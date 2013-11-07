@@ -1,4 +1,4 @@
-package simE.simulator;
+package SimElectricity.simulator;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -7,13 +7,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import simE.components.IComponet;
-import simE.components.Node;
-import simE.components.Node.NodeType;
-import simE.components.Resistance;
-import simE.components.Resistance.NodeWithOhm;
-import simE.components.Resistance.ResistanceType;
-import simE.components.Supply;
+import SimElectricity.components.IComponet;
+import SimElectricity.components.Node;
+import SimElectricity.components.Node.NodeType;
+import SimElectricity.components.Resistance;
+import SimElectricity.components.Resistance.NodeWithOhm;
+import SimElectricity.components.Resistance.ResistanceType;
+import SimElectricity.components.Supply;
 
 public class Grid extends ArrayList<Node> {
 
@@ -48,7 +48,7 @@ public class Grid extends ArrayList<Node> {
 		return super.add(arg0);
 	}
 
-	double[][] getMatrix() {
+	public double[][] getMatrix() {
 		List<Node> fromNodes = new ArrayList<Node>();
 		List<Map<Node, Double>> toNodesAndOhms = new ArrayList<Map<Node, Double>>();
 
@@ -99,59 +99,5 @@ public class Grid extends ArrayList<Node> {
 		}
 
 		return result;
-	}
-
-	public static void main(String[] args) {
-		Grid grid = new Grid();
-		
-		
-		Supply s = new Supply(12);
-		Resistance R2 = new Resistance(500, ResistanceType.CABLE);
-		Resistance R1 = new Resistance(10e3, ResistanceType.LOAD);
-		Resistance R3 = new Resistance(500, ResistanceType.CABLE);
-		Resistance R4 = new Resistance(10e3, ResistanceType.LOAD);
-		
-		Node n1 = new Node();
-		n1.add(s);
-		n1.add(s);
-		n1.add(R2);
-		grid.add(n1);
-		
-		Node n2=new Node();
-		n2.add(R2);
-		n2.add(R1);
-		n2.add(R3);
-		grid.add(n2);
-		
-		Node n3 = new Node();	
-		n3.add(R3);
-		n3.add(R4);
-		grid.add(n3);
-
-		double[][] matrix = grid.getMatrix();		
-		for (double[] ds : matrix) {
-			for (double d : ds) {
-				System.out.print(d);
-				System.out.print(" ");
-			}
-			System.out.println("");
-		}
-		
-		double[][] A = new double[matrix.length][matrix.length];
-		for (int i = 0; i < A.length; i++) {
-			for (int j = 0; j < A.length; j++) {
-				A[i][j] = matrix[i][j];
-			}
-		}
-		
-		double[] b = new double[matrix.length];		
-		for (int i = 0; i < b.length; i++) {
-			b[i] = matrix[i][matrix.length];			
-		}
-
-		double[] x = GaussianElimination.lsolve(A, b);		
-		for (int i = 0; i < x.length; i++) {
-			System.out.println(x[i]);
-		}
 	}
 }

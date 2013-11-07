@@ -1,4 +1,4 @@
-package simE.simulator;
+package SimElectricity.simulator;
 
 /*************************************************************************
  * Compilation: javac GaussianElimination.java Execution: java
