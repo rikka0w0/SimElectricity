@@ -17,7 +17,7 @@ public class Db {
 		conn = DriverManager.getConnection("jdbc:sqlite::memory:");
 
 		Statement stmt = conn.createStatement();
-		stmt.executeUpdate("create table Nodes(node, x, y, z, voltage, resistance, type)");
+		stmt.executeUpdate("create table Nodes(node UNIQUE, x, y, z, voltage, resistance, type)");
 		stmt.executeUpdate("create table N2NRes(node1, node2, n1type, n2type, resistance, isResSet, resSet)");
 
 		System.out.println("Sqlite init.");

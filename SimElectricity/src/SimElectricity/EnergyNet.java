@@ -39,7 +39,7 @@ public final class EnergyNet {
 		
 		System.out.println("Tileentity "+te+" is attached to energy network!");
 		
-		ChunkCoordinates coords = new ChunkCoordinates(te.xCoord,te.yCoord,te.zCoord);
+//		ChunkCoordinates coords = new ChunkCoordinates(te.xCoord,te.yCoord,te.zCoord);
 		
 		Db.addNode(te.toString(), te.xCoord, te.yCoord, te.zCoord, 0, 0, 0);
 		
