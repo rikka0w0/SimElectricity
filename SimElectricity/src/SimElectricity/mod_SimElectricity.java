@@ -69,15 +69,7 @@ public class mod_SimElectricity implements ITickHandler{
 	
 	@EventHandler
 	public void load(FMLInitializationEvent event) {
-		try {
-			Db.init();
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		Db.init();
 		
 //		Grid grid = new Grid();
 //		
