@@ -1,13 +1,16 @@
-package SimElectricity;
+package SimElectricity.Samples;
 
-import SimElectricity.API.IPowerSink;
+import SimElectricity.API.IPowerSource;
+import net.minecraft.tileentity.TileEntity;
 
-public class TileSampleResistor extends TileEnergyBase implements IPowerSink{
+public class TileSampleBattery extends TileEnergyBase implements IPowerSource {
 
+	
+	
 	@Override
 	public int getResistance() {
 		// TODO Auto-generated method stub
-		return 10000;
+		return 0;
 	}
 
 	@Override
@@ -23,15 +26,9 @@ public class TileSampleResistor extends TileEnergyBase implements IPowerSink{
 	}
 
 	@Override
-	public int getMaxSafeVoltage() {
+	public int getOutputVoltage() {
 		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public void onOverVoltage() {
-		// TODO Auto-generated method stub
-		
+		return 12;
 	}
 
 }
