@@ -1,4 +1,11 @@
-package simElectricity;
+package simElectricity.simulator;
+
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import simElectricity.API.BaseComponent;
 
 /*************************************************************************
  * Compilation: javac GaussianElimination.java Execution: java
@@ -10,7 +17,7 @@ package simElectricity;
  * 
  *************************************************************************/
 
-public class GaussianElimination {
+public class Simulator {
 	private static final double EPSILON = 1e-10;
 
 	// Gaussian elimination with partial pivoting
@@ -59,5 +66,38 @@ public class GaussianElimination {
 			x[i] = (b[i] - sum) / A[i][i];
 		}
 		return x;
+	}
+
+	public static double[] runSimulator(List<Node> unknownVoltageNodes,
+			List<Map<Node, Double>> resToOtherNodes) {
+
+		int matrixSize = unknownVoltageNodes.size();
+		double[][] A = new double[matrixSize][matrixSize];
+		double[] b = new double[matrixSize];
+
+		for (int i = 0; i < matrixSize; i++) {
+			Map<Node, Double> tmpRes = resToOtherNodes.get(i);
+			
+			for (int j = 0; j < matrixSize; j++) {
+				double tmp = 0;
+
+				if (i == j) {
+					for (Entry<Node, Double> entry : tmpRes.entrySet())
+						tmp += 1.0 / entry.getValue();
+				} else if(tmpRes.containsKey(unknownVoltageNodes.get(j))) {
+					tmp = -1.0 / tmpRes.get(unknownVoltageNodes.get(j));
+				}
+
+				A[i][j] = tmp;
+			}
+			
+			b[i] = 0;
+			for (Entry<Node, Double> entry : tmpRes.entrySet())
+				if(entry.getKey().isUnknownVoltage() != true)
+					if(entry.getKey().getVoltage() != 0)
+						b[i] = (1.0 / entry.getValue()) * entry.getKey().getVoltage();
+		}
+
+		return lsolve(A, b);
 	}
 }
