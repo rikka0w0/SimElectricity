@@ -10,7 +10,6 @@ import simElectricity.Samples.ItemBlockSample;
 import simElectricity.Samples.TileSampleBattery;
 import simElectricity.Samples.TileSampleConductor;
 import simElectricity.Samples.TileSampleResistor;
-import simElectricity.sqlite.Db;
 import cpw.mods.fml.common.ITickHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
@@ -76,7 +75,7 @@ public class mod_SimElectricity implements ITickHandler {
 
 	@EventHandler
 	public void load(FMLInitializationEvent event) {
-		Db.init();
+		// Db.init();
 	}
 
 }

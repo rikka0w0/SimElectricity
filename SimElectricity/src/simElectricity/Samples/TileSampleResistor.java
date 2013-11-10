@@ -1,8 +1,9 @@
 package simElectricity.Samples;
 
+import simElectricity.API.BaseComponent;
 import simElectricity.API.IPowerSink;
 
-public class TileSampleResistor extends TileEnergyBase implements IPowerSink {
+public class TileSampleResistor extends BaseComponent implements IPowerSink {
 
 	@Override
 	public int getResistance() {
