@@ -1,9 +1,8 @@
 package simElectricity.Samples;
 
-import simElectricity.API.BaseComponent;
 import simElectricity.API.IConductor;
 
-public class TileSampleConductor extends BaseComponent implements IConductor {
+public class TileSampleConductor extends TileSampleBaseComponent implements IConductor {
 
 	@Override
 	public int getResistance() {

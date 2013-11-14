@@ -8,12 +8,12 @@ import simElectricity.API.IBaseComponent;
 import simElectricity.API.TileAttachEvent;
 import simElectricity.API.TileChangeEvent;
 import simElectricity.API.TileDetachEvent;
+import simElectricity.Samples.TileSampleBaseComponent;
 
 public final class EnergyNet {
 
 	public static void onTick(World world) {
 		EnergyNet energyNet = getForWorld(world);
-
 	}
 
 	public EnergyNet() {
@@ -26,6 +26,12 @@ public final class EnergyNet {
 					+ " is trying to attach to energy network, aborting");
 			return;
 		}
+		
+//		TileSampleBaseComponent compoent = (TileSampleBaseComponent)te;		
+//		if(getComponentType(compoent) != IBaseComponent.conductor)
+//		{
+//			
+//		}
 
 		System.out.println("Tileentity " + te
 				+ " is attached to energy network!");

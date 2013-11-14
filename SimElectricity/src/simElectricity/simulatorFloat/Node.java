@@ -1,20 +1,31 @@
 package simElectricity.simulatorFloat;
 
-public class Node {
-	private float voltage;
-	private boolean unknownVoltage;
+import java.util.HashMap;
+import java.util.Map;
 
-	public Node(float voltage, boolean unknownVoltage) {
+public class Node {
+	float voltage;
+	boolean definedVoltage;
+	Map<Node, Float> resToOtherNodes = new HashMap<Node, Float>();
+
+	public Node() {
+		super();
+		this.definedVoltage = false;
+	}
+
+	public Node(float voltage) {
 		super();
 		this.voltage = voltage;
-		this.unknownVoltage = unknownVoltage;
+		this.definedVoltage = true;
 	}
 
-	public float getVoltage() {
-		return voltage;
+	public void connect(Node node, float resistance) {
+		this.resToOtherNodes.put(node, resistance);
+		node.resToOtherNodes.put(this, resistance);
 	}
 
-	public boolean isUnknownVoltage() {
-		return unknownVoltage;
+	public void disconnect(Node node) {
+		node.resToOtherNodes.remove(this);
+		this.resToOtherNodes.remove(node);
 	}
 }
