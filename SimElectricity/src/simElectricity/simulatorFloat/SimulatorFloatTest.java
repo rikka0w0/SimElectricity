@@ -13,12 +13,11 @@ public class SimulatorFloatTest {
 	public static void main(String[] args) {
 		List<Node> unknownVoltageNodes = new ArrayList<Node>();
 		
-
 		Node v0 = new Node(12);
 		Node gnd = new Node(0);		
 		Node e1 = new Node();
 		Node e2 = new Node();
-//		Node e3 = new Node();
+		Node e3 = new Node();
 
 		e1.connect(v0, 500);
 		e1.connect(e2, 50);
@@ -30,9 +29,9 @@ public class SimulatorFloatTest {
 		
 		unknownVoltageNodes.add(e1);
 		unknownVoltageNodes.add(e2);
-//		unknownVoltageNodes.add(e3);
+		unknownVoltageNodes.add(e3);
 		
-		float[] b = Simulator.runSimulator(unknownVoltageNodes);
+		float[] b = Simulator.runSimulator(Simulator.removeInvalidNodes(unknownVoltageNodes));
 		
 //		10.9116
 //		10.8573

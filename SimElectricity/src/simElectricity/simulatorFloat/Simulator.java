@@ -1,5 +1,6 @@
 package simElectricity.simulatorFloat;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -66,6 +67,15 @@ public class Simulator {
 			x[i] = (b[i] - sum) / A[i][i];
 		}
 		return x;
+	}
+	
+	public static List<Node> removeInvalidNodes(List<Node> unknownVoltageNodes){
+		List<Node> result = new ArrayList<Node>();		
+		for (Node node : unknownVoltageNodes) {
+			if(node.connectToDefinedVoltageCount > 1)
+				result.add(node);
+		}
+		return result;		
 	}
 
 	public static float[] runSimulator(List<Node> unknownVoltageNodes) {
