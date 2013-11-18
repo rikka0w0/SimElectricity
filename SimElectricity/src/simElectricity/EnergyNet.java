@@ -26,8 +26,8 @@ public final class EnergyNet {
 	WeightedMultigraph<Node, Resistor> graph = new WeightedMultigraph<Node, Resistor>(
 			Resistor.class);
 	// for source or sink
-	Map<TileEntity, Node> toGirdNode = new HashMap<TileEntity, Node>();
-	Map<TileEntity, Node> definedVoltageNode = new HashMap<TileEntity, Node>();
+	Map<TileEntity, Node> toGirdNodes = new HashMap<TileEntity, Node>();
+	Map<TileEntity, Node> definedVoltageNodes = new HashMap<TileEntity, Node>();
 	// for conductor
 	Map<TileEntity, Resistor> inResistor = new HashMap<TileEntity, Resistor>();
 
@@ -82,12 +82,21 @@ public final class EnergyNet {
 		if (neighborList.size() == 0)
 			return;
 
-		if (!(te instanceof IConductor)) {
+		if (te instanceof IConductor) {
 
-		} else if (!(te instanceof IPowerSink)) {
-
-		} else if (!(te instanceof IPowerSource)) {
-
+		} else {
+			Node toGird = new Node(graph);
+			Node definedVoltage = null;
+			if (te instanceof IPowerSink) {
+				definedVoltage = new Node(graph, 0);
+			} else if (te instanceof IPowerSource) {
+				definedVoltage = new Node(graph,
+						((IPowerSource) te).getOutputVoltage());
+			}
+			toGird.connect(definedVoltage,
+					((IBaseComponent) te).getResistance());
+			toGirdNodes.put(te, toGird);
+			definedVoltageNodes.put(te, definedVoltage);
 		}
 
 		System.out.println("Tileentity " + te
