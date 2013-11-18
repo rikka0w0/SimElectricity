@@ -1,4 +1,4 @@
-package simElectricity.simulatorFloat;
+package simElectricity.simulator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,27 +28,33 @@ public class SimulatorTable {
 		int i = 0;
 		TileEntity tmp;
 
-		tmp = component.worldObj.getBlockTileEntity(component.xCoord + 1, component.yCoord, component.zCoord);
+		tmp = component.worldObj.getBlockTileEntity(component.xCoord + 1,
+				component.yCoord, component.zCoord);
 		if (tmp instanceof IBaseComponent) {
 			result[i++] = tmp;
 		}
-		tmp = component.worldObj.getBlockTileEntity(component.xCoord - 1, component.yCoord, component.zCoord);
+		tmp = component.worldObj.getBlockTileEntity(component.xCoord - 1,
+				component.yCoord, component.zCoord);
 		if (tmp instanceof IBaseComponent) {
 			result[i++] = tmp;
 		}
-		tmp = component.worldObj.getBlockTileEntity(component.xCoord, component.yCoord + 1, component.zCoord);
+		tmp = component.worldObj.getBlockTileEntity(component.xCoord,
+				component.yCoord + 1, component.zCoord);
 		if (tmp instanceof IBaseComponent) {
 			result[i++] = tmp;
 		}
-		tmp = component.worldObj.getBlockTileEntity(component.xCoord, component.yCoord - 1, component.zCoord);
+		tmp = component.worldObj.getBlockTileEntity(component.xCoord,
+				component.yCoord - 1, component.zCoord);
 		if (tmp instanceof IBaseComponent) {
 			result[i++] = tmp;
 		}
-		tmp = component.worldObj.getBlockTileEntity(component.xCoord, component.yCoord, component.zCoord + 1);
+		tmp = component.worldObj.getBlockTileEntity(component.xCoord,
+				component.yCoord, component.zCoord + 1);
 		if (tmp instanceof IBaseComponent) {
 			result[i++] = tmp;
 		}
-		tmp = component.worldObj.getBlockTileEntity(component.xCoord, component.yCoord, component.zCoord - 1);
+		tmp = component.worldObj.getBlockTileEntity(component.xCoord,
+				component.yCoord, component.zCoord - 1);
 		if (tmp instanceof IBaseComponent) {
 			result[i++] = tmp;
 		}
@@ -66,7 +72,7 @@ public class SimulatorTable {
 		}
 		return 0;
 	}
-	
+
 	public int add(TileEntity component) {
 		getNeighboringComponents(component);
 		return 0;

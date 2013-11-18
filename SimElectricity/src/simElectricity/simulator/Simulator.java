@@ -1,12 +1,10 @@
-package simElectricity.simulatorFloat;
+package simElectricity.simulator;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
-import simElectricity.Samples.TileSampleBaseComponent;
+import org.jgrapht.Graphs;
+import org.jgrapht.graph.WeightedMultigraph;
 
 /*************************************************************************
  * Compilation: javac GaussianElimination.java Execution: java
@@ -68,44 +66,59 @@ public class Simulator {
 		}
 		return x;
 	}
-	
-	public static List<Node> removeInvalidNodes(List<Node> unknownVoltageNodes){
-		List<Node> result = new ArrayList<Node>();		
-		for (Node node : unknownVoltageNodes) {
-			if(node.connectToDefinedVoltageCount > 1)
-				result.add(node);
-		}
-		return result;		
-	}
 
-	public static float[] runSimulator(List<Node> unknownVoltageNodes) {
+	public static List<Node> runSimulator(
+			WeightedMultigraph<Node, Resistor> graph) {
+
+		List<Node> unknownVoltageNodes = new ArrayList<Node>();
+		for (Node node : graph.vertexSet()) {
+			if (node.definedVoltage != true)
+				unknownVoltageNodes.add(node);
+		}
 
 		int matrixSize = unknownVoltageNodes.size();
 		float[][] A = new float[matrixSize][matrixSize];
 		float[] b = new float[matrixSize];
 
 		for (int i = 0; i < matrixSize; i++) {
-			Map<Node, Float> tmpRes = unknownVoltageNodes.get(i).resToOtherNodes;
+			List<Node> neighborList = Graphs.neighborListOf(graph,
+					unknownVoltageNodes.get(i));
 
 			for (int j = 0; j < matrixSize; j++) {
 				float tmp = 0;
 
 				if (i == j) {
-					for (Entry<Node, Float> entry : tmpRes.entrySet())
-						tmp += 1 / entry.getValue();
-				} else if (tmpRes.containsKey(unknownVoltageNodes.get(j))) {
-					tmp = (-1 / tmpRes.get(unknownVoltageNodes.get(j)));
+					for (Node node : neighborList)
+						for (Resistor res : graph.getAllEdges(node,
+								unknownVoltageNodes.get(i)))
+							tmp += 1 / graph.getEdgeWeight(res);
+				} else {
+					if (neighborList.contains(unknownVoltageNodes.get(j))) {
+						for (Resistor res : graph.getAllEdges(
+								unknownVoltageNodes.get(j),
+								unknownVoltageNodes.get(i)))
+							tmp += -1 / graph.getEdgeWeight(res);
+					}
 				}
 
 				A[i][j] = tmp;
 			}
 
 			b[i] = 0;
-			for (Entry<Node, Float> entry : tmpRes.entrySet())
-				if (entry.getKey().definedVoltage == true)
-					b[i] += ((1 / entry.getValue()) * entry.getKey().voltage);
+			for (Node node : neighborList)
+				if (node.definedVoltage == true) {
+					for (Resistor res : graph.getAllEdges(node,
+							unknownVoltageNodes.get(i)))
+						b[i] += 1 / graph.getEdgeWeight(res);
+					b[i] += (b[i] * node.voltage);
+				}
 		}
 
-		return lsolve(A, b);
+		float[] x = lsolve(A, b);
+		for (int i = 0; i < x.length; i++) {
+			unknownVoltageNodes.get(i).voltage = x[i];
+		}
+
+		return unknownVoltageNodes;
 	}
 }

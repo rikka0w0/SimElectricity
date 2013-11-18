@@ -1,16 +1,67 @@
 package simElectricity;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeSubscribe;
+
+import org.jgrapht.graph.WeightedMultigraph;
+
 import simElectricity.API.IBaseComponent;
+import simElectricity.API.IConductor;
+import simElectricity.API.IPowerSink;
+import simElectricity.API.IPowerSource;
 import simElectricity.API.TileAttachEvent;
 import simElectricity.API.TileChangeEvent;
 import simElectricity.API.TileDetachEvent;
-import simElectricity.Samples.TileSampleBaseComponent;
+import simElectricity.simulator.Node;
+import simElectricity.simulator.Resistor;
 
 public final class EnergyNet {
+	WeightedMultigraph<Node, Resistor> graph = new WeightedMultigraph<Node, Resistor>(
+			Resistor.class);
+	// for source or sink
+	Map<TileEntity, Node> toGirdNode = new HashMap<TileEntity, Node>();
+	Map<TileEntity, Node> definedVoltageNode = new HashMap<TileEntity, Node>();
+	// for conductor
+	Map<TileEntity, Resistor> inResistor = new HashMap<TileEntity, Resistor>();
+
+	public static List<TileEntity> neighborListOf(TileEntity te) {
+		List<TileEntity> result = new ArrayList<TileEntity>();
+		TileEntity temp;
+
+		temp = te.worldObj.getBlockTileEntity(te.xCoord + 1, te.yCoord,
+				te.zCoord);
+		if (!(temp instanceof IBaseComponent))
+			result.add(temp);
+		temp = te.worldObj.getBlockTileEntity(te.xCoord - 1, te.yCoord,
+				te.zCoord);
+		if (!(temp instanceof IBaseComponent))
+			result.add(temp);
+		temp = te.worldObj.getBlockTileEntity(te.xCoord, te.yCoord + 1,
+				te.zCoord);
+		if (!(temp instanceof IBaseComponent))
+			result.add(temp);
+		temp = te.worldObj.getBlockTileEntity(te.xCoord, te.yCoord - 1,
+				te.zCoord);
+		if (!(temp instanceof IBaseComponent))
+			result.add(temp);
+		temp = te.worldObj.getBlockTileEntity(te.xCoord, te.yCoord,
+				te.zCoord + 1);
+		if (!(temp instanceof IBaseComponent))
+			result.add(temp);
+		temp = te.worldObj.getBlockTileEntity(te.xCoord, te.yCoord,
+				te.zCoord - 1);
+		if (!(temp instanceof IBaseComponent))
+			result.add(temp);
+
+		return result;
+	}
 
 	public static void onTick(World world) {
 		EnergyNet energyNet = getForWorld(world);
@@ -26,12 +77,18 @@ public final class EnergyNet {
 					+ " is trying to attach to energy network, aborting");
 			return;
 		}
-		
-//		TileSampleBaseComponent compoent = (TileSampleBaseComponent)te;		
-//		if(getComponentType(compoent) != IBaseComponent.conductor)
-//		{
-//			
-//		}
+
+		List<TileEntity> neighborList = neighborListOf(te);
+		if (neighborList.size() == 0)
+			return;
+
+		if (!(te instanceof IConductor)) {
+
+		} else if (!(te instanceof IPowerSink)) {
+
+		} else if (!(te instanceof IPowerSource)) {
+
+		}
 
 		System.out.println("Tileentity " + te
 				+ " is attached to energy network!");
