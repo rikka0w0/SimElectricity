@@ -7,7 +7,7 @@ import org.jgrapht.graph.WeightedMultigraph;
 public class Node {
 
 	WeightedMultigraph<Node, Resistor> graph;
-	float voltage;
+	float voltage = 0;
 	boolean definedVoltage = false;
 
 	public Node(WeightedMultigraph<Node, Resistor> graph) {
@@ -27,6 +27,8 @@ public class Node {
 
 	public boolean connect(Node node, float resistance) {
 		Resistor r = graph.addEdge(this, node);
+		if(resistance == 0)
+			resistance = (float) 0.0001;
 		graph.setEdgeWeight(r, resistance);
 		return r != null;
 	}
@@ -38,5 +40,9 @@ public class Node {
 				return graph.removeEdge(resistance2);
 		}
 		return false;
+	}
+
+	public float getVoltage() {
+		return voltage;
 	}
 }

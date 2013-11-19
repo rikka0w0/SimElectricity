@@ -72,7 +72,7 @@ public class Simulator {
 
 		List<Node> unknownVoltageNodes = new ArrayList<Node>();
 		for (Node node : graph.vertexSet()) {
-			if (node.definedVoltage != true)
+			if ((node.definedVoltage != true) && (graph.degreeOf(node) >= 2))
 				unknownVoltageNodes.add(node);
 		}
 
@@ -107,10 +107,11 @@ public class Simulator {
 			b[i] = 0;
 			for (Node node : neighborList)
 				if (node.definedVoltage == true) {
+					float bg = 0;
 					for (Resistor res : graph.getAllEdges(node,
 							unknownVoltageNodes.get(i)))
-						b[i] += 1 / graph.getEdgeWeight(res);
-					b[i] += (b[i] * node.voltage);
+						bg += 1 / graph.getEdgeWeight(res);
+					b[i] += (bg * node.voltage);
 				}
 		}
 
