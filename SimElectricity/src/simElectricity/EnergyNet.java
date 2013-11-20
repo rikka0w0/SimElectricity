@@ -1,27 +1,16 @@
 package simElectricity;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeSubscribe;
-
-import org.jgrapht.graph.WeightedMultigraph;
-
 import simElectricity.API.IBaseComponent;
-import simElectricity.API.IConductor;
-import simElectricity.API.IPowerSink;
-import simElectricity.API.IPowerSource;
 import simElectricity.API.TileAttachEvent;
 import simElectricity.API.TileChangeEvent;
 import simElectricity.API.TileDetachEvent;
-import simElectricity.simulator.Node;
-import simElectricity.simulator.Resistor;
-import simElectricity.simulator.Simulator;
 
 public final class EnergyNet {
 

@@ -6,7 +6,7 @@ public class SimulatorFloatTest {
 
 	public static void main(String[] args) {
 		// List<Node> unknownVoltageNodes = new ArrayList<Node>();
-		SimulatorTable table = new SimulatorTable();
+		Simulator table = new Simulator();
 
 		Node v0 = table.newNode(12);
 		Node gnd = table.newNode(0);

@@ -1,14 +1,14 @@
 package simElectricity.Samples;
 
-import simElectricity.API.IPowerSink;
+import simElectricity.API.IEnergyTile;
 
 public class TileSampleResistor extends TileSampleBaseComponent implements
-		IPowerSink {
+		IEnergyTile {
 
 	@Override
 	public int getResistance() {
 		// TODO Auto-generated method stub
-		return 10000;
+		return 500;
 	}
 
 	@Override
@@ -24,7 +24,7 @@ public class TileSampleResistor extends TileSampleBaseComponent implements
 	}
 
 	@Override
-	public int getMaxSafeVoltage() {
+	public float getMaxSafeVoltage() {
 		// TODO Auto-generated method stub
 		return 0;
 	}
@@ -33,6 +33,18 @@ public class TileSampleResistor extends TileSampleBaseComponent implements
 	public void onOverVoltage() {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public float getOutputVoltage() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public float getInternalResistance() {
+		// TODO Auto-generated method stub
+		return 10000;
 	}
 
 }

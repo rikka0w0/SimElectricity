@@ -33,17 +33,15 @@ public class Item_UltimateMultimeter extends Item{
     	if((world.getBlockTileEntity(x, y, z) instanceof IBaseComponent)&(!world.isRemote)){
     		IBaseComponent te=(IBaseComponent) world.getBlockTileEntity(x, y, z);
     		//Print out information here
-    		if (te instanceof IPowerSource){
-    			IPowerSource ps=(IPowerSource) te;
+    		if (te instanceof IEnergyTile){
+    			IEnergyTile ps=(IEnergyTile) te;
     			
     			player.sendChatToPlayer(ChatMessageComponent.createFromText(
     					"Output voltage: "+String.valueOf(ps.getOutputVoltage())
     					));
-    		}
-    		
-    		if (te instanceof IPowerSink){
-    			IPowerSink ps=(IPowerSink) te;
-    			
+    			player.sendChatToPlayer(ChatMessageComponent.createFromText(
+    					"Internal Resistance: "+String.valueOf(ps.getInternalResistance())
+    					));
     		}
     		
     		if(te instanceof IConductor){
