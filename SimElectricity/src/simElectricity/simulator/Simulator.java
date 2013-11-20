@@ -20,7 +20,7 @@ public class Simulator {
 	private static final float EPSILON = (float) 1e-10;
 
 	// Gaussian elimination with partial pivoting
-	private static float[] lsolve(float[][] A, float[] b) {
+	static float[] lsolve(float[][] A, float[] b) {
 		int N = b.length;
 
 		for (int p = 0; p < N; p++) {
@@ -67,59 +67,4 @@ public class Simulator {
 		return x;
 	}
 
-	public static List<Node> runSimulator(
-			WeightedMultigraph<Node, Resistor> graph) {
-
-		List<Node> unknownVoltageNodes = new ArrayList<Node>();
-		for (Node node : graph.vertexSet()) {
-			if ((node.definedVoltage != true) && (graph.degreeOf(node) >= 2))
-				unknownVoltageNodes.add(node);
-		}
-
-		int matrixSize = unknownVoltageNodes.size();
-		float[][] A = new float[matrixSize][matrixSize];
-		float[] b = new float[matrixSize];
-
-		for (int i = 0; i < matrixSize; i++) {
-			List<Node> neighborList = Graphs.neighborListOf(graph,
-					unknownVoltageNodes.get(i));
-
-			for (int j = 0; j < matrixSize; j++) {
-				float tmp = 0;
-
-				if (i == j) {
-					for (Node node : neighborList)
-						for (Resistor res : graph.getAllEdges(node,
-								unknownVoltageNodes.get(i)))
-							tmp += 1 / graph.getEdgeWeight(res);
-				} else {
-					if (neighborList.contains(unknownVoltageNodes.get(j))) {
-						for (Resistor res : graph.getAllEdges(
-								unknownVoltageNodes.get(j),
-								unknownVoltageNodes.get(i)))
-							tmp += -1 / graph.getEdgeWeight(res);
-					}
-				}
-
-				A[i][j] = tmp;
-			}
-
-			b[i] = 0;
-			for (Node node : neighborList)
-				if (node.definedVoltage == true) {
-					float bg = 0;
-					for (Resistor res : graph.getAllEdges(node,
-							unknownVoltageNodes.get(i)))
-						bg += 1 / graph.getEdgeWeight(res);
-					b[i] += (bg * node.voltage);
-				}
-		}
-
-		float[] x = lsolve(A, b);
-		for (int i = 0; i < x.length; i++) {
-			unknownVoltageNodes.get(i).voltage = x[i];
-		}
-
-		return unknownVoltageNodes;
-	}
 }

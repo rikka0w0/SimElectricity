@@ -2,83 +2,95 @@ package simElectricity.simulator;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
-import net.minecraft.tileentity.TileEntity;
-import simElectricity.API.IBaseComponent;
-import simElectricity.API.IConductor;
-import simElectricity.API.IPowerSink;
-import simElectricity.API.IPowerSource;
+import org.jgrapht.Graphs;
+import org.jgrapht.graph.WeightedMultigraph;
 
 public class SimulatorTable {
-	private List<Node> unknownVoltageNodes = new ArrayList<Node>();
-	private List<Map<Node, Float>> resToOtherNodes = new ArrayList<Map<Node, Float>>();
-	private List<TileEntity> tileIndex = new ArrayList<TileEntity>();
+	WeightedMultigraph<Node, Resistor> graph = new WeightedMultigraph<Node, Resistor>(
+			Resistor.class);
 
-	public List<Node> getUnknownVoltageNodes() {
-		return unknownVoltageNodes;
-	}
-
-	public List<Map<Node, Float>> getResToOtherNodes() {
-		return resToOtherNodes;
-	}
-
-	public static TileEntity[] getNeighboringComponents(TileEntity component) {
-		TileEntity[] result = new TileEntity[7];
-		int i = 0;
-		TileEntity tmp;
-
-		tmp = component.worldObj.getBlockTileEntity(component.xCoord + 1,
-				component.yCoord, component.zCoord);
-		if (tmp instanceof IBaseComponent) {
-			result[i++] = tmp;
-		}
-		tmp = component.worldObj.getBlockTileEntity(component.xCoord - 1,
-				component.yCoord, component.zCoord);
-		if (tmp instanceof IBaseComponent) {
-			result[i++] = tmp;
-		}
-		tmp = component.worldObj.getBlockTileEntity(component.xCoord,
-				component.yCoord + 1, component.zCoord);
-		if (tmp instanceof IBaseComponent) {
-			result[i++] = tmp;
-		}
-		tmp = component.worldObj.getBlockTileEntity(component.xCoord,
-				component.yCoord - 1, component.zCoord);
-		if (tmp instanceof IBaseComponent) {
-			result[i++] = tmp;
-		}
-		tmp = component.worldObj.getBlockTileEntity(component.xCoord,
-				component.yCoord, component.zCoord + 1);
-		if (tmp instanceof IBaseComponent) {
-			result[i++] = tmp;
-		}
-		tmp = component.worldObj.getBlockTileEntity(component.xCoord,
-				component.yCoord, component.zCoord - 1);
-		if (tmp instanceof IBaseComponent) {
-			result[i++] = tmp;
-		}
-
+	public Node newNode() {
+		Node result = new Node(graph);
 		return result;
 	}
 
-	//public static int getComponentType(TileEntity component) {
-	//	if (!(component instanceof IPowerSource)) {
-	//		return IBaseComponent.powerSource;
-	//	} else if (!(component instanceof IPowerSink)) {
-	//		return IBaseComponent.powerSink;
-	//	} else if (!(component instanceof IConductor)) {
-	//		return IBaseComponent.conductor;
-	//	}
-	//	return 0;
-	//}
-
-	public int add(TileEntity component) {
-		getNeighboringComponents(component);
-		return 0;
+	public Node newNode(float voltage) {
+		Node result = new Node(graph, voltage);
+		return result;
 	}
 
-	public void del(int nodeIndex) {
-
+	public boolean connect(Node src, Node dst, float resistance) {
+		if (resistance == 0)
+			return false;
+		Resistor r = graph.addEdge(src, dst);
+		graph.setEdgeWeight(r, resistance);
+		return r != null;
 	}
+
+	public boolean disconnect(Node src, Node dst, float resistance) {
+		Set<Resistor> rs = graph.getAllEdges(src, dst);
+		for (Resistor resistance2 : rs) {
+			if (resistance == graph.getEdgeWeight(resistance2))
+				return graph.removeEdge(resistance2);
+		}
+		return false;
+	}
+
+	public List<Node> run() {
+
+		List<Node> unknownVoltageNodes = new ArrayList<Node>();
+		for (Node node : graph.vertexSet()) {
+			if ((node.definedVoltage != true) && (graph.degreeOf(node) >= 2))
+				unknownVoltageNodes.add(node);
+		}
+
+		int matrixSize = unknownVoltageNodes.size();
+		float[][] A = new float[matrixSize][matrixSize];
+		float[] b = new float[matrixSize];
+
+		for (int i = 0; i < matrixSize; i++) {
+			List<Node> neighborList = Graphs.neighborListOf(graph,
+					unknownVoltageNodes.get(i));
+
+			for (int j = 0; j < matrixSize; j++) {
+				float tmp = 0;
+
+				if (i == j) {
+					for (Node node : neighborList)
+						for (Resistor res : graph.getAllEdges(node,
+								unknownVoltageNodes.get(i)))
+							tmp += 1 / graph.getEdgeWeight(res);
+				} else {
+					if (neighborList.contains(unknownVoltageNodes.get(j))) {
+						for (Resistor res : graph.getAllEdges(
+								unknownVoltageNodes.get(j),
+								unknownVoltageNodes.get(i)))
+							tmp += -1 / graph.getEdgeWeight(res);
+					}
+				}
+
+				A[i][j] = tmp;
+			}
+
+			b[i] = 0;
+			for (Node node : neighborList)
+				if (node.definedVoltage == true) {
+					float bg = 0;
+					for (Resistor res : graph.getAllEdges(node,
+							unknownVoltageNodes.get(i)))
+						bg += 1 / graph.getEdgeWeight(res);
+					b[i] += (bg * node.voltage);
+				}
+		}
+
+		float[] x = Simulator.lsolve(A, b);
+		for (int i = 0; i < x.length; i++) {
+			unknownVoltageNodes.get(i).voltage = x[i];
+		}
+
+		return unknownVoltageNodes;
+	}
+
 }

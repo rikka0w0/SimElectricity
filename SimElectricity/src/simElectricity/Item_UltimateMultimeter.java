@@ -36,7 +36,7 @@ public class Item_UltimateMultimeter extends Item{
     		if (te instanceof IPowerSource){
     			IPowerSource ps=(IPowerSource) te;
     			
-    			player.sendChatToPlayer(ChatMessageComponent.func_111066_d(
+    			player.sendChatToPlayer(ChatMessageComponent.createFromText(
     					"Output voltage: "+String.valueOf(ps.getOutputVoltage())
     					));
     		}
@@ -51,7 +51,7 @@ public class Item_UltimateMultimeter extends Item{
     			
     		}
     		
-    		player.sendChatToPlayer(ChatMessageComponent.func_111066_d("resistance: "+String.valueOf(te.getResistance())));    		
+    		player.sendChatToPlayer(ChatMessageComponent.createFromText("resistance: "+String.valueOf(te.getResistance())));    		
     		
     		return true;
     	}else{
