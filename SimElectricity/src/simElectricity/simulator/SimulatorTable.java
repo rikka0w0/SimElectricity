@@ -62,16 +62,16 @@ public class SimulatorTable {
 		return result;
 	}
 
-	public static int getComponentType(TileEntity component) {
-		if (!(component instanceof IPowerSource)) {
-			return IBaseComponent.powerSource;
-		} else if (!(component instanceof IPowerSink)) {
-			return IBaseComponent.powerSink;
-		} else if (!(component instanceof IConductor)) {
-			return IBaseComponent.conductor;
-		}
-		return 0;
-	}
+	//public static int getComponentType(TileEntity component) {
+	//	if (!(component instanceof IPowerSource)) {
+	//		return IBaseComponent.powerSource;
+	//	} else if (!(component instanceof IPowerSink)) {
+	//		return IBaseComponent.powerSink;
+	//	} else if (!(component instanceof IConductor)) {
+	//		return IBaseComponent.conductor;
+	//	}
+	//	return 0;
+	//}
 
 	public int add(TileEntity component) {
 		getNeighboringComponents(component);

@@ -71,6 +71,7 @@ public class mod_SimElectricity implements ITickHandler {
 		GameRegistry.registerTileEntity(TileSampleBattery.class, "Battery");
 		GameRegistry.registerTileEntity(TileSampleConductor.class, "Conductor");
 		GameRegistry.registerTileEntity(TileSampleResistor.class, "Resistor");
+		GameRegistry.registerItem(new Item_UltimateMultimeter(5000), "Item_UltimateMultimeter");
 	}
 
 	@EventHandler
