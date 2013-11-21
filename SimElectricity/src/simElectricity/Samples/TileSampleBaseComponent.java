@@ -6,15 +6,14 @@ import simElectricity.API.IBaseComponent;
 import simElectricity.API.TileAttachEvent;
 import simElectricity.API.TileDetachEvent;
 
-public abstract class TileSampleBaseComponent extends TileEntity implements
-		IBaseComponent {
-	public boolean isAddedToEnergyNet = false;
-
+public abstract class TileSampleBaseComponent extends TileEntity implements	IBaseComponent {
+	protected boolean isAddedToEnergyNet = false;
+	
 	@Override
-	public void validate() {
-		if (!worldObj.isRemote & !isAddedToEnergyNet) {
+	public void updateEntity() {
+		if (!worldObj.isRemote && !isAddedToEnergyNet) {
 			MinecraftForge.EVENT_BUS.post(new TileAttachEvent(this));
-			isAddedToEnergyNet = true;
+			this.isAddedToEnergyNet=true;
 		}
 	}
 
@@ -22,7 +21,6 @@ public abstract class TileSampleBaseComponent extends TileEntity implements
 	public void invalidate() {
 		if (!worldObj.isRemote & isAddedToEnergyNet) {
 			MinecraftForge.EVENT_BUS.post(new TileDetachEvent(this));
-			isAddedToEnergyNet = false;
 		}
 	}
 }

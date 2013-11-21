@@ -35,13 +35,7 @@ public class Item_UltimateMultimeter extends Item{
     		//Print out information here
     		if (te instanceof IEnergyTile){
     			IEnergyTile ps=(IEnergyTile) te;
-    			
-    			player.sendChatToPlayer(ChatMessageComponent.createFromText(
-    					"Output voltage: "+String.valueOf(ps.getOutputVoltage())
-    					));
-    			player.sendChatToPlayer(ChatMessageComponent.createFromText(
-    					"Internal Resistance: "+String.valueOf(ps.getInternalResistance())
-    					));
+
     		}
     		
     		if(te instanceof IConductor){

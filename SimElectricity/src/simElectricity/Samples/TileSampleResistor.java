@@ -1,5 +1,6 @@
 package simElectricity.Samples;
 
+import net.minecraftforge.common.ForgeDirection;
 import simElectricity.API.IEnergyTile;
 
 public class TileSampleResistor extends TileSampleBaseComponent implements
@@ -8,7 +9,7 @@ public class TileSampleResistor extends TileSampleBaseComponent implements
 	@Override
 	public int getResistance() {
 		// TODO Auto-generated method stub
-		return 500;
+		return 10000;
 	}
 
 	@Override
@@ -42,9 +43,15 @@ public class TileSampleResistor extends TileSampleBaseComponent implements
 	}
 
 	@Override
-	public float getInternalResistance() {
+	public boolean canEmitEnergy(ForgeDirection forgeDirection) {
 		// TODO Auto-generated method stub
-		return 10000;
+		return false;
+	}
+
+	@Override
+	public boolean canSinkEnergy(ForgeDirection forgeDirection) {
+		// TODO Auto-generated method stub
+		return true;
 	}
 
 }
