@@ -34,20 +34,47 @@ public class Item_UltimateMultimeter extends Item{
     {
     	if((world.getBlockTileEntity(x, y, z) instanceof IBaseComponent)&(!world.isRemote)){
     		IBaseComponent te=(IBaseComponent) world.getBlockTileEntity(x, y, z);
-    		//Print out information here
+    		float voltage;
+    		if (EnergyNet.getForWorld(world).voltageCache.containsKey(te))
+    			voltage = EnergyNet.getForWorld(world).voltageCache.get(te);
+    		else
+    			voltage = 0;
+    		
+    		String tileType="Unknown";
+    		float outputVoltage=0;
+    		
+    		
     		if (te instanceof IEnergyTile){
     			IEnergyTile ps=(IEnergyTile) te;
-
+    			if (((IEnergyTile) te).getOutputVoltage()==0)
+    				tileType="Energy Sink";
+    			else{
+    				tileType="Energy Source";
+    				outputVoltage=((IEnergyTile) te).getOutputVoltage();
+    			}
     		}
     		
     		if(te instanceof IConductor){
     			IConductor c=(IConductor) te;
-    			
+    			tileType="Energy Conductor";
     		}
     		
-    		player.sendChatToPlayer(ChatMessageComponent.createFromText("resistance: "+String.valueOf(te.getResistance())));  
-    		float voltage = EnergyNet.getForWorld(world).voltageCache.get(te);    		
-    		player.sendChatToPlayer(ChatMessageComponent.createFromText("voltage: "+String.valueOf(voltage)));    		
+    		//Print out information here
+    		player.sendChatToPlayer(ChatMessageComponent.createFromText("Type: "+tileType));  
+    		player.sendChatToPlayer(ChatMessageComponent.createFromText("Resistance: "+String.valueOf(te.getResistance())));  
+    		if (te instanceof IEnergyTile){
+    			if(outputVoltage>0){//Energy Source
+    				player.sendChatToPlayer(ChatMessageComponent.createFromText("Current: "+String.valueOf((outputVoltage-voltage)/te.getResistance()))); 
+    				player.sendChatToPlayer(ChatMessageComponent.createFromText("Power consumed: "+String.valueOf((outputVoltage-voltage)*(outputVoltage-voltage)/te.getResistance()))); 
+    			}else{//Energy Sink
+    				player.sendChatToPlayer(ChatMessageComponent.createFromText("Current: "+String.valueOf(voltage/te.getResistance()))); 
+    				player.sendChatToPlayer(ChatMessageComponent.createFromText("Power consumed: "+String.valueOf(voltage*voltage/te.getResistance())));    				
+    			}
+    		}
+    		player.sendChatToPlayer(ChatMessageComponent.createFromText("Voltage: "+String.valueOf(voltage)));    	
+    		if(outputVoltage>0) //Energy Source
+        		player.sendChatToPlayer(ChatMessageComponent.createFromText("Internal voltage: "+String.valueOf(outputVoltage)));  
+    		player.sendChatToPlayer(ChatMessageComponent.createFromText("-----------------------"));  
     		
     		return true;
     	}else{

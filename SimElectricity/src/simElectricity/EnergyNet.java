@@ -21,8 +21,15 @@ import simElectricity.API.TileChangeEvent;
 import simElectricity.API.TileDetachEvent;
 
 public final class EnergyNet {
+	/*Simulator*/
 	private static final float EPSILON = (float) 1e-10;
-
+	// private WeightedMultigraph<IBaseComponent, Resistor> tileEntityGraph =
+	// new WeightedMultigraph<IBaseComponent, Resistor>(Resistor.class);
+	private SimpleGraph<IBaseComponent, DefaultEdge> tileEntityGraph = new SimpleGraph<IBaseComponent, DefaultEdge>(DefaultEdge.class);
+	public Map<IBaseComponent, Float> voltageCache = new HashMap<IBaseComponent, Float>();
+	/** A flag for recalculate the energynet*/
+	private boolean calc = false;	
+	
 	// Gaussian elimination with partial pivoting
 	private static float[] lsolve(float[][] A, float[] b) {
 		int N = b.length;
@@ -45,8 +52,7 @@ public final class EnergyNet {
 
 			// singular or nearly singular
 			if (Math.abs(A[p][p]) <= EPSILON) {
-				throw new RuntimeException(
-						"Matrix is singular or nearly singular");
+				//throw new RuntimeException(	"Matrix is singular or nearly singular");
 			}
 
 			// pivot within A and b
@@ -71,6 +77,7 @@ public final class EnergyNet {
 		return x;
 	}
 
+	/** Internal use only, return a list containing neighbor TileEntities*/
 	private static List<TileEntity> neighborListOf(TileEntity te) {
 		List<TileEntity> result = new ArrayList<TileEntity>();
 		TileEntity temp;
@@ -103,22 +110,6 @@ public final class EnergyNet {
 		return result;
 	}
 
-	public static void onTick(World world) {
-		EnergyNet energyNet = getForWorld(world);
-		if(energyNet.calc == true){
-			energyNet.calc = false;
-			energyNet.runSimulator();
-		}
-	}
-
-	// private WeightedMultigraph<IBaseComponent, Resistor> tileEntityGraph =
-	// new WeightedMultigraph<IBaseComponent, Resistor>(Resistor.class);
-	private SimpleGraph<IBaseComponent, DefaultEdge> tileEntityGraph = new SimpleGraph<IBaseComponent, DefaultEdge>(DefaultEdge.class);
-	public Map<IBaseComponent, Float> voltageCache = new HashMap<IBaseComponent, Float>();
-	private boolean calc = false;
-
-
-
 	private void mergeNodes(List<IBaseComponent> nodes) {
 		// for (int i = nodes.size() - 1; i >= 0; i--) {
 		// IBaseComponent thisNode = nodes.get(i);
@@ -135,8 +126,8 @@ public final class EnergyNet {
 		unknownVoltageNodes.addAll(tileEntityGraph.vertexSet());
 
 		int matrixSize = unknownVoltageNodes.size();
-		if(matrixSize < 3)
-			return;
+		//if(matrixSize < 3)
+		//	return;
 
 		float[][] A = new float[matrixSize][matrixSize];
 		float[] b = new float[matrixSize];
@@ -145,7 +136,7 @@ public final class EnergyNet {
 			IBaseComponent nodeI = unknownVoltageNodes.get(i);
 			
 			if (nodeI instanceof IEnergyTile) {
-				b[i] = 1 / ((IEnergyTile) nodeI).getInternalResistance();
+				b[i] = 1 / nodeI.getResistance();
 				b[i] = b[i]	* ((IEnergyTile) nodeI).getOutputVoltage();
 			}
 
@@ -155,13 +146,13 @@ public final class EnergyNet {
 				if (i == j) {
 					for (IBaseComponent iBaseComponent : neighborList)
 						// add neighbor resistance
-						tmp += 1.0 / (nodeI.getResistance() + iBaseComponent.getResistance());
+						tmp += 1.0 / (getResistance(nodeI) + getResistance(iBaseComponent));
 					if (nodeI instanceof IEnergyTile) 
-						tmp += 1.0 / ((IEnergyTile) nodeI).getInternalResistance();
+						tmp += 1.0 / nodeI.getResistance();
 				} else {
 					if (neighborList.contains(unknownVoltageNodes.get(j)))
 						// add neighbor resistance
-						tmp = (float) (-1.0 / (nodeI.getResistance() + unknownVoltageNodes.get(j).getResistance()));
+						tmp = (float) (-1.0 / (getResistance(nodeI) + getResistance(unknownVoltageNodes.get(j))));
 				}
 				A[i][j] = tmp;
 			}
@@ -169,14 +160,48 @@ public final class EnergyNet {
 		
 		float[] x = lsolve(A, b);
 		
+		voltageCache.clear();
 		for (int i = 0; i < x.length; i++) {
 			voltageCache.put(unknownVoltageNodes.get(i), x[i]);
 		}
 	}
 
+	/** Internal use only, only used by runSimulator()*/
+	private static float getResistance(IBaseComponent te){
+		if (te instanceof IEnergyTile)
+			return 0;
+		else
+			return te.getResistance();
+	}
+	/*End of Simulator*/
+	
+	
+	
+	/** Called in each tick to attempt to do calculation*/
+	public static void onTick(World world) {
+		EnergyNet energyNet = getForWorld(world);
+		if(energyNet.calc == true){
+			energyNet.calc = false;
+			energyNet.runSimulator();
+		}
+	}
+	
+	/** Add a TileEntity to the energynet*/
 	public void addTileEntity(TileEntity te) {
-		if (!(te instanceof IBaseComponent)) {
+		if(!te.worldObj.blockExists(te.xCoord, te.yCoord, te.zCoord)){
+			System.out.println(te
+					+ " is added to the energy net too early!, aborting");
+			return;			
+		}
+		
+		if(te.isInvalid()){
 			System.out.println("Invalid tileentity " + te
+					+ " is trying to attach to energy network, aborting");
+			return;			
+		}
+		
+		if (!(te instanceof IBaseComponent)) {
+			System.out.println("Unacceptable tileentity " + te
 					+ " is trying to attach to energy network, aborting");
 			return;
 		}
@@ -198,15 +223,23 @@ public final class EnergyNet {
 				+ " is attached to energy network!");
 	}
 
+	/** Remove a TileEntiy from the energy net*/
 	public void removeTileEntity(TileEntity te) {
-		tileEntityGraph.removeVertex((IBaseComponent) te);
+		System.out.print(tileEntityGraph.removeVertex((IBaseComponent) te));
 		
 		calc = true;
 		
-		System.out
-				.println("Tileentity " + te + " is detach to energy network!");
+		System.out.println("Tileentity " + te + " is detach to energy network!");
 	}
 
+	/** Mark the energy net for updating in next tick*/
+	public void markForUpdate(TileEntity te){
+		calc = true;
+		
+		System.out.println("Tileentity " + te + " cause the energy network to update!");
+	}
+	
+	/** Return a instance of energynet for a specific world*/
 	public static EnergyNet getForWorld(World world) {
 		WorldData worldData = WorldData.get(world);
 		return worldData.energyNet;
@@ -222,7 +255,7 @@ public final class EnergyNet {
 		System.out.println("EnergyNet create");
 	}
 	
-	/** Responce to forge events */
+	/** Response to forge events */
 	public static class EventHandler {
 		public EventHandler() {
 			MinecraftForge.EVENT_BUS.register(this);
@@ -242,9 +275,8 @@ public final class EnergyNet {
 
 		@ForgeSubscribe
 		public void onTileChange(TileChangeEvent event) {
-			// event.amount =
-			// EnergyNet.getForWorld(event.world).emitEnergyFrom((IEnergySource)event.energyTile,
-			// event.amount);
+			EnergyNet.getForWorld(event.energyTile.worldObj).markForUpdate(
+					(TileEntity) event.energyTile);
 		}
 	}
 }

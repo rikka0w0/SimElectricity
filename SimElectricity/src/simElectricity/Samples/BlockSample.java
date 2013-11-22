@@ -1,6 +1,7 @@
 package simElectricity.Samples;
 
 import java.util.List;
+import java.util.Random;
 
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
@@ -17,8 +18,8 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockSample extends BlockContainer {
 	public static final String[] subNames = { "Battery", "Conductor",
-			"Resistor" };
-	private Icon[] iconBuffer = new Icon[3];
+			"Resistor","SwitchOff","SwitchOn" };
+	private Icon[] iconBuffer = new Icon[5];
 
 	// Get TileEntities
 	@Override
@@ -30,6 +31,10 @@ public class BlockSample extends BlockContainer {
 			return new TileSampleConductor();
 		case 2:
 			return new TileSampleResistor();
+		case 3:
+			return null;
+		case 4:
+			return new TileSampleConductor();
 		default:
 			return null;
 		}
@@ -44,6 +49,8 @@ public class BlockSample extends BlockContainer {
     	iconBuffer[0] = par1IconRegister.registerIcon("simElectricity:Block_SampleBattery");
     	iconBuffer[1] = par1IconRegister.registerIcon("simElectricity:Block_SampleConductor");
     	iconBuffer[2] = par1IconRegister.registerIcon("simElectricity:Block_SampleResistor");
+    	iconBuffer[3] = par1IconRegister.registerIcon("simElectricity:Block_SampleSwitch_Off");
+    	iconBuffer[4] = par1IconRegister.registerIcon("simElectricity:Block_SampleSwitch_On");
 //		super.registerIcons(par1IconRegister);
 	}
 
@@ -84,9 +91,19 @@ public class BlockSample extends BlockContainer {
 
 		if (entityPlayer.isSneaking())
 			return false;
-
+		
 		TileEntity te = world.getBlockTileEntity(x, y, z);
-
+		int meta=world.getBlockMetadata(x, y, z);
+		
+		if(meta==3){
+			world.setBlockMetadataWithNotify(x, y, z, 4, 2);
+			return true;
+		}
+		else if(meta==4){
+			world.removeBlockTileEntity(x, y, z);
+			world.setBlockMetadataWithNotify(x, y, z, 3, 2);
+			return true;
+		}
 		return false;
 	}
 
@@ -106,4 +123,9 @@ public class BlockSample extends BlockContainer {
 		return null;
 	}
 
+    @SideOnly(Side.CLIENT)
+    @Override
+    public void randomDisplayTick(World world, int x, int y, int z, Random var5){
+    	//world.markBlockForRenderUpdate(x,  y,  z);
+    }
 }

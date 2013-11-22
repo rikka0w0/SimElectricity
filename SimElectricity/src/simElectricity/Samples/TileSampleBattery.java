@@ -8,7 +8,7 @@ public class TileSampleBattery extends TileSampleBaseComponent implements
 
 	@Override
 	public int getResistance() {
-		return 0;
+		return 1;
 	}
 
 	@Override
@@ -42,20 +42,8 @@ public class TileSampleBattery extends TileSampleBaseComponent implements
 	}
 
 	@Override
-	public boolean canEmitEnergy(ForgeDirection forgeDirection) {
+	public ForgeDirection getFunctionalSide() {
 		// TODO Auto-generated method stub
-		return true;
+		return null;
 	}
-
-	@Override
-	public boolean canSinkEnergy(ForgeDirection forgeDirection) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public float getInternalResistance() {
-		return 1;
-	}
-
 }

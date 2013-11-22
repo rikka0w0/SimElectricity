@@ -9,15 +9,9 @@ public interface IEnergyTile extends IBaseComponent {
 	/**When the input voltage exceed the safety range, do explosions here*/
 	void onOverVoltage();
 
-	/**For generator etc., return true; for machine, return false*/
-	boolean canEmitEnergy(ForgeDirection forgeDirection);
-	
-	/**For generator etc., return false; for machine, return true*/
-	boolean canSinkEnergy(ForgeDirection forgeDirection);
+	/**Return a side that is designed to accept power input or output*/
+	ForgeDirection getFunctionalSide();
 	
 	/**Return 0 for sink(typically machines), other value for source(e.g generator)*/
-
 	float getOutputVoltage();
-	
-	float getInternalResistance();
 }
