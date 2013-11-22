@@ -16,5 +16,8 @@ public interface IEnergyTile extends IBaseComponent {
 	boolean canSinkEnergy(ForgeDirection forgeDirection);
 	
 	/**Return 0 for sink(typically machines), other value for source(e.g generator)*/
-	float getOutputVoltage();	
+
+	float getOutputVoltage();
+	
+	float getInternalResistance();
 }

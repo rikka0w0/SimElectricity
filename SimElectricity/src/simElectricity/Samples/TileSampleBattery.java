@@ -8,8 +8,7 @@ public class TileSampleBattery extends TileSampleBaseComponent implements
 
 	@Override
 	public int getResistance() {
-		// TODO Auto-generated method stub
-		return 1;
+		return 0;
 	}
 
 	@Override
@@ -52,6 +51,11 @@ public class TileSampleBattery extends TileSampleBaseComponent implements
 	public boolean canSinkEnergy(ForgeDirection forgeDirection) {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	@Override
+	public float getInternalResistance() {
+		return 1;
 	}
 
 }

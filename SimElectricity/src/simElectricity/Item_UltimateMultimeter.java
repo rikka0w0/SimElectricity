@@ -1,8 +1,5 @@
 package simElectricity;
 
-import simElectricity.API.*;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -10,6 +7,11 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChatMessageComponent;
 import net.minecraft.world.World;
+import simElectricity.API.IBaseComponent;
+import simElectricity.API.IConductor;
+import simElectricity.API.IEnergyTile;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class Item_UltimateMultimeter extends Item{
 	public Item_UltimateMultimeter(int id) {
@@ -43,7 +45,9 @@ public class Item_UltimateMultimeter extends Item{
     			
     		}
     		
-    		player.sendChatToPlayer(ChatMessageComponent.createFromText("resistance: "+String.valueOf(te.getResistance())));    		
+    		player.sendChatToPlayer(ChatMessageComponent.createFromText("resistance: "+String.valueOf(te.getResistance())));  
+    		float voltage = EnergyNet.getForWorld(world).voltageCache.get(te);    		
+    		player.sendChatToPlayer(ChatMessageComponent.createFromText("voltage: "+String.valueOf(voltage)));    		
     		
     		return true;
     	}else{
