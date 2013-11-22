@@ -10,6 +10,7 @@ import net.minecraft.world.World;
 import simElectricity.API.IBaseComponent;
 import simElectricity.API.IConductor;
 import simElectricity.API.IEnergyTile;
+import simElectricity.API.Util;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -34,11 +35,7 @@ public class Item_UltimateMultimeter extends Item{
     {
     	if((world.getBlockTileEntity(x, y, z) instanceof IBaseComponent)&(!world.isRemote)){
     		IBaseComponent te=(IBaseComponent) world.getBlockTileEntity(x, y, z);
-    		float voltage;
-    		if (EnergyNet.getForWorld(world).voltageCache.containsKey(te))
-    			voltage = EnergyNet.getForWorld(world).voltageCache.get(te);
-    		else
-    			voltage = 0;
+    		float voltage=Util.getVoltage(te);
     		
     		String tileType="Unknown";
     		float outputVoltage=0;
@@ -61,15 +58,13 @@ public class Item_UltimateMultimeter extends Item{
     		
     		//Print out information here
     		player.sendChatToPlayer(ChatMessageComponent.createFromText("Type: "+tileType));  
-    		player.sendChatToPlayer(ChatMessageComponent.createFromText("Resistance: "+String.valueOf(te.getResistance())));  
+    		if (te instanceof IEnergyTile&&outputVoltage>0)
+    			player.sendChatToPlayer(ChatMessageComponent.createFromText("Internal resistance: "+String.valueOf(te.getResistance())));  
+    		else	
+    			player.sendChatToPlayer(ChatMessageComponent.createFromText("Resistance: "+String.valueOf(te.getResistance())));  
     		if (te instanceof IEnergyTile){
-    			if(outputVoltage>0){//Energy Source
-    				player.sendChatToPlayer(ChatMessageComponent.createFromText("Current: "+String.valueOf((outputVoltage-voltage)/te.getResistance()))); 
-    				player.sendChatToPlayer(ChatMessageComponent.createFromText("Power consumed: "+String.valueOf((outputVoltage-voltage)*(outputVoltage-voltage)/te.getResistance()))); 
-    			}else{//Energy Sink
-    				player.sendChatToPlayer(ChatMessageComponent.createFromText("Current: "+String.valueOf(voltage/te.getResistance()))); 
-    				player.sendChatToPlayer(ChatMessageComponent.createFromText("Power consumed: "+String.valueOf(voltage*voltage/te.getResistance())));    				
-    			}
+    				player.sendChatToPlayer(ChatMessageComponent.createFromText("Current: "+String.valueOf(Util.getCurrent((IEnergyTile) te)))); 
+    				player.sendChatToPlayer(ChatMessageComponent.createFromText("Power consumed: "+String.valueOf(Util.getPower((IEnergyTile) te)))); 
     		}
     		player.sendChatToPlayer(ChatMessageComponent.createFromText("Voltage: "+String.valueOf(voltage)));    	
     		if(outputVoltage>0) //Energy Source

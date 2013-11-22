@@ -225,7 +225,7 @@ public final class EnergyNet {
 
 	/** Remove a TileEntiy from the energy net*/
 	public void removeTileEntity(TileEntity te) {
-		System.out.print(tileEntityGraph.removeVertex((IBaseComponent) te));
+		tileEntityGraph.removeVertex((IBaseComponent) te);
 		
 		calc = true;
 		

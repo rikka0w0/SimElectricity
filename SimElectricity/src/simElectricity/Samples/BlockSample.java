@@ -3,6 +3,9 @@ package simElectricity.Samples;
 import java.util.List;
 import java.util.Random;
 
+import simElectricity.API.IEnergyTile;
+import simElectricity.API.Util;
+
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IconRegister;
@@ -11,6 +14,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Icon;
+import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import cpw.mods.fml.relauncher.Side;
@@ -123,9 +127,26 @@ public class BlockSample extends BlockContainer {
 		return null;
 	}
 
-    @SideOnly(Side.CLIENT)
+    //@SideOnly(Side.CLIENT)
     @Override
     public void randomDisplayTick(World world, int x, int y, int z, Random var5){
-    	//world.markBlockForRenderUpdate(x,  y,  z);
+    	int meta=world.getBlockMetadata(x, y, z);
+    	if (meta==2){
+
+    		TileSampleResistor te=(TileSampleResistor) world.getBlockTileEntity(x,y,z);
+    		if(te.isWorking){
+    			//world.setLightValue(EnumSkyBlock.Block, x, y, z, 10);
+    			double d0 = (double)((float)x + 0.5F);
+    			double d1 = (double)((float)y + 1F);
+    			double d2 = (double)((float)z + 0.5F);
+    			double d3 = 0.2199999988079071D;
+    			double d4 = 0.27000001072883606D;
+    			world.spawnParticle("smoke", d0 + d4, d1 + d3, d2, 0.0D, 0.0D, 0.0D);
+    			world.spawnParticle("flame", d0 + d4, d1 + d3, d2, 0.0D, 0.0D, 0.0D);
+    			world.spawnParticle("reddust", d0 + d3, d1, d2 + d4, 0.0D, 0.0D, 0.0D);
+    		}
+    		//else
+    			//world.setLightValue(EnumSkyBlock.Block, x, y, z, 0);
+    	}
     }
 }

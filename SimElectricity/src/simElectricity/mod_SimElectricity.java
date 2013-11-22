@@ -10,6 +10,7 @@ import simElectricity.Samples.ItemBlockSample;
 import simElectricity.Samples.TileSampleBattery;
 import simElectricity.Samples.TileSampleConductor;
 import simElectricity.Samples.TileSampleResistor;
+import simElectricity.Network.*;
 import cpw.mods.fml.common.ITickHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
@@ -21,9 +22,13 @@ import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.TickRegistry;
 import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.common.network.NetworkMod.SidedPacketHandler;
+
 
 @Mod(modid = "mod_SimElectricity", name = "SimElectricity", version = "0.1")
-@NetworkMod(channels = { "mod_SimElectricity" }, clientSideRequired = true)
+@NetworkMod(clientSideRequired = true, serverSideRequired = false, 
+clientPacketHandlerSpec = @SidedPacketHandler(channels = { NetHandler.NET_CHANNEL_CLIENT }, packetHandler = NetHandler.class), 
+serverPacketHandlerSpec = @SidedPacketHandler(channels = { NetHandler.NET_CHANNEL_SERVER }, packetHandler = NetHandler.class))
 public class mod_SimElectricity implements ITickHandler {
 	/** Server and Client Proxy */
 	@SidedProxy(clientSide = "simElectricity.ClientProxy", serverSide = "simElectricity.mod_SimElectricity")
@@ -77,6 +82,7 @@ public class mod_SimElectricity implements ITickHandler {
 	@EventHandler
 	public void load(FMLInitializationEvent event) {
 		// Db.init();
+		NetHandler.addChannel(NetHandler.Net_ID_TileEntitySync, new TileEntityFieldUpdatePacket());
 	}
 
 }
