@@ -117,9 +117,7 @@ public final class EnergyNet {
 	public Map<IBaseComponent, Float> voltageCache = new HashMap<IBaseComponent, Float>();
 	private boolean calc = false;
 
-	public EnergyNet() {
-		System.out.println("EnergyNet create");
-	}
+
 
 	private void mergeNodes(List<IBaseComponent> nodes) {
 		// for (int i = nodes.size() - 1; i >= 0; i--) {
@@ -182,10 +180,14 @@ public final class EnergyNet {
 					+ " is trying to attach to energy network, aborting");
 			return;
 		}
-
-		tileEntityGraph.addVertex((IBaseComponent) te);
+		
 		List<TileEntity> neighborList = neighborListOf(te);
+		
+		if(!tileEntityGraph.containsVertex((IBaseComponent) te))
+			tileEntityGraph.addVertex((IBaseComponent) te);
 		for (TileEntity tileEntity : neighborList) {
+			if(!tileEntityGraph.containsVertex((IBaseComponent) tileEntity))
+				tileEntityGraph.addVertex((IBaseComponent) tileEntity);
 			tileEntityGraph.addEdge((IBaseComponent) te,
 					(IBaseComponent) tileEntity);
 		}
@@ -215,6 +217,11 @@ public final class EnergyNet {
 		new EventHandler();
 	}
 
+	/** Creation of the energy network*/
+	public EnergyNet() {
+		System.out.println("EnergyNet create");
+	}
+	
 	/** Responce to forge events */
 	public static class EventHandler {
 		public EventHandler() {
