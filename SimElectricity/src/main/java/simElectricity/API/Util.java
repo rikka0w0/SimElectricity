@@ -1,7 +1,6 @@
 package simElectricity.API;
 
 import simElectricity.EnergyNet;
-import simElectricity.Network.TileEntityFieldUpdatePacket;
 import net.minecraft.tileentity.TileEntity;
 
 public class Util {
@@ -22,13 +21,13 @@ public class Util {
 	}
 	
 	public static float getVoltage(IBaseComponent Tile){
-		if (EnergyNet.getForWorld(((TileEntity)Tile).worldObj).voltageCache.containsKey(Tile))
-			return EnergyNet.getForWorld(((TileEntity)Tile).worldObj).voltageCache.get(Tile);
+		if (EnergyNet.getForWorld(((TileEntity)Tile).getWorldObj()).voltageCache.containsKey(Tile))
+			return EnergyNet.getForWorld(((TileEntity)Tile).getWorldObj()).voltageCache.get(Tile);
 		else
 			return 0;
 	}
 	
 	public static void updateTileEntityField(TileEntity te,String field){
-		TileEntityFieldUpdatePacket.sendSyncPacket(te,field);
+		//TileEntityFieldUpdatePacket.sendSyncPacket(te,field);
 	}
 }

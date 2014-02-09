@@ -8,12 +8,13 @@ import simElectricity.API.Util;
 
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -23,7 +24,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 public class BlockSample extends BlockContainer {
 	public static final String[] subNames = { "Battery", "Conductor",
 			"Resistor","SwitchOff","SwitchOn" };
-	private Icon[] iconBuffer = new Icon[5];
+	private IIcon[] iconBuffer = new IIcon[5];
 
 	// Get TileEntities
 	@Override
@@ -44,17 +45,15 @@ public class BlockSample extends BlockContainer {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see net.minecraft.block.Block#registerIcons(net.minecraft.client.renderer.texture.IconRegister)
-	 */
+    @Override
     @SideOnly(Side.CLIENT)
-	@Override
-	public void registerIcons(IconRegister par1IconRegister) {
-    	iconBuffer[0] = par1IconRegister.registerIcon("simElectricity:Block_SampleBattery");
-    	iconBuffer[1] = par1IconRegister.registerIcon("simElectricity:Block_SampleConductor");
-    	iconBuffer[2] = par1IconRegister.registerIcon("simElectricity:Block_SampleResistor");
-    	iconBuffer[3] = par1IconRegister.registerIcon("simElectricity:Block_SampleSwitch_Off");
-    	iconBuffer[4] = par1IconRegister.registerIcon("simElectricity:Block_SampleSwitch_On");
+    public void registerBlockIcons(IIconRegister r)
+    {
+    	iconBuffer[0] = r.registerIcon("simElectricity:Block_SampleBattery");
+    	iconBuffer[1] = r.registerIcon("simElectricity:Block_SampleConductor");
+    	iconBuffer[2] = r.registerIcon("simElectricity:Block_SampleResistor");
+    	iconBuffer[3] = r.registerIcon("simElectricity:Block_SampleSwitch_Off");
+    	iconBuffer[4] = r.registerIcon("simElectricity:Block_SampleSwitch_On");
 //		super.registerIcons(par1IconRegister);
 	}
 
@@ -63,28 +62,26 @@ public class BlockSample extends BlockContainer {
 	 */
     @SideOnly(Side.CLIENT)
 	@Override
-	public Icon getBlockTexture(IBlockAccess par1iBlockAccess, int par2,
+	public IIcon getIcon(IBlockAccess par1iBlockAccess, int par2,
 			int par3, int par4, int par5) {
     	int blockMeta = par1iBlockAccess.getBlockMetadata(par2, par3, par4);
     	return iconBuffer[blockMeta];
 //		return super.getBlockTexture(par1iBlockAccess, par2, par3, par4, par5);
 	}
 
-	/* (non-Javadoc)
-	 * @see net.minecraft.block.Block#getIcon(int, int)
-	 */
+
     @SideOnly(Side.CLIENT)
 	@Override
-	public Icon getIcon(int par1, int par2) {
+	public IIcon getIcon(int par1, int par2) {
     	return iconBuffer[par2];
 //		return super.getIcon(par1, par2);
 	}
 
-	public BlockSample(int id) {
-		super(id, Material.rock);
+	public BlockSample() {
+		super(Material.rock);
 		setHardness(2.0F);
 		setResistance(5.0F);
-		setUnlocalizedName("SESample");
+		setBlockName("sime:SESample");
 		setCreativeTab(CreativeTabs.tabRedstone);
 	}
 
@@ -96,7 +93,7 @@ public class BlockSample extends BlockContainer {
 		if (entityPlayer.isSneaking())
 			return false;
 		
-		TileEntity te = world.getBlockTileEntity(x, y, z);
+		TileEntity te = world.getTileEntity(x, y, z);
 		int meta=world.getBlockMetadata(x, y, z);
 		
 		if(meta==3){
@@ -104,7 +101,7 @@ public class BlockSample extends BlockContainer {
 			return true;
 		}
 		else if(meta==4){
-			world.removeBlockTileEntity(x, y, z);
+			world.removeTileEntity(x, y, z);
 			world.setBlockMetadataWithNotify(x, y, z, 3, 2);
 			return true;
 		}
@@ -115,15 +112,17 @@ public class BlockSample extends BlockContainer {
 		return par1;
 	}
 
+    @Override
+    @SuppressWarnings({ "rawtypes", "unchecked" })
 	@SideOnly(Side.CLIENT)
-	public void getSubBlocks(int par1, CreativeTabs tab, List subItems) {
+    public void getSubBlocks(Item par1, CreativeTabs par2CreativeTabs, List subItems){
 		for (int ix = 0; ix < subNames.length; ix++) {
 			subItems.add(new ItemStack(this, 1, ix));
 		}
 	}
 
 	@Override
-	public TileEntity createNewTileEntity(World world) {
+	public TileEntity createNewTileEntity(World world,int i) {
 		return null;
 	}
 
@@ -133,7 +132,7 @@ public class BlockSample extends BlockContainer {
     	int meta=world.getBlockMetadata(x, y, z);
     	if (meta==2){
 
-    		TileSampleResistor te=(TileSampleResistor) world.getBlockTileEntity(x,y,z);
+    		TileSampleResistor te=(TileSampleResistor) world.getTileEntity(x,y,z);
     		if(te.isWorking){
     			//world.setLightValue(EnumSkyBlock.Block, x, y, z, 10);
     			double d0 = (double)((float)x + 0.5F);

@@ -2,9 +2,7 @@ package simElectricity.Samples;
 
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.MinecraftForge;
-import simElectricity.API.IBaseComponent;
-import simElectricity.API.TileAttachEvent;
-import simElectricity.API.TileDetachEvent;
+import simElectricity.API.*;
 
 public abstract class TileSampleBaseComponent extends TileEntity implements	IBaseComponent {
 	protected boolean isAddedToEnergyNet = false;

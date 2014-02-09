@@ -1,6 +1,6 @@
 package simElectricity.API;
 
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.util.*;
 
 public interface IEnergyTile extends IBaseComponent {
 	/**Return the max safety input voltage*/

@@ -2,34 +2,32 @@ package simElectricity;
 
 import java.util.EnumSet;
 
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
-import net.minecraftforge.event.ForgeSubscribe;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.WorldEvent;
 import simElectricity.Samples.BlockSample;
 import simElectricity.Samples.ItemBlockSample;
 import simElectricity.Samples.TileSampleBattery;
 import simElectricity.Samples.TileSampleConductor;
 import simElectricity.Samples.TileSampleResistor;
-import simElectricity.Network.*;
-import cpw.mods.fml.common.ITickHandler;
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.SidedProxy;
-import cpw.mods.fml.common.TickType;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.network.NetworkMod;
+import cpw.mods.fml.common.eventhandler.Event;
+import cpw.mods.fml.common.eventhandler.IEventListener;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.gameevent.TickEvent;
+import cpw.mods.fml.common.gameevent.TickEvent.Phase;
+import cpw.mods.fml.common.gameevent.TickEvent.WorldTickEvent;
 import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.common.registry.TickRegistry;
 import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.common.network.NetworkMod.SidedPacketHandler;
-
 
 @Mod(modid = "mod_SimElectricity", name = "SimElectricity", version = "0.1")
-@NetworkMod(clientSideRequired = true, serverSideRequired = false, 
-clientPacketHandlerSpec = @SidedPacketHandler(channels = { NetHandler.NET_CHANNEL_CLIENT }, packetHandler = NetHandler.class), 
-serverPacketHandlerSpec = @SidedPacketHandler(channels = { NetHandler.NET_CHANNEL_SERVER }, packetHandler = NetHandler.class))
-public class mod_SimElectricity implements ITickHandler {
+public class mod_SimElectricity{
 	/** Server and Client Proxy */
 	@SidedProxy(clientSide = "simElectricity.ClientProxy", serverSide = "simElectricity.mod_SimElectricity")
 	public static mod_SimElectricity proxy;
@@ -41,28 +39,7 @@ public class mod_SimElectricity implements ITickHandler {
 		return null;
 	}
 
-	/** implements ITickHandler */
-	@Override
-	public void tickStart(EnumSet<TickType> type, Object... tickData) {
-		World world = (World) tickData[0];
-		EnergyNet.onTick(world);
-	}
-
-	@Override
-	public void tickEnd(EnumSet<TickType> type, Object... tickData) {
-	}
-
-	@Override
-	public EnumSet<TickType> ticks() {
-		return EnumSet.of(TickType.WORLD);
-	}
-
-	@Override
-	public String getLabel() {
-		return "SE";
-	}
-
-	@ForgeSubscribe
+	@SubscribeEvent
 	public void onWorldUnload(WorldEvent.Unload event) {
 		WorldData.onWorldUnload(event.world);
 	}
@@ -70,19 +47,31 @@ public class mod_SimElectricity implements ITickHandler {
 	/** Initialize */
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
-		TickRegistry.registerTickHandler(this, Side.SERVER);
+		MinecraftForge.EVENT_BUS.register(this);
+		FMLCommonHandler.instance().bus().register(this);
 		EnergyNet.initialize();
-		GameRegistry.registerBlock(new BlockSample(555), ItemBlockSample.class);
+		GameRegistry.registerBlock(new BlockSample(), ItemBlockSample.class, "Sample");
 		GameRegistry.registerTileEntity(TileSampleBattery.class, "Battery");
 		GameRegistry.registerTileEntity(TileSampleConductor.class, "Conductor");
 		GameRegistry.registerTileEntity(TileSampleResistor.class, "Resistor");
-		GameRegistry.registerItem(new Item_UltimateMultimeter(5000), "Item_UltimateMultimeter");
+		GameRegistry.registerItem(new Item_UltimateMultimeter(), "Item_UltimateMultimeter");
 	}
 
 	@EventHandler
 	public void load(FMLInitializationEvent event) {
+
 		// Db.init();
-		NetHandler.addChannel(NetHandler.Net_ID_TileEntitySync, new TileEntityFieldUpdatePacket());
+		//NetHandler.addChannel(NetHandler.Net_ID_TileEntitySync, new TileEntityFieldUpdatePacket());
+	}
+
+	@SubscribeEvent
+	public void tick(WorldTickEvent event){
+		if(event.phase!=Phase.START)
+			return;
+		if(event.side!=Side.SERVER)
+			return;	
+		
+		EnergyNet.onTick(event.world);
 	}
 
 }

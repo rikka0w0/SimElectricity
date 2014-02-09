@@ -8,11 +8,12 @@ import java.util.Map;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.ForgeSubscribe;
 
 import org.jgrapht.Graphs;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleGraph;
+
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 
 import simElectricity.API.IBaseComponent;
 import simElectricity.API.IEnergyTile;
@@ -82,27 +83,27 @@ public final class EnergyNet {
 		List<TileEntity> result = new ArrayList<TileEntity>();
 		TileEntity temp;
 
-		temp = te.worldObj.getBlockTileEntity(te.xCoord + 1, te.yCoord,
+		temp = te.getWorldObj().getTileEntity(te.xCoord + 1, te.yCoord,
 				te.zCoord);
 		if (temp instanceof IBaseComponent)
 			result.add(temp);
-		temp = te.worldObj.getBlockTileEntity(te.xCoord - 1, te.yCoord,
+		temp = te.getWorldObj().getTileEntity(te.xCoord - 1, te.yCoord,
 				te.zCoord);
 		if (temp instanceof IBaseComponent)
 			result.add(temp);
-		temp = te.worldObj.getBlockTileEntity(te.xCoord, te.yCoord + 1,
+		temp = te.getWorldObj().getTileEntity(te.xCoord, te.yCoord + 1,
 				te.zCoord);
 		if (temp instanceof IBaseComponent)
 			result.add(temp);
-		temp = te.worldObj.getBlockTileEntity(te.xCoord, te.yCoord - 1,
+		temp = te.getWorldObj().getTileEntity(te.xCoord, te.yCoord - 1,
 				te.zCoord);
 		if (temp instanceof IBaseComponent)
 			result.add(temp);
-		temp = te.worldObj.getBlockTileEntity(te.xCoord, te.yCoord,
+		temp = te.getWorldObj().getTileEntity(te.xCoord, te.yCoord,
 				te.zCoord + 1);
 		if (temp instanceof IBaseComponent)
 			result.add(temp);
-		temp = te.worldObj.getBlockTileEntity(te.xCoord, te.yCoord,
+		temp = te.getWorldObj().getTileEntity(te.xCoord, te.yCoord,
 				te.zCoord - 1);
 		if (temp instanceof IBaseComponent)
 			result.add(temp);
@@ -188,7 +189,7 @@ public final class EnergyNet {
 	
 	/** Add a TileEntity to the energynet*/
 	public void addTileEntity(TileEntity te) {
-		if(!te.worldObj.blockExists(te.xCoord, te.yCoord, te.zCoord)){
+		if(!te.getWorldObj().blockExists(te.xCoord, te.yCoord, te.zCoord)){
 			System.out.println(te
 					+ " is added to the energy net too early!, aborting");
 			return;			
@@ -261,21 +262,21 @@ public final class EnergyNet {
 			MinecraftForge.EVENT_BUS.register(this);
 		}
 
-		@ForgeSubscribe
+		@SubscribeEvent
 		public void onAttachEvent(TileAttachEvent event) {
-			EnergyNet.getForWorld(event.energyTile.worldObj).addTileEntity(
+			EnergyNet.getForWorld(event.energyTile.getWorldObj()).addTileEntity(
 					(TileEntity) event.energyTile);
 		}
 
-		@ForgeSubscribe
+		@SubscribeEvent
 		public void onTileDetach(TileDetachEvent event) {
-			EnergyNet.getForWorld(event.energyTile.worldObj).removeTileEntity(
+			EnergyNet.getForWorld(event.energyTile.getWorldObj()).removeTileEntity(
 					(TileEntity) event.energyTile);
 		}
 
-		@ForgeSubscribe
+		@SubscribeEvent
 		public void onTileChange(TileChangeEvent event) {
-			EnergyNet.getForWorld(event.energyTile.worldObj).markForUpdate(
+			EnergyNet.getForWorld(event.energyTile.getWorldObj()).markForUpdate(
 					(TileEntity) event.energyTile);
 		}
 	}

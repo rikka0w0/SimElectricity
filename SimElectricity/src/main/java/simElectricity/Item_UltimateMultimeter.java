@@ -1,11 +1,11 @@
 package simElectricity;
 
-import net.minecraft.client.renderer.texture.IconRegister;
+import Frogcraft.CommonMethods;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ChatMessageComponent;
 import net.minecraft.world.World;
 import simElectricity.API.IBaseComponent;
 import simElectricity.API.IConductor;
@@ -15,26 +15,26 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 public class Item_UltimateMultimeter extends Item{
-	public Item_UltimateMultimeter(int id) {
-		super(id);
+	public Item_UltimateMultimeter() {
+		super();
 		maxStackSize = 1;
 		setHasSubtypes(true);
-		setUnlocalizedName("Item_UltimateMultimeter");
+		setUnlocalizedName("sime:Item_UltimateMultimeter");
 		setMaxDamage(256);
 		setCreativeTab(CreativeTabs.tabRedstone);
 	}
 
 	
-    @SideOnly(Side.CLIENT)
-    public void registerIcons(IconRegister par1IconRegister)
+	@SideOnly(Side.CLIENT)
+    public void registerIcons(IIconRegister r)
     {
-    	itemIcon=par1IconRegister.registerIcon("simElectricity:Item_UltimateMultimeter");
+    	itemIcon=r.registerIcon(CommonMethods.getItemName(this));
     }
     
     public boolean onItemUse(ItemStack item, EntityPlayer player, World world, int x, int y, int z, int par7, float par8, float par9, float par10)
     {
-    	if((world.getBlockTileEntity(x, y, z) instanceof IBaseComponent)&(!world.isRemote)){
-    		IBaseComponent te=(IBaseComponent) world.getBlockTileEntity(x, y, z);
+    	if((world.getTileEntity(x, y, z) instanceof IBaseComponent)&(!world.isRemote)){
+    		IBaseComponent te=(IBaseComponent) world.getTileEntity(x, y, z);
     		float voltage=Util.getVoltage(te);
     		
     		String tileType="Unknown";
@@ -55,26 +55,29 @@ public class Item_UltimateMultimeter extends Item{
     			IConductor c=(IConductor) te;
     			tileType="Energy Conductor";
     		}
-    		
     		//Print out information here
-    		player.sendChatToPlayer(ChatMessageComponent.createFromText("Type: "+tileType));  
+    		output("Type: "+tileType);  
     		if (te instanceof IEnergyTile&&outputVoltage>0)
-    			player.sendChatToPlayer(ChatMessageComponent.createFromText("Internal resistance: "+String.valueOf(te.getResistance())));  
+    			output("Internal resistance: "+String.valueOf(te.getResistance()));  
     		else	
-    			player.sendChatToPlayer(ChatMessageComponent.createFromText("Resistance: "+String.valueOf(te.getResistance())));  
+    			output("Resistance: "+String.valueOf(te.getResistance()));  
     		if (te instanceof IEnergyTile){
-    				player.sendChatToPlayer(ChatMessageComponent.createFromText("Current: "+String.valueOf(Util.getCurrent((IEnergyTile) te)))); 
-    				player.sendChatToPlayer(ChatMessageComponent.createFromText("Power consumed: "+String.valueOf(Util.getPower((IEnergyTile) te)))); 
+    			output("Current: "+String.valueOf(Util.getCurrent((IEnergyTile) te))); 
+    			output("Power consumed: "+String.valueOf(Util.getPower((IEnergyTile) te))); 
     		}
-    		player.sendChatToPlayer(ChatMessageComponent.createFromText("Voltage: "+String.valueOf(voltage)));    	
+    		output("Voltage: "+String.valueOf(voltage));    	
     		if(outputVoltage>0) //Energy Source
-        		player.sendChatToPlayer(ChatMessageComponent.createFromText("Internal voltage: "+String.valueOf(outputVoltage)));  
-    		player.sendChatToPlayer(ChatMessageComponent.createFromText("-----------------------"));  
+    			output("Internal voltage: "+String.valueOf(outputVoltage));  
+    		output("-----------------------");  
     		
     		return true;
     	}else{
     		return false;
     	}
         
+    }
+    
+    public void output(String text){
+    	System.out.print(text);
     }
 }

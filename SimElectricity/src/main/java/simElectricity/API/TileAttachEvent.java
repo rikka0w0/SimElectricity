@@ -1,12 +1,12 @@
 package simElectricity.API;
 
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.event.Event;
+import cpw.mods.fml.common.eventhandler.Event;
 
-public class TileDetachEvent extends Event {
+public class TileAttachEvent extends Event {
 	public TileEntity energyTile;
 
-	public TileDetachEvent(TileEntity energyTile) {
+	public TileAttachEvent(TileEntity energyTile) {
 		this.energyTile = energyTile;
 	}
 }
