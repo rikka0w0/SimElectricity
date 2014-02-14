@@ -78,6 +78,6 @@ public class Item_UltimateMultimeter extends Item{
     }
     
     public void output(String text){
-    	System.out.print(text);
+    	System.out.println(text);
     }
 }

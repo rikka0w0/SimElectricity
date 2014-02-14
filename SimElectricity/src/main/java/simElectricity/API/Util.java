@@ -1,6 +1,8 @@
 package simElectricity.API;
 
 import simElectricity.EnergyNet;
+import simElectricity.mod_SimElectricity;
+import simElectricity.Network.PacketTileEntityFieldUpdate;
 import net.minecraft.tileentity.TileEntity;
 
 public class Util {
@@ -28,6 +30,6 @@ public class Util {
 	}
 	
 	public static void updateTileEntityField(TileEntity te,String field){
-		//TileEntityFieldUpdatePacket.sendSyncPacket(te,field);
+		mod_SimElectricity.instance.packetPipeline.sendToAll(new PacketTileEntityFieldUpdate(te,field));
 	}
 }

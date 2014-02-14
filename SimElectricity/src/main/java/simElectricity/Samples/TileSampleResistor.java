@@ -6,22 +6,19 @@ import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.IEnergyTile;
 import simElectricity.API.Util;
 
-public class TileSampleResistor extends TileSampleBaseComponent implements
-		IEnergyTile {
-
+public class TileSampleResistor extends TileSampleBaseComponent implements IEnergyTile {
 	public boolean isWorking=false;
 	
 	@Override
     public void readFromNBT(NBTTagCompound nbt)
     {
 		super.readFromNBT(nbt);
-    	isWorking=nbt.getBoolean("isWorking");
-    	Util.updateTileEntityField(this, "isWorking");
+    	//isWorking=nbt.getBoolean("isWorking");
     }
     
     public void writeToNBT(NBTTagCompound nbt){
     	super.writeToNBT(nbt);
-    	nbt.setBoolean("isWorking", isWorking);
+    	//nbt.setBoolean("isWorking", isWorking);
     }
 	
 	@Override
@@ -29,22 +26,20 @@ public class TileSampleResistor extends TileSampleBaseComponent implements
 		super.updateEntity();
 		if (worldObj.isRemote)
 			return;
-		
 		float p=Util.getPower(this);
 		if(p>0){
 			if(!isWorking){
 				isWorking=true;
+				Util.updateTileEntityField(this, "isWorking");
 			}
 		}
 		else if(isWorking){
 			isWorking=false;
-			
+			Util.updateTileEntityField(this, "isWorking");
 		}
+		//if (isWorking)
+			//worldObj.createExplosion(null, xCoord, yCoord, zCoord, 4, true);
 		
-		if (isWorking)
-			worldObj.createExplosion(null, xCoord, yCoord, zCoord, 4, true);
-		
-		Util.updateTileEntityField(this, "isWorking");
 	}
 	
 	@Override
