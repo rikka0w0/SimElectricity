@@ -8,6 +8,7 @@ import java.util.Map;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.util.ForgeDirection;
 
 import org.jgrapht.Graphs;
 import org.jgrapht.graph.DefaultEdge;
@@ -15,11 +16,7 @@ import org.jgrapht.graph.SimpleGraph;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 
-import simElectricity.API.IBaseComponent;
-import simElectricity.API.IEnergyTile;
-import simElectricity.API.TileAttachEvent;
-import simElectricity.API.TileChangeEvent;
-import simElectricity.API.TileDetachEvent;
+import simElectricity.API.*;
 
 public final class EnergyNet {
 	/*Simulator*/
@@ -83,31 +80,91 @@ public final class EnergyNet {
 		List<TileEntity> result = new ArrayList<TileEntity>();
 		TileEntity temp;
 
-		temp = te.getWorldObj().getTileEntity(te.xCoord + 1, te.yCoord,
-				te.zCoord);
-		if (temp instanceof IBaseComponent)
-			result.add(temp);
-		temp = te.getWorldObj().getTileEntity(te.xCoord - 1, te.yCoord,
-				te.zCoord);
-		if (temp instanceof IBaseComponent)
-			result.add(temp);
-		temp = te.getWorldObj().getTileEntity(te.xCoord, te.yCoord + 1,
-				te.zCoord);
-		if (temp instanceof IBaseComponent)
-			result.add(temp);
-		temp = te.getWorldObj().getTileEntity(te.xCoord, te.yCoord - 1,
-				te.zCoord);
-		if (temp instanceof IBaseComponent)
-			result.add(temp);
-		temp = te.getWorldObj().getTileEntity(te.xCoord, te.yCoord,
-				te.zCoord + 1);
-		if (temp instanceof IBaseComponent)
-			result.add(temp);
-		temp = te.getWorldObj().getTileEntity(te.xCoord, te.yCoord,
-				te.zCoord - 1);
-		if (temp instanceof IBaseComponent)
-			result.add(temp);
+		if (te instanceof IConductor){		
+			temp = te.getWorldObj().getTileEntity(te.xCoord + 1, te.yCoord,te.zCoord);	
+			if (temp instanceof IConductor){
+				result.add(temp);
+			}else if (temp instanceof IEnergyTile){
+				if(((IEnergyTile)temp).getFunctionalSide().getOpposite()==ForgeDirection.EAST)
+					result.add(temp);
+			}
+			
+			temp = te.getWorldObj().getTileEntity(te.xCoord - 1, te.yCoord,te.zCoord);
+			if (temp instanceof IConductor){
+				result.add(temp);
+			}else if (temp instanceof IEnergyTile){
+				if(((IEnergyTile)temp).getFunctionalSide().getOpposite()==ForgeDirection.WEST)
+					result.add(temp);
+			}
+			
+			temp = te.getWorldObj().getTileEntity(te.xCoord, te.yCoord + 1,te.zCoord);
+			if (temp instanceof IConductor){
+				result.add(temp);
+			}else if (temp instanceof IEnergyTile){
+				if(((IEnergyTile)temp).getFunctionalSide().getOpposite()==ForgeDirection.UP)
+					result.add(temp);
+			}
+			
+			temp = te.getWorldObj().getTileEntity(te.xCoord, te.yCoord - 1,te.zCoord);
+			if (temp instanceof IConductor){
+				result.add(temp);
+			}else if (temp instanceof IEnergyTile){
+				if(((IEnergyTile)temp).getFunctionalSide().getOpposite()==ForgeDirection.DOWN)
+					result.add(temp);
+			}
+			
+			temp = te.getWorldObj().getTileEntity(te.xCoord, te.yCoord,te.zCoord + 1);
+			if (temp instanceof IConductor){
+				result.add(temp);
+			}else if (temp instanceof IEnergyTile){
+				if(((IEnergyTile)temp).getFunctionalSide().getOpposite()==ForgeDirection.SOUTH)
+					result.add(temp);
+			}
+			
+			temp = te.getWorldObj().getTileEntity(te.xCoord, te.yCoord,	te.zCoord - 1);
+			if (temp instanceof IConductor){
+				result.add(temp);
+			}else if (temp instanceof IEnergyTile){
+				if(((IEnergyTile)temp).getFunctionalSide().getOpposite()==ForgeDirection.NORTH)
+					result.add(temp);
+			}
+		}
 
+		
+		if (te instanceof IEnergyTile){		
+			ForgeDirection myDirection=((IEnergyTile)te).getFunctionalSide();
+			int x=0,y=0,z=0;
+			
+			switch(myDirection){
+			case EAST:
+				x++;
+				break;
+			case WEST:
+				x--;
+				break;
+			case UP:
+				y++;
+				break;
+			case DOWN:
+				y--;
+				break;
+			case SOUTH:
+				z++;
+				break;
+			case NORTH:
+				z--;
+				break;
+			default:
+				break;
+			}
+			
+			temp = te.getWorldObj().getTileEntity(te.xCoord+x, te.yCoord+y,te.zCoord+z);	
+			
+			if (temp instanceof IConductor){
+				result.add(temp);
+			}
+		}
+		
 		return result;
 	}
 

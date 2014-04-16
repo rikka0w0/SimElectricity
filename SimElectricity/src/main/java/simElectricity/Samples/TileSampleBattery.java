@@ -3,9 +3,8 @@ package simElectricity.Samples;
 import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.IEnergyTile;
 
-public class TileSampleBattery extends TileSampleBaseComponent implements
-		IEnergyTile {
-
+public class TileSampleBattery extends TileSampleEnergyTile{
+	
 	@Override
 	public int getResistance() {
 		return 1;
@@ -43,7 +42,6 @@ public class TileSampleBattery extends TileSampleBaseComponent implements
 
 	@Override
 	public ForgeDirection getFunctionalSide() {
-		// TODO Auto-generated method stub
-		return null;
+		return functionalSide;
 	}
 }

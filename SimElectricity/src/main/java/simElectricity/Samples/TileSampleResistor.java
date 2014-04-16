@@ -6,8 +6,9 @@ import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.IEnergyTile;
 import simElectricity.API.Util;
 
-public class TileSampleResistor extends TileSampleBaseComponent implements IEnergyTile {
+public class TileSampleResistor extends TileSampleEnergyTile{
 	public boolean isWorking=false;
+
 	
 	@Override
     public void readFromNBT(NBTTagCompound nbt)
@@ -37,6 +38,7 @@ public class TileSampleResistor extends TileSampleBaseComponent implements IEner
 			isWorking=false;
 			Util.updateTileEntityField(this, "isWorking");
 		}
+		
 		//if (isWorking)
 			//worldObj.createExplosion(null, xCoord, yCoord, zCoord, 4, true);
 		
@@ -79,7 +81,6 @@ public class TileSampleResistor extends TileSampleBaseComponent implements IEner
 
 	@Override
 	public ForgeDirection getFunctionalSide() {
-		// TODO Auto-generated method stub
-		return null;
+		return functionalSide;
 	}
 }

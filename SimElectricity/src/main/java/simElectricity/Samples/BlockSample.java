@@ -10,14 +10,17 @@ import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
+import net.minecraft.util.MathHelper;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.ForgeDirection;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -26,6 +29,51 @@ public class BlockSample extends BlockContainer {
 			"Resistor","SwitchOff","SwitchOn" };
 	private IIcon[] iconBuffer = new IIcon[5];
 
+    /**
+     * Can this block provide power. Only wire currently seems to have this change based on its state.
+     */
+	@Override
+    public boolean canProvidePower()
+    {
+        return true;
+    }
+	
+	@Override
+    public int isProvidingStrongPower(IBlockAccess world, int x, int y, int z, int p_149748_5_)
+    {
+		TileEntity te=world.getTileEntity(x, y, z);
+		if (!(te instanceof TileSampleResistor))
+			return 0;
+		
+		TileSampleResistor r=(TileSampleResistor)te;
+		if(r.isWorking)		
+			return 16;
+		else
+			return 0;
+    }
+    
+    public boolean shouldCheckWeakPower(IBlockAccess world, int x, int y, int z, int side)
+    {
+        return true;
+    }
+	
+    @Override
+    public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase player, ItemStack stack)
+    {
+    	if (world.isRemote)
+    		return;
+        int heading = MathHelper.floor_double((double)(player.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3;
+        int pitch = Math.round(player.rotationPitch);
+        
+        TileEntity te = world.getTileEntity(x, y, z);
+        
+        if (!(te instanceof TileSampleEnergyTile))
+        	return;
+        
+        ((TileSampleEnergyTile)te).functionalSide=Util.getPlayerSight(player).getOpposite();
+    }
+	
+	
 	// Get TileEntities
 	@Override
 	public TileEntity createTileEntity(World world, int meta) {

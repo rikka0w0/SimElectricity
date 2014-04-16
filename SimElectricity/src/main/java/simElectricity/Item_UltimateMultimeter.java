@@ -57,6 +57,8 @@ public class Item_UltimateMultimeter extends Item{
     		}
     		//Print out information here
     		output("Type: "+tileType);  
+    		if (te instanceof IEnergyTile)
+    			output("FunctionalSide: "+ ((IEnergyTile)te).getFunctionalSide().toString());
     		if (te instanceof IEnergyTile&&outputVoltage>0)
     			output("Internal resistance: "+String.valueOf(te.getResistance()));  
     		else	
