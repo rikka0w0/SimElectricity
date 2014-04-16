@@ -9,25 +9,66 @@ import net.minecraft.util.MathHelper;
 import net.minecraftforge.common.util.ForgeDirection;
 
 public class Util {
+ 
+	//Internal use only! [side][facing]
+	public static byte[][] sideAndFacingToSpriteOffset = new byte[][]{
+            {
+                3, 2, 0, 0, 0, 0
+            }, {
+                2, 3, 1, 1, 1, 1
+            }, {
+                1, 1, 3, 2, 5, 4
+            }, {
+                0, 0, 2, 3, 4, 5
+            }, {
+                4, 5, 4, 5, 3, 2
+            }, {
+                5, 4, 5, 4, 2, 3
+            }
+    };
+	
+	public static void scheduleBlockUpdate(TileEntity te){
+		te.getWorldObj().scheduleBlockUpdate(te.xCoord, te.yCoord, te.zCoord, te.getWorldObj().getBlock(te.xCoord, te.yCoord, te.zCoord), 20);
+	}
+	
+	public static int getTextureOnSide(int side,ForgeDirection direction){
+		switch (direction){
+        case NORTH:
+        	return sideAndFacingToSpriteOffset[side][3];
+        case SOUTH:
+        	return sideAndFacingToSpriteOffset[side][2];
+        case WEST:
+        	return sideAndFacingToSpriteOffset[side][5];
+        case EAST:
+        	return sideAndFacingToSpriteOffset[side][4];
+        case UP:
+        	return sideAndFacingToSpriteOffset[side][0];
+        case DOWN:
+        	return sideAndFacingToSpriteOffset[side][1];
+        default:
+        	return 0;
+        }
+	}
+	
 	public static ForgeDirection getPlayerSight(EntityLivingBase player){
         int heading = MathHelper.floor_double((double)(player.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3;
         int pitch = Math.round(player.rotationPitch);
         
         if (pitch >= 65)
-        	return ForgeDirection.DOWN;
+        	return ForgeDirection.DOWN;  //1
         
         if (pitch<=-65)
-        	return ForgeDirection.UP;
+        	return ForgeDirection.UP;    //0
         
         switch (heading){
-        case 2:
-        	return ForgeDirection.NORTH;
         case 0:
-        	return ForgeDirection.SOUTH;
+        	return ForgeDirection.SOUTH; //2
         case 1:
-        	return ForgeDirection.WEST;
+        	return ForgeDirection.WEST;  //5
+        case 2:
+        	return ForgeDirection.NORTH; //3       	
         case 3:
-        	return ForgeDirection.EAST;
+        	return ForgeDirection.EAST;  //4
         default:
         	return null;
         }

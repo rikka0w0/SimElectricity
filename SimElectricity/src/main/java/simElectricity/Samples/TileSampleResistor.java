@@ -32,11 +32,13 @@ public class TileSampleResistor extends TileSampleEnergyTile{
 			if(!isWorking){
 				isWorking=true;
 				Util.updateTileEntityField(this, "isWorking");
+				Util.scheduleBlockUpdate(this);
 			}
 		}
 		else if(isWorking){
 			isWorking=false;
 			Util.updateTileEntityField(this, "isWorking");
+			Util.scheduleBlockUpdate(this);
 		}
 		
 		//if (isWorking)

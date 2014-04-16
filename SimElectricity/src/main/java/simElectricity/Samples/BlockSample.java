@@ -47,7 +47,7 @@ public class BlockSample extends BlockContainer {
 		
 		TileSampleResistor r=(TileSampleResistor)te;
 		if(r.isWorking)		
-			return 16;
+			return 15;
 		else
 			return 0;
     }
@@ -133,6 +133,14 @@ public class BlockSample extends BlockContainer {
 		setCreativeTab(CreativeTabs.tabRedstone);
 	}
 
+    @Override
+    public void updateTick(World world, int x, int y, int z, Random p_149674_5_) {
+     	if (world.isRemote)
+    		return;    	
+    	TileEntity te = world.getTileEntity(x, y, z);
+    	Util.updateTileEntityField(te, "isWorking");   	
+    }
+	
 	@Override
 	public boolean onBlockActivated(World world, int x, int y, int z,
 			EntityPlayer entityPlayer, int par6, float par7, float par8,

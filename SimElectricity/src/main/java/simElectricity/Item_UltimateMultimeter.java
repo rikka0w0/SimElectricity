@@ -1,11 +1,12 @@
 package simElectricity;
 
-import Frogcraft.CommonMethods;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ChatComponentText;
 import net.minecraft.world.World;
 import simElectricity.API.IBaseComponent;
 import simElectricity.API.IConductor;
@@ -28,7 +29,7 @@ public class Item_UltimateMultimeter extends Item{
 	@SideOnly(Side.CLIENT)
     public void registerIcons(IIconRegister r)
     {
-    	itemIcon=r.registerIcon(CommonMethods.getItemName(this));
+    	itemIcon=r.registerIcon("simElectricity:Item_UltimateMultimeter");
     }
     
     public boolean onItemUse(ItemStack item, EntityPlayer player, World world, int x, int y, int z, int par7, float par8, float par9, float par10)
@@ -80,6 +81,6 @@ public class Item_UltimateMultimeter extends Item{
     }
     
     public void output(String text){
-    	System.out.println(text);
+    	Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(text));
     }
 }

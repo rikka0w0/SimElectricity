@@ -5,6 +5,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.WorldEvent;
+import simElectricity.Blocks.BlockQuantumGenerator;
+import simElectricity.Blocks.TileQuantumGenerator;
 import simElectricity.Network.PacketPipeline;
 import simElectricity.Network.PacketTileEntityFieldUpdate;
 import simElectricity.Samples.BlockSample;
@@ -58,17 +60,20 @@ public class mod_SimElectricity{
 		FMLCommonHandler.instance().bus().register(this);
 		EnergyNet.initialize();
 		GameRegistry.registerBlock(new BlockSample(), ItemBlockSample.class, "Sample");
-		GameRegistry.registerTileEntity(TileSampleBattery.class, "Battery");
-		GameRegistry.registerTileEntity(TileSampleConductor.class, "Conductor");
-		GameRegistry.registerTileEntity(TileSampleResistor.class, "Resistor");
-		GameRegistry.registerItem(new Item_UltimateMultimeter(), "Item_UltimateMultimeter");
+		GameRegistry.registerBlock(new BlockQuantumGenerator(), "sime:QuantumGenerator");
+		GameRegistry.registerItem(new Item_UltimateMultimeter(), "sime:Item_UltimateMultimeter");
+
+		
 	}
 
 	@EventHandler
 	public void load(FMLInitializationEvent event) {
 		packetPipeline.initialise();
-		// Db.init();
-		//NetHandler.addChannel(NetHandler.Net_ID_TileEntitySync, new TileEntityFieldUpdatePacket());
+		
+		GameRegistry.registerTileEntity(TileQuantumGenerator.class, "Tile_QuantumGenerator");	
+		GameRegistry.registerTileEntity(TileSampleBattery.class, "Battery");
+		GameRegistry.registerTileEntity(TileSampleConductor.class, "Conductor");
+		GameRegistry.registerTileEntity(TileSampleResistor.class, "Resistor");	
 	}
 
 	@EventHandler

@@ -2,11 +2,14 @@ package simElectricity.Network;
 
 import java.lang.reflect.Field;
 
+import simElectricity.API.Util;
+
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.ForgeDirection;
 
 /**This packet performs server->client side synchronization~*/
 public class PacketTileEntityFieldUpdate extends AbstractPacket {
@@ -35,13 +38,17 @@ public class PacketTileEntityFieldUpdate extends AbstractPacket {
 		Field f;
 		try {
 			f = te.getClass().getField(field);
-			if(f.getType()==boolean.class){
+			if(f.getType()==boolean.class){   //Boolean
 				type=0;
 				value=f.getBoolean(te);
 			}			
-			else if(f.getType()==int.class){
+			else if(f.getType()==int.class){  //Integer
 				type=1;
 				value=f.getInt(te);
+			}
+			else if(f.getType()==ForgeDirection.class){  //ForgeDirection
+				type=2;
+				value=Util.direction2Byte((ForgeDirection)f.get(te));
 			}
 			else{
 				System.out.println(te.toString()+" is trying synchronous a unknown type field: "+_field);
@@ -71,6 +78,9 @@ public class PacketTileEntityFieldUpdate extends AbstractPacket {
 		case 1:
 			buffer.writeInt((Integer) value);
 			break;			
+		case 2:
+			buffer.writeByte((Byte)value);
+			break;
 		}
 	}
 
@@ -93,16 +103,19 @@ public class PacketTileEntityFieldUpdate extends AbstractPacket {
 			break;
 		case 1:
 			value=buffer.readInt();
-			break;			
+			break;	
+		case 2:
+			value=buffer.readByte();
+			break;
 		}
 	}
 
 	
 	@Override
 	public void handleClientSide(EntityPlayer player) {
-		System.out.print(field);
-		System.out.print("=");
-		System.out.println(value);
+		//System.out.print(field);
+		//System.out.print("=");
+		//System.out.println(value);
 		
 		try{
 			World world = player.worldObj;
@@ -112,6 +125,8 @@ public class PacketTileEntityFieldUpdate extends AbstractPacket {
 				return;
 			if (te.getClass().hashCode()!=hash)
 				return;
+			if(!world.isRemote)
+				return;
 			
 			Field f=te.getClass().getField(field);
 			switch (type){
@@ -120,7 +135,11 @@ public class PacketTileEntityFieldUpdate extends AbstractPacket {
 				break;
 			case 1:
 				f.setInt(te,(Integer) value);
-				break;				
+				break;		
+			case 2:
+				f.set(te, Util.byte2Direction((Byte) value));
+				world.markBlockForUpdate(x, y, z);
+				break;
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
