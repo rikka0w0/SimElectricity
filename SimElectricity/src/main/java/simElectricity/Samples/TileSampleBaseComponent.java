@@ -12,6 +12,7 @@ public abstract class TileSampleBaseComponent extends TileEntity implements	IBas
 		if (!worldObj.isRemote && !isAddedToEnergyNet) {
 			MinecraftForge.EVENT_BUS.post(new TileAttachEvent(this));
 			this.isAddedToEnergyNet=true;
+			Util.scheduleBlockUpdate(this);
 		}
 	}
 

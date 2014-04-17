@@ -7,7 +7,7 @@ public interface IBaseComponent {
 	 * sinks energy For a energy source, the smaller the resistance is, the
 	 * lower voltage drop it will have, this means it can drive heavier load
 	 */
-	int getResistance();
+	float getResistance();
 
 	/**
 	 * For load: Return the max power the load can sink, 0 for infinite For

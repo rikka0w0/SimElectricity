@@ -9,7 +9,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -24,7 +23,7 @@ public class BlockQuantumGenerator extends BlockContainer {
     @SideOnly(Side.CLIENT)
     @Override
     public void randomDisplayTick(World world, int x, int y, int z, Random var5){
-    	world.markBlockForUpdate(x,  y,  z);
+    	//world.markBlockForUpdate(x,  y,  z);
     }
 	
     public BlockQuantumGenerator() {
@@ -32,7 +31,7 @@ public class BlockQuantumGenerator extends BlockContainer {
 		setHardness(2.0F);
 		setResistance(5.0F);
 		setBlockName("sime:QuantumGenerator");
-		setCreativeTab(CreativeTabs.tabRedstone);
+		setCreativeTab(Util.SETab);
 	}
 
 	@Override
@@ -67,19 +66,19 @@ public class BlockQuantumGenerator extends BlockContainer {
    	}
     
     @Override
-    public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase player, ItemStack stack)
-    {
-    	if (world.isRemote)
-    		return;
-        
+    public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase player, ItemStack stack) {       
         TileEntity te = world.getTileEntity(x, y, z);
         
         if (!(te instanceof TileQuantumGenerator))
         	return;
         
         ((TileQuantumGenerator)te).functionalSide=Util.getPlayerSight(player).getOpposite();
-        Util.updateTileEntityField(te, "functionalSide");
         
+    	if (world.isRemote)
+    		return;
+    	
+    	//Server side only!
+        Util.updateTileEntityField(te, "functionalSide");
     }	
     
     @Override
@@ -87,6 +86,8 @@ public class BlockQuantumGenerator extends BlockContainer {
      	if (world.isRemote)
     		return;    	
     	TileEntity te = world.getTileEntity(x, y, z);
+    	if (!(te instanceof TileQuantumGenerator))
+    		return;
     	Util.updateTileEntityField(te, "functionalSide");   	
     }
     
@@ -94,6 +95,8 @@ public class BlockQuantumGenerator extends BlockContainer {
     public void onNeighborBlockChange(World world, int x, int y, int z, Block block){
     	if (world.isRemote)
     		return;    	
+    	
+    	//Server side only!
     	TileEntity te = world.getTileEntity(x, y, z);
     	Util.updateTileEntityField(te, "functionalSide");
     }

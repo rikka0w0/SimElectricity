@@ -14,12 +14,12 @@ public class TileSampleResistor extends TileSampleEnergyTile{
     public void readFromNBT(NBTTagCompound nbt)
     {
 		super.readFromNBT(nbt);
-    	//isWorking=nbt.getBoolean("isWorking");
+    	isWorking=nbt.getBoolean("isWorking");
     }
     
     public void writeToNBT(NBTTagCompound nbt){
     	super.writeToNBT(nbt);
-    	//nbt.setBoolean("isWorking", isWorking);
+    	nbt.setBoolean("isWorking", isWorking);
     }
 	
 	@Override
@@ -42,12 +42,12 @@ public class TileSampleResistor extends TileSampleEnergyTile{
 		}
 		
 		//if (isWorking)
-			//worldObj.createExplosion(null, xCoord, yCoord, zCoord, 4, true);
+			//worldObj.createExplosion(null, xCoord, yCoord, zCoord, 10, true);
 		
 	}
 	
 	@Override
-	public int getResistance() {
+	public float getResistance() {
 		return 10000;
 	}
 

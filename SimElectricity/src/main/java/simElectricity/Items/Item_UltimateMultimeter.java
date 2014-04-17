@@ -1,4 +1,4 @@
-package simElectricity;
+package simElectricity.Items;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -22,7 +22,7 @@ public class Item_UltimateMultimeter extends Item{
 		setHasSubtypes(true);
 		setUnlocalizedName("sime:Item_UltimateMultimeter");
 		setMaxDamage(256);
-		setCreativeTab(CreativeTabs.tabRedstone);
+		setCreativeTab(Util.SETab);
 	}
 
 	

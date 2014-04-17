@@ -1,2 +1,6 @@
+itemGroup.SimElectricity=SimElectricity
 tile.sime:QuantumGenerator.name=Quantum Generator
+tile.sime:Wire.CopperCable_Thin.name=Thin Copper Cable
+tile.sime:Wire.CopperCable_Medium.name=Medium Copper Cable
+tile.sime:Wire.CopperCable_Thick.name=Thick Copper Cable
 item.sime:Item_UltimateMultimeter.name=Ultimate Multimeter

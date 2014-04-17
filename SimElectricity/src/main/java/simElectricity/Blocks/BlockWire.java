@@ -1,0 +1,196 @@
+package simElectricity.Blocks;
+
+import java.util.List;
+import java.util.Random;
+
+import simElectricity.API.Util;
+
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockContainer;
+import net.minecraft.block.material.Material;
+import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.IIcon;
+import net.minecraft.world.Explosion;
+import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
+
+public class BlockWire extends BlockContainer{
+
+	public static final String[] subNames = {"CopperCable_Thin","CopperCable_Medium","CopperCable_Thick"};
+	public static final float[] resistanceList = {0.27F,0.09F,0.03F};
+	public static final float[] collisionWidthList = {0.12F,0.22F,0.32F};
+	@SideOnly(Side.CLIENT)
+	public static final float[] renderingWidthList = {0.1F,0.2F,0.3F};	
+	
+	@SideOnly(Side.CLIENT)
+	public IIcon[] iconBuffer=new IIcon[subNames.length];
+
+		
+	//Initiallize Block
+	public BlockWire() {
+		super(Material.circuits);
+		setHardness(2.0F);
+		setResistance(5.0F);
+		setBlockName("sime:Wire");
+		setCreativeTab(Util.SETab);
+	}
+	
+	@Override
+	public void onBlockDestroyedByExplosion(World world, int x, int y, int z, Explosion explosion){
+		
+	}
+	
+	public void onNeighborBlockChange(World world, int x, int y, int z, Block block) {
+		//Util.scheduleBlockUpdate(world.getTileEntity(x, y, z));
+		if (!world.isRemote)
+			Util.updateTileEntityField(world.getTileEntity(x, y, z), "renderSides"); 
+	}
+	
+    @Override
+    public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase player, ItemStack stack)
+    {
+    	if (world.isRemote)
+    		return;
+    	
+    	TileEntity te=world.getTileEntity(x, y, z);
+    	Util.updateTileEntityField(te, "renderSides"); 
+    	((TileWire)te).updateSides();
+    }
+	
+    @Override
+    public void updateTick(World world, int x, int y, int z, Random p_149674_5_) {
+     	if (world.isRemote)
+    		return;    	
+    	Util.updateTileEntityField(world.getTileEntity(x, y, z), "renderSides"); 
+    }
+    
+    
+    
+    //Rendering ----------------------------------------------------
+	
+	public void setBlockBoundsForItemRender(){
+        float f = 0.1875F;
+        setBlockBounds(1F, 0.6F, 1F, 0.0F, 0.6F, 0.0F);
+    }
+
+    @Override
+	public void addCollisionBoxesToList(World world, int x, int y, int z, AxisAlignedBB par5AxisAlignedBB, List par6List, Entity par7Entity){
+    	super.addCollisionBoxesToList(world, x, y, z, par5AxisAlignedBB, par6List, par7Entity);
+    	TileWire tile = (TileWire) world.getTileEntity(x,y,z);
+    	float WIDTH=collisionWidthList[world.getBlockMetadata(x, y, z)];
+    	
+    	float minA = 0.5F - WIDTH, maxA = 0.5F + WIDTH;
+    	float minX = 0.5F - WIDTH,
+    	minY = 0.5F - WIDTH,
+    	minZ = 0.5F - WIDTH,
+    	maxX = 0.5F + WIDTH,
+    	maxY = 0.5F + WIDTH,
+    	maxZ = 0.5F + WIDTH;
+    	
+    	//X方向
+    	boolean[] arr = tile.renderSides;
+    	
+    	if(arr[5]) 
+    		maxA = 1.0F;
+    	if(arr[4])
+    		minA = 0.0F;
+    	if(arr[5] || arr[4]) {
+    		setBlockBounds(minA, minY, minZ, maxA, maxY, maxZ);
+    		super.addCollisionBoxesToList(world, x, y, z, par5AxisAlignedBB, par6List, par7Entity);
+    	}
+    	
+    	if(arr[3])
+    		maxA = 1.0F;
+    	else maxA = 0.5F + WIDTH;
+    	if(arr[2])
+    		minA = 0.0F;
+    	else minA = 0.5F - WIDTH;
+    	if(arr[3] || arr[2]) {
+    		setBlockBounds(minX, minY, minA, maxX, maxY, maxA);
+    		super.addCollisionBoxesToList(world, x, y, z, par5AxisAlignedBB, par6List, par7Entity);
+    	}
+    	
+    	if(arr[1])
+    		maxA = 1.0F;
+    	else maxA = 0.5F + WIDTH;
+    	if(arr[0])
+    		minA = 0.0F;
+    	else minA = 0.5F - WIDTH;
+    	if(arr[1] || arr[0]) {
+    		setBlockBounds(minX, minA, minZ, maxX, maxA, maxZ);
+    		super.addCollisionBoxesToList(world, x, y, z, par5AxisAlignedBB, par6List, par7Entity);
+    	}
+    }
+    
+    
+    @Override
+	public void setBlockBoundsBasedOnState(IBlockAccess world, int x, int y, int z) {
+    	float WIDTH=collisionWidthList[world.getBlockMetadata(x, y, z)];
+    	
+    	minX = 0.5 - WIDTH;
+    	minY = 0.5 - WIDTH;
+    	minZ = 0.5 - WIDTH;
+    	maxX = 0.5 + WIDTH;
+    	maxY = 0.5 + WIDTH;
+    	maxZ = 0.5 + WIDTH;
+    }
+    
+	//This will tell minecraft not to render any side of our cube.
+    public boolean shouldSideBeRendered(IBlockAccess iblockaccess, int i, int j, int k, int l){return false;}
+
+    //And this tell it that you can see through this block, and neighbor blocks should be rendered.
+    public boolean isOpaqueCube(){return false;}
+    
+    //-------------------------------------------------------------------------------------------------------------
+    
+    
+    
+    //Multi block stuff starts
+	@Override
+    @SideOnly(Side.CLIENT)
+    public void registerBlockIcons(IIconRegister r){
+		for(int i=0;i<subNames.length;i++){ 
+			iconBuffer[i]=r.registerIcon("simElectricity:Wiring/"+subNames[i]);
+		}
+	}
+	
+    @SideOnly(Side.CLIENT)
+	@Override
+	public IIcon getIcon(IBlockAccess world, int x,int y, int z, int side) {
+    	int blockMeta = world.getBlockMetadata(x, y, z);
+    	return iconBuffer[blockMeta];
+	}
+    
+    @SideOnly(Side.CLIENT)
+	@Override
+	public IIcon getIcon(int side, int meta) {
+    	return iconBuffer[meta];
+	}
+    
+    @Override
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+	@SideOnly(Side.CLIENT)
+    public void getSubBlocks(Item par1, CreativeTabs par2CreativeTabs, List subItems){
+		for (int ix = 0; ix < subNames.length; ix++) {
+			subItems.add(new ItemStack(this, 1, ix));
+		}
+	}
+    
+    @Override
+	public int damageDropped(int meta) {return meta;}
+    
+	@Override
+	public TileEntity createNewTileEntity(World var1, int var2) {return null;}
+	
+	@Override
+	public TileEntity createTileEntity(World world, int meta) {return new TileWire(meta);}
+}

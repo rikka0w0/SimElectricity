@@ -3,13 +3,16 @@ package simElectricity.API;
 import simElectricity.EnergyNet;
 import simElectricity.mod_SimElectricity;
 import simElectricity.Network.PacketTileEntityFieldUpdate;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.MathHelper;
 import net.minecraftforge.common.util.ForgeDirection;
 
 public class Util {
- 
+	//Creative Tab for SimElectricity project
+	public static CreativeTabs SETab;
+	
 	//Internal use only! [side][facing]
 	public static byte[][] sideAndFacingToSpriteOffset = new byte[][]{
             {
@@ -28,7 +31,11 @@ public class Util {
     };
 	
 	public static void scheduleBlockUpdate(TileEntity te){
-		te.getWorldObj().scheduleBlockUpdate(te.xCoord, te.yCoord, te.zCoord, te.getWorldObj().getBlock(te.xCoord, te.yCoord, te.zCoord), 20);
+		scheduleBlockUpdate(te,10);
+	}
+	
+	public static void scheduleBlockUpdate(TileEntity te,int time){
+		te.getWorldObj().scheduleBlockUpdate(te.xCoord, te.yCoord, te.zCoord, te.getWorldObj().getBlock(te.xCoord, te.yCoord, te.zCoord), time);
 	}
 	
 	public static int getTextureOnSide(int side,ForgeDirection direction){

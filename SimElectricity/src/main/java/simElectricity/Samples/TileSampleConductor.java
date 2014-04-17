@@ -6,7 +6,7 @@ public class TileSampleConductor extends TileSampleBaseComponent implements
 		IConductor {
 
 	@Override
-	public int getResistance() {
+	public float getResistance() {
 		return 500;
 	}
 

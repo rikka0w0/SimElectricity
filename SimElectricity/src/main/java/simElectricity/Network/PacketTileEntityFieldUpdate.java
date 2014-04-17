@@ -3,6 +3,7 @@ package simElectricity.Network;
 import java.lang.reflect.Field;
 
 import simElectricity.API.Util;
+import simElectricity.Blocks.TileWire;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -49,6 +50,9 @@ public class PacketTileEntityFieldUpdate extends AbstractPacket {
 			else if(f.getType()==ForgeDirection.class){  //ForgeDirection
 				type=2;
 				value=Util.direction2Byte((ForgeDirection)f.get(te));
+			}else if(f.getType()==boolean[].class){  //Boolean group
+				type=3;
+				value=f.get(te);
 			}
 			else{
 				System.out.println(te.toString()+" is trying synchronous a unknown type field: "+_field);
@@ -81,6 +85,14 @@ public class PacketTileEntityFieldUpdate extends AbstractPacket {
 		case 2:
 			buffer.writeByte((Byte)value);
 			break;
+		case 3:
+			buffer.writeBoolean(((boolean[]) value)[0]);
+			buffer.writeBoolean(((boolean[]) value)[1]);
+			buffer.writeBoolean(((boolean[]) value)[2]);
+			buffer.writeBoolean(((boolean[]) value)[3]);
+			buffer.writeBoolean(((boolean[]) value)[4]);
+			buffer.writeBoolean(((boolean[]) value)[5]);
+			break;
 		}
 	}
 
@@ -106,6 +118,16 @@ public class PacketTileEntityFieldUpdate extends AbstractPacket {
 			break;	
 		case 2:
 			value=buffer.readByte();
+			break;
+		case 3:
+			boolean[] temp=new boolean[6];
+			temp[0]=buffer.readBoolean();
+			temp[1]=buffer.readBoolean();
+			temp[2]=buffer.readBoolean();
+			temp[3]=buffer.readBoolean();
+			temp[4]=buffer.readBoolean();
+			temp[5]=buffer.readBoolean();
+			value=temp;
 			break;
 		}
 	}
@@ -139,6 +161,11 @@ public class PacketTileEntityFieldUpdate extends AbstractPacket {
 			case 2:
 				f.set(te, Util.byte2Direction((Byte) value));
 				world.markBlockForUpdate(x, y, z);
+				break;
+			case 3:
+				f.set(te, value);
+				world.markBlockForUpdate(x, y, z);
+				((TileWire)(world.getTileEntity(x, y, z))).updateSides();
 				break;
 			}
 		} catch (Exception e) {

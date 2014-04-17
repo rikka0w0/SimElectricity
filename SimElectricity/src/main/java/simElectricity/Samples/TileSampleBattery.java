@@ -6,7 +6,7 @@ import simElectricity.API.IEnergyTile;
 public class TileSampleBattery extends TileSampleEnergyTile{
 	
 	@Override
-	public int getResistance() {
+	public float getResistance() {
 		return 1;
 	}
 

@@ -58,10 +58,7 @@ public class BlockSample extends BlockContainer {
     }
 	
     @Override
-    public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase player, ItemStack stack)
-    {
-    	if (world.isRemote)
-    		return;
+    public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase player, ItemStack stack){
         int heading = MathHelper.floor_double((double)(player.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3;
         int pitch = Math.round(player.rotationPitch);
         
@@ -71,6 +68,11 @@ public class BlockSample extends BlockContainer {
         	return;
         
         ((TileSampleEnergyTile)te).functionalSide=Util.getPlayerSight(player).getOpposite();
+        
+    	if (world.isRemote)
+    		return;
+    	//Server side only!
+        Util.updateTileEntityField(te, "functionalSide");
     }
 	
 	
@@ -138,7 +140,10 @@ public class BlockSample extends BlockContainer {
      	if (world.isRemote)
     		return;    	
     	TileEntity te = world.getTileEntity(x, y, z);
-    	Util.updateTileEntityField(te, "isWorking");   	
+    	if((!(te instanceof TileSampleResistor))&(!(te instanceof TileSampleBattery)))
+    	return;
+    	Util.updateTileEntityField(te, "isWorking");
+    	Util.updateTileEntityField(te, "functionalSide");  
     }
 	
 	@Override

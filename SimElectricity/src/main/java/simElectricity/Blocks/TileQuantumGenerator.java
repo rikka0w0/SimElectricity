@@ -26,7 +26,6 @@ public class TileQuantumGenerator extends TileEntity implements IEnergyTile{
 	public void invalidate() {
 		if (!worldObj.isRemote & isAddedToEnergyNet) {
 			MinecraftForge.EVENT_BUS.post(new TileDetachEvent(this));
-			isAddedToEnergyNet = false;
 		}
 	}
 	
@@ -45,7 +44,7 @@ public class TileQuantumGenerator extends TileEntity implements IEnergyTile{
     }
 	
     @Override
-	public int getResistance() {return 1;}
+	public float getResistance() {return 1;}
 
 	@Override
 	public void onOverloaded() {}
