@@ -67,6 +67,7 @@ public class RenderWire extends TileEntitySpecialRenderer{
 			dz = 1;
 			break;
 		}
+		
 		float offset = (0.5F + WIDTH) / 2F;
 		GL11.glTranslatef(dx * offset, dy * offset, dz * offset);
 		if (side != -1) {
@@ -75,10 +76,12 @@ public class RenderWire extends TileEntitySpecialRenderer{
 					Math.abs(dy == 0.0F ? 1 : dy * scale),
 					Math.abs(dz == 0.0F ? 1 : dz * scale));
 		}
+		
 		int a = 0;
 		for (int i = 0; i < theArray.length; i++)
 			if (theArray[i])
 				a++;
+		
 		for (int i = 0; i < 6; i++) {
 			if (!doesRenderSide(side, i, theArray))
 				continue;
@@ -166,9 +169,9 @@ public class RenderWire extends TileEntitySpecialRenderer{
 				return false;
 			return true;
 		}
-		if (dirs[blockSide].getOpposite().ordinal() == subSide
-				|| (blockSide == subSide && theArray[subSide]))
-			return false;
+		//Fix the rendering problem
+		//if (dirs[blockSide].getOpposite().ordinal() == subSide|| (blockSide == subSide && theArray[subSide]))
+			//return false;
 		return true;
 	}
 }
