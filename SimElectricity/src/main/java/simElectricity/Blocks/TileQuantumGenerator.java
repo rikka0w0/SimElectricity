@@ -49,6 +49,7 @@ public class TileQuantumGenerator extends TileEntity implements IEnergyTile,ISyn
     	
     	functionalSide=Util.byte2Direction(tagCompound.getByte("functionalSide"));
     	outputVoltage=tagCompound.getFloat("outputVoltage");
+    	outputResistance=tagCompound.getFloat("outputResistance");
     }
     
     @Override
@@ -57,6 +58,7 @@ public class TileQuantumGenerator extends TileEntity implements IEnergyTile,ISyn
     	
     	tagCompound.setByte("functionalSide", Util.direction2Byte(functionalSide));
     	tagCompound.setFloat("outputVoltage", outputVoltage);
+    	tagCompound.setFloat("outputResistance", outputResistance);
     }
 	
     @Override

@@ -241,6 +241,17 @@ public final class EnergyNet {
 		if(energyNet.calc == true){
 			energyNet.calc = false;
 			energyNet.runSimulator();
+			
+			try{
+				for (IBaseComponent tile:energyNet.tileEntityGraph.vertexSet()){
+					if(tile instanceof IEnergyTile){
+						IEnergyTile te=(IEnergyTile) tile;
+						if(te.getMaxSafeVoltage()!=0&&te.getMaxSafeVoltage()<energyNet.voltageCache.get(tile))
+							te.onOverVoltage();
+					}
+				}	
+			}
+			catch(Exception e){}
 		}
 	}
 	
@@ -294,7 +305,7 @@ public final class EnergyNet {
 	public void markForUpdate(TileEntity te){
 		calc = true;
 		//TODO:
-		//System.out.println("Tileentity " + te + " cause the energy network to update!");
+		System.out.println("Tileentity " + te + " cause the energy network to update!");
 	}
 	
 	/** Return a instance of energynet for a specific world*/

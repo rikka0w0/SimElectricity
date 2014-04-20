@@ -31,7 +31,6 @@ public class TileElectricFurnace extends TileEntity implements IEnergyTile,ISync
 	
 	@Override
 	public void updateEntity() {
-		energyPerItem=4000F;
 		if (!worldObj.isRemote && !isAddedToEnergyNet) {
 			Util.postTileAttachEvent(this);
 			this.isAddedToEnergyNet=true;
@@ -39,15 +38,16 @@ public class TileElectricFurnace extends TileEntity implements IEnergyTile,ISync
 		}
 		
 		if(worldObj.isRemote)
-			return;
-		
+			return;	
 		
 		if(Util.getPower(this)>0&&result!=null&&(inv[1]==null|(inv[1]!=null&&inv[1].isItemEqual(result)))){
 			energyStored+=Util.getPower(this)*0.02;
 			progress=((int) (energyStored*100/energyPerItem));
 			
-			resistance=50;
-			Util.postTileChangeEvent(this);
+			if(resistance>100){
+				resistance=50;
+				Util.postTileChangeEvent(this);
+			}
 			
 			isWorking=true;
 			Util.updateTileEntityField(this, "isWorking");
@@ -69,8 +69,10 @@ public class TileElectricFurnace extends TileEntity implements IEnergyTile,ISync
 		}else{
 			progress=0;
 			energyStored=0;
-			resistance=1000000000;
-			Util.postTileChangeEvent(this);
+			if(resistance<100){
+				resistance=1000000000;
+				Util.postTileChangeEvent(this);
+			}
 			isWorking=false;
 			Util.updateTileEntityField(this, "isWorking");
 		}
@@ -161,10 +163,12 @@ public class TileElectricFurnace extends TileEntity implements IEnergyTile,ISync
 	public float getOutputVoltage() {return 0;}
 
 	@Override
-	public float getMaxSafeVoltage() {return 0;}
+	public float getMaxSafeVoltage() {return 265;}
 
 	@Override
-	public void onOverVoltage() {}
+	public void onOverVoltage() {
+		worldObj.createExplosion(null, xCoord, yCoord, zCoord, 4F+Util.getVoltage(this)/getMaxSafeVoltage(), true);
+	}
 
 	@Override
 	public ForgeDirection getFunctionalSide() {return functionalSide;}

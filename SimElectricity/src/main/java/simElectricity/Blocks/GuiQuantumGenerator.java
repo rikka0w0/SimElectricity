@@ -117,8 +117,8 @@ public class GuiQuantumGenerator extends GuiContainer {
     	
        	fontRendererObj.drawString(StatCollector.translateToLocal("tile.sime:QuantumGenerator.name"), 8, 6, 4210752);
        	
-       	fontRendererObj.drawString(float2Str(tileentity.outputVoltage,10)+" V", 30, 46, 4210752);
-       	fontRendererObj.drawString(float2Str(tileentity.outputResistance,100)+" ¦¸", 30, 24, 4210752);
+       	fontRendererObj.drawString(String.format("%.1f", tileentity.outputVoltage)+" V", 30, 46, 4210752);
+       	fontRendererObj.drawString(String.format("%.2f", tileentity.outputResistance)+" ¦¸", 30, 24, 4210752);
        	
        	//draws "Inventory" or your regional equivalent
        	fontRendererObj.drawString(StatCollector.translateToLocal("container.inventory"), 8, ySize - 96, 4210752);
