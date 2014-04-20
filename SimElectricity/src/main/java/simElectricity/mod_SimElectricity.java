@@ -60,6 +60,7 @@ public class mod_SimElectricity{
 		//Register Blocks
 		GameRegistry.registerBlock(QuantumGenerator, "sime:QuantumGenerator");
 		GameRegistry.registerBlock(new BlockVoltageMeter(), "sime:VoltageMeter");
+		GameRegistry.registerBlock(new BlockElectricFurnace(), "sime:ElectricFurnace");
 		GameRegistry.registerBlock(new BlockWire(), ItemBlockWire.class, "sime:Wire");
 		
 		//Register Items
@@ -80,6 +81,7 @@ public class mod_SimElectricity{
 		//Register TileEntities
 		GameRegistry.registerTileEntity(TileQuantumGenerator.class, "TileQuantumGenerator");	
 		GameRegistry.registerTileEntity(TileVoltageMeter.class, "TileVoltageMeter");	
+		GameRegistry.registerTileEntity(TileElectricFurnace.class, "TileElectricFurnace");	
 		GameRegistry.registerTileEntity(TileWire.class, "TileCopperWire");
 
 		GameRegistry.registerTileEntity(TileSampleBattery.class, "Battery");

@@ -23,7 +23,9 @@ public class ClientProxy extends CommonProxy {
 		if (te instanceof TileQuantumGenerator)
 			return new GuiQuantumGenerator(player.inventory,(TileQuantumGenerator) te);
 		if (te instanceof TileVoltageMeter)
-			return  new GuiVoltageMeter(player.inventory,(TileVoltageMeter) te);
+			return new GuiVoltageMeter(player.inventory,(TileVoltageMeter) te);
+		if (te instanceof TileElectricFurnace)
+			return new GuiElectricFurnace(player.inventory,(TileElectricFurnace) te);
 		
 		return null;
     }

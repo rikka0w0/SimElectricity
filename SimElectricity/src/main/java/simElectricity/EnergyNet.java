@@ -293,8 +293,8 @@ public final class EnergyNet {
 	/** Mark the energy net for updating in next tick*/
 	public void markForUpdate(TileEntity te){
 		calc = true;
-		
-		System.out.println("Tileentity " + te + " cause the energy network to update!");
+		//TODO:
+		//System.out.println("Tileentity " + te + " cause the energy network to update!");
 	}
 	
 	/** Return a instance of energynet for a specific world*/

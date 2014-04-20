@@ -1,6 +1,7 @@
 itemGroup.SimElectricity=SimElectricity
 tile.sime:QuantumGenerator.name=Quantum Generator
 tile.sime:VoltageMeter.name=Voltage Meter(1MOhm)
+tile.sime:ElectricFurnace.name=Electric Furnace
 tile.sime:Wire.CopperCable_Thin.name=Thin Copper Cable
 tile.sime:Wire.CopperCable_Medium.name=Medium Copper Cable
 tile.sime:Wire.CopperCable_Thick.name=Thick Copper Cable
