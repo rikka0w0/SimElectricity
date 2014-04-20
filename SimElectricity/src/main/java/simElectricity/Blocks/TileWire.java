@@ -8,7 +8,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.*;
 
-public class TileWire extends TileEntity implements IConductor{
+public class TileWire extends TileEntity implements IConductor,ISyncPacketHandler{
 	protected boolean isAddedToEnergyNet = false;
 	public boolean[] renderSides = new boolean[6];
 	
@@ -24,6 +24,15 @@ public class TileWire extends TileEntity implements IConductor{
     	width=BlockWire.renderingWidthList[meta];
     	textureString=BlockWire.subNames[meta];
     }
+    
+	@Override
+	public void onClient2ServerUpdate(String field, Object value, short type) {}
+
+	@Override
+	public void onServer2ClientUpdate(String field, Object value, short type) {
+		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+		updateSides();
+	}
     
 	public void updateSides() {
 		ForgeDirection[] dirs = ForgeDirection.values();

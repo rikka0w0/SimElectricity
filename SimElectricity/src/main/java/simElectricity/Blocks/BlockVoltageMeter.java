@@ -19,7 +19,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
-public class BlockQuantumGenerator extends BlockContainer {
+public class BlockVoltageMeter extends BlockContainer {
 	private IIcon[] iconBuffer = new IIcon[6];
 	
     @SideOnly(Side.CLIENT)
@@ -35,30 +35,30 @@ public class BlockQuantumGenerator extends BlockContainer {
     	if(player.isSneaking())
     		return false;
     	
-    	if(!(te instanceof TileQuantumGenerator))
+    	if(!(te instanceof TileVoltageMeter))
     		return false;
     	
     	player.openGui(mod_SimElectricity.instance, 0, world, x, y, z);
     	return true;
     }
     
-    public BlockQuantumGenerator() {
+    public BlockVoltageMeter() {
 		super(Material.rock);
 		setHardness(2.0F);
 		setResistance(5.0F);
-		setBlockName("sime:QuantumGenerator");
+		setBlockName("sime:VoltageMeter");
 		setCreativeTab(Util.SETab);
 	}
 
 	@Override
     @SideOnly(Side.CLIENT)
     public void registerBlockIcons(IIconRegister r){
-    	iconBuffer[0] = r.registerIcon("simElectricity:IndustrialDevice_Side");
-    	iconBuffer[1] = r.registerIcon("simElectricity:QuantumGenerator_Side");
-    	iconBuffer[2] = r.registerIcon("simElectricity:QuantumGenerator_Front");
-    	iconBuffer[3] = r.registerIcon("simElectricity:QuantumGenerator_Side");
-    	iconBuffer[4] = r.registerIcon("simElectricity:QuantumGenerator_Side");
-    	iconBuffer[5] = r.registerIcon("simElectricity:QuantumGenerator_Side");
+    	iconBuffer[0] = r.registerIcon("simElectricity:VoltageMeter_Side");
+    	iconBuffer[1] = r.registerIcon("simElectricity:VoltageMeter_Side");
+    	iconBuffer[2] = r.registerIcon("simElectricity:VoltageMeter_Back");
+    	iconBuffer[3] = r.registerIcon("simElectricity:VoltageMeter_Front");
+    	iconBuffer[4] = r.registerIcon("simElectricity:VoltageMeter_Side");
+    	iconBuffer[5] = r.registerIcon("simElectricity:VoltageMeter_Side");
     }
 
 	
@@ -68,27 +68,27 @@ public class BlockQuantumGenerator extends BlockContainer {
     	int blockMeta = world.getBlockMetadata(x, y, z);
     	TileEntity te=world.getTileEntity(x, y, z);
     	
-    	if(!(te instanceof TileQuantumGenerator))
+    	if(!(te instanceof TileVoltageMeter))
     		return iconBuffer[0];
     	
-    	//System.out.println(((TileQuantumGenerator)te).getFunctionalSide());
-    	return iconBuffer[Util.getTextureOnSide(side, ((TileQuantumGenerator)te).getFunctionalSide())];
+    	//System.out.println(((TileVoltageMeter)te).getFunctionalSide());
+    	return iconBuffer[Util.getTextureOnSide(side, ((TileVoltageMeter)te).getFunctionalSide())];
 	}
 	
     @SideOnly(Side.CLIENT)
    	@Override
    	public IIcon getIcon(int side, int meta) {
-    	return iconBuffer[Util.getTextureOnSide(side, ForgeDirection.WEST)];
+    	return iconBuffer[Util.getTextureOnSide(side, ForgeDirection.EAST)];
    	}
     
     @Override
     public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase player, ItemStack stack) {       
         TileEntity te = world.getTileEntity(x, y, z);
         
-        if (!(te instanceof TileQuantumGenerator))
+        if (!(te instanceof TileVoltageMeter))
         	return;
         
-        ((TileQuantumGenerator)te).functionalSide=Util.getPlayerSight(player).getOpposite();
+        ((TileVoltageMeter)te).functionalSide=Util.getPlayerSight(player);
         
     	if (world.isRemote)
     		return;
@@ -102,7 +102,7 @@ public class BlockQuantumGenerator extends BlockContainer {
      	if (world.isRemote)
     		return;    	
     	TileEntity te = world.getTileEntity(x, y, z);
-    	if (!(te instanceof TileQuantumGenerator))
+    	if (!(te instanceof TileVoltageMeter))
     		return;
     	Util.updateTileEntityField(te, "functionalSide");   	
     }
@@ -118,7 +118,7 @@ public class BlockQuantumGenerator extends BlockContainer {
     }
 	
 	@Override
-	public TileEntity createNewTileEntity(World var1, int var2) {return new TileQuantumGenerator();}
+	public TileEntity createNewTileEntity(World var1, int var2) {return new TileVoltageMeter();}
 	
 	@Override
 	public int damageDropped(int par1) {return par1;}

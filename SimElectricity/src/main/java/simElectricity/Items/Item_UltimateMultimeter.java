@@ -42,6 +42,7 @@ public class Item_UltimateMultimeter extends Item{
     		float outputVoltage=0;
     		
     		
+    		output("-----------------------");  
     		if (te instanceof IEnergyTile){
     			IEnergyTile ps=(IEnergyTile) te;
     			if (((IEnergyTile) te).getOutputVoltage()==0)
@@ -61,17 +62,17 @@ public class Item_UltimateMultimeter extends Item{
     		if (te instanceof IEnergyTile)
     			output("FunctionalSide: "+ ((IEnergyTile)te).getFunctionalSide().toString());
     		if (te instanceof IEnergyTile&&outputVoltage>0)
-    			output("Internal resistance: "+String.valueOf(te.getResistance()));  
+    			output("Internal resistance: "+String.valueOf(te.getResistance())+"¦¸");  
     		else	
-    			output("Resistance: "+String.valueOf(te.getResistance()));  
+    			output("Resistance: "+String.valueOf(te.getResistance())+"¦¸");  
     		if (te instanceof IEnergyTile){
-    			output("Current: "+String.valueOf(Util.getCurrent((IEnergyTile) te))); 
-    			output("Power consumed: "+String.valueOf(Util.getPower((IEnergyTile) te))); 
+    			output("Current: "+String.valueOf(Util.getCurrent((IEnergyTile) te))+"A"); 
+    			output("Power rate: "+String.valueOf(Util.getPower((IEnergyTile) te))+"W"); 
     		}
-    		output("Voltage: "+String.valueOf(voltage));    	
+    		output("Voltage: "+String.valueOf(voltage)+"V");    	
     		if(outputVoltage>0) //Energy Source
-    			output("Internal voltage: "+String.valueOf(outputVoltage));  
-    		output("-----------------------");  
+    			output("Internal voltage: "+String.valueOf(outputVoltage)+"V");  
+    		
     		
     		return true;
     	}else{

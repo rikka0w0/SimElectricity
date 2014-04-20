@@ -1,20 +1,17 @@
 package simElectricity.Blocks;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import simElectricity.API.*;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.ForgeDirection;
+import simElectricity.API.IEnergyTile;
+import simElectricity.API.ISyncPacketHandler;
+import simElectricity.API.Util;
 
-public class TileQuantumGenerator extends TileEntity implements IEnergyTile,ISyncPacketHandler{
+public class TileVoltageMeter extends TileEntity implements IEnergyTile,ISyncPacketHandler{
 	public ForgeDirection functionalSide=ForgeDirection.NORTH;
 	protected boolean isAddedToEnergyNet = false;
 	
-	public float outputVoltage=12;
-	public float outputResistance=1;
-	
+	public float voltage=0;
 	
 	@Override
 	public void onServer2ClientUpdate(String field, Object value, short type) {
@@ -23,10 +20,7 @@ public class TileQuantumGenerator extends TileEntity implements IEnergyTile,ISyn
 	}
 	
 	@Override
-	public void onClient2ServerUpdate(String field, Object value, short type) {
-		if(field.contains("outputVoltage"))	
-			Util.postTileChangeEvent(this);
-	}
+	public void onClient2ServerUpdate(String field, Object value, short type) {}
 	
 	@Override
 	public void updateEntity() {
@@ -48,7 +42,6 @@ public class TileQuantumGenerator extends TileEntity implements IEnergyTile,ISyn
     	super.readFromNBT(tagCompound);
     	
     	functionalSide=Util.byte2Direction(tagCompound.getByte("functionalSide"));
-    	outputVoltage=tagCompound.getFloat("outputVoltage");
     }
     
     @Override
@@ -56,11 +49,10 @@ public class TileQuantumGenerator extends TileEntity implements IEnergyTile,ISyn
     	super.writeToNBT(tagCompound);
     	
     	tagCompound.setByte("functionalSide", Util.direction2Byte(functionalSide));
-    	tagCompound.setFloat("outputVoltage", outputVoltage);
     }
 	
     @Override
-	public float getResistance() {return outputResistance;}
+	public float getResistance() {return 1000000;}
 
 	@Override
 	public void onOverloaded() {}
@@ -69,7 +61,7 @@ public class TileQuantumGenerator extends TileEntity implements IEnergyTile,ISyn
 	public int getMaxPowerDissipation() {return 0;}
 
 	@Override
-	public float getOutputVoltage() {return outputVoltage;}
+	public float getOutputVoltage() {return 0;}
 
 	@Override
 	public float getMaxSafeVoltage() {return 0;}

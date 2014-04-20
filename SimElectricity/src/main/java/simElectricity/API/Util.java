@@ -3,41 +3,80 @@ package simElectricity.API;
 import simElectricity.EnergyNet;
 import simElectricity.mod_SimElectricity;
 import simElectricity.Network.PacketTileEntityFieldUpdate;
+import net.minecraft.client.Minecraft;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.MathHelper;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.ForgeDirection;
 
 public class Util {
-	//Creative Tab for SimElectricity project
+	/** Creative Tab for SimElectricity project */
 	public static CreativeTabs SETab;
 	
-	//Internal use only! [side][facing]
-	public static byte[][] sideAndFacingToSpriteOffset = new byte[][]{
-            {
-                3, 2, 0, 0, 0, 0
-            }, {
-                2, 3, 1, 1, 1, 1
-            }, {
-                1, 1, 3, 2, 5, 4
-            }, {
-                0, 0, 2, 3, 4, 5
-            }, {
-                4, 5, 4, 5, 3, 2
-            }, {
-                5, 4, 5, 4, 2, 3
-            }
-    };
+	//Energy net-------------------------------------------------------------------------------------------------------------------------------
+	/** Post a TileAttachEvent for a tileEntity */
+	public static void postTileAttachEvent(TileEntity te){MinecraftForge.EVENT_BUS.post(new TileAttachEvent(te));}
+	/** Post a TileChangeEvent for a tileEntity */
+	public static void postTileChangeEvent(TileEntity te){MinecraftForge.EVENT_BUS.post(new TileChangeEvent(te));}
+	/** Post a TileDetachEvent for a tileEntity */
+	public static void postTileDetachEvent(TileEntity te){MinecraftForge.EVENT_BUS.post(new TileDetachEvent(te));}
 	
-	public static void scheduleBlockUpdate(TileEntity te){
-		scheduleBlockUpdate(te,10);
+	/** Calculate the consumed power for a given EnergyTile*/
+	public static float getPower(IEnergyTile Tile){
+		if(Tile.getOutputVoltage()>0){            //Energy Source
+			return ((Tile.getOutputVoltage()-getVoltage(Tile))*(Tile.getOutputVoltage()-getVoltage(Tile)))/Tile.getResistance(); 
+		}else{                                    //Energy Sink
+			return getVoltage(Tile)*getVoltage(Tile)/Tile.getResistance();    				
+		}
+	}
+
+	/** Calculate the input/output for a given EnergyTile*/
+	public static float getCurrent(IEnergyTile Tile){
+		if(Tile.getOutputVoltage()>0){            //Energy Source
+			return (Tile.getOutputVoltage()-getVoltage(Tile))/Tile.getResistance(); 
+		}else{                                    //Energy Sink
+			return getVoltage(Tile)/Tile.getResistance();    				
+		}
 	}
 	
+	/** Calculate the volage of a given EnergyTile RELATIVE TO GROUND! */
+	public static float getVoltage(IBaseComponent Tile){
+		if (EnergyNet.getForWorld(((TileEntity)Tile).getWorldObj()).voltageCache.containsKey(Tile))
+			return EnergyNet.getForWorld(((TileEntity)Tile).getWorldObj()).voltageCache.get(Tile);
+		else
+			return 0;
+	}
+	
+	//Network & Sync------------------------------------------------------------------------------------------------------------------------
+	/** Update a client tileEntity field from the server */
+	public static void updateTileEntityField(TileEntity te,String field){
+		mod_SimElectricity.instance.packetPipeline.sendToDimension(new PacketTileEntityFieldUpdate(te,field),te.getWorldObj().getWorldInfo().getVanillaDimension());
+	}
+	
+	/** Update a server tileEntity field from a client */
+	public static void updateTileEntityFieldToServer(TileEntity te,String field){
+		mod_SimElectricity.instance.packetPipeline.sendToServer(new PacketTileEntityFieldUpdate(te,field));
+	}
+	
+	//Util
+	/** Post some text in chat box(Other player cannot see it) */
+    public void chat(String text){
+    	Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(text));
+    }
+	
+	//Facing and Rendering------------------------------------------------------------------------------------------------------------------
+	/** Update a block rendering after 10 ticks */
+	public static void scheduleBlockUpdate(TileEntity te){ scheduleBlockUpdate(te,10);}
+	
+	/** Update a block rendering after some ticks */
 	public static void scheduleBlockUpdate(TileEntity te,int time){
 		te.getWorldObj().scheduleBlockUpdate(te.xCoord, te.yCoord, te.zCoord, te.getWorldObj().getBlock(te.xCoord, te.yCoord, te.zCoord), time);
 	}
 	
+	/** Get the texture index for a given side with a rotation */
 	public static int getTextureOnSide(int side,ForgeDirection direction){
 		switch (direction){
         case NORTH:
@@ -57,6 +96,7 @@ public class Util {
         }
 	}
 	
+	/** Return which direction the player is looking at */
 	public static ForgeDirection getPlayerSight(EntityLivingBase player){
         int heading = MathHelper.floor_double((double)(player.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3;
         int pitch = Math.round(player.rotationPitch);
@@ -81,6 +121,7 @@ public class Util {
         }
 	}
 	
+	/** Get a ForgeDirection from a byte, used in network packets */
 	public static ForgeDirection byte2Direction(byte byteData){
         switch (byteData){
         case 2:
@@ -100,6 +141,7 @@ public class Util {
         }		
 	}
 	
+	/** Convert a ForgeDirection to a byte, used in network packets */
 	public static byte direction2Byte(ForgeDirection direction){
         switch (direction){
         case NORTH:
@@ -119,30 +161,13 @@ public class Util {
         }
 	}
 	
-	public static float getPower(IEnergyTile Tile){
-		if(Tile.getOutputVoltage()>0){//Energy Source
-			return ((Tile.getOutputVoltage()-getVoltage(Tile))*(Tile.getOutputVoltage()-getVoltage(Tile)))/Tile.getResistance(); 
-		}else{//Energy Sink
-			return getVoltage(Tile)*getVoltage(Tile)/Tile.getResistance();    				
-		}
-	}
-
-	public static float getCurrent(IEnergyTile Tile){
-		if(Tile.getOutputVoltage()>0){//Energy Source
-			return (Tile.getOutputVoltage()-getVoltage(Tile))/Tile.getResistance(); 
-		}else{//Energy Sink
-			return getVoltage(Tile)/Tile.getResistance();    				
-		}
-	}
-	
-	public static float getVoltage(IBaseComponent Tile){
-		if (EnergyNet.getForWorld(((TileEntity)Tile).getWorldObj()).voltageCache.containsKey(Tile))
-			return EnergyNet.getForWorld(((TileEntity)Tile).getWorldObj()).voltageCache.get(Tile);
-		else
-			return 0;
-	}
-	
-	public static void updateTileEntityField(TileEntity te,String field){
-		mod_SimElectricity.instance.packetPipeline.sendToDimension(new PacketTileEntityFieldUpdate(te,field),te.getWorldObj().getWorldInfo().getVanillaDimension());
-	}
+	/** Internal use only! [side][facing] */
+	public static byte[][] sideAndFacingToSpriteOffset = new byte[][]{
+            {3, 2, 0, 0, 0, 0}, 
+            {2, 3, 1, 1, 1, 1}, 
+            {1, 1, 3, 2, 5, 4}, 
+            {0, 0, 2, 3, 4, 5}, 
+            {4, 5, 4, 5, 3, 2}, 
+            {5, 4, 5, 4, 2, 3}
+    };
 }

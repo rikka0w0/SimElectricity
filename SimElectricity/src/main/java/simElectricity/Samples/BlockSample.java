@@ -132,7 +132,7 @@ public class BlockSample extends BlockContainer {
 		setHardness(2.0F);
 		setResistance(5.0F);
 		setBlockName("sime:SESample");
-		setCreativeTab(CreativeTabs.tabRedstone);
+		setCreativeTab(Util.SETab);
 	}
 
     @Override

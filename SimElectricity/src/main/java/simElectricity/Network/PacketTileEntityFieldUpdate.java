@@ -2,6 +2,7 @@ package simElectricity.Network;
 
 import java.lang.reflect.Field;
 
+import simElectricity.API.ISyncPacketHandler;
 import simElectricity.API.Util;
 import simElectricity.Blocks.TileWire;
 
@@ -14,14 +15,19 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 /**This packet performs server->client side synchronization~*/
 public class PacketTileEntityFieldUpdate extends AbstractPacket {
-	public PacketTileEntityFieldUpdate(){}
-
-	
 	int x,z,hash;
 	short y;
 	Short type,fieldLength;
 	String field;
 	Object value;
+	
+	public PacketTileEntityFieldUpdate(){}
+	@Override
+	public void handleClientSide(EntityPlayer player) {handle(player,true);}
+	@Override
+	public void handleServerSide(EntityPlayer player) {handle(player,false);}
+	
+	/*-------------------------------------------------------------------------------------------------------------------*/
 	
 	public PacketTileEntityFieldUpdate(TileEntity te, String _field){		
 		if (te==null)
@@ -47,12 +53,15 @@ public class PacketTileEntityFieldUpdate extends AbstractPacket {
 				type=1;
 				value=f.getInt(te);
 			}
-			else if(f.getType()==ForgeDirection.class){  //ForgeDirection
+			else if(f.getType()==ForgeDirection.class){  //ForgeDirection(Usually used by machines)
 				type=2;
 				value=Util.direction2Byte((ForgeDirection)f.get(te));
-			}else if(f.getType()==boolean[].class){  //Boolean group
+			}else if(f.getType()==boolean[].class){  //Boolean group(Usually used by wires)
 				type=3;
 				value=f.get(te);
+			}else if(f.getType()==float.class){  //Float
+				type=4;
+				value=f.getFloat(te);
 			}
 			else{
 				System.out.println(te.toString()+" is trying synchronous a unknown type field: "+_field);
@@ -93,6 +102,9 @@ public class PacketTileEntityFieldUpdate extends AbstractPacket {
 			buffer.writeBoolean(((boolean[]) value)[4]);
 			buffer.writeBoolean(((boolean[]) value)[5]);
 			break;
+		case 4:
+			buffer.writeFloat((Float) value);
+			break;
 		}
 	}
 
@@ -129,16 +141,14 @@ public class PacketTileEntityFieldUpdate extends AbstractPacket {
 			temp[5]=buffer.readBoolean();
 			value=temp;
 			break;
+		case 4:
+			value=buffer.readFloat();
+			break;
 		}
 	}
 
 	
-	@Override
-	public void handleClientSide(EntityPlayer player) {
-		//System.out.print(field);
-		//System.out.print("=");
-		//System.out.println(value);
-		
+	public void handle(EntityPlayer player, boolean isClient) {
 		try{
 			World world = player.worldObj;
 			TileEntity te = world.getTileEntity(x, y, z);
@@ -147,7 +157,7 @@ public class PacketTileEntityFieldUpdate extends AbstractPacket {
 				return;
 			if (te.getClass().hashCode()!=hash)
 				return;
-			if(!world.isRemote)
+			if(world.isRemote!=isClient)
 				return;
 			
 			Field f=te.getClass().getField(field);
@@ -160,22 +170,24 @@ public class PacketTileEntityFieldUpdate extends AbstractPacket {
 				break;		
 			case 2:
 				f.set(te, Util.byte2Direction((Byte) value));
-				world.markBlockForUpdate(x, y, z);
 				break;
 			case 3:
 				f.set(te, value);
-				world.markBlockForUpdate(x, y, z);
-				((TileWire)(world.getTileEntity(x, y, z))).updateSides();
 				break;
+			case 4:
+				f.setFloat(te, (Float) value);
+				break;
+			}
+			
+			if(isClient){ //Client is handling
+				if(te instanceof ISyncPacketHandler)
+					((ISyncPacketHandler)te).onServer2ClientUpdate(field,value,type);				
+			}else{ //Server is handling
+				if(te instanceof ISyncPacketHandler)
+					((ISyncPacketHandler)te).onClient2ServerUpdate(field,value,type);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-
-	@Override
-	public void handleServerSide(EntityPlayer player) {
-		//Do nothing here
-	}
-
 }

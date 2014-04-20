@@ -1,0 +1,22 @@
+[
+{
+  "modid": "mod_SimElectricity",
+  "name": "SimElectricity",
+  "description": "Providing a electricity energy network based on real world circuit simulation~",
+  "version": "${version}",
+  "mcversion": ${mcversion}",
+  "url": "http://www.baidu.com",
+  "updateUrl": "",
+  "authors": [
+    "Rikka0_0",
+    "Aurora"
+  ],
+  "credits": "",
+  "logoFile": "",
+  "screenshots": [
+  ],
+  "parent":"",
+  "dependencies": [ "JGraph"
+  ]
+}
+]
