@@ -25,16 +25,16 @@ public class Item_UltimateMultimeter extends Item{
 		setCreativeTab(Util.SETab);
 	}
 
-	
+	@Override
 	@SideOnly(Side.CLIENT)
     public void registerIcons(IIconRegister r)
     {
     	itemIcon=r.registerIcon("simElectricity:Item_UltimateMultimeter");
     }
-    
-    public boolean onItemUse(ItemStack item, EntityPlayer player, World world, int x, int y, int z, int par7, float par8, float par9, float par10)
-    {
-    	if((world.getTileEntity(x, y, z) instanceof IBaseComponent)&(!world.isRemote)){
+	
+	@Override
+    public boolean onItemUse(ItemStack item, EntityPlayer player, World world, int x, int y, int z, int par7, float par8, float par9, float par10){
+		if((world.getTileEntity(x, y, z) instanceof IBaseComponent)&(!world.isRemote)){
     		IBaseComponent te=(IBaseComponent) world.getTileEntity(x, y, z);
     		float voltage=Util.getVoltage(te);
     		
@@ -42,7 +42,7 @@ public class Item_UltimateMultimeter extends Item{
     		float outputVoltage=0;
     		
     		
-    		output("-----------------------");  
+    		Util.chat("-----------------------");  
     		if (te instanceof IEnergyTile){
     			IEnergyTile ps=(IEnergyTile) te;
     			if (((IEnergyTile) te).getOutputVoltage()==0)
@@ -58,30 +58,25 @@ public class Item_UltimateMultimeter extends Item{
     			tileType="Energy Conductor";
     		}
     		//Print out information here
-    		output("Type: "+tileType);  
+    		Util.chat("Type: "+tileType);  
     		if (te instanceof IEnergyTile)
-    			output("FunctionalSide: "+ ((IEnergyTile)te).getFunctionalSide().toString());
+    			Util.chat("FunctionalSide: "+ ((IEnergyTile)te).getFunctionalSide().toString());
     		if (te instanceof IEnergyTile&&outputVoltage>0)
-    			output("Internal resistance: "+String.valueOf(te.getResistance())+"次");  
+    			Util.chat("Internal resistance: "+String.valueOf(te.getResistance())+"次");  
     		else	
-    			output("Resistance: "+String.valueOf(te.getResistance())+"次");  
+    			Util.chat("Resistance: "+String.valueOf(te.getResistance())+"次");  
     		if (te instanceof IEnergyTile){
-    			output("Current: "+String.valueOf(Util.getCurrent((IEnergyTile) te))+"A"); 
-    			output("Power rate: "+String.valueOf(Util.getPower((IEnergyTile) te))+"W"); 
+    			Util.chat("Current: "+String.valueOf(Util.getCurrent((IEnergyTile) te))+"A"); 
+    			Util.chat("Power rate: "+String.valueOf(Util.getPower((IEnergyTile) te))+"W"); 
     		}
-    		output("Voltage: "+String.valueOf(voltage)+"V");    	
+    		Util.chat("Voltage: "+String.valueOf(voltage)+"V");    	
     		if(outputVoltage>0) //Energy Source
-    			output("Internal voltage: "+String.valueOf(outputVoltage)+"V");  
+    			Util.chat("Internal voltage: "+String.valueOf(outputVoltage)+"V");  
     		
     		
     		return true;
     	}else{
     		return false;
     	}
-        
-    }
-    
-    public void output(String text){
-    	Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(text));
     }
 }

@@ -5,6 +5,7 @@ import simElectricity.Blocks.*;
 import simElectricity.Items.*;
 import simElectricity.Network.PacketPipeline;
 import simElectricity.Network.PacketTileEntityFieldUpdate;
+import simElectricity.Network.PacketTileEntitySideUpdate;
 import simElectricity.Samples.*;
 
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -45,9 +46,6 @@ public class mod_SimElectricity{
 		MinecraftForge.EVENT_BUS.register(globalEventHandler);
 		FMLCommonHandler.instance().bus().register(globalEventHandler);
 		
-		//Initialize energy network
-		EnergyNet.initialize();
-		
 		//CreativeTab
 		final BlockQuantumGenerator QuantumGenerator=new BlockQuantumGenerator();
 		Util.SETab= new CreativeTabs("SimElectricity") {
@@ -65,6 +63,8 @@ public class mod_SimElectricity{
 		
 		//Register Items
 		GameRegistry.registerItem(new Item_UltimateMultimeter(), "sime:Item_UltimateMultimeter");
+		GameRegistry.registerItem(new Item_Glove(), "sime:Item_Glove");
+		GameRegistry.registerItem(new Item_Wrench(), "sime:Item_Wrench");
 
 		GameRegistry.registerBlock(new BlockSample(), ItemBlockSample.class, "Sample");
 	}
@@ -94,6 +94,7 @@ public class mod_SimElectricity{
 	public void postInitialise(FMLPostInitializationEvent evt) {
 		//Register network packets
 	    packetPipeline.registerPacket(PacketTileEntityFieldUpdate.class);
+	    packetPipeline.registerPacket(PacketTileEntitySideUpdate.class);
 	    packetPipeline.postInitialise();
 
 	}

@@ -81,4 +81,10 @@ public class TileQuantumGenerator extends TileEntity implements IEnergyTile,ISyn
 
 	@Override
 	public ForgeDirection getFunctionalSide() {return functionalSide;}
+
+	@Override
+	public void setFunctionalSide(ForgeDirection newFunctionalSide) {}
+
+	@Override
+	public boolean canSetFunctionalSide(ForgeDirection newFunctionalSide) {return false;}
 }

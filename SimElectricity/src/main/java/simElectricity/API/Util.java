@@ -3,6 +3,7 @@ package simElectricity.API;
 import simElectricity.EnergyNet;
 import simElectricity.mod_SimElectricity;
 import simElectricity.Network.PacketTileEntityFieldUpdate;
+import simElectricity.Network.PacketTileEntitySideUpdate;
 import net.minecraft.client.Minecraft;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
@@ -23,6 +24,8 @@ public class Util {
 	public static void postTileChangeEvent(TileEntity te){MinecraftForge.EVENT_BUS.post(new TileChangeEvent(te));}
 	/** Post a TileDetachEvent for a tileEntity */
 	public static void postTileDetachEvent(TileEntity te){MinecraftForge.EVENT_BUS.post(new TileDetachEvent(te));}
+	/** Post a TileRejoinEvent for a tileEntity */
+	public static void postTileRejoinEvent(TileEntity te){MinecraftForge.EVENT_BUS.post(new TileRejoinEvent(te));}
 	
 	/** Calculate the consumed power for a given EnergyTile*/
 	public static float getPower(IEnergyTile Tile){
@@ -61,9 +64,19 @@ public class Util {
 		mod_SimElectricity.instance.packetPipeline.sendToServer(new PacketTileEntityFieldUpdate(te,field));
 	}
 	
+	/** Update a tileEntity's facing on client side */
+	public static void updateTileEntityFacing(TileEntity te){
+		mod_SimElectricity.instance.packetPipeline.sendToDimension(new PacketTileEntitySideUpdate(te,(byte)0),te.getWorldObj().getWorldInfo().getVanillaDimension());
+	}
+	
+	/** Update a tileEntity's functional side on client side */
+	public static void updateTileEntityFunctionalSide(TileEntity te){
+		mod_SimElectricity.instance.packetPipeline.sendToDimension(new PacketTileEntitySideUpdate(te,(byte)1),te.getWorldObj().getWorldInfo().getVanillaDimension());
+	}	
+	
 	//Util
 	/** Post some text in chat box(Other player cannot see it) */
-    public void chat(String text){
+    public static void chat(String text){
     	Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(text));
     }
 	

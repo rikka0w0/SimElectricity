@@ -22,12 +22,6 @@ import net.minecraftforge.common.util.ForgeDirection;
 public class BlockVoltageMeter extends BlockContainer {
 	private IIcon[] iconBuffer = new IIcon[6];
 	
-    @SideOnly(Side.CLIENT)
-    @Override
-    public void randomDisplayTick(World world, int x, int y, int z, Random var5){
-    	//world.markBlockForUpdate(x,  y,  z);
-    }
-	
     @Override
     public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int i1, float f1, float f2, float f3){
     	TileEntity te = world.getTileEntity(x, y, z);
@@ -55,8 +49,8 @@ public class BlockVoltageMeter extends BlockContainer {
     public void registerBlockIcons(IIconRegister r){
     	iconBuffer[0] = r.registerIcon("simElectricity:VoltageMeter_Side");
     	iconBuffer[1] = r.registerIcon("simElectricity:VoltageMeter_Side");
-    	iconBuffer[2] = r.registerIcon("simElectricity:VoltageMeter_Back");
-    	iconBuffer[3] = r.registerIcon("simElectricity:VoltageMeter_Front");
+    	iconBuffer[2] = r.registerIcon("simElectricity:VoltageMeter_Front");
+    	iconBuffer[3] = r.registerIcon("simElectricity:VoltageMeter_Back");
     	iconBuffer[4] = r.registerIcon("simElectricity:VoltageMeter_Side");
     	iconBuffer[5] = r.registerIcon("simElectricity:VoltageMeter_Side");
     }
@@ -72,13 +66,13 @@ public class BlockVoltageMeter extends BlockContainer {
     		return iconBuffer[0];
     	
     	//System.out.println(((TileVoltageMeter)te).getFunctionalSide());
-    	return iconBuffer[Util.getTextureOnSide(side, ((TileVoltageMeter)te).getFunctionalSide())];
+    	return iconBuffer[Util.getTextureOnSide(side, ((TileVoltageMeter)te).getFacing())];
 	}
 	
     @SideOnly(Side.CLIENT)
    	@Override
    	public IIcon getIcon(int side, int meta) {
-    	return iconBuffer[Util.getTextureOnSide(side, ForgeDirection.EAST)];
+    	return iconBuffer[Util.getTextureOnSide(side, ForgeDirection.WEST)];
    	}
     
     @Override
@@ -88,13 +82,9 @@ public class BlockVoltageMeter extends BlockContainer {
         if (!(te instanceof TileVoltageMeter))
         	return;
         
-        ((TileVoltageMeter)te).functionalSide=Util.getPlayerSight(player);
-        
-    	if (world.isRemote)
-    		return;
-    	
-    	//Server side only!
-        Util.updateTileEntityField(te, "functionalSide");
+        //Both for server and client
+        ((TileVoltageMeter)te).setFacing(Util.getPlayerSight(player).getOpposite());
+        ((TileVoltageMeter)te).setFunctionalSide(Util.getPlayerSight(player));
     }	
     
     @Override
@@ -104,7 +94,8 @@ public class BlockVoltageMeter extends BlockContainer {
     	TileEntity te = world.getTileEntity(x, y, z);
     	if (!(te instanceof TileVoltageMeter))
     		return;
-    	Util.updateTileEntityField(te, "functionalSide");   	
+    	Util.updateTileEntityFacing(te);
+    	Util.updateTileEntityFunctionalSide(te); 	
     }
     
     @Override
@@ -114,7 +105,7 @@ public class BlockVoltageMeter extends BlockContainer {
     	
     	//Server side only!
     	TileEntity te = world.getTileEntity(x, y, z);
-    	Util.updateTileEntityField(te, "functionalSide");
+    	Util.updateTileEntityFacing(te);
     }
 	
 	@Override

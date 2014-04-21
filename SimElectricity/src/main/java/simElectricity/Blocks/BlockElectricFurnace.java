@@ -67,8 +67,8 @@ public class BlockElectricFurnace extends BlockContainer{
     public void registerBlockIcons(IIconRegister r){
     	iconBuffer[0] = r.registerIcon("simElectricity:ElectricFurnace_Bottom");
     	iconBuffer[1] = r.registerIcon("simElectricity:ElectricFurnace_Top");
-    	iconBuffer[2] = r.registerIcon("simElectricity:ElectricFurnace_Back");
-    	iconBuffer[3] = r.registerIcon("simElectricity:ElectricFurnace_Front");
+    	iconBuffer[2] = r.registerIcon("simElectricity:ElectricFurnace_Front");
+    	iconBuffer[3] = r.registerIcon("simElectricity:ElectricFurnace_Back");
     	iconBuffer[4] = r.registerIcon("simElectricity:ElectricFurnace_Side");
     	iconBuffer[5] = r.registerIcon("simElectricity:ElectricFurnace_Side");
     	iconBuffer[6] = r.registerIcon("simElectricity:ElectricFurnace_Front_W");
@@ -84,8 +84,8 @@ public class BlockElectricFurnace extends BlockContainer{
     	if(!(te instanceof TileElectricFurnace))
     		return iconBuffer[0];
     	
-    	int iconIndex=Util.getTextureOnSide(side, ((TileElectricFurnace)te).getFunctionalSide());
-    	if(((TileElectricFurnace)te).isWorking&&iconIndex==3)
+    	int iconIndex=Util.getTextureOnSide(side, ((TileElectricFurnace)te).getFacing());
+    	if(((TileElectricFurnace)te).isWorking&&iconIndex==2)
     		iconIndex=6;
     	
     	return iconBuffer[iconIndex];
@@ -94,7 +94,7 @@ public class BlockElectricFurnace extends BlockContainer{
     @SideOnly(Side.CLIENT)
    	@Override
    	public IIcon getIcon(int side, int meta) {
-    	return iconBuffer[Util.getTextureOnSide(side, ForgeDirection.EAST)];
+    	return iconBuffer[Util.getTextureOnSide(side, ForgeDirection.WEST)];
    	}
     
     @Override
@@ -104,13 +104,9 @@ public class BlockElectricFurnace extends BlockContainer{
         if (!(te instanceof TileElectricFurnace))
         	return;
         
-        ((TileElectricFurnace)te).functionalSide=Util.getPlayerSight(player);
-        
-    	if (world.isRemote)
-    		return;
-    	
-    	//Server side only!
-        Util.updateTileEntityField(te, "functionalSide");
+        //Both for server and client
+        ((TileElectricFurnace)te).setFacing(Util.getPlayerSight(player).getOpposite());
+        ((TileElectricFurnace)te).setFunctionalSide(Util.getPlayerSight(player));
     }	
     
     @Override
@@ -120,7 +116,8 @@ public class BlockElectricFurnace extends BlockContainer{
     	TileEntity te = world.getTileEntity(x, y, z);
     	if (!(te instanceof TileElectricFurnace))
     		return;
-    	Util.updateTileEntityField(te, "functionalSide");   	
+    	Util.updateTileEntityFacing(te);
+    	Util.updateTileEntityFunctionalSide(te);
     }
     
     @Override
@@ -130,7 +127,7 @@ public class BlockElectricFurnace extends BlockContainer{
     	
     	//Server side only!
     	TileEntity te = world.getTileEntity(x, y, z);
-    	Util.updateTileEntityField(te, "functionalSide");
+    	Util.updateTileEntityFacing(te);
     }
 	
 	@Override

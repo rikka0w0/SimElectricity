@@ -247,7 +247,7 @@ public final class EnergyNet {
 					if(tile instanceof IEnergyTile){
 						IEnergyTile te=(IEnergyTile) tile;
 						if(te.getMaxSafeVoltage()!=0&&te.getMaxSafeVoltage()<energyNet.voltageCache.get(tile))
-							te.onOverVoltage();
+							te.onOverVoltage(); //Over voltage check
 					}
 				}	
 			}
@@ -257,24 +257,6 @@ public final class EnergyNet {
 	
 	/** Add a TileEntity to the energynet*/
 	public void addTileEntity(TileEntity te) {
-		if(!te.getWorldObj().blockExists(te.xCoord, te.yCoord, te.zCoord)){
-			System.out.println(te
-					+ " is added to the energy net too early!, aborting");
-			return;			
-		}
-		
-		if(te.isInvalid()){
-			System.out.println("Invalid tileentity " + te
-					+ " is trying to attach to energy network, aborting");
-			return;			
-		}
-		
-		if (!(te instanceof IBaseComponent)) {
-			System.out.println("Unacceptable tileentity " + te
-					+ " is trying to attach to energy network, aborting");
-			return;
-		}
-		
 		List<TileEntity> neighborList = neighborListOf(te);
 		
 		if(!tileEntityGraph.containsVertex((IBaseComponent) te))
@@ -287,9 +269,6 @@ public final class EnergyNet {
 		}
 
 		calc = true;
-		
-		System.out.println("Tileentity " + te
-				+ " is attached to energy network!");
 	}
 
 	/** Remove a TileEntiy from the energy net*/
@@ -297,15 +276,17 @@ public final class EnergyNet {
 		tileEntityGraph.removeVertex((IBaseComponent) te);
 		
 		calc = true;
-		
-		System.out.println("Tileentity " + te + " is detach to energy network!");
 	}
 
+	/** Refresh a node information for a tile which ALREADY attached to the energy network */
+	public void rejoinTileEntity(TileEntity te){
+		removeTileEntity(te);
+		addTileEntity(te);
+	}
+	
 	/** Mark the energy net for updating in next tick*/
 	public void markForUpdate(TileEntity te){
 		calc = true;
-		//TODO:
-		System.out.println("Tileentity " + te + " cause the energy network to update!");
 	}
 	
 	/** Return a instance of energynet for a specific world*/
@@ -314,38 +295,8 @@ public final class EnergyNet {
 		return worldData.energyNet;
 	}
 
-	/** Initialize the energy network, basically register some forge events */
-	public static void initialize() {
-		new EventHandler();
-	}
-
 	/** Creation of the energy network*/
 	public EnergyNet() {
 		System.out.println("EnergyNet create");
-	}
-	
-	/** Response to forge events */
-	public static class EventHandler {
-		public EventHandler() {
-			MinecraftForge.EVENT_BUS.register(this);
-		}
-
-		@SubscribeEvent
-		public void onAttachEvent(TileAttachEvent event) {
-			EnergyNet.getForWorld(event.energyTile.getWorldObj()).addTileEntity(
-					(TileEntity) event.energyTile);
-		}
-
-		@SubscribeEvent
-		public void onTileDetach(TileDetachEvent event) {
-			EnergyNet.getForWorld(event.energyTile.getWorldObj()).removeTileEntity(
-					(TileEntity) event.energyTile);
-		}
-
-		@SubscribeEvent
-		public void onTileChange(TileChangeEvent event) {
-			EnergyNet.getForWorld(event.energyTile.getWorldObj()).markForUpdate(
-					(TileEntity) event.energyTile);
-		}
 	}
 }

@@ -18,6 +18,8 @@ public class TileWire extends TileEntity implements IConductor,ISyncPacketHandle
     @SideOnly(Side.CLIENT)
     public String textureString;
 	
+    public TileWire(){}
+    
     public TileWire(int meta){
     	super();
     	resistance=BlockWire.resistanceList[meta];

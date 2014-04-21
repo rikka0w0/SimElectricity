@@ -85,4 +85,16 @@ public class TileSampleResistor extends TileSampleEnergyTile{
 	public ForgeDirection getFunctionalSide() {
 		return functionalSide;
 	}
+
+	@Override
+	public void setFunctionalSide(ForgeDirection newFunctionalSide) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public boolean canSetFunctionalSide(ForgeDirection newFunctionalSide) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

@@ -53,7 +53,7 @@ public class BlockQuantumGenerator extends BlockContainer {
 	@Override
     @SideOnly(Side.CLIENT)
     public void registerBlockIcons(IIconRegister r){
-    	iconBuffer[0] = r.registerIcon("simElectricity:IndustrialDevice_Side");
+    	iconBuffer[0] = r.registerIcon("simElectricity:QuantumGenerator_Side");
     	iconBuffer[1] = r.registerIcon("simElectricity:QuantumGenerator_Side");
     	iconBuffer[2] = r.registerIcon("simElectricity:QuantumGenerator_Front");
     	iconBuffer[3] = r.registerIcon("simElectricity:QuantumGenerator_Side");

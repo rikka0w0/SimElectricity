@@ -11,9 +11,7 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.*;
 
-public class TileElectricFurnace extends TileEntity implements IEnergyTile,ISyncPacketHandler,ISidedInventory{
-	public ForgeDirection functionalSide=ForgeDirection.NORTH;
-	protected boolean isAddedToEnergyNet = false;
+public class TileElectricFurnace extends TileStandardSEMachine implements ISyncPacketHandler,ISidedInventory{
 	public boolean isWorking=false;
 	public int progress=0;
 	public float resistance=10;
@@ -31,11 +29,7 @@ public class TileElectricFurnace extends TileEntity implements IEnergyTile,ISync
 	
 	@Override
 	public void updateEntity() {
-		if (!worldObj.isRemote && !isAddedToEnergyNet) {
-			Util.postTileAttachEvent(this);
-			this.isAddedToEnergyNet=true;
-			Util.scheduleBlockUpdate(this);
-		}
+		super.updateEntity();
 		
 		if(worldObj.isRemote)
 			return;	
@@ -95,26 +89,10 @@ public class TileElectricFurnace extends TileEntity implements IEnergyTile,ISync
 		return r;
 	}
 	
-	@Override
-	public void onServer2ClientUpdate(String field, Object value, short type) {
-		if(field.contains("functionalSide")||field.contains("isWorking"))	
-			worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-	}
-	
-	@Override
-	public void onClient2ServerUpdate(String field, Object value, short type) {}
-	
-	@Override
-	public void invalidate() {
-		if (!worldObj.isRemote & isAddedToEnergyNet)
-			Util.postTileDetachEvent(this);
-	}
-	
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
     	super.readFromNBT(tagCompound);
     	
-    	functionalSide=Util.byte2Direction(tagCompound.getByte("functionalSide"));
     	isWorking=tagCompound.getBoolean("isWorking");
     	energyStored=tagCompound.getFloat("energyStored");
     	
@@ -133,7 +111,6 @@ public class TileElectricFurnace extends TileEntity implements IEnergyTile,ISync
     public void writeToNBT(NBTTagCompound tagCompound) {
     	super.writeToNBT(tagCompound);
     	
-    	tagCompound.setByte("functionalSide", Util.direction2Byte(functionalSide));
     	tagCompound.setBoolean("isWorking", isWorking);
     	tagCompound.setFloat("energyStored", energyStored);
     	
@@ -149,10 +126,20 @@ public class TileElectricFurnace extends TileEntity implements IEnergyTile,ISync
         }
         tagCompound.setTag("Inventory", itemList);
     }
+    
+	//---------------------------------------------------------------------------------------------------------
+	@Override
+	public void onServer2ClientUpdate(String field, Object value, short type) {
+		if(field.contains("isWorking"))	
+			worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+	}
+	
+	@Override
+	public void onClient2ServerUpdate(String field, Object value, short type) {}
 	
     @Override
 	public float getResistance() {return resistance;}
-
+    
 	@Override
 	public void onOverloaded() {}
 
@@ -169,9 +156,14 @@ public class TileElectricFurnace extends TileEntity implements IEnergyTile,ISync
 	public void onOverVoltage() {
 		worldObj.createExplosion(null, xCoord, yCoord, zCoord, 4F+Util.getVoltage(this)/getMaxSafeVoltage(), true);
 	}
-
+	
 	@Override
-	public ForgeDirection getFunctionalSide() {return functionalSide;}
+	public boolean canSetFacing(ForgeDirection newFacing) {
+		if(newFacing!=ForgeDirection.UP&&newFacing!=ForgeDirection.DOWN)
+			return true;
+		else
+			return false;
+	}
 	
 	//Inventory stuff--------------------------------------------------------------------------------
 	public ItemStack[] inv;

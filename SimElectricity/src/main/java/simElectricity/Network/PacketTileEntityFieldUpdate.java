@@ -13,7 +13,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
-/**This packet performs server->client side synchronization~*/
+/**This packet performs server->client side synchronization just for functional side and facing~*/
 public class PacketTileEntityFieldUpdate extends AbstractPacket {
 	int x,z,hash;
 	short y;
