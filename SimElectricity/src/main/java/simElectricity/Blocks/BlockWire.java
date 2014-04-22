@@ -44,13 +44,7 @@ public class BlockWire extends BlockContainer{
 		setCreativeTab(Util.SETab);
 	}
 	
-	@Override
-	public void onBlockDestroyedByExplosion(World world, int x, int y, int z, Explosion explosion){
-		
-	}
-	
 	public void onNeighborBlockChange(World world, int x, int y, int z, Block block) {
-		//Util.scheduleBlockUpdate(world.getTileEntity(x, y, z));
 		if (!world.isRemote)
 			Util.updateTileEntityField(world.getTileEntity(x, y, z), "renderSides"); 
 	}

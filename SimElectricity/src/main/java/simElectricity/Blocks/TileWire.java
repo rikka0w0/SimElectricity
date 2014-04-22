@@ -33,7 +33,7 @@ public class TileWire extends TileEntity implements IConductor,ISyncPacketHandle
 
 	@Override
 	public void onServer2ClientUpdate(String field, Object value, short type) {
-		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+		//worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 		updateSides();
 	}
     

@@ -14,8 +14,6 @@ import org.jgrapht.Graphs;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleGraph;
 
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-
 import simElectricity.API.*;
 
 public final class EnergyNet {

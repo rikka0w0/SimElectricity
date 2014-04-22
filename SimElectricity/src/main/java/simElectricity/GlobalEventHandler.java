@@ -1,11 +1,9 @@
 package simElectricity;
 
-import simElectricity.API.IBaseComponent;
-import simElectricity.API.TileAttachEvent;
-import simElectricity.API.TileChangeEvent;
-import simElectricity.API.TileDetachEvent;
-import simElectricity.API.TileRejoinEvent;
+import simElectricity.API.*;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.chunk.Chunk;
+import net.minecraftforge.event.world.ChunkWatchEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent.Phase;
@@ -26,6 +24,27 @@ public class GlobalEventHandler {
 			return;	
 		
 		EnergyNet.onTick(event.world);
+	}
+
+	//When a player see the chunk, update facing, functionalside, wire rendering
+	@SubscribeEvent
+	public void onChunkWatchEvent(ChunkWatchEvent.Watch event){
+	    Chunk chunk = event.player.worldObj.getChunkFromChunkCoords(event.chunk.chunkXPos, event.chunk.chunkZPos);
+
+	    for (Object tileEntity : chunk.chunkTileEntityMap.values()){
+	    	TileEntity te=(TileEntity) tileEntity;
+	    	if(te instanceof IEnergyTile)
+	    		Util.updateTileEntityFunctionalSide(te);
+	    	if(te instanceof ISidedFacing)
+	    		Util.updateTileEntityFacing(te);
+	    	if(te instanceof IConductor){
+	    		Util.scheduleBlockUpdate(te);
+	    		//Be extremely careful when update something on the edge of the chunk
+	    		if(te.xCoord%16==0||te.xCoord%16==1||te.xCoord%16==15||
+	    		   te.zCoord%16==0||te.zCoord%16==1||te.zCoord%16==15)
+	    			te.getWorldObj().notifyBlocksOfNeighborChange(te.xCoord, te.yCoord, te.zCoord, null);
+	    	}
+	    }
 	}
 	
 	//Energy net --------------------------------------------------------------------------------------------------------------
