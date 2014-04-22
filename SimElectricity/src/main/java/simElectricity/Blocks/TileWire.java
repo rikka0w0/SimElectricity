@@ -2,6 +2,7 @@ package simElectricity.Blocks;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraftforge.common.MinecraftForge;
@@ -83,6 +84,19 @@ public class TileWire extends TileEntity implements IConductor,ISyncPacketHandle
 		}
 	}
 
+    @Override
+    public void readFromNBT(NBTTagCompound tagCompound) {
+    	super.readFromNBT(tagCompound);
+    	
+    	resistance=tagCompound.getFloat("resistance");
+    }
+    
+    @Override
+    public void writeToNBT(NBTTagCompound tagCompound) {
+    	super.writeToNBT(tagCompound);
+    	
+    	tagCompound.setFloat("resistance", resistance);
+    }
 	
 	@Override
 	public float getResistance() {

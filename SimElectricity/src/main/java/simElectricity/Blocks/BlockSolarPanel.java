@@ -2,16 +2,14 @@ package simElectricity.Blocks;
 
 import java.util.Random;
 
-import simElectricity.mod_SimElectricity;
-import simElectricity.API.Util;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import simElectricity.API.Util;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
@@ -19,48 +17,27 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
-public class BlockQuantumGenerator extends BlockContainer {
+public class BlockSolarPanel extends BlockContainer{
 	private IIcon[] iconBuffer = new IIcon[6];
 	
-    @SideOnly(Side.CLIENT)
-    @Override
-    public void randomDisplayTick(World world, int x, int y, int z, Random var5){
-    	//world.markBlockForUpdate(x,  y,  z);
-    }
-	
-    @Override
-    public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int i1, float f1, float f2, float f3){
-    	TileEntity te = world.getTileEntity(x, y, z);
-    	
-    	if(player.isSneaking())
-    		return false;
-    	
-    	if(!(te instanceof TileQuantumGenerator))
-    		return false;
-    	
-    	player.openGui(mod_SimElectricity.instance, 0, world, x, y, z);
-    	return true;
-    }
-    
-    public BlockQuantumGenerator() {
+    public BlockSolarPanel() {
 		super(Material.rock);
 		setHardness(2.0F);
 		setResistance(5.0F);
-		setBlockName("sime:QuantumGenerator");
+		setBlockName("sime:SolarPanel");
 		setCreativeTab(Util.SETab);
 	}
-
+    
 	@Override
     @SideOnly(Side.CLIENT)
     public void registerBlockIcons(IIconRegister r){
-    	iconBuffer[0] = r.registerIcon("simElectricity:QuantumGenerator_Side");
-    	iconBuffer[1] = r.registerIcon("simElectricity:QuantumGenerator_Side");
-    	iconBuffer[2] = r.registerIcon("simElectricity:QuantumGenerator_Front");
-    	iconBuffer[3] = r.registerIcon("simElectricity:QuantumGenerator_Side");
-    	iconBuffer[4] = r.registerIcon("simElectricity:QuantumGenerator_Side");
-    	iconBuffer[5] = r.registerIcon("simElectricity:QuantumGenerator_Side");
+    	iconBuffer[0] = r.registerIcon("simElectricity:SolarPanel_Bottom");
+    	iconBuffer[1] = r.registerIcon("simElectricity:SolarPanel_Top");
+    	iconBuffer[2] = r.registerIcon("simElectricity:SolarPanel_Front");
+    	iconBuffer[3] = r.registerIcon("simElectricity:SolarPanel_Side");
+    	iconBuffer[4] = r.registerIcon("simElectricity:SolarPanel_Side");
+    	iconBuffer[5] = r.registerIcon("simElectricity:SolarPanel_Side");
     }
-
 	
     @SideOnly(Side.CLIENT)
 	@Override
@@ -68,11 +45,20 @@ public class BlockQuantumGenerator extends BlockContainer {
     	int blockMeta = world.getBlockMetadata(x, y, z);
     	TileEntity te=world.getTileEntity(x, y, z);
     	
-    	if(!(te instanceof TileQuantumGenerator))
+    	if(!(te instanceof TileSolarPanel))
     		return iconBuffer[0];
     	
-    	//System.out.println(((TileQuantumGenerator)te).getFunctionalSide());
-    	return iconBuffer[Util.getTextureOnSide(side, ((TileQuantumGenerator)te).getFunctionalSide())];
+    	int iconIndex=Util.getTextureOnSide(side, ((TileSolarPanel)te).getFunctionalSide());
+    	
+    	if(((TileSolarPanel)te).getFunctionalSide()==ForgeDirection.DOWN){
+    		if(iconIndex==3){
+    			iconIndex=1;
+    		}else if(iconIndex==1){
+    			iconIndex=3;
+    		}    		
+    	}
+    	
+    	return iconBuffer[iconIndex];
 	}
 	
     @SideOnly(Side.CLIENT)
@@ -85,10 +71,10 @@ public class BlockQuantumGenerator extends BlockContainer {
     public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase player, ItemStack stack) {       
         TileEntity te = world.getTileEntity(x, y, z);
         
-        if (!(te instanceof TileQuantumGenerator))
+        if (!(te instanceof TileSolarPanel))
         	return;
         
-        ((TileQuantumGenerator)te).setFunctionalSide(Util.getPlayerSight(player).getOpposite());
+        ((TileSolarPanel)te).setFunctionalSide(Util.getPlayerSight(player).getOpposite());
     }	
     
     @Override
@@ -96,14 +82,13 @@ public class BlockQuantumGenerator extends BlockContainer {
      	if (world.isRemote)
     		return;    	
     	TileEntity te = world.getTileEntity(x, y, z);
-    	if (!(te instanceof TileQuantumGenerator))
+    	if (!(te instanceof TileSolarPanel))
     		return;
-
     	Util.updateTileEntityFunctionalSide(te); 	  	
     }
     
     @Override
-    public void onNeighborBlockChange(World world, int x, int y, int z, Block block){
+    public void onNeighborBlockChange(World world, int x, int y, int z, Block block){    	
     	if (world.isRemote)
     		return;    	
     	
@@ -113,7 +98,7 @@ public class BlockQuantumGenerator extends BlockContainer {
     }
 	
 	@Override
-	public TileEntity createNewTileEntity(World var1, int var2) {return new TileQuantumGenerator();}
+	public TileEntity createNewTileEntity(World var1, int var2) {return new TileSolarPanel();}
 	
 	@Override
 	public int damageDropped(int par1) {return par1;}

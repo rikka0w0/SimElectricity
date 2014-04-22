@@ -68,27 +68,27 @@ public class GuiQuantumGenerator extends GuiContainer {
 	    	switch(button.id){
 	    	case 4: 
 	    		if(this.isCtrlKeyDown())
-	    			tileentity.outputResistance-=10;
-	    		else
 	    			tileentity.outputResistance-=1;
-	    		break;
-	    	case 5: 
-	    		if(this.isCtrlKeyDown())
-	    			tileentity.outputResistance-=0.01;
 	    		else
 	    			tileentity.outputResistance-=0.1;
 	    		break;
+	    	case 5: 
+	    		if(this.isCtrlKeyDown())
+	    			tileentity.outputResistance-=0.001;
+	    		else
+	    			tileentity.outputResistance-=0.01;
+	    		break;
 	    	case 6: 
 	    		if(this.isCtrlKeyDown())
-	    			tileentity.outputResistance+=0.01;
+	    			tileentity.outputResistance+=0.001;
 	    		else
-	    			tileentity.outputResistance+=0.1;
+	    			tileentity.outputResistance+=0.01;
 	    		break;
     		case 7: 
     			if(this.isCtrlKeyDown())
-    				tileentity.outputResistance+=10;
-    			else
     				tileentity.outputResistance+=1;
+    			else
+    				tileentity.outputResistance+=0.1;
     			break;
     		default:
     		}   	

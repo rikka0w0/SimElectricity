@@ -68,7 +68,7 @@ public class BlockElectricFurnace extends BlockContainer{
     	iconBuffer[0] = r.registerIcon("simElectricity:ElectricFurnace_Bottom");
     	iconBuffer[1] = r.registerIcon("simElectricity:ElectricFurnace_Top");
     	iconBuffer[2] = r.registerIcon("simElectricity:ElectricFurnace_Front");
-    	iconBuffer[3] = r.registerIcon("simElectricity:ElectricFurnace_Back");
+    	iconBuffer[3] = r.registerIcon("simElectricity:ElectricFurnace_Side");
     	iconBuffer[4] = r.registerIcon("simElectricity:ElectricFurnace_Side");
     	iconBuffer[5] = r.registerIcon("simElectricity:ElectricFurnace_Side");
     	iconBuffer[6] = r.registerIcon("simElectricity:ElectricFurnace_Front_W");

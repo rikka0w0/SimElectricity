@@ -159,6 +159,7 @@ public class BlockSample extends BlockContainer {
 		
 		if(meta==3){
 			world.setBlockMetadataWithNotify(x, y, z, 4, 2);
+			world.notifyBlocksOfNeighborChange(x, y, z, null);
 			return true;
 		}
 		else if(meta==4){
