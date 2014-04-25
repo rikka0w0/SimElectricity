@@ -48,7 +48,7 @@ public class TileSampleResistor extends TileSampleEnergyTile{
 	
 	@Override
 	public float getResistance() {
-		return 10000;
+		return 10;
 	}
 
 	@Override

@@ -7,7 +7,7 @@ import simElectricity.API.Util;
 public class TileQuantumGenerator extends TileStandardGenerator implements ISyncPacketHandler{
 	@Override
 	public void onClient2ServerUpdate(String field, Object value, short type) {
-		if(field.contains("outputVoltage"))	
+		if(field.contains("outputVoltage")|field.contains("outputResistance"))	
 			Util.postTileChangeEvent(this);
 	}
 

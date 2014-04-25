@@ -226,8 +226,10 @@ public final class EnergyNet {
 	private static float getResistance(IBaseComponent te){
 		if (te instanceof IEnergyTile)
 			return 0;
+		else if(te instanceof IConductor)
+			return te.getResistance()/2;
 		else
-			return te.getResistance();
+			return 0;
 	}
 	/*End of Simulator*/
 	

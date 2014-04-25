@@ -7,7 +7,7 @@ public class TileSampleConductor extends TileSampleBaseComponent implements
 
 	@Override
 	public float getResistance() {
-		return 1;
+		return 10;
 	}
 
 	@Override
