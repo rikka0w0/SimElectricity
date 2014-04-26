@@ -5,11 +5,9 @@ import simElectricity.API.ISidedFacing;
 import simElectricity.API.Util;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
-import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
 
 /**This packet performs server<->client side synchronization for tileEntity fields~*/
 public class PacketTileEntitySideUpdate extends AbstractPacket{

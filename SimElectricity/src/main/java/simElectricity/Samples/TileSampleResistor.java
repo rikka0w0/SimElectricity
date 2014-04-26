@@ -1,9 +1,7 @@
 package simElectricity.Samples;
 
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.world.EnumSkyBlock;
 import net.minecraftforge.common.util.ForgeDirection;
-import simElectricity.API.IEnergyTile;
 import simElectricity.API.Util;
 
 public class TileSampleResistor extends TileSampleEnergyTile{

@@ -4,7 +4,6 @@ import java.lang.reflect.Field;
 
 import simElectricity.API.ISyncPacketHandler;
 import simElectricity.API.Util;
-import simElectricity.Blocks.TileWire;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;

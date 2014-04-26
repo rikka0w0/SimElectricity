@@ -1,7 +1,6 @@
 package simElectricity.Samples;
 
 import net.minecraftforge.common.util.ForgeDirection;
-import simElectricity.API.IEnergyTile;
 
 public class TileSampleBattery extends TileSampleEnergyTile{
 	
