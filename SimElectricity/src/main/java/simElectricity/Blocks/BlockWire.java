@@ -27,10 +27,8 @@ public class BlockWire extends BlockContainer{
 	public static final String[] subNames = {"CopperCable_Thin","CopperCable_Medium","CopperCable_Thick"};
 	public static final float[] resistanceList = {0.27F,0.09F,0.03F};
 	public static final float[] collisionWidthList = {0.12F,0.22F,0.32F};
-	@SideOnly(Side.CLIENT)
 	public static final float[] renderingWidthList = {0.1F,0.2F,0.3F};	
 	
-	@SideOnly(Side.CLIENT)
 	public IIcon[] iconBuffer=new IIcon[subNames.length];
 
 		
