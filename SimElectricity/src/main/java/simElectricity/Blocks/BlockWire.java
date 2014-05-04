@@ -43,7 +43,7 @@ public class BlockWire extends BlockContainer{
 	
 	public void onNeighborBlockChange(World world, int x, int y, int z, Block block) {
 		if (!world.isRemote)
-			Util.updateTileEntityField(world.getTileEntity(x, y, z), "renderSides"); 
+			updateRenderSides(world.getTileEntity(x, y, z));
 	}
 	
     @Override
@@ -53,10 +53,23 @@ public class BlockWire extends BlockContainer{
     		return;
     	
     	TileEntity te=world.getTileEntity(x, y, z);
-    	Util.updateTileEntityField(te, "renderSides"); 
     	((TileWire)te).updateSides();
+    	Util.updateTileEntityField(te, "renderSides"); 
+    	
+    	updateRenderSides(world.getTileEntity(x+1, y, z) );
+    	updateRenderSides(world.getTileEntity(x-1, y, z) );
+    	updateRenderSides(world.getTileEntity(x, y+1, z) );
+    	updateRenderSides(world.getTileEntity(x, y-1, z) );
+    	updateRenderSides(world.getTileEntity(x, y, z+1) );
+    	updateRenderSides(world.getTileEntity(x, y, z-1));
     }
 	
+    void updateRenderSides(TileEntity te){
+    	if(te instanceof TileWire){
+    		Util.scheduleBlockUpdate(te, 12);
+    	}
+    }
+    
     @Override
     public void updateTick(World world, int x, int y, int z, Random p_149674_5_) {
      	if (world.isRemote)

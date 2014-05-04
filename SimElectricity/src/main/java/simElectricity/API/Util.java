@@ -4,9 +4,9 @@ import simElectricity.EnergyNet;
 import simElectricity.mod_SimElectricity;
 import simElectricity.Network.PacketTileEntityFieldUpdate;
 import simElectricity.Network.PacketTileEntitySideUpdate;
-import net.minecraft.client.Minecraft;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.MathHelper;
@@ -76,8 +76,8 @@ public class Util {
 	
 	//Util
 	/** Post some text in chat box(Other player cannot see it) */
-    public static void chat(String text){
-    	Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(text));
+    public static void chat(EntityPlayer player,String text){
+    	player.addChatMessage(new ChatComponentText(text));
     }
 	
 	//Facing and Rendering------------------------------------------------------------------------------------------------------------------
@@ -86,6 +86,8 @@ public class Util {
 	
 	/** Update a block rendering after some ticks */
 	public static void scheduleBlockUpdate(TileEntity te,int time){
+		if(te==null)
+			return;
 		te.getWorldObj().scheduleBlockUpdate(te.xCoord, te.yCoord, te.zCoord, te.getWorldObj().getBlock(te.xCoord, te.yCoord, te.zCoord), time);
 	}
 	

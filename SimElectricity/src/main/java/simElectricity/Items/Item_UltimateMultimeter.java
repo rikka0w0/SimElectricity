@@ -39,7 +39,7 @@ public class Item_UltimateMultimeter extends Item{
     		float outputVoltage=0;
     		
     		
-    		Util.chat("-----------------------");  
+    		Util.chat(player,"-----------------------");  
     		if (te instanceof IEnergyTile){
     			IEnergyTile ps=(IEnergyTile) te;
     			if (((IEnergyTile) te).getOutputVoltage()==0)
@@ -55,20 +55,20 @@ public class Item_UltimateMultimeter extends Item{
     			tileType="Energy Conductor";
     		}
     		//Print out information here
-    		Util.chat("Type: "+tileType);  
+    		Util.chat(player,"Type: "+tileType);  
     		if (te instanceof IEnergyTile)
-    			Util.chat("FunctionalSide: "+ ((IEnergyTile)te).getFunctionalSide().toString());
+    			Util.chat(player,"FunctionalSide: "+ ((IEnergyTile)te).getFunctionalSide().toString());
     		if (te instanceof IEnergyTile&&outputVoltage>0)
-    			Util.chat("Internal resistance: "+String.valueOf(te.getResistance())+"次");  
+    			Util.chat(player,"Internal resistance: "+String.valueOf(te.getResistance())+"次");  
     		else	
-    			Util.chat("Resistance: "+String.valueOf(te.getResistance())+"次");  
+    			Util.chat(player,"Resistance: "+String.valueOf(te.getResistance())+"次");  
     		if (te instanceof IEnergyTile){
-    			Util.chat("Current: "+String.valueOf(Util.getCurrent((IEnergyTile) te))+"A"); 
-    			Util.chat("Power rate: "+String.valueOf(Util.getPower((IEnergyTile) te))+"W"); 
+    			Util.chat(player,"Current: "+String.valueOf(Util.getCurrent((IEnergyTile) te))+"A"); 
+    			Util.chat(player,"Power rate: "+String.valueOf(Util.getPower((IEnergyTile) te))+"W"); 
     		}
-    		Util.chat("Voltage: "+String.valueOf(voltage)+"V");    	
+    		Util.chat(player,"Voltage: "+String.valueOf(voltage)+"V");    	
     		if(outputVoltage>0) //Energy Source
-    			Util.chat("Internal voltage: "+String.valueOf(outputVoltage)+"V");  
+    			Util.chat(player,"Internal voltage: "+String.valueOf(outputVoltage)+"V");  
     		
     		
     		return true;

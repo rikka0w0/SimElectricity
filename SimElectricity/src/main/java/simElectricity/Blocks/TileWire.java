@@ -14,9 +14,7 @@ public class TileWire extends TileEntity implements IConductor,ISyncPacketHandle
 	public boolean[] renderSides = new boolean[6];
 	
     public float resistance=100;
-    @SideOnly(Side.CLIENT)
 	public float width=0.1F;
-    @SideOnly(Side.CLIENT)
     public String textureString;
 	
     public TileWire(){}

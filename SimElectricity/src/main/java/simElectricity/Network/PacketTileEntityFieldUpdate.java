@@ -2,9 +2,9 @@ package simElectricity.Network;
 
 import java.lang.reflect.Field;
 
-import cpw.mods.fml.common.network.ByteBufUtils;
 import simElectricity.API.ISyncPacketHandler;
 import simElectricity.API.Util;
+
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import net.minecraft.entity.player.EntityPlayer;
@@ -14,9 +14,9 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 /**This packet performs server->client side synchronization just for functional side and facing~*/
 public class PacketTileEntityFieldUpdate extends AbstractPacket {
-	int x,z,hash;
+	int x,z;
 	short y;
-	Short type;
+	Short type,fieldLength;
 	String field;
 	Object value;
 	
@@ -39,7 +39,6 @@ public class PacketTileEntityFieldUpdate extends AbstractPacket {
 		y=(short) te.yCoord;
 		z=te.zCoord;
 		field=_field;
-		hash=te.getClass().hashCode();
 		
 		Field f;
 		try {
@@ -77,9 +76,10 @@ public class PacketTileEntityFieldUpdate extends AbstractPacket {
 		buffer.writeInt(x);
 		buffer.writeShort(y);
 		buffer.writeInt(z);
-		buffer.writeInt(hash);
 		buffer.writeShort(type);
-		ByteBufUtils.writeUTF8String(buffer, field);
+		buffer.writeShort(field.length());
+		for(char c:field.toCharArray())
+			buffer.writeChar(c);
 		
 		switch(type){
 		case 0:
@@ -110,9 +110,12 @@ public class PacketTileEntityFieldUpdate extends AbstractPacket {
 		x = buffer.readInt();
         y = buffer.readShort();
         z = buffer.readInt();
-        hash=buffer.readInt();
         type=buffer.readShort();
-        field = ByteBufUtils.readUTF8String(buffer);
+        fieldLength=buffer.readShort();
+        
+        field="";
+		for (int i=0;i<fieldLength;i++)
+			field+=buffer.readChar();
 		
 		switch(type){
 		case 0:
@@ -147,8 +150,6 @@ public class PacketTileEntityFieldUpdate extends AbstractPacket {
 			TileEntity te = world.getTileEntity(x, y, z);
 			
 			if (te == null) 
-				return;
-			if (te.getClass().hashCode()!=hash)
 				return;
 			if(world.isRemote!=isClient)
 				return;

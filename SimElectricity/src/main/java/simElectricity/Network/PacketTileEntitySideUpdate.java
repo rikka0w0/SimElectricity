@@ -11,14 +11,14 @@ import net.minecraft.world.World;
 
 /**This packet performs server<->client side synchronization for tileEntity fields~*/
 public class PacketTileEntitySideUpdate extends AbstractPacket{
-	int x,z,hash;
+	int x,z;
 	short y;
 	byte value,type;
 	
 	public PacketTileEntitySideUpdate(){}
 	
 	/** type: 0-facing 1-functionalSide */
-	public PacketTileEntitySideUpdate(TileEntity te,byte _type){
+	public PacketTileEntitySideUpdate(TileEntity te,byte _type){		
 		if (te==null)
 			return;
 		
@@ -28,7 +28,6 @@ public class PacketTileEntitySideUpdate extends AbstractPacket{
 		x=te.xCoord;
 		y=(short) te.yCoord;
 		z=te.zCoord;
-		hash=te.getClass().hashCode();
 		
 		type=_type;
 		
@@ -46,7 +45,6 @@ public class PacketTileEntitySideUpdate extends AbstractPacket{
 		buffer.writeInt(x);
 		buffer.writeShort(y);
 		buffer.writeInt(z);
-		buffer.writeInt(hash);
 		buffer.writeByte(value);
 		buffer.writeByte(type);
 	}
@@ -56,7 +54,6 @@ public class PacketTileEntitySideUpdate extends AbstractPacket{
 		x = buffer.readInt();
         y = buffer.readShort();
         z = buffer.readInt();
-        hash=buffer.readInt();
         value=buffer.readByte();
         type=buffer.readByte();
 	}
@@ -67,8 +64,6 @@ public class PacketTileEntitySideUpdate extends AbstractPacket{
 		TileEntity te = world.getTileEntity(x, y, z);
 		
 		if (te == null) 
-			return;
-		if (te.getClass().hashCode()!=hash)
 			return;
 		if (!world.isRemote)  //Client processing only!
 			return;
@@ -85,6 +80,7 @@ public class PacketTileEntitySideUpdate extends AbstractPacket{
 				return;			
 			
 			((IEnergyTile) te).setFunctionalSide(Util.byte2Direction(value));
+			world.markBlockForUpdate(x, y, z);
 		}
 	}
 	
