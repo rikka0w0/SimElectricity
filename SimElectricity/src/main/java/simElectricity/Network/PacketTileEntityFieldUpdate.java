@@ -2,9 +2,9 @@ package simElectricity.Network;
 
 import java.lang.reflect.Field;
 
+import cpw.mods.fml.common.network.ByteBufUtils;
 import simElectricity.API.ISyncPacketHandler;
 import simElectricity.API.Util;
-
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import net.minecraft.entity.player.EntityPlayer;
@@ -16,7 +16,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 public class PacketTileEntityFieldUpdate extends AbstractPacket {
 	int x,z;
 	short y;
-	Short type,fieldLength;
+	Short type;
 	String field;
 	Object value;
 	
@@ -77,9 +77,7 @@ public class PacketTileEntityFieldUpdate extends AbstractPacket {
 		buffer.writeShort(y);
 		buffer.writeInt(z);
 		buffer.writeShort(type);
-		buffer.writeShort(field.length());
-		for(char c:field.toCharArray())
-			buffer.writeChar(c);
+		ByteBufUtils.writeUTF8String(buffer, field);
 		
 		switch(type){
 		case 0:
@@ -111,11 +109,7 @@ public class PacketTileEntityFieldUpdate extends AbstractPacket {
         y = buffer.readShort();
         z = buffer.readInt();
         type=buffer.readShort();
-        fieldLength=buffer.readShort();
-        
-        field="";
-		for (int i=0;i<fieldLength;i++)
-			field+=buffer.readChar();
+        field = ByteBufUtils.readUTF8String(buffer);
 		
 		switch(type){
 		case 0:
