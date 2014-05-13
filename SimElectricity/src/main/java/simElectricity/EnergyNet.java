@@ -52,10 +52,12 @@ public final class EnergyNet {
 
 			// pivot within A and b
 			for (int i = p + 1; i < N; i++) {
-				float alpha = A[i][p] / A[p][p];
-				b[i] -= alpha * b[p];
-				for (int j = p; j < N; j++) {
-					A[i][j] -= alpha * A[p][j];
+				if(A[p][p]!=0){//Ignore any line with all zero
+					float alpha = A[i][p] / A[p][p];
+					b[i] -= alpha * b[p];
+					for (int j = p; j < N; j++) {
+						A[i][j] -= alpha * A[p][j];
+					}
 				}
 			}
 		}
@@ -63,11 +65,13 @@ public final class EnergyNet {
 		// back substitution
 		float[] x = new float[N];
 		for (int i = N - 1; i >= 0; i--) {
-			float sum = (float) 0.0;
-			for (int j = i + 1; j < N; j++) {
-				sum += A[i][j] * x[j];
-			}
-			x[i] = (b[i] - sum) / A[i][i];
+			if(A[i][i]!=0){//Ignore any line with all zero
+				float sum = (float) 0.0;
+				for (int j = i + 1; j < N; j++) {
+					sum += A[i][j] * x[j];
+				}
+				x[i] = (b[i] - sum) / A[i][i];
+			}	
 		}
 		return x;
 	}
@@ -175,7 +179,7 @@ public final class EnergyNet {
 		// }
 		// }
 	}
-
+	
 	private void runSimulator() {
 		List<IBaseComponent> unknownVoltageNodes = new ArrayList<IBaseComponent>();
 		unknownVoltageNodes.addAll(tileEntityGraph.vertexSet());
@@ -193,6 +197,8 @@ public final class EnergyNet {
 			if (nodeI instanceof IEnergyTile) {
 				b[i] = 1 / nodeI.getResistance();
 				b[i] = b[i]	* ((IEnergyTile) nodeI).getOutputVoltage();
+			}else{
+				b[i] = 0;
 			}
 
 			List<IBaseComponent> neighborList = Graphs.neighborListOf(tileEntityGraph, nodeI);	
@@ -212,6 +218,7 @@ public final class EnergyNet {
 				A[i][j] = tmp;
 			}
 		}
+		
 		
 		float[] x = lsolve(A, b);
 		
