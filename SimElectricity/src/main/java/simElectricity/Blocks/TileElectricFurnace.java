@@ -1,16 +1,14 @@
 package simElectricity.Blocks;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.ISidedInventory;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.*;
+import simElectricity.API.Common.TileStandardSEMachine;
 
-public class TileElectricFurnace extends TileStandardSEMachine implements ISyncPacketHandler,ISidedInventory{
+public class TileElectricFurnace extends TileStandardSEMachine implements ISyncPacketHandler{
 	public boolean isWorking=false;
 	public int progress=0;
 	public float resistance=10;
@@ -18,11 +16,11 @@ public class TileElectricFurnace extends TileStandardSEMachine implements ISyncP
 	public float energyStored;
 	public ItemStack result;
 	
-	public TileElectricFurnace(){
-		inv = new ItemStack[2];
-	}
 
 	public void onInventoryChanged(){
+    	if(worldObj.isRemote)
+    		return;
+    	
     	result=getResult(inv[0]);
     }
 	
@@ -94,15 +92,6 @@ public class TileElectricFurnace extends TileStandardSEMachine implements ISyncP
     	
     	isWorking=tagCompound.getBoolean("isWorking");
     	energyStored=tagCompound.getFloat("energyStored");
-    	
-        NBTTagList tagList = tagCompound.getTagList("Inventory",Constants.NBT.TAG_COMPOUND);
-        for (int i = 0; i < tagList.tagCount(); i++) {
-                NBTTagCompound tag = (NBTTagCompound) tagList.getCompoundTagAt(i);
-                byte slot = tag.getByte("Slot");
-                if (slot >= 0 && slot < inv.length) {
-                        inv[slot] = ItemStack.loadItemStackFromNBT(tag);
-                }
-        }
         result=getResult(inv[0]);
     }
     
@@ -112,18 +101,6 @@ public class TileElectricFurnace extends TileStandardSEMachine implements ISyncP
     	
     	tagCompound.setBoolean("isWorking", isWorking);
     	tagCompound.setFloat("energyStored", energyStored);
-    	
-        NBTTagList itemList = new NBTTagList();
-        for (int i = 0; i < inv.length; i++) {
-                ItemStack stack = inv[i];
-                if (stack != null) {
-                        NBTTagCompound tag = new NBTTagCompound();
-                        tag.setByte("Slot", (byte) i);
-                        stack.writeToNBT(tag);
-                        itemList.appendTag(tag);
-                }
-        }
-        tagCompound.setTag("Inventory", itemList);
     }
     
 	//---------------------------------------------------------------------------------------------------------
@@ -164,67 +141,9 @@ public class TileElectricFurnace extends TileStandardSEMachine implements ISyncP
 			return false;
 	}
 	
-	//Inventory stuff--------------------------------------------------------------------------------
-	public ItemStack[] inv;
+	//Inventory
 	@Override
-	public int getSizeInventory() {return inv.length;}
-
-	@Override
-	public ItemStack getStackInSlot(int slot) {return inv[slot];}
-
-	@Override
-	public ItemStack decrStackSize(int slot, int amount) {
-		ItemStack stack = getStackInSlot(slot);
-        if (stack != null) {
-        	if (stack.stackSize <= amount) {
-        		setInventorySlotContents(slot, null);
-            } else {
-            	stack = stack.splitStack(amount);
-            	if (stack.stackSize == 0) {
-            		setInventorySlotContents(slot, null);
-            	}
-            }
-        }
-        return stack;
-	}
-
-	@Override
-	public ItemStack getStackInSlotOnClosing(int slot) {
-    	ItemStack stack = getStackInSlot(slot);
-    	if (stack != null) 
-    		setInventorySlotContents(slot, null);
-    	return stack;
-	}
-
-	@Override
-	public void setInventorySlotContents(int slot, ItemStack stack) {
-		inv[slot] = stack;
-        if (stack != null && stack.stackSize > getInventoryStackLimit())
-        	stack.stackSize = getInventoryStackLimit();
-        
-        onInventoryChanged();
-	}
-
-	@Override
-	public boolean hasCustomInventoryName() {return false;}
-
-	@Override
-	public int getInventoryStackLimit() {return 64;}
-
-	@Override
-	public boolean isUseableByPlayer(EntityPlayer player) {return worldObj.getTileEntity(xCoord, yCoord, zCoord) == this && player.getDistanceSq(xCoord + 0.5, yCoord + 0.5, zCoord + 0.5) < 64;}
-
-	@Override
-	public void openInventory() {}
-
-	@Override
-	public void closeInventory() {}
-
-	@Override
-	public boolean isItemValidForSlot(int var1, ItemStack var2) {return true;}
-	
-	@Override
-	public String getInventoryName() {return "TileElectricFurnace";}
+	public int getInventorySize() {return 2;}
 	
 	@Override
 	public int[] getAccessibleSlotsFromSide(int side) {return new int[]{0,1};}

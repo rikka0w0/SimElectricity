@@ -1,6 +1,13 @@
 package simElectricity;
 
 import simElectricity.API.*;
+import simElectricity.API.EnergyTile.IBaseComponent;
+import simElectricity.API.EnergyTile.IConductor;
+import simElectricity.API.EnergyTile.IEnergyTile;
+import simElectricity.API.Events.TileAttachEvent;
+import simElectricity.API.Events.TileChangeEvent;
+import simElectricity.API.Events.TileDetachEvent;
+import simElectricity.API.Events.TileRejoinEvent;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.event.world.ChunkWatchEvent;

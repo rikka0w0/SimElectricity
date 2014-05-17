@@ -5,10 +5,10 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
-import simElectricity.API.IBaseComponent;
-import simElectricity.API.IConductor;
-import simElectricity.API.IEnergyTile;
 import simElectricity.API.Util;
+import simElectricity.API.EnergyTile.IBaseComponent;
+import simElectricity.API.EnergyTile.IConductor;
+import simElectricity.API.EnergyTile.IEnergyTile;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 

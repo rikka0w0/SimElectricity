@@ -2,25 +2,21 @@ package simElectricity.Blocks;
 
 import java.util.Iterator;
 
-import simElectricity.API.Common.ContainerBase;
-
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.Slot;
-import net.minecraft.item.ItemStack;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import simElectricity.API.Common.ContainerBase;
 
-public class ContainerElectricFurnace extends ContainerBase{
-	protected TileElectricFurnace tileEntity;
+public class ContainerSimpleGenerator extends ContainerBase {
+	protected TileSimpleGenerator tileEntity;
 	protected int progress;
 	
-	public ContainerElectricFurnace (InventoryPlayer inventoryPlayer, TileElectricFurnace te){
+	public ContainerSimpleGenerator (InventoryPlayer inventoryPlayer, TileSimpleGenerator te){
         tileEntity = te;
         
         addSlotToContainer(new Slot(tileEntity, 0, 43, 33));
-        addSlotToContainer(new Slot(tileEntity, 1, 103, 34){public boolean isItemValid(ItemStack par1ItemStack){return false;}});
         
         bindPlayerInventory(inventoryPlayer);
 	}
@@ -28,7 +24,7 @@ public class ContainerElectricFurnace extends ContainerBase{
     @Override
     public void addCraftingToCrafters(ICrafting par1iCrafting){
         super.addCraftingToCrafters(par1iCrafting);
-      	par1iCrafting.sendProgressBarUpdate(this, 0, tileEntity.progress);     
+      	par1iCrafting.sendProgressBarUpdate(this, 0, tileEntity.progress);         	
     }
     
     
@@ -44,17 +40,17 @@ public class ContainerElectricFurnace extends ContainerBase{
     	while (var1.hasNext())
     	{
     		ICrafting var2 = (ICrafting)var1.next();
-            	var2.sendProgressBarUpdate(this, 0, progress);          	
+            var2.sendProgressBarUpdate(this, 0, progress);    
     	}
     	
     	progress=tileEntity.progress;
     }
 	
-    public int getPlayerInventoryStartIndex(){
-    	return 2;
+	public int getPlayerInventoryStartIndex(){
+    	return 1;
     }
     public int getPlayerInventoryEndIndex(){
-    	return 38;
+    	return 37;
     }
     public int getTileInventoryStartIndex(){
     	return 0;

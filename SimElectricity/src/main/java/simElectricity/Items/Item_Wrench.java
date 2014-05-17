@@ -2,8 +2,8 @@ package simElectricity.Items;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import simElectricity.API.IEnergyTile;
 import simElectricity.API.Util;
+import simElectricity.API.EnergyTile.IEnergyTile;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;

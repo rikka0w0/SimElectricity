@@ -1,8 +1,8 @@
 package simElectricity.Blocks;
 
 import net.minecraftforge.common.util.ForgeDirection;
-import simElectricity.API.TileStandardGenerator;
 import simElectricity.API.Util;
+import simElectricity.API.Common.TileStandardGenerator;
 
 public class TileSolarPanel extends TileStandardGenerator{
 	@Override

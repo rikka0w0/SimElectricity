@@ -8,6 +8,11 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.*;
+import simElectricity.API.EnergyTile.IBaseComponent;
+import simElectricity.API.EnergyTile.IConductor;
+import simElectricity.API.EnergyTile.IEnergyTile;
+import simElectricity.API.Events.TileAttachEvent;
+import simElectricity.API.Events.TileDetachEvent;
 
 public class TileWire extends TileEntity implements IConductor,ISyncPacketHandler{
 	protected boolean isAddedToEnergyNet = false;

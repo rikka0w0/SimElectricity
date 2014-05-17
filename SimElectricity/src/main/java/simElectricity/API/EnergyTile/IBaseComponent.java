@@ -1,4 +1,4 @@
-package simElectricity.API;
+package simElectricity.API.EnergyTile;
 
 public interface IBaseComponent {
 	/**

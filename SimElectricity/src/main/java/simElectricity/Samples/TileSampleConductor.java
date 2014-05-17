@@ -1,6 +1,6 @@
 package simElectricity.Samples;
 
-import simElectricity.API.IConductor;
+import simElectricity.API.EnergyTile.IConductor;
 
 public class TileSampleConductor extends TileSampleBaseComponent implements
 		IConductor {

@@ -1,4 +1,4 @@
-package simElectricity.API;
+package simElectricity.API.Events;
 
 import cpw.mods.fml.common.eventhandler.Event;
 import net.minecraft.tileentity.TileEntity;

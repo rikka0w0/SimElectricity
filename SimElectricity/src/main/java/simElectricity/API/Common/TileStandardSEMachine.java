@@ -1,11 +1,13 @@
-package simElectricity.API;
+package simElectricity.API.Common;
 
+import simElectricity.API.ISidedFacing;
+import simElectricity.API.Util;
+import simElectricity.API.EnergyTile.IEnergyTile;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 
 /**A standard SE machine can inherits this class, make things easier and less confusion */
-public abstract class TileStandardSEMachine extends TileEntity implements IEnergyTile,ISidedFacing{
+public abstract class TileStandardSEMachine extends TileInventoryMachine implements IEnergyTile,ISidedFacing{
 	protected ForgeDirection functionalSide=ForgeDirection.NORTH;
 	protected ForgeDirection facing=ForgeDirection.NORTH;
 	protected boolean isAddedToEnergyNet = false;
@@ -26,6 +28,7 @@ public abstract class TileStandardSEMachine extends TileEntity implements IEnerg
 			Util.postTileDetachEvent(this);
 	}
 	
+	//ISidedFacing
 	@Override
 	public void setFacing(ForgeDirection newFacing){facing=newFacing;}
 	
@@ -36,6 +39,7 @@ public abstract class TileStandardSEMachine extends TileEntity implements IEnerg
 	public boolean canSetFacing(ForgeDirection newFacing) {return true;}
 	
 
+	//IEnergyTile
 	@Override
 	public ForgeDirection getFunctionalSide() {return functionalSide;}
 	

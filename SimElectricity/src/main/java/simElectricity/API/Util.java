@@ -2,6 +2,12 @@ package simElectricity.API;
 
 import simElectricity.EnergyNet;
 import simElectricity.mod_SimElectricity;
+import simElectricity.API.EnergyTile.IBaseComponent;
+import simElectricity.API.EnergyTile.IEnergyTile;
+import simElectricity.API.Events.TileAttachEvent;
+import simElectricity.API.Events.TileChangeEvent;
+import simElectricity.API.Events.TileDetachEvent;
+import simElectricity.API.Events.TileRejoinEvent;
 import simElectricity.Network.PacketTileEntityFieldUpdate;
 import simElectricity.Network.PacketTileEntitySideUpdate;
 import net.minecraft.creativetab.CreativeTabs;

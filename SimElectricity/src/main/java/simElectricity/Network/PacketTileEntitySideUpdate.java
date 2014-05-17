@@ -1,8 +1,8 @@
 package simElectricity.Network;
 
-import simElectricity.API.IEnergyTile;
 import simElectricity.API.ISidedFacing;
 import simElectricity.API.Util;
+import simElectricity.API.EnergyTile.IEnergyTile;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import net.minecraft.entity.player.EntityPlayer;

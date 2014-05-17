@@ -1,8 +1,8 @@
 package simElectricity.Blocks;
 
 import simElectricity.API.ISyncPacketHandler;
-import simElectricity.API.TileStandardGenerator;
 import simElectricity.API.Util;
+import simElectricity.API.Common.TileStandardGenerator;
 
 public class TileQuantumGenerator extends TileStandardGenerator implements ISyncPacketHandler{
 	@Override

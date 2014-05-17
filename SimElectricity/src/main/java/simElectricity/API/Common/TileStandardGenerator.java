@@ -1,5 +1,7 @@
-package simElectricity.API;
+package simElectricity.API.Common;
 
+import simElectricity.API.Util;
+import simElectricity.API.EnergyTile.IEnergyTile;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;

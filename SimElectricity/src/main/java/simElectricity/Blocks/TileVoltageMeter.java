@@ -1,6 +1,6 @@
 package simElectricity.Blocks;
 
-import simElectricity.API.TileStandardSEMachine;
+import simElectricity.API.Common.TileStandardSEMachine;
 
 public class TileVoltageMeter extends TileStandardSEMachine{
 	public float voltage=0;
@@ -22,4 +22,7 @@ public class TileVoltageMeter extends TileStandardSEMachine{
 
 	@Override
 	public void onOverVoltage() {}
+
+	@Override
+	public int getInventorySize() {return 0;}
 }

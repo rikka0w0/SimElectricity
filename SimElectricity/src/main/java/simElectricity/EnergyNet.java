@@ -13,7 +13,7 @@ import org.jgrapht.Graphs;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleGraph;
 
-import simElectricity.API.*;
+import simElectricity.API.EnergyTile.*;
 
 public final class EnergyNet {
 	/*Simulator*/
@@ -254,6 +254,10 @@ public final class EnergyNet {
 						IEnergyTile te=(IEnergyTile) tile;
 						if(te.getMaxSafeVoltage()!=0&&te.getMaxSafeVoltage()<energyNet.voltageCache.get(tile))
 							te.onOverVoltage(); //Over voltage check
+					}else if(tile instanceof IConductor){
+						IConductor te=(IConductor) tile;
+						if(te.getInsulationBreakdownVoltage()!=0&&te.getInsulationBreakdownVoltage()<energyNet.voltageCache.get(tile))
+							te.onInsulationBreakdown();
 					}
 				}	
 			}
