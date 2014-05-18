@@ -3,20 +3,16 @@ package simElectricity.Blocks;
 import simElectricity.API.Util;
 import simElectricity.API.Common.ContainerBase;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.tileentity.TileEntity;
 
 public class ContainerVoltageMeter extends ContainerBase{
-	protected TileVoltageMeter tileEntity;
-	public ContainerVoltageMeter (InventoryPlayer inventoryPlayer, TileVoltageMeter te){
-        tileEntity = te;
-                
-        bindPlayerInventory(inventoryPlayer);
-	}
-    
-    @Override
+    public ContainerVoltageMeter(InventoryPlayer inventoryPlayer, TileEntity te) {super(inventoryPlayer, te);}
+
+	@Override
     public void detectAndSendChanges()
     {
     	super.detectAndSendChanges();
-    	tileEntity.voltage=Util.getVoltage(tileEntity);
+    	((TileVoltageMeter)tileEntity).voltage=Util.getVoltage(((TileVoltageMeter)tileEntity));
     	Util.updateTileEntityField(tileEntity, "voltage");
     }
 	
@@ -31,5 +27,5 @@ public class ContainerVoltageMeter extends ContainerBase{
     }
     public int getTileInventoryEndIndex(){
     	return 27;
-    } 
+    }
 }

@@ -1,4 +1,4 @@
-package simElectricity.Blocks;
+package simElectricity.Blocks.Client;
 
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
@@ -9,6 +9,8 @@ import net.minecraft.util.StatCollector;
 import org.lwjgl.opengl.GL11;
 
 import simElectricity.API.Util;
+import simElectricity.Blocks.ContainerQuantumGenerator;
+import simElectricity.Blocks.TileQuantumGenerator;
 
 
 public class GuiQuantumGenerator extends GuiContainer {

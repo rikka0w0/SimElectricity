@@ -28,11 +28,39 @@ public class BlockSimpleGenerator  extends BlockContainer {
     public void randomDisplayTick(World world, int x, int y, int z, Random var5){
     	TileSimpleGenerator te=(TileSimpleGenerator) world.getTileEntity(x,y,z);
     	if(te.isWorking){
-   			double d0 = (double)((float)x + 0.5F);
-   			double d1 = (double)((float)y + 1F);
-   			double d2 = (double)((float)z + 0.5F);
+   			double d0 = (double)((float)x);
+   			double d1 = (double)((float)y);
+   			double d2 = (double)((float)z);
    			double d3 = 0.2199999988079071D;
    			double d4 = 0.27000001072883606D;
+   			world.spawnParticle("smoke", d0 + d4 + 0.25F, d1 + d3 + 1F, d2 + 0.5F, 0.0D, 0.0D, 0.0D);
+   			world.spawnParticle("smoke", d0 + d4 + 0.15F, d1 + d3 + 1F, d2 + 0.5F, 0.0D, 0.0D, 0.0D);
+   			world.spawnParticle("smoke", d0 + d4 + 0.4F, d1 + d3 + 1F, d2 + 0.6F, 0.0D, 0.0D, 0.0D);
+   			switch(te.getFacing()){
+   			case WEST:
+   				d0-=0.4F;
+   				d1+=0.1F;
+   				d2+=0.5F;
+   				break;
+   			case SOUTH:
+   				d0+=0.25F;
+   				d1+=0.1F;
+   				d2+=1.1F;
+   				break;
+   			case NORTH:
+   				d0+=0.25F;
+   				d1+=0.1F;
+   				d2-=0.1F;
+   				break;
+   			case EAST:
+   				d0+=0.8F;
+   				d1+=0.1F;
+   				d2+=0.5F;
+   				break;   		
+			default:
+				break;
+   			}
+   			
    			world.spawnParticle("smoke", d0 + d4, d1 + d3, d2, 0.0D, 0.0D, 0.0D);
    			world.spawnParticle("flame", d0 + d4, d1 + d3, d2, 0.0D, 0.0D, 0.0D);
    			world.spawnParticle("reddust", d0 + d3, d1, d2 + d4, 0.0D, 0.0D, 0.0D);

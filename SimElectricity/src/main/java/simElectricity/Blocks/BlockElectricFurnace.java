@@ -22,24 +22,6 @@ import cpw.mods.fml.relauncher.SideOnly;
 public class BlockElectricFurnace extends BlockContainer{
 	private IIcon[] iconBuffer = new IIcon[7];
 	
-    @SideOnly(Side.CLIENT)
-    @Override
-    public void randomDisplayTick(World world, int x, int y, int z, Random var5){
-    	int meta=world.getBlockMetadata(x, y, z);
-
-    	TileElectricFurnace te=(TileElectricFurnace) world.getTileEntity(x,y,z);
-    	if(te.isWorking){
-   			double d0 = (double)((float)x + 0.5F);
-   			double d1 = (double)((float)y + 1F);
-   			double d2 = (double)((float)z + 0.5F);
-   			double d3 = 0.2199999988079071D;
-   			double d4 = 0.27000001072883606D;
-   			world.spawnParticle("smoke", d0 + d4, d1 + d3, d2, 0.0D, 0.0D, 0.0D);
-   			world.spawnParticle("flame", d0 + d4, d1 + d3, d2, 0.0D, 0.0D, 0.0D);
-   			world.spawnParticle("reddust", d0 + d3, d1, d2 + d4, 0.0D, 0.0D, 0.0D);
-    	}
-    }
-	
     @Override
     public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int i1, float f1, float f2, float f3){
     	TileEntity te = world.getTileEntity(x, y, z);

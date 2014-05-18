@@ -3,10 +3,7 @@ package simElectricity;
 import simElectricity.API.Util;
 import simElectricity.Blocks.*;
 import simElectricity.Items.*;
-import simElectricity.Network.PacketPipeline;
-import simElectricity.Network.PacketTileEntityFieldUpdate;
-import simElectricity.Network.PacketTileEntitySideUpdate;
-import simElectricity.Samples.*;
+import simElectricity.Network.*;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
@@ -57,14 +54,13 @@ public class mod_SimElectricity{
 		GameRegistry.registerBlock(new BlockSimpleGenerator(), "sime:SimpleGenerator");		
 		GameRegistry.registerBlock(new BlockVoltageMeter(), "sime:VoltageMeter");
 		GameRegistry.registerBlock(new BlockElectricFurnace(), "sime:ElectricFurnace");
+		GameRegistry.registerBlock(new BlockAdjustableResistor(), "sime:AdjustableResistor");		
 		GameRegistry.registerBlock(new BlockWire(), ItemBlockWire.class, "sime:Wire");
 		
 		//Register Items
 		GameRegistry.registerItem(new Item_UltimateMultimeter(), "sime:Item_UltimateMultimeter");
 		GameRegistry.registerItem(new Item_Glove(), "sime:Item_Glove");
 		GameRegistry.registerItem(new Item_Wrench(), "sime:Item_Wrench");
-
-		GameRegistry.registerBlock(new BlockSample(), ItemBlockSample.class, "Sample");
 	}
 
 	/** Initialize */
@@ -82,11 +78,8 @@ public class mod_SimElectricity{
 		GameRegistry.registerTileEntity(TileSimpleGenerator.class, "TileSimpleGenerator");
 		GameRegistry.registerTileEntity(TileVoltageMeter.class, "TileVoltageMeter");	
 		GameRegistry.registerTileEntity(TileElectricFurnace.class, "TileElectricFurnace");	
-		GameRegistry.registerTileEntity(TileWire.class, "TileCopperWire");
-
-		GameRegistry.registerTileEntity(TileSampleBattery.class, "Battery");
-		GameRegistry.registerTileEntity(TileSampleConductor.class, "Conductor");
-		GameRegistry.registerTileEntity(TileSampleResistor.class, "Resistor");
+		GameRegistry.registerTileEntity(TileWire.class, "TileWire");
+		GameRegistry.registerTileEntity(TileAdjustableResistor.class, "TileAdjustableResistor");			
 	}
 
 	/** PostInitialize */

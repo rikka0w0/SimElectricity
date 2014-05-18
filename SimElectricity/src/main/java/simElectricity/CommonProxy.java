@@ -18,13 +18,15 @@ public class CommonProxy implements IGuiHandler {
 		TileEntity te=world.getTileEntity(x, y, z);
 		
 		if (te instanceof TileQuantumGenerator)
-			return new ContainerQuantumGenerator(player.inventory,(TileQuantumGenerator) te);
+			return new ContainerQuantumGenerator(player.inventory, te);
 		if (te instanceof TileVoltageMeter)
-			return new ContainerVoltageMeter(player.inventory,(TileVoltageMeter) te);
+			return new ContainerVoltageMeter(player.inventory, te);
 		if (te instanceof TileElectricFurnace)
-			return new ContainerElectricFurnace(player.inventory,(TileElectricFurnace) te);
+			return new ContainerElectricFurnace(player.inventory, te);
 		if (te instanceof TileSimpleGenerator)
-			return new ContainerSimpleGenerator(player.inventory,(TileSimpleGenerator) te);
+			return new ContainerSimpleGenerator(player.inventory, te);
+	    if (te instanceof TileAdjustableResistor)
+			return new ContainerAdjustableResistor(player.inventory, te);	    	
 		
 		return null;
 	}

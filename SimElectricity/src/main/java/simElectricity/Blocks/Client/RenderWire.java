@@ -1,7 +1,9 @@
-package simElectricity.Blocks;
+package simElectricity.Blocks.Client;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
+
+import simElectricity.Blocks.TileWire;
 
 
 import net.minecraft.client.renderer.Tessellator;

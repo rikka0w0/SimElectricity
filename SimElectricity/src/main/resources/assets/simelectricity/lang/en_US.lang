@@ -9,3 +9,7 @@ tile.sime:Wire.CopperCable_Thick.name=Thick Copper Cable
 item.sime:Item_UltimateMultimeter.name=Ultimate Multimeter
 item.sime:Item_Glove.name=Glove
 item.sime:Item_Wrench.name=Wrench
+tile.sime:AdjustableResistor.name=Adjustable Resistor
+tile.sime:SimpleGenerator.name=Simple Generator
+tile.sime:SimpleGenerator.Output=Output:
+tile.sime:SimpleGenerator.Impedance=Impedance:

@@ -66,6 +66,7 @@ public class BlockWire extends BlockContainer{
 	
     void updateRenderSides(TileEntity te){
     	if(te instanceof TileWire){
+    		Util.updateTileEntityField(te, "renderSides");
     		Util.scheduleBlockUpdate(te, 12);
     	}
     }

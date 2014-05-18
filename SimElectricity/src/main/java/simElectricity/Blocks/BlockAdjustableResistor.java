@@ -3,7 +3,9 @@ package simElectricity.Blocks;
 import java.util.Random;
 
 import simElectricity.mod_SimElectricity;
+import simElectricity.API.ISidedFacing;
 import simElectricity.API.Util;
+import simElectricity.API.EnergyTile.IEnergyTile;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
@@ -19,7 +21,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
-public class BlockVoltageMeter extends BlockContainer {
+public class BlockAdjustableResistor extends BlockContainer {
 	private IIcon[] iconBuffer = new IIcon[6];
 	
     @Override
@@ -33,23 +35,23 @@ public class BlockVoltageMeter extends BlockContainer {
     	return true;
     }
     
-    public BlockVoltageMeter() {
+    public BlockAdjustableResistor() {
 		super(Material.rock);
 		setHardness(2.0F);
 		setResistance(5.0F);
-		setBlockName("sime:VoltageMeter");
+		setBlockName("sime:AdjustableResistor");
 		setCreativeTab(Util.SETab);
 	}
 
 	@Override
     @SideOnly(Side.CLIENT)
     public void registerBlockIcons(IIconRegister r){
-    	iconBuffer[0] = r.registerIcon("simElectricity:VoltageMeter_Side");
-    	iconBuffer[1] = r.registerIcon("simElectricity:VoltageMeter_Side");
-    	iconBuffer[2] = r.registerIcon("simElectricity:VoltageMeter_Front");
-    	iconBuffer[3] = r.registerIcon("simElectricity:VoltageMeter_Back");
-    	iconBuffer[4] = r.registerIcon("simElectricity:VoltageMeter_Side");
-    	iconBuffer[5] = r.registerIcon("simElectricity:VoltageMeter_Side");
+    	iconBuffer[0] = r.registerIcon("simElectricity:AdjustableResistor_Bottom");
+    	iconBuffer[1] = r.registerIcon("simElectricity:AdjustableResistor_Top");
+    	iconBuffer[2] = r.registerIcon("simElectricity:AdjustableResistor_Front");
+    	iconBuffer[3] = r.registerIcon("simElectricity:AdjustableResistor_Side");
+    	iconBuffer[4] = r.registerIcon("simElectricity:AdjustableResistor_Side");
+    	iconBuffer[5] = r.registerIcon("simElectricity:AdjustableResistor_Side");
     }
 
 	
@@ -59,11 +61,10 @@ public class BlockVoltageMeter extends BlockContainer {
     	int blockMeta = world.getBlockMetadata(x, y, z);
     	TileEntity te=world.getTileEntity(x, y, z);
     	
-    	if(!(te instanceof TileVoltageMeter))
+    	if(!(te instanceof ISidedFacing))
     		return iconBuffer[0];
     	
-    	//System.out.println(((TileVoltageMeter)te).getFunctionalSide());
-    	return iconBuffer[Util.getTextureOnSide(side, ((TileVoltageMeter)te).getFacing())];
+    	return iconBuffer[Util.getTextureOnSide(side, ((ISidedFacing)te).getFacing())];
 	}
 	
     @SideOnly(Side.CLIENT)
@@ -76,12 +77,12 @@ public class BlockVoltageMeter extends BlockContainer {
     public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase player, ItemStack stack) {       
         TileEntity te = world.getTileEntity(x, y, z);
         
-        if (!(te instanceof TileVoltageMeter))
+        if (!(te instanceof IEnergyTile)||!(te instanceof ISidedFacing))
         	return;
         
         //Both for server and client
-        ((TileVoltageMeter)te).setFacing(Util.getPlayerSight(player).getOpposite());
-        ((TileVoltageMeter)te).setFunctionalSide(Util.getPlayerSight(player));
+        ((ISidedFacing)te).setFacing(Util.getPlayerSight(player).getOpposite());
+        ((IEnergyTile)te).setFunctionalSide(Util.getPlayerSight(player));
     }	
     
     @Override
@@ -89,8 +90,10 @@ public class BlockVoltageMeter extends BlockContainer {
      	if (world.isRemote)
     		return;    	
     	TileEntity te = world.getTileEntity(x, y, z);
-    	if (!(te instanceof TileVoltageMeter))
-    		return;
+
+        if (!(te instanceof IEnergyTile)||!(te instanceof ISidedFacing))
+        	return;
+    	
     	Util.updateTileEntityFacing(te);
     	Util.updateTileEntityFunctionalSide(te); 	
     }
@@ -101,12 +104,11 @@ public class BlockVoltageMeter extends BlockContainer {
     		return;    	
     	
     	//Server side only!
-    	TileEntity te = world.getTileEntity(x, y, z);
-    	Util.updateTileEntityFacing(te);
+    	Util.updateTileEntityFacing(world.getTileEntity(x, y, z));
     }
 	
 	@Override
-	public TileEntity createNewTileEntity(World var1, int var2) {return new TileVoltageMeter();}
+	public TileEntity createNewTileEntity(World var1, int var2) {return new TileAdjustableResistor();}
 	
 	@Override
 	public int damageDropped(int par1) {return par1;}

@@ -1,6 +1,12 @@
 package simElectricity;
 
 import simElectricity.Blocks.*;
+import simElectricity.Blocks.Client.GuiAdjustableResistor;
+import simElectricity.Blocks.Client.GuiElectricFurnace;
+import simElectricity.Blocks.Client.GuiQuantumGenerator;
+import simElectricity.Blocks.Client.GuiSimpleGenerator;
+import simElectricity.Blocks.Client.GuiVoltageMeter;
+import simElectricity.Blocks.Client.RenderWire;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
@@ -28,6 +34,8 @@ public class ClientProxy extends CommonProxy {
 			return new GuiElectricFurnace(player.inventory,(TileElectricFurnace) te);
 		if (te instanceof TileSimpleGenerator)
 			return new GuiSimpleGenerator(player.inventory,(TileSimpleGenerator) te);
+		if (te instanceof TileAdjustableResistor)
+			return new GuiAdjustableResistor(player.inventory,(TileAdjustableResistor) te);
 		
 		return null;
     }

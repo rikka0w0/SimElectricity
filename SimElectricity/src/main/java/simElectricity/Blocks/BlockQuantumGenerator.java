@@ -30,9 +30,6 @@ public class BlockQuantumGenerator extends BlockContainer {
     	if(player.isSneaking())
     		return false;
     	
-    	if(!(te instanceof TileQuantumGenerator))
-    		return false;
-    	
     	player.openGui(mod_SimElectricity.instance, 0, world, x, y, z);
     	return true;
     }

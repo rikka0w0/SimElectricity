@@ -9,32 +9,26 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.ICrafting;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 
 public class ContainerElectricFurnace extends ContainerBase{
-	protected TileElectricFurnace tileEntity;
+	public ContainerElectricFurnace(InventoryPlayer inventoryPlayer,TileEntity te) {super(inventoryPlayer, te);}
 	protected int progress;
-	
-	public ContainerElectricFurnace (InventoryPlayer inventoryPlayer, TileElectricFurnace te){
-        tileEntity = te;
-        
-        addSlotToContainer(new Slot(tileEntity, 0, 43, 33));
-        addSlotToContainer(new Slot(tileEntity, 1, 103, 34){public boolean isItemValid(ItemStack par1ItemStack){return false;}});
-        
-        bindPlayerInventory(inventoryPlayer);
-	}
+
     
     @Override
     public void addCraftingToCrafters(ICrafting par1iCrafting){
         super.addCraftingToCrafters(par1iCrafting);
-      	par1iCrafting.sendProgressBarUpdate(this, 0, tileEntity.progress);     
+      	par1iCrafting.sendProgressBarUpdate(this, 0, ((TileElectricFurnace)tileEntity).progress);     
     }
     
     
     @SideOnly(Side.CLIENT)
     public void updateProgressBar(int par1, int par2){
-    	if (par1 == 0)	tileEntity.progress = par2;
+    	if (par1 == 0)	((TileElectricFurnace)tileEntity).progress = par2;
    	}
     
     @Override
@@ -47,7 +41,7 @@ public class ContainerElectricFurnace extends ContainerBase{
             	var2.sendProgressBarUpdate(this, 0, progress);          	
     	}
     	
-    	progress=tileEntity.progress;
+    	progress=((TileElectricFurnace)tileEntity).progress;
     }
 	
     public int getPlayerInventoryStartIndex(){
@@ -62,4 +56,10 @@ public class ContainerElectricFurnace extends ContainerBase{
     public int getTileInventoryEndIndex(){
     	return 1;
     }
+
+	@Override
+	public void init() {
+        addSlotToContainer(new Slot((IInventory) tileEntity, 0, 43, 33));
+        addSlotToContainer(new Slot((IInventory) tileEntity, 1, 103, 34){public boolean isItemValid(ItemStack par1ItemStack){return false;}});
+	}
 }

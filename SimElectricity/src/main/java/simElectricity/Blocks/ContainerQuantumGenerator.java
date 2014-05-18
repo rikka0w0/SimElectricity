@@ -3,21 +3,12 @@ package simElectricity.Blocks;
 import simElectricity.API.Util;
 import simElectricity.API.Common.ContainerBase;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.tileentity.TileEntity;
 
 public class ContainerQuantumGenerator extends ContainerBase{
-	protected TileQuantumGenerator tileEntity;
-	public ContainerQuantumGenerator (InventoryPlayer inventoryPlayer, TileQuantumGenerator te){
-        tileEntity = te;
-        
-        if(!te.getWorldObj().isRemote){
-        	Util.updateTileEntityField(te, "outputVoltage");
-        	Util.updateTileEntityField(te, "outputResistance");
-        }
-        
-        bindPlayerInventory(inventoryPlayer);
-	}
-	
-    public int getPlayerInventoryStartIndex(){
+    public ContainerQuantumGenerator(InventoryPlayer inventoryPlayer,TileEntity te) {super(inventoryPlayer, te);}
+    
+	public int getPlayerInventoryStartIndex(){
     	return 27;
     }
     public int getPlayerInventoryEndIndex(){
@@ -28,5 +19,13 @@ public class ContainerQuantumGenerator extends ContainerBase{
     }
     public int getTileInventoryEndIndex(){
     	return 27;
-    } 
+    }
+
+	@Override
+	public void init() {
+        if(!tileEntity.getWorldObj().isRemote){
+        	Util.updateTileEntityField(tileEntity, "outputVoltage");
+        	Util.updateTileEntityField(tileEntity, "outputResistance");
+        }
+	} 
 }
