@@ -7,16 +7,20 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.ForgeDirection;
 
 /**A standard SE machine can inherits this class, make things easier and less confusion */
-public abstract class TileStandardSEMachine extends TileInventoryMachine implements IEnergyTile,ISidedFacing{
+public abstract class TileStandardSEMachine extends TileSidedFacingMachine implements IEnergyTile,ISidedFacing{
 	protected ForgeDirection functionalSide=ForgeDirection.NORTH;
-	protected ForgeDirection facing=ForgeDirection.NORTH;
+	
 	protected boolean isAddedToEnergyNet = false;
+	
+	public void onLoad(){}
+	public void onUnload(){}
 	
 	@Override
 	public void updateEntity() {
 		super.updateEntity();
 		if (!worldObj.isRemote && !isAddedToEnergyNet) {
 			Util.postTileAttachEvent(this);
+			onLoad();
 			this.isAddedToEnergyNet=true;
 			Util.scheduleBlockUpdate(this);
 		}
@@ -24,20 +28,16 @@ public abstract class TileStandardSEMachine extends TileInventoryMachine impleme
 	
 	@Override
 	public void invalidate() {
-		if (!worldObj.isRemote & isAddedToEnergyNet)
+		if (!worldObj.isRemote & isAddedToEnergyNet){
 			Util.postTileDetachEvent(this);
+			onUnload();
+			this.isAddedToEnergyNet=false;
+		}
+		
+		super.invalidate();
 	}
 	
-	//ISidedFacing
-	@Override
-	public void setFacing(ForgeDirection newFacing){facing=newFacing;}
-	
-	@Override
-	public ForgeDirection getFacing() {return facing;}
 
-	@Override
-	public boolean canSetFacing(ForgeDirection newFacing) {return true;}
-	
 
 	//IEnergyTile
 	@Override
@@ -53,7 +53,6 @@ public abstract class TileStandardSEMachine extends TileInventoryMachine impleme
     public void readFromNBT(NBTTagCompound tagCompound) {
     	super.readFromNBT(tagCompound);
     	
-    	facing=Util.byte2Direction(tagCompound.getByte("facing"));
     	functionalSide=Util.byte2Direction(tagCompound.getByte("functionalSide"));
     }
     
@@ -61,7 +60,6 @@ public abstract class TileStandardSEMachine extends TileInventoryMachine impleme
     public void writeToNBT(NBTTagCompound tagCompound) {
     	super.writeToNBT(tagCompound);
     	
-    	tagCompound.setByte("facing", Util.direction2Byte(facing));
     	tagCompound.setByte("functionalSide", Util.direction2Byte(functionalSide));
     }
 }

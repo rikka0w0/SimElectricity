@@ -28,8 +28,11 @@ public abstract class TileStandardGenerator extends TileEntity implements IEnerg
 
 	@Override
 	public void invalidate() {
-		if (!worldObj.isRemote & isAddedToEnergyNet)
+		if (!worldObj.isRemote & isAddedToEnergyNet){
 			Util.postTileDetachEvent(this);
+			this.isAddedToEnergyNet=false;
+		}
+		super.invalidate();
 	}
 	
     @Override

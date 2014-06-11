@@ -2,6 +2,8 @@ package simElectricity;
 
 import simElectricity.API.Util;
 import simElectricity.Blocks.*;
+import simElectricity.Blocks.WindMill.BlockWindMillTop;
+import simElectricity.Blocks.WindMill.TileWindMillTop;
 import simElectricity.Items.*;
 import simElectricity.Network.*;
 
@@ -56,11 +58,15 @@ public class mod_SimElectricity{
 		GameRegistry.registerBlock(new BlockElectricFurnace(), "sime:ElectricFurnace");
 		GameRegistry.registerBlock(new BlockAdjustableResistor(), "sime:AdjustableResistor");		
 		GameRegistry.registerBlock(new BlockWire(), ItemBlockWire.class, "sime:Wire");
+		GameRegistry.registerBlock(new BlockWindMillTop(), "sime:WindMillTop");	
+		
+		GameRegistry.registerBlock(new BlockIC2Emitter(), "sime:IC2Emitter");			
 		
 		//Register Items
 		GameRegistry.registerItem(new Item_UltimateMultimeter(), "sime:Item_UltimateMultimeter");
 		GameRegistry.registerItem(new Item_Glove(), "sime:Item_Glove");
 		GameRegistry.registerItem(new Item_Wrench(), "sime:Item_Wrench");
+		GameRegistry.registerItem(new Item_Fan(), "sime:Item_Fan");
 	}
 
 	/** Initialize */
@@ -79,7 +85,9 @@ public class mod_SimElectricity{
 		GameRegistry.registerTileEntity(TileVoltageMeter.class, "TileVoltageMeter");	
 		GameRegistry.registerTileEntity(TileElectricFurnace.class, "TileElectricFurnace");	
 		GameRegistry.registerTileEntity(TileWire.class, "TileWire");
-		GameRegistry.registerTileEntity(TileAdjustableResistor.class, "TileAdjustableResistor");			
+		GameRegistry.registerTileEntity(TileAdjustableResistor.class, "TileAdjustableResistor");		
+		GameRegistry.registerTileEntity(TileWindMillTop.class, "TileWindMillTop");
+		GameRegistry.registerTileEntity(TileIC2Emitter.class, "TileIC2Emitter");				
 	}
 
 	/** PostInitialize */

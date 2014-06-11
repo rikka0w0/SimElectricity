@@ -7,6 +7,8 @@ import simElectricity.Blocks.Client.GuiQuantumGenerator;
 import simElectricity.Blocks.Client.GuiSimpleGenerator;
 import simElectricity.Blocks.Client.GuiVoltageMeter;
 import simElectricity.Blocks.Client.RenderWire;
+import simElectricity.Blocks.WindMill.RenderWindMillTop;
+import simElectricity.Blocks.WindMill.TileWindMillTop;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
@@ -20,6 +22,7 @@ public class ClientProxy extends CommonProxy {
 	@Override
 	public void registerTileEntitySpecialRenderer() {
 		ClientRegistry.bindTileEntitySpecialRenderer(TileWire.class,new RenderWire());
+		ClientRegistry.bindTileEntitySpecialRenderer(TileWindMillTop.class,new RenderWindMillTop());
 	}
 
     @Override

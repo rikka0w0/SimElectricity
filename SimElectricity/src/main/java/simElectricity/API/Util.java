@@ -32,6 +32,15 @@ public class Util {
 	public static void postTileDetachEvent(TileEntity te){MinecraftForge.EVENT_BUS.post(new TileDetachEvent(te));}
 	/** Post a TileRejoinEvent for a tileEntity */
 	public static void postTileRejoinEvent(TileEntity te){MinecraftForge.EVENT_BUS.post(new TileRejoinEvent(te));}
+		
+	/** Calculate the energy output from a IEnergyTile in one tick (1/20 second)*/
+	public static float getWorkDonePerTick(IEnergyTile Tile){
+		if(Tile.getOutputVoltage()>0){            //Energy Source
+			return (float) (0.2*Util.getVoltage(Tile)*Util.getCurrent(Tile));
+		}else{                                    //Energy Sink
+			return 0;  				
+		}	
+	}
 	
 	/** Calculate the consumed power for a given EnergyTile*/
 	public static float getPower(IEnergyTile Tile){
@@ -85,7 +94,6 @@ public class Util {
     public static void chat(EntityPlayer player,String text){
     	player.addChatMessage(new ChatComponentText(text));
     }
-	
 	//Facing and Rendering------------------------------------------------------------------------------------------------------------------
 	/** Update a block rendering after 10 ticks */
 	public static void scheduleBlockUpdate(TileEntity te){ scheduleBlockUpdate(te,10);}

@@ -9,7 +9,7 @@ import simElectricity.API.Common.TileSidedGenerator;
 public class TileSimpleGenerator extends TileSidedGenerator implements ISyncPacketHandler{
 	public boolean isWorking;
 	protected int burnTime;
-    protected int burned;
+    protected float burned;
     public int progress;
 	
 	@Override
@@ -27,8 +27,8 @@ public class TileSimpleGenerator extends TileSidedGenerator implements ISyncPack
     			Util.postTileChangeEvent(this);
     		}				
 			
-			burned--;	
-			progress=burned*100/burnTime; //Update progress
+			burned-=0.03+0.1*Util.getWorkDonePerTick(this);	
+			progress=(int) (burned*100/burnTime); //Update progress
 			
 			if(burned<=0){
 				burned=0;
@@ -96,14 +96,14 @@ public class TileSimpleGenerator extends TileSidedGenerator implements ISyncPack
     public void readFromNBT(NBTTagCompound tagCompound) {
     	super.readFromNBT(tagCompound);
     	burnTime=tagCompound.getInteger("burnTime");
-    	burned=tagCompound.getInteger("burned");
+    	burned=tagCompound.getFloat("burned");
     }
 	
     @Override
     public void writeToNBT(NBTTagCompound tagCompound) {
     	super.writeToNBT(tagCompound);
     	tagCompound.setInteger("burnTime", burnTime);
-    	tagCompound.setInteger("burned", burned);
+    	tagCompound.setFloat("burned", burned);
     }
 	//Statics-------------------------------------------------------
     public static int getBurnTime(ItemStack in){return TileEntityFurnace.getItemBurnTime(in);}
