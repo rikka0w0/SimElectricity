@@ -9,10 +9,12 @@ import simElectricity.API.*;
 import simElectricity.API.Common.TileStandardSEMachine;
 
 public class TileElectricFurnace extends TileStandardSEMachine implements ISyncPacketHandler{
+	public static float energyPerItem=1000F;
+	public static float onResistance=100F;
+	
 	public boolean isWorking=false;
 	public int progress=0;
 	public float resistance=10;
-	public static float energyPerItem=4000F;
 	public float energyStored;
 	public ItemStack result;
 	
@@ -35,8 +37,8 @@ public class TileElectricFurnace extends TileStandardSEMachine implements ISyncP
 			energyStored+=Util.getPower(this)*0.02;
 			progress=((int) (energyStored*100/energyPerItem));
 			
-			if(resistance>100){
-				resistance=50;
+			if(resistance>onResistance){
+				resistance=onResistance;
 				Util.postTileChangeEvent(this);
 			}
 			
@@ -60,7 +62,7 @@ public class TileElectricFurnace extends TileStandardSEMachine implements ISyncP
 		}else{
 			progress=0;
 			energyStored=0;
-			if(resistance<100){
+			if(resistance<=onResistance){
 				resistance=1000000000;
 				Util.postTileChangeEvent(this);
 			}

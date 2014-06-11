@@ -2,13 +2,7 @@ package simElectricity.API.EnergyTile;
 
 import net.minecraftforge.common.util.ForgeDirection;
 
-public interface IEnergyTile extends IBaseComponent {
-	/**Return the max safety input voltage*/
-	float getMaxSafeVoltage();
-
-	/**When the input voltage exceed the safety range, do explosions here*/
-	void onOverVoltage();
-
+public interface IEnergyTile extends ICircuitComponent {
 	/**Return a side that is designed to accept power input or output*/
 	ForgeDirection getFunctionalSide();
 	
@@ -17,7 +11,4 @@ public interface IEnergyTile extends IBaseComponent {
 	
 	/**Usually called by the wrench, to determine set or not*/
 	boolean canSetFunctionalSide(ForgeDirection newFunctionalSide);
-	
-	/**Return 0 for sink(typically machines), other value for source(e.g generator)*/
-	float getOutputVoltage();
 }

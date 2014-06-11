@@ -27,7 +27,7 @@ public class TileSimpleGenerator extends TileSidedGenerator implements ISyncPack
     			Util.postTileChangeEvent(this);
     		}				
 			
-			burned-=0.03+0.1*Util.getWorkDonePerTick(this);	
+			burned-=0.03+0.02*Util.getWorkDonePerTick(this);	
 			progress=(int) (burned*100/burnTime); //Update progress
 			
 			if(burned<=0){
