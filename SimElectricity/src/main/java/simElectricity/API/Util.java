@@ -94,6 +94,26 @@ public class Util {
     public static void chat(EntityPlayer player,String text){
     	player.addChatMessage(new ChatComponentText(text));
     }
+    
+    /** Get a tileEntity on the given side of a tileEntity*/
+	public static TileEntity getTEonDirection(TileEntity te, ForgeDirection direction){
+		switch (direction){
+		case EAST:
+			return te.getWorldObj().getTileEntity(te.xCoord + 1, te.yCoord,te.zCoord);	
+		case WEST:
+			return te.getWorldObj().getTileEntity(te.xCoord - 1, te.yCoord,te.zCoord);
+		case UP:
+			return te.getWorldObj().getTileEntity(te.xCoord, te.yCoord + 1,te.zCoord);
+		case DOWN:
+			return te.getWorldObj().getTileEntity(te.xCoord, te.yCoord - 1,te.zCoord);
+		case SOUTH:
+			return te.getWorldObj().getTileEntity(te.xCoord, te.yCoord,te.zCoord + 1);
+		case NORTH:
+			return te.getWorldObj().getTileEntity(te.xCoord, te.yCoord,te.zCoord - 1);
+		default:
+			return null;
+		}
+	}
 	//Facing and Rendering------------------------------------------------------------------------------------------------------------------
 	/** Update a block rendering after 10 ticks */
 	public static void scheduleBlockUpdate(TileEntity te){ scheduleBlockUpdate(te,10);}

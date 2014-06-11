@@ -13,6 +13,7 @@ import org.jgrapht.Graphs;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleGraph;
 
+import simElectricity.API.Util;
 import simElectricity.API.EnergyTile.*;
 
 public final class EnergyNet {
@@ -74,99 +75,6 @@ public final class EnergyNet {
 			}	
 		}
 		return x;
-	}
-
-	/** Internal use only, return a list containing neighbor TileEntities*/
-	private static List<TileEntity> neighborListOf(TileEntity te) {
-		List<TileEntity> result = new ArrayList<TileEntity>();
-		TileEntity temp;
-
-		if (te instanceof IConductor){		
-			temp = te.getWorldObj().getTileEntity(te.xCoord + 1, te.yCoord,te.zCoord);	
-			if (temp instanceof IConductor){
-				result.add(temp);
-			}else if (temp instanceof IEnergyTile){
-				if(((IEnergyTile)temp).getFunctionalSide().getOpposite()==ForgeDirection.EAST)
-					result.add(temp);
-			}
-			
-			temp = te.getWorldObj().getTileEntity(te.xCoord - 1, te.yCoord,te.zCoord);
-			if (temp instanceof IConductor){
-				result.add(temp);
-			}else if (temp instanceof IEnergyTile){
-				if(((IEnergyTile)temp).getFunctionalSide().getOpposite()==ForgeDirection.WEST)
-					result.add(temp);
-			}
-			
-			temp = te.getWorldObj().getTileEntity(te.xCoord, te.yCoord + 1,te.zCoord);
-			if (temp instanceof IConductor){
-				result.add(temp);
-			}else if (temp instanceof IEnergyTile){
-				if(((IEnergyTile)temp).getFunctionalSide().getOpposite()==ForgeDirection.UP)
-					result.add(temp);
-			}
-			
-			temp = te.getWorldObj().getTileEntity(te.xCoord, te.yCoord - 1,te.zCoord);
-			if (temp instanceof IConductor){
-				result.add(temp);
-			}else if (temp instanceof IEnergyTile){
-				if(((IEnergyTile)temp).getFunctionalSide().getOpposite()==ForgeDirection.DOWN)
-					result.add(temp);
-			}
-			
-			temp = te.getWorldObj().getTileEntity(te.xCoord, te.yCoord,te.zCoord + 1);
-			if (temp instanceof IConductor){
-				result.add(temp);
-			}else if (temp instanceof IEnergyTile){
-				if(((IEnergyTile)temp).getFunctionalSide().getOpposite()==ForgeDirection.SOUTH)
-					result.add(temp);
-			}
-			
-			temp = te.getWorldObj().getTileEntity(te.xCoord, te.yCoord,	te.zCoord - 1);
-			if (temp instanceof IConductor){
-				result.add(temp);
-			}else if (temp instanceof IEnergyTile){
-				if(((IEnergyTile)temp).getFunctionalSide().getOpposite()==ForgeDirection.NORTH)
-					result.add(temp);
-			}
-		}
-
-		
-		if (te instanceof IEnergyTile){		
-			ForgeDirection myDirection=((IEnergyTile)te).getFunctionalSide();
-			int x=0,y=0,z=0;
-			
-			switch(myDirection){
-			case EAST:
-				x++;
-				break;
-			case WEST:
-				x--;
-				break;
-			case UP:
-				y++;
-				break;
-			case DOWN:
-				y--;
-				break;
-			case SOUTH:
-				z++;
-				break;
-			case NORTH:
-				z--;
-				break;
-			default:
-				break;
-			}
-			
-			temp = te.getWorldObj().getTileEntity(te.xCoord+x, te.yCoord+y,te.zCoord+z);	
-			
-			if (temp instanceof IConductor){
-				result.add(temp);
-			}
-		}
-		
-		return result;
 	}
 
 	private void mergeNodes(List<IBaseComponent> nodes) {
@@ -265,26 +173,137 @@ public final class EnergyNet {
 		}
 	}
 	
-	/** Add a TileEntity to the energynet*/
-	public void addTileEntity(TileEntity te) {
-		List<TileEntity> neighborList = neighborListOf(te);
-		
-		if(!tileEntityGraph.containsVertex((IBaseComponent) te))
-			tileEntityGraph.addVertex((IBaseComponent) te);
-		for (TileEntity tileEntity : neighborList) {
-			if(!tileEntityGraph.containsVertex((IBaseComponent) tileEntity))
-				tileEntityGraph.addVertex((IBaseComponent) tileEntity);
-			tileEntityGraph.addEdge((IBaseComponent) te,
-					(IBaseComponent) tileEntity);
+	//Editing of the jGraph--------------------------------------------------------------------------------
+	/** Internal use only, return a list containing neighbor TileEntities (Just for IBaseComponent)*/
+	private static List<IBaseComponent> neighborListOf(TileEntity te) {
+		List<IBaseComponent> result = new ArrayList<IBaseComponent>();
+		TileEntity temp;
+
+		if (te instanceof IConductor){	
+			ForgeDirection[] directions = new ForgeDirection[6];
+			directions[0]=ForgeDirection.EAST;
+			directions[1]=ForgeDirection.WEST;
+			directions[2]=ForgeDirection.UP;
+			directions[3]=ForgeDirection.DOWN;
+			directions[4]=ForgeDirection.SOUTH;
+			directions[5]=ForgeDirection.NORTH;
+			
+			
+			for (int i=0;i<6;i++){
+				temp = Util.getTEonDirection(te,directions[i]);
+				if (temp instanceof IConductor){          //Conductor
+					result.add((IConductor)temp);
+				}else if (temp instanceof IEnergyTile){   //IEnergyTile
+					if(((IEnergyTile)temp).getFunctionalSide()==directions[i].getOpposite())
+						result.add((IEnergyTile)temp);
+				}else if (temp instanceof IComplexTile){  //IComplexTile
+					if(((IComplexTile)temp).getCircuitComponent(directions[i].getOpposite())!=null)
+						result.add(((IComplexTile)temp).getCircuitComponent(directions[i].getOpposite()));
+				}				
+			}
 		}
 
+		
+		if (te instanceof IEnergyTile){		
+			ForgeDirection myDirection=((IEnergyTile)te).getFunctionalSide();
+			int x=0,y=0,z=0;
+			
+			switch(myDirection){
+			case EAST:
+				x++;
+				break;
+			case WEST:
+				x--;
+				break;
+			case UP:
+				y++;
+				break;
+			case DOWN:
+				y--;
+				break;
+			case SOUTH:
+				z++;
+				break;
+			case NORTH:
+				z--;
+				break;
+			default:
+				break;
+			}
+			
+			temp = te.getWorldObj().getTileEntity(te.xCoord+x, te.yCoord+y,te.zCoord+z);	
+			
+			if (temp instanceof IConductor){
+				result.add((IBaseComponent)temp);
+			}
+		}
+		
+		return result;
+	}
+	
+	/** Add a TileEntity to the energynet*/
+	public void addTileEntity(TileEntity te) {
+		if(te instanceof IComplexTile){      //IComplexTile
+			IComplexTile ct=((IComplexTile)te);
+			
+			ICircuitComponent SubComponent;
+			TileEntity neighbor;
+			
+			ForgeDirection[] directions = new ForgeDirection[6];
+			directions[0]=ForgeDirection.EAST;
+			directions[1]=ForgeDirection.WEST;
+			directions[2]=ForgeDirection.UP;
+			directions[3]=ForgeDirection.DOWN;
+			directions[4]=ForgeDirection.SOUTH;
+			directions[5]=ForgeDirection.NORTH;
+			
+			for (int i=0;i<6;i++){
+				SubComponent=ct.getCircuitComponent(directions[i]);	
+				
+				if(!tileEntityGraph.containsVertex(SubComponent))	//If the subComponent haven't been added, add it!
+					tileEntityGraph.addVertex(SubComponent);			
+				
+				neighbor=Util.getTEonDirection(te,directions[i]);
+				
+				if(neighbor instanceof IConductor){                //Connected properly
+					if(!tileEntityGraph.containsVertex((IConductor) neighbor))
+						tileEntityGraph.addVertex((IConductor) neighbor);
+					tileEntityGraph.addEdge(SubComponent,(IConductor) neighbor); //Add association
+				}				
+			}
+		}else if(te instanceof IBaseComponent){  //IBaseComponent
+			List<IBaseComponent> neighborList = neighborListOf(te);
+			
+			if(!tileEntityGraph.containsVertex((IBaseComponent) te))
+				tileEntityGraph.addVertex((IBaseComponent) te);
+			
+			for (IBaseComponent tileEntity : neighborList) {
+				if(!tileEntityGraph.containsVertex((IBaseComponent) tileEntity))
+					tileEntityGraph.addVertex((IBaseComponent) tileEntity);
+				tileEntityGraph.addEdge((IBaseComponent) te,(IBaseComponent) tileEntity);
+			}				
+		}
 		calc = true;
 	}
 
 	/** Remove a TileEntiy from the energy net*/
 	public void removeTileEntity(TileEntity te) {
-		tileEntityGraph.removeVertex((IBaseComponent) te);
-		
+		if(te instanceof IComplexTile){ //For a comlexTile every subComponents has to be removed!
+			ICircuitComponent[] SubComponents = new ICircuitComponent[6];
+			SubComponents[0]=((IComplexTile)te).getCircuitComponent(ForgeDirection.NORTH);	
+			SubComponents[1]=((IComplexTile)te).getCircuitComponent(ForgeDirection.SOUTH);	
+			SubComponents[2]=((IComplexTile)te).getCircuitComponent(ForgeDirection.EAST);	
+			SubComponents[3]=((IComplexTile)te).getCircuitComponent(ForgeDirection.WEST);	
+			SubComponents[4]=((IComplexTile)te).getCircuitComponent(ForgeDirection.UP);	
+			SubComponents[5]=((IComplexTile)te).getCircuitComponent(ForgeDirection.DOWN);	
+			
+			for (int i=0;i<6;i++){
+				if(SubComponents[i] instanceof IBaseComponent)
+					tileEntityGraph.removeVertex((IBaseComponent) SubComponents[i]);
+			}
+		}else{ //IBaseComponent and IConductor	
+			tileEntityGraph.removeVertex((IBaseComponent) te);
+		}
 		calc = true;
 	}
 
