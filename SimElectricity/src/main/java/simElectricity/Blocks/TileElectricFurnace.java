@@ -33,13 +33,13 @@ public class TileElectricFurnace extends TileStandardSEMachine implements ISyncP
 		if(worldObj.isRemote)
 			return;	
 		
-		if(Util.getPower(this)>0&&result!=null&&(inv[1]==null|(inv[1]!=null&&inv[1].isItemEqual(result)))){
-			energyStored+=Util.getPower(this)*0.02;
+		if(Energy.getPower(this)>0&&result!=null&&(inv[1]==null|(inv[1]!=null&&inv[1].isItemEqual(result)))){
+			energyStored+=Energy.getPower(this)*0.02;
 			progress=((int) (energyStored*100/energyPerItem));
 			
 			if(resistance>onResistance){
 				resistance=onResistance;
-				Util.postTileChangeEvent(this);
+				Energy.postTileChangeEvent(this);
 			}
 			
 			isWorking=true;
@@ -64,7 +64,7 @@ public class TileElectricFurnace extends TileStandardSEMachine implements ISyncP
 			energyStored=0;
 			if(resistance<=onResistance){
 				resistance=1000000000;
-				Util.postTileChangeEvent(this);
+				Energy.postTileChangeEvent(this);
 			}
 			isWorking=false;
 			Util.updateTileEntityField(this, "isWorking");
@@ -132,7 +132,7 @@ public class TileElectricFurnace extends TileStandardSEMachine implements ISyncP
 
 	@Override
 	public void onOverVoltage() {
-		worldObj.createExplosion(null, xCoord, yCoord, zCoord, 4F+Util.getVoltage(this)/getMaxSafeVoltage(), true);
+		worldObj.createExplosion(null, xCoord, yCoord, zCoord, 4F+Energy.getVoltage(this)/getMaxSafeVoltage(), true);
 	}
 	
 	@Override

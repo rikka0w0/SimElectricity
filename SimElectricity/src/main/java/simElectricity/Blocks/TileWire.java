@@ -8,9 +8,7 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.*;
-import simElectricity.API.EnergyTile.IBaseComponent;
 import simElectricity.API.EnergyTile.IConductor;
-import simElectricity.API.EnergyTile.IEnergyTile;
 import simElectricity.API.Events.TileAttachEvent;
 import simElectricity.API.Events.TileDetachEvent;
 
@@ -43,22 +41,7 @@ public class TileWire extends TileEntity implements IConductor,ISyncPacketHandle
 	public void updateSides() {
 		ForgeDirection[] dirs = ForgeDirection.values();
 		for (int i = 0; i < 6; i++) {
-			TileEntity ent = worldObj.getTileEntity(xCoord
-				+ dirs[i].offsetX, yCoord + dirs[i].offsetY, zCoord
-				+ dirs[i].offsetZ);
-			if (ent != null && ent instanceof IBaseComponent) {
-				if(ent instanceof IConductor){
-					renderSides[i] = true;
-				}else if (ent instanceof IEnergyTile){
-					ForgeDirection functionalSide=((IEnergyTile)ent).getFunctionalSide();
-					ForgeDirection curDirection=dirs[i];
-					
-					if(curDirection==functionalSide.getOpposite())
-						renderSides[i] = true;	
-
-				}
-			} else
-				renderSides[i] = false;
+				renderSides[i] = Util.possibleConnection(this,dirs[i]);
 		}
 	}
 

@@ -2,6 +2,7 @@ package simElectricity.Items;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import simElectricity.API.Energy;
 import simElectricity.API.Util;
 import simElectricity.API.EnergyTile.IEnergyTile;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -38,7 +39,7 @@ public class Item_Wrench extends Item{
     		
     		if(te.canSetFunctionalSide(newFacing)){
     			te.setFunctionalSide(newFacing);
-    			Util.postTileRejoinEvent((TileEntity) te);
+    			Energy.postTileRejoinEvent((TileEntity) te);
     			Util.updateTileEntityFunctionalSide((TileEntity) te);
     	    	world.notifyBlocksOfNeighborChange(x, y, z, null);
     		}

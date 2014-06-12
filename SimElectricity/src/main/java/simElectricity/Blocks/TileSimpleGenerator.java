@@ -7,6 +7,9 @@ import simElectricity.API.*;
 import simElectricity.API.Common.TileSidedGenerator;
 
 public class TileSimpleGenerator extends TileSidedGenerator implements ISyncPacketHandler{
+	public static int normalOutputV=230;
+	public static int normalOutputR=1;
+	
 	public boolean isWorking;
 	protected int burnTime;
     protected float burned;
@@ -21,13 +24,18 @@ public class TileSimpleGenerator extends TileSidedGenerator implements ISyncPack
 
 		
 		if(burnTime>0){ //Burning something
-    		if(outputVoltage!=230){
+    		if(outputVoltage!=normalOutputV){
     			isWorking=true;
-    			outputVoltage=230;
-    			Util.postTileChangeEvent(this);
+    			outputVoltage=normalOutputV;
+    			outputResistance=normalOutputR;
+    			Energy.postTileChangeEvent(this);
     		}				
 			
-			burned-=0.03+0.02*Util.getWorkDonePerTick(this);	
+    		float workDone=Energy.getWorkDonePerTick(this);	
+    		if(workDone<0)
+    			return;
+			
+    		burned-=0.03+0.02*workDone;	
 			progress=(int) (burned*100/burnTime); //Update progress
 			
 			if(burned<=0){
@@ -56,7 +64,8 @@ public class TileSimpleGenerator extends TileSidedGenerator implements ISyncPack
     		
     		if(outputVoltage!=0){
     			outputVoltage=0;
-    		    Util.postTileChangeEvent(this);
+    			outputResistance=10000000;
+    			Energy.postTileChangeEvent(this);
     		}
     		
     		burnTime=0;
@@ -64,9 +73,10 @@ public class TileSimpleGenerator extends TileSidedGenerator implements ISyncPack
     	}else{    		
     		isWorking=true;
     		
-    		if(outputVoltage!=230){
-    			this.outputVoltage=230;
-    			Util.postTileChangeEvent(this);
+    		if(outputVoltage!=normalOutputV){
+    			outputVoltage=normalOutputV;
+    			outputResistance=normalOutputR;
+    			Energy.postTileChangeEvent(this);
     		}
     		
   	    	burnTime=bt;

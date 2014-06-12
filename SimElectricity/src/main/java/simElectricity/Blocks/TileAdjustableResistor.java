@@ -1,7 +1,7 @@
 package simElectricity.Blocks;
 
+import simElectricity.API.Energy;
 import simElectricity.API.ISyncPacketHandler;
-import simElectricity.API.Util;
 import simElectricity.API.Common.TileStandardSEMachine;
 
 public class TileAdjustableResistor extends TileStandardSEMachine implements ISyncPacketHandler{
@@ -16,14 +16,14 @@ public class TileAdjustableResistor extends TileStandardSEMachine implements ISy
 		if(worldObj.isRemote)
 			return;
 		
-		power=Util.getPower(this);
+		power=Energy.getPower(this);
 		powerConsumed+=power/20F;
 	}
 	
 	@Override
 	public void onClient2ServerUpdate(String field, Object value, short type) {
 		if(field.contains("resistance"))	
-			Util.postTileChangeEvent(this);
+			Energy.postTileChangeEvent(this);
 	}
 
 	@Override

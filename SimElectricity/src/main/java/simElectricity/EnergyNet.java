@@ -102,9 +102,9 @@ public final class EnergyNet {
 		for (int i = 0; i < matrixSize; i++) {		
 			IBaseComponent nodeI = unknownVoltageNodes.get(i);
 			
-			if (nodeI instanceof IEnergyTile) {
+			if (nodeI instanceof ICircuitComponent) {
 				b[i] = 1 / nodeI.getResistance();
-				b[i] = b[i]	* ((IEnergyTile) nodeI).getOutputVoltage();
+				b[i] = b[i]	* ((ICircuitComponent) nodeI).getOutputVoltage();
 			}else{
 				b[i] = 0;
 			}
@@ -116,7 +116,7 @@ public final class EnergyNet {
 					for (IBaseComponent iBaseComponent : neighborList)
 						// add neighbor resistance
 						tmp += 1.0 / (getResistance(nodeI) + getResistance(iBaseComponent));
-					if (nodeI instanceof IEnergyTile) 
+					if (nodeI instanceof ICircuitComponent) 
 						tmp += 1.0 / nodeI.getResistance();
 				} else {
 					if (neighborList.contains(unknownVoltageNodes.get(j)))
@@ -138,7 +138,7 @@ public final class EnergyNet {
 
 	/** Internal use only, only used by runSimulator()*/
 	private static float getResistance(IBaseComponent te){
-		if (te instanceof IEnergyTile)
+		if (te instanceof ICircuitComponent)
 			return 0;
 		else if(te instanceof IConductor)
 			return te.getResistance()/2;
@@ -158,8 +158,8 @@ public final class EnergyNet {
 			
 			try{
 				for (IBaseComponent tile:energyNet.tileEntityGraph.vertexSet()){
-					if(tile instanceof IEnergyTile){
-						IEnergyTile te=(IEnergyTile) tile;
+					if(tile instanceof ICircuitComponent){
+						ICircuitComponent te=(ICircuitComponent) tile;
 						if(te.getMaxSafeVoltage()!=0&&te.getMaxSafeVoltage()<energyNet.voltageCache.get(tile))
 							te.onOverVoltage(); //Over voltage check
 					}else if(tile instanceof IConductor){
@@ -260,18 +260,20 @@ public final class EnergyNet {
 			for (int i=0;i<6;i++){
 				SubComponent=ct.getCircuitComponent(directions[i]);	
 				
-				if(!tileEntityGraph.containsVertex(SubComponent))	//If the subComponent haven't been added, add it!
-					tileEntityGraph.addVertex(SubComponent);			
-				
-				neighbor=Util.getTEonDirection(te,directions[i]);
-				
-				if(neighbor instanceof IConductor){                //Connected properly
-					if(!tileEntityGraph.containsVertex((IConductor) neighbor))
-						tileEntityGraph.addVertex((IConductor) neighbor);
-					tileEntityGraph.addEdge(SubComponent,(IConductor) neighbor); //Add association
-				}				
+				if(SubComponent instanceof IBaseComponent){
+					if(!tileEntityGraph.containsVertex(SubComponent))	//If the subComponent haven't been added, add it!
+						tileEntityGraph.addVertex(SubComponent);			
+					
+					neighbor=Util.getTEonDirection(te,directions[i]);
+					
+					if(neighbor instanceof IConductor){                //Connected properly
+						if(!tileEntityGraph.containsVertex((IConductor) neighbor))
+							tileEntityGraph.addVertex((IConductor) neighbor);
+						tileEntityGraph.addEdge(SubComponent,(IConductor) neighbor); //Add association
+					}
+				}
 			}
-		}else if(te instanceof IBaseComponent){  //IBaseComponent
+		}else{  //IBaseComponent and IConductor
 			List<IBaseComponent> neighborList = neighborListOf(te);
 			
 			if(!tileEntityGraph.containsVertex((IBaseComponent) te))
@@ -301,7 +303,7 @@ public final class EnergyNet {
 				if(SubComponents[i] instanceof IBaseComponent)
 					tileEntityGraph.removeVertex((IBaseComponent) SubComponents[i]);
 			}
-		}else{ //IBaseComponent and IConductor	
+		}else{  //IBaseComponent and IConductor
 			tileEntityGraph.removeVertex((IBaseComponent) te);
 		}
 		calc = true;

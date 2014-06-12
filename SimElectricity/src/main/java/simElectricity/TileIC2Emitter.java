@@ -1,8 +1,9 @@
 package simElectricity;
+
 import ic2.api.energy.event.EnergyTileLoadEvent;
 import ic2.api.energy.event.EnergyTileUnloadEvent;
 import ic2.api.energy.tile.IEnergySource;
-import simElectricity.API.Util;
+import simElectricity.API.Energy;
 import simElectricity.API.Common.TileStandardSEMachine;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.MinecraftForge;
@@ -22,7 +23,7 @@ public class TileIC2Emitter extends TileStandardSEMachine implements IEnergySour
 		if (worldObj.isRemote)
 			return;
 		
-		buffer+=Util.getPower(this);
+		buffer+=Energy.getPower(this);
 	}
 	
 	

@@ -1,5 +1,6 @@
 package simElectricity.API.Common;
 
+import simElectricity.API.Energy;
 import simElectricity.API.ISidedFacing;
 import simElectricity.API.Util;
 import simElectricity.API.EnergyTile.IEnergyTile;
@@ -19,7 +20,7 @@ public abstract class TileStandardSEMachine extends TileSidedFacingMachine imple
 	public void updateEntity() {
 		super.updateEntity();
 		if (!worldObj.isRemote && !isAddedToEnergyNet) {
-			Util.postTileAttachEvent(this);
+			Energy.postTileAttachEvent(this);
 			onLoad();
 			this.isAddedToEnergyNet=true;
 			Util.scheduleBlockUpdate(this);
@@ -29,7 +30,7 @@ public abstract class TileStandardSEMachine extends TileSidedFacingMachine imple
 	@Override
 	public void invalidate() {
 		if (!worldObj.isRemote & isAddedToEnergyNet){
-			Util.postTileDetachEvent(this);
+			Energy.postTileDetachEvent(this);
 			onUnload();
 			this.isAddedToEnergyNet=false;
 		}

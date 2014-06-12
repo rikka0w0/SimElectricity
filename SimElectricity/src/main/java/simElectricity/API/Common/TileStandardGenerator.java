@@ -1,5 +1,6 @@
 package simElectricity.API.Common;
 
+import simElectricity.API.Energy;
 import simElectricity.API.Util;
 import simElectricity.API.EnergyTile.IEnergyTile;
 import net.minecraft.nbt.NBTTagCompound;
@@ -19,7 +20,7 @@ public abstract class TileStandardGenerator extends TileEntity implements IEnerg
 	@Override
 	public void updateEntity() {
 		if (!worldObj.isRemote && !isAddedToEnergyNet) {
-			Util.postTileAttachEvent(this);
+			Energy.postTileAttachEvent(this);
 			this.isAddedToEnergyNet=true;
 			init();			
 			Util.scheduleBlockUpdate(this);
@@ -29,7 +30,7 @@ public abstract class TileStandardGenerator extends TileEntity implements IEnerg
 	@Override
 	public void invalidate() {
 		if (!worldObj.isRemote & isAddedToEnergyNet){
-			Util.postTileDetachEvent(this);
+			Energy.postTileDetachEvent(this);
 			this.isAddedToEnergyNet=false;
 		}
 		super.invalidate();

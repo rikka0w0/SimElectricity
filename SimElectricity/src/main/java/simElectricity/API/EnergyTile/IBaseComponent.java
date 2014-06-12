@@ -1,6 +1,6 @@
 package simElectricity.API.EnergyTile;
 
-public interface IBaseComponent extends ISEInterface{
+public interface IBaseComponent{
 	/**
 	 * Return the resistance of the machine or the internal resistance of the
 	 * battery For a energy sink, the smaller the resistance is, the faster it

@@ -1,5 +1,6 @@
 package simElectricity.Blocks;
 
+import simElectricity.API.Energy;
 import simElectricity.API.Util;
 import simElectricity.API.Common.ContainerBase;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -12,7 +13,7 @@ public class ContainerVoltageMeter extends ContainerBase{
     public void detectAndSendChanges()
     {
     	super.detectAndSendChanges();
-    	((TileVoltageMeter)tileEntity).voltage=Util.getVoltage(((TileVoltageMeter)tileEntity));
+    	((TileVoltageMeter)tileEntity).voltage=Energy.getVoltage(((TileVoltageMeter)tileEntity));
     	Util.updateTileEntityField(tileEntity, "voltage");
     }
 	

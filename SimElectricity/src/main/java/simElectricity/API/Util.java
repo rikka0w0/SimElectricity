@@ -1,72 +1,19 @@
 package simElectricity.API;
 
-import simElectricity.EnergyNet;
 import simElectricity.mod_SimElectricity;
-import simElectricity.API.EnergyTile.IBaseComponent;
-import simElectricity.API.EnergyTile.IEnergyTile;
-import simElectricity.API.Events.TileAttachEvent;
-import simElectricity.API.Events.TileChangeEvent;
-import simElectricity.API.Events.TileDetachEvent;
-import simElectricity.API.Events.TileRejoinEvent;
-import simElectricity.Network.PacketTileEntityFieldUpdate;
-import simElectricity.Network.PacketTileEntitySideUpdate;
+import simElectricity.API.EnergyTile.*;
+import simElectricity.Network.*;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.MathHelper;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.ForgeDirection;
 
 public class Util {
 	/** Creative Tab for SimElectricity project */
 	public static CreativeTabs SETab;
-	
-	//Energy net-------------------------------------------------------------------------------------------------------------------------------
-	/** Post a TileAttachEvent for a tileEntity */
-	public static void postTileAttachEvent(TileEntity te){MinecraftForge.EVENT_BUS.post(new TileAttachEvent(te));}
-	/** Post a TileChangeEvent for a tileEntity */
-	public static void postTileChangeEvent(TileEntity te){MinecraftForge.EVENT_BUS.post(new TileChangeEvent(te));}
-	/** Post a TileDetachEvent for a tileEntity */
-	public static void postTileDetachEvent(TileEntity te){MinecraftForge.EVENT_BUS.post(new TileDetachEvent(te));}
-	/** Post a TileRejoinEvent for a tileEntity */
-	public static void postTileRejoinEvent(TileEntity te){MinecraftForge.EVENT_BUS.post(new TileRejoinEvent(te));}
-		
-	/** Calculate the energy output from a IEnergyTile in one tick (1/20 second)*/
-	public static float getWorkDonePerTick(IEnergyTile Tile){
-		if(Tile.getOutputVoltage()>0){            //Energy Source
-			return (float) (0.2*Util.getVoltage(Tile)*Util.getCurrent(Tile));
-		}else{                                    //Energy Sink
-			return 0;  				
-		}	
-	}
-	
-	/** Calculate the consumed power for a given EnergyTile*/
-	public static float getPower(IEnergyTile Tile){
-		if(Tile.getOutputVoltage()>0){            //Energy Source
-			return ((Tile.getOutputVoltage()-getVoltage(Tile))*(Tile.getOutputVoltage()-getVoltage(Tile)))/Tile.getResistance(); 
-		}else{                                    //Energy Sink
-			return getVoltage(Tile)*getVoltage(Tile)/Tile.getResistance();    				
-		}
-	}
-
-	/** Calculate the input/output for a given EnergyTile*/
-	public static float getCurrent(IEnergyTile Tile){
-		if(Tile.getOutputVoltage()>0){            //Energy Source
-			return (Tile.getOutputVoltage()-getVoltage(Tile))/Tile.getResistance(); 
-		}else{                                    //Energy Sink
-			return getVoltage(Tile)/Tile.getResistance();    				
-		}
-	}
-	
-	/** Calculate the volage of a given EnergyTile RELATIVE TO GROUND! */
-	public static float getVoltage(IBaseComponent Tile){
-		if (EnergyNet.getForWorld(((TileEntity)Tile).getWorldObj()).voltageCache.containsKey(Tile))
-			return EnergyNet.getForWorld(((TileEntity)Tile).getWorldObj()).voltageCache.get(Tile);
-		else
-			return 0;
-	}
 	
 	//Network & Sync------------------------------------------------------------------------------------------------------------------------
 	/** Update a client tileEntity field from the server */
@@ -97,22 +44,31 @@ public class Util {
     
     /** Get a tileEntity on the given side of a tileEntity*/
 	public static TileEntity getTEonDirection(TileEntity te, ForgeDirection direction){
-		switch (direction){
-		case EAST:
-			return te.getWorldObj().getTileEntity(te.xCoord + 1, te.yCoord,te.zCoord);	
-		case WEST:
-			return te.getWorldObj().getTileEntity(te.xCoord - 1, te.yCoord,te.zCoord);
-		case UP:
-			return te.getWorldObj().getTileEntity(te.xCoord, te.yCoord + 1,te.zCoord);
-		case DOWN:
-			return te.getWorldObj().getTileEntity(te.xCoord, te.yCoord - 1,te.zCoord);
-		case SOUTH:
-			return te.getWorldObj().getTileEntity(te.xCoord, te.yCoord,te.zCoord + 1);
-		case NORTH:
-			return te.getWorldObj().getTileEntity(te.xCoord, te.yCoord,te.zCoord - 1);
-		default:
-			return null;
+		return te.getWorldObj().getTileEntity(
+				te.xCoord + direction.offsetX,
+				te.yCoord + direction.offsetY,
+				te.zCoord + direction.offsetZ);
+	}
+	
+	/** Used by wires to find possible connections */
+	public static boolean possibleConnection(TileEntity te, ForgeDirection direction){
+		TileEntity ent = getTEonDirection(te,direction);
+		
+		if(ent instanceof IConductor){
+			return true;
+				
+		}else if (ent instanceof IEnergyTile){
+			ForgeDirection functionalSide=((IEnergyTile)ent).getFunctionalSide();
+				
+			if(direction==functionalSide.getOpposite())
+				return true;
+
+		}else if (ent instanceof IComplexTile){
+			if(((IComplexTile)ent).getCircuitComponent(direction.getOpposite()) instanceof IBaseComponent)
+				return true;
 		}
+		
+		return false;
 	}
 	//Facing and Rendering------------------------------------------------------------------------------------------------------------------
 	/** Update a block rendering after 10 ticks */

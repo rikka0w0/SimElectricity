@@ -59,6 +59,7 @@ public class mod_SimElectricity{
 		GameRegistry.registerBlock(new BlockAdjustableResistor(), "sime:AdjustableResistor");		
 		GameRegistry.registerBlock(new BlockWire(), ItemBlockWire.class, "sime:Wire");
 		GameRegistry.registerBlock(new BlockWindMillTop(), "sime:WindMillTop");	
+		GameRegistry.registerBlock(new BlockComplexTile(), "sime:ComplexTile");
 		
 		GameRegistry.registerBlock(new BlockIC2Emitter(), "sime:IC2Emitter");			
 		
@@ -87,7 +88,8 @@ public class mod_SimElectricity{
 		GameRegistry.registerTileEntity(TileWire.class, "TileWire");
 		GameRegistry.registerTileEntity(TileAdjustableResistor.class, "TileAdjustableResistor");		
 		GameRegistry.registerTileEntity(TileWindMillTop.class, "TileWindMillTop");
-		GameRegistry.registerTileEntity(TileIC2Emitter.class, "TileIC2Emitter");				
+		GameRegistry.registerTileEntity(TileIC2Emitter.class, "TileIC2Emitter");	
+		GameRegistry.registerTileEntity(ComplexTile.class, "ComplexTile");	
 	}
 
 	/** PostInitialize */

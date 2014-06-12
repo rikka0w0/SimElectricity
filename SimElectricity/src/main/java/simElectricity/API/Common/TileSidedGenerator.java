@@ -2,7 +2,7 @@ package simElectricity.API.Common;
 
 public abstract class TileSidedGenerator extends TileStandardSEMachine{
 	public float outputVoltage=0;
-	public float outputResistance=1F;
+	public float outputResistance=10000000;
 	
     @Override
 	public float getResistance() {return outputResistance;}

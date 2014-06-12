@@ -2,6 +2,7 @@ package simElectricity;
 
 import simElectricity.API.*;
 import simElectricity.API.EnergyTile.IBaseComponent;
+import simElectricity.API.EnergyTile.IComplexTile;
 import simElectricity.API.EnergyTile.IConductor;
 import simElectricity.API.EnergyTile.IEnergyTile;
 import simElectricity.API.Events.TileAttachEvent;
@@ -68,7 +69,7 @@ public class GlobalEventHandler {
 			return;			
 		}
 		
-		if (!(te instanceof IBaseComponent)) {
+		if (!(te instanceof IBaseComponent) && !(te instanceof IComplexTile)) {
 			System.out.println("Unacceptable tileentity " + te+ " is trying to attach to the energy network, aborting");
 			return;
 		}

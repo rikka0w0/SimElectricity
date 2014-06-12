@@ -32,7 +32,7 @@ public class BlockWire extends BlockContainer{
 	public IIcon[] iconBuffer=new IIcon[subNames.length];
 
 		
-	//Initiallize Block
+	//Initialize Block
 	public BlockWire() {
 		super(Material.circuits);
 		setHardness(2.0F);

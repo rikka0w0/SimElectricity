@@ -1,7 +1,7 @@
 package simElectricity.Blocks;
 
 import net.minecraftforge.common.util.ForgeDirection;
-import simElectricity.API.Util;
+import simElectricity.API.Energy;
 import simElectricity.API.Common.TileStandardGenerator;
 
 public class TileSolarPanel extends TileStandardGenerator{
@@ -28,7 +28,7 @@ public class TileSolarPanel extends TileStandardGenerator{
 		if(voltage!=outputVoltage|resistance!=outputResistance){
 			outputVoltage=voltage;
 			outputResistance=resistance;
-			Util.postTileChangeEvent(this);
+			Energy.postTileChangeEvent(this);
 		}
 	}
 	
