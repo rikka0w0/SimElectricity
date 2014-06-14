@@ -23,9 +23,28 @@ public class Energy {
 	/** Post a TileRejoinEvent for a tileEntity */
 	public static void postTileRejoinEvent(TileEntity te){MinecraftForge.EVENT_BUS.post(new TileRejoinEvent(te));}
 		
-	/** Calculate the energy output from a IEnergyTile in one tick (1/20 second)*/
+	/** Calculate the energy output from a IEnergyTile in one tick (1/20 second)
+	 *  For IEnergyTile Only! */
 	public static float getWorkDonePerTick(IEnergyTile Tile){
 		return getWorkDonePerTick(Tile,((TileEntity)Tile).getWorldObj());
+	}
+	
+	/** Calculate the consumed power for a given EnergyTile
+	 *  For IEnergyTile and IConductor Only! */
+	public static float getPower(IEnergyTile Tile){
+		return getPower(Tile, ((TileEntity)Tile).getWorldObj());
+	}	
+	
+	/** Calculate the input/output for a given EnergyTile
+	 *  For IEnergyTile and IConductor Only! */
+	public static float getCurrent(IEnergyTile Tile){
+		return getCurrent(Tile, ((TileEntity)Tile).getWorldObj());
+	}
+	
+	/** Calculate the voltage of a given EnergyTile RELATIVE TO GROUND!
+	 *  For IEnergyTile and IConductor Only! */
+	public static float getVoltage(IBaseComponent Tile){
+		return getVoltage(Tile, ((TileEntity)Tile).getWorldObj());
 	}
 	
 	/** Calculate the energy output from a IEnergyTile in one tick (1/20 second)*/
@@ -37,12 +56,6 @@ public class Energy {
 		}	
 	}
 	
-	/** Calculate the consumed power for a given EnergyTile
-	 *  For IEnergyTile and IConductor Only! */
-	public static float getPower(IEnergyTile Tile){
-		return getPower(Tile, ((TileEntity)Tile).getWorldObj());
-	}
-
 	/** Calculate the consumed power for a given EnergyTile */
 	public static float getPower(ICircuitComponent Tile, World world){
 		if(Tile.getOutputVoltage()>0){            //Energy Source
@@ -52,12 +65,6 @@ public class Energy {
 		}
 	}
 	
-	/** Calculate the input/output for a given EnergyTile
-	 *  For IEnergyTile and IConductor Only! */
-	public static float getCurrent(IEnergyTile Tile){
-		return getCurrent(Tile, ((TileEntity)Tile).getWorldObj());
-	}
-	
 	/** Calculate the input/output for a given EnergyTile */
 	public static float getCurrent(ICircuitComponent Tile, World world){
 		if(Tile.getOutputVoltage()>0){            //Energy Source
@@ -65,12 +72,6 @@ public class Energy {
 		}else{                                    //Energy Sink
 			return getVoltage(Tile, world)/Tile.getResistance();    				
 		}
-	}
-	
-	/** Calculate the voltage of a given EnergyTile RELATIVE TO GROUND!
-	 *  For IEnergyTile and IConductor Only! */
-	public static float getVoltage(IBaseComponent Tile){
-		return getVoltage(Tile, ((TileEntity)Tile).getWorldObj());
 	}
 	
 	/** Calculate the voltage of a given EnergyTile RELATIVE TO GROUND! */

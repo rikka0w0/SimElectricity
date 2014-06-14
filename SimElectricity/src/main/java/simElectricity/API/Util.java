@@ -63,8 +63,8 @@ public class Util {
 			if(direction==functionalSide.getOpposite())
 				return true;
 
-		}else if (ent instanceof IComplexTile){
-			if(((IComplexTile)ent).canConnectOnSide(direction.getOpposite()))
+		}else if (ent instanceof IConnectable){
+			if(((IConnectable)ent).canConnectOnSide(direction.getOpposite()))
 				return true;
 		}
 		

@@ -20,8 +20,8 @@ public abstract class TileStandardSEMachine extends TileSidedFacingMachine imple
 	public void updateEntity() {
 		super.updateEntity();
 		if (!worldObj.isRemote && !isAddedToEnergyNet) {
-			Energy.postTileAttachEvent(this);
 			onLoad();
+			Energy.postTileAttachEvent(this);
 			this.isAddedToEnergyNet=true;
 			Util.scheduleBlockUpdate(this);
 		}
@@ -30,8 +30,8 @@ public abstract class TileStandardSEMachine extends TileSidedFacingMachine imple
 	@Override
 	public void invalidate() {
 		if (!worldObj.isRemote & isAddedToEnergyNet){
+			onUnload();			
 			Energy.postTileDetachEvent(this);
-			onUnload();
 			this.isAddedToEnergyNet=false;
 		}
 		
