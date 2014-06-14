@@ -84,9 +84,10 @@ public class Item_UltimateMultimeter extends Item{
     			Util.chat(player,"Power rate: "+String.valueOf(Energy.getPower((ICircuitComponent) te, tile.getWorldObj()))+"W"); 
     		}
     		Util.chat(player,"Voltage: "+String.valueOf(voltage)+"V");    	
-    		if(outputVoltage>0) //Energy Source
+    		if(outputVoltage>0){ //Energy Source
     			Util.chat(player,"Internal voltage: "+String.valueOf(outputVoltage)+"V");  
-    		
+    			Util.chat(player,"Output rate: "+String.valueOf(outputVoltage*Energy.getCurrent((ICircuitComponent) te, tile.getWorldObj()))+"W");  
+    		}
     		
     		return true;
     	}else{

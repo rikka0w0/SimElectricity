@@ -1,4 +1,4 @@
-package simElectricity;
+package simElectricity.Test;
 
 import ic2.api.energy.event.EnergyTileLoadEvent;
 import ic2.api.energy.event.EnergyTileUnloadEvent;

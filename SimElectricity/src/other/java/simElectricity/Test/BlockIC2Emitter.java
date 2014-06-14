@@ -1,4 +1,4 @@
-package simElectricity;
+package simElectricity.Test;
 
 import java.util.Random;
 

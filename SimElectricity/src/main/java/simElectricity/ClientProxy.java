@@ -1,12 +1,7 @@
 package simElectricity;
 
 import simElectricity.Blocks.*;
-import simElectricity.Blocks.Client.GuiAdjustableResistor;
-import simElectricity.Blocks.Client.GuiElectricFurnace;
-import simElectricity.Blocks.Client.GuiQuantumGenerator;
-import simElectricity.Blocks.Client.GuiSimpleGenerator;
-import simElectricity.Blocks.Client.GuiVoltageMeter;
-import simElectricity.Blocks.Client.RenderWire;
+import simElectricity.Blocks.Client.*;
 import simElectricity.Blocks.WindMill.RenderWindMillTop;
 import simElectricity.Blocks.WindMill.TileWindMillTop;
 import net.minecraft.entity.player.EntityPlayer;
@@ -39,6 +34,7 @@ public class ClientProxy extends CommonProxy {
 			return new GuiSimpleGenerator(player.inventory,(TileSimpleGenerator) te);
 		if (te instanceof TileAdjustableResistor)
 			return new GuiAdjustableResistor(player.inventory,(TileAdjustableResistor) te);
+				
 		
 		return null;
     }

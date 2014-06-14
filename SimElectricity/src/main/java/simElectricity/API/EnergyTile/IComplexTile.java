@@ -6,4 +6,6 @@ import net.minecraftforge.common.util.ForgeDirection;
 public interface IComplexTile{
 	/** Returns the corresponding circuit component on certain side*/
 	public ICircuitComponent getCircuitComponent(ForgeDirection side);
+
+	boolean canConnectOnSide(ForgeDirection side);
 }

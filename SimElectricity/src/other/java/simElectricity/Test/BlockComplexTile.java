@@ -1,4 +1,4 @@
-package simElectricity;
+package simElectricity.Test;
 
 import simElectricity.API.Util;
 import net.minecraft.block.BlockContainer;

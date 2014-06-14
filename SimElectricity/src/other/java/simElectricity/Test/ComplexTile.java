@@ -1,4 +1,4 @@
-package simElectricity;
+package simElectricity.Test;
 
 import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.Common.TileComplexMachine;
@@ -44,6 +44,21 @@ public class ComplexTile extends TileComplexMachine{
 			return Tile_NORTH;
 		default:
 			return null;
+		}
+	}
+
+	@Override
+	public int getInventorySize() {	return 0;}
+
+	@Override
+	public boolean canConnectOnSide(ForgeDirection side) {
+		switch (side){
+		case UP:
+			return true;
+		case NORTH:
+			return true;
+		default:
+			return false;
 		}
 	}
 }

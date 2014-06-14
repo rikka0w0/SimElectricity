@@ -64,7 +64,7 @@ public class Util {
 				return true;
 
 		}else if (ent instanceof IComplexTile){
-			if(((IComplexTile)ent).getCircuitComponent(direction.getOpposite()) instanceof IBaseComponent)
+			if(((IComplexTile)ent).canConnectOnSide(direction.getOpposite()))
 				return true;
 		}
 		

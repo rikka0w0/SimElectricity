@@ -25,8 +25,13 @@ public class Energy {
 		
 	/** Calculate the energy output from a IEnergyTile in one tick (1/20 second)*/
 	public static float getWorkDonePerTick(IEnergyTile Tile){
+		return getWorkDonePerTick(Tile,((TileEntity)Tile).getWorldObj());
+	}
+	
+	/** Calculate the energy output from a IEnergyTile in one tick (1/20 second)*/
+	public static float getWorkDonePerTick(ICircuitComponent Tile, World world){
 		if(Tile.getOutputVoltage()>0){            //Energy Source
-			return (float) (0.2*getVoltage(Tile)*getCurrent(Tile));
+			return (float) (0.05*getVoltage(Tile,world)*getCurrent(Tile,world));
 		}else{                                    //Energy Sink
 			return 0;  				
 		}	

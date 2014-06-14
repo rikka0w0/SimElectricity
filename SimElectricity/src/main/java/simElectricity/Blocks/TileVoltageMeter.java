@@ -6,7 +6,7 @@ public class TileVoltageMeter extends TileStandardSEMachine{
 	public float voltage=0;
 
     @Override
-	public float getResistance() {return 1000000;}
+	public float getResistance() {return Float.MAX_VALUE;}
 
 	@Override
 	public void onOverloaded() {}
