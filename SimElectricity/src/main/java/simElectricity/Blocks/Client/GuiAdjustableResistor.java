@@ -84,7 +84,7 @@ public class GuiAdjustableResistor extends GuiContainer {
     	
        	fontRendererObj.drawString(StatCollector.translateToLocal("tile.sime:AdjustableResistor.name"), 8, 6, 4210752);
        	
-       	fontRendererObj.drawString(String.format("%.1f", te.resistance)+" ¦¸", 30, 24, 4210752);
+       	fontRendererObj.drawString(String.format("%.1f", te.resistance)+" \u03a9", 30, 24, 4210752);
        	fontRendererObj.drawString(String.format("%.1f", te.power)+" W", 30, 37, 4210752);
        	fontRendererObj.drawString(String.format("%.0f", te.powerConsumed)+" J", 30, 50, 4210752);       	
        	

@@ -75,9 +75,9 @@ public class Item_UltimateMultimeter extends Item{
     			Util.chat(player,"FunctionalSide: "+ ((IEnergyTile)te).getFunctionalSide().toString());
     		
     		if (te instanceof ICircuitComponent&&outputVoltage>0)
-    			Util.chat(player,"Internal resistance: "+String.valueOf(te.getResistance())+"¦¸");  
+    			Util.chat(player,"Internal resistance: "+String.valueOf(te.getResistance())+"\u03a9");
     		else	
-    			Util.chat(player,"Resistance: "+String.valueOf(te.getResistance())+"¦¸");  
+    			Util.chat(player,"Resistance: "+String.valueOf(te.getResistance())+"\u03a9");
     		
     		if (te instanceof ICircuitComponent){
     			Util.chat(player,"Current: "+String.valueOf(Energy.getCurrent((ICircuitComponent) te, tile.getWorldObj()))+"A"); 

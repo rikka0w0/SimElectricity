@@ -27,7 +27,7 @@ public class GuiSimpleGenerator extends GuiContainer{
        	fontRendererObj.drawString(StatCollector.translateToLocal("tile.sime:SimpleGenerator.Output"), 115, 22, 4210752);
        	fontRendererObj.drawString(String.valueOf(tileentity.getOutputVoltage())+"V", 115, 32, 4210752);
        	fontRendererObj.drawString(StatCollector.translateToLocal("tile.sime:SimpleGenerator.Impedance"), 115, 42, 4210752);
-       	fontRendererObj.drawString(String.valueOf(tileentity.getResistance())+"Ohm", 115, 52, 4210752);
+       	fontRendererObj.drawString(String.valueOf(tileentity.getResistance())+"\u03a9", 115, 52, 4210752);
        	
        	//draws "Inventory" or your regional equivalent
        	fontRendererObj.drawString(StatCollector.translateToLocal("container.inventory"), 8, ySize - 96, 4210752);

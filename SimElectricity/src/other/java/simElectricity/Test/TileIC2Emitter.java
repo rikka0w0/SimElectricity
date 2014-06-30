@@ -42,7 +42,12 @@ public class TileIC2Emitter extends TileStandardSEMachine implements IEnergySour
 		buffer-=arg0;
 	}
 
-	@Override
+    @Override
+    public int getSourceTier() {
+        return 1;
+    }
+
+    @Override
 	public double getOfferedEnergy() {return Math.min(IC2Voltage, buffer);}
 
 	@Override

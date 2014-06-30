@@ -50,7 +50,7 @@ public class TileWire extends TileEntity implements IConductor,ISyncPacketHandle
     public AxisAlignedBB getRenderBoundingBox()
     {
         AxisAlignedBB bb = INFINITE_EXTENT_AABB;
-        bb = AxisAlignedBB.getAABBPool().getAABB(xCoord, yCoord, zCoord, xCoord + 1, yCoord + 1, zCoord + 1);
+        bb = AxisAlignedBB.getBoundingBox(xCoord, yCoord, zCoord, xCoord + 1, yCoord + 1, zCoord + 1);
         return bb;
     }
 
