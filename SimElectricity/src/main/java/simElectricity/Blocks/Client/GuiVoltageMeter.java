@@ -28,7 +28,7 @@ public class GuiVoltageMeter extends GuiContainer {
      	//draw text and stuff here
        	//the parameters for drawString are: string, x, y, color
     	
-       	fontRendererObj.drawString(StatCollector.translateToLocal("tile.sime:VoltageMeter.name"), 8, 6, 4210752);
+       	fontRendererObj.drawString(StatCollector.translateToLocal("tile.VoltageMeter.name"), 8, 6, 4210752);
        	fontRendererObj.drawString("Voltage: "+tileentity.voltage+"V", 18, 22, 4210752);
        	
        	//draws "Inventory" or your regional equivalent

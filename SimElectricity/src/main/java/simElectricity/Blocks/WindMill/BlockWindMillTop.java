@@ -1,7 +1,8 @@
 package simElectricity.Blocks.WindMill;
 
-import java.util.Random;
-
+import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
@@ -16,9 +17,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.ISidedFacing;
 import simElectricity.API.Util;
-import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+
+import java.util.Random;
 
 public class BlockWindMillTop extends BlockContainer{
 	private IIcon[] iconBuffer = new IIcon[6];
@@ -70,7 +70,7 @@ public class BlockWindMillTop extends BlockContainer{
 		super(Material.rock);
 		setHardness(2.0F);
 		setResistance(5.0F);
-		setBlockName("sime:WindMillTop");
+		setBlockName("WindMillTop");
 		setCreativeTab(Util.SETab);
 	}
 

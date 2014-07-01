@@ -82,7 +82,7 @@ public class GuiAdjustableResistor extends GuiContainer {
      	//draw text and stuff here
        	//the parameters for drawString are: string, x, y, color
     	
-       	fontRendererObj.drawString(StatCollector.translateToLocal("tile.sime:AdjustableResistor.name"), 8, 6, 4210752);
+       	fontRendererObj.drawString(StatCollector.translateToLocal("tile.AdjustableResistor.name"), 8, 6, 4210752);
        	
        	fontRendererObj.drawString(String.format("%.1f", te.resistance)+" \u03a9", 30, 24, 4210752);
        	fontRendererObj.drawString(String.format("%.1f", te.power)+" W", 30, 37, 4210752);

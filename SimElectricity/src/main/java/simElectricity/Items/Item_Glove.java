@@ -17,7 +17,7 @@ public class Item_Glove extends Item{
 		super();
 		maxStackSize = 1;
 		setHasSubtypes(true);
-		setUnlocalizedName("sime:Item_Glove");
+		setUnlocalizedName("Item_Glove");
 		setMaxDamage(256);
 		setCreativeTab(Util.SETab);
 	}

@@ -1,10 +1,5 @@
 package simElectricity.Test;
 
-import java.util.Random;
-
-import simElectricity.API.ISidedFacing;
-import simElectricity.API.Util;
-import simElectricity.API.EnergyTile.IEnergyTile;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
@@ -18,6 +13,11 @@ import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
+import simElectricity.API.EnergyTile.IEnergyTile;
+import simElectricity.API.ISidedFacing;
+import simElectricity.API.Util;
+
+import java.util.Random;
 
 
 public class BlockIC2Emitter extends BlockContainer{
@@ -28,7 +28,7 @@ public class BlockIC2Emitter extends BlockContainer{
 		super(Material.rock);
 		setHardness(2.0F);
 		setResistance(5.0F);
-		setBlockName("sime:IC2Emitter");
+		setBlockName("IC2Emitter");
 		setCreativeTab(Util.SETab);
 	}
 

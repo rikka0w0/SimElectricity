@@ -18,7 +18,7 @@ public class Item_Wrench extends Item{
 		super();
 		maxStackSize = 1;
 		setHasSubtypes(true);
-		setUnlocalizedName("sime:Item_Wrench");
+		setUnlocalizedName("Item_Wrench");
 		setMaxDamage(256);
 		setCreativeTab(Util.SETab);
 	}

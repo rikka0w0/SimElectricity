@@ -1,7 +1,7 @@
 package simElectricity.Blocks;
 
-import java.util.Random;
-
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
@@ -14,10 +14,10 @@ import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
-import simElectricity.mod_SimElectricity;
 import simElectricity.API.Util;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import simElectricity.mod_SimElectricity;
+
+import java.util.Random;
 
 public class BlockElectricFurnace extends BlockContainer{
 	private IIcon[] iconBuffer = new IIcon[7];
@@ -40,7 +40,7 @@ public class BlockElectricFurnace extends BlockContainer{
 		super(Material.rock);
 		setHardness(2.0F);
 		setResistance(5.0F);
-		setBlockName("sime:ElectricFurnace");
+		setBlockName("ElectricFurnace");
 		setCreativeTab(Util.SETab);
 	}
 

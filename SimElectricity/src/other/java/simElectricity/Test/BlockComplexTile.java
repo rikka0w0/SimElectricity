@@ -13,7 +13,7 @@ public class BlockComplexTile extends BlockContainer{
 		super(Material.rock);
 		setHardness(2.0F);
 		setResistance(5.0F);
-		setBlockName("sime:ComplexTile");
+		setBlockName("ComplexTile");
 		setCreativeTab(Util.SETab);
 	}
 

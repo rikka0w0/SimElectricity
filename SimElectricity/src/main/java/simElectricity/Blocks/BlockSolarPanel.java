@@ -1,10 +1,7 @@
 package simElectricity.Blocks;
 
-import java.util.Random;
-
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import simElectricity.API.Util;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
@@ -16,6 +13,9 @@ import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
+import simElectricity.API.Util;
+
+import java.util.Random;
 
 public class BlockSolarPanel extends BlockContainer{
 	private IIcon[] iconBuffer = new IIcon[6];
@@ -24,7 +24,7 @@ public class BlockSolarPanel extends BlockContainer{
 		super(Material.rock);
 		setHardness(2.0F);
 		setResistance(5.0F);
-		setBlockName("sime:SolarPanel");
+		setBlockName("SolarPanel");
 		setCreativeTab(Util.SETab);
 	}
     

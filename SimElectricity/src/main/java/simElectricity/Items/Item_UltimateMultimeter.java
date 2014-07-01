@@ -17,7 +17,7 @@ public class Item_UltimateMultimeter extends Item{
 		super();
 		maxStackSize = 1;
 		setHasSubtypes(true);
-		setUnlocalizedName("sime:Item_UltimateMultimeter");
+		setUnlocalizedName("Item_UltimateMultimeter");
 		setMaxDamage(256);
 		setCreativeTab(Util.SETab);
 	}

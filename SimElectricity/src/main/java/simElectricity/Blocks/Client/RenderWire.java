@@ -165,10 +165,8 @@ public class RenderWire extends TileEntitySpecialRenderer{
 			boolean[] theArray) {
 		ForgeDirection[] dirs = ForgeDirection.values();
 		if (blockSide == -1) {
-			if (theArray[subSide])
-				return false;
-			return true;
-		}
+            return !theArray[subSide];
+        }
 		//Fix the rendering problem
 		//if (dirs[blockSide].getOpposite().ordinal() == subSide|| (blockSide == subSide && theArray[subSide]))
 			//return false;

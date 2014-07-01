@@ -9,7 +9,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 public class Item_Fan extends Item{
 	public Item_Fan() {
 		super();
-		setUnlocalizedName("sime:Item_Fan");
+		setUnlocalizedName("Item_Fan");
 		setCreativeTab(Util.SETab);
 	}
 

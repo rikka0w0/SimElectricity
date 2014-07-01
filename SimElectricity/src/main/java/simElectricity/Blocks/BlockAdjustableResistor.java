@@ -1,11 +1,5 @@
 package simElectricity.Blocks;
 
-import java.util.Random;
-
-import simElectricity.mod_SimElectricity;
-import simElectricity.API.ISidedFacing;
-import simElectricity.API.Util;
-import simElectricity.API.EnergyTile.IEnergyTile;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
@@ -20,6 +14,12 @@ import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
+import simElectricity.API.EnergyTile.IEnergyTile;
+import simElectricity.API.ISidedFacing;
+import simElectricity.API.Util;
+import simElectricity.mod_SimElectricity;
+
+import java.util.Random;
 
 public class BlockAdjustableResistor extends BlockContainer {
 	private IIcon[] iconBuffer = new IIcon[6];
@@ -39,7 +39,7 @@ public class BlockAdjustableResistor extends BlockContainer {
 		super(Material.rock);
 		setHardness(2.0F);
 		setResistance(5.0F);
-		setBlockName("sime:AdjustableResistor");
+		setBlockName("AdjustableResistor");
 		setCreativeTab(Util.SETab);
 	}
 

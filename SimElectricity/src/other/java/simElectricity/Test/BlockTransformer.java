@@ -1,7 +1,7 @@
 package simElectricity.Test;
 
-import java.util.Random;
-
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -12,13 +12,13 @@ import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
-import simElectricity.API.Energy;
-import simElectricity.API.Util;
 import simElectricity.API.Common.TileComplexMachine;
+import simElectricity.API.Energy;
 import simElectricity.API.EnergyTile.ICircuitComponent;
+import simElectricity.API.Util;
 import simElectricity.Test.TileBatteryBox.CircuitComponent;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+
+import java.util.Random;
 
 public class BlockTransformer extends BlockContainer{
 	public static class TileTransformer extends TileComplexMachine{
@@ -106,7 +106,7 @@ public class BlockTransformer extends BlockContainer{
 		super(Material.rock);
 		setHardness(2.0F);
 		setResistance(5.0F);
-		setBlockName("sime:Transformer");
+		setBlockName("Transformer");
 		setCreativeTab(Util.SETab);
 	}
 

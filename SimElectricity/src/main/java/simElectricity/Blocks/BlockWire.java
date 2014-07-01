@@ -1,10 +1,5 @@
 package simElectricity.Blocks;
 
-import java.util.List;
-import java.util.Random;
-
-import simElectricity.API.Util;
-
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
@@ -21,6 +16,10 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import simElectricity.API.Util;
+
+import java.util.List;
+import java.util.Random;
 
 public class BlockWire extends BlockContainer{
 
@@ -37,7 +36,7 @@ public class BlockWire extends BlockContainer{
 		super(Material.circuits);
 		setHardness(2.0F);
 		setResistance(5.0F);
-		setBlockName("sime:Wire");
+		setBlockName("Wire");
 		setCreativeTab(Util.SETab);
 	}
 	
