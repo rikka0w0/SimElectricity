@@ -1,19 +1,5 @@
 package simElectricity.Network;
 
-import java.util.*;
-
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
-import io.netty.channel.ChannelHandler;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.MessageToMessageCodec;
-
-import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.network.INetHandler;
-import net.minecraft.network.NetHandlerPlayServer;
-
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.network.FMLEmbeddedChannel;
 import cpw.mods.fml.common.network.FMLOutboundHandler;
@@ -21,18 +7,31 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.network.internal.FMLProxyPacket;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
+import io.netty.channel.ChannelHandler;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.handler.codec.MessageToMessageCodec;
+import net.minecraft.client.Minecraft;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.network.INetHandler;
+import net.minecraft.network.NetHandlerPlayServer;
+
+import java.util.*;
 
 /**
  * Packet pipeline class. Directs all registered packet data to be handled by the packets themselves.
+ *
  * @author sirgingalot
- * some code from: cpw
+ *         some code from: cpw
  */
 @ChannelHandler.Sharable
 public class PacketPipeline extends MessageToMessageCodec<FMLProxyPacket, AbstractPacket> {
 
-    private EnumMap<Side, FMLEmbeddedChannel>           channels;
-    private LinkedList<Class<? extends AbstractPacket>> packets           = new LinkedList<Class<? extends AbstractPacket>>();
-    private boolean                                     isPostInitialised = false;
+    private EnumMap<Side, FMLEmbeddedChannel> channels;
+    private LinkedList<Class<? extends AbstractPacket>> packets = new LinkedList<Class<? extends AbstractPacket>>();
+    private boolean isPostInitialised = false;
 
     /**
      * Register your packet with the pipeline. Discriminators are automatically set.
@@ -105,8 +104,6 @@ public class PacketPipeline extends MessageToMessageCodec<FMLProxyPacket, Abstra
 
             default:
         }
-
-        out.add(pkt);
     }
 
     // Method to call from FMLInitializationEvent
