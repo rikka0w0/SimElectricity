@@ -1,6 +1,5 @@
 package simElectricity.Blocks.WindMill;
 
-import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
@@ -22,37 +21,37 @@ import java.util.Random;
 
 public class BlockWindMillTop extends BlockContainer{
 	private IIcon[] iconBuffer = new IIcon[6];
-	
+
     @Override
     public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int i1, float f1, float f2, float f3){
     	TileWindMillTop te = (TileWindMillTop) world.getTileEntity(x, y, z);
-    	ItemStack playerItem = player.getCurrentEquippedItem();   
-    	
+    	ItemStack playerItem = player.getCurrentEquippedItem();
+
     	if(player.isSneaking())
     		return false;
-    	
-    	 	
+
+
     	if(te.settled){
     		if(playerItem!=null)
-    			return false;  
-    		
-    		dropBlockAsItem(world, x, y+1, z, new ItemStack(GameRegistry.findItem("mod_SimElectricity", "sime:Item_Fan"),1));
+    			return false;
+
+    		dropBlockAsItem(world, x, y+1, z, new ItemStack(Util.getItem("Item_Fan"), 1));
     		te.settled=false;
     	}else{
     		if(playerItem==null)
-    			return false;    		
-    		
-    		if(playerItem.getItem()!=GameRegistry.findItem("mod_SimElectricity", "sime:Item_Fan"))
     			return false;
-    		
+
+    		if(playerItem.getItem() != Util.getItem("Item_Fan"))
+    			return false;
+
     		playerItem=playerItem.splitStack(1);
-    		
+
     		te.settled=true;
     	}
 
     	return true;
     }
-    
+
     @Override
     public void breakBlock(World world, int x, int y, int z, Block block, int meta)
     {
@@ -60,12 +59,12 @@ public class BlockWindMillTop extends BlockContainer{
 
         if (te instanceof TileWindMillTop){
         	if (((TileWindMillTop)te).settled)
-        		dropBlockAsItem(world,x,y,z,new ItemStack(GameRegistry.findItem("mod_SimElectricity", "sime:Item_Fan"),1));
+        		dropBlockAsItem(world,x,y,z,new ItemStack(Util.getItem("Item_Fan"), 1));
         }
-    	
+
     	super.breakBlock(world, x, y, z, block, meta);
     }
-    
+
     public BlockWindMillTop() {
 		super(Material.rock);
 		setHardness(2.0F);
@@ -85,54 +84,54 @@ public class BlockWindMillTop extends BlockContainer{
     	iconBuffer[5] = r.registerIcon("simElectricity:WindMill_Side");
     }
 
-	
+
     @SideOnly(Side.CLIENT)
 	@Override
 	public IIcon getIcon(IBlockAccess world, int x,int y, int z, int side) {
     	int blockMeta = world.getBlockMetadata(x, y, z);
     	TileEntity te=world.getTileEntity(x, y, z);
-    	
-    	
+
+
     	return iconBuffer[Util.getTextureOnSide(side, ((ISidedFacing)te).getFacing())];
 	}
-	
+
     @SideOnly(Side.CLIENT)
    	@Override
    	public IIcon getIcon(int side, int meta) {
     	return iconBuffer[Util.getTextureOnSide(side, ForgeDirection.WEST)];
    	}
-    
+
     @Override
-    public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase player, ItemStack stack) {       
+    public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase player, ItemStack stack) {
         TileEntity te = world.getTileEntity(x, y, z);
-        
+
         //Both for server and client
         ((ISidedFacing)te).setFacing(Util.getPlayerSight(player).getOpposite());
-    }	
-    
+    }
+
     @Override
     public void updateTick(World world, int x, int y, int z, Random p_149674_5_) {
      	if (world.isRemote)
-    		return;    	
+    		return;
     	TileEntity te = world.getTileEntity(x, y, z);
 
     	Util.updateTileEntityFacing(te);
     	Util.updateTileEntityField(te, "settled");
     }
-    
+
     @Override
     public void onNeighborBlockChange(World world, int x, int y, int z, Block block){
     	if (world.isRemote)
-    		return;    	
-    	
+    		return;
+
     	//Server side only!
     	TileEntity te = world.getTileEntity(x, y, z);
     	Util.updateTileEntityFacing(te);
     }
-	
+
 	@Override
 	public TileEntity createNewTileEntity(World var1, int var2) {return new TileWindMillTop();}
-	
+
 	@Override
 	public int damageDropped(int par1) {return par1;}
 }

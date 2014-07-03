@@ -1,13 +1,11 @@
 package simElectricity.Blocks.WindMill;
 
-import java.util.Random;
-
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.ForgeDirection;
-
-
-import simElectricity.API.Util;
 import simElectricity.API.Common.TileSidedFacingMachine;
+import simElectricity.API.Util;
+
+import java.util.Random;
 
 public class TileWindMillTop extends TileSidedFacingMachine{
 	public int randAngle=(new Random()).nextInt(180);
@@ -24,10 +22,7 @@ public class TileWindMillTop extends TileSidedFacingMachine{
 	
 	@Override
 	public boolean canSetFacing(ForgeDirection newFacing) {
-		if(newFacing!=ForgeDirection.UP&&newFacing!=ForgeDirection.DOWN)
-			return true;
-		else
-			return false;
+        return newFacing != ForgeDirection.UP && newFacing != ForgeDirection.DOWN;
 	}
 	
     @Override
