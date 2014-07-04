@@ -1,14 +1,22 @@
 *.class
+hs_err_pid*
+.mtj.tmp/
 
 # Package Files #
 *.war
 *.ear
+*.jar
 
 # IDEA module file #
 *.iml
+*.ipr
+*.iws
+atlassian-ide-plugin.xml
 
 # IDEA project file #
 /.idea
+/.idea_modules
+/out
 
 # Gradle #
 /.gradle
@@ -19,6 +27,7 @@
 .classpath
 .project
 .metadata
+.settings
 /.settings
 /bin
 
@@ -49,3 +58,4 @@ $RECYCLE.BIN/
 # Vim #
 ~*
 *.swp
+.*.swp
