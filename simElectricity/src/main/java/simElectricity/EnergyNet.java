@@ -2,13 +2,16 @@ package simElectricity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
+import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleGraph;
@@ -76,25 +79,73 @@ public final class EnergyNet {
 		}
 		return x;
 	}
+	
+	private boolean nodeIsLine(IBaseComponent conductor, SimpleGraph<IBaseComponent, DefaultEdge> optimizedTileEntityGraph){
+		if(conductor.getClass() == VirtualConductor.class)
+			return false;
+		if(!(conductor instanceof IConductor))
+			return false;
+		if(VirtualConductor.conductorInVirtual((IConductor) conductor))
+			return false;			
+		return Graphs.neighborListOf(optimizedTileEntityGraph, conductor).size() == 2;
+	}
+	
+	private VirtualConductor floodFill(IBaseComponent conductor, VirtualConductor virtualConductor, SimpleGraph<IBaseComponent, DefaultEdge> optimizedTileEntityGraph){
+		if(nodeIsLine(conductor, optimizedTileEntityGraph)) {
+			if(virtualConductor == null)
+				virtualConductor = new VirtualConductor();
+			virtualConductor.append((IConductor) conductor);
+			List<IBaseComponent> neighborList = Graphs.neighborListOf(optimizedTileEntityGraph, conductor);
+			for (IBaseComponent iBaseComponent : neighborList) {
+				floodFill(iBaseComponent, virtualConductor, optimizedTileEntityGraph);
+			}
+		} else if (virtualConductor != null) {
+			virtualConductor.appendConnection(conductor);
+		}
+		
+		return virtualConductor;
+	}
 
-	private void mergeNodes(List<IBaseComponent> nodes) {
-		// for (int i = nodes.size() - 1; i >= 0; i--) {
-		// IBaseComponent thisNode = nodes.get(i);
-		// if (tileEntityGraph.degreeOf(thisNode) == 2) {
-		// List<IBaseComponent> neighborList = Graphs.neighborListOf(
-		// tileEntityGraph, thisNode);
-		//
-		// }
-		// }
+	private boolean mergeIConductorNode(SimpleGraph<IBaseComponent, DefaultEdge> optimizedTileEntityGraph) {
+		boolean result = false;
+		VirtualConductor virtualConductor = null;
+		
+		Set<IBaseComponent> iBaseComponentSet =  optimizedTileEntityGraph.vertexSet();
+		for (IBaseComponent iBaseComponent : iBaseComponentSet) {
+			virtualConductor = floodFill(iBaseComponent, virtualConductor, optimizedTileEntityGraph);
+			
+			if(virtualConductor != null) {
+				break;
+			}
+		}		
+		
+		if(virtualConductor != null) {
+			optimizedTileEntityGraph.addVertex(virtualConductor);
+			optimizedTileEntityGraph.addEdge(virtualConductor, virtualConductor.getConnection(0));
+			optimizedTileEntityGraph.addEdge(virtualConductor, virtualConductor.getConnection(1));
+			
+			for (IConductor conductor : VirtualConductor.allConductorInVirtual()) 
+				optimizedTileEntityGraph.removeVertex(conductor);
+			
+			result = true;
+		}
+		
+		return result;
 	}
 	
 	private void runSimulator() {
+		SimpleGraph<IBaseComponent, DefaultEdge> optimizedTileEntityGraph = (SimpleGraph<IBaseComponent, DefaultEdge>) tileEntityGraph.clone();
+		
+		//try to optimization
+		System.out.printf("raw:%d nodes\n",optimizedTileEntityGraph.vertexSet().size());
+		VirtualConductor.mapClear();
+		while(mergeIConductorNode(optimizedTileEntityGraph));
+		System.out.printf("optimized:%d nodes\n",optimizedTileEntityGraph.vertexSet().size());
+		
 		List<IBaseComponent> unknownVoltageNodes = new ArrayList<IBaseComponent>();
-		unknownVoltageNodes.addAll(tileEntityGraph.vertexSet());
+		unknownVoltageNodes.addAll(optimizedTileEntityGraph.vertexSet());
 
 		int matrixSize = unknownVoltageNodes.size();
-		//if(matrixSize < 3)
-		//	return;
 
 		float[][] A = new float[matrixSize][matrixSize];
 		float[] b = new float[matrixSize];
@@ -109,7 +160,7 @@ public final class EnergyNet {
 				b[i] = 0;
 			}
 
-			List<IBaseComponent> neighborList = Graphs.neighborListOf(tileEntityGraph, nodeI);	
+			List<IBaseComponent> neighborList = Graphs.neighborListOf(optimizedTileEntityGraph, nodeI);	
 			for (int j = 0; j < matrixSize; j++) {
 				float tmp = 0;
 				if (i == j) {
