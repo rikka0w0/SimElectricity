@@ -1,10 +1,13 @@
-package simElectricity.API.EnergyTile;
+package simElectricity.EnergyNet;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import simElectricity.API.EnergyTile.IBaseComponent;
+import simElectricity.API.EnergyTile.IConductor;
 
 public class VirtualConductor implements IConductor {
 	

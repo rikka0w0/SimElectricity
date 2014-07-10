@@ -3,7 +3,6 @@ package simElectricity.API;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
-import simElectricity.EnergyNet;
 import simElectricity.API.EnergyTile.IBaseComponent;
 import simElectricity.API.EnergyTile.ICircuitComponent;
 import simElectricity.API.EnergyTile.IEnergyTile;
@@ -11,6 +10,7 @@ import simElectricity.API.Events.TileAttachEvent;
 import simElectricity.API.Events.TileChangeEvent;
 import simElectricity.API.Events.TileDetachEvent;
 import simElectricity.API.Events.TileRejoinEvent;
+import simElectricity.EnergyNet.EnergyNet;
 
 public class Energy {
 	//Energy net-------------------------------------------------------------------------------------------------------------------------------

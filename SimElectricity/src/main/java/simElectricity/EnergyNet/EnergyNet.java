@@ -1,4 +1,4 @@
-package simElectricity;
+package simElectricity.EnergyNet;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,70 +16,19 @@ import org.jgrapht.Graphs;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleGraph;
 
+import simElectricity.ConfigManager;
 import simElectricity.API.Util;
 import simElectricity.API.EnergyTile.*;
 
 public final class EnergyNet {
-	/*Simulator*/
-	private static final float EPSILON = (float) 1e-10;
 	// private WeightedMultigraph<IBaseComponent, Resistor> tileEntityGraph =
 	// new WeightedMultigraph<IBaseComponent, Resistor>(Resistor.class);
 	private SimpleGraph<IBaseComponent, DefaultEdge> tileEntityGraph = new SimpleGraph<IBaseComponent, DefaultEdge>(DefaultEdge.class);
 	public Map<IBaseComponent, Float> voltageCache = new HashMap<IBaseComponent, Float>();
 	/** A flag for recalculate the energynet*/
 	private boolean calc = false;	
-	
-	// Gaussian elimination with partial pivoting
-	private static float[] lsolve(float[][] A, float[] b) {
-		int N = b.length;
 
-		for (int p = 0; p < N; p++) {
-
-			// find pivot row and swap
-			int max = p;
-			for (int i = p + 1; i < N; i++) {
-				if (Math.abs(A[i][p]) > Math.abs(A[max][p])) {
-					max = i;
-				}
-			}
-			float[] temp = A[p];
-			A[p] = A[max];
-			A[max] = temp;
-			float t = b[p];
-			b[p] = b[max];
-			b[max] = t;
-
-			// singular or nearly singular
-			if (Math.abs(A[p][p]) <= EPSILON) {
-				//throw new RuntimeException(	"Matrix is singular or nearly singular");
-			}
-
-			// pivot within A and b
-			for (int i = p + 1; i < N; i++) {
-				if(A[p][p]!=0){//Ignore any line with all zero
-					float alpha = A[i][p] / A[p][p];
-					b[i] -= alpha * b[p];
-					for (int j = p; j < N; j++) {
-						A[i][j] -= alpha * A[p][j];
-					}
-				}
-			}
-		}
-
-		// back substitution
-		float[] x = new float[N];
-		for (int i = N - 1; i >= 0; i--) {
-			if(A[i][i]!=0){//Ignore any line with all zero
-				float sum = (float) 0.0;
-				for (int j = i + 1; j < N; j++) {
-					sum += A[i][j] * x[j];
-				}
-				x[i] = (b[i] - sum) / A[i][i];
-			}	
-		}
-		return x;
-	}
-	
+	//Optimization--------------------------------------------------------------------
 	private boolean nodeIsLine(IBaseComponent conductor, SimpleGraph<IBaseComponent, DefaultEdge> optimizedTileEntityGraph){
 		if(conductor.getClass() == VirtualConductor.class)
 			return false;
@@ -133,14 +82,18 @@ public final class EnergyNet {
 		return result;
 	}
 	
+	//Simulator------------------------------------------------------------------------
 	private void runSimulator() {
 		SimpleGraph<IBaseComponent, DefaultEdge> optimizedTileEntityGraph = (SimpleGraph<IBaseComponent, DefaultEdge>) tileEntityGraph.clone();
 		
 		//try to optimization
-		System.out.printf("raw:%d nodes\n",optimizedTileEntityGraph.vertexSet().size());
-		VirtualConductor.mapClear();
-		while(mergeIConductorNode(optimizedTileEntityGraph));
-		System.out.printf("optimized:%d nodes\n",optimizedTileEntityGraph.vertexSet().size());
+		if(ConfigManager.optimizeNodes){
+			System.out.printf("raw:%d nodes\n",optimizedTileEntityGraph.vertexSet().size());
+			VirtualConductor.mapClear();
+			while(mergeIConductorNode(optimizedTileEntityGraph));
+				System.out.printf("optimized:%d nodes\n",optimizedTileEntityGraph.vertexSet().size());
+		}
+		
 		
 		List<IBaseComponent> unknownVoltageNodes = new ArrayList<IBaseComponent>();
 		unknownVoltageNodes.addAll(optimizedTileEntityGraph.vertexSet());
@@ -179,7 +132,7 @@ public final class EnergyNet {
 		}
 		
 		
-		float[] x = lsolve(A, b);
+		float[] x = MatrixOperation.lsolve(A, b);
 		
 		voltageCache.clear();
 		for (int i = 0; i < x.length; i++) {

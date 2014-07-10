@@ -21,6 +21,7 @@ import simElectricity.API.Util;
 import simElectricity.Blocks.*;
 import simElectricity.Blocks.WindMill.BlockWindMillTop;
 import simElectricity.Blocks.WindMill.TileWindMillTop;
+import simElectricity.EnergyNet.EnergyNetEventHandler;
 import simElectricity.Items.Item_Fan;
 import simElectricity.Items.Item_Glove;
 import simElectricity.Items.Item_UltimateMultimeter;
@@ -43,14 +44,16 @@ public class mod_SimElectricity{
     public static mod_SimElectricity instance;
 
 	public PacketPipeline packetPipeline = new PacketPipeline();
-	private GlobalEventHandler globalEventHandler = new GlobalEventHandler();
 
 	/** PreInitialize */
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
+		//Load Configs
+		new ConfigManager(event);
+		
 		//Add to event bus
-		MinecraftForge.EVENT_BUS.register(globalEventHandler);
-		FMLCommonHandler.instance().bus().register(globalEventHandler);
+		new GlobalEventHandler();
+		new EnergyNetEventHandler();
 
 		//CreativeTab
 		final BlockQuantumGenerator QuantumGenerator = new BlockQuantumGenerator();

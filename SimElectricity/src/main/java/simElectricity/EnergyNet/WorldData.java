@@ -1,7 +1,8 @@
-package simElectricity;
+package simElectricity.EnergyNet;
 
 import java.util.Map;
 import java.util.WeakHashMap;
+
 
 import net.minecraft.world.World;
 
