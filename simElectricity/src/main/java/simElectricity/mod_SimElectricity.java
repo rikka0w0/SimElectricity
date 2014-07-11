@@ -16,7 +16,6 @@ import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
-import net.minecraftforge.common.MinecraftForge;
 import simElectricity.API.Util;
 import simElectricity.Blocks.*;
 import simElectricity.Blocks.WindMill.BlockWindMillTop;
@@ -30,7 +29,7 @@ import simElectricity.Network.PacketPipeline;
 import simElectricity.Network.PacketTileEntityFieldUpdate;
 import simElectricity.Network.PacketTileEntitySideUpdate;
 
-@Mod(modid = mod_SimElectricity.MODID, name = mod_SimElectricity.NAME, version = "0.1")
+@Mod(modid = mod_SimElectricity.MODID, name = mod_SimElectricity.NAME, version = "0.1", guiFactory = "simElectricity.Client.SimEGuiFactory", dependencies = "required-after:Forge@[10.12.2.1147,)")
 public class mod_SimElectricity{
 
     public static final String MODID = "mod_SimElectricity";
@@ -49,8 +48,9 @@ public class mod_SimElectricity{
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
 		//Load Configs
-		new ConfigManager(event);
-		
+        FMLCommonHandler.instance().bus().register(new ConfigManager());
+        ConfigManager.init(event);
+
 		//Add to event bus
 		new GlobalEventHandler();
 		new EnergyNetEventHandler();
