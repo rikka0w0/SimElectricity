@@ -30,88 +30,99 @@ import simElectricity.Network.PacketTileEntityFieldUpdate;
 import simElectricity.Network.PacketTileEntitySideUpdate;
 
 @Mod(modid = mod_SimElectricity.MODID, name = mod_SimElectricity.NAME, version = "0.1", guiFactory = "simElectricity.Client.SimEGuiFactory", dependencies = "required-after:Forge@[10.12.2.1147,)")
-public class mod_SimElectricity{
+public class mod_SimElectricity {
 
     public static final String MODID = "mod_SimElectricity";
     public static final String NAME = "SimElectricity";
 
-	/** Server and Client Proxy */
-	@SidedProxy(clientSide = "simElectricity.ClientProxy", serverSide = "simElectricity.CommonProxy")
-	public static CommonProxy proxy;
+    /**
+     * Server and Client Proxy
+     */
+    @SidedProxy(clientSide = "simElectricity.ClientProxy", serverSide = "simElectricity.CommonProxy")
+    public static CommonProxy proxy;
 
     @Instance(mod_SimElectricity.MODID)
     public static mod_SimElectricity instance;
 
-	public PacketPipeline packetPipeline = new PacketPipeline();
+    public PacketPipeline packetPipeline = new PacketPipeline();
 
-	/** PreInitialize */
-	@EventHandler
-	public void preInit(FMLPreInitializationEvent event) {
-		//Load Configs
+    /**
+     * PreInitialize
+     */
+    @EventHandler
+    public void preInit(FMLPreInitializationEvent event) {
+        //Load Configs
         FMLCommonHandler.instance().bus().register(new ConfigManager());
         ConfigManager.init(event);
 
-		//Add to event bus
-		new GlobalEventHandler();
-		new EnergyNetEventHandler();
+        //Add to event bus
+        new GlobalEventHandler();
+        new EnergyNetEventHandler();
 
-		//CreativeTab
-		final BlockQuantumGenerator QuantumGenerator = new BlockQuantumGenerator();
-		Util.SETab= new CreativeTabs("SimElectricity") {
-			@Override
-			@SideOnly(Side.CLIENT)
-			public Item getTabIconItem() {return Item.getItemFromBlock(QuantumGenerator);}
-		};
-		QuantumGenerator.setCreativeTab(Util.SETab);
+        //CreativeTab
+        final BlockQuantumGenerator QuantumGenerator = new BlockQuantumGenerator();
+        Util.SETab = new CreativeTabs("SimElectricity") {
+            @Override
+            @SideOnly(Side.CLIENT)
+            public Item getTabIconItem() {
+                return Item.getItemFromBlock(QuantumGenerator);
+            }
+        };
+        QuantumGenerator.setCreativeTab(Util.SETab);
 
-		//Register Blocks
-		registerBlock(QuantumGenerator);
-		registerBlock(new BlockSolarPanel());
-		registerBlock(new BlockSimpleGenerator());
-		registerBlock(new BlockVoltageMeter());
-		registerBlock(new BlockElectricFurnace());
-		registerBlock(new BlockAdjustableResistor());
-		registerBlock(new BlockWire(), ItemBlockWire.class);
-		registerBlock(new BlockWindMillTop());
-		registerBlock(new BlockTransformer());
+        //Register Blocks
+        registerBlock(QuantumGenerator);
+        registerBlock(new BlockSolarPanel());
+        registerBlock(new BlockSimpleGenerator());
+        registerBlock(new BlockVoltageMeter());
+        registerBlock(new BlockElectricFurnace());
+        registerBlock(new BlockAdjustableResistor());
+        registerBlock(new BlockWire(), ItemBlockWire.class);
+        registerBlock(new BlockWindMillTop());
+        registerBlock(new BlockTransformer());
 
 
-		//Register Items
-		registerItem(new Item_UltimateMultimeter());
-		registerItem(new Item_Glove());
-		registerItem(new Item_Wrench());
-		registerItem(new Item_Fan());
-	}
+        //Register Items
+        registerItem(new Item_UltimateMultimeter());
+        registerItem(new Item_Glove());
+        registerItem(new Item_Wrench());
+        registerItem(new Item_Fan());
+    }
 
-	/** Initialize */
-	@EventHandler
-	public void load(FMLInitializationEvent event) {
-		//Register GUI handler
-		NetworkRegistry.INSTANCE.registerGuiHandler(instance, proxy);
-		//Initialize network proxy
-		packetPipeline.initialise();
-		proxy.registerTileEntitySpecialRenderer();
+    /**
+     * Initialize
+     */
+    @EventHandler
+    public void load(FMLInitializationEvent event) {
+        //Register GUI handler
+        NetworkRegistry.INSTANCE.registerGuiHandler(instance, proxy);
 
-		//Register TileEntities
-		GameRegistry.registerTileEntity(TileQuantumGenerator.class, "TileQuantumGenerator");
-		GameRegistry.registerTileEntity(TileSolarPanel.class, "TileSolarPanel");
-		GameRegistry.registerTileEntity(TileSimpleGenerator.class, "TileSimpleGenerator");
-		GameRegistry.registerTileEntity(TileVoltageMeter.class, "TileVoltageMeter");
-		GameRegistry.registerTileEntity(TileElectricFurnace.class, "TileElectricFurnace");
-		GameRegistry.registerTileEntity(TileWire.class, "TileWire");
-		GameRegistry.registerTileEntity(TileAdjustableResistor.class, "TileAdjustableResistor");
-		GameRegistry.registerTileEntity(TileWindMillTop.class, "TileWindMillTop");
-		GameRegistry.registerTileEntity(TileTransformer.class, "TileTransformer");
-	}
+        //Initialize network proxy
+        packetPipeline.initialize();
+        proxy.registerTileEntitySpecialRenderer();
 
-	/** PostInitialize */
-	@EventHandler
-	public void postInitialise(FMLPostInitializationEvent evt) {
-		//Register network packets
-	    packetPipeline.registerPacket(PacketTileEntityFieldUpdate.class);
-	    packetPipeline.registerPacket(PacketTileEntitySideUpdate.class);
-	    packetPipeline.postInitialise();
-	}
+        //Register TileEntities
+        GameRegistry.registerTileEntity(TileQuantumGenerator.class, "TileQuantumGenerator");
+        GameRegistry.registerTileEntity(TileSolarPanel.class, "TileSolarPanel");
+        GameRegistry.registerTileEntity(TileSimpleGenerator.class, "TileSimpleGenerator");
+        GameRegistry.registerTileEntity(TileVoltageMeter.class, "TileVoltageMeter");
+        GameRegistry.registerTileEntity(TileElectricFurnace.class, "TileElectricFurnace");
+        GameRegistry.registerTileEntity(TileWire.class, "TileWire");
+        GameRegistry.registerTileEntity(TileAdjustableResistor.class, "TileAdjustableResistor");
+        GameRegistry.registerTileEntity(TileWindMillTop.class, "TileWindMillTop");
+        GameRegistry.registerTileEntity(TileTransformer.class, "TileTransformer");
+    }
+
+    /**
+     * PostInitialize
+     */
+    @EventHandler
+    public void postInitialize(FMLPostInitializationEvent evt) {
+        //Register network packets
+        packetPipeline.registerPacket(PacketTileEntityFieldUpdate.class);
+        packetPipeline.registerPacket(PacketTileEntitySideUpdate.class);
+        packetPipeline.postInitialize();
+    }
 
     private static void registerBlock(Block block) {
         GameRegistry.registerBlock(block, block.getUnlocalizedName().replace("tile.", ""));

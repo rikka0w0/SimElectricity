@@ -6,18 +6,20 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.common.config.Configuration;
 
 public class ConfigManager {
+
     public static Configuration config;
 
+    /**
+     * Enable Optimized Nodes
+     */
     public static boolean optimizeNodes;
 
 
     public static void init(FMLPreInitializationEvent event) {
-
         if (config == null) {
             config = new Configuration(event.getSuggestedConfigurationFile());
             syncConfig();
         }
-
     }
 
     private static void syncConfig() {

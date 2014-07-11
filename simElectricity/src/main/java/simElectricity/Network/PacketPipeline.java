@@ -107,13 +107,13 @@ public class PacketPipeline extends MessageToMessageCodec<FMLProxyPacket, Abstra
     }
 
     // Method to call from FMLInitializationEvent
-    public void initialise() {
+    public void initialize() {
         this.channels = NetworkRegistry.INSTANCE.newChannel("SimE", this);
     }
 
     // Method to call from FMLPostInitializationEvent
     // Ensures that packet discriminators are common between server and client by using logical sorting
-    public void postInitialise() {
+    public void postInitialize() {
         if (this.isPostInitialised) {
             return;
         }
