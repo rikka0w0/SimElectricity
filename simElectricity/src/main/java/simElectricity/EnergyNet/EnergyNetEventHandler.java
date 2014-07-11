@@ -5,6 +5,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.WorldEvent;
 import simElectricity.API.EnergyTile.IBaseComponent;
 import simElectricity.API.EnergyTile.IComplexTile;
+import simElectricity.API.EnergyTile.ITransformer;
 import simElectricity.API.Events.TileAttachEvent;
 import simElectricity.API.Events.TileChangeEvent;
 import simElectricity.API.Events.TileDetachEvent;
@@ -50,7 +51,7 @@ public class EnergyNetEventHandler {
 			return;			
 		}
 		
-		if (!(te instanceof IBaseComponent) && !(te instanceof IComplexTile)) {
+		if (!(te instanceof IBaseComponent) && !(te instanceof IComplexTile) && !(te instanceof ITransformer)) {
 			System.out.println("Unacceptable tileentity " + te+ " is trying to attach to the energy network, aborting");
 			return;
 		}

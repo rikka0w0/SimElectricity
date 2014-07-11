@@ -110,31 +110,60 @@ public final class EnergyNet {
 		float[][] A = new float[matrixSize][matrixSize];
 		float[] b = new float[matrixSize];
 
-		for (int i = 0; i < matrixSize; i++) {		
-			IBaseComponent nodeI = unknownVoltageNodes.get(i);
+		for (int rowIndex = 0; rowIndex < matrixSize; rowIndex++) {		
+			IBaseComponent currentRowComponent = unknownVoltageNodes.get(rowIndex);
 			
-			if (nodeI instanceof ICircuitComponent) {
-				b[i] = 1 / nodeI.getResistance();
-				b[i] = b[i]	* ((ICircuitComponent) nodeI).getOutputVoltage();
+			//Add fixed voltage sources
+			if (currentRowComponent instanceof ICircuitComponent) {
+				//Possible voltage source, getOutputVoltage()=0 for sinks, getOutputVoltage>0 for sources
+				b[rowIndex] = ((ICircuitComponent) currentRowComponent).getOutputVoltage() 
+						      / currentRowComponent.getResistance();
 			}else{
-				b[i] = 0;
+				//Normal conductor nodes
+				b[rowIndex] = 0;
 			}
 
-			List<IBaseComponent> neighborList = Graphs.neighborListOf(optimizedTileEntityGraph, nodeI);	
-			for (int j = 0; j < matrixSize; j++) {
-				float tmp = 0;
-				if (i == j) {
-					for (IBaseComponent iBaseComponent : neighborList)
-						// add neighbor resistance
-						tmp += 1.0 / (getResistance(nodeI) + getResistance(iBaseComponent));
-					if (nodeI instanceof ICircuitComponent) 
-						tmp += 1.0 / nodeI.getResistance();
-				} else {
-					if (neighborList.contains(unknownVoltageNodes.get(j)))
-						// add neighbor resistance
-						tmp = (float) (-1.0 / (getResistance(nodeI) + getResistance(unknownVoltageNodes.get(j))));
+			List<IBaseComponent> neighborList = Graphs.neighborListOf(optimizedTileEntityGraph, currentRowComponent);	
+			for (int columnIndex = 0; columnIndex < matrixSize; columnIndex++) {
+				float cellData = 0;
+				
+				if (rowIndex == columnIndex) { //Key cell
+					//Add neighbor resistance
+					for (IBaseComponent neighbor : neighborList){
+						cellData += 1.0 / (getResistance(currentRowComponent) + getResistance(neighbor));	//Normally either of them will be 0
+					}
+					
+					//Add internal resistance for fixed voltage sources
+					if (currentRowComponent instanceof ICircuitComponent)
+						cellData += 1.0 / currentRowComponent.getResistance();
+				
+					//Add induction to transformers
+					if(currentRowComponent instanceof ITransformerWinding){
+						ITransformerWinding winding = (ITransformerWinding) currentRowComponent;
+						if (winding.isPrimary()){
+							cellData += winding.getRatio()*winding.getRatio() / winding.getResistance();
+						}else{
+							cellData += 1.0 / winding.getResistance();
+						}
+					}
+				
+					
+				} else {  //Normal cells
+					IBaseComponent currentColumnComponent=unknownVoltageNodes.get(columnIndex);
+					if (neighborList.contains(currentColumnComponent)){   //Add neighbor's resistance (-Gi)
+						cellData = (float) (-1.0 / (getResistance(currentRowComponent) + getResistance(currentColumnComponent)));
+					
+					}else if (currentRowComponent instanceof ITransformerWinding){ //Add transformer association
+						ITransformerWinding winding = (ITransformerWinding)currentRowComponent;
+						ITransformer core = winding.getCore();
+						
+						if ((winding.isPrimary() && core.getSecondary()==currentColumnComponent)||
+						   ((!winding.isPrimary()) && core.getPrimary()==currentColumnComponent))
+							cellData = -winding.getRatio()/winding.getResistance();
+					}
 				}
-				A[i][j] = tmp;
+				
+				A[rowIndex][columnIndex] = cellData;
 			}
 		}
 		
@@ -147,14 +176,10 @@ public final class EnergyNet {
 		}
 	}
 
-	/** Internal use only, only used by runSimulator()*/
 	private static float getResistance(IBaseComponent te){
-		if (te instanceof ICircuitComponent)
-			return 0;
-		else if(te instanceof IConductor)
+		if(te instanceof IConductor)
 			return te.getResistance()/2;
-		else
-			return 0;
+		return 0;
 	}
 	/*End of Simulator*/
 	
@@ -163,10 +188,12 @@ public final class EnergyNet {
 	/** Called in each tick to attempt to do calculation*/
 	public static void onTick(World world) {
 		EnergyNet energyNet = getForWorld(world);
+		//energyNet.calc = true;
 		if(energyNet.calc == true){
 			energyNet.calc = false;
 			energyNet.runSimulator();
 			
+			//Check power distribution
 			try{
 				for (IBaseComponent tile:energyNet.tileEntityGraph.vertexSet()){
 					if(tile instanceof ICircuitComponent){
@@ -210,39 +237,18 @@ public final class EnergyNet {
 				}else if (temp instanceof IComplexTile){  //IComplexTile
 					if(((IComplexTile)temp).getCircuitComponent(directions[i].getOpposite())!=null)
 						result.add(((IComplexTile)temp).getCircuitComponent(directions[i].getOpposite()));
-				}				
+				}else if (temp instanceof ITransformer){
+					if(((ITransformer)temp).getInputSide()==directions[i].getOpposite())
+						result.add(((ITransformer)temp).getPrimary());
+					if(((ITransformer)temp).getOutputSide()==directions[i].getOpposite())
+						result.add(((ITransformer)temp).getSecondary());
+				}
 			}
 		}
 
 		
 		if (te instanceof IEnergyTile){		
-			ForgeDirection myDirection=((IEnergyTile)te).getFunctionalSide();
-			int x=0,y=0,z=0;
-			
-			switch(myDirection){
-			case EAST:
-				x++;
-				break;
-			case WEST:
-				x--;
-				break;
-			case UP:
-				y++;
-				break;
-			case DOWN:
-				y--;
-				break;
-			case SOUTH:
-				z++;
-				break;
-			case NORTH:
-				z--;
-				break;
-			default:
-				break;
-			}
-			
-			temp = te.getWorldObj().getTileEntity(te.xCoord+x, te.yCoord+y,te.zCoord+z);	
+			temp = Util.getTEonDirection(te, ((IEnergyTile)te).getFunctionalSide());
 			
 			if (temp instanceof IConductor){
 				result.add((IBaseComponent)temp);
@@ -284,6 +290,36 @@ public final class EnergyNet {
 					}
 				}
 			}
+			
+		}else if(te instanceof ITransformer){         //Transformer
+			ITransformer transformer = ((ITransformer)te);
+			ITransformerWinding primary = ((ITransformer)te).getPrimary();
+			ITransformerWinding secondary = ((ITransformer)te).getSecondary();
+			
+			TileEntity neighbor;
+			
+			//Add primary
+			if(!tileEntityGraph.containsVertex(primary));
+				tileEntityGraph.addVertex(primary);
+				
+			neighbor = Util.getTEonDirection(te, transformer.getInputSide());
+			if(neighbor instanceof IConductor){
+				if(!tileEntityGraph.containsVertex((IBaseComponent) neighbor))
+					tileEntityGraph.addVertex((IBaseComponent) neighbor);
+				tileEntityGraph.addEdge(primary,(IBaseComponent) neighbor);
+			}
+			
+			//Add secondary
+			if(!tileEntityGraph.containsVertex(secondary))
+				tileEntityGraph.addVertex(secondary);
+					
+			neighbor = Util.getTEonDirection(te, transformer.getOutputSide());
+			if(neighbor instanceof IConductor){
+				if(!tileEntityGraph.containsVertex((IBaseComponent) neighbor))
+					tileEntityGraph.addVertex((IBaseComponent) neighbor);
+				tileEntityGraph.addEdge(secondary,(IBaseComponent) neighbor);
+			}
+			
 		}else{  //IBaseComponent and IConductor
 			List<IBaseComponent> neighborList = neighborListOf(te);
 			
@@ -314,6 +350,9 @@ public final class EnergyNet {
 				if(SubComponents[i] instanceof IBaseComponent)
 					tileEntityGraph.removeVertex((IBaseComponent) SubComponents[i]);
 			}
+		}else if(te instanceof ITransformer){
+			tileEntityGraph.removeVertex(((ITransformer)te).getPrimary());
+			tileEntityGraph.removeVertex(((ITransformer)te).getSecondary());
 		}else{  //IBaseComponent and IConductor
 			tileEntityGraph.removeVertex((IBaseComponent) te);
 		}

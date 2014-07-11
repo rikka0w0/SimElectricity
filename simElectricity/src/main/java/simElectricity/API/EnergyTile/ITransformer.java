@@ -2,12 +2,12 @@ package simElectricity.API.EnergyTile;
 
 import net.minecraftforge.common.util.ForgeDirection;
 
-public interface ITranformer {
+public interface ITransformer {
 	ForgeDirection getInputSide();
 	
 	ForgeDirection getOutputSide();
 	
-	ITransformerPrimary getPrimary();
+	ITransformerWinding getPrimary();
 	
-	ITransformerSecondary getSecondary();
+	ITransformerWinding getSecondary();
 }
