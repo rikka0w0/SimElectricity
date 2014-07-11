@@ -14,8 +14,11 @@ public abstract class TileInventoryMachine extends TileEntity implements ISidedI
 	public abstract int  getInventorySize();//Used to get the size of the inventory, should return a constant!
 	
 	//ISidedInventory - Override the following three function when necessary!
+	@Override
 	public int[] getAccessibleSlotsFromSide(int var1) {return null;}
+	@Override
 	public boolean canInsertItem(int var1, ItemStack var2, int var3) {return false;}
+	@Override
 	public boolean canExtractItem(int var1, ItemStack var2, int var3) {return false;}
 	
 	//Initiallize
@@ -30,7 +33,7 @@ public abstract class TileInventoryMachine extends TileEntity implements ISidedI
     	    	
         NBTTagList tagList = tagCompound.getTagList("Inventory",Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < tagList.tagCount(); i++) {
-                NBTTagCompound tag = (NBTTagCompound) tagList.getCompoundTagAt(i);
+                NBTTagCompound tag = tagList.getCompoundTagAt(i);
                 byte slot = tag.getByte("Slot");
                 if (slot >= 0 && slot < inv.length) {
                         inv[slot] = ItemStack.loadItemStackFromNBT(tag);

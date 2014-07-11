@@ -109,7 +109,7 @@ public class Util {
 
 	/** Return which direction the player is looking at */
 	public static ForgeDirection getPlayerSight(EntityLivingBase player){
-        int heading = MathHelper.floor_double((double)(player.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3;
+        int heading = MathHelper.floor_double(player.rotationYaw * 4.0F / 360.0F + 0.5D) & 3;
         int pitch = Math.round(player.rotationPitch);
 
         if (pitch >= 65)

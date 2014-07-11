@@ -15,6 +15,7 @@ import org.lwjgl.opengl.GL11;
 public class RenderWindMillTop extends TileEntitySpecialRenderer{
 	public TileWindMillTop te;
 	
+	@Override
 	public void renderTileEntityAt(TileEntity tileEntity, double d, double d1, double d2, float f) {
 		te=(TileWindMillTop) tileEntity;
 		

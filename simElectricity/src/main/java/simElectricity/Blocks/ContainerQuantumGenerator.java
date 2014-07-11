@@ -8,16 +8,20 @@ import net.minecraft.tileentity.TileEntity;
 public class ContainerQuantumGenerator extends ContainerBase{
     public ContainerQuantumGenerator(InventoryPlayer inventoryPlayer,TileEntity te) {super(inventoryPlayer, te);}
     
+	@Override
 	public int getPlayerInventoryStartIndex(){
     	return 27;
     }
-    public int getPlayerInventoryEndIndex(){
+    @Override
+	public int getPlayerInventoryEndIndex(){
     	return 36;
     }
-    public int getTileInventoryStartIndex(){
+    @Override
+	public int getTileInventoryStartIndex(){
     	return 0;
     }
-    public int getTileInventoryEndIndex(){
+    @Override
+	public int getTileInventoryEndIndex(){
     	return 27;
     }
 

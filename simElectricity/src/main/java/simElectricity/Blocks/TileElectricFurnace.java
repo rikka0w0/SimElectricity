@@ -19,6 +19,7 @@ public class TileElectricFurnace extends TileStandardSEMachine implements ISyncP
 	public ItemStack result;
 	
 
+	@Override
 	public void onInventoryChanged(){
     	if(worldObj.isRemote)
     		return;

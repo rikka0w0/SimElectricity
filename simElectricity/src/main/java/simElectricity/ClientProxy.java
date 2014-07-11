@@ -33,7 +33,7 @@ public class ClientProxy extends CommonProxy {
 		if (te instanceof TileSimpleGenerator)
 			return new GuiSimpleGenerator(player.inventory,(TileSimpleGenerator) te);
 		if (te instanceof TileAdjustableResistor)
-			return new GuiAdjustableResistor(player.inventory,(TileAdjustableResistor) te);
+			return new GuiAdjustableResistor(player.inventory,te);
 				
 		
 		return null;

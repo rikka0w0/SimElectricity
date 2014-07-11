@@ -1,6 +1,7 @@
 package simElectricity.Blocks.Client;
 
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.tileentity.TileEntity;
@@ -32,25 +33,25 @@ public class GuiAdjustableResistor extends GuiContainer {
     public void actionPerformed(GuiButton button) {
     	switch(button.id){
     	case 0: 
-    		if(this.isCtrlKeyDown())
+    		if(GuiScreen.isCtrlKeyDown())
     			te.resistance-=100;
     		else
     			te.resistance-=10;
     		break;
     	case 1: 
-    		if(this.isCtrlKeyDown())
+    		if(GuiScreen.isCtrlKeyDown())
     			te.resistance-=0.1;
     		else
     			te.resistance-=1;
     		break;
     	case 2: 
-    		if(this.isCtrlKeyDown())
+    		if(GuiScreen.isCtrlKeyDown())
     			te.resistance+=0.1;
     		else
     			te.resistance+=1;
     		break;
 		case 3: 
-			if(this.isCtrlKeyDown())
+			if(GuiScreen.isCtrlKeyDown())
 				te.resistance+=100;
 			else
 				te.resistance+=10;

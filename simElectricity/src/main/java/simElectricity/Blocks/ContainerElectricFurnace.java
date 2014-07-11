@@ -26,7 +26,8 @@ public class ContainerElectricFurnace extends ContainerBase{
     }
     
     
-    @SideOnly(Side.CLIENT)
+    @Override
+	@SideOnly(Side.CLIENT)
     public void updateProgressBar(int par1, int par2){
     	if (par1 == 0)	((TileElectricFurnace)tileEntity).progress = par2;
    	}
@@ -56,6 +57,7 @@ public class ContainerElectricFurnace extends ContainerBase{
 	@Override
 	public void init() {
         addSlotToContainer(new Slot((IInventory) tileEntity, 0, 43, 33));
-        addSlotToContainer(new Slot((IInventory) tileEntity, 1, 103, 34){public boolean isItemValid(ItemStack par1ItemStack){return false;}});
+        addSlotToContainer(new Slot((IInventory) tileEntity, 1, 103, 34){@Override
+		public boolean isItemValid(ItemStack par1ItemStack){return false;}});
 	}
 }

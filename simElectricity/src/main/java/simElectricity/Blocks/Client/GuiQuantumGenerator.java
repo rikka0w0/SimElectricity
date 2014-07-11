@@ -1,6 +1,7 @@
 package simElectricity.Blocks.Client;
 
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.ResourceLocation;
@@ -35,25 +36,25 @@ public class GuiQuantumGenerator extends GuiContainer {
     	if(button.id<4){
 	    	switch(button.id){
 	    	case 0: 
-	    		if(this.isCtrlKeyDown())
+	    		if(GuiScreen.isCtrlKeyDown())
 	    			tileentity.outputVoltage-=100;
 	    		else
 	    			tileentity.outputVoltage-=10;
 	    		break;
 	    	case 1: 
-	    		if(this.isCtrlKeyDown())
+	    		if(GuiScreen.isCtrlKeyDown())
 	    			tileentity.outputVoltage-=0.1;
 	    		else
 	    			tileentity.outputVoltage-=1;
 	    		break;
 	    	case 2: 
-	    		if(this.isCtrlKeyDown())
+	    		if(GuiScreen.isCtrlKeyDown())
 	    			tileentity.outputVoltage+=0.1;
 	    		else
 	    			tileentity.outputVoltage+=1;
 	    		break;
     		case 3: 
-    			if(this.isCtrlKeyDown())
+    			if(GuiScreen.isCtrlKeyDown())
     				tileentity.outputVoltage+=100;
     			else
     				tileentity.outputVoltage+=10;
@@ -69,25 +70,25 @@ public class GuiQuantumGenerator extends GuiContainer {
     	}else if(button.id<=8){
 	    	switch(button.id){
 	    	case 4: 
-	    		if(this.isCtrlKeyDown())
+	    		if(GuiScreen.isCtrlKeyDown())
 	    			tileentity.outputResistance-=1;
 	    		else
 	    			tileentity.outputResistance-=0.1;
 	    		break;
 	    	case 5: 
-	    		if(this.isCtrlKeyDown())
+	    		if(GuiScreen.isCtrlKeyDown())
 	    			tileentity.outputResistance-=0.001;
 	    		else
 	    			tileentity.outputResistance-=0.01;
 	    		break;
 	    	case 6: 
-	    		if(this.isCtrlKeyDown())
+	    		if(GuiScreen.isCtrlKeyDown())
 	    			tileentity.outputResistance+=0.001;
 	    		else
 	    			tileentity.outputResistance+=0.01;
 	    		break;
     		case 7: 
-    			if(this.isCtrlKeyDown())
+    			if(GuiScreen.isCtrlKeyDown())
     				tileentity.outputResistance+=1;
     			else
     				tileentity.outputResistance+=0.1;

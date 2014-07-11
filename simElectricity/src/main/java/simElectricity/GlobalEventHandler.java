@@ -2,20 +2,12 @@ package simElectricity;
 
 import simElectricity.API.*;
 import simElectricity.API.EnergyTile.*;
-import simElectricity.API.Events.*;
-import simElectricity.EnergyNet.EnergyNet;
-import simElectricity.EnergyNet.WorldData;
-
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.ChunkWatchEvent;
-import net.minecraftforge.event.world.WorldEvent;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.gameevent.TickEvent.Phase;
-import cpw.mods.fml.common.gameevent.TickEvent.WorldTickEvent;
-import cpw.mods.fml.relauncher.Side;
 
 public class GlobalEventHandler {
 	public GlobalEventHandler(){

@@ -24,7 +24,8 @@ public class ContainerSimpleGenerator extends ContainerBase {
     }
     
     
-    @SideOnly(Side.CLIENT)
+    @Override
+	@SideOnly(Side.CLIENT)
     public void updateProgressBar(int par1, int par2){
     	if (par1 == 0)	((TileSimpleGenerator)tileEntity).progress = par2;
     	if (par1 == 1)	((TileSimpleGenerator)tileEntity).outputVoltage = par2;    	
@@ -48,16 +49,20 @@ public class ContainerSimpleGenerator extends ContainerBase {
     	outputResistance=(int) ((TileSimpleGenerator)tileEntity).outputResistance;    	
     }
 	
+	@Override
 	public int getPlayerInventoryStartIndex(){
     	return 1;
     }
-    public int getPlayerInventoryEndIndex(){
+    @Override
+	public int getPlayerInventoryEndIndex(){
     	return 37;
     }
-    public int getTileInventoryStartIndex(){
+    @Override
+	public int getTileInventoryStartIndex(){
     	return 0;
     }
-    public int getTileInventoryEndIndex(){
+    @Override
+	public int getTileInventoryEndIndex(){
     	return 1;
     }
 

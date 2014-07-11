@@ -67,7 +67,7 @@ public class VirtualConductor implements IConductor {
 		if(result)
 		{
 			totalResistance += conductor.getResistance();
-			this.map.put(conductor, this);
+			VirtualConductor.map.put(conductor, this);
 			
 			if(connections[0] == conductor)
 				connections[0] = null;

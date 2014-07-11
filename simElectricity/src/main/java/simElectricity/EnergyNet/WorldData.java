@@ -15,7 +15,7 @@ public class WorldData {
 		if (world == null)
 			throw new IllegalArgumentException("world is null");
 
-		WorldData ret = (WorldData) mapping.get(world);
+		WorldData ret = mapping.get(world);
 
 		if (ret == null) {
 			ret = new WorldData();

@@ -2,7 +2,6 @@ package simElectricity.EnergyNet;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -11,7 +10,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
-import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleGraph;
@@ -327,9 +325,9 @@ public final class EnergyNet {
 				tileEntityGraph.addVertex((IBaseComponent) te);
 			
 			for (IBaseComponent tileEntity : neighborList) {
-				if(!tileEntityGraph.containsVertex((IBaseComponent) tileEntity))
-					tileEntityGraph.addVertex((IBaseComponent) tileEntity);
-				tileEntityGraph.addEdge((IBaseComponent) te,(IBaseComponent) tileEntity);
+				if(!tileEntityGraph.containsVertex(tileEntity))
+					tileEntityGraph.addVertex(tileEntity);
+				tileEntityGraph.addEdge((IBaseComponent) te,tileEntity);
 			}				
 		}
 		calc = true;
@@ -348,7 +346,7 @@ public final class EnergyNet {
 			
 			for (int i=0;i<6;i++){
 				if(SubComponents[i] instanceof IBaseComponent)
-					tileEntityGraph.removeVertex((IBaseComponent) SubComponents[i]);
+					tileEntityGraph.removeVertex(SubComponents[i]);
 			}
 		}else if(te instanceof ITransformer){
 			tileEntityGraph.removeVertex(((ITransformer)te).getPrimary());

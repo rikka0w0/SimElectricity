@@ -29,9 +29,9 @@ public class BlockSimpleGenerator  extends BlockContainer {
     public void randomDisplayTick(World world, int x, int y, int z, Random var5){
     	TileSimpleGenerator te=(TileSimpleGenerator) world.getTileEntity(x,y,z);
     	if(te.isWorking){
-   			double d0 = (double)((float)x);
-   			double d1 = (double)((float)y);
-   			double d2 = (double)((float)z);
+   			double d0 = (x);
+   			double d1 = (y);
+   			double d2 = (z);
    			double d3 = 0.2199999988079071D;
    			double d4 = 0.27000001072883606D;
    			world.spawnParticle("smoke", d0 + d4 + 0.25F, d1 + d3 + 1F, d2 + 0.5F, 0.0D, 0.0D, 0.0D);
