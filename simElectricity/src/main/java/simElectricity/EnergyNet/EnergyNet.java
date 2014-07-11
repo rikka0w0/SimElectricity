@@ -35,8 +35,15 @@ public final class EnergyNet {
 		if(!(conductor instanceof IConductor))
 			return false;
 		if(VirtualConductor.conductorInVirtual((IConductor) conductor))
-			return false;			
-		return Graphs.neighborListOf(optimizedTileEntityGraph, conductor).size() == 2;
+			return false;
+		
+		List<IBaseComponent> list = Graphs.neighborListOf(optimizedTileEntityGraph, conductor);
+		for (IBaseComponent iBaseComponent : list) {
+			if(!(iBaseComponent instanceof IConductor))
+				return false;
+		}
+		
+		return list.size() == 2;
 	}
 	
 	private VirtualConductor floodFill(IBaseComponent conductor, VirtualConductor virtualConductor, SimpleGraph<IBaseComponent, DefaultEdge> optimizedTileEntityGraph){
