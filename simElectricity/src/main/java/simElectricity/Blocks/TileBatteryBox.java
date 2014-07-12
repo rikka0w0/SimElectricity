@@ -15,8 +15,8 @@ public class TileBatteryBox extends TileStandardGenerator {
 	private float chargingVoltage = 115;
 	private float dischargeVoltage = 110;
 	
-	private int wattStore = 0;
-	private int wattStoreMax = 1000000;
+	private float wattTickStore = 0;
+	private float wattTickStoreMax = 1000000;
 	
     @Override
     public void updateEntity() {
@@ -26,16 +26,16 @@ public class TileBatteryBox extends TileStandardGenerator {
         if (worldObj.isRemote)
             return;
 
-        if ((Energy.getVoltage(this) > chargingVoltage) && (wattStore < wattStoreMax)) {
+        if ((Energy.getVoltage(this) >= chargingVoltage) && (wattTickStore < wattTickStoreMax)) {
         	checkAndSendChange(0, 0.8F);
-        	wattStore += Energy.getPower(this) * 0.05;
+        	wattTickStore += (Energy.getPower(this) * 0.05);
         	
-            System.out.printf("charging, wattTickStore: %d\n", wattStore);
-        }else if ((Energy.getVoltage(this) < dischargeVoltage) && (wattStore > 0)) {
-        	checkAndSendChange(dischargeVoltage, 0.8F);
-        	wattStore -= outputVoltage * Energy.getCurrent(this) * 0.05;
+            System.out.printf("charging, wattTickStore: %f\n", wattTickStore);
+        }else if ((Energy.getVoltage(this) <= dischargeVoltage) && (wattTickStore > 0)) {
+        	checkAndSendChange(dischargeVoltage - 0.1F, 0.8F);
+        	wattTickStore -= Energy.getWorkDonePerTick(this);
         	
-            System.out.printf("discharge, wattTickStore: %d\n", wattStore);
+            System.out.printf("discharge, wattTickStore: %f\n", wattTickStore);
 		}else {
         	checkAndSendChange(0, Float.MAX_VALUE);
 		}

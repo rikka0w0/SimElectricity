@@ -36,7 +36,7 @@ public class BlockBatteryBox extends BlockContainer {
     @SideOnly(Side.CLIENT)
     public void registerBlockIcons(IIconRegister r) {
         iconBuffer[0] = r.registerIcon("simElectricity:SolarPanel_Bottom");
-        iconBuffer[1] = r.registerIcon("simElectricity:SolarPanel_Top");
+        iconBuffer[1] = r.registerIcon("simElectricity:SolarPanel_Bottom");
         iconBuffer[2] = r.registerIcon("simElectricity:SolarPanel_Front");
         iconBuffer[3] = r.registerIcon("simElectricity:SolarPanel_Side");
         iconBuffer[4] = r.registerIcon("simElectricity:SolarPanel_Side");
