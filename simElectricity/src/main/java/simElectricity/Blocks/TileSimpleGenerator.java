@@ -66,7 +66,7 @@ public class TileSimpleGenerator extends TileSidedGenerator implements ISyncPack
 
             if (outputVoltage != 0) {
                 outputVoltage = 0;
-                outputResistance = 10000000;
+                outputResistance = Float.MAX_VALUE;
                 Energy.postTileChangeEvent(this);
             }
 

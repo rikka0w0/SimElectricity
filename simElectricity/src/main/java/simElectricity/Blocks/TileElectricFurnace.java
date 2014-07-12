@@ -66,7 +66,7 @@ public class TileElectricFurnace extends TileStandardSEMachine implements ISyncP
             progress = 0;
             energyStored = 0;
             if (resistance <= onResistance) {
-                resistance = 1000000000;
+                resistance = Float.MAX_VALUE;
                 Energy.postTileChangeEvent(this);
             }
             isWorking = false;

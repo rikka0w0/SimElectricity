@@ -18,7 +18,7 @@ public class TileSolarPanel extends TileStandardGenerator {
             if (worldObj.canBlockSeeTheSky(xCoord, yCoord + 1, zCoord))
                 checkAndSendChange(18, 0.8F);
             else
-                checkAndSendChange(0.001F, 1000000);
+                checkAndSendChange(0.001F, Float.MAX_VALUE);
         } else {
             checkAndSendChange(12, 20);
         }

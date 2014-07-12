@@ -43,8 +43,6 @@ public class Item_UltimateMultimeter extends Item {
             if (te == null)
                 return false;
 
-            float voltage = Energy.getVoltage(te, tile.getWorldObj());
-
             String tileType = "Unknown";
             float outputVoltage = 0;
 
@@ -82,7 +80,7 @@ public class Item_UltimateMultimeter extends Item {
                 Util.chat(player, "Current: " + String.valueOf(Energy.getCurrent((ICircuitComponent) te, tile.getWorldObj())) + "A");
                 Util.chat(player, "Power rate: " + String.valueOf(Energy.getPower((ICircuitComponent) te, tile.getWorldObj())) + "W");
             }
-            Util.chat(player, "Voltage: " + String.valueOf(voltage) + "V");
+            Util.chat(player, "Voltage: " + String.valueOf(Energy.getVoltage(te, tile.getWorldObj())) + "V");
             if (outputVoltage > 0) { //Energy Source
                 Util.chat(player, "Internal voltage: " + String.valueOf(outputVoltage) + "V");
                 Util.chat(player, "Output rate: " + String.valueOf(outputVoltage * Energy.getCurrent((ICircuitComponent) te, tile.getWorldObj())) + "W");

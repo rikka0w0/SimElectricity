@@ -80,6 +80,7 @@ public class mod_SimElectricity {
         registerBlock(new BlockWire(), ItemBlockWire.class);
         registerBlock(new BlockWindMillTop());
         registerBlock(new BlockTransformer());
+        registerBlock(new BlockBatteryBox());
 
 
         //Register Items
