@@ -27,12 +27,12 @@ public class TileBatteryBox extends TileStandardGenerator {
             return;
 
         if ((Energy.getVoltage(this) >= chargingVoltage) && (wattTickStore < wattTickStoreMax)) {
-        	checkAndSendChange(0, 0.8F);
+        	checkAndSendChange(0, 100F);
         	wattTickStore += (Energy.getPower(this) * 0.05);
         	
             System.out.printf("charging, wattTickStore: %f\n", wattTickStore);
-        }else if ((Energy.getVoltage(this) <= dischargeVoltage) && (wattTickStore > 0)) {
-        	checkAndSendChange(dischargeVoltage - 0.1F, 0.8F);
+        }else if ((Energy.getVoltage(this) <= (dischargeVoltage + 0.1F)) && (wattTickStore > 0)) {
+        	checkAndSendChange(dischargeVoltage, 0.8F);
         	wattTickStore -= Energy.getWorkDonePerTick(this);
         	
             System.out.printf("discharge, wattTickStore: %f\n", wattTickStore);
