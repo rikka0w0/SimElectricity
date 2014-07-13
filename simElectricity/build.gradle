@@ -22,8 +22,7 @@ group= "com.Rikka0_0.mod_SimElectricity" // http://maven.apache.org/guides/mini/
 archivesBaseName = "mod_SimElectricity"
 
 minecraft {
-    version = "1.7.10-10.13.0.1170"
-    assetDir = "eclipse/assets"
+    version = "1.7.10-10.13.0.1180"
 }
 processResources
 {
