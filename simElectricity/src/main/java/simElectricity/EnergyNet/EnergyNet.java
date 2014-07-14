@@ -7,6 +7,7 @@ import org.jgrapht.Graphs;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleGraph;
 import simElectricity.API.EnergyTile.*;
+import simElectricity.API.EnergyTile.ITransformer.ITransformerWinding;
 import simElectricity.API.Util;
 import simElectricity.ConfigManager;
 
@@ -235,10 +236,10 @@ public final class EnergyNet {
                     if (((IComplexTile) temp).getCircuitComponent(directions[i].getOpposite()) != null)
                         result.add(((IComplexTile) temp).getCircuitComponent(directions[i].getOpposite()));
                 } else if (temp instanceof ITransformer) {
-                    if (((ITransformer) temp).getInputSide() == directions[i].getOpposite())
+                    if (((ITransformer) temp).getPrimarySide() == directions[i].getOpposite())
                         result.add(((ITransformer) temp).getPrimary());
 
-                    if (((ITransformer) temp).getOutputSide() == directions[i].getOpposite())
+                    if (((ITransformer) temp).getSecondarySide() == directions[i].getOpposite())
                         result.add(((ITransformer) temp).getSecondary());
                 }
             }
@@ -298,11 +299,11 @@ public final class EnergyNet {
 
             TileEntity neighbor;
 
-            //Add primary TODO
+            //Add primary
             if (!tileEntityGraph.containsVertex(primary))
                 tileEntityGraph.addVertex(primary);
 
-            neighbor = Util.getTEonDirection(te, transformer.getInputSide());
+            neighbor = Util.getTEonDirection(te, transformer.getPrimarySide());
             if (neighbor instanceof IConductor) {
                 if (!tileEntityGraph.containsVertex((IBaseComponent) neighbor))
                     tileEntityGraph.addVertex((IBaseComponent) neighbor);
@@ -313,7 +314,7 @@ public final class EnergyNet {
             if (!tileEntityGraph.containsVertex(secondary))
                 tileEntityGraph.addVertex(secondary);
 
-            neighbor = Util.getTEonDirection(te, transformer.getOutputSide());
+            neighbor = Util.getTEonDirection(te, transformer.getSecondarySide());
             if (neighbor instanceof IConductor) {
                 if (!tileEntityGraph.containsVertex((IBaseComponent) neighbor))
                     tileEntityGraph.addVertex((IBaseComponent) neighbor);

@@ -13,6 +13,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.EnergyTile.IConductor;
 import simElectricity.API.EnergyTile.IConnectable;
 import simElectricity.API.EnergyTile.IEnergyTile;
+import simElectricity.API.EnergyTile.ITransformer;
 import simElectricity.Network.PacketTileEntityFieldUpdate;
 import simElectricity.Network.PacketTileEntitySideUpdate;
 import simElectricity.mod_SimElectricity;
@@ -90,6 +91,10 @@ public class Util {
         } else if (ent instanceof IConnectable) {
             if (((IConnectable) ent).canConnectOnSide(direction.getOpposite()))
                 return true;
+        } else if (ent instanceof ITransformer) {
+        	if (((ITransformer)ent).getPrimarySide()==direction.getOpposite() ||
+        		((ITransformer)ent).getSecondarySide()==direction.getOpposite())
+        		return true;
         }
 
         return false;

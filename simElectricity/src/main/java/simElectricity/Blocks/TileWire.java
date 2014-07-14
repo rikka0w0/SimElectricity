@@ -10,6 +10,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.EnergyTile.IConductor;
 import simElectricity.API.Events.TileAttachEvent;
 import simElectricity.API.Events.TileDetachEvent;
+import simElectricity.API.Energy;
 import simElectricity.API.ISyncPacketHandler;
 import simElectricity.API.Util;
 
@@ -58,8 +59,10 @@ public class TileWire extends TileEntity implements IConductor, ISyncPacketHandl
 
     @Override
     public void updateEntity() {
+    	super.updateEntity();
+    	
         if (!worldObj.isRemote && !isAddedToEnergyNet) {
-            MinecraftForge.EVENT_BUS.post(new TileAttachEvent(this));
+            Energy.postTileAttachEvent(this);
             this.isAddedToEnergyNet = true;
             Util.scheduleBlockUpdate(this, 20);
         }
@@ -68,8 +71,11 @@ public class TileWire extends TileEntity implements IConductor, ISyncPacketHandl
     @Override
     public void invalidate() {
         if (!worldObj.isRemote & isAddedToEnergyNet) {
-            MinecraftForge.EVENT_BUS.post(new TileDetachEvent(this));
+            Energy.postTileDetachEvent(this);
+            this.isAddedToEnergyNet = false;
         }
+
+        super.invalidate();
     }
 
     @Override
