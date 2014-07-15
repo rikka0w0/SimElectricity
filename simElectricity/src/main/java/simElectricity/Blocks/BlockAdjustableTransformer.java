@@ -54,9 +54,9 @@ public class BlockAdjustableTransformer extends BlockContainer {
     	TileAdjustableTransformer te = (TileAdjustableTransformer) world.getTileEntity(x, y, z);
 
     	
-    	if (side==te.getPrimarySide().ordinal())
+    	if (side==te.primarySide.ordinal())
     		return iconBuffer[2];
-    	else if (side==te.getSecondarySide().ordinal())
+    	else if (side==te.secondarySide.ordinal())
     		return iconBuffer[1];
     	else 
     		return iconBuffer[0];
@@ -86,6 +86,7 @@ public class BlockAdjustableTransformer extends BlockContainer {
 
         Util.updateTileEntityField(te,"primarySide");
         Util.updateTileEntityField(te,"secondarySide");
+        world.notifyBlockChange(x, y, z, this);
     }
 
     @Override

@@ -27,7 +27,7 @@ public class TileIncandescentLamp extends TileStandardSEMachine implements IEner
 
 	@Override
 	public float getResistance() {
-		return 9900; // 100 watt at 230V
+		return 9900; // 5 watt at 220V
 	}
 
 	@Override

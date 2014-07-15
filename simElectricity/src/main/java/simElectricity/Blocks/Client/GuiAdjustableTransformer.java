@@ -112,21 +112,49 @@ public class GuiAdjustableTransformer extends GuiContainer {
     public void mouseClicked(int x, int y, int button){
     	super.mouseClicked(x, y, button);
     	
-    	int t_x = x-guiLeft, t_y = y-guiTop;
-    	System.out.print(t_x);
-    	System.out.print(",");
-    	System.out.print(t_y);
-    	System.out.print("-");
-    	System.out.println(button);    	
+    	int tx = x-guiLeft, ty = y-guiTop;
+    	ForgeDirection selectedDirection = ForgeDirection.UNKNOWN;
+    	
+    	if(tx>=139 && tx<=150 && ty>=61 && ty<=63){
+    		selectedDirection = ForgeDirection.NORTH;
+    	}else if(tx>=139 && tx<=150 && ty>=76 && ty<=78){
+    		selectedDirection = ForgeDirection.SOUTH;
+    	}if(tx>=136 && tx<=138 && ty>=64 && ty<=75){
+    		selectedDirection = ForgeDirection.WEST;
+    	}else if(tx>=151 && tx<=153 && ty>=64 && ty<=75){
+    		selectedDirection = ForgeDirection.EAST;
+    	}if(tx>=141 && tx<=148 && ty>=66 && ty<=73){
+    		selectedDirection = ForgeDirection.UP;
+    	}else if(tx>=159 && tx<=166 && ty>=66 && ty<=73){
+    		selectedDirection = ForgeDirection.DOWN;
+    	}
+    	
+    	if(selectedDirection == ForgeDirection.UNKNOWN)
+    		return;
+    	
+    	if(button == 0){        //Left key
+    		if(te.getSecondarySide() == selectedDirection)
+    			te.secondarySide = te.primarySide;
+    			
+    		te.primarySide = selectedDirection;
+    	}else if (button == 1){ //Right key
+     		if(te.getPrimarySide() == selectedDirection)
+    			te.primarySide = te.secondarySide;
+    			
+    		te.secondarySide = selectedDirection;   		
+    	}
+
+    	Util.updateTileEntityFieldToServer(te, "primarySide");
+    	Util.updateTileEntityFieldToServer(te, "secondarySide");
+    	
+    	//te.getWorldObj().markBlockForUpdate(te.xCoord, te.yCoord, te.zCoord);
+    	
+    	System.out.println(button);
     }
     
     public GuiAdjustableTransformer(InventoryPlayer inventoryPlayer, TileEntity tileEntity) {
         super(new ContainerQuantumGenerator(inventoryPlayer, tileEntity));
         te = (TileAdjustableTransformer) tileEntity;
-    }
-
-    String float2Str(float f, int dig) {
-        return String.valueOf(((int) (f * dig)) / dig) + "." + String.valueOf((int) (f * dig) - ((int) (f * dig)) / dig * dig);
     }
 
     @Override
@@ -153,15 +181,15 @@ public class GuiAdjustableTransformer extends GuiContainer {
         int y = (height - ySize) / 2;
         this.drawTexturedModalRect(x, y, 0, 0, xSize, ySize);
         
-        drawFacingBar(x+130, y+61,te.getPrimarySide().getOpposite(),te.getSecondarySide().getOpposite());
+        drawFacingBar(x+130, y+61,te.getPrimarySide(),te.getSecondarySide());
     }
     
     protected void drawFacingBar(int x,int y, ForgeDirection red, ForgeDirection blue){    	
     	switch(red){
-    	case EAST:
+    	case WEST:
     		this.drawTexturedModalRect(x+6, y+2, 176, 0, 3, 14);
     		break;
-    	case WEST:
+    	case EAST:
     		this.drawTexturedModalRect(x+20, y+2, 176, 0, 3, 14);
     		break;
     	case NORTH:
@@ -181,10 +209,10 @@ public class GuiAdjustableTransformer extends GuiContainer {
     	}
     	
     	switch(blue){
-    	case EAST:
+    	case WEST:
     		this.drawTexturedModalRect(x+6, y+2, 179, 0, 3, 14);
     		break;
-    	case WEST:
+    	case EAST:
     		this.drawTexturedModalRect(x+20, y+2, 179, 0, 3, 14);
     		break;
     	case NORTH:

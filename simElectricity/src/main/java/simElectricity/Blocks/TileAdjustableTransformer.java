@@ -13,7 +13,7 @@ public class TileAdjustableTransformer extends TileEntity implements ITransforme
     public Secondary secondary = new ITransformer.Secondary(this);
     protected boolean isAddedToEnergyNet = false;
 
-    public ForgeDirection primarySide, secondarySide;
+    public ForgeDirection primarySide = ForgeDirection.NORTH, secondarySide = ForgeDirection.SOUTH;
     public float ratio = 10, outputResistance = 1;
 
     @Override
@@ -60,6 +60,7 @@ public class TileAdjustableTransformer extends TileEntity implements ITransforme
 	public void onClient2ServerUpdate(String field, Object value, short type) {
     	if (field.contains("primarySide")||field.contains("secondarySide")){
     		Energy.postTileRejoinEvent(this);
+    		Util.scheduleBlockUpdate(this);
     	}else if (field.contains("outputResistance")||field.contains("ratio")){
             Energy.postTileChangeEvent(this);
     	}
