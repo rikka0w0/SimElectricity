@@ -14,10 +14,10 @@ public interface IBaseComponent {
      * conductor: Return the max power the conductor can generate, limit the
      * maximum current, using P=IIR to calculate
      */
-    int getMaxPowerDissipation();
+    //int getMaxPowerDissipation();
 
     /**
      * Do conductor melt here
      */
-    void onOverloaded();
+    //void onOverloaded();
 }

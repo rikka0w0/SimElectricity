@@ -35,15 +35,6 @@ public class VirtualConductor implements IConductor {
     }
 
     @Override
-    public int getMaxPowerDissipation() {
-        return 0;
-    }
-
-    @Override
-    public void onOverloaded() {
-    }
-
-    @Override
     public int getInsulationBreakdownVoltage() {
         return 0;
     }

@@ -24,14 +24,7 @@ public interface ITransformer {
     
     /** This class represents the primary of a transformer*/
     public static class Primary implements ITransformerWinding {
-        /** You can Override this class when necessary!*/
-        @Override
-        public int getMaxPowerDissipation() {return 0;}
-
-        /** You can Override this class when necessary!*/
-        @Override
-        public void onOverloaded() {}
-        
+        /** You can Override this class when necessary!*/        
         private ITransformer core;
         
         public Primary(ITransformer _core) {core = _core;}

@@ -98,16 +98,6 @@ public class TileWire extends TileEntity implements IConductor, ISyncPacketHandl
     }
 
     @Override
-    public void onOverloaded() {
-        worldObj.createExplosion(null, xCoord, yCoord, zCoord, 0, true);
-    }
-
-    @Override
-    public int getMaxPowerDissipation() {
-        return 0;
-    }
-
-    @Override
     public int getInsulationBreakdownVoltage() {
         return 0;
     }

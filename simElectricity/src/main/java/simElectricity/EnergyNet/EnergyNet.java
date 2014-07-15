@@ -8,6 +8,7 @@ import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleGraph;
 import simElectricity.API.EnergyTile.*;
 import simElectricity.API.EnergyTile.ITransformer.ITransformerWinding;
+import simElectricity.API.IEnergyNetUpdateHandler;
 import simElectricity.API.Util;
 import simElectricity.ConfigManager;
 
@@ -189,19 +190,10 @@ public final class EnergyNet {
             energyNet.runSimulator();
 
             //Check power distribution
-            try {
-                for (IBaseComponent tile : energyNet.tileEntityGraph.vertexSet()) {
-                    if (tile instanceof ICircuitComponent) {
-                        ICircuitComponent te = (ICircuitComponent) tile;
-                        if (te.getMaxSafeVoltage() != 0 && te.getMaxSafeVoltage() < energyNet.voltageCache.get(tile))
-                            te.onOverVoltage(); //Over voltage check
-                    } else if (tile instanceof IConductor) {
-                        IConductor te = (IConductor) tile;
-                        if (te.getInsulationBreakdownVoltage() != 0 && te.getInsulationBreakdownVoltage() < energyNet.voltageCache.get(tile))
-                            te.onInsulationBreakdown();
-                    }
+            for (IBaseComponent tile : energyNet.tileEntityGraph.vertexSet()) {                    
+            	if (tile instanceof IEnergyNetUpdateHandler){
+                   	((IEnergyNetUpdateHandler)tile).onEnergyNetUpdate();
                 }
-            } catch (Exception ignored) {
             }
         }
     }

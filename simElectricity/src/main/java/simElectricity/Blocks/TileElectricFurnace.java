@@ -7,10 +7,11 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.Common.TileStandardSEMachine;
 import simElectricity.API.Energy;
+import simElectricity.API.IEnergyNetUpdateHandler;
 import simElectricity.API.ISyncPacketHandler;
 import simElectricity.API.Util;
 
-public class TileElectricFurnace extends TileStandardSEMachine implements ISyncPacketHandler {
+public class TileElectricFurnace extends TileStandardSEMachine implements ISyncPacketHandler,IEnergyNetUpdateHandler {
     public static float energyPerItem = 1000F;
     public static float onResistance = 100F;
 
@@ -125,28 +126,15 @@ public class TileElectricFurnace extends TileStandardSEMachine implements ISyncP
     }
 
     @Override
-    public void onOverloaded() {
-    }
-
-    @Override
-    public int getMaxPowerDissipation() {
-        return 0;
-    }
-
-    @Override
     public float getOutputVoltage() {
         return 0;
     }
 
-    @Override
-    public float getMaxSafeVoltage() {
-        return 265;
-    }
-
-    @Override
-    public void onOverVoltage() {
-        worldObj.createExplosion(null, xCoord, yCoord, zCoord, 4F + Energy.getVoltage(this) / getMaxSafeVoltage(), true);
-    }
+	@Override
+	public void onEnergyNetUpdate() {
+		if (Energy.getVoltage(this)>265)
+			worldObj.createExplosion(null, xCoord, yCoord, zCoord, 4F + Energy.getVoltage(this) / 265, true);
+	}
 
     @Override
     public boolean canSetFacing(ForgeDirection newFacing) {

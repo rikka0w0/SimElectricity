@@ -33,15 +33,6 @@ public class TileAdjustableResistor extends TileStandardSEMachine implements ISy
     }
 
     @Override
-    public float getMaxSafeVoltage() {
-        return 0;
-    }
-
-    @Override
-    public void onOverVoltage() {
-    }
-
-    @Override
     public float getOutputVoltage() {
         return 0;
     }
@@ -50,16 +41,7 @@ public class TileAdjustableResistor extends TileStandardSEMachine implements ISy
     public float getResistance() {
         return resistance;
     }
-
-    @Override
-    public int getMaxPowerDissipation() {
-        return 0;
-    }
-
-    @Override
-    public void onOverloaded() {
-    }
-
+    
     @Override
     public int getInventorySize() {
         return 0;

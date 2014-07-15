@@ -62,26 +62,8 @@ public abstract class TileStandardGenerator extends TileEntity implements IEnerg
     }
 
     @Override
-    public void onOverloaded() {
-    }
-
-    @Override
-    public int getMaxPowerDissipation() {
-        return 0;
-    }
-
-    @Override
     public float getOutputVoltage() {
         return outputVoltage;
-    }
-
-    @Override
-    public float getMaxSafeVoltage() {
-        return 0;
-    }
-
-    @Override
-    public void onOverVoltage() {
     }
 
     @Override

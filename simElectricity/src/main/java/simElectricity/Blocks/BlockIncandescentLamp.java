@@ -11,6 +11,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
+import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -18,6 +19,7 @@ import simElectricity.API.EnergyTile.IEnergyTile;
 import simElectricity.API.ISidedFacing;
 import simElectricity.API.Util;
 import simElectricity.mod_SimElectricity;
+import net.minecraft.world.IWorldAccess;
 
 import java.util.Random;
 
@@ -80,27 +82,28 @@ public class BlockIncandescentLamp extends BlockContainer {
         ((TileIncandescentLamp) te).setFunctionalSide(Util.getPlayerSight(player).getOpposite());
     }
 
+    public int getLightValue(IBlockAccess world, int x, int y, int z){
+    	TileIncandescentLamp te = (TileIncandescentLamp) world.getTileEntity(x, y, z);
+    	
+    	return 15* ((int) te.lightLevel);
+    }
+    
     @Override
     public void updateTick(World world, int x, int y, int z, Random p_149674_5_) {
+    	TileEntity te = world.getTileEntity(x, y, z);
+
+    	
         if (world.isRemote)
             return;
-        TileEntity te = world.getTileEntity(x, y, z);
+        
         if (!(te instanceof TileIncandescentLamp))
             return;
         Util.updateTileEntityFunctionalSide(te);
         Util.updateTileEntityField(te, "lightLevel");
-    }
-    
-    @Override
-    public void randomDisplayTick(World world, int x, int y, int z, Random p_149734_5_) {
-        TileEntity te = world.getTileEntity(x, y, z);
-        if (!(te instanceof TileIncandescentLamp))
-            return;
         
-        float lightLevel = ((TileIncandescentLamp)te).lightLevel;
-        this.setLightLevel(lightLevel);
+        world.markBlockForUpdate(x, y, z);
     }
-
+   
     @Override
     public void onNeighborBlockChange(World world, int x, int y, int z, Block block) {
         if (world.isRemote)
@@ -110,7 +113,7 @@ public class BlockIncandescentLamp extends BlockContainer {
         TileEntity te = world.getTileEntity(x, y, z);
         Util.updateTileEntityFunctionalSide(te);
     }
-
+    
     @Override
     public TileEntity createNewTileEntity(World var1, int var2) {
         return new TileIncandescentLamp();

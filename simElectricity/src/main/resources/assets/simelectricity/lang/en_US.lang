@@ -13,3 +13,4 @@ tile.AdjustableResistor.name=Adjustable Resistor
 tile.SimpleGenerator.name=Simple Generator
 tile.SimpleGenerator.Output=Output:
 tile.SimpleGenerator.Impedance=Impedance:
+tile.AdjustableTransformer.name=Adjustable Transformer

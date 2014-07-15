@@ -10,25 +10,7 @@ public abstract class TileSidedGenerator extends TileStandardSEMachine {
     }
 
     @Override
-    public void onOverloaded() {
-    }
-
-    @Override
-    public int getMaxPowerDissipation() {
-        return 0;
-    }
-
-    @Override
     public float getOutputVoltage() {
         return outputVoltage;
-    }
-
-    @Override
-    public float getMaxSafeVoltage() {
-        return 0;
-    }
-
-    @Override
-    public void onOverVoltage() {
     }
 }
