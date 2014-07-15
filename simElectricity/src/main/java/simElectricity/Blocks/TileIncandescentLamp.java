@@ -13,7 +13,7 @@ import simElectricity.API.ISyncPacketHandler;
 import simElectricity.API.Util;
 
 public class TileIncandescentLamp extends TileStandardSEMachine implements IEnergyNetUpdateHandler{
-	public float lightLevel = 0.0F;
+	public int lightLevel = 0;
 	
     @Override
     public boolean canSetFunctionalSide(ForgeDirection newFunctionalSide) {
@@ -27,7 +27,7 @@ public class TileIncandescentLamp extends TileStandardSEMachine implements IEner
 
 	@Override
 	public float getResistance() {
-		return 529; // 100 watt at 230V
+		return 9900; // 100 watt at 230V
 	}
 
 	@Override
@@ -37,9 +37,9 @@ public class TileIncandescentLamp extends TileStandardSEMachine implements IEner
 
 	@Override
 	public void onEnergyNetUpdate() {
-        lightLevel = Energy.getPower(this) / 100.0F;
-        if (lightLevel>1)
-        	lightLevel=1;
+        lightLevel = (int) (Energy.getPower(this) / 0.3F);
+        if (lightLevel>15)
+        	lightLevel=15;
         
         //Util.updateTileEntityField(this, "lightLevel");
         Util.scheduleBlockUpdate(this,4);

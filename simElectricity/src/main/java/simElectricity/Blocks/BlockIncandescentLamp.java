@@ -82,7 +82,7 @@ public class BlockIncandescentLamp extends BlockContainer {
         if (!(te instanceof TileIncandescentLamp))
             return 0;
 
-        return (int) (15 * ((TileIncandescentLamp) te).lightLevel);
+        return ((TileIncandescentLamp) te).lightLevel;
     }
 
     @Override
