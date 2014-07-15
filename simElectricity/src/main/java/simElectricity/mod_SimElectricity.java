@@ -112,7 +112,7 @@ public class mod_SimElectricity {
         GameRegistry.registerTileEntity(TileWire.class, "TileWire");
         GameRegistry.registerTileEntity(TileAdjustableResistor.class, "TileAdjustableResistor");
         GameRegistry.registerTileEntity(TileWindMillTop.class, "TileWindMillTop");
-        GameRegistry.registerTileEntity(TileAdjustableTransformer.class, "TileTransformer");
+        GameRegistry.registerTileEntity(TileAdjustableTransformer.class, "TileAdjustableTransformer");
         GameRegistry.registerTileEntity(TileBatteryBox.class, "TileBatteryBox");
         GameRegistry.registerTileEntity(TileIncandescentLamp.class, "TileIncandescentLamp");
     }

@@ -65,8 +65,8 @@ public class BlockWire extends BlockContainer {
 
     void updateRenderSides(TileEntity te) {
         if (te instanceof TileWire) {
+        	((TileWire) te).updateSides();
             Util.updateTileEntityField(te, "renderSides");
-            Util.scheduleBlockUpdate(te, 12);
         }
     }
 
@@ -74,6 +74,7 @@ public class BlockWire extends BlockContainer {
     public void updateTick(World world, int x, int y, int z, Random p_149674_5_) {
         if (world.isRemote)
             return;
+        ((TileWire) world.getTileEntity(x, y, z)).updateSides();
         Util.updateTileEntityField(world.getTileEntity(x, y, z), "renderSides");
     }
 

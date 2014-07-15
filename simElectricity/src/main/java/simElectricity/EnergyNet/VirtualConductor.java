@@ -34,15 +34,6 @@ public class VirtualConductor implements IConductor {
         return totalResistance;
     }
 
-    @Override
-    public int getInsulationBreakdownVoltage() {
-        return 0;
-    }
-
-    @Override
-    public void onInsulationBreakdown() {
-    }
-
     public boolean append(IConductor conductor) {
         boolean result = this.contains.add(conductor);
         if (result) {

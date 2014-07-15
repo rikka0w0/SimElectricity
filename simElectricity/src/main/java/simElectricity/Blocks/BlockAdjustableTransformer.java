@@ -36,16 +36,16 @@ public class BlockAdjustableTransformer extends BlockContainer {
         super(Material.rock);
         setHardness(2.0F);
         setResistance(5.0F);
-        setBlockName("Transformer");
+        setBlockName("AdjustableTransformer");
         setCreativeTab(Util.SETab);
     }
 
     @Override
     @SideOnly(Side.CLIENT)
     public void registerBlockIcons(IIconRegister r) {
-        iconBuffer[0] = r.registerIcon("simElectricity:WindMill_Back");
-        iconBuffer[1] = r.registerIcon("simElectricity:SolarPanel_Front");
-        iconBuffer[2] = r.registerIcon("simElectricity:QuantumGenerator_Front");
+        iconBuffer[0] = r.registerIcon("simElectricity:Transformer_Side");
+        iconBuffer[1] = r.registerIcon("simElectricity:Transformer_Secondary");
+        iconBuffer[2] = r.registerIcon("simElectricity:Transformer_Primary");
     }
 
     @SideOnly(Side.CLIENT)
@@ -65,7 +65,10 @@ public class BlockAdjustableTransformer extends BlockContainer {
     @SideOnly(Side.CLIENT)
     @Override
     public IIcon getIcon(int side, int meta) {
-        return iconBuffer[0];
+    	if (side==4)
+    		return iconBuffer[1];
+    	else
+    		return iconBuffer[0];
     }
 
     @Override

@@ -14,7 +14,7 @@ import simElectricity.API.Energy;
 import simElectricity.API.ISyncPacketHandler;
 import simElectricity.API.Util;
 
-public class TileWire extends TileEntity implements IConductor, ISyncPacketHandler {
+public class TileWire extends TileEntity implements IConductor {
     protected boolean isAddedToEnergyNet = false;
     public boolean[] renderSides = new boolean[6];
 
@@ -30,16 +30,6 @@ public class TileWire extends TileEntity implements IConductor, ISyncPacketHandl
         resistance = BlockWire.resistanceList[meta];
         width = BlockWire.renderingWidthList[meta];
         textureString = BlockWire.subNames[meta];
-    }
-
-    @Override
-    public void onClient2ServerUpdate(String field, Object value, short type) {
-    }
-
-    @Override
-    public void onServer2ClientUpdate(String field, Object value, short type) {
-        //worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-        updateSides();
     }
 
     public void updateSides() {
@@ -95,14 +85,5 @@ public class TileWire extends TileEntity implements IConductor, ISyncPacketHandl
     @Override
     public float getResistance() {
         return resistance;
-    }
-
-    @Override
-    public int getInsulationBreakdownVoltage() {
-        return 0;
-    }
-
-    @Override
-    public void onInsulationBreakdown() {
     }
 }
