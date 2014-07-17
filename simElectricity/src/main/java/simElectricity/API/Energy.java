@@ -6,6 +6,7 @@ import net.minecraftforge.common.MinecraftForge;
 import simElectricity.API.EnergyTile.IBaseComponent;
 import simElectricity.API.EnergyTile.ICircuitComponent;
 import simElectricity.API.EnergyTile.IEnergyTile;
+import simElectricity.API.EnergyTile.ITransformer.ITransformerWinding;
 import simElectricity.API.Events.TileAttachEvent;
 import simElectricity.API.Events.TileChangeEvent;
 import simElectricity.API.Events.TileDetachEvent;
@@ -72,7 +73,11 @@ public class Energy {
      * For IEnergyTile and IConductor Only!
      */
     public static float getVoltage(IBaseComponent Tile) {
-        return getVoltage(Tile, ((TileEntity) Tile).getWorldObj());
+    	if (Tile instanceof ITransformerWinding){
+    		return getVoltage(Tile, ((TileEntity)(((ITransformerWinding) Tile).getCore())).getWorldObj());
+    	}else{
+    		return getVoltage(Tile, ((TileEntity) Tile).getWorldObj());
+    	}
     }
 
     /**
