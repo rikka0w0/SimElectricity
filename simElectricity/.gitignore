@@ -5,7 +5,6 @@ hs_err_pid*
 # Package Files #
 *.war
 *.ear
-*.jar
 
 # IDEA module file #
 *.iml
