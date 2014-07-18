@@ -1,3 +1,3 @@
 SimElectricity
 ==============
-a demo for Resistive load circuit simulation
+A demo for Resistive load circuit simulation.
