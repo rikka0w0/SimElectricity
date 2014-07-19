@@ -11,7 +11,7 @@ import simElectricity.API.IEnergyNetUpdateHandler;
 import simElectricity.API.ISyncPacketHandler;
 import simElectricity.API.Util;
 
-public class TileElectricFurnace extends TileStandardSEMachine implements ISyncPacketHandler,IEnergyNetUpdateHandler {
+public class TileElectricFurnace extends TileStandardSEMachine implements ISyncPacketHandler, IEnergyNetUpdateHandler {
     public static float energyPerItem = 1000F;
     public static float onResistance = 100F;
 
@@ -37,7 +37,7 @@ public class TileElectricFurnace extends TileStandardSEMachine implements ISyncP
         if (worldObj.isRemote)
             return;
         //TODO inv[1] == null | (inv[1] != null && inv[1].isItemEqual(result))
-        if (Energy.getPower(this) > 0 && result != null && (inv[1] == null || (inv[1] != null && inv[1].isItemEqual(result)))) {
+        if (Energy.getPower(this) > 0 && result != null && (inv[1] == null || (inv[1] != null && inv[1].stackSize < 64 && inv[1].isItemEqual(result)))) {
             energyStored += Energy.getPower(this) * 0.02;
             progress = ((int) (energyStored * 100 / energyPerItem));
 
@@ -50,7 +50,12 @@ public class TileElectricFurnace extends TileStandardSEMachine implements ISyncP
             Util.updateTileEntityField(this, "isWorking");
 
             if (energyStored > energyPerItem) {
-                ItemStack newResult = getResult(inv, 0);
+                ItemStack newResult = result.copy();
+
+                inv[0].stackSize -= 1;
+                if (newResult.stackSize == 0)
+                    newResult.stackSize = 1;
+
                 if (inv[0] != null && inv[0].stackSize == 0)
                     inv[0] = null;
 
@@ -81,17 +86,6 @@ public class TileElectricFurnace extends TileStandardSEMachine implements ISyncP
         return FurnaceRecipes.smelting().getSmeltingResult(i.copy());
     }
 
-    public ItemStack getResult(ItemStack inv[], int i) {
-        if (inv[i] == null)
-            return null;
-        ItemStack r = FurnaceRecipes.smelting().getSmeltingResult(inv[i]);
-        if (r != null)
-            inv[i].stackSize -= 1;
-        if (r.stackSize == 0)
-            r.stackSize = 1;
-        return r;
-    }
-
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
@@ -109,7 +103,6 @@ public class TileElectricFurnace extends TileStandardSEMachine implements ISyncP
         tagCompound.setFloat("energyStored", energyStored);
     }
 
-    //---------------------------------------------------------------------------------------------------------
     @Override
     public void onServer2ClientUpdate(String field, Object value, short type) {
         if (field.contains("isWorking"))
@@ -130,11 +123,13 @@ public class TileElectricFurnace extends TileStandardSEMachine implements ISyncP
         return 0;
     }
 
-	@Override
-	public void onEnergyNetUpdate() {
-		if (Energy.getVoltage(this)>265)
-			worldObj.createExplosion(null, xCoord, yCoord, zCoord, 4F + Energy.getVoltage(this) / 265, true);
-	}
+    @Override
+    public void onEnergyNetUpdate() {
+        if (Energy.getVoltage(this) > 265)
+            worldObj.createExplosion(null, xCoord, yCoord, zCoord, 4F + Energy.getVoltage(this) / 265, true);
+
+        Util.scheduleBlockUpdate(this, 4);
+    }
 
     @Override
     public boolean canSetFacing(ForgeDirection newFacing) {

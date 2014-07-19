@@ -119,34 +119,34 @@ public final class EnergyNet {
                 b[rowIndex] = 0;
             }
 
-            
+
             List<IBaseComponent> neighborList = Graphs.neighborListOf(optimizedTileEntityGraph, currentRowComponent);
             //Generate row for conductor node
             if (currentRowComponent instanceof IConductor){
                 for (int columnIndex = 0; columnIndex < matrixSize; columnIndex++) {
                     double cellData = 0;
-                    
+
                     if (rowIndex == columnIndex) { //Key cell
                     	//Add neighbor resistance
                     	for (IBaseComponent neighbor : neighborList) {
-                    		if (neighbor instanceof IConductor){  
+                    		if (neighbor instanceof IConductor){
                     			cellData += 2.0D / (currentRowComponent.getResistance() + neighbor.getResistance());  // IConductor next to IConductor
                     		}else{
                     			cellData += 2.0D / currentRowComponent.getResistance();                              // IConductor next to other components
                     		}
-                    	}    	
+                    	}
                     }else{
                         IBaseComponent currentColumnComponent = unknownVoltageNodes.get(columnIndex);
                         if (neighborList.contains(currentColumnComponent)){
                         	if (currentColumnComponent instanceof IConductor){
                         		cellData = -2.0D / (currentRowComponent.getResistance() + currentColumnComponent.getResistance());
                         	}else{
-                        		cellData = -2.0D / currentRowComponent.getResistance();		
+                        		cellData = -2.0D / currentRowComponent.getResistance();
                         	}
                         }
-                           
+
                     }
-                    
+
                     A[rowIndex][columnIndex] = cellData;
                 }
             }else{ //For other nodes (can only have a IConductor neighbor or no neighbor!)
@@ -156,15 +156,15 @@ public final class EnergyNet {
             		if (possibleNeighbor!=null)
             			neighbor=(IConductor) possibleNeighbor; //Must be a IConductor!
             	}
-            	
+
                 for (int columnIndex = 0; columnIndex < matrixSize; columnIndex++) {
                     double cellData = 0;
-                    
+
                     if (rowIndex == columnIndex) { //Key cell
                     	if (neighbor!=null){
                     		cellData += 2.0D / neighbor.getResistance();
                     	}
-                    	
+
                     	//Add internal resistance for fixed voltage sources
                     	if (currentRowComponent instanceof ICircuitComponent){
                     		cellData += 1.0 / currentRowComponent.getResistance();
@@ -189,12 +189,12 @@ public final class EnergyNet {
                                 cellData = -winding.getRatio() / winding.getResistance();
                         }
                     }
-                    
+
                     A[rowIndex][columnIndex] = cellData;
                 }
             }
-            
-            
+
+
         }
 
         float[] x = MatrixOperation.lsolve(A, b);
@@ -218,7 +218,7 @@ public final class EnergyNet {
             energyNet.runSimulator();
 
             //Check power distribution
-            for (IBaseComponent tile : energyNet.tileEntityGraph.vertexSet()) {                    
+            for (IBaseComponent tile : energyNet.tileEntityGraph.vertexSet()) {
             	if (tile instanceof IEnergyNetUpdateHandler){
                    	((IEnergyNetUpdateHandler)tile).onEnergyNetUpdate();
                 }
@@ -357,10 +357,10 @@ public final class EnergyNet {
     }
 
     /**
-     * Remove a TileEntiy from the energy net
+     * Remove a TileEntity from the energy net
      */
     public void removeTileEntity(TileEntity te) {
-        if (te instanceof IComplexTile) { //For a comlexTile every subComponents has to be removed!
+        if (te instanceof IComplexTile) { //For a complexTile every subComponents has to be removed!
             ICircuitComponent[] SubComponents = new ICircuitComponent[6];
             SubComponents[0] = ((IComplexTile) te).getCircuitComponent(ForgeDirection.NORTH);
             SubComponents[1] = ((IComplexTile) te).getCircuitComponent(ForgeDirection.SOUTH);

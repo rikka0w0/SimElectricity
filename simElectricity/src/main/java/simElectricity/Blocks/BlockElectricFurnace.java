@@ -99,6 +99,8 @@ public class BlockElectricFurnace extends BlockContainer {
             return;
         Util.updateTileEntityFacing(te);
         Util.updateTileEntityFunctionalSide(te);
+
+        world.markBlockForUpdate(x, y, z);
     }
 
     @Override
@@ -119,5 +121,13 @@ public class BlockElectricFurnace extends BlockContainer {
     @Override
     public int damageDropped(int par1) {
         return par1;
+    }
+
+    public int getLightValue(IBlockAccess world, int x, int y, int z) {
+        TileEntity te = world.getTileEntity(x, y, z);
+        if (!(te instanceof TileElectricFurnace))
+            return 0;
+
+        return ((TileElectricFurnace) te).isWorking ? 13 : 0;
     }
 }

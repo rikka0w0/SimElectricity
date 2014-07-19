@@ -34,7 +34,7 @@ public class CommonProxy implements IGuiHandler {
         if (te instanceof TileAdjustableResistor)
             return new ContainerAdjustableResistor(player.inventory, te);
         if (te instanceof TileAdjustableTransformer)
-        	return new ContainerAdjustableTransformer(player.inventory, te);
+            return new ContainerAdjustableTransformer(player.inventory, te);
 
         return null;
     }

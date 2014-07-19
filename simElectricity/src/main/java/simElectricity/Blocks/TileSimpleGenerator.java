@@ -50,9 +50,9 @@ public class TileSimpleGenerator extends TileSidedGenerator implements ISyncPack
                     } else {
                         inv[0] = null;
                     }
-                    updateWoringStatus(burnTime_Inv0);    //Update Working Status
+                    updateWorkingStatus(burnTime_Inv0);    //Update Working Status
                 } else {
-                    updateWoringStatus(0);                //Update Working Status (No more fuel)
+                    updateWorkingStatus(0);                //Update Working Status (No more fuel)
                 }
             }
         } else {
@@ -60,7 +60,7 @@ public class TileSimpleGenerator extends TileSidedGenerator implements ISyncPack
         }
     }
 
-    public void updateWoringStatus(int bt) {
+    public void updateWorkingStatus(int bt) {
         if (bt == 0) {
             isWorking = false;
 
@@ -100,7 +100,7 @@ public class TileSimpleGenerator extends TileSidedGenerator implements ISyncPack
             } else {
                 inv[0] = null;
             }
-            updateWoringStatus(burnTime_Inv0);
+            updateWorkingStatus(burnTime_Inv0);
         }
     }
 
