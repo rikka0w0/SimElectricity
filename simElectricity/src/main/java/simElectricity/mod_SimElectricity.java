@@ -95,7 +95,7 @@ public class mod_SimElectricity {
      * Initialize
      */
     @EventHandler
-    public void load(FMLInitializationEvent event) {
+    public void init(FMLInitializationEvent event) {
         //Register GUI handler
         NetworkRegistry.INSTANCE.registerGuiHandler(instance, proxy);
 
@@ -121,7 +121,7 @@ public class mod_SimElectricity {
      * PostInitialize
      */
     @EventHandler
-    public void postInitialize(FMLPostInitializationEvent evt) {
+    public void postInit(FMLPostInitializationEvent evt) {
         //Register network packets
         packetPipeline.registerPacket(PacketTileEntityFieldUpdate.class);
         packetPipeline.registerPacket(PacketTileEntitySideUpdate.class);

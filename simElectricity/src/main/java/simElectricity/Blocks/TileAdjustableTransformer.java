@@ -4,12 +4,12 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.Energy;
+import simElectricity.API.EnergyTile.ITransformer;
 import simElectricity.API.ISyncPacketHandler;
 import simElectricity.API.Util;
-import simElectricity.API.EnergyTile.ITransformer;
 
 public class TileAdjustableTransformer extends TileEntity implements ITransformer, ISyncPacketHandler {
-	public Primary primary = new ITransformer.Primary(this);
+    public Primary primary = new ITransformer.Primary(this);
     public Secondary secondary = new ITransformer.Secondary(this);
     protected boolean isAddedToEnergyNet = false;
 
@@ -35,17 +35,17 @@ public class TileAdjustableTransformer extends TileEntity implements ITransforme
 
         super.invalidate();
     }
-    
+
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
-    	super.readFromNBT(tagCompound);
-    	
-    	ratio = tagCompound.getFloat("ratio");
-    	outputResistance = tagCompound.getFloat("outputResistance");
-    	primarySide = Util.byte2Direction(tagCompound.getByte("primarySide"));
-    	secondarySide = Util.byte2Direction(tagCompound.getByte("secondarySide"));
+        super.readFromNBT(tagCompound);
+
+        ratio = tagCompound.getFloat("ratio");
+        outputResistance = tagCompound.getFloat("outputResistance");
+        primarySide = Util.byte2Direction(tagCompound.getByte("primarySide"));
+        secondarySide = Util.byte2Direction(tagCompound.getByte("secondarySide"));
     }
-    
+
     @Override
     public void writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
@@ -55,39 +55,51 @@ public class TileAdjustableTransformer extends TileEntity implements ITransforme
         tagCompound.setByte("primarySide", Util.direction2Byte(primarySide));
         tagCompound.setByte("secondarySide", Util.direction2Byte(secondarySide));
     }
-    
+
     @Override
-	public void onClient2ServerUpdate(String field, Object value, short type) {
-    	if (field.contains("primarySide")||field.contains("secondarySide")){
-    		Energy.postTileRejoinEvent(this);
-    		Util.scheduleBlockUpdate(this);
-    	}else if (field.contains("outputResistance")||field.contains("ratio")){
+    public void onClient2ServerUpdate(String field, Object value, short type) {
+        if (field.contains("primarySide") || field.contains("secondarySide")) {
+            Energy.postTileRejoinEvent(this);
+            Util.scheduleBlockUpdate(this);
+        } else if (field.contains("outputResistance") || field.contains("ratio")) {
             Energy.postTileChangeEvent(this);
-    	}
-	}
-
-	@Override
-	public void onServer2ClientUpdate(String field, Object value, short type) {
-		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-	}
-
-	@Override
-	public float getResistance() {return outputResistance;}
-
-	@Override
-	public float getRatio() {return ratio;}
-    
-    @Override
-    public ForgeDirection getPrimarySide() {return primarySide;}
-    
-    @Override
-    public ForgeDirection getSecondarySide() {return secondarySide;}
+        }
+    }
 
     @Override
-    public ITransformerWinding getPrimary() {return primary;}
+    public void onServer2ClientUpdate(String field, Object value, short type) {
+        worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+    }
 
     @Override
-    public ITransformerWinding getSecondary() {return secondary;}
+    public float getResistance() {
+        return outputResistance;
+    }
+
+    @Override
+    public float getRatio() {
+        return ratio;
+    }
+
+    @Override
+    public ForgeDirection getPrimarySide() {
+        return primarySide;
+    }
+
+    @Override
+    public ForgeDirection getSecondarySide() {
+        return secondarySide;
+    }
+
+    @Override
+    public ITransformerWinding getPrimary() {
+        return primary;
+    }
+
+    @Override
+    public ITransformerWinding getSecondary() {
+        return secondary;
+    }
 
 
 }

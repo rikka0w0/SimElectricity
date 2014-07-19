@@ -1,7 +1,5 @@
 package simElectricity.Blocks;
 
-import java.util.Random;
-
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.BlockContainer;
@@ -15,10 +13,11 @@ import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
-import simElectricity.mod_SimElectricity;
-import simElectricity.API.ISidedFacing;
+import simElectricity.API.EnergyTile.IConductor;
 import simElectricity.API.Util;
-import simElectricity.API.EnergyTile.IEnergyTile;
+import simElectricity.mod_SimElectricity;
+
+import java.util.Random;
 
 public class BlockAdjustableTransformer extends BlockContainer {
     private IIcon[] iconBuffer = new IIcon[6];
@@ -31,7 +30,7 @@ public class BlockAdjustableTransformer extends BlockContainer {
         player.openGui(mod_SimElectricity.instance, 0, world, x, y, z);
         return true;
     }
-    
+
     public BlockAdjustableTransformer() {
         super(Material.rock);
         setHardness(2.0F);
@@ -51,44 +50,58 @@ public class BlockAdjustableTransformer extends BlockContainer {
     @SideOnly(Side.CLIENT)
     @Override
     public IIcon getIcon(IBlockAccess world, int x, int y, int z, int side) {
-    	TileAdjustableTransformer te = (TileAdjustableTransformer) world.getTileEntity(x, y, z);
+        TileAdjustableTransformer te = (TileAdjustableTransformer) world.getTileEntity(x, y, z);
 
-    	
-    	if (side==te.primarySide.ordinal())
-    		return iconBuffer[2];
-    	else if (side==te.secondarySide.ordinal())
-    		return iconBuffer[1];
-    	else 
-    		return iconBuffer[0];
+
+        if (side == te.primarySide.ordinal())
+            return iconBuffer[2];
+        else if (side == te.secondarySide.ordinal())
+            return iconBuffer[1];
+        else
+            return iconBuffer[0];
     }
 
     @SideOnly(Side.CLIENT)
     @Override
     public IIcon getIcon(int side, int meta) {
-    	if (side==4)
-    		return iconBuffer[1];
-    	else
-    		return iconBuffer[0];
+        if (side == 4)
+            return iconBuffer[1];
+        else
+            return iconBuffer[0];
     }
 
     @Override
     public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase player, ItemStack stack) {
         TileAdjustableTransformer te = (TileAdjustableTransformer) world.getTileEntity(x, y, z);
 
-        te.secondarySide=Util.getPlayerSight(player);
-        te.primarySide=te.secondarySide.getOpposite();
+        te.secondarySide = Util.getPlayerSight(player);
+
+        if (world.getTileEntity(x + 1, y, z) instanceof IConductor)
+            te.secondarySide = ForgeDirection.EAST;
+        else if (world.getTileEntity(x - 1, y, z) instanceof IConductor)
+            te.secondarySide = ForgeDirection.WEST;
+        else if (world.getTileEntity(x, y, z + 1) instanceof IConductor)
+            te.secondarySide = ForgeDirection.SOUTH;
+        else if (world.getTileEntity(x, y, z - 1) instanceof IConductor)
+            te.secondarySide = ForgeDirection.NORTH;
+        else if (world.getTileEntity(x, y + 1, z) instanceof IConductor)
+            te.secondarySide = ForgeDirection.UP;
+        else if (world.getTileEntity(x, y - 1, z) instanceof IConductor)
+            te.secondarySide = ForgeDirection.DOWN;
+
+        te.primarySide = te.secondarySide.getOpposite();
     }
-    
+
     @Override
     public void updateTick(World world, int x, int y, int z, Random p_149674_5_) {
         if (world.isRemote)
             return;
-        
+
         TileAdjustableTransformer te = (TileAdjustableTransformer) world.getTileEntity(x, y, z);
 
 
-        Util.updateTileEntityField(te,"primarySide");
-        Util.updateTileEntityField(te,"secondarySide");
+        Util.updateTileEntityField(te, "primarySide");
+        Util.updateTileEntityField(te, "secondarySide");
         world.notifyBlockChange(x, y, z, this);
     }
 

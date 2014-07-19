@@ -73,11 +73,11 @@ public class Energy {
      * For IEnergyTile and IConductor Only!
      */
     public static float getVoltage(IBaseComponent Tile) {
-    	if (Tile instanceof ITransformerWinding){
-    		return getVoltage(Tile, ((TileEntity)(((ITransformerWinding) Tile).getCore())).getWorldObj());
-    	}else{
-    		return getVoltage(Tile, ((TileEntity) Tile).getWorldObj());
-    	}
+        if (Tile instanceof ITransformerWinding) {
+            return getVoltage(Tile, ((TileEntity) (((ITransformerWinding) Tile).getCore())).getWorldObj());
+        } else {
+            return getVoltage(Tile, ((TileEntity) Tile).getWorldObj());
+        }
     }
 
     /**

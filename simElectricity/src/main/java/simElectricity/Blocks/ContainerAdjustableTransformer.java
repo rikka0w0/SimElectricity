@@ -33,10 +33,10 @@ public class ContainerAdjustableTransformer extends ContainerBase {
     @Override
     public void init() {
         if (!tileEntity.getWorldObj().isRemote) {
-        	Util.updateTileEntityField(tileEntity, "ratio");
+            Util.updateTileEntityField(tileEntity, "ratio");
             Util.updateTileEntityField(tileEntity, "outputResistance");
-        	Util.updateTileEntityField(tileEntity, "primarySide");
-            Util.updateTileEntityField(tileEntity, "secondarySide");            
+            Util.updateTileEntityField(tileEntity, "primarySide");
+            Util.updateTileEntityField(tileEntity, "secondarySide");
         }
     }
 

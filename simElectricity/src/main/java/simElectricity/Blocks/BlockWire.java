@@ -42,8 +42,8 @@ public class BlockWire extends BlockContainer {
 
     @Override
     public void onNeighborBlockChange(World world, int x, int y, int z, Block block) {
-        if (!world.isRemote){        	
-        	Util.scheduleBlockUpdate(world.getTileEntity(x, y, z));
+        if (!world.isRemote) {
+            Util.scheduleBlockUpdate(world.getTileEntity(x, y, z));
             //updateRenderSides();
         }
     }
@@ -67,7 +67,7 @@ public class BlockWire extends BlockContainer {
 
     void updateRenderSides(TileEntity te) {
         if (te instanceof TileWire) {
-        	((TileWire) te).updateSides();
+            ((TileWire) te).updateSides();
             Util.updateTileEntityField(te, "renderSides");
         }
     }
@@ -191,7 +191,7 @@ public class BlockWire extends BlockContainer {
     }
 
     @Override
-    @SuppressWarnings( { "rawtypes", "unchecked" })
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     @SideOnly(Side.CLIENT)
     public void getSubBlocks(Item par1, CreativeTabs par2CreativeTabs, List subItems) {
         for (int ix = 0; ix < subNames.length; ix++) {

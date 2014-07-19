@@ -92,9 +92,9 @@ public class Util {
             if (((IConnectable) ent).canConnectOnSide(direction.getOpposite()))
                 return true;
         } else if (ent instanceof ITransformer) {
-        	if (((ITransformer)ent).getPrimarySide()==direction.getOpposite() ||
-        		((ITransformer)ent).getSecondarySide()==direction.getOpposite())
-        		return true;
+            if (((ITransformer) ent).getPrimarySide() == direction.getOpposite() ||
+                    ((ITransformer) ent).getSecondarySide() == direction.getOpposite())
+                return true;
         }
 
         return false;

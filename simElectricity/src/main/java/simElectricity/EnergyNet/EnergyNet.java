@@ -122,65 +122,65 @@ public final class EnergyNet {
 
             List<IBaseComponent> neighborList = Graphs.neighborListOf(optimizedTileEntityGraph, currentRowComponent);
             //Generate row for conductor node
-            if (currentRowComponent instanceof IConductor){
+            if (currentRowComponent instanceof IConductor) {
                 for (int columnIndex = 0; columnIndex < matrixSize; columnIndex++) {
                     double cellData = 0;
 
                     if (rowIndex == columnIndex) { //Key cell
-                    	//Add neighbor resistance
-                    	for (IBaseComponent neighbor : neighborList) {
-                    		if (neighbor instanceof IConductor){
-                    			cellData += 2.0D / (currentRowComponent.getResistance() + neighbor.getResistance());  // IConductor next to IConductor
-                    		}else{
-                    			cellData += 2.0D / currentRowComponent.getResistance();                              // IConductor next to other components
-                    		}
-                    	}
-                    }else{
+                        //Add neighbor resistance
+                        for (IBaseComponent neighbor : neighborList) {
+                            if (neighbor instanceof IConductor) {
+                                cellData += 2.0D / (currentRowComponent.getResistance() + neighbor.getResistance());  // IConductor next to IConductor
+                            } else {
+                                cellData += 2.0D / currentRowComponent.getResistance();                              // IConductor next to other components
+                            }
+                        }
+                    } else {
                         IBaseComponent currentColumnComponent = unknownVoltageNodes.get(columnIndex);
-                        if (neighborList.contains(currentColumnComponent)){
-                        	if (currentColumnComponent instanceof IConductor){
-                        		cellData = -2.0D / (currentRowComponent.getResistance() + currentColumnComponent.getResistance());
-                        	}else{
-                        		cellData = -2.0D / currentRowComponent.getResistance();
-                        	}
+                        if (neighborList.contains(currentColumnComponent)) {
+                            if (currentColumnComponent instanceof IConductor) {
+                                cellData = -2.0D / (currentRowComponent.getResistance() + currentColumnComponent.getResistance());
+                            } else {
+                                cellData = -2.0D / currentRowComponent.getResistance();
+                            }
                         }
 
                     }
 
                     A[rowIndex][columnIndex] = cellData;
                 }
-            }else{ //For other nodes (can only have a IConductor neighbor or no neighbor!)
-            	//Find the only possible neighbor (maybe not exist)
-            	IConductor neighbor = null;
-            	for (IBaseComponent possibleNeighbor : neighborList) {
-            		if (possibleNeighbor!=null)
-            			neighbor=(IConductor) possibleNeighbor; //Must be a IConductor!
-            	}
+            } else { //For other nodes (can only have a IConductor neighbor or no neighbor!)
+                //Find the only possible neighbor (maybe not exist)
+                IConductor neighbor = null;
+                for (IBaseComponent possibleNeighbor : neighborList) {
+                    if (possibleNeighbor != null)
+                        neighbor = (IConductor) possibleNeighbor; //Must be a IConductor!
+                }
 
                 for (int columnIndex = 0; columnIndex < matrixSize; columnIndex++) {
                     double cellData = 0;
 
                     if (rowIndex == columnIndex) { //Key cell
-                    	if (neighbor!=null){
-                    		cellData += 2.0D / neighbor.getResistance();
-                    	}
+                        if (neighbor != null) {
+                            cellData += 2.0D / neighbor.getResistance();
+                        }
 
-                    	//Add internal resistance for fixed voltage sources
-                    	if (currentRowComponent instanceof ICircuitComponent){
-                    		cellData += 1.0 / currentRowComponent.getResistance();
-                    	}else if (currentRowComponent instanceof ITransformerWinding){
+                        //Add internal resistance for fixed voltage sources
+                        if (currentRowComponent instanceof ICircuitComponent) {
+                            cellData += 1.0 / currentRowComponent.getResistance();
+                        } else if (currentRowComponent instanceof ITransformerWinding) {
                             ITransformerWinding winding = (ITransformerWinding) currentRowComponent;
                             if (winding.isPrimary()) {
                                 cellData += winding.getRatio() * winding.getRatio() / winding.getResistance();
                             } else {
                                 cellData += 1.0 / winding.getResistance();
                             }
-                    	}
-                    }else{
-                        if (neighbor == unknownVoltageNodes.get(columnIndex)){
-                        	cellData = -2.0D / neighbor.getResistance();
+                        }
+                    } else {
+                        if (neighbor == unknownVoltageNodes.get(columnIndex)) {
+                            cellData = -2.0D / neighbor.getResistance();
                         } else if (currentRowComponent instanceof ITransformerWinding) { //Add transformer association
-                        	IBaseComponent currentColumnComponent = unknownVoltageNodes.get(columnIndex);
+                            IBaseComponent currentColumnComponent = unknownVoltageNodes.get(columnIndex);
                             ITransformerWinding winding = (ITransformerWinding) currentRowComponent;
                             ITransformer core = winding.getCore();
 
@@ -219,8 +219,8 @@ public final class EnergyNet {
 
             //Check power distribution
             for (IBaseComponent tile : energyNet.tileEntityGraph.vertexSet()) {
-            	if (tile instanceof IEnergyNetUpdateHandler){
-                   	((IEnergyNetUpdateHandler)tile).onEnergyNetUpdate();
+                if (tile instanceof IEnergyNetUpdateHandler) {
+                    ((IEnergyNetUpdateHandler) tile).onEnergyNetUpdate();
                 }
             }
         }

@@ -3,29 +3,25 @@ package simElectricity.Blocks;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockContainer;
-import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
+import simElectricity.API.Common.BlockStandardSEMachine;
 import simElectricity.API.Util;
 
 import java.util.Random;
 
-public class BlockIncandescentLamp extends BlockContainer {
+public class BlockIncandescentLamp extends BlockStandardSEMachine {
     private IIcon[] iconBuffer = new IIcon[6];
 
     public BlockIncandescentLamp() {
-        super(Material.rock);
+        super();
         setHardness(2.0F);
         setResistance(5.0F);
         setBlockName("IncandescentLamp");
-        setCreativeTab(Util.SETab);
     }
 
     @Override
@@ -64,16 +60,6 @@ public class BlockIncandescentLamp extends BlockContainer {
     @Override
     public IIcon getIcon(int side, int meta) {
         return iconBuffer[Util.getTextureOnSide(side, ForgeDirection.WEST)];
-    }
-
-    @Override
-    public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase player, ItemStack stack) {
-        TileEntity te = world.getTileEntity(x, y, z);
-
-        if (!(te instanceof TileIncandescentLamp))
-            return;
-
-        ((TileIncandescentLamp) te).setFunctionalSide(Util.getPlayerSight(player).getOpposite());
     }
 
     public int getLightValue(IBlockAccess world, int x, int y, int z) {

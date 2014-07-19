@@ -5,13 +5,9 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.ForgeDirection;
-import simElectricity.API.EnergyTile.IConductor;
-import simElectricity.API.Events.TileAttachEvent;
-import simElectricity.API.Events.TileDetachEvent;
 import simElectricity.API.Energy;
-import simElectricity.API.ISyncPacketHandler;
+import simElectricity.API.EnergyTile.IConductor;
 import simElectricity.API.Util;
 
 public class TileWire extends TileEntity implements IConductor {
@@ -49,8 +45,8 @@ public class TileWire extends TileEntity implements IConductor {
 
     @Override
     public void updateEntity() {
-    	super.updateEntity();
-    	
+        super.updateEntity();
+
         if (!worldObj.isRemote && !isAddedToEnergyNet) {
             Energy.postTileAttachEvent(this);
             this.isAddedToEnergyNet = true;

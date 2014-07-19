@@ -41,7 +41,7 @@ public class TileAdjustableResistor extends TileStandardSEMachine implements ISy
     public float getResistance() {
         return resistance;
     }
-    
+
     @Override
     public int getInventorySize() {
         return 0;
