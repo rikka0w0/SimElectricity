@@ -103,8 +103,8 @@ public final class EnergyNet {
 
         int matrixSize = unknownVoltageNodes.size();
 
-        float[][] A = new float[matrixSize][matrixSize];
-        float[] b = new float[matrixSize];
+        double[][] A = new double[matrixSize][matrixSize]; //A initialized 0 matrix
+        double[] b = new double[matrixSize];
 
         for (int rowIndex = 0; rowIndex < matrixSize; rowIndex++) {
             IBaseComponent currentRowComponent = unknownVoltageNodes.get(rowIndex);
@@ -119,48 +119,82 @@ public final class EnergyNet {
                 b[rowIndex] = 0;
             }
 
+            
             List<IBaseComponent> neighborList = Graphs.neighborListOf(optimizedTileEntityGraph, currentRowComponent);
-            for (int columnIndex = 0; columnIndex < matrixSize; columnIndex++) {
-                float cellData = 0;
-
-                if (rowIndex == columnIndex) { //Key cell
-                    //Add neighbor resistance
-                    for (IBaseComponent neighbor : neighborList) {
-                        cellData += 1.0 / (getResistance(currentRowComponent) + getResistance(neighbor));    //Normally either of them will be 0
+            //Generate row for conductor node
+            if (currentRowComponent instanceof IConductor){
+                for (int columnIndex = 0; columnIndex < matrixSize; columnIndex++) {
+                    double cellData = 0;
+                    
+                    if (rowIndex == columnIndex) { //Key cell
+                    	//Add neighbor resistance
+                    	for (IBaseComponent neighbor : neighborList) {
+                    		if (neighbor instanceof IConductor){  
+                    			cellData += 2.0D / (currentRowComponent.getResistance() + neighbor.getResistance());  // IConductor next to IConductor
+                    		}else{
+                    			cellData += 2.0D / currentRowComponent.getResistance();                              // IConductor next to other components
+                    		}
+                    	}    	
+                    }else{
+                        IBaseComponent currentColumnComponent = unknownVoltageNodes.get(columnIndex);
+                        if (neighborList.contains(currentColumnComponent)){
+                        	if (currentColumnComponent instanceof IConductor){
+                        		cellData = -2.0D / (currentRowComponent.getResistance() + currentColumnComponent.getResistance());
+                        	}else{
+                        		cellData = -2.0D / currentRowComponent.getResistance();		
+                        	}
+                        }
+                           
                     }
+                    
+                    A[rowIndex][columnIndex] = cellData;
+                }
+            }else{ //For other nodes (can only have a IConductor neighbor or no neighbor!)
+            	//Find the only possible neighbor (maybe not exist)
+            	IConductor neighbor = null;
+            	for (IBaseComponent possibleNeighbor : neighborList) {
+            		if (possibleNeighbor!=null)
+            			neighbor=(IConductor) possibleNeighbor; //Must be a IConductor!
+            	}
+            	
+                for (int columnIndex = 0; columnIndex < matrixSize; columnIndex++) {
+                    double cellData = 0;
+                    
+                    if (rowIndex == columnIndex) { //Key cell
+                    	if (neighbor!=null){
+                    		cellData += 2.0D / neighbor.getResistance();
+                    	}
+                    	
+                    	//Add internal resistance for fixed voltage sources
+                    	if (currentRowComponent instanceof ICircuitComponent){
+                    		cellData += 1.0 / currentRowComponent.getResistance();
+                    	}else if (currentRowComponent instanceof ITransformerWinding){
+                            ITransformerWinding winding = (ITransformerWinding) currentRowComponent;
+                            if (winding.isPrimary()) {
+                                cellData += winding.getRatio() * winding.getRatio() / winding.getResistance();
+                            } else {
+                                cellData += 1.0 / winding.getResistance();
+                            }
+                    	}
+                    }else{
+                        if (neighbor == unknownVoltageNodes.get(columnIndex)){
+                        	cellData = -2.0D / neighbor.getResistance();
+                        } else if (currentRowComponent instanceof ITransformerWinding) { //Add transformer association
+                        	IBaseComponent currentColumnComponent = unknownVoltageNodes.get(columnIndex);
+                            ITransformerWinding winding = (ITransformerWinding) currentRowComponent;
+                            ITransformer core = winding.getCore();
 
-                    //Add internal resistance for fixed voltage sources
-                    if (currentRowComponent instanceof ICircuitComponent)
-                        cellData += 1.0 / currentRowComponent.getResistance();
-
-                    //Add induction to transformers
-                    if (currentRowComponent instanceof ITransformerWinding) {
-                        ITransformerWinding winding = (ITransformerWinding) currentRowComponent;
-                        if (winding.isPrimary()) {
-                            cellData += winding.getRatio() * winding.getRatio() / winding.getResistance();
-                        } else {
-                            cellData += 1.0 / winding.getResistance();
+                            if ((winding.isPrimary() && core.getSecondary() == currentColumnComponent) ||
+                                    ((!winding.isPrimary()) && core.getPrimary() == currentColumnComponent))
+                                cellData = -winding.getRatio() / winding.getResistance();
                         }
                     }
-
-
-                } else {  //Normal cells
-                    IBaseComponent currentColumnComponent = unknownVoltageNodes.get(columnIndex);
-                    if (neighborList.contains(currentColumnComponent)) {   //Add neighbor's resistance (-Gi)
-                        cellData = (float) (-1.0 / (getResistance(currentRowComponent) + getResistance(currentColumnComponent)));
-
-                    } else if (currentRowComponent instanceof ITransformerWinding) { //Add transformer association
-                        ITransformerWinding winding = (ITransformerWinding) currentRowComponent;
-                        ITransformer core = winding.getCore();
-
-                        if ((winding.isPrimary() && core.getSecondary() == currentColumnComponent) ||
-                                ((!winding.isPrimary()) && core.getPrimary() == currentColumnComponent))
-                            cellData = -winding.getRatio() / winding.getResistance();
-                    }
+                    
+                    A[rowIndex][columnIndex] = cellData;
                 }
-
-                A[rowIndex][columnIndex] = cellData;
             }
+            
+            
         }
 
         float[] x = MatrixOperation.lsolve(A, b);
@@ -169,12 +203,6 @@ public final class EnergyNet {
         for (int i = 0; i < x.length; i++) {
             voltageCache.put(unknownVoltageNodes.get(i), x[i]);
         }
-    }
-
-    private static float getResistance(IBaseComponent te) {
-        if (te instanceof IConductor)
-            return te.getResistance() / 2;
-        return 0;
     }
     /*End of Simulator*/
 

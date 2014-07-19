@@ -1,10 +1,10 @@
 package simElectricity.EnergyNet;
 
 public class MatrixOperation {
-    public static final float EPSILON = (float) 1e-10;
+    public static final double EPSILON = (double) 1e-10;
 
     // Gaussian elimination with partial pivoting
-    public static float[] lsolve(float[][] A, float[] b) {
+    public static float[] lsolve(double[][] A, double[] b) {
         int N = b.length;
 
         for (int p = 0; p < N; p++) {
@@ -16,10 +16,10 @@ public class MatrixOperation {
                     max = i;
                 }
             }
-            float[] temp = A[p];
+            double[] temp = A[p];
             A[p] = A[max];
             A[max] = temp;
-            float t = b[p];
+            double t = b[p];
             b[p] = b[max];
             b[max] = t;
 
@@ -31,7 +31,7 @@ public class MatrixOperation {
             // pivot within A and b
             for (int i = p + 1; i < N; i++) {
                 if (A[p][p] != 0) {//Ignore any line with all zero
-                    float alpha = A[i][p] / A[p][p];
+                    double alpha = A[i][p] / A[p][p];
                     b[i] -= alpha * b[p];
                     for (int j = p; j < N; j++) {
                         A[i][j] -= alpha * A[p][j];
@@ -44,11 +44,11 @@ public class MatrixOperation {
         float[] x = new float[N];
         for (int i = N - 1; i >= 0; i--) {
             if (A[i][i] != 0) {//Ignore any line with all zero
-                float sum = (float) 0.0;
+                double sum = (double) 0.0;
                 for (int j = i + 1; j < N; j++) {
                     sum += A[i][j] * x[j];
                 }
-                x[i] = (b[i] - sum) / A[i][i];
+                x[i] = (float) ((b[i] - sum) / A[i][i]);
             }
         }
         return x;
