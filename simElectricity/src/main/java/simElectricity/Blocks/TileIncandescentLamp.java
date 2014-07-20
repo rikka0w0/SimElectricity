@@ -4,9 +4,10 @@ import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.Common.TileStandardSEMachine;
 import simElectricity.API.Energy;
 import simElectricity.API.IEnergyNetUpdateHandler;
+import simElectricity.API.IUpdateOnWatch;
 import simElectricity.API.Util;
 
-public class TileIncandescentLamp extends TileStandardSEMachine implements IEnergyNetUpdateHandler {
+public class TileIncandescentLamp extends TileStandardSEMachine implements IEnergyNetUpdateHandler,IUpdateOnWatch {
     public int lightLevel = 0;
 
     @Override
@@ -39,4 +40,9 @@ public class TileIncandescentLamp extends TileStandardSEMachine implements IEner
         //Util.updateTileEntityField(this, "lightLevel");
         Util.scheduleBlockUpdate(this, 4);
     }
+
+	@Override
+	public void onWatch() {
+		Util.scheduleBlockUpdate(this, 4);
+	}
 }

@@ -218,11 +218,13 @@ public final class EnergyNet {
             energyNet.runSimulator();
 
             //Check power distribution
+            try{
             for (IBaseComponent tile : energyNet.tileEntityGraph.vertexSet()) {
                 if (tile instanceof IEnergyNetUpdateHandler) {
                     ((IEnergyNetUpdateHandler) tile).onEnergyNetUpdate();
                 }
             }
+            }catch(Exception e){}
         }
     }
 

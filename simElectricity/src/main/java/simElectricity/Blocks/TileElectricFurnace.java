@@ -9,9 +9,10 @@ import simElectricity.API.Common.TileStandardSEMachine;
 import simElectricity.API.Energy;
 import simElectricity.API.IEnergyNetUpdateHandler;
 import simElectricity.API.ISyncPacketHandler;
+import simElectricity.API.IUpdateOnWatch;
 import simElectricity.API.Util;
 
-public class TileElectricFurnace extends TileStandardSEMachine implements ISyncPacketHandler, IEnergyNetUpdateHandler {
+public class TileElectricFurnace extends TileStandardSEMachine implements ISyncPacketHandler, IEnergyNetUpdateHandler, IUpdateOnWatch {
     public static float energyPerItem = 1000F;
     public static float onResistance = 100F;
 
@@ -156,4 +157,9 @@ public class TileElectricFurnace extends TileStandardSEMachine implements ISyncP
     public boolean canExtractItem(int slot, ItemStack item, int side) {
         return slot == 1;
     }
+    
+	@Override
+	public void onWatch() {
+		Util.scheduleBlockUpdate(this, 4);
+	}
 }

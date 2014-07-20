@@ -9,6 +9,7 @@ import net.minecraftforge.event.world.ChunkWatchEvent;
 import simElectricity.API.EnergyTile.IConductor;
 import simElectricity.API.EnergyTile.IEnergyTile;
 import simElectricity.API.ISidedFacing;
+import simElectricity.API.IUpdateOnWatch;
 import simElectricity.API.Util;
 
 public class GlobalEventHandler {
@@ -35,6 +36,8 @@ public class GlobalEventHandler {
                         te.zCoord % 16 == 0 || te.zCoord % 16 == 1 || te.zCoord % 16 == 15)
                     te.getWorldObj().notifyBlocksOfNeighborChange(te.xCoord, te.yCoord, te.zCoord, null);
             }
+            if (te instanceof IUpdateOnWatch)
+            	((IUpdateOnWatch)te).onWatch();
         }
     }
 }
