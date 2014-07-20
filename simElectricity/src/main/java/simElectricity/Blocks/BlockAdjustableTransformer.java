@@ -12,8 +12,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
-import simElectricity.API.EnergyTile.IConductor;
 import simElectricity.API.Util;
 import simElectricity.mod_SimElectricity;
 
@@ -72,23 +70,12 @@ public class BlockAdjustableTransformer extends BlockContainer {
 
     @Override
     public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase player, ItemStack stack) {
-        TileAdjustableTransformer te = (TileAdjustableTransformer) world.getTileEntity(x, y, z);
+        TileEntity te = world.getTileEntity(x, y, z);
+        if (!(te instanceof TileAdjustableTransformer))
+            return;
 
-        te.secondarySide = Util.getPlayerSight(player);
-        te.primarySide = te.secondarySide.getOpposite();
-
-        if (te.secondarySide != ForgeDirection.EAST && world.getTileEntity(x + 1, y, z) instanceof IConductor)
-            te.primarySide = ForgeDirection.EAST;
-        else if (te.secondarySide != ForgeDirection.WEST && world.getTileEntity(x - 1, y, z) instanceof IConductor)
-            te.primarySide = ForgeDirection.WEST;
-        else if (te.secondarySide != ForgeDirection.SOUTH && world.getTileEntity(x, y, z + 1) instanceof IConductor)
-            te.primarySide = ForgeDirection.SOUTH;
-        else if (te.secondarySide != ForgeDirection.NORTH && world.getTileEntity(x, y, z - 1) instanceof IConductor)
-            te.primarySide = ForgeDirection.NORTH;
-        else if (te.secondarySide != ForgeDirection.UP && world.getTileEntity(x, y + 1, z) instanceof IConductor)
-            te.primarySide = ForgeDirection.UP;
-        else if (te.secondarySide != ForgeDirection.DOWN && world.getTileEntity(x, y - 1, z) instanceof IConductor)
-            te.primarySide = ForgeDirection.DOWN;
+        ((TileAdjustableTransformer) te).secondarySide = Util.getPlayerSight(player);
+        ((TileAdjustableTransformer) te).primarySide = ((TileAdjustableTransformer) te).secondarySide.getOpposite();
     }
 
     @Override
@@ -97,7 +84,6 @@ public class BlockAdjustableTransformer extends BlockContainer {
             return;
 
         TileAdjustableTransformer te = (TileAdjustableTransformer) world.getTileEntity(x, y, z);
-
 
         Util.updateTileEntityField(te, "primarySide");
         Util.updateTileEntityField(te, "secondarySide");
