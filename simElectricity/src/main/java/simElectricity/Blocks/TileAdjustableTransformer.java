@@ -104,6 +104,6 @@ public class TileAdjustableTransformer extends TileEntity implements ITransforme
 
 	@Override
 	public void onWatch() {
-		Util.scheduleBlockUpdate(this, 4);
+		Util.scheduleBlockUpdate(this);
 	}
 }
