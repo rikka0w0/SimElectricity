@@ -144,6 +144,7 @@ public class BlockWire extends BlockContainer {
     @Override
     public void setBlockBoundsBasedOnState(IBlockAccess world, int x, int y, int z) {
         float WIDTH = collisionWidthList[world.getBlockMetadata(x, y, z)];
+        boolean[] possibleConnections = ((TileWire)world.getTileEntity(x, y, z)).renderSides;
 
         minX = 0.5 - WIDTH;
         minY = 0.5 - WIDTH;
@@ -151,6 +152,24 @@ public class BlockWire extends BlockContainer {
         maxX = 0.5 + WIDTH;
         maxY = 0.5 + WIDTH;
         maxZ = 0.5 + WIDTH;
+        
+        if (possibleConnections[0])
+        	minY = 0;
+        
+        if (possibleConnections[1])
+        	maxY = 1;
+        
+        if (possibleConnections[2])
+        	minZ = 0;
+        
+        if (possibleConnections[3])
+        	maxZ = 1;
+        
+        if (possibleConnections[4])
+        	minX = 0;
+        
+        if (possibleConnections[5])
+        	maxX = 1;
     }
 
     //This will tell minecraft not to render any side of our cube.

@@ -75,20 +75,6 @@ public class BlockAdjustableTransformer extends BlockContainer {
         TileAdjustableTransformer te = (TileAdjustableTransformer) world.getTileEntity(x, y, z);
 
         te.secondarySide = Util.getPlayerSight(player);
-
-        if (world.getTileEntity(x + 1, y, z) instanceof IConductor)
-            te.secondarySide = ForgeDirection.EAST;
-        else if (world.getTileEntity(x - 1, y, z) instanceof IConductor)
-            te.secondarySide = ForgeDirection.WEST;
-        else if (world.getTileEntity(x, y, z + 1) instanceof IConductor)
-            te.secondarySide = ForgeDirection.SOUTH;
-        else if (world.getTileEntity(x, y, z - 1) instanceof IConductor)
-            te.secondarySide = ForgeDirection.NORTH;
-        else if (world.getTileEntity(x, y + 1, z) instanceof IConductor)
-            te.secondarySide = ForgeDirection.UP;
-        else if (world.getTileEntity(x, y - 1, z) instanceof IConductor)
-            te.secondarySide = ForgeDirection.DOWN;
-
         te.primarySide = te.secondarySide.getOpposite();
 
         if (te.secondarySide != ForgeDirection.EAST && world.getTileEntity(x + 1, y, z) instanceof IConductor)
