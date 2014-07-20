@@ -90,6 +90,19 @@ public class BlockAdjustableTransformer extends BlockContainer {
             te.secondarySide = ForgeDirection.DOWN;
 
         te.primarySide = te.secondarySide.getOpposite();
+
+        if (te.secondarySide != ForgeDirection.EAST && world.getTileEntity(x + 1, y, z) instanceof IConductor)
+            te.primarySide = ForgeDirection.EAST;
+        else if (te.secondarySide != ForgeDirection.WEST && world.getTileEntity(x - 1, y, z) instanceof IConductor)
+            te.primarySide = ForgeDirection.WEST;
+        else if (te.secondarySide != ForgeDirection.SOUTH && world.getTileEntity(x, y, z + 1) instanceof IConductor)
+            te.primarySide = ForgeDirection.SOUTH;
+        else if (te.secondarySide != ForgeDirection.NORTH && world.getTileEntity(x, y, z - 1) instanceof IConductor)
+            te.primarySide = ForgeDirection.NORTH;
+        else if (te.secondarySide != ForgeDirection.UP && world.getTileEntity(x, y + 1, z) instanceof IConductor)
+            te.primarySide = ForgeDirection.UP;
+        else if (te.secondarySide != ForgeDirection.DOWN && world.getTileEntity(x, y - 1, z) instanceof IConductor)
+            te.primarySide = ForgeDirection.DOWN;
     }
 
     @Override
