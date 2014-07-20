@@ -8,6 +8,7 @@ import net.minecraft.util.Vec3;
 import net.minecraftforge.common.util.ForgeDirection;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
+import simElectricity.Blocks.BlockWire;
 import simElectricity.Blocks.TileWire;
 
 public class RenderWire extends TileEntitySpecialRenderer {
@@ -15,14 +16,14 @@ public class RenderWire extends TileEntitySpecialRenderer {
     public String textureString = "";
 
     @Override
-    public void renderTileEntityAt(TileEntity tileentity, double d0, double d1, double d2, float f) {
+    public void renderTileEntityAt(TileEntity tileentity, double x, double y, double z, float tick) {
         TileWire wire = (TileWire) tileentity;
         WIDTH = wire.width;
         textureString = wire.textureString;
 
         Tessellator t = Tessellator.instance;
         GL11.glPushMatrix();
-        GL11.glTranslated(d0 + 0.5, d1 + 0.5, d2 + 0.5);
+        GL11.glTranslated(x + 0.5, y + 0.5, z + 0.5);
         renderWireBox(t, -1, wire.renderSides);
         for (int i = 0; i < 6; i++) {
             if (wire.renderSides[i])
@@ -33,7 +34,8 @@ public class RenderWire extends TileEntitySpecialRenderer {
 
     private void renderWireBox(Tessellator t, int side, boolean[] theArray) {
         ForgeDirection[] dirs = ForgeDirection.values();
-        Vec3 v1 = Vec3.createVectorHelper(-WIDTH, -WIDTH, -WIDTH),
+        Vec3
+                v1 = Vec3.createVectorHelper(-WIDTH, -WIDTH, -WIDTH),
                 v2 = Vec3.createVectorHelper(WIDTH, -WIDTH, -WIDTH),
                 v3 = Vec3.createVectorHelper(WIDTH, -WIDTH, WIDTH),
                 v4 = Vec3.createVectorHelper(-WIDTH, -WIDTH, WIDTH),
@@ -69,9 +71,14 @@ public class RenderWire extends TileEntitySpecialRenderer {
         GL11.glTranslatef(dx * offset, dy * offset, dz * offset);
         if (side != -1) {
             float scale = 2F;
-            GL11.glScalef(Math.abs(dx == 0.0F ? 1 : dx * scale),
-                    Math.abs(dy == 0.0F ? 1 : dy * scale),
-                    Math.abs(dz == 0.0F ? 1 : dz * scale));
+
+            if (WIDTH == BlockWire.renderingWidthList[1])
+                scale = 0.75F;
+            else if (WIDTH == BlockWire.renderingWidthList[2])
+                scale = 0.34F;
+
+            //noinspection ConstantConditions
+            GL11.glScalef(Math.abs(dx == 0.0F ? 1 : dx * scale), Math.abs(dy == 0.0F ? 1 : dy * scale), Math.abs(dz == 0.0F ? 1 : dz * scale));
         }
 
         int a = 0;
