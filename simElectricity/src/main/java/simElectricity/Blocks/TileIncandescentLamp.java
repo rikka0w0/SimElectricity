@@ -43,6 +43,6 @@ public class TileIncandescentLamp extends TileStandardSEMachine implements IEner
 
 	@Override
 	public void onWatch() {
-		Util.scheduleBlockUpdate(this, 4);
+		Util.scheduleBlockUpdate(this);
 	}
 }

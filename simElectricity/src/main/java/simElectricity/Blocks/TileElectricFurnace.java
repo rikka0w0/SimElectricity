@@ -160,6 +160,6 @@ public class TileElectricFurnace extends TileStandardSEMachine implements ISyncP
     
 	@Override
 	public void onWatch() {
-		Util.scheduleBlockUpdate(this, 4);
+		Util.scheduleBlockUpdate(this);
 	}
 }
