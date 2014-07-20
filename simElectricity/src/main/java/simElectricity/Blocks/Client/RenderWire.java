@@ -45,6 +45,7 @@ public class RenderWire extends TileEntitySpecialRenderer {
                 v8 = Vec3.createVectorHelper(-WIDTH, WIDTH, WIDTH);
         GL11.glPushMatrix();
         GL11.glEnable(GL12.GL_RESCALE_NORMAL);
+        GL11.glDisable(GL11.GL_LIGHTING);
         float dx = 0.0F, dy = 0.0F, dz = 0.0F;
         switch (side) {
             case 0:
@@ -158,6 +159,7 @@ public class RenderWire extends TileEntitySpecialRenderer {
             GL11.glPopMatrix();
         }
         GL11.glDisable(GL12.GL_RESCALE_NORMAL);
+        GL11.glEnable(GL11.GL_LIGHTING);
         GL11.glPopMatrix();
     }
 
