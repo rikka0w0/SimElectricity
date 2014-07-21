@@ -24,20 +24,20 @@ public class BlockSwitch extends BlockContainerSE {
     private IIcon[] iconBuffer = new IIcon[6];
 
     @Override
-    public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int i1, float f1, float f2, float f3) {
+    public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float f1, float f2, float f3) {
         if (player.isSneaking())
             return false;
 
         TileSwitch te = (TileSwitch) world.getTileEntity(x, y, z);
 
-        if (Util.getPlayerSight(player) == te.getFacing().getOpposite()) {
+        if (te.getFacing() != ForgeDirection.getOrientation(side) || player.isSneaking()) {
+            player.openGui(SimElectricity.instance, 0, world, x, y, z);
+        } else {
             if (!world.isRemote) {
                 te.isOn = !te.isOn;
                 Util.updateTileEntityField(te, "isOn");
                 Energy.postTileRejoinEvent(te);
             }
-        } else {
-            player.openGui(SimElectricity.instance, 0, world, x, y, z);
         }
         return true;
     }

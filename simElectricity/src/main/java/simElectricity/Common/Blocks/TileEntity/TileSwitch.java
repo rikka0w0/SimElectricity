@@ -3,24 +3,21 @@ package simElectricity.Common.Blocks.TileEntity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
-import simElectricity.API.Energy;
+import simElectricity.API.*;
 import simElectricity.API.EnergyTile.IBaseComponent;
 import simElectricity.API.EnergyTile.IConductor;
 import simElectricity.API.EnergyTile.IConnectable;
 import simElectricity.API.EnergyTile.IManualJunction;
-import simElectricity.API.ISidedFacing;
-import simElectricity.API.ISyncPacketHandler;
-import simElectricity.API.Util;
 
 import java.util.List;
 
-public class TileSwitch extends TileEntity implements IManualJunction, IConnectable, ISyncPacketHandler, ISidedFacing{
+public class TileSwitch extends TileEntity implements IManualJunction, IConnectable, ISyncPacketHandler, ISidedFacing, IUpdateOnWatch {
     protected boolean isAddedToEnergyNet = false;
 
-    public ForgeDirection inputSide = ForgeDirection.NORTH, outputSide = ForgeDirection.SOUTH , facing = ForgeDirection.WEST;
-	public float resistance = 0.1F;
-	public float maxCurrent = 1F;
-	public boolean isOn = false;
+    public ForgeDirection inputSide = ForgeDirection.NORTH, outputSide = ForgeDirection.SOUTH, facing = ForgeDirection.WEST;
+    public float resistance = 0.1F;
+    public float maxCurrent = 1F;
+    public boolean isOn = false;
 
     @Override
     public void updateEntity() {
@@ -81,38 +78,48 @@ public class TileSwitch extends TileEntity implements IManualJunction, IConnecta
         worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
     }
 
-	@Override
-	public float getResistance() {return resistance;}
+    @Override
+    public float getResistance() {
+        return resistance;
+    }
 
-	@Override
-	public boolean canConnectOnSide(ForgeDirection side) {
+    @Override
+    public boolean canConnectOnSide(ForgeDirection side) {
         return side == inputSide || side == outputSide;
     }
 
-	@Override
-	public void addNeighbors(List<IBaseComponent> list) {
-		if (isOn){
-			TileEntity neighbor = Util.getTileEntityonDirection(this, inputSide);
+    @Override
+    public void addNeighbors(List<IBaseComponent> list) {
+        if (isOn) {
+            TileEntity neighbor = Util.getTileEntityonDirection(this, inputSide);
 
-			if (neighbor instanceof IConductor)
-				list.add((IConductor)neighbor);
+            if (neighbor instanceof IConductor)
+                list.add((IConductor) neighbor);
 
-			neighbor = Util.getTileEntityonDirection(this, outputSide);
+            neighbor = Util.getTileEntityonDirection(this, outputSide);
 
-			if (neighbor instanceof IConductor)
-				list.add((IConductor)neighbor);
-		}
-	}
+            if (neighbor instanceof IConductor)
+                list.add((IConductor) neighbor);
+        }
+    }
 
-	@Override
-	public ForgeDirection getFacing() {return facing;}
+    @Override
+    public ForgeDirection getFacing() {
+        return facing;
+    }
 
-	@Override
-	public void setFacing(ForgeDirection newFacing) {facing = newFacing;}
+    @Override
+    public void setFacing(ForgeDirection newFacing) {
+        facing = newFacing;
+    }
 
-	@Override
-	public boolean canSetFacing(ForgeDirection newFacing) {
+    @Override
+    public boolean canSetFacing(ForgeDirection newFacing) {
         return newFacing != inputSide && newFacing != outputSide;
-	}
+    }
 
+    @Override
+    public void onWatch() {
+        Util.scheduleBlockUpdate(this);
+    }
 }
