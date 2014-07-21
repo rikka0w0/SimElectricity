@@ -10,7 +10,7 @@ import net.minecraft.util.StatCollector;
 import net.minecraftforge.common.util.ForgeDirection;
 import org.lwjgl.opengl.GL11;
 import simElectricity.API.Util;
-import simElectricity.Blocks.ContainerAdjustableTransformer;
+import simElectricity.Blocks.ContainerQuantumGenerator;
 import simElectricity.Blocks.TileAdjustableTransformer;
 
 
@@ -152,7 +152,7 @@ public class GuiAdjustableTransformer extends GuiContainer {
     }
 
     public GuiAdjustableTransformer(InventoryPlayer inventoryPlayer, TileEntity tileEntity) {
-        super(new ContainerAdjustableTransformer(inventoryPlayer, tileEntity));
+        super(new ContainerQuantumGenerator(inventoryPlayer, tileEntity));
         te = (TileAdjustableTransformer) tileEntity;
     }
 
