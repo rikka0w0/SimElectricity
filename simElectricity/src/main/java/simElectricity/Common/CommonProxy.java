@@ -9,7 +9,7 @@ import simElectricity.Common.Blocks.TileEntity.*;
 
 public class CommonProxy implements IGuiHandler {
     @Override
-    public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
+    public Object getClientGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
         return null;
     }
 
@@ -21,7 +21,7 @@ public class CommonProxy implements IGuiHandler {
     }
 
     @Override
-    public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
+    public Object getServerGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
         TileEntity te = world.getTileEntity(x, y, z);
 
         if (te instanceof TileQuantumGenerator)
@@ -36,6 +36,8 @@ public class CommonProxy implements IGuiHandler {
             return new ContainerAdjustableResistor(player.inventory, te);
         if (te instanceof TileAdjustableTransformer)
             return new ContainerAdjustableTransformer(player.inventory, te);
+        if (te instanceof TileSwitch)
+            return new ContainerSwitch(player.inventory, te);
 
         return null;
     }

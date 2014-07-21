@@ -7,12 +7,12 @@ import net.minecraftforge.common.util.ForgeDirection;
  */
 public interface ISidedFacing {
     /**
-     * Return the facing(Should have a line of "private ForgeDirection facing=ForgeDirection.NORTH;" in the tile entity class)
+     * Return the facing(Should have a line of "private ForgeDirection facing = ForgeDirection.NORTH;" in the tile entity class)
      */
     ForgeDirection getFacing();
 
     /**
-     * Usually contains a line of "facing=newFacing;"
+     * Usually contains a line of "facing = newFacing;"
      */
     void setFacing(ForgeDirection newFacing);
 

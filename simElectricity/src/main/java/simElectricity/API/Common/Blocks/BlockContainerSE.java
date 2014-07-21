@@ -7,6 +7,11 @@ import net.minecraft.block.material.Material;
 import simElectricity.API.Common.Items.ItemBlockSE;
 import simElectricity.API.Util;
 
+/**
+ * Basic SimElectricity Container Block
+ *
+ * @author <Meow J>
+ */
 public abstract class BlockContainerSE extends BlockContainer {
 
     public BlockContainerSE(Material material) {
@@ -15,6 +20,14 @@ public abstract class BlockContainerSE extends BlockContainer {
             setCreativeTab(Util.SETab);
     }
 
+    /**
+     * If this block has its own ItemBlock, just override this method and shouldRegister(set to false).
+     *
+     * @param name name of this block.
+     *
+     * @see simElectricity.Common.Blocks.BlockWire
+     * @see simElectricity.Common.Items.ItemBlocks.ItemBlockWire
+     */
     @Override
     public Block setBlockName(String name) {
         if (shouldRegister())

@@ -16,8 +16,8 @@ public class RenderWire extends TileEntitySpecialRenderer {
     public String textureString = "";
 
     @Override
-    public void renderTileEntityAt(TileEntity tileentity, double x, double y, double z, float tick) {
-        TileWire wire = (TileWire) tileentity;
+    public void renderTileEntityAt(TileEntity tileEntity, double x, double y, double z, float tick) {
+        TileWire wire = (TileWire) tileEntity;
         WIDTH = wire.width;
         textureString = wire.textureString;
 
@@ -32,7 +32,7 @@ public class RenderWire extends TileEntitySpecialRenderer {
         GL11.glPopMatrix();
     }
 
-    private void renderWireBox(Tessellator t, int side, boolean[] theArray) {
+    private void renderWireBox(Tessellator t, int side, boolean[] sideArr) {
         ForgeDirection[] dirs = ForgeDirection.values();
         Vec3
                 v1 = Vec3.createVectorHelper(-WIDTH, -WIDTH, -WIDTH),
@@ -83,12 +83,12 @@ public class RenderWire extends TileEntitySpecialRenderer {
         }
 
         int a = 0;
-        for (boolean i : theArray)
+        for (boolean i : sideArr)
             if (i)
                 a++;
 
         for (int i = 0; i < 6; i++) {
-            if (!doesRenderSide(side, i, theArray))
+            if (!doesRenderSide(side, i, sideArr))
                 continue;
             Vec3 vec1 = null, vec2 = null, vec3 = null, vec4 = null;
             dx = 0.0F;
@@ -140,7 +140,7 @@ public class RenderWire extends TileEntitySpecialRenderer {
             }
             GL11.glPushMatrix();
             if (side == -1) {
-                if (a == 1 && theArray[dirs[i].getOpposite().ordinal()])
+                if (a == 1 && sideArr[dirs[i].getOpposite().ordinal()])
                     bindTexture(new ResourceLocation("simelectricity", "textures/blocks/Wiring/" + textureString + "_Head.png"));
                 else
                     bindTexture(new ResourceLocation("simelectricity", "textures/blocks/Wiring/" + textureString + "_Side.png"));
@@ -167,15 +167,7 @@ public class RenderWire extends TileEntitySpecialRenderer {
         t.addVertexWithUV(vec3.xCoord, vec3.yCoord, vec3.zCoord, texU, texV);
     }
 
-    private boolean doesRenderSide(int blockSide, int subSide,
-                                   boolean[] theArray) {
-        ForgeDirection[] dirs = ForgeDirection.values();
-        if (blockSide == -1) {
-            return !theArray[subSide];
-        }
-        //Fix the rendering problem
-        //if (dirs[blockSide].getOpposite().ordinal() == subSide|| (blockSide == subSide && theArray[subSide]))
-        //return false;
-        return true;
+    private boolean doesRenderSide(int blockSide, int subSide, boolean[] sideArr) {
+        return blockSide != -1 || !sideArr[subSide];
     }
 }

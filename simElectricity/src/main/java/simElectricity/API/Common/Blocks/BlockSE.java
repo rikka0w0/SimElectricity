@@ -6,6 +6,11 @@ import net.minecraft.block.material.Material;
 import simElectricity.API.Common.Items.ItemBlockSE;
 import simElectricity.API.Util;
 
+/**
+ * Basic SimElectricity Block
+ *
+ * @author <Meow J>
+ */
 public abstract class BlockSE extends Block {
     public BlockSE(Material material) {
         super(material);
@@ -13,11 +18,19 @@ public abstract class BlockSE extends Block {
             setCreativeTab(Util.SETab);
     }
 
+    /**
+     * If this block has its own ItemBlock, just override this method and shouldRegister(set to false).
+     *
+     * @param name name of this block.
+     *
+     * @see simElectricity.Common.Blocks.BlockWire
+     * @see simElectricity.Common.Items.ItemBlocks.ItemBlockWire
+     */
     @Override
-    public Block setBlockName(String par1Str) {
+    public Block setBlockName(String name) {
         if (shouldRegister())
-            GameRegistry.registerBlock(this, ItemBlockSE.class, par1Str);
-        return super.setBlockName(par1Str);
+            GameRegistry.registerBlock(this, ItemBlockSE.class, name);
+        return super.setBlockName(name);
     }
 
     public boolean registerInCreativeTab() {

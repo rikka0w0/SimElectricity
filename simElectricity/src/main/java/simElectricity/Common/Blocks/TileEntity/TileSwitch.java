@@ -92,12 +92,12 @@ public class TileSwitch extends TileEntity implements IManualJunction, IConnecta
 	@Override
 	public void addNeighbors(List<IBaseComponent> list) {
 		if (isOn){
-			TileEntity neighbor = Util.getTEonDirection(this, inputSide);
+			TileEntity neighbor = Util.getTileEntityonDirection(this, inputSide);
 
 			if (neighbor instanceof IConductor)
 				list.add((IConductor)neighbor);
 
-			neighbor = Util.getTEonDirection(this, outputSide);
+			neighbor = Util.getTileEntityonDirection(this, outputSide);
 
 			if (neighbor instanceof IConductor)
 				list.add((IConductor)neighbor);

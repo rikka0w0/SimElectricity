@@ -8,6 +8,20 @@ import simElectricity.API.Util;
 public abstract class TileSidedFacingMachine extends TileInventoryMachine implements ISidedFacing {
     protected ForgeDirection facing = ForgeDirection.NORTH;
 
+    @Override
+    public void readFromNBT(NBTTagCompound tagCompound) {
+        super.readFromNBT(tagCompound);
+
+        facing = Util.byte2Direction(tagCompound.getByte("facing"));
+    }
+
+    @Override
+    public void writeToNBT(NBTTagCompound tagCompound) {
+        super.writeToNBT(tagCompound);
+
+        tagCompound.setByte("facing", Util.direction2Byte(facing));
+    }
+
     //ISidedFacing
     @Override
     public void setFacing(ForgeDirection newFacing) {
@@ -24,17 +38,4 @@ public abstract class TileSidedFacingMachine extends TileInventoryMachine implem
         return true;
     }
 
-    @Override
-    public void readFromNBT(NBTTagCompound tagCompound) {
-        super.readFromNBT(tagCompound);
-
-        facing = Util.byte2Direction(tagCompound.getByte("facing"));
-    }
-
-    @Override
-    public void writeToNBT(NBTTagCompound tagCompound) {
-        super.writeToNBT(tagCompound);
-
-        tagCompound.setByte("facing", Util.direction2Byte(facing));
-    }
 }

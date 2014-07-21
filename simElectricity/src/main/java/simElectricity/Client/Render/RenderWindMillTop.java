@@ -1,4 +1,4 @@
-package simElectricity.Common.Blocks.WindMill;
+package simElectricity.Client.Render;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.OpenGlHelper;
@@ -8,13 +8,14 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import org.lwjgl.opengl.GL11;
+import simElectricity.Common.Blocks.WindMill.TileWindMillTop;
 
 
 public class RenderWindMillTop extends TileEntitySpecialRenderer {
     public TileWindMillTop te;
 
     @Override
-    public void renderTileEntityAt(TileEntity tileEntity, double d, double d1, double d2, float f) {
+    public void renderTileEntityAt(TileEntity tileEntity, double x, double y, double z, float tick) {
         te = (TileWindMillTop) tileEntity;
 
         if (!te.settled)
@@ -22,7 +23,7 @@ public class RenderWindMillTop extends TileEntitySpecialRenderer {
 
         GL11.glPushMatrix();
 
-        GL11.glTranslatef((float) d, (float) d1, (float) d2);
+        GL11.glTranslatef((float) x, (float) y, (float) z);
         renderBlockYour(tileEntity.getWorldObj(), tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord);
 
         GL11.glPopMatrix();

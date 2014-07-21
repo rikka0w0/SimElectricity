@@ -44,7 +44,7 @@ public abstract class TileStandardSEMachine extends TileSidedFacingMachine imple
     }
 
 
-    //IEnergyTile
+    // IEnergyTile
     @Override
     public ForgeDirection getFunctionalSide() {
         return functionalSide;

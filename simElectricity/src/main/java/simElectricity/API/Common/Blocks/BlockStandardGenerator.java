@@ -25,7 +25,7 @@ public abstract class BlockStandardGenerator extends BlockContainerSE {
     }
 
     @Override
-    public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase player, ItemStack stack) {
+    public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase player, ItemStack itemStack) {
         TileEntity te = world.getTileEntity(x, y, z);
 
         if (!(te instanceof TileStandardGenerator))

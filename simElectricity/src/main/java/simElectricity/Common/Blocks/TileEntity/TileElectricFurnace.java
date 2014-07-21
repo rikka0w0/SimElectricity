@@ -149,12 +149,12 @@ public class TileElectricFurnace extends TileStandardSEMachine implements ISyncP
     }
 
     @Override
-    public boolean canInsertItem(int slot, ItemStack item, int side) {
+    public boolean canInsertItem(int slot, ItemStack itemStack, int side) {
         return slot == 0;
     }
 
     @Override
-    public boolean canExtractItem(int slot, ItemStack item, int side) {
+    public boolean canExtractItem(int slot, ItemStack itemStack, int side) {
         return slot == 1;
     }
     

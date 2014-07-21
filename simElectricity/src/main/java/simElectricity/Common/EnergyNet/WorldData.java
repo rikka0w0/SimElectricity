@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.WeakHashMap;
 
 public class WorldData {
+    @SuppressWarnings("unchecked")
     public static Map<World, WorldData> mapping = new WeakHashMap();
 
     public EnergyNet energyNet = new EnergyNet();

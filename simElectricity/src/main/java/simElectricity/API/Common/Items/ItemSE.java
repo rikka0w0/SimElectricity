@@ -5,6 +5,11 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import simElectricity.API.Util;
 
+/**
+ * Basic SimElectricity Item
+ *
+ * @author <Meow J>
+ */
 public class ItemSE extends Item {
     public ItemSE() {
         super();
@@ -12,6 +17,9 @@ public class ItemSE extends Item {
             setCreativeTab(Util.SETab);
     }
 
+    /**
+     * @param name name of this item.
+     */
     @Override
     public Item setUnlocalizedName(String name) {
         if (shouldRegister())

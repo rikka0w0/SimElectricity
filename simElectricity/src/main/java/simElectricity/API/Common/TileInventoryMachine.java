@@ -11,24 +11,38 @@ import net.minecraftforge.common.util.Constants;
 public abstract class TileInventoryMachine extends TileEntity implements ISidedInventory {
     protected ItemStack[] inv;
 
+    /**
+     * Called when the content of the inventory changes
+     */
     public void onInventoryChanged() {
-    }//Called when the content of the inventory changes
+    }
 
-    public abstract int getInventorySize();//Used to get the size of the inventory, should return a constant!
+    /**
+     * Used to get the size of the inventory, should return a constant!
+     */
+    public abstract int getInventorySize();
 
-    //ISidedInventory - Override the following three function when necessary!
+    /**
+     * ISidedInventory - Override this method when necessary!
+     */
     @Override
-    public int[] getAccessibleSlotsFromSide(int var1) {
+    public int[] getAccessibleSlotsFromSide(int side) {
         return null;
     }
 
+    /**
+     * ISidedInventory - Override this method when necessary!
+     */
     @Override
-    public boolean canInsertItem(int var1, ItemStack var2, int var3) {
+    public boolean canInsertItem(int slot, ItemStack itemStack, int side) {
         return false;
     }
 
+    /**
+     * ISidedInventory - Override this method when necessary!
+     */
     @Override
-    public boolean canExtractItem(int var1, ItemStack var2, int var3) {
+    public boolean canExtractItem(int slot, ItemStack itemStack, int side) {
         return false;
     }
 
@@ -68,8 +82,8 @@ public abstract class TileInventoryMachine extends TileEntity implements ISidedI
         }
         tagCompound.setTag("Inventory", itemList);
     }
-    //Inventory stuff--------------------------------------------------------------------------------
 
+    //Inventory Stuff
     @Override
     public int getSizeInventory() {
         return inv.length;
@@ -105,10 +119,10 @@ public abstract class TileInventoryMachine extends TileEntity implements ISidedI
     }
 
     @Override
-    public void setInventorySlotContents(int slot, ItemStack stack) {
-        inv[slot] = stack;
-        if (stack != null && stack.stackSize > getInventoryStackLimit())
-            stack.stackSize = getInventoryStackLimit();
+    public void setInventorySlotContents(int slot, ItemStack itemStack) {
+        inv[slot] = itemStack;
+        if (itemStack != null && itemStack.stackSize > getInventoryStackLimit())
+            itemStack.stackSize = getInventoryStackLimit();
 
         onInventoryChanged();
     }
@@ -137,7 +151,7 @@ public abstract class TileInventoryMachine extends TileEntity implements ISidedI
     }
 
     @Override
-    public boolean isItemValidForSlot(int var1, ItemStack var2) {
+    public boolean isItemValidForSlot(int slot, ItemStack itemStack) {
         return true;
     }
 

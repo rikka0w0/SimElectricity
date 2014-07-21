@@ -17,7 +17,7 @@ public abstract class TileStandardGenerator extends TileEntity implements IEnerg
     public void init() {
     }
 
-    //TileEntity--------------------------------------------------------------------------
+    // TileEntity
     @Override
     public void updateEntity() {
         if (!worldObj.isRemote && !isAddedToEnergyNet) {
@@ -55,7 +55,8 @@ public abstract class TileStandardGenerator extends TileEntity implements IEnerg
         tagCompound.setFloat("outputResistance", outputResistance);
     }
 
-    //IEnergyTile---------------------------------------------------------------------------
+
+    // IEnergyTile
     @Override
     public float getResistance() {
         return outputResistance;

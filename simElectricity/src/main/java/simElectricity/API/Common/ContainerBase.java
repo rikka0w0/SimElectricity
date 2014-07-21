@@ -30,7 +30,7 @@ public abstract class ContainerBase extends Container {
     }
 
     @Override
-    public boolean canInteractWith(EntityPlayer entityplayer) {
+    public boolean canInteractWith(EntityPlayer player) {
         return true;
     }
 
@@ -46,13 +46,13 @@ public abstract class ContainerBase extends Container {
 
     @Override
     public ItemStack transferStackInSlot(EntityPlayer player, int slot) {
-        ItemStack stack = null;
+        ItemStack itemStack = null;
         Slot slotObject = (Slot) inventorySlots.get(slot);
 
         //null checks and checks if the item can be stacked (maxStackSize > 1)
         if (slotObject != null && slotObject.getHasStack()) {
             ItemStack stackInSlot = slotObject.getStack();
-            stack = stackInSlot.copy();
+            itemStack = stackInSlot.copy();
 
             //merges the item into player inventory since its in the tileEntity
             if (slot < getPlayerInventoryStartIndex()) {
@@ -69,11 +69,11 @@ public abstract class ContainerBase extends Container {
             else
                 slotObject.onSlotChanged();
 
-            if (stackInSlot.stackSize == stack.stackSize)
+            if (stackInSlot.stackSize == itemStack.stackSize)
                 return null;
 
             slotObject.onPickupFromSlot(player, stackInSlot);
         }
-        return stack;
+        return itemStack;
     }
 }

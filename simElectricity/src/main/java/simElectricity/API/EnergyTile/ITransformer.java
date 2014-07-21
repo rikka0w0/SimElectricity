@@ -30,7 +30,6 @@ public interface ITransformer {
      */
     float getRatio();
 
-    //----------------------------------------------------------------------------------------------------------
 
     /**
      * This class represents the primary of a transformer
@@ -41,8 +40,8 @@ public interface ITransformer {
          */
         private ITransformer core;
 
-        public Primary(ITransformer _core) {
-            core = _core;
+        public Primary(ITransformer core) {
+            this.core = core;
         }
 
         /**
@@ -82,8 +81,8 @@ public interface ITransformer {
      * This class represents the secondary of a transformer , do not alternate this class!
      */
     public static class Secondary extends Primary {
-        public Secondary(ITransformer _core) {
-            super(_core);
+        public Secondary(ITransformer core) {
+            super(core);
         }
 
         @Override

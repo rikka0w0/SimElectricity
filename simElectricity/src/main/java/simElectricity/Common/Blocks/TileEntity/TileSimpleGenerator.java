@@ -118,12 +118,12 @@ public class TileSimpleGenerator extends TileSidedGenerator implements ISyncPack
         tagCompound.setFloat("burned", burned);
     }
 
-    //Statics-------------------------------------------------------
+    //Statics
     public static int getBurnTime(ItemStack in) {
         return TileEntityFurnace.getItemBurnTime(in);
     }
 
-    //Functions-----------------------------------------------------
+    //Functions
     @Override
     public int getInventorySize() {
         return 1;
