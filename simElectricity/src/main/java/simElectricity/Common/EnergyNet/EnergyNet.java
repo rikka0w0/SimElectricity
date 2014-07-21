@@ -257,7 +257,10 @@ public final class EnergyNet {
                     if (((ITransformer) temp).getSecondarySide() == direction.getOpposite())
                         result.add(((ITransformer) temp).getSecondary());
                 } else if (temp instanceof IManualJunction) {
-                    result.add((IManualJunction) temp);
+                    List<IBaseComponent> neighbors = new ArrayList<IBaseComponent>();
+                    ((IManualJunction) temp).addNeighbors(neighbors);
+                    if (neighbors.contains(te))
+                        result.add((IManualJunction) temp);
                 }
             }
         }

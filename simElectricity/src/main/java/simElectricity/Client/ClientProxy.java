@@ -5,11 +5,11 @@ import cpw.mods.fml.client.registry.ClientRegistry;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-import simElectricity.Common.Blocks.TileEntity.*;
-import simElectricity.Client.Render.RenderWindMillTop;
-import simElectricity.Common.Blocks.WindMill.TileWindMillTop;
 import simElectricity.Client.Gui.*;
+import simElectricity.Client.Render.RenderWindMillTop;
 import simElectricity.Client.Render.RenderWire;
+import simElectricity.Common.Blocks.TileEntity.*;
+import simElectricity.Common.Blocks.WindMill.TileWindMillTop;
 import simElectricity.Common.CommonProxy;
 
 public class ClientProxy extends CommonProxy {
@@ -40,6 +40,8 @@ public class ClientProxy extends CommonProxy {
             return new GuiAdjustableResistor(player.inventory, te);
         if (te instanceof TileAdjustableTransformer)
             return new GuiAdjustableTransformer(player.inventory, te);
+        if (te instanceof TileSwitch)
+            return new GuiSwitch(player.inventory, te);
 
         return null;
     }

@@ -28,17 +28,17 @@ public class BlockSwitch extends BlockContainerSE {
         if (player.isSneaking())
             return false;
 
-        if (!world.isRemote) {
-            TileSwitch te = (TileSwitch) world.getTileEntity(x, y, z);
+        TileSwitch te = (TileSwitch) world.getTileEntity(x, y, z);
 
-            if (Util.getPlayerSight(player) == te.getFacing().getOpposite()) {
+        if (Util.getPlayerSight(player) == te.getFacing().getOpposite()) {
+            if (!world.isRemote) {
                 te.isOn = !te.isOn;
                 Util.updateTileEntityField(te, "isOn");
                 Energy.postTileRejoinEvent(te);
             }
+        } else {
+            player.openGui(SimElectricity.instance, 0, world, x, y, z);
         }
-
-        player.openGui(SimElectricity.instance, 0, world, x, y, z);
         return true;
     }
 
