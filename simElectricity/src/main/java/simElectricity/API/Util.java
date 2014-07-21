@@ -14,17 +14,11 @@ import simElectricity.API.EnergyTile.IConductor;
 import simElectricity.API.EnergyTile.IConnectable;
 import simElectricity.API.EnergyTile.IEnergyTile;
 import simElectricity.API.EnergyTile.ITransformer;
-import simElectricity.Common.Network.PacketTileEntityFieldUpdate;
-import simElectricity.Common.Network.PacketTileEntitySideUpdate;
-import simElectricity.SimElectricity;
+import simElectricity.Network.PacketTileEntityFieldUpdate;
+import simElectricity.Network.PacketTileEntitySideUpdate;
+import simElectricity.mod_SimElectricity;
 
 public class Util {
-
-    /**
-     * For getBlock/Item
-     */
-    public static final String MODID = "SimElectricity";
-    public static final String NAME = "SimElectricity";
     /**
      * Creative Tab for SimElectricity project
      */
@@ -36,28 +30,28 @@ public class Util {
      * Update a client tileEntity field from the server
      */
     public static void updateTileEntityField(TileEntity te, String field) {
-        SimElectricity.instance.packetPipeline.sendToDimension(new PacketTileEntityFieldUpdate(te, field), te.getWorldObj().getWorldInfo().getVanillaDimension());
+        mod_SimElectricity.instance.packetPipeline.sendToDimension(new PacketTileEntityFieldUpdate(te, field), te.getWorldObj().getWorldInfo().getVanillaDimension());
     }
 
     /**
      * Update a server tileEntity field from a client
      */
     public static void updateTileEntityFieldToServer(TileEntity te, String field) {
-        SimElectricity.instance.packetPipeline.sendToServer(new PacketTileEntityFieldUpdate(te, field));
+        mod_SimElectricity.instance.packetPipeline.sendToServer(new PacketTileEntityFieldUpdate(te, field));
     }
 
     /**
      * Update a tileEntity's facing on client side
      */
     public static void updateTileEntityFacing(TileEntity te) {
-        SimElectricity.instance.packetPipeline.sendToDimension(new PacketTileEntitySideUpdate(te, (byte) 0), te.getWorldObj().getWorldInfo().getVanillaDimension());
+        mod_SimElectricity.instance.packetPipeline.sendToDimension(new PacketTileEntitySideUpdate(te, (byte) 0), te.getWorldObj().getWorldInfo().getVanillaDimension());
     }
 
     /**
      * Update a tileEntity's functional side on client side
      */
     public static void updateTileEntityFunctionalSide(TileEntity te) {
-        SimElectricity.instance.packetPipeline.sendToDimension(new PacketTileEntitySideUpdate(te, (byte) 1), te.getWorldObj().getWorldInfo().getVanillaDimension());
+        mod_SimElectricity.instance.packetPipeline.sendToDimension(new PacketTileEntitySideUpdate(te, (byte) 1), te.getWorldObj().getWorldInfo().getVanillaDimension());
     }
 
     //Util
@@ -234,7 +228,7 @@ public class Util {
      * @return The block or null if not found
      */
     public static Block getBlock(String name) {
-        return GameRegistry.findBlock(MODID, name);
+        return GameRegistry.findBlock(mod_SimElectricity.MODID, name);
     }
 
     /**
@@ -243,6 +237,6 @@ public class Util {
      * @return The item or null if not found
      */
     public static Item getItem(String name) {
-        return GameRegistry.findItem(MODID, name);
+        return GameRegistry.findItem(mod_SimElectricity.MODID, name);
     }
 }
