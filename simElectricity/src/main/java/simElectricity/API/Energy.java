@@ -11,7 +11,7 @@ import simElectricity.API.Events.TileAttachEvent;
 import simElectricity.API.Events.TileChangeEvent;
 import simElectricity.API.Events.TileDetachEvent;
 import simElectricity.API.Events.TileRejoinEvent;
-import simElectricity.EnergyNet.EnergyNet;
+import simElectricity.Common.EnergyNet.EnergyNet;
 
 public class Energy {
     //Energy net-------------------------------------------------------------------------------------------------------------------------------
