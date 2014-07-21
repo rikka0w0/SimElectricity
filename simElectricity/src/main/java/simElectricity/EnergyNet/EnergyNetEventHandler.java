@@ -55,6 +55,12 @@ public class EnergyNetEventHandler {
             System.out.println("Unacceptable tileentity " + te + " is trying to attach to the energy network, aborting");
             return;
         }
+        
+        if (te.getWorldObj().isRemote){
+            System.out.println("Client tileentity " + te + " is requesting, aborting");
+            return;
+        }
+        	
 
         EnergyNet.getForWorld(te.getWorldObj()).addTileEntity(te);
 
@@ -66,6 +72,11 @@ public class EnergyNetEventHandler {
     public void onTileDetach(TileDetachEvent event) {
         TileEntity te = event.energyTile;
 
+        if (te.getWorldObj().isRemote){
+            System.out.println("Client tileentity " + te + " is requesting, aborting");
+            return;
+        }
+        
         EnergyNet.getForWorld(te.getWorldObj()).removeTileEntity(te);
 
         System.out.println("Tileentity " + te + " is detach from the energy network!");
@@ -75,6 +86,11 @@ public class EnergyNetEventHandler {
     public void onTileRejoin(TileRejoinEvent event) {
         TileEntity te = event.energyTile;
 
+        if (te.getWorldObj().isRemote){
+            System.out.println("Client tileentity " + te + " is requesting, aborting");
+            return;
+        }
+        
         EnergyNet.getForWorld(te.getWorldObj()).rejoinTileEntity(te);
 
         System.out.println("Tileentity " + te + " is rejoined from the energy network!");
@@ -84,6 +100,11 @@ public class EnergyNetEventHandler {
     public void onTileChange(TileChangeEvent event) {
         TileEntity te = event.energyTile;
 
+        if (te.getWorldObj().isRemote){
+            System.out.println("Client tileentity " + te + " is requesting, aborting");
+            return;
+        }
+        
         EnergyNet.getForWorld(te.getWorldObj()).markForUpdate(te);
 
         System.out.println("Tileentity " + te + " cause the energy network to update!");

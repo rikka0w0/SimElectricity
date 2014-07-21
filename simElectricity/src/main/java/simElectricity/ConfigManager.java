@@ -23,7 +23,7 @@ public class ConfigManager {
     }
 
     private static void syncConfig() {
-        optimizeNodes = config.get(Configuration.CATEGORY_GENERAL, "Optimize_Nodes", true, "Enable Optimized Nodes.").getBoolean();
+        optimizeNodes = config.get(Configuration.CATEGORY_GENERAL, "Optimize_Nodes", false, "A function that can improve the performance by reducing the total number of conductor nodes (May be buggy)").getBoolean();
 
         if (config.hasChanged())
             config.save();

@@ -122,14 +122,14 @@ public final class EnergyNet {
 
             List<IBaseComponent> neighborList = Graphs.neighborListOf(optimizedTileEntityGraph, currentRowComponent);
             //Generate row for conductor node
-            if (currentRowComponent instanceof IConductor) {
+            if (currentRowComponent instanceof IConductor || currentRowComponent instanceof IManualJunction) {
                 for (int columnIndex = 0; columnIndex < matrixSize; columnIndex++) {
                     double cellData = 0;
 
                     if (rowIndex == columnIndex) { //Key cell
                         //Add neighbor resistance
                         for (IBaseComponent neighbor : neighborList) {
-                            if (neighbor instanceof IConductor) {
+                            if (neighbor instanceof IConductor || neighbor instanceof IManualJunction) {
                                 cellData += 2.0D / (currentRowComponent.getResistance() + neighbor.getResistance());  // IConductor next to IConductor
                             } else {
                                 cellData += 2.0D / currentRowComponent.getResistance();                              // IConductor next to other components
@@ -138,7 +138,7 @@ public final class EnergyNet {
                     } else {
                         IBaseComponent currentColumnComponent = unknownVoltageNodes.get(columnIndex);
                         if (neighborList.contains(currentColumnComponent)) {
-                            if (currentColumnComponent instanceof IConductor) {
+                            if (currentColumnComponent instanceof IConductor || currentColumnComponent instanceof IManualJunction) {
                                 cellData = -2.0D / (currentRowComponent.getResistance() + currentColumnComponent.getResistance());
                             } else {
                                 cellData = -2.0D / currentRowComponent.getResistance();
@@ -238,31 +238,24 @@ public final class EnergyNet {
         TileEntity temp;
 
         if (te instanceof IConductor) {
-            ForgeDirection[] directions = new ForgeDirection[6];
-            directions[0] = ForgeDirection.EAST;
-            directions[1] = ForgeDirection.WEST;
-            directions[2] = ForgeDirection.UP;
-            directions[3] = ForgeDirection.DOWN;
-            directions[4] = ForgeDirection.SOUTH;
-            directions[5] = ForgeDirection.NORTH;
-
-
-            for (int i = 0; i < 6; i++) {
-                temp = Util.getTEonDirection(te, directions[i]);
+            for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
+                temp = Util.getTEonDirection(te, direction);
                 if (temp instanceof IConductor) {  //Conductor
                     result.add((IConductor) temp);
                 } else if (temp instanceof IEnergyTile) {   //IEnergyTile
-                    if (((IEnergyTile) temp).getFunctionalSide() == directions[i].getOpposite())
+                    if (((IEnergyTile) temp).getFunctionalSide() == direction.getOpposite())
                         result.add((IEnergyTile) temp);
                 } else if (temp instanceof IComplexTile) {  //IComplexTile
-                    if (((IComplexTile) temp).getCircuitComponent(directions[i].getOpposite()) != null)
-                        result.add(((IComplexTile) temp).getCircuitComponent(directions[i].getOpposite()));
+                    if (((IComplexTile) temp).getCircuitComponent(direction.getOpposite()) != null)
+                        result.add(((IComplexTile) temp).getCircuitComponent(direction.getOpposite()));
                 } else if (temp instanceof ITransformer) {
-                    if (((ITransformer) temp).getPrimarySide() == directions[i].getOpposite())
+                    if (((ITransformer) temp).getPrimarySide() == direction.getOpposite())
                         result.add(((ITransformer) temp).getPrimary());
 
-                    if (((ITransformer) temp).getSecondarySide() == directions[i].getOpposite())
+                    if (((ITransformer) temp).getSecondarySide() == direction.getOpposite())
                         result.add(((ITransformer) temp).getSecondary());
+                } else if (temp instanceof IManualJunction) {
+                	result.add((IManualJunction)temp);
                 }
             }
         }
@@ -274,6 +267,10 @@ public final class EnergyNet {
             if (temp instanceof IConductor) {
                 result.add((IBaseComponent) temp);
             }
+        }
+        
+        if (te instanceof IManualJunction){
+        	((IManualJunction)te).addNeighbors(result);
         }
 
         return result;
@@ -289,22 +286,14 @@ public final class EnergyNet {
             ICircuitComponent SubComponent;
             TileEntity neighbor;
 
-            ForgeDirection[] directions = new ForgeDirection[6];
-            directions[0] = ForgeDirection.EAST;
-            directions[1] = ForgeDirection.WEST;
-            directions[2] = ForgeDirection.UP;
-            directions[3] = ForgeDirection.DOWN;
-            directions[4] = ForgeDirection.SOUTH;
-            directions[5] = ForgeDirection.NORTH;
-
-            for (int i = 0; i < 6; i++) {
-                SubComponent = ct.getCircuitComponent(directions[i]);
+            for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
+                SubComponent = ct.getCircuitComponent(direction);
 
                 if (SubComponent instanceof IBaseComponent) {
                     if (!tileEntityGraph.containsVertex(SubComponent))    //If the subComponent haven't been added, add it!
                         tileEntityGraph.addVertex(SubComponent);
 
-                    neighbor = Util.getTEonDirection(te, directions[i]);
+                    neighbor = Util.getTEonDirection(te, direction);
 
                     if (neighbor instanceof IConductor) {                //Connected properly
                         if (!tileEntityGraph.containsVertex((IConductor) neighbor))
@@ -371,9 +360,9 @@ public final class EnergyNet {
             SubComponents[4] = ((IComplexTile) te).getCircuitComponent(ForgeDirection.UP);
             SubComponents[5] = ((IComplexTile) te).getCircuitComponent(ForgeDirection.DOWN);
 
-            for (int i = 0; i < 6; i++) {
-                if (SubComponents[i] instanceof IBaseComponent)
-                    tileEntityGraph.removeVertex(SubComponents[i]);
+            for (ICircuitComponent subComponent : SubComponents) {
+                if (subComponent instanceof IBaseComponent)
+                    tileEntityGraph.removeVertex(subComponent);
             }
         } else if (te instanceof ITransformer) {
             tileEntityGraph.removeVertex(((ITransformer) te).getPrimary());

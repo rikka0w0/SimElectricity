@@ -82,6 +82,7 @@ public class mod_SimElectricity {
         registerBlock(new BlockAdjustableTransformer());
         registerBlock(new BlockBatteryBox());
         registerBlock(new BlockIncandescentLamp());
+        registerBlock(new BlockSwitch());
 
 
         //Register Items
@@ -115,6 +116,7 @@ public class mod_SimElectricity {
         GameRegistry.registerTileEntity(TileAdjustableTransformer.class, "TileAdjustableTransformer");
         GameRegistry.registerTileEntity(TileBatteryBox.class, "TileBatteryBox");
         GameRegistry.registerTileEntity(TileIncandescentLamp.class, "TileIncandescentLamp");
+        GameRegistry.registerTileEntity(TileSwitch.class, "TileSwitch");
     }
 
     /**
