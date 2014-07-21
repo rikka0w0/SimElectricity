@@ -30,37 +30,37 @@ public class Util {
      */
     public static CreativeTabs SETab;
 
-    //Network & Sync------------------------------------------------------------------------------------------------------------------------
+    //Network & Sync
 
     /**
      * Update a client tileEntity field from the server
      */
-    public static void updateTileEntityField(TileEntity te, String field) {
-        SimElectricity.instance.packetPipeline.sendToDimension(new PacketTileEntityFieldUpdate(te, field), te.getWorldObj().getWorldInfo().getVanillaDimension());
+    public static void updateTileEntityField(TileEntity tileEntity, String field) {
+        SimElectricity.instance.packetPipeline.sendToDimension(new PacketTileEntityFieldUpdate(tileEntity, field), tileEntity.getWorldObj().getWorldInfo().getVanillaDimension());
     }
 
     /**
      * Update a server tileEntity field from a client
      */
-    public static void updateTileEntityFieldToServer(TileEntity te, String field) {
-        SimElectricity.instance.packetPipeline.sendToServer(new PacketTileEntityFieldUpdate(te, field));
+    public static void updateTileEntityFieldToServer(TileEntity tileEntity, String field) {
+        SimElectricity.instance.packetPipeline.sendToServer(new PacketTileEntityFieldUpdate(tileEntity, field));
     }
 
     /**
      * Update a tileEntity's facing on client side
      */
-    public static void updateTileEntityFacing(TileEntity te) {
-        SimElectricity.instance.packetPipeline.sendToDimension(new PacketTileEntitySideUpdate(te, (byte) 0), te.getWorldObj().getWorldInfo().getVanillaDimension());
+    public static void updateTileEntityFacing(TileEntity tileEntity) {
+        SimElectricity.instance.packetPipeline.sendToDimension(new PacketTileEntitySideUpdate(tileEntity, (byte) 0), tileEntity.getWorldObj().getWorldInfo().getVanillaDimension());
     }
 
     /**
      * Update a tileEntity's functional side on client side
      */
-    public static void updateTileEntityFunctionalSide(TileEntity te) {
-        SimElectricity.instance.packetPipeline.sendToDimension(new PacketTileEntitySideUpdate(te, (byte) 1), te.getWorldObj().getWorldInfo().getVanillaDimension());
+    public static void updateTileEntityFunctionalSide(TileEntity tileEntity) {
+        SimElectricity.instance.packetPipeline.sendToDimension(new PacketTileEntitySideUpdate(tileEntity, (byte) 1), tileEntity.getWorldObj().getWorldInfo().getVanillaDimension());
     }
 
-    //Util
+    // Util
 
     /**
      * Post some text in chat box(Other player cannot see it)
@@ -72,18 +72,18 @@ public class Util {
     /**
      * Get a tileEntity on the given side of a tileEntity
      */
-    public static TileEntity getTEonDirection(TileEntity te, ForgeDirection direction) {
-        return te.getWorldObj().getTileEntity(
-                te.xCoord + direction.offsetX,
-                te.yCoord + direction.offsetY,
-                te.zCoord + direction.offsetZ);
+    public static TileEntity getTileEntityonDirection(TileEntity tileEntity, ForgeDirection direction) {
+        return tileEntity.getWorldObj().getTileEntity(
+                tileEntity.xCoord + direction.offsetX,
+                tileEntity.yCoord + direction.offsetY,
+                tileEntity.zCoord + direction.offsetZ);
     }
 
     /**
      * Used by wires to find possible connections
      */
-    public static boolean possibleConnection(TileEntity te, ForgeDirection direction) {
-        TileEntity ent = getTEonDirection(te, direction);
+    public static boolean possibleConnection(TileEntity tileEntity, ForgeDirection direction) {
+        TileEntity ent = getTileEntityonDirection(tileEntity, direction);
 
         if (ent instanceof IConductor) {
             return true;
@@ -105,22 +105,23 @@ public class Util {
 
         return false;
     }
-    //Facing and Rendering------------------------------------------------------------------------------------------------------------------
+
+    //Facing and Rendering
 
     /**
      * Update a block rendering after 10 ticks
      */
-    public static void scheduleBlockUpdate(TileEntity te) {
-        scheduleBlockUpdate(te, 10);
+    public static void scheduleBlockUpdate(TileEntity tileEntity) {
+        scheduleBlockUpdate(tileEntity, 10);
     }
 
     /**
      * Update a block rendering after some ticks
      */
-    public static void scheduleBlockUpdate(TileEntity te, int time) {
-        if (te == null)
+    public static void scheduleBlockUpdate(TileEntity tileEntity, int time) {
+        if (tileEntity == null)
             return;
-        te.getWorldObj().scheduleBlockUpdate(te.xCoord, te.yCoord, te.zCoord, te.getWorldObj().getBlock(te.xCoord, te.yCoord, te.zCoord), time);
+        tileEntity.getWorldObj().scheduleBlockUpdate(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord, tileEntity.getWorldObj().getBlock(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord), time);
     }
 
     /**
@@ -174,6 +175,8 @@ public class Util {
 
     /**
      * Get a ForgeDirection from a byte, used in network packets
+     *
+     * @see net.minecraftforge.common.util.ForgeDirection
      */
     public static ForgeDirection byte2Direction(byte byteData) {
         switch (byteData) {
@@ -196,6 +199,8 @@ public class Util {
 
     /**
      * Convert a ForgeDirection to a byte, used in network packets
+     *
+     * @see net.minecraftforge.common.util.ForgeDirection
      */
     public static byte direction2Byte(ForgeDirection direction) {
         switch (direction) {
@@ -227,6 +232,8 @@ public class Util {
             { 4, 5, 4, 5, 3, 2 },
             { 5, 4, 5, 4, 2, 3 }
     };
+
+    // Block/Item
 
     /**
      * @param name The name of the block.

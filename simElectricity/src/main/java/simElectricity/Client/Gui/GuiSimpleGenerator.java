@@ -17,7 +17,7 @@ public class GuiSimpleGenerator extends GuiContainer {
     }
 
     @Override
-    protected void drawGuiContainerForegroundLayer(int param1, int param2) {
+    protected void drawGuiContainerForegroundLayer(int x, int y) {
         //draw text and stuff here
         //the parameters for drawString are: string, x, y, color
 
@@ -33,7 +33,7 @@ public class GuiSimpleGenerator extends GuiContainer {
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(float par1, int par2, int par3) {
+    protected void drawGuiContainerBackgroundLayer(float opacity, int par2, int par3) {
         //draw your Gui here, only thing you need to change is the path
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         mc.renderEngine.bindTexture(new ResourceLocation("simElectricity:textures/gui/GUI_SimpleGenerator.png"));

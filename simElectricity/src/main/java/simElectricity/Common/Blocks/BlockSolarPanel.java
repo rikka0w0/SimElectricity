@@ -84,12 +84,12 @@ public class BlockSolarPanel extends BlockStandardGenerator {
     }
 
     @Override
-    public TileEntity createNewTileEntity(World var1, int var2) {
+    public TileEntity createNewTileEntity(World world, int meta) {
         return new TileSolarPanel();
     }
 
     @Override
-    public int damageDropped(int par1) {
-        return par1;
+    public int damageDropped(int meta) {
+        return meta;
     }
 }

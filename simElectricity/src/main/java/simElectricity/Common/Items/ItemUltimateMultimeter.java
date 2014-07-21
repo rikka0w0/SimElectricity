@@ -28,7 +28,7 @@ public class ItemUltimateMultimeter extends ItemSE {
     }
 
     @Override
-    public boolean onItemUse(ItemStack item, EntityPlayer player, World world, int x, int y, int z, int par7, float par8, float par9, float par10) {
+    public boolean onItemUse(ItemStack itemStack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
         TileEntity tile = world.getTileEntity(x, y, z);
 
         if (tile instanceof ITransformer && (!(world.isRemote))) {

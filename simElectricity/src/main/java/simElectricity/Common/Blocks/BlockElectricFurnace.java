@@ -76,7 +76,7 @@ public class BlockElectricFurnace extends BlockStandardSEMachine {
     }
 
     @Override
-    public void updateTick(World world, int x, int y, int z, Random p_149674_5_) {
+    public void updateTick(World world, int x, int y, int z, Random random) {
         if (world.isRemote)
             return;
         TileEntity te = world.getTileEntity(x, y, z);
@@ -99,13 +99,13 @@ public class BlockElectricFurnace extends BlockStandardSEMachine {
     }
 
     @Override
-    public TileEntity createNewTileEntity(World var1, int var2) {
+    public TileEntity createNewTileEntity(World world, int meta) {
         return new TileElectricFurnace();
     }
 
     @Override
-    public int damageDropped(int par1) {
-        return par1;
+    public int damageDropped(int meta) {
+        return meta;
     }
 
     public int getLightValue(IBlockAccess world, int x, int y, int z) {

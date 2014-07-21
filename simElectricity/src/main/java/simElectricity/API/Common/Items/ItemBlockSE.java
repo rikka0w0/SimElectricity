@@ -4,6 +4,11 @@ import net.minecraft.block.Block;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 
+/**
+ * Basic SimElectricity ItemBlock
+ *
+ * @author <Meow J>
+ */
 public class ItemBlockSE extends ItemBlock {
     public ItemBlockSE(Block block) {
         super(block);

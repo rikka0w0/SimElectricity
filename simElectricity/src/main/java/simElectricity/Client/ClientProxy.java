@@ -6,7 +6,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import simElectricity.Common.Blocks.TileEntity.*;
-import simElectricity.Common.Blocks.WindMill.RenderWindMillTop;
+import simElectricity.Client.Render.RenderWindMillTop;
 import simElectricity.Common.Blocks.WindMill.TileWindMillTop;
 import simElectricity.Client.Gui.*;
 import simElectricity.Client.Render.RenderWire;
@@ -25,7 +25,7 @@ public class ClientProxy extends CommonProxy {
     }
 
     @Override
-    public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
+    public Object getClientGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
         TileEntity te = world.getTileEntity(x, y, z);
 
         if (te instanceof TileQuantumGenerator)

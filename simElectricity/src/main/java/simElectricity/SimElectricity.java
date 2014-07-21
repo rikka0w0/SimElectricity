@@ -87,7 +87,7 @@ public class SimElectricity {
      * PostInitialize
      */
     @EventHandler
-    public void postInit(FMLPostInitializationEvent evt) {
+    public void postInit(FMLPostInitializationEvent event) {
         //Register network packets
         packetPipeline.registerPacket(PacketTileEntityFieldUpdate.class);
         packetPipeline.registerPacket(PacketTileEntitySideUpdate.class);

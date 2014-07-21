@@ -51,7 +51,7 @@ public class BlockWire extends BlockContainerSE {
     }
 
     @Override
-    public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase player, ItemStack stack) {
+    public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase player, ItemStack itemStack) {
         if (world.isRemote)
             return;
 
@@ -75,7 +75,7 @@ public class BlockWire extends BlockContainerSE {
     }
 
     @Override
-    public void updateTick(World world, int x, int y, int z, Random p_149674_5_) {
+    public void updateTick(World world, int x, int y, int z, Random random) {
         if (world.isRemote)
             return;
         ((TileWire) world.getTileEntity(x, y, z)).updateSides();
@@ -83,7 +83,7 @@ public class BlockWire extends BlockContainerSE {
     }
 
 
-    //Rendering ----------------------------------------------------
+    // Rendering
 
     @Override
     public void setBlockBoundsForItemRender() {
@@ -91,8 +91,8 @@ public class BlockWire extends BlockContainerSE {
     }
 
     @Override
-    public void addCollisionBoxesToList(World world, int x, int y, int z, AxisAlignedBB par5AxisAlignedBB, List par6List, Entity par7Entity) {
-        super.addCollisionBoxesToList(world, x, y, z, par5AxisAlignedBB, par6List, par7Entity);
+    public void addCollisionBoxesToList(World world, int x, int y, int z, AxisAlignedBB axisAlignedBB, List list, Entity entity) {
+        super.addCollisionBoxesToList(world, x, y, z, axisAlignedBB, list, entity);
         TileWire tile = (TileWire) world.getTileEntity(x, y, z);
         float WIDTH = collisionWidthList[world.getBlockMetadata(x, y, z)];
 
@@ -113,7 +113,7 @@ public class BlockWire extends BlockContainerSE {
             minA = 0.0F;
         if (arr[5] || arr[4]) {
             setBlockBounds(minA, minY, minZ, maxA, maxY, maxZ);
-            super.addCollisionBoxesToList(world, x, y, z, par5AxisAlignedBB, par6List, par7Entity);
+            super.addCollisionBoxesToList(world, x, y, z, axisAlignedBB, list, entity);
         }
 
         if (arr[3])
@@ -124,7 +124,7 @@ public class BlockWire extends BlockContainerSE {
         else minA = 0.5F - WIDTH;
         if (arr[3] || arr[2]) {
             setBlockBounds(minX, minY, minA, maxX, maxY, maxA);
-            super.addCollisionBoxesToList(world, x, y, z, par5AxisAlignedBB, par6List, par7Entity);
+            super.addCollisionBoxesToList(world, x, y, z, axisAlignedBB, list, entity);
         }
 
         if (arr[1])
@@ -135,7 +135,7 @@ public class BlockWire extends BlockContainerSE {
         else minA = 0.5F - WIDTH;
         if (arr[1] || arr[0]) {
             setBlockBounds(minX, minA, minZ, maxX, maxA, maxZ);
-            super.addCollisionBoxesToList(world, x, y, z, par5AxisAlignedBB, par6List, par7Entity);
+            super.addCollisionBoxesToList(world, x, y, z, axisAlignedBB, list, entity);
         }
     }
 
@@ -183,10 +183,9 @@ public class BlockWire extends BlockContainerSE {
         return false;
     }
 
-    //-------------------------------------------------------------------------------------------------------------
-
 
     //Multi block stuff starts
+
     @Override
     @SideOnly(Side.CLIENT)
     public void registerBlockIcons(IIconRegister r) {
@@ -209,7 +208,7 @@ public class BlockWire extends BlockContainerSE {
     }
 
     @Override
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings( { "rawtypes", "unchecked" })
     @SideOnly(Side.CLIENT)
     public void getSubBlocks(Item par1, CreativeTabs par2CreativeTabs, List subItems) {
         for (int ix = 0; ix < subNames.length; ix++) {
@@ -234,7 +233,7 @@ public class BlockWire extends BlockContainerSE {
     }
 
     @Override
-    public TileEntity createNewTileEntity(World var1, int var2) {
+    public TileEntity createNewTileEntity(World world, int meta) {
         return null;
     }
 

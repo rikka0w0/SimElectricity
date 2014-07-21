@@ -89,7 +89,7 @@ public class BlockSwitch extends BlockContainerSE {
     }
 
     @Override
-    public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase player, ItemStack stack) {
+    public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase player, ItemStack itemStack) {
         TileSwitch te = (TileSwitch) world.getTileEntity(x, y, z);
 
         te.setFacing(Util.getPlayerSight(player).getOpposite());
@@ -98,7 +98,7 @@ public class BlockSwitch extends BlockContainerSE {
     }
 
     @Override
-    public void updateTick(World world, int x, int y, int z, Random p_149674_5_) {
+    public void updateTick(World world, int x, int y, int z, Random random) {
         if (world.isRemote)
             return;
 
@@ -112,7 +112,7 @@ public class BlockSwitch extends BlockContainerSE {
     }
 
     @Override
-    public TileEntity createNewTileEntity(World var1, int var2) {
+    public TileEntity createNewTileEntity(World world, int meta) {
         return new TileSwitch();
     }
 }

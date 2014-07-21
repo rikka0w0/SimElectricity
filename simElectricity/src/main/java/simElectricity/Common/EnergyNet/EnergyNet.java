@@ -86,6 +86,7 @@ public final class EnergyNet {
     }
 
     //Simulator------------------------------------------------------------------------
+    @SuppressWarnings( { "StatementWithEmptyBody", "unchecked" })
     private void runSimulator() {
         SimpleGraph<IBaseComponent, DefaultEdge> optimizedTileEntityGraph = (SimpleGraph<IBaseComponent, DefaultEdge>) tileEntityGraph.clone();
 
@@ -224,7 +225,7 @@ public final class EnergyNet {
                         ((IEnergyNetUpdateHandler) tile).onEnergyNetUpdate();
                     }
                 }
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
         }
     }
@@ -240,7 +241,7 @@ public final class EnergyNet {
 
         if (te instanceof IConductor) {
             for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
-                temp = Util.getTEonDirection(te, direction);
+                temp = Util.getTileEntityonDirection(te, direction);
                 if (temp instanceof IConductor) {  //Conductor
                     result.add((IConductor) temp);
                 } else if (temp instanceof IEnergyTile) {   //IEnergyTile
@@ -263,7 +264,7 @@ public final class EnergyNet {
 
 
         if (te instanceof IEnergyTile) {
-            temp = Util.getTEonDirection(te, ((IEnergyTile) te).getFunctionalSide());
+            temp = Util.getTileEntityonDirection(te, ((IEnergyTile) te).getFunctionalSide());
 
             if (temp instanceof IConductor) {
                 result.add((IBaseComponent) temp);
@@ -294,7 +295,7 @@ public final class EnergyNet {
                     if (!tileEntityGraph.containsVertex(SubComponent))    //If the subComponent haven't been added, add it!
                         tileEntityGraph.addVertex(SubComponent);
 
-                    neighbor = Util.getTEonDirection(te, direction);
+                    neighbor = Util.getTileEntityonDirection(te, direction);
 
                     if (neighbor instanceof IConductor) {                //Connected properly
                         if (!tileEntityGraph.containsVertex((IConductor) neighbor))
@@ -315,7 +316,7 @@ public final class EnergyNet {
             if (!tileEntityGraph.containsVertex(primary))
                 tileEntityGraph.addVertex(primary);
 
-            neighbor = Util.getTEonDirection(te, transformer.getPrimarySide());
+            neighbor = Util.getTileEntityonDirection(te, transformer.getPrimarySide());
             if (neighbor instanceof IConductor) {
                 if (!tileEntityGraph.containsVertex((IBaseComponent) neighbor))
                     tileEntityGraph.addVertex((IBaseComponent) neighbor);
@@ -326,7 +327,7 @@ public final class EnergyNet {
             if (!tileEntityGraph.containsVertex(secondary))
                 tileEntityGraph.addVertex(secondary);
 
-            neighbor = Util.getTEonDirection(te, transformer.getSecondarySide());
+            neighbor = Util.getTileEntityonDirection(te, transformer.getSecondarySide());
             if (neighbor instanceof IConductor) {
                 if (!tileEntityGraph.containsVertex((IBaseComponent) neighbor))
                     tileEntityGraph.addVertex((IBaseComponent) neighbor);

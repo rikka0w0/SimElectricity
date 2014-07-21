@@ -28,7 +28,7 @@ public class ItemGlove extends ItemSE {
     }
 
     @Override
-    public boolean onItemUse(ItemStack item, EntityPlayer player, World world, int x, int y, int z, int par7, float par8, float par9, float par10) {
+    public boolean onItemUse(ItemStack itemStack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
         if ((world.getTileEntity(x, y, z) instanceof ISidedFacing) & (!world.isRemote)) {
             ISidedFacing te = (ISidedFacing) world.getTileEntity(x, y, z);
             ForgeDirection newFacing = Util.getPlayerSight(player).getOpposite();
@@ -36,7 +36,7 @@ public class ItemGlove extends ItemSE {
             if (te.canSetFacing(newFacing)) {
                 te.setFacing(newFacing);
                 Util.updateTileEntityFacing((TileEntity) te);
-                item.damageItem(1, player);
+                itemStack.damageItem(1, player);
             }
             return true;
         } else {

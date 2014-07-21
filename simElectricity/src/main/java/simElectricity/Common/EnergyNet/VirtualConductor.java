@@ -57,6 +57,7 @@ public class VirtualConductor implements IConductor {
         this.contains.clear();
     }
 
+    @SuppressWarnings("SuspiciousMethodCalls")
     public boolean appendConnection(IBaseComponent baseComponent) {
         boolean result = true;
 //		if(baseComponent instanceof IConductor)

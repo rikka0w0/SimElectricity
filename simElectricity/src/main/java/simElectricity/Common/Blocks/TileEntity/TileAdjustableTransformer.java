@@ -9,7 +9,7 @@ import simElectricity.API.ISyncPacketHandler;
 import simElectricity.API.IUpdateOnWatch;
 import simElectricity.API.Util;
 
-public class TileAdjustableTransformer extends TileEntity implements ITransformer, ISyncPacketHandler ,IUpdateOnWatch {
+public class TileAdjustableTransformer extends TileEntity implements ITransformer, ISyncPacketHandler, IUpdateOnWatch {
     public Primary primary = new ITransformer.Primary(this);
     public Secondary secondary = new ITransformer.Secondary(this);
     protected boolean isAddedToEnergyNet = false;
@@ -102,8 +102,8 @@ public class TileAdjustableTransformer extends TileEntity implements ITransforme
         return secondary;
     }
 
-	@Override
-	public void onWatch() {
-		Util.scheduleBlockUpdate(this);
-	}
+    @Override
+    public void onWatch() {
+        Util.scheduleBlockUpdate(this);
+    }
 }

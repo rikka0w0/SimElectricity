@@ -34,9 +34,8 @@ public class PacketTileEntityFieldUpdate extends AbstractPacket {
         handle(player, false);
     }
 
-	/*-------------------------------------------------------------------------------------------------------------------*/
 
-    public PacketTileEntityFieldUpdate(TileEntity te, String _field) {
+    public PacketTileEntityFieldUpdate(TileEntity te, String field) {
         if (te == null)
             return;
 
@@ -46,11 +45,11 @@ public class PacketTileEntityFieldUpdate extends AbstractPacket {
         x = te.xCoord;
         y = (short) te.yCoord;
         z = te.zCoord;
-        field = _field;
+        this.field = field;
 
         Field f;
         try {
-            f = te.getClass().getField(field);
+            f = te.getClass().getField(this.field);
             if (f.getType() == boolean.class) {   //Boolean
                 type = 0;
                 value = f.getBoolean(te);
@@ -67,7 +66,7 @@ public class PacketTileEntityFieldUpdate extends AbstractPacket {
                 type = 4;
                 value = f.getFloat(te);
             } else {
-                System.out.println(te.toString() + " is trying synchronous a unknown type field: " + _field);
+                System.out.println(te.toString() + " is trying synchronous a unknown type field: " + field);
             }
         } catch (Exception e) {
             e.printStackTrace();

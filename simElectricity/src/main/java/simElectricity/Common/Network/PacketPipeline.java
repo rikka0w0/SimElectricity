@@ -42,17 +42,14 @@ public class PacketPipeline extends MessageToMessageCodec<FMLProxyPacket, Abstra
      */
     public boolean registerPacket(Class<? extends AbstractPacket> clazz) {
         if (this.packets.size() > 256) {
-            // You should log here!!
             return false;
         }
 
         if (this.packets.contains(clazz)) {
-            // You should log here!!
             return false;
         }
 
         if (this.isPostInitialised) {
-            // You should log here!!
             return false;
         }
 

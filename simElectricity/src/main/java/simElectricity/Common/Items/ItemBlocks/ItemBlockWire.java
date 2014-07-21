@@ -16,7 +16,7 @@ public class ItemBlockWire extends ItemBlockSE {
     public ItemBlockWire(Block block) {
         super(block);
         setHasSubtypes(true);
-        setUnlocalizedName("ItemBlock_SEWire");
+        setUnlocalizedName("SEWire");
     }
 
     @Override
@@ -29,6 +29,7 @@ public class ItemBlockWire extends ItemBlockSE {
         return getUnlocalizedName() + "." + BlockWire.subNames[itemstack.getItemDamage()];
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack itemStack, EntityPlayer player, List list, boolean p_77624_4_) {
