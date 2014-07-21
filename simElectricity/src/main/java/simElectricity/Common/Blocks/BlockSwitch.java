@@ -47,7 +47,6 @@ public class BlockSwitch extends BlockContainerSE {
         setHardness(2.0F);
         setResistance(5.0F);
         setBlockName("Switch");
-        setCreativeTab(Util.SETab);
     }
 
     @Override
