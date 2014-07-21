@@ -25,19 +25,20 @@ public class BlockSwitch extends BlockContainer {
     @Override
     public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int i1, float f1, float f2, float f3) {
         if (player.isSneaking())
-            return false;
+        	return false;
 
-        if (!world.isRemote){
-        	TileSwitch te = (TileSwitch) world.getTileEntity(x, y, z);
+        TileSwitch te = (TileSwitch) world.getTileEntity(x, y, z);
         	
-        	if (Util.getPlayerSight(player) == te.getFacing().getOpposite()){
-        		te.isOn =! te.isOn;
-        		Util.updateTileEntityField(te, "isOn");
-        		Energy.postTileRejoinEvent(te);
+        if (Util.getPlayerSight(player) == te.getFacing().getOpposite()){
+        	if(!world.isRemote){
+        	te.isOn =! te.isOn;
+        	Util.updateTileEntityField(te, "isOn");
+        	Energy.postTileRejoinEvent(te);
         	}
+        }else{
+        	player.openGui(mod_SimElectricity.instance, 0, world, x, y, z);
         }
         
-        player.openGui(mod_SimElectricity.instance, 0, world, x, y, z);
         return true;
     }
 

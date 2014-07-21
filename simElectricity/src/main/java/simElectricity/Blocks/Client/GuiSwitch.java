@@ -10,12 +10,12 @@ import net.minecraft.util.StatCollector;
 import net.minecraftforge.common.util.ForgeDirection;
 import org.lwjgl.opengl.GL11;
 import simElectricity.API.Util;
-import simElectricity.Blocks.ContainerAdjustableTransformer;
-import simElectricity.Blocks.TileAdjustableTransformer;
+import simElectricity.Blocks.ContainerSwitch;
+import simElectricity.Blocks.TileSwitch;
 
 
-public class GuiAdjustableTransformer extends GuiContainer {
-    protected TileAdjustableTransformer te;
+public class GuiSwitch extends GuiContainer {
+    protected TileSwitch te;
 
     @Override
     public void initGui() {
@@ -39,70 +39,70 @@ public class GuiAdjustableTransformer extends GuiContainer {
         switch (button.id) {
             case 0:
                 if (GuiScreen.isCtrlKeyDown())
-                    te.outputResistance -= 1;
+                    te.resistance -= 1;
                 else
-                    te.outputResistance -= 0.1;
+                    te.resistance -= 0.1;
                 break;
             case 1:
                 if (GuiScreen.isCtrlKeyDown())
-                    te.outputResistance -= 0.001;
+                    te.resistance -= 0.001;
                 else
-                    te.outputResistance -= 0.01;
+                    te.resistance -= 0.01;
                 break;
             case 2:
                 if (GuiScreen.isCtrlKeyDown())
-                    te.outputResistance += 0.001;
+                    te.resistance += 0.001;
                 else
-                    te.outputResistance += 0.01;
+                    te.resistance += 0.01;
                 break;
             case 3:
                 if (GuiScreen.isCtrlKeyDown())
-                    te.outputResistance += 1;
+                    te.resistance += 1;
                 else
-                    te.outputResistance += 0.1;
+                    te.resistance += 0.1;
                 break;
 
             case 4:
                 if (GuiScreen.isCtrlKeyDown())
-                    te.ratio -= 100;
+                    te.maxCurrent -= 100;
                 else
-                    te.ratio -= 10;
+                    te.maxCurrent -= 10;
                 break;
             case 5:
                 if (GuiScreen.isCtrlKeyDown())
-                    te.ratio -= 0.1;
+                    te.maxCurrent -= 0.1;
                 else
-                    te.ratio -= 1;
+                    te.maxCurrent -= 1;
                 break;
             case 6:
                 if (GuiScreen.isCtrlKeyDown())
-                    te.ratio += 0.1;
+                    te.maxCurrent += 0.1;
                 else
-                    te.ratio += 1;
+                    te.maxCurrent += 1;
                 break;
             case 7:
                 if (GuiScreen.isCtrlKeyDown())
-                    te.ratio += 100;
+                    te.maxCurrent += 100;
                 else
-                    te.ratio += 10;
+                    te.maxCurrent += 10;
                 break;
 
             default:
         }
 
-        if (te.outputResistance < 0.001)
-            te.outputResistance = 0.001F;
-        if (te.outputResistance > 100)
-            te.outputResistance = 100;
+        if (te.resistance < 0.001)
+            te.resistance = 0.001F;
+        if (te.resistance > 100)
+            te.resistance = 100;
         if (button.id < 4)
-            Util.updateTileEntityFieldToServer(te, "outputResistance");
+            Util.updateTileEntityFieldToServer(te, "resistance");
 
-        if (te.ratio < 0.1)
-            te.ratio = 0.1F;
-        if (te.ratio > 1000)
-            te.ratio = 1000;
+        if (te.maxCurrent < 0.1)
+            te.maxCurrent = 0.1F;
+        if (te.maxCurrent > 1000)
+            te.maxCurrent = 1000;
         if (button.id < 8 && button.id > 3)
-            Util.updateTileEntityFieldToServer(te, "ratio");
+            Util.updateTileEntityFieldToServer(te, "maxCurrent");
 
     }
 
@@ -128,32 +128,34 @@ public class GuiAdjustableTransformer extends GuiContainer {
             selectedDirection = ForgeDirection.DOWN;
         }
 
-        if (selectedDirection == ForgeDirection.UNKNOWN)
-            return;
+        if (selectedDirection == ForgeDirection.UNKNOWN){
+        	if (tx>80 && tx < 110 && ty>66 && ty<72){
+        		te.isOn=!te.isOn;
+        		Util.updateTileEntityFieldToServer(te, "isOn");
+        	}
+        	return;
+        }
+            
 
         if (button == 0) {        //Left key
-            if (te.getSecondarySide() == selectedDirection)
-                te.secondarySide = te.primarySide;
+            if (te.outputSide == selectedDirection)
+                te.outputSide = te.inputSide;
 
-            te.primarySide = selectedDirection;
+            te.inputSide = selectedDirection;
         } else if (button == 1) { //Right key
-            if (te.getPrimarySide() == selectedDirection)
-                te.primarySide = te.secondarySide;
+            if (te.inputSide == selectedDirection)
+                te.inputSide = te.outputSide;
 
-            te.secondarySide = selectedDirection;
+            te.outputSide = selectedDirection;
         }
 
-        Util.updateTileEntityFieldToServer(te, "primarySide");
-        Util.updateTileEntityFieldToServer(te, "secondarySide");
-
-        //te.getWorldObj().markBlockForUpdate(te.xCoord, te.yCoord, te.zCoord);
-
-        System.out.println(button);
+        Util.updateTileEntityFieldToServer(te, "inputSide");
+        Util.updateTileEntityFieldToServer(te, "outputSide");
     }
 
-    public GuiAdjustableTransformer(InventoryPlayer inventoryPlayer, TileEntity tileEntity) {
-        super(new ContainerAdjustableTransformer(inventoryPlayer, tileEntity));
-        te = (TileAdjustableTransformer) tileEntity;
+    public GuiSwitch(InventoryPlayer inventoryPlayer, TileEntity tileEntity) {
+        super(new ContainerSwitch(inventoryPlayer, tileEntity));
+        te = (TileSwitch) tileEntity;
     }
 
     @Override
@@ -161,11 +163,11 @@ public class GuiAdjustableTransformer extends GuiContainer {
         //draw text and stuff here
         //the parameters for drawString are: string, x, y, color
 
-        fontRendererObj.drawString(StatCollector.translateToLocal("tile.AdjustableTransformer.name"), 8, 6, 4210752);
+        fontRendererObj.drawString(StatCollector.translateToLocal("tile.Switch.name"), 8, 6, 4210752);
 
-        fontRendererObj.drawString("1:" + String.format("%.1f", te.ratio), 32, 26, 4210752);
+        fontRendererObj.drawString("Imax =" + String.format("%.2f", te.maxCurrent) + " A", 8, 26, 4210752);
 
-        fontRendererObj.drawString(String.format("%.3f", te.outputResistance) + " \u03a9", 32, 42, 4210752);
+        fontRendererObj.drawString("Ron = " + String.format("%.3f", te.resistance) + " \u03a9", 8, 42, 4210752);
 
         //draws "Inventory" or your regional equivalent
         fontRendererObj.drawString(StatCollector.translateToLocal("container.inventory"), 8, ySize - 96, 4210752);
@@ -175,12 +177,16 @@ public class GuiAdjustableTransformer extends GuiContainer {
     protected void drawGuiContainerBackgroundLayer(float par1, int par2, int par3) {
         //draw your Gui here, only thing you need to change is the path
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        mc.renderEngine.bindTexture(new ResourceLocation("simElectricity:textures/gui/GUI_AdjustableTransformer.png"));
+        mc.renderEngine.bindTexture(new ResourceLocation("simElectricity:textures/gui/GUI_Switch.png"));
         int x = (width - xSize) / 2;
         int y = (height - ySize) / 2;
-        this.drawTexturedModalRect(x, y, 0, 0, xSize, ySize);
+        drawTexturedModalRect(x, y, 0, 0, xSize, ySize);
 
-        drawFacingBar(x + 130, y + 61, te.getPrimarySide(), te.getSecondarySide());
+        if (te.isOn){
+        	drawTexturedModalRect(x+91, y+70, 3, 0, 9, 1);
+        }
+        
+        drawFacingBar(x + 130, y + 61, te.inputSide, te.outputSide);
     }
 
     protected void drawFacingBar(int x, int y, ForgeDirection red, ForgeDirection blue) {
