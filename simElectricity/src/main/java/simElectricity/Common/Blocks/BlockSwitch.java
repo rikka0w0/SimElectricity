@@ -30,7 +30,7 @@ public class BlockSwitch extends BlockContainerSE {
 
         TileSwitch te = (TileSwitch) world.getTileEntity(x, y, z);
 
-        if (te.getFacing() != ForgeDirection.getOrientation(side) || player.isSneaking()) {
+        if (te.getFacing() != ForgeDirection.getOrientation(side)) {
             player.openGui(SimElectricity.instance, 0, world, x, y, z);
         } else {
             if (!world.isRemote) {
