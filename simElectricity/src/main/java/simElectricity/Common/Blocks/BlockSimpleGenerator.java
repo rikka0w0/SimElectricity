@@ -149,9 +149,4 @@ public class BlockSimpleGenerator extends BlockStandardSEMachine {
     public TileEntity createNewTileEntity(World world, int meta) {
         return new TileSimpleGenerator();
     }
-
-    @Override
-    public int damageDropped(int meta) {
-        return meta;
-    }
 }

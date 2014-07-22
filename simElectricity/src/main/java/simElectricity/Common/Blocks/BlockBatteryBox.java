@@ -88,8 +88,5 @@ public class BlockBatteryBox extends BlockStandardGenerator {
         return new TileBatteryBox();
     }
 
-    @Override
-    public int damageDropped(int meta) {
-        return meta;
-    }
+
 }

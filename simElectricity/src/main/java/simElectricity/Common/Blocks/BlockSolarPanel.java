@@ -87,9 +87,4 @@ public class BlockSolarPanel extends BlockStandardGenerator {
     public TileEntity createNewTileEntity(World world, int meta) {
         return new TileSolarPanel();
     }
-
-    @Override
-    public int damageDropped(int meta) {
-        return meta;
-    }
 }

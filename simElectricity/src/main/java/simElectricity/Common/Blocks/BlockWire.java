@@ -37,7 +37,7 @@ public class BlockWire extends BlockContainerSE {
     //Initialize Block
     public BlockWire() {
         super(Material.circuits);
-        setHardness(1.0F);
+        setHardness(0.2F);
         setResistance(5.0F);
         setBlockName("Wire");
     }
@@ -225,11 +225,6 @@ public class BlockWire extends BlockContainerSE {
     @Override
     public boolean shouldRegister() {
         return false;
-    }
-
-    @Override
-    public int damageDropped(int meta) {
-        return meta;
     }
 
     @Override

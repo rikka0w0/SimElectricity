@@ -93,9 +93,4 @@ public class BlockQuantumGenerator extends BlockStandardGenerator {
     public TileEntity createNewTileEntity(World world, int meta) {
         return new TileQuantumGenerator();
     }
-
-    @Override
-    public int damageDropped(int meta) {
-        return meta;
-    }
 }

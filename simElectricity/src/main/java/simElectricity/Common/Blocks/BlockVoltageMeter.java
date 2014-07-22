@@ -91,9 +91,4 @@ public class BlockVoltageMeter extends BlockStandardSEMachine {
     public TileEntity createNewTileEntity(World world, int meta) {
         return new TileVoltageMeter();
     }
-
-    @Override
-    public int damageDropped(int meta) {
-        return meta;
-    }
 }

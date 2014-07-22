@@ -93,9 +93,4 @@ public class BlockAdjustableResistor extends BlockStandardSEMachine {
     public TileEntity createNewTileEntity(World world, int meta) {
         return new TileAdjustableResistor();
     }
-
-    @Override
-    public int damageDropped(int meta) {
-        return meta;
-    }
 }

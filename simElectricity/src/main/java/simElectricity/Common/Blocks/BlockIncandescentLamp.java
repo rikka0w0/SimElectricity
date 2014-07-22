@@ -102,9 +102,4 @@ public class BlockIncandescentLamp extends BlockStandardSEMachine {
     public TileEntity createNewTileEntity(World world, int meta) {
         return new TileIncandescentLamp();
     }
-
-    @Override
-    public int damageDropped(int meta) {
-        return meta;
-    }
 }

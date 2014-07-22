@@ -6,9 +6,10 @@ import net.minecraft.tileentity.TileEntityFurnace;
 import simElectricity.API.Common.TileSidedGenerator;
 import simElectricity.API.Energy;
 import simElectricity.API.ISyncPacketHandler;
+import simElectricity.API.IUpdateOnWatch;
 import simElectricity.API.Util;
 
-public class TileSimpleGenerator extends TileSidedGenerator implements ISyncPacketHandler {
+public class TileSimpleGenerator extends TileSidedGenerator implements ISyncPacketHandler, IUpdateOnWatch {
     public static int normalOutputV = 230;
     public static int normalOutputR = 1;
 
@@ -138,4 +139,9 @@ public class TileSimpleGenerator extends TileSidedGenerator implements ISyncPack
     @Override
     public void onClient2ServerUpdate(String field, Object value, short type) {
     }
+
+	@Override
+	public void onWatch() {
+		Util.updateTileEntityField(this, "isWorking");
+	}
 }
