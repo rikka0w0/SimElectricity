@@ -32,7 +32,7 @@ public class ItemWrench extends ItemSE {
     public boolean onItemUse(ItemStack itemStack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
         if ((world.getTileEntity(x, y, z) instanceof IEnergyTile) & (!world.isRemote)) {
             IEnergyTile te = (IEnergyTile) world.getTileEntity(x, y, z);
-            ForgeDirection newFacing = Util.getPlayerSight(player).getOpposite();
+            ForgeDirection newFacing = ForgeDirection.getOrientation(side);
 
             if (te.canSetFunctionalSide(newFacing)) {
                 te.setFunctionalSide(newFacing);

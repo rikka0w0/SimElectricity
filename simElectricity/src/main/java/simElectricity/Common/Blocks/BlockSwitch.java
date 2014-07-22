@@ -15,7 +15,6 @@ import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.Common.Blocks.AutoFacing;
 import simElectricity.API.Common.Blocks.BlockContainerSE;
 import simElectricity.API.Energy;
-import simElectricity.API.EnergyTile.IConductor;
 import simElectricity.API.Util;
 import simElectricity.Common.Blocks.TileEntity.TileSwitch;
 import simElectricity.SimElectricity;
@@ -94,13 +93,9 @@ public class BlockSwitch extends BlockContainerSE {
         TileSwitch te = (TileSwitch) world.getTileEntity(x, y, z);
 
         te.setFacing(Util.getPlayerSight(player).getOpposite());
-        te.inputSide = ForgeDirection.UP;
 
-        te.inputSide = AutoFacing.autoConnect(te, te.inputSide);
-
-        te.outputSide = ForgeDirection.DOWN;
-
-        te.outputSide = AutoFacing.autoConnect(te, te.outputSide, te.inputSide);
+        te.inputSide = AutoFacing.autoConnect(te, ForgeDirection.UP);
+        te.outputSide = AutoFacing.autoConnect(te, ForgeDirection.DOWN, te.inputSide);
     }
 
     @Override

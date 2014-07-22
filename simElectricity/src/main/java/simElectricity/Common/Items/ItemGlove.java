@@ -31,7 +31,7 @@ public class ItemGlove extends ItemSE {
     public boolean onItemUse(ItemStack itemStack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
         if ((world.getTileEntity(x, y, z) instanceof ISidedFacing) & (!world.isRemote)) {
             ISidedFacing te = (ISidedFacing) world.getTileEntity(x, y, z);
-            ForgeDirection newFacing = Util.getPlayerSight(player).getOpposite();
+            ForgeDirection newFacing = ForgeDirection.getOrientation(side);
 
             if (te.canSetFacing(newFacing)) {
                 te.setFacing(newFacing);

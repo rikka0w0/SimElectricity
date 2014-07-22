@@ -64,7 +64,7 @@ public class BlockSolarPanel extends BlockStandardGenerator {
     }
 
     @Override
-    public void updateTick(World world, int x, int y, int z, Random p_149674_5_) {
+    public void updateTick(World world, int x, int y, int z, Random random) {
         if (world.isRemote)
             return;
         TileEntity te = world.getTileEntity(x, y, z);

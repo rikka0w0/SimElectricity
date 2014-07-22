@@ -7,7 +7,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.Common.TileStandardGenerator;
-import simElectricity.API.EnergyTile.IConductor;
 import simElectricity.API.Util;
 
 /**
@@ -31,12 +30,8 @@ public abstract class BlockStandardGenerator extends BlockContainerSE {
         if (!(te instanceof TileStandardGenerator))
             return;
 
-        ForgeDirection functionalSide = Util.getPlayerSight(player).getOpposite();
+        ForgeDirection functionalSide = AutoFacing.autoConnect(te, Util.getPlayerSight(player).getOpposite());
 
-        functionalSide=AutoFacing.autoConnect(te, functionalSide);
-        
         ((TileStandardGenerator) te).setFunctionalSide(functionalSide);
     }
-
-    //TODO
 }

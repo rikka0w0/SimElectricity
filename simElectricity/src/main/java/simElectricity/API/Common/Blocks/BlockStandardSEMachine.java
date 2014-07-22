@@ -7,7 +7,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.Common.TileStandardSEMachine;
-import simElectricity.API.EnergyTile.IConductor;
 import simElectricity.API.Util;
 
 /**
@@ -33,14 +32,10 @@ public abstract class BlockStandardSEMachine extends BlockContainerSE {
 
         ForgeDirection functionalSide = Util.getPlayerSight(player);
 
-        //TODO player
         ((TileStandardSEMachine) te).setFacing(functionalSide.getOpposite());
 
-        functionalSide=AutoFacing.autoConnect(te, functionalSide);
+        functionalSide = AutoFacing.autoConnect(te, functionalSide);
 
-        //TODO side
-        //TODO ((TileStandardSEMachine) te).setFacing(functionalSide.getOpposite());
         ((TileStandardSEMachine) te).setFunctionalSide(functionalSide);
     }
-    //TODO
 }
