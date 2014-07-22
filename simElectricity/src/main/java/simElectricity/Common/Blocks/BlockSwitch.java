@@ -12,6 +12,7 @@ import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
+import simElectricity.API.Common.Blocks.AutoFacing;
 import simElectricity.API.Common.Blocks.BlockContainerSE;
 import simElectricity.API.Energy;
 import simElectricity.API.EnergyTile.IConductor;
@@ -95,33 +96,11 @@ public class BlockSwitch extends BlockContainerSE {
         te.setFacing(Util.getPlayerSight(player).getOpposite());
         te.inputSide = ForgeDirection.UP;
 
-        if (world.getTileEntity(x + 1, y, z) instanceof IConductor)
-            te.inputSide = ForgeDirection.EAST;
-        else if (world.getTileEntity(x - 1, y, z) instanceof IConductor)
-            te.inputSide = ForgeDirection.WEST;
-        else if (world.getTileEntity(x, y, z + 1) instanceof IConductor)
-            te.inputSide = ForgeDirection.SOUTH;
-        else if (world.getTileEntity(x, y, z - 1) instanceof IConductor)
-            te.inputSide = ForgeDirection.NORTH;
-        else if (world.getTileEntity(x, y + 1, z) instanceof IConductor)
-            te.inputSide = ForgeDirection.UP;
-        else if (world.getTileEntity(x, y - 1, z) instanceof IConductor)
-            te.inputSide = ForgeDirection.DOWN;
+        AutoFacing.autoConnect(te, te.inputSide);
 
         te.outputSide = ForgeDirection.DOWN;
 
-        if (te.inputSide != ForgeDirection.EAST && world.getTileEntity(x + 1, y, z) instanceof IConductor)
-            te.outputSide = ForgeDirection.EAST;
-        else if (te.inputSide != ForgeDirection.WEST && world.getTileEntity(x - 1, y, z) instanceof IConductor)
-            te.outputSide = ForgeDirection.WEST;
-        else if (te.inputSide != ForgeDirection.SOUTH && world.getTileEntity(x, y, z + 1) instanceof IConductor)
-            te.outputSide = ForgeDirection.SOUTH;
-        else if (te.inputSide != ForgeDirection.NORTH && world.getTileEntity(x, y, z - 1) instanceof IConductor)
-            te.outputSide = ForgeDirection.NORTH;
-        else if (te.inputSide != ForgeDirection.UP && world.getTileEntity(x, y + 1, z) instanceof IConductor)
-            te.outputSide = ForgeDirection.UP;
-        else if (te.inputSide != ForgeDirection.DOWN && world.getTileEntity(x, y - 1, z) instanceof IConductor)
-            te.outputSide = ForgeDirection.DOWN;
+        AutoFacing.autoConnect(te, te.outputSide, te.inputSide);
     }
 
     @Override

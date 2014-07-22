@@ -86,7 +86,7 @@ public final class EnergyNet {
     }
 
     //Simulator------------------------------------------------------------------------
-    @SuppressWarnings( { "StatementWithEmptyBody", "unchecked" })
+    @SuppressWarnings( { "unchecked" })
     private void runSimulator() {
         SimpleGraph<IBaseComponent, DefaultEdge> optimizedTileEntityGraph = (SimpleGraph<IBaseComponent, DefaultEdge>) tileEntityGraph.clone();
 

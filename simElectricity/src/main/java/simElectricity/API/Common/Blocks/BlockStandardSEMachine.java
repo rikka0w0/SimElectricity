@@ -36,18 +36,7 @@ public abstract class BlockStandardSEMachine extends BlockContainerSE {
         //TODO player
         ((TileStandardSEMachine) te).setFacing(functionalSide.getOpposite());
 
-        if (world.getTileEntity(x + 1, y, z) instanceof IConductor)
-            functionalSide = ForgeDirection.EAST;
-        else if (world.getTileEntity(x - 1, y, z) instanceof IConductor)
-            functionalSide = ForgeDirection.WEST;
-        else if (world.getTileEntity(x, y, z + 1) instanceof IConductor)
-            functionalSide = ForgeDirection.SOUTH;
-        else if (world.getTileEntity(x, y, z - 1) instanceof IConductor)
-            functionalSide = ForgeDirection.NORTH;
-        else if (world.getTileEntity(x, y + 1, z) instanceof IConductor)
-            functionalSide = ForgeDirection.UP;
-        else if (world.getTileEntity(x, y - 1, z) instanceof IConductor)
-            functionalSide = ForgeDirection.DOWN;
+        functionalSide=AutoFacing.autoConnect(te, functionalSide);
 
         //TODO side
         //TODO ((TileStandardSEMachine) te).setFacing(functionalSide.getOpposite());
