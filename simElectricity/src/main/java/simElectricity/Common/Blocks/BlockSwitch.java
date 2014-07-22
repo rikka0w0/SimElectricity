@@ -96,11 +96,11 @@ public class BlockSwitch extends BlockContainerSE {
         te.setFacing(Util.getPlayerSight(player).getOpposite());
         te.inputSide = ForgeDirection.UP;
 
-        AutoFacing.autoConnect(te, te.inputSide);
+        te.inputSide = AutoFacing.autoConnect(te, te.inputSide);
 
         te.outputSide = ForgeDirection.DOWN;
 
-        AutoFacing.autoConnect(te, te.outputSide, te.inputSide);
+        te.outputSide = AutoFacing.autoConnect(te, te.outputSide, te.inputSide);
     }
 
     @Override
