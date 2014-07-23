@@ -139,7 +139,7 @@ public class TileSwitch extends TileEntity implements IManualJunction, IConnecta
 			return 0;
 		
 		TileEntity neighbor;
-		for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS){
+		for (ForgeDirection dir : new ForgeDirection[]{inputSide,outputSide}){
 			neighbor = Util.getTileEntityonDirection(this, dir);
 			if (neighbor instanceof IConductor){
 				return 2F * Math.abs((Energy.getVoltage((IConductor)neighbor)-(Energy.getVoltage(this))) /
