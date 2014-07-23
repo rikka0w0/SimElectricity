@@ -11,7 +11,7 @@ import simElectricity.API.EnergyTile.IManualJunction;
 
 import java.util.List;
 
-public class TileSwitch extends TileEntity implements IManualJunction, IConnectable, ISyncPacketHandler, ISidedFacing, IUpdateOnWatch {
+public class TileSwitch extends TileEntity implements IManualJunction, IConnectable, ISyncPacketHandler, ISidedFacing, IUpdateOnWatch, IEnergyNetUpdateHandler {
     protected boolean isAddedToEnergyNet = false;
 
     public ForgeDirection inputSide = ForgeDirection.NORTH, outputSide = ForgeDirection.SOUTH, facing = ForgeDirection.WEST;
@@ -70,6 +70,8 @@ public class TileSwitch extends TileEntity implements IManualJunction, IConnecta
             Util.scheduleBlockUpdate(this);
         } else if (field.contains("resistance")) {
             Energy.postTileChangeEvent(this);
+        } else if (field.contains("maxCurrent")) {
+        	onEnergyNetUpdate();
         }
     }
 
@@ -122,4 +124,25 @@ public class TileSwitch extends TileEntity implements IManualJunction, IConnecta
     public void onWatch() {
         Util.scheduleBlockUpdate(this);
     }
+
+	@Override
+	public void onEnergyNetUpdate() {
+		if (getCurrent() > maxCurrent){
+			isOn = false;
+            Energy.postTileRejoinEvent(this);
+            Util.scheduleBlockUpdate(this);
+		}
+	}
+	
+	private float getCurrent(){
+		TileEntity neighbor;
+		for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS){
+			neighbor = Util.getTileEntityonDirection(this, dir);
+			if (neighbor instanceof IConductor){
+				return 2F * Math.abs((Energy.getVoltage((IConductor)neighbor)-(Energy.getVoltage(this))) /
+						            (((IConductor)neighbor).getResistance()+this.getResistance()));
+			}
+		}		
+		return 0;
+	}
 }

@@ -27,7 +27,7 @@ public abstract class TileInventoryMachine extends TileEntity implements ISidedI
      */
     @Override
     public int[] getAccessibleSlotsFromSide(int side) {
-        return null;
+        return new int[] {};
     }
 
     /**
