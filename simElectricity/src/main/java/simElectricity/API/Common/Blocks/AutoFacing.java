@@ -15,7 +15,7 @@ public class AutoFacing {
      * @return valid conductor direction. If there is no conductor nearby, return default direction.
      */
     public static ForgeDirection autoConnect(TileEntity tileEntity, ForgeDirection defaultDirection) {
-        return autoConnect(tileEntity, defaultDirection, null);
+        return autoConnect(tileEntity, defaultDirection, new ForgeDirection[] {});
     }
 
     /**
@@ -30,14 +30,7 @@ public class AutoFacing {
      * @see simElectricity.Common.Blocks.BlockSwitch
      */
     public static ForgeDirection autoConnect(TileEntity tileEntity, ForgeDirection defaultDirection, ForgeDirection exception) {
-        for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
-            if (tileEntity.getWorldObj().getTileEntity(tileEntity.xCoord + direction.offsetX,
-                    tileEntity.yCoord + direction.offsetY,
-                    tileEntity.zCoord + direction.offsetZ) instanceof IConductor
-                    && exception != direction)
-                return direction;
-        }
-        return defaultDirection;
+        return autoConnect(tileEntity,defaultDirection,new ForgeDirection[] {exception});
     }
 
     /**
@@ -49,7 +42,7 @@ public class AutoFacing {
      *
      * @return valid conductor direction. If there is no conductor nearby, return default direction.
      */
-    public static ForgeDirection autoConnectWithExceptionArray(TileEntity tileEntity, ForgeDirection defaultDirection, ForgeDirection[] exceptions) {
+    public static ForgeDirection autoConnect(TileEntity tileEntity, ForgeDirection defaultDirection, ForgeDirection[] exceptions) {
         for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
             if (tileEntity.getWorldObj().getTileEntity(tileEntity.xCoord + direction.offsetX,
                     tileEntity.yCoord + direction.offsetY,

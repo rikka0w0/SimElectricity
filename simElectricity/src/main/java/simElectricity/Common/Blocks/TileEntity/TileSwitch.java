@@ -135,6 +135,9 @@ public class TileSwitch extends TileEntity implements IManualJunction, IConnecta
 	}
 	
 	private float getCurrent(){
+		if (!isOn)
+			return 0;
+		
 		TileEntity neighbor;
 		for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS){
 			neighbor = Util.getTileEntityonDirection(this, dir);
