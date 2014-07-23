@@ -130,7 +130,7 @@ public class TileSwitch extends TileEntity implements IManualJunction, IConnecta
 		if (getCurrent() > maxCurrent){
 			isOn = false;
             Energy.postTileRejoinEvent(this);
-            Util.scheduleBlockUpdate(this);
+            Util.updateTileEntityField(this, "isOn");
 		}
 	}
 	

@@ -165,7 +165,7 @@ public class GuiSwitch extends GuiContainer {
 
         fontRendererObj.drawString(StatCollector.translateToLocal("tile.sime:Switch.name"), 8, 6, 4210752);
 
-        fontRendererObj.drawString("Imax =" + String.format("%.2f", te.maxCurrent) + " A", 8, 26, 4210752);
+        fontRendererObj.drawString("Imax = " + String.format("%.1f", te.maxCurrent) + " A", 8, 26, 4210752);
 
         fontRendererObj.drawString("Ron = " + String.format("%.3f", te.resistance) + " \u03a9", 8, 42, 4210752);
 

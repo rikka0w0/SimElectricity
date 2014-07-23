@@ -61,7 +61,7 @@ public class GuiQuantumGenerator extends GuiContainer {
             }
 
             if (tileentity.outputVoltage < 0)
-                tileentity.outputVoltage = 0;
+                tileentity.outputVoltage = 0.1F;
             if (tileentity.outputVoltage > 10000)
                 tileentity.outputVoltage = 10000;
             Util.updateTileEntityFieldToServer(tileentity, "outputVoltage");
@@ -95,7 +95,7 @@ public class GuiQuantumGenerator extends GuiContainer {
             }
 
             if (tileentity.outputResistance < 0)
-                tileentity.outputResistance = 0;
+                tileentity.outputResistance = 0.001F;
             if (tileentity.outputResistance > 100)
                 tileentity.outputResistance = 100;
             Util.updateTileEntityFieldToServer(tileentity, "outputResistance");
@@ -119,7 +119,7 @@ public class GuiQuantumGenerator extends GuiContainer {
         fontRendererObj.drawString(StatCollector.translateToLocal("tile.sime:QuantumGenerator.name"), 8, 6, 4210752);
 
         fontRendererObj.drawString(String.format("%.1f", tileentity.outputVoltage) + " V", 30, 46, 4210752);
-        fontRendererObj.drawString(String.format("%.2f", tileentity.outputResistance) + " \u03a9", 30, 24, 4210752);
+        fontRendererObj.drawString(String.format("%.3f", tileentity.outputResistance) + " \u03a9", 30, 24, 4210752);
 
         //draws "Inventory" or your regional equivalent
         fontRendererObj.drawString(StatCollector.translateToLocal("container.inventory"), 8, ySize - 96, 4210752);
