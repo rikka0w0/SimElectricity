@@ -1,10 +1,13 @@
 package simElectricity.Common.Core;
 
+import cpw.mods.fml.common.registry.GameRegistry;
+import simElectricity.API.Util;
 import simElectricity.Common.Items.ItemFan;
 import simElectricity.Common.Items.ItemGlove;
 import simElectricity.Common.Items.ItemUltimateMultimeter;
 import simElectricity.Common.Items.ItemWrench;
 
+@GameRegistry.ObjectHolder(Util.MODID)
 public class SEItems {
 
     public static ItemFan fan;

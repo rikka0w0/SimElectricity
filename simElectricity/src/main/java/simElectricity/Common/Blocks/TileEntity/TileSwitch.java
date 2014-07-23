@@ -71,7 +71,7 @@ public class TileSwitch extends TileEntity implements IManualJunction, IConnecta
         } else if (field.contains("resistance")) {
             Energy.postTileChangeEvent(this);
         } else if (field.contains("maxCurrent")) {
-        	onEnergyNetUpdate();
+            onEnergyNetUpdate();
         }
     }
 
@@ -125,27 +125,27 @@ public class TileSwitch extends TileEntity implements IManualJunction, IConnecta
         Util.scheduleBlockUpdate(this);
     }
 
-	@Override
-	public void onEnergyNetUpdate() {
-		if (getCurrent() > maxCurrent){
-			isOn = false;
+    @Override
+    public void onEnergyNetUpdate() {
+        if (getCurrent() > maxCurrent) {
+            isOn = false;
             Energy.postTileRejoinEvent(this);
             Util.updateTileEntityField(this, "isOn");
-		}
-	}
-	
-	private float getCurrent(){
-		if (!isOn)
-			return 0;
-		
-		TileEntity neighbor;
-		for (ForgeDirection dir : new ForgeDirection[]{inputSide,outputSide}){
-			neighbor = Util.getTileEntityonDirection(this, dir);
-			if (neighbor instanceof IConductor){
-				return 2F * Math.abs((Energy.getVoltage((IConductor)neighbor)-(Energy.getVoltage(this))) /
-						            (((IConductor)neighbor).getResistance()+this.getResistance()));
-			}
-		}		
-		return 0;
-	}
+        }
+    }
+
+    private float getCurrent() {
+        if (!isOn)
+            return 0;
+
+        TileEntity neighbor;
+        for (ForgeDirection dir : new ForgeDirection[] { inputSide, outputSide }) {
+            neighbor = Util.getTileEntityonDirection(this, dir);
+            if (neighbor instanceof IConductor) {
+                return 2F * Math.abs((Energy.getVoltage((IConductor) neighbor) - (Energy.getVoltage(this))) /
+                        (((IConductor) neighbor).getResistance() + this.getResistance()));
+            }
+        }
+        return 0;
+    }
 }

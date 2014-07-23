@@ -25,8 +25,11 @@ public class BlockSimpleGenerator extends BlockStandardSEMachine {
     @SideOnly(Side.CLIENT)
     @Override
     public void randomDisplayTick(World world, int x, int y, int z, Random random) {
-        TileSimpleGenerator te = (TileSimpleGenerator) world.getTileEntity(x, y, z);
-        if (te.isWorking) {
+        TileEntity te = world.getTileEntity(x, y, z);
+        if (!(te instanceof TileSimpleGenerator))
+            return;
+
+        if (((TileSimpleGenerator) te).isWorking) {
             double d0 = (x);
             double d1 = (y);
             double d2 = (z);
@@ -35,7 +38,7 @@ public class BlockSimpleGenerator extends BlockStandardSEMachine {
             world.spawnParticle("smoke", d0 + d4 + 0.25F, d1 + d3 + 1F, d2 + 0.5F, 0.0D, 0.0D, 0.0D);
             world.spawnParticle("smoke", d0 + d4 + 0.15F, d1 + d3 + 1F, d2 + 0.5F, 0.0D, 0.0D, 0.0D);
             world.spawnParticle("smoke", d0 + d4 + 0.4F, d1 + d3 + 1F, d2 + 0.6F, 0.0D, 0.0D, 0.0D);
-            switch (te.getFacing()) {
+            switch (((TileSimpleGenerator) te).getFacing()) {
                 case WEST:
                     d0 -= 0.4F;
                     d1 += 0.1F;
@@ -62,7 +65,6 @@ public class BlockSimpleGenerator extends BlockStandardSEMachine {
 
             world.spawnParticle("smoke", d0 + d4, d1 + d3, d2, 0.0D, 0.0D, 0.0D);
             world.spawnParticle("flame", d0 + d4, d1 + d3, d2, 0.0D, 0.0D, 0.0D);
-            world.spawnParticle("reddust", d0 + d3, d1, d2 + d4, 0.0D, 0.0D, 0.0D);
         }
     }
 
@@ -133,6 +135,8 @@ public class BlockSimpleGenerator extends BlockStandardSEMachine {
         Util.updateTileEntityFacing(te);
         Util.updateTileEntityFunctionalSide(te);
         Util.updateTileEntityField(te, "isWorking");
+
+        world.markBlockForUpdate(x, y, z);
     }
 
     @Override
@@ -148,5 +152,13 @@ public class BlockSimpleGenerator extends BlockStandardSEMachine {
     @Override
     public TileEntity createNewTileEntity(World world, int meta) {
         return new TileSimpleGenerator();
+    }
+
+    public int getLightValue(IBlockAccess world, int x, int y, int z) {
+        TileEntity te = world.getTileEntity(x, y, z);
+        if (!(te instanceof TileSimpleGenerator))
+            return 0;
+
+        return ((TileSimpleGenerator) te).isWorking ? 13 : 0;
     }
 }

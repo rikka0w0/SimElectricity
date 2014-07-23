@@ -15,7 +15,7 @@ public class AutoFacing {
      * @return valid conductor direction. If there is no conductor nearby, return default direction.
      */
     public static ForgeDirection autoConnect(TileEntity tileEntity, ForgeDirection defaultDirection) {
-        return autoConnect(tileEntity, defaultDirection, new ForgeDirection[] {});
+        return autoConnect(tileEntity, defaultDirection, new ForgeDirection[] { });
     }
 
     /**
@@ -30,7 +30,7 @@ public class AutoFacing {
      * @see simElectricity.Common.Blocks.BlockSwitch
      */
     public static ForgeDirection autoConnect(TileEntity tileEntity, ForgeDirection defaultDirection, ForgeDirection exception) {
-        return autoConnect(tileEntity,defaultDirection,new ForgeDirection[] {exception});
+        return autoConnect(tileEntity, defaultDirection, new ForgeDirection[] { exception });
     }
 
     /**

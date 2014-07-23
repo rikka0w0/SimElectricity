@@ -88,6 +88,52 @@ public class BlockElectricFurnace extends BlockStandardSEMachine {
         world.markBlockForUpdate(x, y, z);
     }
 
+    @SideOnly(Side.CLIENT)
+    @Override
+    public void randomDisplayTick(World world, int x, int y, int z, Random random) {
+        TileEntity te = world.getTileEntity(x, y, z);
+        if (!(te instanceof TileElectricFurnace))
+            return;
+
+        if (((TileElectricFurnace) te).isWorking) {
+            double d0 = (x);
+            double d1 = (y);
+            double d2 = (z);
+            double d3 = 0.2199999988079071D;
+            double d4 = 0.27000001072883606D;
+            world.spawnParticle("smoke", d0 + d4 + 0.25F, d1 + d3 + 1F, d2 + 0.5F, 0.0D, 0.0D, 0.0D);
+            world.spawnParticle("smoke", d0 + d4 + 0.15F, d1 + d3 + 1F, d2 + 0.5F, 0.0D, 0.0D, 0.0D);
+            world.spawnParticle("smoke", d0 + d4 + 0.4F, d1 + d3 + 1F, d2 + 0.6F, 0.0D, 0.0D, 0.0D);
+            switch (((TileElectricFurnace) te).getFacing()) {
+                case WEST:
+                    d0 -= 0.4F;
+                    d1 += 0.1F;
+                    d2 += 0.5F;
+                    break;
+                case SOUTH:
+                    d0 += 0.25F;
+                    d1 += 0.1F;
+                    d2 += 1.1F;
+                    break;
+                case NORTH:
+                    d0 += 0.25F;
+                    d1 += 0.1F;
+                    d2 -= 0.1F;
+                    break;
+                case EAST:
+                    d0 += 0.8F;
+                    d1 += 0.1F;
+                    d2 += 0.5F;
+                    break;
+                default:
+                    break;
+            }
+
+            world.spawnParticle("smoke", d0 + d4, d1 + d3, d2, 0.0D, 0.0D, 0.0D);
+            world.spawnParticle("flame", d0 + d4, d1 + d3, d2, 0.0D, 0.0D, 0.0D);
+        }
+    }
+
     @Override
     public void onNeighborBlockChange(World world, int x, int y, int z, Block block) {
         if (world.isRemote)
