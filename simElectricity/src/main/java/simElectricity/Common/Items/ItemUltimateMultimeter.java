@@ -79,9 +79,9 @@ public class ItemUltimateMultimeter extends ItemSE {
             if (te instanceof IConductor) {
                 tileType = "Energy Conductor";
             }
-            
+
             if (te instanceof IManualJunction) {
-                tileType = "Manual Junction";            	
+                tileType = "Manual Junction";
             }
 
             //Print out information here

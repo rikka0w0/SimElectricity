@@ -83,4 +83,8 @@ public class TileWire extends TileEntity implements IConductor {
     public float getResistance() {
         return resistance;
     }
+
+    public boolean isConnected(ForgeDirection direction) {
+        return direction.ordinal() < 6 && direction.ordinal() >= 0 && renderSides[direction.ordinal()];
+    }
 }
