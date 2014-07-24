@@ -3,9 +3,11 @@ package simElectricity.Common.EnergyNet;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
+
 import org.jgrapht.Graphs;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleGraph;
+
 import simElectricity.API.EnergyTile.*;
 import simElectricity.API.EnergyTile.ITransformer.ITransformerWinding;
 import simElectricity.API.IEnergyNetUpdateHandler;
@@ -284,73 +286,48 @@ public final class EnergyNet {
     /**
      * Add a TileEntity to the energynet
      */
-    public void addTileEntity(TileEntity te) {
-        if (te instanceof IComplexTile) {      //IComplexTile
-            IComplexTile ct = ((IComplexTile) te);
+	public void addTileEntity(TileEntity te) {
+		Map<IBaseComponent, IBaseComponent> neighborMap = new HashMap<IBaseComponent, IBaseComponent>();
 
-            ICircuitComponent SubComponent;
-            TileEntity neighbor;
+		if (te instanceof IComplexTile) { // IComplexTile
+			for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
+				ICircuitComponent subComponent = ((IComplexTile) te).getCircuitComponent(direction);
+				if (subComponent instanceof IBaseComponent) {
+					TileEntity neighbor = Util.getTileEntityonDirection(te, direction);
+					if (neighbor instanceof IConductor)  // Connected properly
+						neighborMap.put((IBaseComponent) neighbor, subComponent);
+				}
+			}
 
-            for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
-                SubComponent = ct.getCircuitComponent(direction);
+		} else if (te instanceof ITransformer) { // Transformer
+			ITransformer transformer = ((ITransformer) te);
+			ITransformerWinding primary = ((ITransformer) te).getPrimary();
+			ITransformerWinding secondary = ((ITransformer) te).getSecondary();
 
-                if (SubComponent instanceof IBaseComponent) {
-                    if (!tileEntityGraph.containsVertex(SubComponent))    //If the subComponent haven't been added, add it!
-                        tileEntityGraph.addVertex(SubComponent);
+			TileEntity neighbor;
 
-                    neighbor = Util.getTileEntityonDirection(te, direction);
+			neighbor = Util.getTileEntityonDirection(te, transformer.getPrimarySide());
+			if (neighbor instanceof IConductor)
+				neighborMap.put((IBaseComponent) neighbor, primary);
 
-                    if (neighbor instanceof IConductor) {                //Connected properly
-                        if (!tileEntityGraph.containsVertex((IConductor) neighbor))
-                            tileEntityGraph.addVertex((IConductor) neighbor);
-                        tileEntityGraph.addEdge(SubComponent, (IConductor) neighbor); //Add association
-                    }
-                }
-            }
+			neighbor = Util.getTileEntityonDirection(te, transformer.getSecondarySide());
+			if (neighbor instanceof IConductor)
+				neighborMap.put((IBaseComponent) neighbor, secondary);
 
-        } else if (te instanceof ITransformer) {         //Transformer
-            ITransformer transformer = ((ITransformer) te);
-            ITransformerWinding primary = ((ITransformer) te).getPrimary();
-            ITransformerWinding secondary = ((ITransformer) te).getSecondary();
+		} else { // IBaseComponent and IConductor
+			List<IBaseComponent> neighborList = neighborListOf(te);
+			for (IBaseComponent neighbor : neighborList)
+				neighborMap.put(neighbor, (IBaseComponent) te);
+		}
 
-            TileEntity neighbor;
+		for (IBaseComponent neighbor : neighborMap.keySet()) {
+			tileEntityGraph.addVertex(neighbor);
+			tileEntityGraph.addVertex(neighborMap.get(neighbor));
+			tileEntityGraph.addEdge(neighbor, neighborMap.get(neighbor));
+		}
 
-            //Add primary
-            if (!tileEntityGraph.containsVertex(primary))
-                tileEntityGraph.addVertex(primary);
-
-            neighbor = Util.getTileEntityonDirection(te, transformer.getPrimarySide());
-            if (neighbor instanceof IConductor) {
-                if (!tileEntityGraph.containsVertex((IBaseComponent) neighbor))
-                    tileEntityGraph.addVertex((IBaseComponent) neighbor);
-                tileEntityGraph.addEdge(primary, (IBaseComponent) neighbor);
-            }
-
-            //Add secondary
-            if (!tileEntityGraph.containsVertex(secondary))
-                tileEntityGraph.addVertex(secondary);
-
-            neighbor = Util.getTileEntityonDirection(te, transformer.getSecondarySide());
-            if (neighbor instanceof IConductor) {
-                if (!tileEntityGraph.containsVertex((IBaseComponent) neighbor))
-                    tileEntityGraph.addVertex((IBaseComponent) neighbor);
-                tileEntityGraph.addEdge(secondary, (IBaseComponent) neighbor);
-            }
-
-        } else {  //IBaseComponent and IConductor
-            List<IBaseComponent> neighborList = neighborListOf(te);
-
-            if (!tileEntityGraph.containsVertex((IBaseComponent) te))
-                tileEntityGraph.addVertex((IBaseComponent) te);
-
-            for (IBaseComponent tileEntity : neighborList) {
-                if (!tileEntityGraph.containsVertex(tileEntity))
-                    tileEntityGraph.addVertex(tileEntity);
-                tileEntityGraph.addEdge((IBaseComponent) te, tileEntity);
-            }
-        }
-        calc = true;
-    }
+		calc = true;
+	}
 
     /**
      * Remove a TileEntity from the energy net
