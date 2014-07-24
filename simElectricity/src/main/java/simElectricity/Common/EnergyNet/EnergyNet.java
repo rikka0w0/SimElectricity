@@ -3,11 +3,9 @@ package simElectricity.Common.EnergyNet;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
-
 import org.jgrapht.Graphs;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleGraph;
-
 import simElectricity.API.EnergyTile.*;
 import simElectricity.API.EnergyTile.ITransformer.ITransformerWinding;
 import simElectricity.API.IEnergyNetUpdateHandler;
@@ -133,18 +131,18 @@ public final class EnergyNet {
                         //Add neighbor resistance
                         for (IBaseComponent neighbor : neighborList) {
                             if (neighbor instanceof IConductor || neighbor instanceof IManualJunction) {
-                                cellData += 1.0D / (getResistance(currentRowComponent,neighbor) + getResistance(neighbor,currentRowComponent));  // IConductor next to IConductor
+                                cellData += 1.0D / (getResistance(currentRowComponent, neighbor) + getResistance(neighbor, currentRowComponent));  // IConductor next to IConductor
                             } else {
-                                cellData += 1.0D / getResistance(currentRowComponent,neighbor);                              // IConductor next to other components
+                                cellData += 1.0D / getResistance(currentRowComponent, neighbor);                              // IConductor next to other components
                             }
                         }
                     } else {
                         IBaseComponent currentColumnComponent = unknownVoltageNodes.get(columnIndex);
                         if (neighborList.contains(currentColumnComponent)) {
                             if (currentColumnComponent instanceof IConductor || currentColumnComponent instanceof IManualJunction) {
-                                cellData = -1.0D / (getResistance(currentRowComponent,currentColumnComponent) + getResistance(currentColumnComponent,currentRowComponent));
+                                cellData = -1.0D / (getResistance(currentRowComponent, currentColumnComponent) + getResistance(currentColumnComponent, currentRowComponent));
                             } else {
-                                cellData = -1.0D / getResistance(currentRowComponent,currentColumnComponent);
+                                cellData = -1.0D / getResistance(currentRowComponent, currentColumnComponent);
                             }
                         }
 
@@ -207,19 +205,19 @@ public final class EnergyNet {
             voltageCache.put(unknownVoltageNodes.get(i), x[i]);
         }
     }
-    
-    public double getResistance(IBaseComponent node, IBaseComponent neighbor){
-    	if (node instanceof IConductor){            //IConductor
-    		return node.getResistance() / 2D;
-    	}else if (node instanceof IManualJunction){ //IManualJunction
-    		if (node.getResistance() == 0){
-    			return ((IManualJunction)node).getResistance(neighbor);
-    		}else{
-    			return node.getResistance() / 2D; 
-    		}
-    	}else{
-    		return 0;
-    	}
+
+    public double getResistance(IBaseComponent node, IBaseComponent neighbor) {
+        if (node instanceof IConductor) {            //IConductor
+            return node.getResistance() / 2D;
+        } else if (node instanceof IManualJunction) { //IManualJunction
+            if (node.getResistance() == 0) {
+                return ((IManualJunction) node).getResistance(neighbor);
+            } else {
+                return node.getResistance() / 2D;
+            }
+        } else {
+            return 0;
+        }
     }
     
     /*End of Simulator*/
@@ -301,48 +299,48 @@ public final class EnergyNet {
     /**
      * Add a TileEntity to the energynet
      */
-	public void addTileEntity(TileEntity te) {
-		Map<IBaseComponent, IBaseComponent> neighborMap = new HashMap<IBaseComponent, IBaseComponent>();
+    public void addTileEntity(TileEntity te) {
+        Map<IBaseComponent, IBaseComponent> neighborMap = new HashMap<IBaseComponent, IBaseComponent>();
 
-		if (te instanceof IComplexTile) { // IComplexTile
-			for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
-				ICircuitComponent subComponent = ((IComplexTile) te).getCircuitComponent(direction);
-				if (subComponent instanceof IBaseComponent) {
-					TileEntity neighbor = Util.getTileEntityonDirection(te, direction);
-					if (neighbor instanceof IConductor)  // Connected properly
-						neighborMap.put((IBaseComponent) neighbor, subComponent);
-				}
-			}
+        if (te instanceof IComplexTile) { // IComplexTile
+            for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
+                ICircuitComponent subComponent = ((IComplexTile) te).getCircuitComponent(direction);
+                if (subComponent instanceof IBaseComponent) {
+                    TileEntity neighbor = Util.getTileEntityonDirection(te, direction);
+                    if (neighbor instanceof IConductor)  // Connected properly
+                        neighborMap.put((IBaseComponent) neighbor, subComponent);
+                }
+            }
 
-		} else if (te instanceof ITransformer) { // Transformer
-			ITransformer transformer = ((ITransformer) te);
-			ITransformerWinding primary = ((ITransformer) te).getPrimary();
-			ITransformerWinding secondary = ((ITransformer) te).getSecondary();
+        } else if (te instanceof ITransformer) { // Transformer
+            ITransformer transformer = ((ITransformer) te);
+            ITransformerWinding primary = ((ITransformer) te).getPrimary();
+            ITransformerWinding secondary = ((ITransformer) te).getSecondary();
 
-			TileEntity neighbor;
+            TileEntity neighbor;
 
-			neighbor = Util.getTileEntityonDirection(te, transformer.getPrimarySide());
-			if (neighbor instanceof IConductor)
-				neighborMap.put((IBaseComponent) neighbor, primary);
+            neighbor = Util.getTileEntityonDirection(te, transformer.getPrimarySide());
+            if (neighbor instanceof IConductor)
+                neighborMap.put((IBaseComponent) neighbor, primary);
 
-			neighbor = Util.getTileEntityonDirection(te, transformer.getSecondarySide());
-			if (neighbor instanceof IConductor)
-				neighborMap.put((IBaseComponent) neighbor, secondary);
+            neighbor = Util.getTileEntityonDirection(te, transformer.getSecondarySide());
+            if (neighbor instanceof IConductor)
+                neighborMap.put((IBaseComponent) neighbor, secondary);
 
-		} else { // IBaseComponent and IConductor
-			List<IBaseComponent> neighborList = neighborListOf(te);
-			for (IBaseComponent neighbor : neighborList)
-				neighborMap.put(neighbor, (IBaseComponent) te);
-		}
+        } else { // IBaseComponent and IConductor
+            List<IBaseComponent> neighborList = neighborListOf(te);
+            for (IBaseComponent neighbor : neighborList)
+                neighborMap.put(neighbor, (IBaseComponent) te);
+        }
 
-		for (IBaseComponent neighbor : neighborMap.keySet()) {
-			tileEntityGraph.addVertex(neighbor);
-			tileEntityGraph.addVertex(neighborMap.get(neighbor));
-			tileEntityGraph.addEdge(neighbor, neighborMap.get(neighbor));
-		}
+        for (IBaseComponent neighbor : neighborMap.keySet()) {
+            tileEntityGraph.addVertex(neighbor);
+            tileEntityGraph.addVertex(neighborMap.get(neighbor));
+            tileEntityGraph.addEdge(neighbor, neighborMap.get(neighbor));
+        }
 
-		calc = true;
-	}
+        calc = true;
+    }
 
     /**
      * Remove a TileEntity from the energy net

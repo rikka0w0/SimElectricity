@@ -4,11 +4,11 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 /**
  * This interface can represent a energy source or a energy sink
- * 
+ * <p/>
  * e.g. a generator or a machine should implement this interface!
- * 
+ * <p/>
  * See ICircuitComponent for information about getOutputVoltage();
- * */
+ */
 public interface IEnergyTile extends ICircuitComponent {
     /**
      * Return a side that is designed to interact with energyNet

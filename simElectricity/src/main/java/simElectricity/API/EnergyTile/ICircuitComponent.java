@@ -2,10 +2,10 @@ package simElectricity.API.EnergyTile;
 
 /**
  * This represents a circuit component in the simulation.
- * 
+ * <p/>
  * Can be a source or sink, determined by getOutputVoltage();
  * Another important function is getResistance(), it can represent the resistance of a load or the internal resistance of a generator
- * 
+ * <p/>
  * Usually, this interface should NOT implemented by a tileEntity, this interface can just represents subComponents of a IComplexTile TileEntity
  * A normal machine or generator should implements IEnergyTile, see IEnergyTile for further information.
  */
