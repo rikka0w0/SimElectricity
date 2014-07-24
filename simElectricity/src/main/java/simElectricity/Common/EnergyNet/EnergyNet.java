@@ -133,18 +133,18 @@ public final class EnergyNet {
                         //Add neighbor resistance
                         for (IBaseComponent neighbor : neighborList) {
                             if (neighbor instanceof IConductor || neighbor instanceof IManualJunction) {
-                                cellData += 2.0D / (currentRowComponent.getResistance() + neighbor.getResistance());  // IConductor next to IConductor
+                                cellData += 1.0D / (getResistance(currentRowComponent,neighbor) + getResistance(neighbor,currentRowComponent));  // IConductor next to IConductor
                             } else {
-                                cellData += 2.0D / currentRowComponent.getResistance();                              // IConductor next to other components
+                                cellData += 1.0D / getResistance(currentRowComponent,neighbor);                              // IConductor next to other components
                             }
                         }
                     } else {
                         IBaseComponent currentColumnComponent = unknownVoltageNodes.get(columnIndex);
                         if (neighborList.contains(currentColumnComponent)) {
                             if (currentColumnComponent instanceof IConductor || currentColumnComponent instanceof IManualJunction) {
-                                cellData = -2.0D / (currentRowComponent.getResistance() + currentColumnComponent.getResistance());
+                                cellData = -1.0D / (getResistance(currentRowComponent,currentColumnComponent) + getResistance(currentColumnComponent,currentRowComponent));
                             } else {
-                                cellData = -2.0D / currentRowComponent.getResistance();
+                                cellData = -1.0D / getResistance(currentRowComponent,currentColumnComponent);
                             }
                         }
 
@@ -207,6 +207,21 @@ public final class EnergyNet {
             voltageCache.put(unknownVoltageNodes.get(i), x[i]);
         }
     }
+    
+    public double getResistance(IBaseComponent node, IBaseComponent neighbor){
+    	if (node instanceof IConductor){            //IConductor
+    		return node.getResistance() / 2D;
+    	}else if (node instanceof IManualJunction){ //IManualJunction
+    		if (node.getResistance() == 0){
+    			return ((IManualJunction)node).getResistance(neighbor);
+    		}else{
+    			return node.getResistance() / 2D; 
+    		}
+    	}else{
+    		return 0;
+    	}
+    }
+    
     /*End of Simulator*/
 
 

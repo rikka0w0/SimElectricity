@@ -4,10 +4,18 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 /**
  * This interface represents a transformer
+ * 
+ * See wiki for details of the model of transformer, to enhance the understanding 0w0
  */
 public interface ITransformer {
+    /**
+     * Return the facing of the primary
+     */
     ForgeDirection getPrimarySide();
 
+    /**
+     * Return the facing of the secondary
+     */
     ForgeDirection getSecondarySide();
 
     /**

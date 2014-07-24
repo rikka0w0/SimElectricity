@@ -1,14 +1,6 @@
 package simElectricity.API.EnergyTile;
 
-public interface IConductor extends IBaseComponent {
-    /**
-     * Return the maximum voltage the insulation layer can stand, 0 for no insulator
-     * when there's no insulator, the wire will shock creatures near it
-     */
-    //int getInsulationBreakdownVoltage();
-
-    /**
-     * Do burn up the insulator here
-     */
-    //void onInsulationBreakdown();
-}
+/**
+ * A wire should implements this interface, the getResistance() should return the resistance(Ohm) of a block of wire, see SimElectricity for more information
+ * */
+public interface IConductor extends IBaseComponent {}

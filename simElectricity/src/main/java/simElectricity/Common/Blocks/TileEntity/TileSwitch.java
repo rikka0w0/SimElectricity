@@ -148,4 +148,9 @@ public class TileSwitch extends TileEntity implements IManualJunction, IConnecta
         }
         return 0;
     }
+
+	@Override
+	public float getResistance(IBaseComponent neighbor) {
+		return 0;
+	}
 }
