@@ -7,7 +7,8 @@ import net.minecraftforge.common.util.ForgeDirection;
  * <p/>
  * e.g. a generator or a machine should implement this interface!
  * <p/>
- * See ICircuitComponent for information about getOutputVoltage();
+ * See {@link simElectricity.API.EnergyTile.ICircuitComponent} for information about
+ * {@link simElectricity.API.EnergyTile.ICircuitComponent#getOutputVoltage() getOutputVoltage()};
  */
 public interface IEnergyTile extends ICircuitComponent {
     /**

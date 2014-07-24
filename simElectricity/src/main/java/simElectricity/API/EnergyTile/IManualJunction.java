@@ -4,7 +4,9 @@ import java.util.List;
 
 /**
  * This interface can represent a manual junction, should be implemented by a tileEntity
- * (A little bit hard to explain clearly in few words, so see simElectricity wiki for more information)
+ * (A little bit hard to explain clearly in few words, so see
+ * <a href="https://github.com/RoyalAliceAcademyOfSciences/SimElectricity/wiki">SimElectricity wiki</a>
+ * for more information)
  */
 public interface IManualJunction extends IBaseComponent {
     /**
@@ -15,9 +17,9 @@ public interface IManualJunction extends IBaseComponent {
 
 
     /**
-     * A advanced version of getResistance() in IBaseComponent
+     * A advanced version of {@link simElectricity.API.EnergyTile.IBaseComponent#getResistance() getResistance()} in {@link simElectricity.API.EnergyTile.IBaseComponent}
      * <p/>
-     * Return 0 in getResistance() of IBaseComponent to make this function valid
+     * Return 0 in {@link simElectricity.API.EnergyTile.IBaseComponent#getResistance() getResistance()} in {@link simElectricity.API.EnergyTile.IBaseComponent} to make this function valid
      * <p/>
      * Should return the resistance between this tileEntity and the neighbor
      */

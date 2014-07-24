@@ -63,7 +63,7 @@ public class Util {
     // Util
 
     /**
-     * Post some text in chat box(Other player cannot see it)
+     * Post some text in chat box. (Other player cannot see it)
      */
     public static void chat(EntityPlayer player, String text) {
         player.addChatMessage(new ChatComponentText(text));
@@ -174,9 +174,7 @@ public class Util {
     }
 
     /**
-     * Get a ForgeDirection from a byte, used in network packets
-     *
-     * @see net.minecraftforge.common.util.ForgeDirection
+     * Get a {@link net.minecraftforge.common.util.ForgeDirection} from a byte, used in network packets
      */
     public static ForgeDirection byte2Direction(byte byteData) {
         switch (byteData) {
@@ -198,9 +196,7 @@ public class Util {
     }
 
     /**
-     * Convert a ForgeDirection to a byte, used in network packets
-     *
-     * @see net.minecraftforge.common.util.ForgeDirection
+     * Convert a {@link net.minecraftforge.common.util.ForgeDirection} to a byte, used in network packets
      */
     public static byte direction2Byte(ForgeDirection direction) {
         switch (direction) {

@@ -41,11 +41,11 @@ public interface ITransformer {
 
     /**
      * This class represents the primary of a transformer
+     * <p/>
+     * You can Override this class when necessary!
      */
     public static class Primary implements ITransformerWinding {
-        /**
-         * You can Override this class when necessary!
-         */
+        
         private ITransformer core;
 
         public Primary(ITransformer core) {

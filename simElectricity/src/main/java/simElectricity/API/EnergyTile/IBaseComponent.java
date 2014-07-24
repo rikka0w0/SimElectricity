@@ -3,9 +3,10 @@ package simElectricity.API.EnergyTile;
 /**
  * This interface is the base of components that participate in the simulation of energyNet,
  * but a normal simElectricity machine should not implement this interface >_<
- * See ICircuitComponent,IEnergyTile and IConductor for more information
+ * See {@link simElectricity.API.EnergyTile.ICircuitComponent}, {@link simElectricity.API.EnergyTile.IEnergyTile} and {@link simElectricity.API.EnergyTile.IConductor} for more information
  * <p/>
- * Detailed instruction is available on the wiki of simElectricity
+ * Detailed instruction is available on
+ * <a href="https://github.com/RoyalAliceAcademyOfSciences/SimElectricity/wiki">the wiki of simElectricity</a>
  */
 public interface IBaseComponent {
     /**
@@ -14,7 +15,7 @@ public interface IBaseComponent {
      * the internal resistance of the battery of the energy sink.
      * <p/>
      * NEVER return 0 (0 will crash the EnergyNet!),
-     * but for IManualJunction, 0 is allowed and mean something else, see IManualJunction for further details
+     * but for {@link simElectricity.API.EnergyTile.IManualJunction}, 0 is allowed and mean something else, see {@link simElectricity.API.EnergyTile.IManualJunction} for further details
      * <p/>
      * Tips:
      * For a energy sink, the smaller resistance it has, the more energy it will consume.

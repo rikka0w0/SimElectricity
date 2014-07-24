@@ -19,46 +19,36 @@ import simElectricity.Common.EnergyNet.EnergyNet;
 public class Energy {
 
     /**
-     * Post a TileAttachEvent for a tileEntity
-     *
-     * @see simElectricity.API.Events.TileAttachEvent
+     * Post a {@link simElectricity.API.Events.TileAttachEvent} for a tileEntity
      */
     public static void postTileAttachEvent(TileEntity te) {
         MinecraftForge.EVENT_BUS.post(new TileAttachEvent(te));
     }
 
     /**
-     * Post a TileChangeEvent for a tileEntity
-     *
-     * @see simElectricity.API.Events.TileChangeEvent
+     * Post a {@link simElectricity.API.Events.TileChangeEvent} for a tileEntity
      */
     public static void postTileChangeEvent(TileEntity te) {
         MinecraftForge.EVENT_BUS.post(new TileChangeEvent(te));
     }
 
     /**
-     * Post a TileDetachEvent for a tileEntity
-     *
-     * @see simElectricity.API.Events.TileDetachEvent
+     * Post a {@link simElectricity.API.Events.TileDetachEvent} for a tileEntity
      */
     public static void postTileDetachEvent(TileEntity te) {
         MinecraftForge.EVENT_BUS.post(new TileDetachEvent(te));
     }
 
     /**
-     * Post a TileRejoinEvent for a tileEntity
-     *
-     * @see simElectricity.API.Events.TileRejoinEvent
+     * Post a {@link simElectricity.API.Events.TileRejoinEvent} for a tileEntity
      */
     public static void postTileRejoinEvent(TileEntity te) {
         MinecraftForge.EVENT_BUS.post(new TileRejoinEvent(te));
     }
 
     /**
-     * Calculate the energy output from a IEnergyTile in one tick (1/20 second)
-     * For IEnergyTile Only!
-     *
-     * @see simElectricity.API.EnergyTile.IEnergyTile
+     * Calculate the energy output from a {@link simElectricity.API.EnergyTile.IEnergyTile} in one tick (1/20 second)
+     * For {@link simElectricity.API.EnergyTile.IEnergyTile} Only!
      */
     public static float getWorkDonePerTick(IEnergyTile Tile) {
         return getWorkDonePerTick(Tile, ((TileEntity) Tile).getWorldObj());
@@ -66,10 +56,7 @@ public class Energy {
 
     /**
      * Calculate the consumed power for a given EnergyTile
-     * For IEnergyTile and IConductor Only!
-     *
-     * @see simElectricity.API.EnergyTile.IEnergyTile
-     * @see simElectricity.API.EnergyTile.IConductor
+     * For {@link simElectricity.API.EnergyTile.IEnergyTile} and {@link simElectricity.API.EnergyTile.IConductor} Only!
      */
     public static float getPower(IEnergyTile Tile) {
         return getPower(Tile, ((TileEntity) Tile).getWorldObj());
@@ -77,10 +64,7 @@ public class Energy {
 
     /**
      * Calculate the input/output for a given EnergyTile
-     * For IEnergyTile and IConductor Only!
-     *
-     * @see simElectricity.API.EnergyTile.IEnergyTile
-     * @see simElectricity.API.EnergyTile.IConductor
+     * For {@link simElectricity.API.EnergyTile.IEnergyTile} and {@link simElectricity.API.EnergyTile.IConductor} Only!
      */
     public static float getCurrent(IEnergyTile Tile) {
         return getCurrent(Tile, ((TileEntity) Tile).getWorldObj());
@@ -88,10 +72,7 @@ public class Energy {
 
     /**
      * Calculate the voltage of a given EnergyTile RELATIVE TO GROUND!
-     * For IEnergyTile and IConductor Only!
-     *
-     * @see simElectricity.API.EnergyTile.IEnergyTile
-     * @see simElectricity.API.EnergyTile.IConductor
+     * For {@link simElectricity.API.EnergyTile.IEnergyTile} and {@link simElectricity.API.EnergyTile.IConductor} Only!
      */
     public static float getVoltage(IBaseComponent Tile) {
         if (Tile instanceof ITransformerWinding) {
@@ -102,9 +83,7 @@ public class Energy {
     }
 
     /**
-     * Calculate the energy output from a IEnergyTile in one tick (1/20 second)
-     *
-     * @see simElectricity.API.EnergyTile.IEnergyTile
+     * Calculate the energy output from a {@link simElectricity.API.EnergyTile.IEnergyTile} in one tick (1/20 second)
      */
     public static float getWorkDonePerTick(ICircuitComponent Tile, World world) {
         if (Tile.getOutputVoltage() > 0) {//Energy Source
