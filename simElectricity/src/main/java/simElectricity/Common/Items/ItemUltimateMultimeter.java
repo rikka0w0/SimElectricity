@@ -79,9 +79,9 @@ public class ItemUltimateMultimeter extends ItemSE {
             if (te instanceof IConductor) {
                 tileType = "Energy Conductor";
             }
-
+            
             if (te instanceof IManualJunction) {
-                tileType = "Manual Junction";
+                tileType = "Manual Junction";            	
             }
 
             //Print out information here
@@ -102,6 +102,9 @@ public class ItemUltimateMultimeter extends ItemSE {
             if (outputVoltage > 0) { //Energy Source
                 Util.chat(player, "Internal voltage: " + String.valueOf(outputVoltage) + "V");
                 Util.chat(player, "Output rate: " + String.valueOf(outputVoltage * Energy.getCurrent((ICircuitComponent) te, tile.getWorldObj())) + "W");
+            }
+            if (te instanceof IConductor){
+            	Util.chat(player, "Color: "+String.valueOf(((IConductor) te).getColor()));
             }
 
             return true;

@@ -15,6 +15,7 @@ public class TileWire extends TileEntity implements IConductor {
     protected boolean isAddedToEnergyNet = false;
     public boolean[] renderSides = new boolean[6];
 
+    public int color = 0;
     public float resistance = 100;
     public float width = 0.1F;
     public String textureString;
@@ -70,6 +71,7 @@ public class TileWire extends TileEntity implements IConductor {
         super.readFromNBT(tagCompound);
 
         resistance = tagCompound.getFloat("resistance");
+        color = tagCompound.getInteger("color");
     }
 
     @Override
@@ -77,14 +79,16 @@ public class TileWire extends TileEntity implements IConductor {
         super.writeToNBT(tagCompound);
 
         tagCompound.setFloat("resistance", resistance);
+        tagCompound.setInteger("color", color);
     }
 
     @Override
     public float getResistance() {
         return resistance;
     }
-
-    public boolean isConnected(ForgeDirection direction) {
-        return direction.ordinal() < 6 && direction.ordinal() >= 0 && renderSides[direction.ordinal()];
+    
+    @Override
+    public int getColor() {
+    	return color;
     }
 }

@@ -260,7 +260,15 @@ public final class EnergyNet {
             for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
                 temp = Util.getTileEntityonDirection(te, direction);
                 if (temp instanceof IConductor) {  //Conductor
-                    result.add((IConductor) temp);
+                	IConductor wire = (IConductor) te;
+                	IConductor neighbor = (IConductor) temp;
+                    
+                	if (wire.getColor() == 0 || 
+                		neighbor.getColor() == 0 ||
+                		wire.getColor() == neighbor.getColor()){
+                		result.add(neighbor);
+                	}
+                	
                 } else if (temp instanceof IEnergyTile) {   //IEnergyTile
                     if (((IEnergyTile) temp).getFunctionalSide() == direction.getOpposite())
                         result.add((IEnergyTile) temp);
@@ -348,18 +356,11 @@ public final class EnergyNet {
      * Remove a TileEntity from the energy net
      */
     public void removeTileEntity(TileEntity te) {
-        if (te instanceof IComplexTile) { //For a complexTile every subComponents has to be removed!
-            ICircuitComponent[] SubComponents = new ICircuitComponent[6];
-            SubComponents[0] = ((IComplexTile) te).getCircuitComponent(ForgeDirection.NORTH);
-            SubComponents[1] = ((IComplexTile) te).getCircuitComponent(ForgeDirection.SOUTH);
-            SubComponents[2] = ((IComplexTile) te).getCircuitComponent(ForgeDirection.EAST);
-            SubComponents[3] = ((IComplexTile) te).getCircuitComponent(ForgeDirection.WEST);
-            SubComponents[4] = ((IComplexTile) te).getCircuitComponent(ForgeDirection.UP);
-            SubComponents[5] = ((IComplexTile) te).getCircuitComponent(ForgeDirection.DOWN);
-
-            for (ICircuitComponent subComponent : SubComponents) {
-                if (subComponent instanceof IBaseComponent)
-                    tileEntityGraph.removeVertex(subComponent);
+        if (te instanceof IComplexTile) { //For a complexTile every subComponents has to be removed!            
+            for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS){
+            	ICircuitComponent subComponent = ((IComplexTile) te).getCircuitComponent(direction);
+            	if (subComponent != null)
+            		tileEntityGraph.removeVertex(subComponent);
             }
         } else if (te instanceof ITransformer) {
             tileEntityGraph.removeVertex(((ITransformer) te).getPrimary());

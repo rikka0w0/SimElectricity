@@ -86,7 +86,15 @@ public class Util {
         TileEntity ent = getTileEntityonDirection(tileEntity, direction);
 
         if (ent instanceof IConductor) {
-            return true;
+        	if (tileEntity instanceof IConductor){
+            	if (((IConductor) ent).getColor() == 0 || 
+            			((IConductor) tileEntity).getColor() == 0 ||
+                		((IConductor) ent).getColor() == ((IConductor) tileEntity).getColor()){
+                		return true;
+                	}
+        	} else {
+        		return true;
+        	}
 
         } else if (ent instanceof IEnergyTile) {
             ForgeDirection functionalSide = ((IEnergyTile) ent).getFunctionalSide();
