@@ -4,7 +4,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 /**
  * This interface represents a transformer
- * 
+ * <p/>
  * See wiki for details of the model of transformer, to enhance the understanding 0w0
  */
 public interface ITransformer {
@@ -41,11 +41,11 @@ public interface ITransformer {
 
     /**
      * This class represents the primary of a transformer
+     * <p/>
+     * You can Override this class when necessary!
      */
     public static class Primary implements ITransformerWinding {
-        /**
-         * You can Override this class when necessary!
-         */
+        
         private ITransformer core;
 
         public Primary(ITransformer core) {

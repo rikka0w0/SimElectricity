@@ -23,15 +23,15 @@ public abstract class TileInventoryMachine extends TileEntity implements ISidedI
     public abstract int getInventorySize();
 
     /**
-     * ISidedInventory - Override this method when necessary!
+     * {@link net.minecraft.inventory.ISidedInventory} - Override this method when necessary!
      */
     @Override
     public int[] getAccessibleSlotsFromSide(int side) {
-        return new int[] {};
+        return new int[] { };
     }
 
     /**
-     * ISidedInventory - Override this method when necessary!
+     * {@link net.minecraft.inventory.ISidedInventory} - Override this method when necessary!
      */
     @Override
     public boolean canInsertItem(int slot, ItemStack itemStack, int side) {
@@ -39,7 +39,7 @@ public abstract class TileInventoryMachine extends TileEntity implements ISidedI
     }
 
     /**
-     * ISidedInventory - Override this method when necessary!
+     * {@link net.minecraft.inventory.ISidedInventory} - Override this method when necessary!
      */
     @Override
     public boolean canExtractItem(int slot, ItemStack itemStack, int side) {
