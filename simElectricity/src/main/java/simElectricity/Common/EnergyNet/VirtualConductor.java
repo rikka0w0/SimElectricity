@@ -33,10 +33,10 @@ public class VirtualConductor implements IConductor {
     public float getResistance() {
         return totalResistance;
     }
-    
+
     @Override
-    public int getColor(){
-    	return 0;
+    public int getColor() {
+        return 0;
     }
 
     public boolean append(IConductor conductor) {

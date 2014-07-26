@@ -50,29 +50,29 @@ public class BlockWire extends BlockContainerSE {
     public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float f1, float f2, float f3) {
         if (player.isSneaking())
             return false;
-    	        
+
         TileEntity tileEntity = world.getTileEntity(x, y, z);
         if (!(tileEntity instanceof TileWire))
-        	return false;
-        
+            return false;
+
         TileWire wire = (TileWire) tileEntity;
-        
-    	if (player.getCurrentEquippedItem() !=null){
-    		ItemStack stack = player.getCurrentEquippedItem();
-    		if (stack.getItem() == Items.dye){
-    			if (!world.isRemote){
-    				wire.color = stack.getItemDamage() + 1;           //Set the color
-    				Energy.postTileRejoinEvent(tileEntity);           //Reconnect the wire to the energy network
-    				Util.updateTileEntityField(tileEntity, "color");  //Update the field color to every client within the dimension
-    				onBlockPlacedBy(world, x, y, z, player, null);    //Update rests to clients
-    			}
-    			
-    			return true;
-    		}
-    	}
-    	return false;
+
+        if (player.getCurrentEquippedItem() != null) {
+            ItemStack stack = player.getCurrentEquippedItem();
+            if (stack.getItem() == Items.dye) {
+                if (!world.isRemote) {
+                    wire.color = stack.getItemDamage() + 1;           //Set the color
+                    Energy.postTileRejoinEvent(tileEntity);           //Reconnect the wire to the energy network
+                    Util.updateTileEntityField(tileEntity, "color");  //Update the field color to every client within the dimension
+                    onBlockPlacedBy(world, x, y, z, player, null);    //Update rests to clients
+                }
+
+                return true;
+            }
+        }
+        return false;
     }
-    
+
     @Override
     public void onNeighborBlockChange(World world, int x, int y, int z, Block block) {
         if (!world.isRemote) {
@@ -90,8 +90,8 @@ public class BlockWire extends BlockContainerSE {
         ((TileWire) te).updateSides();                  //Update information about rendering
         Util.updateTileEntityField(te, "renderSides");  //Synchronize the field to clients
 
-        for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS){ //Update neighbors
-        	updateRenderSides(world.getTileEntity(x + direction.offsetX, y + direction.offsetY, z+direction.offsetZ));
+        for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) { //Update neighbors
+            updateRenderSides(world.getTileEntity(x + direction.offsetX, y + direction.offsetY, z + direction.offsetZ));
         }
     }
 
@@ -121,48 +121,42 @@ public class BlockWire extends BlockContainerSE {
     @Override
     public void addCollisionBoxesToList(World world, int x, int y, int z, AxisAlignedBB axisAlignedBB, List list, Entity entity) {
         super.addCollisionBoxesToList(world, x, y, z, axisAlignedBB, list, entity);
-        TileWire tile = (TileWire) world.getTileEntity(x, y, z);
+
+        if (!(world.getTileEntity(x, y, z) instanceof TileWire))
+            return;
+        TileWire wire = (TileWire) world.getTileEntity(x, y, z);
+
         float WIDTH = collisionWidthList[world.getBlockMetadata(x, y, z)];
 
-        float minA = 0.5F - WIDTH, maxA = 0.5F + WIDTH;
-        float minX = 0.5F - WIDTH,
-                minY = 0.5F - WIDTH,
-                minZ = 0.5F - WIDTH,
-                maxX = 0.5F + WIDTH,
-                maxY = 0.5F + WIDTH,
-                maxZ = 0.5F + WIDTH;
+        float minPos = 0.5F - WIDTH, maxPos = 0.5F + WIDTH;
 
-        //X方向
-        boolean[] arr = tile.renderSides;
-
-        if (arr[5])
-            maxA = 1.0F;
-        if (arr[4])
-            minA = 0.0F;
-        if (arr[5] || arr[4]) {
-            setBlockBounds(minA, minY, minZ, maxA, maxY, maxZ);
+        if (wire.isConnected(ForgeDirection.WEST)) {
+            setBlockBounds(0F, minPos, minPos, maxPos, maxPos, maxPos);
             super.addCollisionBoxesToList(world, x, y, z, axisAlignedBB, list, entity);
         }
 
-        if (arr[3])
-            maxA = 1.0F;
-        else maxA = 0.5F + WIDTH;
-        if (arr[2])
-            minA = 0.0F;
-        else minA = 0.5F - WIDTH;
-        if (arr[3] || arr[2]) {
-            setBlockBounds(minX, minY, minA, maxX, maxY, maxA);
+        if (wire.isConnected(ForgeDirection.EAST)) {
+            setBlockBounds(minPos, minPos, minPos, 1F, maxPos, maxPos);
             super.addCollisionBoxesToList(world, x, y, z, axisAlignedBB, list, entity);
         }
 
-        if (arr[1])
-            maxA = 1.0F;
-        else maxA = 0.5F + WIDTH;
-        if (arr[0])
-            minA = 0.0F;
-        else minA = 0.5F - WIDTH;
-        if (arr[1] || arr[0]) {
-            setBlockBounds(minX, minA, minZ, maxX, maxA, maxZ);
+        if (wire.isConnected(ForgeDirection.NORTH)) {
+            setBlockBounds(minPos, minPos, 0F, maxPos, maxPos, maxPos);
+            super.addCollisionBoxesToList(world, x, y, z, axisAlignedBB, list, entity);
+        }
+
+        if (wire.isConnected(ForgeDirection.SOUTH)) {
+            setBlockBounds(minPos, minPos, minPos, maxPos, maxPos, 1F);
+            super.addCollisionBoxesToList(world, x, y, z, axisAlignedBB, list, entity);
+        }
+
+        if (wire.isConnected(ForgeDirection.UP)) {
+            setBlockBounds(minPos, minPos, minPos, maxPos, 1F, maxPos);
+            super.addCollisionBoxesToList(world, x, y, z, axisAlignedBB, list, entity);
+        }
+
+        if (wire.isConnected(ForgeDirection.DOWN)) {
+            setBlockBounds(minPos, 0F, minPos, maxPos, maxPos, maxPos);
             super.addCollisionBoxesToList(world, x, y, z, axisAlignedBB, list, entity);
         }
     }
@@ -171,7 +165,11 @@ public class BlockWire extends BlockContainerSE {
     @Override
     public void setBlockBoundsBasedOnState(IBlockAccess world, int x, int y, int z) {
         float WIDTH = collisionWidthList[world.getBlockMetadata(x, y, z)];
-        boolean[] possibleConnections = ((TileWire) world.getTileEntity(x, y, z)).renderSides;
+
+        if (!(world.getTileEntity(x, y, z) instanceof TileWire))
+            return;
+
+        TileWire wire = (TileWire) world.getTileEntity(x, y, z);
 
         minX = 0.5 - WIDTH;
         minY = 0.5 - WIDTH;
@@ -180,23 +178,60 @@ public class BlockWire extends BlockContainerSE {
         maxY = 0.5 + WIDTH;
         maxZ = 0.5 + WIDTH;
 
-        if (possibleConnections[0])
+        if (wire.isConnected(ForgeDirection.DOWN))
             minY = 0;
 
-        if (possibleConnections[1])
+        if (wire.isConnected(ForgeDirection.UP))
             maxY = 1;
 
-        if (possibleConnections[2])
+        if (wire.isConnected(ForgeDirection.NORTH))
             minZ = 0;
 
-        if (possibleConnections[3])
+        if (wire.isConnected(ForgeDirection.SOUTH))
             maxZ = 1;
 
-        if (possibleConnections[4])
+        if (wire.isConnected(ForgeDirection.WEST))
             minX = 0;
 
-        if (possibleConnections[5])
+        if (wire.isConnected(ForgeDirection.EAST))
             maxX = 1;
+    }
+
+    public AxisAlignedBB getCollisionBoundingBoxFromPool(World world, int x, int y, int z) {
+        float WIDTH = collisionWidthList[world.getBlockMetadata(x, y, z)];
+
+        if (!(world.getTileEntity(x, y, z) instanceof TileWire))
+            return AxisAlignedBB.getBoundingBox(x, y, z, x + 1, y + 1, z + 1);
+
+        TileWire wire = (TileWire) world.getTileEntity(x, y, z);
+
+        double minX = 0.5 - WIDTH,
+                minY = 0.5 - WIDTH,
+                minZ = 0.5 - WIDTH,
+                maxX = 0.5 + WIDTH,
+                maxY = 0.5 + WIDTH,
+                maxZ = 0.5 + WIDTH;
+
+        if (wire.isConnected(ForgeDirection.DOWN))
+            minY = 0;
+
+        if (wire.isConnected(ForgeDirection.UP))
+            maxY = 1;
+
+        if (wire.isConnected(ForgeDirection.NORTH))
+            minZ = 0;
+
+        if (wire.isConnected(ForgeDirection.SOUTH))
+            maxZ = 1;
+
+        if (wire.isConnected(ForgeDirection.WEST))
+            minX = 0;
+
+        if (wire.isConnected(ForgeDirection.EAST))
+            maxX = 1;
+
+        return AxisAlignedBB.getBoundingBox((double) x + minX, (double) y + minY, (double) z + minZ,
+                (double) x + maxX, (double) y + maxY, (double) z + maxZ);
     }
 
     //This will tell minecraft not to render any side of our cube.
@@ -208,6 +243,16 @@ public class BlockWire extends BlockContainerSE {
     //And this tell it that you can see through this block, and neighbor blocks should be rendered.
     @Override
     public boolean isOpaqueCube() {
+        return false;
+    }
+
+    @Override
+    public boolean renderAsNormalBlock() {
+        return false;
+    }
+
+    @Override
+    public boolean canBeReplacedByLeaves(IBlockAccess world, int x, int y, int z) {
         return false;
     }
 
