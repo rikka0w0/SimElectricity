@@ -303,11 +303,6 @@ public class BlockWire extends BlockContainerSE {
 
     @Override
     public TileEntity createNewTileEntity(World world, int meta) {
-        return null;
-    }
-
-    @Override
-    public TileEntity createTileEntity(World world, int meta) {
         return new TileWire(meta);
     }
 }
