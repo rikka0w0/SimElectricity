@@ -197,6 +197,7 @@ public class BlockWire extends BlockContainerSE {
             maxX = 1;
     }
 
+    @Override
     public AxisAlignedBB getCollisionBoundingBoxFromPool(World world, int x, int y, int z) {
         float WIDTH = collisionWidthList[world.getBlockMetadata(x, y, z)];
 
