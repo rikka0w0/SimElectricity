@@ -129,22 +129,22 @@ public class TileSimpleGenerator extends TileSidedGenerator implements ISyncPack
     public int getInventorySize() {
         return 1;
     }
-    
+
     @Override
     public int[] getAccessibleSlotsFromSide(int side) {
-        return new int[] {0};
+        return new int[] { 0 };
     }
 
     @Override
     public boolean canInsertItem(int slot, ItemStack itemStack, int side) {
-        return slot == 0;
+        return slot == 0 && TileEntityFurnace.isItemFuel(itemStack);
     }
 
     @Override
     public boolean canExtractItem(int slot, ItemStack itemStack, int side) {
         return slot == 0;
     }
-    
+
 
     @Override
     public void onServer2ClientUpdate(String field, Object value, short type) {
@@ -156,8 +156,8 @@ public class TileSimpleGenerator extends TileSidedGenerator implements ISyncPack
     public void onClient2ServerUpdate(String field, Object value, short type) {
     }
 
-	@Override
-	public void onWatch() {
-		Util.updateTileEntityField(this, "isWorking");
-	}
+    @Override
+    public void onWatch() {
+        Util.updateTileEntityField(this, "isWorking");
+    }
 }

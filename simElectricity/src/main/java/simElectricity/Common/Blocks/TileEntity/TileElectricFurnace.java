@@ -6,11 +6,7 @@ import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.Common.TileStandardSEMachine;
-import simElectricity.API.Energy;
-import simElectricity.API.IEnergyNetUpdateHandler;
-import simElectricity.API.ISyncPacketHandler;
-import simElectricity.API.IUpdateOnWatch;
-import simElectricity.API.Util;
+import simElectricity.API.*;
 
 public class TileElectricFurnace extends TileStandardSEMachine implements ISyncPacketHandler, IEnergyNetUpdateHandler, IUpdateOnWatch {
     public static float energyPerItem = 1000F;
@@ -150,16 +146,17 @@ public class TileElectricFurnace extends TileStandardSEMachine implements ISyncP
 
     @Override
     public boolean canInsertItem(int slot, ItemStack itemStack, int side) {
-        return slot == 0;
+        return slot == 0 && FurnaceRecipes.smelting().getSmeltingResult(itemStack) != null;
     }
 
     @Override
     public boolean canExtractItem(int slot, ItemStack itemStack, int side) {
         return slot == 1;
     }
-    
-	@Override
-	public void onWatch() {
-		Util.scheduleBlockUpdate(this);
-	}
+
+    @Override
+    public void onWatch() {
+        Util.scheduleBlockUpdate(this);
+    }
+
 }
