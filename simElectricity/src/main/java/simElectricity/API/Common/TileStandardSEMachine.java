@@ -10,7 +10,7 @@ import simElectricity.API.Util;
 /**
  * A standard SE machine can inherits this class, make things easier and less confusion
  */
-public abstract class TileStandardSEMachine extends TileSidedFacingMachine implements IEnergyTile, ISidedFacing {
+public abstract class TileStandardSEMachine extends TileSidedFacingMachine implements IEnergyTile {
     protected ForgeDirection functionalSide = ForgeDirection.NORTH;
 
     protected boolean isAddedToEnergyNet = false;

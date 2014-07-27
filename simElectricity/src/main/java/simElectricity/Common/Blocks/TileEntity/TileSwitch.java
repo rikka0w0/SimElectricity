@@ -13,7 +13,8 @@ import java.util.List;
 
 public class TileSwitch extends TileEntity implements IManualJunction, IConnectable, ISyncPacketHandler, ISidedFacing, IUpdateOnWatch, IEnergyNetUpdateHandler {
     protected boolean isAddedToEnergyNet = false;
-
+    public float current=0F;
+    
     public ForgeDirection inputSide = ForgeDirection.NORTH, outputSide = ForgeDirection.SOUTH, facing = ForgeDirection.WEST;
     public float resistance = 0.1F;
     public float maxCurrent = 1F;
@@ -127,7 +128,8 @@ public class TileSwitch extends TileEntity implements IManualJunction, IConnecta
 
     @Override
     public void onEnergyNetUpdate() {
-        if (getCurrent() > maxCurrent) {
+    	current = getCurrent();
+        if (current > maxCurrent) {
             isOn = false;
             Energy.postTileRejoinEvent(this);
             Util.updateTileEntityField(this, "isOn");
