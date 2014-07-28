@@ -1,0 +1,29 @@
+﻿# Creative Tab
+itemGroup.SimElectricity=SimElectricity
+
+# Blocks
+tile.sime:QuantumGenerator.name=量子发电机
+tile.sime:VoltageMeter.name=电压表(1MOhm)
+tile.sime:ElectricFurnace.name=小型电路
+tile.sime:SolarPanel.name=太阳能电池板
+tile.sime:Wire.CopperCable_Thin.name=细绝缘铜线
+tile.sime:Wire.CopperCable_Medium.name=普通绝缘铜线
+tile.sime:Wire.CopperCable_Thick.name=粗绝缘铜线
+tile.sime:AdjustableResistor.name=可调电阻
+tile.sime:SimpleGenerator.name=简易燃料发电机
+tile.sime:AdjustableTransformer.name=可调变压器
+tile.sime:WindMillTop.name=风力发电机
+tile.sime:BatteryBox.name=电池箱
+tile.sime:IncandescentLamp.name=节能灯 (5w)
+tile.sime:Switch.name=空气开关
+
+# Items
+item.sime:UltimateMultimeter.name=高级万用表
+item.sime:Glove.name=手套
+item.sime:Wrench.name=扳手
+item.sime:Fan.name=风力发电机叶片
+
+# Text
+sime.Output=输出:
+sime.Impedance=阻抗:
+sime.Resistance=电阻:
