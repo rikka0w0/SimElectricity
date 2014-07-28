@@ -27,14 +27,7 @@ public class TileElectricFurnace extends TileStandardSEMachine implements ISyncP
         result = getResult(inv[0]);
         
         if(result==null){
-            progress = 0;
-            energyStored = 0;
-            if (resistance <= onResistance) {
-                resistance = Float.MAX_VALUE;
-                Energy.postTileChangeEvent(this);
-            }
-            isWorking = false;
-            onWatch();
+        	stop();
         }
     }
 
@@ -79,17 +72,21 @@ public class TileElectricFurnace extends TileStandardSEMachine implements ISyncP
         }
         
         if(result==null && isWorking){
-            progress = 0;
-            energyStored = 0;
-            if (resistance <= onResistance) {
-                resistance = Float.MAX_VALUE;
-                Energy.postTileChangeEvent(this);
-            }
-            isWorking = false;
-            onWatch();
+        	stop();
         }
     }
 
+    void stop(){
+    	progress = 0;
+        energyStored = 0;
+        if (resistance <= onResistance) {
+        	resistance = Float.MAX_VALUE;
+            Energy.postTileChangeEvent(this);
+        }
+        isWorking = false;
+        onWatch();
+    }
+    
     public ItemStack getResult(ItemStack i) {
         if (i == null)
             return null;
@@ -138,7 +135,10 @@ public class TileElectricFurnace extends TileStandardSEMachine implements ISyncP
         if (Energy.getVoltage(this) > 265)
             worldObj.createExplosion(null, xCoord, yCoord, zCoord, 4F + Energy.getVoltage(this) / 265, true);
 
-        Util.scheduleBlockUpdate(this, 4);
+        if(Energy.getVoltage(this)==0){
+        	isWorking = false;
+            onWatch();
+        }
     }
 
     @Override
