@@ -3,9 +3,6 @@ package simElectricity.Common.EnergyNet;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
-import org.jgrapht.Graphs;
-import org.jgrapht.graph.DefaultEdge;
-import org.jgrapht.graph.SimpleGraph;
 import simElectricity.API.EnergyTile.*;
 import simElectricity.API.EnergyTile.ITransformer.ITransformerWinding;
 import simElectricity.API.IEnergyNetUpdateHandler;
@@ -17,7 +14,7 @@ import java.util.*;
 public final class EnergyNet {
     // private WeightedMultigraph<IBaseComponent, Resistor> tileEntityGraph =
     // new WeightedMultigraph<IBaseComponent, Resistor>(Resistor.class);
-    private SimpleGraph<IBaseComponent, DefaultEdge> tileEntityGraph = new SimpleGraph<IBaseComponent, DefaultEdge>(DefaultEdge.class);
+    private BakaGraph tileEntityGraph = new BakaGraph();
     public Map<IBaseComponent, Float> voltageCache = new HashMap<IBaseComponent, Float>();
     /**
      * A flag for recalculate the energynet
@@ -25,7 +22,7 @@ public final class EnergyNet {
     private boolean calc = false;
 
     //Optimization--------------------------------------------------------------------
-    private boolean nodeIsLine(IBaseComponent conductor, SimpleGraph<IBaseComponent, DefaultEdge> optimizedTileEntityGraph) {
+    private boolean nodeIsLine(IBaseComponent conductor, BakaGraph optimizedTileEntityGraph) {
         if (conductor.getClass() == VirtualConductor.class)
             return false;
         if (!(conductor instanceof IConductor))
@@ -33,7 +30,7 @@ public final class EnergyNet {
         if (VirtualConductor.conductorInVirtual((IConductor) conductor))
             return false;
 
-        List<IBaseComponent> list = Graphs.neighborListOf(optimizedTileEntityGraph, conductor);
+        List<IBaseComponent> list = optimizedTileEntityGraph.neighborListOf(conductor);
         for (IBaseComponent iBaseComponent : list) {
             if (!(iBaseComponent instanceof IConductor))
                 return false;
@@ -42,12 +39,12 @@ public final class EnergyNet {
         return list.size() == 2;
     }
 
-    private VirtualConductor floodFill(IBaseComponent conductor, VirtualConductor virtualConductor, SimpleGraph<IBaseComponent, DefaultEdge> optimizedTileEntityGraph) {
+    private VirtualConductor floodFill(IBaseComponent conductor, VirtualConductor virtualConductor, BakaGraph optimizedTileEntityGraph) {
         if (nodeIsLine(conductor, optimizedTileEntityGraph)) {
             if (virtualConductor == null)
                 virtualConductor = new VirtualConductor();
             virtualConductor.append((IConductor) conductor);
-            List<IBaseComponent> neighborList = Graphs.neighborListOf(optimizedTileEntityGraph, conductor);
+            List<IBaseComponent> neighborList = optimizedTileEntityGraph.neighborListOf(conductor);
             for (IBaseComponent iBaseComponent : neighborList) {
                 floodFill(iBaseComponent, virtualConductor, optimizedTileEntityGraph);
             }
@@ -58,7 +55,7 @@ public final class EnergyNet {
         return virtualConductor;
     }
 
-    private boolean mergeIConductorNode(SimpleGraph<IBaseComponent, DefaultEdge> optimizedTileEntityGraph) {
+    private boolean mergeIConductorNode(BakaGraph optimizedTileEntityGraph) {
         boolean result = false;
         VirtualConductor virtualConductor = null;
 
@@ -88,7 +85,7 @@ public final class EnergyNet {
     //Simulator------------------------------------------------------------------------
     @SuppressWarnings( { "unchecked" })
     private void runSimulator() {
-        SimpleGraph<IBaseComponent, DefaultEdge> optimizedTileEntityGraph = (SimpleGraph<IBaseComponent, DefaultEdge>) tileEntityGraph.clone();
+        BakaGraph optimizedTileEntityGraph = (BakaGraph) tileEntityGraph.clone();
 
         //try to optimization
         if (ConfigManager.optimizeNodes) {
@@ -121,7 +118,7 @@ public final class EnergyNet {
             }
 
 
-            List<IBaseComponent> neighborList = Graphs.neighborListOf(optimizedTileEntityGraph, currentRowComponent);
+            List<IBaseComponent> neighborList = optimizedTileEntityGraph.neighborListOf(currentRowComponent);
             //Generate row for conductor node
             if (currentRowComponent instanceof IConductor || currentRowComponent instanceof IManualJunction) {
                 for (int columnIndex = 0; columnIndex < matrixSize; columnIndex++) {

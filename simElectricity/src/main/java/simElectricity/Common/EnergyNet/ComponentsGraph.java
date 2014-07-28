@@ -3,17 +3,14 @@ package simElectricity.Common.EnergyNet;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.jgrapht.graph.DefaultEdge;
-import org.jgrapht.graph.SimpleGraph;
-
 import simElectricity.API.EnergyTile.IBaseComponent;
 
 public class ComponentsGraph {
 	//tell me which graph have this component
 	public static Map<IBaseComponent, ComponentsGraph> componentsMap = new HashMap<IBaseComponent, ComponentsGraph>(); 
 	
-    private SimpleGraph<IBaseComponent, DefaultEdge> tileEntityGraph = new SimpleGraph<IBaseComponent, DefaultEdge>(DefaultEdge.class);
-    private SimpleGraph<IBaseComponent, DefaultEdge> optimizedGraph = (SimpleGraph<IBaseComponent, DefaultEdge>) tileEntityGraph.clone();
+    private BakaGraph tileEntityGraph = new BakaGraph();
+    private BakaGraph optimizedGraph =  (BakaGraph) tileEntityGraph.clone();
 
     public ComponentsGraph(IBaseComponent firstNode) {
     	componentsMap.put(firstNode, this);
