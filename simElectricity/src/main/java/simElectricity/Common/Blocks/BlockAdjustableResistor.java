@@ -68,28 +68,6 @@ public class BlockAdjustableResistor extends BlockStandardSEMachine {
     }
 
     @Override
-    public void updateTick(World world, int x, int y, int z, Random random) {
-        if (world.isRemote)
-            return;
-        TileEntity te = world.getTileEntity(x, y, z);
-
-        if (!(te instanceof IEnergyTile) || !(te instanceof ISidedFacing))
-            return;
-
-        Util.updateTileEntityFacing(te);
-        Util.updateTileEntityFunctionalSide(te);
-    }
-
-    @Override
-    public void onNeighborBlockChange(World world, int x, int y, int z, Block block) {
-        if (world.isRemote)
-            return;
-
-        //Server side only!
-        Util.updateTileEntityFacing(world.getTileEntity(x, y, z));
-    }
-
-    @Override
     public TileEntity createNewTileEntity(World world, int meta) {
         return new TileAdjustableResistor();
     }

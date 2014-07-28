@@ -56,7 +56,6 @@ public class BlockVoltageMeter extends BlockStandardSEMachine {
         if (!(te instanceof TileVoltageMeter))
             return iconBuffer[0];
 
-        //System.out.println(((TileVoltageMeter)te).getFunctionalSide());
         return iconBuffer[Util.getTextureOnSide(side, ((TileVoltageMeter) te).getFacing())];
     }
 
@@ -64,27 +63,6 @@ public class BlockVoltageMeter extends BlockStandardSEMachine {
     @Override
     public IIcon getIcon(int side, int meta) {
         return iconBuffer[Util.getTextureOnSide(side, ForgeDirection.WEST)];
-    }
-
-    @Override
-    public void updateTick(World world, int x, int y, int z, Random random) {
-        if (world.isRemote)
-            return;
-        TileEntity te = world.getTileEntity(x, y, z);
-        if (!(te instanceof TileVoltageMeter))
-            return;
-        Util.updateTileEntityFacing(te);
-        Util.updateTileEntityFunctionalSide(te);
-    }
-
-    @Override
-    public void onNeighborBlockChange(World world, int x, int y, int z, Block block) {
-        if (world.isRemote)
-            return;
-
-        //Server side only!
-        TileEntity te = world.getTileEntity(x, y, z);
-        Util.updateTileEntityFacing(te);
     }
 
     @Override

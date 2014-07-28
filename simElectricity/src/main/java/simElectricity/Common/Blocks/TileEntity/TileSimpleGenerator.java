@@ -86,7 +86,7 @@ public class TileSimpleGenerator extends TileSidedGenerator implements ISyncPack
             if (burned <= 0)
                 burned = burnTime;
         }
-        Util.updateTileEntityField(this, "isWorking");
+        onWatch();
     }
 
     @Override
@@ -145,7 +145,12 @@ public class TileSimpleGenerator extends TileSidedGenerator implements ISyncPack
         return slot == 0;
     }
 
-
+    @Override
+    public void onWatch() {
+        Util.updateTileEntityField(this, "isWorking");
+        Util.scheduleBlockUpdate(this);
+    }
+    
     @Override
     public void onServer2ClientUpdate(String field, Object value, short type) {
         if (field.contains("isWorking"))
@@ -154,10 +159,5 @@ public class TileSimpleGenerator extends TileSidedGenerator implements ISyncPack
 
     @Override
     public void onClient2ServerUpdate(String field, Object value, short type) {
-    }
-
-    @Override
-    public void onWatch() {
-        Util.updateTileEntityField(this, "isWorking");
     }
 }

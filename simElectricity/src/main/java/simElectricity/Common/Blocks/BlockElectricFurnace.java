@@ -75,19 +75,6 @@ public class BlockElectricFurnace extends BlockStandardSEMachine {
         return iconBuffer[Util.getTextureOnSide(side, ForgeDirection.WEST)];
     }
 
-    @Override
-    public void updateTick(World world, int x, int y, int z, Random random) {
-        if (world.isRemote)
-            return;
-        TileEntity te = world.getTileEntity(x, y, z);
-        if (!(te instanceof TileElectricFurnace))
-            return;
-        Util.updateTileEntityFacing(te);
-        Util.updateTileEntityFunctionalSide(te);
-
-        world.markBlockForUpdate(x, y, z);
-    }
-
     @SideOnly(Side.CLIENT)
     @Override
     public void randomDisplayTick(World world, int x, int y, int z, Random random) {
@@ -135,15 +122,10 @@ public class BlockElectricFurnace extends BlockStandardSEMachine {
     }
 
     @Override
-    public void onNeighborBlockChange(World world, int x, int y, int z, Block block) {
-        if (world.isRemote)
-            return;
-
-        //Server side only!
-        TileEntity te = world.getTileEntity(x, y, z);
-        Util.updateTileEntityFacing(te);
+    public void updateTick(World world, int x, int y, int z, Random random) {
+        world.markBlockForUpdate(x, y, z);
     }
-
+    
     @Override
     public TileEntity createNewTileEntity(World world, int meta) {
         return new TileElectricFurnace();

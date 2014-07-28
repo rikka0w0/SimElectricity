@@ -64,26 +64,6 @@ public class BlockBatteryBox extends BlockStandardGenerator {
     }
 
     @Override
-    public void updateTick(World world, int x, int y, int z, Random random) {
-        if (world.isRemote)
-            return;
-        TileEntity te = world.getTileEntity(x, y, z);
-        if (!(te instanceof TileBatteryBox))
-            return;
-        Util.updateTileEntityFunctionalSide(te);
-    }
-
-    @Override
-    public void onNeighborBlockChange(World world, int x, int y, int z, Block block) {
-        if (world.isRemote)
-            return;
-
-        //Server side only!
-        TileEntity te = world.getTileEntity(x, y, z);
-        Util.updateTileEntityFunctionalSide(te);
-    }
-
-    @Override
     public TileEntity createNewTileEntity(World world, int meta) {
         return new TileBatteryBox();
     }

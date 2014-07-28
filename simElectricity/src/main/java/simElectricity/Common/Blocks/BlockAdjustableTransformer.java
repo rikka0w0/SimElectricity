@@ -80,18 +80,6 @@ public class BlockAdjustableTransformer extends BlockContainerSE {
     }
 
     @Override
-    public void updateTick(World world, int x, int y, int z, Random random) {
-        if (world.isRemote)
-            return;
-
-        TileAdjustableTransformer te = (TileAdjustableTransformer) world.getTileEntity(x, y, z);
-
-        Util.updateTileEntityField(te, "primarySide");
-        Util.updateTileEntityField(te, "secondarySide");
-        world.notifyBlockChange(x, y, z, this);
-    }
-
-    @Override
     public TileEntity createNewTileEntity(World world, int meta) {
         return new TileAdjustableTransformer();
     }

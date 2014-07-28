@@ -76,8 +76,9 @@ public class BlockWire extends BlockContainerSE {
     @Override
     public void onNeighborBlockChange(World world, int x, int y, int z, Block block) {
         if (!world.isRemote) {
-            Util.scheduleBlockUpdate(world.getTileEntity(x, y, z));
-            //updateRenderSides();
+        	TileEntity te = world.getTileEntity(x, y, z);
+            Util.scheduleBlockUpdate(te);
+            updateRenderSides(te);
         }
     }
 
@@ -87,8 +88,7 @@ public class BlockWire extends BlockContainerSE {
             return;
 
         TileEntity te = world.getTileEntity(x, y, z);
-        ((TileWire) te).updateSides();                  //Update information about rendering
-        Util.updateTileEntityField(te, "renderSides");  //Synchronize the field to clients
+        updateRenderSides(te);
 
         for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) { //Update neighbors
             updateRenderSides(world.getTileEntity(x + direction.offsetX, y + direction.offsetY, z + direction.offsetZ));
@@ -97,17 +97,19 @@ public class BlockWire extends BlockContainerSE {
 
     void updateRenderSides(TileEntity te) {
         if (te instanceof TileWire) {
-            ((TileWire) te).updateSides();
-            Util.updateTileEntityField(te, "renderSides");
+            ((TileWire) te).updateSides();                 //Update information about rendering
+            Util.updateTileEntityField(te, "renderSides"); //Synchronize the field to clients
         }
     }
 
+    
     @Override
     public void updateTick(World world, int x, int y, int z, Random random) {
         if (world.isRemote)
             return;
-        ((TileWire) world.getTileEntity(x, y, z)).updateSides();
-        Util.updateTileEntityField(world.getTileEntity(x, y, z), "renderSides");
+        
+        TileEntity te = world.getTileEntity(x, y, z);
+        updateRenderSides(te);
     }
 
 

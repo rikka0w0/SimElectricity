@@ -28,7 +28,6 @@ public abstract class TileStandardSEMachine extends TileSidedFacingMachine imple
             onLoad();
             Energy.postTileAttachEvent(this);
             this.isAddedToEnergyNet = true;
-            Util.scheduleBlockUpdate(this);
         }
     }
 

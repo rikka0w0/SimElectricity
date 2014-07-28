@@ -99,20 +99,6 @@ public class BlockSwitch extends BlockContainerSE {
     }
 
     @Override
-    public void updateTick(World world, int x, int y, int z, Random random) {
-        if (world.isRemote)
-            return;
-
-        TileSwitch te = (TileSwitch) world.getTileEntity(x, y, z);
-
-        Util.updateTileEntityField(te, "inputSide");
-        Util.updateTileEntityField(te, "outputSide");
-        Util.updateTileEntityField(te, "isOn");
-        Util.updateTileEntityFacing(te);
-        world.notifyBlockChange(x, y, z, this);
-    }
-
-    @Override
     public TileEntity createNewTileEntity(World world, int meta) {
         return new TileSwitch();
     }

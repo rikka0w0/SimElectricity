@@ -14,7 +14,7 @@ public class TileElectricFurnace extends TileStandardSEMachine implements ISyncP
 
     public boolean isWorking = false;
     public int progress = 0;
-    public float resistance = 10;
+    public float resistance = Float.MAX_VALUE;
     public float energyStored;
     public ItemStack result;
 
@@ -25,6 +25,17 @@ public class TileElectricFurnace extends TileStandardSEMachine implements ISyncP
             return;
 
         result = getResult(inv[0]);
+        
+        if(result==null){
+            progress = 0;
+            energyStored = 0;
+            if (resistance <= onResistance) {
+                resistance = Float.MAX_VALUE;
+                Energy.postTileChangeEvent(this);
+            }
+            isWorking = false;
+            onWatch();
+        }
     }
 
     @Override
@@ -44,7 +55,7 @@ public class TileElectricFurnace extends TileStandardSEMachine implements ISyncP
             }
 
             isWorking = true;
-            Util.updateTileEntityField(this, "isWorking");
+            onWatch();
 
             if (energyStored > energyPerItem) {
                 ItemStack newResult = result.copy();
@@ -65,7 +76,9 @@ public class TileElectricFurnace extends TileStandardSEMachine implements ISyncP
                 progress = 0;
                 energyStored = 0;
             }
-        } else {
+        }
+        
+        if(result==null && isWorking){
             progress = 0;
             energyStored = 0;
             if (resistance <= onResistance) {
@@ -73,7 +86,7 @@ public class TileElectricFurnace extends TileStandardSEMachine implements ISyncP
                 Energy.postTileChangeEvent(this);
             }
             isWorking = false;
-            Util.updateTileEntityField(this, "isWorking");
+            onWatch();
         }
     }
 
@@ -154,9 +167,9 @@ public class TileElectricFurnace extends TileStandardSEMachine implements ISyncP
         return slot == 1;
     }
 
-    @Override
-    public void onWatch() {
-        Util.scheduleBlockUpdate(this);
-    }
-
+	@Override
+	public void onWatch() {
+		Util.updateTileEntityField(this, "isWorking");
+		Util.scheduleBlockUpdate(this);
+	}
 }

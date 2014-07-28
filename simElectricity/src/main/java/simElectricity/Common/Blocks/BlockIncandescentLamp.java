@@ -63,6 +63,7 @@ public class BlockIncandescentLamp extends BlockStandardSEMachine {
         return iconBuffer[Util.getTextureOnSide(side, ForgeDirection.WEST)];
     }
 
+    @Override
     public int getLightValue(IBlockAccess world, int x, int y, int z) {
         TileEntity te = world.getTileEntity(x, y, z);
 
@@ -74,28 +75,7 @@ public class BlockIncandescentLamp extends BlockStandardSEMachine {
 
     @Override
     public void updateTick(World world, int x, int y, int z, Random random) {
-        TileEntity te = world.getTileEntity(x, y, z);
-
-
-        if (world.isRemote)
-            return;
-
-        if (!(te instanceof TileIncandescentLamp))
-            return;
-        Util.updateTileEntityFunctionalSide(te);
-        Util.updateTileEntityField(te, "lightLevel");
-
         world.markBlockForUpdate(x, y, z);
-    }
-
-    @Override
-    public void onNeighborBlockChange(World world, int x, int y, int z, Block block) {
-        if (world.isRemote)
-            return;
-
-        //Server side only!
-        TileEntity te = world.getTileEntity(x, y, z);
-        Util.updateTileEntityFunctionalSide(te);
     }
 
     @Override

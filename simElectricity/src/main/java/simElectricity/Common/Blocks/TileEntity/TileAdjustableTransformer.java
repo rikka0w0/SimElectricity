@@ -23,7 +23,6 @@ public class TileAdjustableTransformer extends TileEntity implements ITransforme
         if (!worldObj.isRemote && !isAddedToEnergyNet) {
             Energy.postTileAttachEvent(this);
             this.isAddedToEnergyNet = true;
-            Util.scheduleBlockUpdate(this);
         }
     }
 
@@ -61,7 +60,7 @@ public class TileAdjustableTransformer extends TileEntity implements ITransforme
     public void onClient2ServerUpdate(String field, Object value, short type) {
         if (field.contains("primarySide") || field.contains("secondarySide")) {
             Energy.postTileRejoinEvent(this);
-            Util.scheduleBlockUpdate(this);
+            onWatch();
         } else if (field.contains("outputResistance") || field.contains("ratio")) {
             Energy.postTileChangeEvent(this);
         }
@@ -104,6 +103,9 @@ public class TileAdjustableTransformer extends TileEntity implements ITransforme
 
     @Override
     public void onWatch() {
-        Util.scheduleBlockUpdate(this);
+        Util.updateTileEntityField(this, "primarySide");
+        Util.updateTileEntityField(this, "secondarySide");
+        worldObj.notifyBlockChange(xCoord, yCoord, zCoord, 
+        		worldObj.getBlock(xCoord, yCoord, zCoord));
     }
 }

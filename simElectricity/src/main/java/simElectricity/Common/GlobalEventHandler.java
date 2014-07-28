@@ -30,7 +30,9 @@ public class GlobalEventHandler {
             if (te instanceof ISidedFacing)
                 Util.updateTileEntityFacing(te);
             if (te instanceof IConductor) {
-                Util.scheduleBlockUpdate(te);
+            	Util.scheduleBlockUpdate(te);
+            	//Send onNeighborBlockChange to IConductors, do reRender here
+            	//te.getWorldObj().getBlock(te.xCoord, te.yCoord, te.zCoord).onNeighborBlockChange(te.getWorldObj(),te.xCoord, te.yCoord, te.zCoord, null);
                 //Be extremely careful when update something on the edge of the chunk
                 if (te.xCoord % 16 == 0 || te.xCoord % 16 == 1 || te.xCoord % 16 == 15 ||
                         te.zCoord % 16 == 0 || te.zCoord % 16 == 1 || te.zCoord % 16 == 15)

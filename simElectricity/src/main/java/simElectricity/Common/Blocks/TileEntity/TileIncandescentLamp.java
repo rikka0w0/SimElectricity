@@ -4,6 +4,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.Common.TileStandardSEMachine;
 import simElectricity.API.Energy;
 import simElectricity.API.IEnergyNetUpdateHandler;
+import simElectricity.API.ISyncPacketHandler;
 import simElectricity.API.IUpdateOnWatch;
 import simElectricity.API.Util;
 
@@ -37,12 +38,13 @@ public class TileIncandescentLamp extends TileStandardSEMachine implements IEner
             lightLevel = 15;
         if (Energy.getVoltage(this) > 265)
             worldObj.createExplosion(null, xCoord, yCoord, zCoord, 4F + Energy.getVoltage(this) / 265, true);
-        //Util.updateTileEntityField(this, "lightLevel");
-        Util.scheduleBlockUpdate(this, 4);
+
+        onWatch();
     }
 
 	@Override
 	public void onWatch() {
-		Util.scheduleBlockUpdate(this);
+        Util.updateTileEntityField(this, "lightLevel");
+        Util.scheduleBlockUpdate(this);
 	}
 }

@@ -26,7 +26,6 @@ public class TileSwitch extends TileEntity implements IManualJunction, IConnecta
         if (!worldObj.isRemote && !isAddedToEnergyNet) {
             Energy.postTileAttachEvent(this);
             this.isAddedToEnergyNet = true;
-            Util.scheduleBlockUpdate(this);
         }
     }
 
@@ -68,7 +67,7 @@ public class TileSwitch extends TileEntity implements IManualJunction, IConnecta
     public void onClient2ServerUpdate(String field, Object value, short type) {
         if (field.contains("inputSide") || field.contains("outputSide") || field.contains("isOn")) {
             Energy.postTileRejoinEvent(this);
-            Util.scheduleBlockUpdate(this);
+            onWatch();
         } else if (field.contains("resistance")) {
             Energy.postTileChangeEvent(this);
         } else if (field.contains("maxCurrent")) {
@@ -123,7 +122,11 @@ public class TileSwitch extends TileEntity implements IManualJunction, IConnecta
 
     @Override
     public void onWatch() {
-        Util.scheduleBlockUpdate(this);
+        Util.updateTileEntityField(this, "inputSide");
+        Util.updateTileEntityField(this, "outputSide");
+        Util.updateTileEntityField(this, "isOn");
+        worldObj.notifyBlockChange(xCoord, yCoord, zCoord, 
+        		worldObj.getBlock(xCoord, yCoord, zCoord));
     }
 
     @Override

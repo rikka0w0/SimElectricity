@@ -52,7 +52,6 @@ public class TileWire extends TileEntity implements IConductor {
         if (!worldObj.isRemote && !isAddedToEnergyNet) {
             Energy.postTileAttachEvent(this);
             this.isAddedToEnergyNet = true;
-            Util.scheduleBlockUpdate(this, 20);
         }
     }
 
