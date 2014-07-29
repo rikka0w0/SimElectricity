@@ -19,8 +19,6 @@ import simElectricity.API.Util;
 import simElectricity.Common.Blocks.TileEntity.TileSwitch;
 import simElectricity.SimElectricity;
 
-import java.util.Random;
-
 public class BlockSwitch extends BlockContainerSE {
     private IIcon[] iconBuffer = new IIcon[6];
 

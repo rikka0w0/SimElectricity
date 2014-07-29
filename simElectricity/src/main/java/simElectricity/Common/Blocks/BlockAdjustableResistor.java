@@ -2,7 +2,6 @@ package simElectricity.Common.Blocks;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
@@ -11,13 +10,10 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.Common.Blocks.BlockStandardSEMachine;
-import simElectricity.API.EnergyTile.IEnergyTile;
 import simElectricity.API.ISidedFacing;
 import simElectricity.API.Util;
 import simElectricity.Common.Blocks.TileEntity.TileAdjustableResistor;
 import simElectricity.SimElectricity;
-
-import java.util.Random;
 
 public class BlockAdjustableResistor extends BlockStandardSEMachine {
     private IIcon[] iconBuffer = new IIcon[6];

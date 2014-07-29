@@ -16,8 +16,6 @@ import simElectricity.API.Util;
 import simElectricity.Common.Blocks.TileEntity.TileAdjustableTransformer;
 import simElectricity.SimElectricity;
 
-import java.util.Random;
-
 public class BlockAdjustableTransformer extends BlockContainerSE {
     private IIcon[] iconBuffer = new IIcon[6];
 

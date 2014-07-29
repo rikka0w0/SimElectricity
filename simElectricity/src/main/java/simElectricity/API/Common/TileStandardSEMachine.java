@@ -4,7 +4,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.Energy;
 import simElectricity.API.EnergyTile.IEnergyTile;
-import simElectricity.API.ISidedFacing;
 import simElectricity.API.Util;
 
 /**

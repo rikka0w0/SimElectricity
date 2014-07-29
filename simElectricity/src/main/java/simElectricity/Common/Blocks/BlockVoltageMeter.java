@@ -2,7 +2,6 @@ package simElectricity.Common.Blocks;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
@@ -14,8 +13,6 @@ import simElectricity.API.Common.Blocks.BlockStandardSEMachine;
 import simElectricity.API.Util;
 import simElectricity.Common.Blocks.TileEntity.TileVoltageMeter;
 import simElectricity.SimElectricity;
-
-import java.util.Random;
 
 public class BlockVoltageMeter extends BlockStandardSEMachine {
     private IIcon[] iconBuffer = new IIcon[6];

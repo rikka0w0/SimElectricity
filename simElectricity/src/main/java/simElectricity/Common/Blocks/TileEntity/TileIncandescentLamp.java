@@ -4,7 +4,6 @@ import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.Common.TileStandardSEMachine;
 import simElectricity.API.Energy;
 import simElectricity.API.IEnergyNetUpdateHandler;
-import simElectricity.API.ISyncPacketHandler;
 import simElectricity.API.IUpdateOnWatch;
 import simElectricity.API.Util;
 

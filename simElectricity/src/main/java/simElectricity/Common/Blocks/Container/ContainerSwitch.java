@@ -4,7 +4,6 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.tileentity.TileEntity;
 import simElectricity.API.Common.ContainerBase;
 import simElectricity.API.Util;
-import simElectricity.Common.Blocks.TileEntity.TileSwitch;
 
 public class ContainerSwitch extends ContainerBase {
     public ContainerSwitch(InventoryPlayer inventoryPlayer, TileEntity te) {

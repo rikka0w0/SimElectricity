@@ -64,7 +64,6 @@ public class ItemUltimateMultimeter extends ItemSE {
 
             Util.chat(player, "-----------------------");
             if (te instanceof ICircuitComponent) {
-                ICircuitComponent ps = (ICircuitComponent) te;
                 if (((ICircuitComponent) te).getOutputVoltage() == 0)
                     tileType = "Energy Sink";
                 else {

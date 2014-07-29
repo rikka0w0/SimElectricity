@@ -2,7 +2,6 @@ package simElectricity.Common.Blocks;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
@@ -15,8 +14,6 @@ import simElectricity.API.EnergyTile.IEnergyTile;
 import simElectricity.API.Util;
 import simElectricity.Common.Blocks.TileEntity.TileQuantumGenerator;
 import simElectricity.SimElectricity;
-
-import java.util.Random;
 
 public class BlockQuantumGenerator extends BlockStandardGenerator {
     private IIcon[] iconBuffer = new IIcon[6];
