@@ -25,6 +25,7 @@ public class BakaGraph {
 	/**
 	 * Return a exact copy of this node graph
 	 */
+	@Override
 	public Object clone(){
 		BakaGraph result = new BakaGraph();
 		result.graph.putAll(graph);

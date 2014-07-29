@@ -132,6 +132,7 @@ public class BlockSimpleGenerator extends BlockStandardSEMachine {
         return new TileSimpleGenerator();
     }
 
+    @Override
     public int getLightValue(IBlockAccess world, int x, int y, int z) {
         TileEntity te = world.getTileEntity(x, y, z);
         if (!(te instanceof TileSimpleGenerator))

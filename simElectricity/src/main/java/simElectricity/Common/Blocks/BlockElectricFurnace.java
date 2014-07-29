@@ -130,6 +130,7 @@ public class BlockElectricFurnace extends BlockStandardSEMachine {
         return new TileElectricFurnace();
     }
 
+    @Override
     public int getLightValue(IBlockAccess world, int x, int y, int z) {
         TileEntity te = world.getTileEntity(x, y, z);
         if (!(te instanceof TileElectricFurnace))

@@ -24,7 +24,7 @@ public class ItemBlockWire extends ItemBlockSE {
         return damageValue;
     }
 
-
+    @Override
     public String getUnlocalizedName(ItemStack itemstack) {
         return getUnlocalizedName() + "." + BlockWire.subNames[itemstack.getItemDamage()];
     }

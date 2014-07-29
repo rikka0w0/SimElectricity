@@ -106,6 +106,7 @@ public class GuiAdjustableTransformer extends GuiContainer {
 
     }
 
+    @Override
     public void mouseClicked(int x, int y, int button) {
         super.mouseClicked(x, y, button);
 
