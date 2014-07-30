@@ -13,7 +13,6 @@ import java.util.Map;
 
 public class ItemHVWire extends ItemSE {
     public static Map<EntityPlayer, int[]> lastCoordinates = new HashMap<EntityPlayer, int[]>();
-    ;
 
     public ItemHVWire() {
         super();
@@ -23,6 +22,12 @@ public class ItemHVWire extends ItemSE {
     @Override
     public boolean onItemUse(ItemStack itemStack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
         if (!world.isRemote) {
+
+            if (!(world.getTileEntity(x, y, z) instanceof TileTower)) {
+                Util.chat(player, StatCollector.translateToLocal("sime.TgtNotTw"));
+                return true;
+            }
+
             if (!lastCoordinates.containsKey(player))
                 lastCoordinates.put(player, new int[] { 0, -1, 0 });
 

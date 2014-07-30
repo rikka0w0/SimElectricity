@@ -32,3 +32,4 @@ sime.Resistance=Resistance:
 sime.TwSelect=Tower Selected.
 sime.TwConnect=Tower Connected.
 sime.ActionCancel=Action Cancelled.
+sime.TgtNotTw=Target is not a Tower.

@@ -1,5 +1,6 @@
 package simElectricity.Common.Blocks;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
@@ -30,6 +31,17 @@ public class BlockTower extends BlockContainerSE {
         } else {
             tower.facing = 0;
         }
+    }
+
+    @Override
+    public void breakBlock(World world, int x, int y, int z, Block block, int meta) {
+        if (world.getTileEntity(x, y, z) instanceof TileTower) {
+            TileTower tower = (TileTower) world.getTileEntity(x, y, z);
+            for (int i = 0; i < tower.neighborsInfo.length; i += 3)
+                if (world.getTileEntity(tower.neighborsInfo[i], tower.neighborsInfo[i + 1], tower.neighborsInfo[i + 2]) instanceof TileTower)
+                    ((TileTower) world.getTileEntity(tower.neighborsInfo[0], tower.neighborsInfo[1], tower.neighborsInfo[2])).delNeighbor(tower);
+        }
+        super.breakBlock(world, x, y, z, block, meta);
     }
 
     @Override
