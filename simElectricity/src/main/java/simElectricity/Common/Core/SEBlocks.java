@@ -22,7 +22,7 @@ public class SEBlocks {
     public static BlockVoltageMeter voltageMeter;
     public static BlockWindMillTop windMillTop;
     public static BlockWire wire;
-
+    public static BlockTower tower;
 
     public static void preInit() {
         adjustableResistor = new BlockAdjustableResistor();
@@ -37,6 +37,7 @@ public class SEBlocks {
         voltageMeter = new BlockVoltageMeter();
         windMillTop = new BlockWindMillTop();
         wire = new BlockWire();
+        tower = new BlockTower();
     }
 
     public static void init() {
@@ -52,5 +53,6 @@ public class SEBlocks {
         GameRegistry.registerTileEntity(TileBatteryBox.class, "TileBatteryBox");
         GameRegistry.registerTileEntity(TileIncandescentLamp.class, "TileIncandescentLamp");
         GameRegistry.registerTileEntity(TileSwitch.class, "TileSwitch");
+        GameRegistry.registerTileEntity(TileTower.class, "TileTower");
     }
 }

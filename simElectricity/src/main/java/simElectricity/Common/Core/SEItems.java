@@ -2,10 +2,7 @@ package simElectricity.Common.Core;
 
 import cpw.mods.fml.common.registry.GameRegistry;
 import simElectricity.API.Util;
-import simElectricity.Common.Items.ItemFan;
-import simElectricity.Common.Items.ItemGlove;
-import simElectricity.Common.Items.ItemUltimateMultimeter;
-import simElectricity.Common.Items.ItemWrench;
+import simElectricity.Common.Items.*;
 
 @GameRegistry.ObjectHolder(Util.MODID)
 public class SEItems {
@@ -14,11 +11,13 @@ public class SEItems {
     public static ItemGlove glove;
     public static ItemUltimateMultimeter ultimateMultimeter;
     public static ItemWrench wrench;
+    public static ItemHVWire hvWire;
 
     public static void init() {
         fan = new ItemFan();
         glove = new ItemGlove();
         ultimateMultimeter = new ItemUltimateMultimeter();
         wrench = new ItemWrench();
+        hvWire = new ItemHVWire();
     }
 }

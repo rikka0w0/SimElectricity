@@ -65,6 +65,9 @@ public class PacketTileEntityFieldUpdate extends AbstractPacket {
             } else if (f.getType() == float.class) {  //Float
                 type = 4;
                 value = f.getFloat(te);
+            } else if (f.getType() == int[].class) {  //Integer array
+                type = 5;
+                value = f.get(te);
             } else {
                 System.out.println(te.toString() + " is trying synchronous a unknown type field: " + field);
             }
@@ -94,16 +97,20 @@ public class PacketTileEntityFieldUpdate extends AbstractPacket {
                 buffer.writeByte((Byte) value);
                 break;
             case 3:
-                buffer.writeBoolean(((boolean[]) value)[0]);
-                buffer.writeBoolean(((boolean[]) value)[1]);
-                buffer.writeBoolean(((boolean[]) value)[2]);
-                buffer.writeBoolean(((boolean[]) value)[3]);
-                buffer.writeBoolean(((boolean[]) value)[4]);
-                buffer.writeBoolean(((boolean[]) value)[5]);
+            	buffer.writeInt(((boolean[])value).length);
+            	for (boolean i : (boolean[])value){
+            		buffer.writeBoolean(i);
+            	}
                 break;
             case 4:
                 buffer.writeFloat((Float) value);
                 break;
+            case 5:
+            	buffer.writeInt(((int[])value).length);
+            	for (int i : (int[])value){
+            		buffer.writeInt(i);
+            	}
+            	break;
         }
     }
 
@@ -127,18 +134,22 @@ public class PacketTileEntityFieldUpdate extends AbstractPacket {
                 value = buffer.readByte();
                 break;
             case 3:
-                boolean[] temp = new boolean[6];
-                temp[0] = buffer.readBoolean();
-                temp[1] = buffer.readBoolean();
-                temp[2] = buffer.readBoolean();
-                temp[3] = buffer.readBoolean();
-                temp[4] = buffer.readBoolean();
-                temp[5] = buffer.readBoolean();
-                value = temp;
+            	boolean[] arrayBoolean = new boolean[buffer.readInt()];
+            	for (int i=0;i<arrayBoolean.length;i++){
+            		arrayBoolean[i] = buffer.readBoolean();
+            	}
+            	value = arrayBoolean;
                 break;
             case 4:
                 value = buffer.readFloat();
                 break;
+            case 5:
+            	int[] arrayInt = new int[buffer.readInt()];
+            	for (int i=0;i<arrayInt.length;i++){
+            		arrayInt[i] = buffer.readInt();
+            	}
+            	value = arrayInt;
+            	break;
         }
     }
 
@@ -170,6 +181,9 @@ public class PacketTileEntityFieldUpdate extends AbstractPacket {
                 case 4:
                     f.setFloat(te, (Float) value);
                     break;
+                case 5:
+                    f.set(te, value);
+                    break;               	
             }
 
             if (isClient) { //Client is handling

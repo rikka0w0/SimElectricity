@@ -10,8 +10,6 @@ public class TileAdjustableResistor extends TileStandardSEMachine implements ISy
     public float powerConsumed = 0;
     public float power = 0;
 
-    protected boolean isAddedToEnergyNet = false;
-
     @Override
     public void updateEntity() {
         super.updateEntity();
