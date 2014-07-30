@@ -7,7 +7,7 @@ import simElectricity.API.IEnergyNetUpdateHandler;
 import simElectricity.API.IUpdateOnWatch;
 import simElectricity.API.Util;
 
-public class TileIncandescentLamp extends TileStandardSEMachine implements IEnergyNetUpdateHandler,IUpdateOnWatch {
+public class TileIncandescentLamp extends TileStandardSEMachine implements IEnergyNetUpdateHandler, IUpdateOnWatch {
     public int lightLevel = 0;
 
     @Override
@@ -41,9 +41,9 @@ public class TileIncandescentLamp extends TileStandardSEMachine implements IEner
         onWatch();
     }
 
-	@Override
-	public void onWatch() {
+    @Override
+    public void onWatch() {
         Util.updateTileEntityField(this, "lightLevel");
         Util.scheduleBlockUpdate(this);
-	}
+    }
 }

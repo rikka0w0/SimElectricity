@@ -124,7 +124,7 @@ public class BlockElectricFurnace extends BlockStandardSEMachine {
     public void updateTick(World world, int x, int y, int z, Random random) {
         world.markBlockForUpdate(x, y, z);
     }
-    
+
     @Override
     public TileEntity createNewTileEntity(World world, int meta) {
         return new TileElectricFurnace();

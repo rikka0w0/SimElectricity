@@ -97,20 +97,20 @@ public class PacketTileEntityFieldUpdate extends AbstractPacket {
                 buffer.writeByte((Byte) value);
                 break;
             case 3:
-            	buffer.writeInt(((boolean[])value).length);
-            	for (boolean i : (boolean[])value){
-            		buffer.writeBoolean(i);
-            	}
+                buffer.writeInt(((boolean[]) value).length);
+                for (boolean i : (boolean[]) value) {
+                    buffer.writeBoolean(i);
+                }
                 break;
             case 4:
                 buffer.writeFloat((Float) value);
                 break;
             case 5:
-            	buffer.writeInt(((int[])value).length);
-            	for (int i : (int[])value){
-            		buffer.writeInt(i);
-            	}
-            	break;
+                buffer.writeInt(((int[]) value).length);
+                for (int i : (int[]) value) {
+                    buffer.writeInt(i);
+                }
+                break;
         }
     }
 
@@ -134,22 +134,22 @@ public class PacketTileEntityFieldUpdate extends AbstractPacket {
                 value = buffer.readByte();
                 break;
             case 3:
-            	boolean[] arrayBoolean = new boolean[buffer.readInt()];
-            	for (int i=0;i<arrayBoolean.length;i++){
-            		arrayBoolean[i] = buffer.readBoolean();
-            	}
-            	value = arrayBoolean;
+                boolean[] arrayBoolean = new boolean[buffer.readInt()];
+                for (int i = 0; i < arrayBoolean.length; i++) {
+                    arrayBoolean[i] = buffer.readBoolean();
+                }
+                value = arrayBoolean;
                 break;
             case 4:
                 value = buffer.readFloat();
                 break;
             case 5:
-            	int[] arrayInt = new int[buffer.readInt()];
-            	for (int i=0;i<arrayInt.length;i++){
-            		arrayInt[i] = buffer.readInt();
-            	}
-            	value = arrayInt;
-            	break;
+                int[] arrayInt = new int[buffer.readInt()];
+                for (int i = 0; i < arrayInt.length; i++) {
+                    arrayInt[i] = buffer.readInt();
+                }
+                value = arrayInt;
+                break;
         }
     }
 
@@ -183,7 +183,7 @@ public class PacketTileEntityFieldUpdate extends AbstractPacket {
                     break;
                 case 5:
                     f.set(te, value);
-                    break;               	
+                    break;
             }
 
             if (isClient) { //Client is handling

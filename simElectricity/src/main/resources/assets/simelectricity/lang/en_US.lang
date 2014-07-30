@@ -16,14 +16,19 @@ tile.sime:WindMillTop.name=WindMill
 tile.sime:BatteryBox.name=BatteryBox
 tile.sime:IncandescentLamp.name=Incandescent Lamp (5w)
 tile.sime:Switch.name=Switch
+tile.sime:Tower.name=Tower
 
 # Items
 item.sime:UltimateMultimeter.name=Ultimate Multimeter
 item.sime:Glove.name=Glove
 item.sime:Wrench.name=Wrench
 item.sime:Fan.name=WindMill Turbine
+item.sime:HVWire.name=HV Wire
 
 # Text
 sime.Output=Output:
 sime.Impedance=Impedance:
 sime.Resistance=Resistance:
+sime.TwSelect=Tower Selected.
+sime.TwConnect=Tower Connected.
+sime.ActionCancel=Action Cancelled.

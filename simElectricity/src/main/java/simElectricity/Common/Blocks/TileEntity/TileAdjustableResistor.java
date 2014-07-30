@@ -34,7 +34,7 @@ public class TileAdjustableResistor extends TileStandardSEMachine implements ISy
 
         tagCompound.setFloat("resistance", resistance);
     }
-    
+
     @Override
     public void onClient2ServerUpdate(String field, Object value, short type) {
         if (field.contains("resistance"))
