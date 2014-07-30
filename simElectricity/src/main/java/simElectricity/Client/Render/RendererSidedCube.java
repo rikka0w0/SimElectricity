@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) LambdaCraft Modding Team, 2013
  * http://lambdacraft.half-life.cn/
  *
