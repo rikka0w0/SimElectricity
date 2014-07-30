@@ -78,8 +78,10 @@ public class TileTower extends TileEntity implements IUpdateOnWatch, IManualJunc
             
     		for(int i=0;i<neighborsInfo.length;i+=3){
     			TileTower neighbor = (TileTower) getWorldObj().getTileEntity(neighborsInfo[i],neighborsInfo[i+1],neighborsInfo[i+2]);
-    			neighbor.delNeighbor(this);
-    			Util.updateTileEntityField(neighbor, "neighborsInfo");
+    			if (neighbor!=null){
+    				neighbor.delNeighbor(this);
+    				Util.updateTileEntityField(neighbor, "neighborsInfo");
+    			}
     		}
         }
 
@@ -146,7 +148,7 @@ public class TileTower extends TileEntity implements IUpdateOnWatch, IManualJunc
 			return 0.1F;
 		
 		if (neighbor instanceof TileTower){
-			return (float) (0.1*distanceOf(new int[]{
+			return (float) (0.2*distanceOf(new int[]{
 					((TileTower) neighbor).xCoord,((TileTower) neighbor).yCoord,((TileTower) neighbor).zCoord,
 					xCoord,yCoord,zCoord}));
 		}
