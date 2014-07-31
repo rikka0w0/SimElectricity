@@ -34,8 +34,8 @@ public class TileTower extends TileEntity implements IUpdateOnWatch, IManualJunc
 	
 	public void delNeighbor(TileEntity te){
 		for (int i=0;i<neighborsInfo.length;i+=3){
-			if (neighborsInfo[i] == te.xCoord ||
-				neighborsInfo[i+1] == te.yCoord ||
+			if (neighborsInfo[i] == te.xCoord &&
+				neighborsInfo[i+1] == te.yCoord &&
 				neighborsInfo[i+2] == te.zCoord){
 				neighborsInfo[i] = 0;
 				neighborsInfo[i+1] = -1;
