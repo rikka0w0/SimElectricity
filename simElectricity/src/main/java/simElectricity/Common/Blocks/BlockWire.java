@@ -107,6 +107,7 @@ public class BlockWire extends BlockContainerSE {
             return;
 
         TileEntity te = world.getTileEntity(x, y, z);
+        Util.scheduleBlockUpdate(te);
         updateRenderSides(te);
 
         for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) { //Update neighbors
