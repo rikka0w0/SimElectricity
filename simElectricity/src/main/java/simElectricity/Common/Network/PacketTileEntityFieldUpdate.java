@@ -1,3 +1,22 @@
+/*
+ * Copyright (C) 2014 SimElectricity
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
+ * USA
+ */
+
 package simElectricity.Common.Network;
 
 import io.netty.buffer.ByteBuf;
@@ -97,20 +116,20 @@ public class PacketTileEntityFieldUpdate extends AbstractPacket {
                 buffer.writeByte((Byte) value);
                 break;
             case 3:
-            	buffer.writeInt(((boolean[])value).length);
-            	for (boolean i : (boolean[])value){
-            		buffer.writeBoolean(i);
-            	}
+                buffer.writeInt(((boolean[]) value).length);
+                for (boolean i : (boolean[]) value) {
+                    buffer.writeBoolean(i);
+                }
                 break;
             case 4:
                 buffer.writeFloat((Float) value);
                 break;
             case 5:
-            	buffer.writeInt(((int[])value).length);
-            	for (int i : (int[])value){
-            		buffer.writeInt(i);
-            	}
-            	break;
+                buffer.writeInt(((int[]) value).length);
+                for (int i : (int[]) value) {
+                    buffer.writeInt(i);
+                }
+                break;
         }
     }
 
@@ -134,22 +153,22 @@ public class PacketTileEntityFieldUpdate extends AbstractPacket {
                 value = buffer.readByte();
                 break;
             case 3:
-            	boolean[] arrayBoolean = new boolean[buffer.readInt()];
-            	for (int i=0;i<arrayBoolean.length;i++){
-            		arrayBoolean[i] = buffer.readBoolean();
-            	}
-            	value = arrayBoolean;
+                boolean[] arrayBoolean = new boolean[buffer.readInt()];
+                for (int i = 0; i < arrayBoolean.length; i++) {
+                    arrayBoolean[i] = buffer.readBoolean();
+                }
+                value = arrayBoolean;
                 break;
             case 4:
                 value = buffer.readFloat();
                 break;
             case 5:
-            	int[] arrayInt = new int[buffer.readInt()];
-            	for (int i=0;i<arrayInt.length;i++){
-            		arrayInt[i] = buffer.readInt();
-            	}
-            	value = arrayInt;
-            	break;
+                int[] arrayInt = new int[buffer.readInt()];
+                for (int i = 0; i < arrayInt.length; i++) {
+                    arrayInt[i] = buffer.readInt();
+                }
+                value = arrayInt;
+                break;
         }
     }
 
@@ -183,7 +202,7 @@ public class PacketTileEntityFieldUpdate extends AbstractPacket {
                     break;
                 case 5:
                     f.set(te, value);
-                    break;               	
+                    break;
             }
 
             if (isClient) { //Client is handling

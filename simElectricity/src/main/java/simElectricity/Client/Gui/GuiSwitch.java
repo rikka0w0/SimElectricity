@@ -1,3 +1,22 @@
+/*
+ * Copyright (C) 2014 SimElectricity
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
+ * USA
+ */
+
 package simElectricity.Client.Gui;
 
 import net.minecraft.client.gui.GuiButton;
@@ -164,12 +183,12 @@ public class GuiSwitch extends GuiContainer {
         //draw text and stuff here
         //the parameters for drawString are: string, x, y, color
 
-    	if (te.isOn)    	
-    		fontRendererObj.drawString(StatCollector.translateToLocal("tile.sime:Switch.name") + "              (I=" + String.format("%.3f",te.current) + " A)", 8, 6, 4210752);
-    	else
-        	fontRendererObj.drawString(StatCollector.translateToLocal("tile.sime:Switch.name") , 8, 6, 4210752);
-    	
-    	
+        if (te.isOn)
+            fontRendererObj.drawString(StatCollector.translateToLocal("tile.sime:Switch.name") + "              (I=" + String.format("%.3f", te.current) + " A)", 8, 6, 4210752);
+        else
+            fontRendererObj.drawString(StatCollector.translateToLocal("tile.sime:Switch.name"), 8, 6, 4210752);
+
+
         fontRendererObj.drawString("Imax = " + String.format("%.1f", te.maxCurrent) + " A", 8, 26, 4210752);
 
         fontRendererObj.drawString("Ron = " + String.format("%.3f", te.resistance) + " \u03a9", 8, 42, 4210752);
