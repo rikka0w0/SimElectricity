@@ -24,9 +24,9 @@ import io.netty.channel.ChannelHandlerContext;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.EnergyTile.IEnergyTile;
 import simElectricity.API.ISidedFacing;
-import simElectricity.API.Util;
 
 /**
  * This packet performs server<->client side synchronization for tileEntity fields~
@@ -56,9 +56,9 @@ public class PacketTileEntitySideUpdate extends AbstractPacket {
         type = _type;
 
         if (type == 0) {
-            value = Util.direction2Byte(((ISidedFacing) te).getFacing());
+            value = (byte) ((ISidedFacing) te).getFacing().ordinal();
         } else if (type == 1) {
-            value = Util.direction2Byte(((IEnergyTile) te).getFunctionalSide());
+            value = (byte) ((IEnergyTile) te).getFunctionalSide().ordinal();
         } else {
             System.out.println("TileEntity " + te.toString() + " is trying to update its facing/functional side, but it's not an instance of ISidedFacing nor IEnergyTile, this must be a bug!");
         }
@@ -97,13 +97,13 @@ public class PacketTileEntitySideUpdate extends AbstractPacket {
             if (!(te instanceof ISidedFacing))
                 return;
 
-            ((ISidedFacing) te).setFacing(Util.byte2Direction(value));
+            ((ISidedFacing) te).setFacing(ForgeDirection.getOrientation(value));
             world.markBlockForUpdate(x, y, z);
         } else if (type == 1) {
             if (!(te instanceof IEnergyTile))
                 return;
 
-            ((IEnergyTile) te).setFunctionalSide(Util.byte2Direction(value));
+            ((IEnergyTile) te).setFunctionalSide(ForgeDirection.getOrientation(value));
             world.markBlockForUpdate(x, y, z);
         }
     }

@@ -22,7 +22,6 @@ package simElectricity.API.Common;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.ISidedFacing;
-import simElectricity.API.Util;
 
 public abstract class TileSidedFacingMachine extends TileInventoryMachine implements ISidedFacing {
     protected ForgeDirection facing = ForgeDirection.NORTH;
@@ -31,14 +30,14 @@ public abstract class TileSidedFacingMachine extends TileInventoryMachine implem
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
 
-        facing = Util.byte2Direction(tagCompound.getByte("facing"));
+        facing = ForgeDirection.getOrientation((tagCompound.getByte("facing")));
     }
 
     @Override
     public void writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
 
-        tagCompound.setByte("facing", Util.direction2Byte(facing));
+        tagCompound.setByte("facing", (byte) facing.ordinal());
     }
 
     //ISidedFacing

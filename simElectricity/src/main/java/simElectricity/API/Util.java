@@ -201,50 +201,6 @@ public class Util {
     }
 
     /**
-     * Get a {@link net.minecraftforge.common.util.ForgeDirection} from a byte, used in network packets
-     */
-    public static ForgeDirection byte2Direction(byte byteData) {
-        switch (byteData) {
-            case 2:
-                return ForgeDirection.NORTH;
-            case 0:
-                return ForgeDirection.SOUTH;
-            case 1:
-                return ForgeDirection.WEST;
-            case 3:
-                return ForgeDirection.EAST;
-            case 4:
-                return ForgeDirection.UP;
-            case 5:
-                return ForgeDirection.DOWN;
-            default:
-                return null;
-        }
-    }
-
-    /**
-     * Convert a {@link net.minecraftforge.common.util.ForgeDirection} to a byte, used in network packets
-     */
-    public static byte direction2Byte(ForgeDirection direction) {
-        switch (direction) {
-            case NORTH:
-                return 2;
-            case SOUTH:
-                return 0;
-            case WEST:
-                return 1;
-            case EAST:
-                return 3;
-            case UP:
-                return 4;
-            case DOWN:
-                return 5;
-            default:
-                return 0;
-        }
-    }
-
-    /**
      * Internal use only! [side][facing]
      */
     public static byte[][] sideAndFacingToSpriteOffset = new byte[][] {

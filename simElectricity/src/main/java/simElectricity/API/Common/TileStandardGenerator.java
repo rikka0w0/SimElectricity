@@ -60,7 +60,7 @@ public abstract class TileStandardGenerator extends TileEntity implements IEnerg
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
 
-        functionalSide = Util.byte2Direction(tagCompound.getByte("functionalSide"));
+        functionalSide = ForgeDirection.getOrientation(tagCompound.getByte("functionalSide"));
         outputVoltage = tagCompound.getFloat("outputVoltage");
         outputResistance = tagCompound.getFloat("outputResistance");
     }
@@ -69,7 +69,7 @@ public abstract class TileStandardGenerator extends TileEntity implements IEnerg
     public void writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
 
-        tagCompound.setByte("functionalSide", Util.direction2Byte(functionalSide));
+        tagCompound.setByte("functionalSide", (byte) functionalSide.ordinal());
         tagCompound.setFloat("outputVoltage", outputVoltage);
         tagCompound.setFloat("outputResistance", outputResistance);
     }

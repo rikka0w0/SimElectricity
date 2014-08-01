@@ -64,7 +64,7 @@ public class RenderTower extends TileEntitySpecialRenderer implements ITexturePr
 				//Mid
 				GL11.glPushMatrix();
 				GL11.glTranslated(x, y, z);
-				GL11.glTranslated(0.5, 3.5, 0.5);
+				GL11.glTranslated(0.5, 3, 0.5);
 				
 				render.renderHalfParabolicCable(
 						tower.xCoord,tower.yCoord,tower.zCoord,
@@ -77,7 +77,7 @@ public class RenderTower extends TileEntitySpecialRenderer implements ITexturePr
 				if (neighbor.facing == tower.facing){
 					GL11.glPushMatrix();
 					GL11.glTranslated(x, y, z);
-					GL11.glTranslated(0.5 + (tower.facing==1?0:3), 3.5, 0.5 + (tower.facing==1?3:0));
+					GL11.glTranslated(0.5 + (tower.facing==1?0:3), 3, 0.5 + (tower.facing==1?3:0));
 					
 					render.renderHalfParabolicCable(
 							tower.xCoord + (tower.facing==1?0:3),tower.yCoord,tower.zCoord + (tower.facing==1?3:0),
@@ -88,7 +88,7 @@ public class RenderTower extends TileEntitySpecialRenderer implements ITexturePr
 					
 					GL11.glPushMatrix();
 					GL11.glTranslated(x, y, z);
-					GL11.glTranslated(0.5 + (tower.facing==1?0:-3), 3.5, 0.5 + (tower.facing==1?-3:0));
+					GL11.glTranslated(0.5 + (tower.facing==1?0:-3), 3, 0.5 + (tower.facing==1?-3:0));
 					
 					render.renderHalfParabolicCable(
 							tower.xCoord + (tower.facing==1?0:-3),tower.yCoord,tower.zCoord + (tower.facing==1?-3:0),
@@ -128,7 +128,7 @@ public class RenderTower extends TileEntitySpecialRenderer implements ITexturePr
 					
 					GL11.glPushMatrix();
 					GL11.glTranslated(x, y, z);
-					GL11.glTranslated(0.5 + (tower.facing==1?0:3), 3.5, 0.5 + (tower.facing==1?3:0));
+					GL11.glTranslated(0.5 + (tower.facing==1?0:3), 3, 0.5 + (tower.facing==1?3:0));
 					
 					render.renderHalfParabolicCable(
 							tower.xCoord + (tower.facing==1?0:3),tower.yCoord,tower.zCoord + (tower.facing==1?3:0),
@@ -139,7 +139,7 @@ public class RenderTower extends TileEntitySpecialRenderer implements ITexturePr
 					
 					GL11.glPushMatrix();
 					GL11.glTranslated(x, y, z);
-					GL11.glTranslated(0.5 + (tower.facing==1?0:-3), 3.5, 0.5 + (tower.facing==1?-3:0));
+					GL11.glTranslated(0.5 + (tower.facing==1?0:-3), 3, 0.5 + (tower.facing==1?-3:0));
 					
 					render.renderHalfParabolicCable(
 							tower.xCoord + (tower.facing==1?0:-3),tower.yCoord,tower.zCoord + (tower.facing==1?-3:0),
@@ -254,17 +254,17 @@ public class RenderTower extends TileEntitySpecialRenderer implements ITexturePr
 		
 		//Insulators
 		GL11.glPushMatrix();
-		GL11.glTranslated(0, 9.5, 0);
+		GL11.glTranslated(0, 9, 0);
 		renderInsulator(render);
 		GL11.glPopMatrix();
 		
 		GL11.glPushMatrix();
-		GL11.glTranslated(0, 9.5, -3);
+		GL11.glTranslated(0, 9, -3);
 		renderInsulator(render);
 		GL11.glPopMatrix();
 		
 		GL11.glPushMatrix();
-		GL11.glTranslated(0, 9.5, 3);
+		GL11.glTranslated(0, 9, 3);
 		renderInsulator(render);
 		GL11.glPopMatrix();
 	
@@ -312,8 +312,20 @@ public class RenderTower extends TileEntitySpecialRenderer implements ITexturePr
 	}
 	
 	void renderInsulator(CubeRender render){
-		render.render_cube(0.1,0.5,0.1);
+		render.render_cube(0.1,1,0.1);
 		GL11.glTranslated(0, 0.1, 0);
+		render.render_cube(0.3,0.04,0.3,2);
+		GL11.glTranslated(0, 0.08, 0);
+		render.render_cube(0.3,0.04,0.3,2);
+		GL11.glTranslated(0, 0.08, 0);
+		render.render_cube(0.3,0.04,0.3,2);
+		GL11.glTranslated(0, 0.08, 0);
+		render.render_cube(0.3,0.04,0.3,2);
+		GL11.glTranslated(0, 0.08, 0);
+		render.render_cube(0.3,0.04,0.3,2);
+		GL11.glTranslated(0, 0.08, 0);
+		render.render_cube(0.3,0.04,0.3,2);
+		GL11.glTranslated(0, 0.08, 0);
 		render.render_cube(0.3,0.04,0.3,2);
 		GL11.glTranslated(0, 0.08, 0);
 		render.render_cube(0.3,0.04,0.3,2);

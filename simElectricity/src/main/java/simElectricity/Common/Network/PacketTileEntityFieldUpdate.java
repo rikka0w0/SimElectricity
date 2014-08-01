@@ -26,7 +26,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.ISyncPacketHandler;
-import simElectricity.API.Util;
 
 import java.lang.reflect.Field;
 
@@ -77,7 +76,7 @@ public class PacketTileEntityFieldUpdate extends AbstractPacket {
                 value = f.getInt(te);
             } else if (f.getType() == ForgeDirection.class) {  //ForgeDirection(Usually used by machines)
                 type = 2;
-                value = Util.direction2Byte((ForgeDirection) f.get(te));
+                value = (byte) ((ForgeDirection) f.get(te)).ordinal();
             } else if (f.getType() == boolean[].class) {  //Boolean group(Usually used by wires)
                 type = 3;
                 value = f.get(te);
@@ -192,7 +191,7 @@ public class PacketTileEntityFieldUpdate extends AbstractPacket {
                     f.setInt(te, (Integer) value);
                     break;
                 case 2:
-                    f.set(te, Util.byte2Direction((Byte) value));
+                    f.set(te, ForgeDirection.getOrientation((Byte) value));
                     break;
                 case 3:
                     f.set(te, value);

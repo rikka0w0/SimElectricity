@@ -23,7 +23,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.Energy;
 import simElectricity.API.EnergyTile.IEnergyTile;
-import simElectricity.API.Util;
 
 /**
  * A standard SE machine can inherits this class, make things easier and less confusion
@@ -81,13 +80,13 @@ public abstract class TileStandardSEMachine extends TileSidedFacingMachine imple
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
 
-        functionalSide = Util.byte2Direction(tagCompound.getByte("functionalSide"));
+        functionalSide = ForgeDirection.getOrientation(tagCompound.getByte("functionalSide"));
     }
 
     @Override
     public void writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
 
-        tagCompound.setByte("functionalSide", Util.direction2Byte(functionalSide));
+        tagCompound.setByte("functionalSide", (byte) functionalSide.ordinal());
     }
 }

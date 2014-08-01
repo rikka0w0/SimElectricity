@@ -65,9 +65,9 @@ public class TileSwitch extends TileEntity implements IManualJunction, IConnecta
         resistance = tagCompound.getFloat("resistance");
         maxCurrent = tagCompound.getFloat("maxCurrent");
         isOn = tagCompound.getBoolean("isOn");
-        inputSide = Util.byte2Direction(tagCompound.getByte("inputSide"));
-        outputSide = Util.byte2Direction(tagCompound.getByte("outputSide"));
-        facing = Util.byte2Direction(tagCompound.getByte("facing"));
+        inputSide = ForgeDirection.getOrientation(tagCompound.getByte("inputSide"));
+        outputSide = ForgeDirection.getOrientation(tagCompound.getByte("outputSide"));
+        facing = ForgeDirection.getOrientation(tagCompound.getByte("facing"));
     }
 
     @Override
@@ -77,9 +77,9 @@ public class TileSwitch extends TileEntity implements IManualJunction, IConnecta
         tagCompound.setFloat("resistance", resistance);
         tagCompound.setFloat("maxCurrent", maxCurrent);
         tagCompound.setBoolean("isOn", isOn);
-        tagCompound.setByte("inputSide", Util.direction2Byte(inputSide));
-        tagCompound.setByte("outputSide", Util.direction2Byte(outputSide));
-        tagCompound.setByte("facing", Util.direction2Byte(facing));
+        tagCompound.setByte("inputSide", (byte) inputSide.ordinal());
+        tagCompound.setByte("outputSide", (byte) outputSide.ordinal());
+        tagCompound.setByte("facing", (byte) facing.ordinal());
     }
 
     @Override

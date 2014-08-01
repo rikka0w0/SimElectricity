@@ -61,8 +61,8 @@ public class TileAdjustableTransformer extends TileEntity implements ITransforme
 
         ratio = tagCompound.getFloat("ratio");
         outputResistance = tagCompound.getFloat("outputResistance");
-        primarySide = Util.byte2Direction(tagCompound.getByte("primarySide"));
-        secondarySide = Util.byte2Direction(tagCompound.getByte("secondarySide"));
+        primarySide = ForgeDirection.getOrientation(tagCompound.getByte("primarySide"));
+        secondarySide = ForgeDirection.getOrientation(tagCompound.getByte("secondarySide"));
     }
 
     @Override
@@ -71,8 +71,8 @@ public class TileAdjustableTransformer extends TileEntity implements ITransforme
 
         tagCompound.setFloat("ratio", ratio);
         tagCompound.setFloat("outputResistance", outputResistance);
-        tagCompound.setByte("primarySide", Util.direction2Byte(primarySide));
-        tagCompound.setByte("secondarySide", Util.direction2Byte(secondarySide));
+        tagCompound.setByte("primarySide", (byte) primarySide.ordinal());
+        tagCompound.setByte("secondarySide", (byte) secondarySide.ordinal());
     }
 
     @Override
