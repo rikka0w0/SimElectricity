@@ -71,7 +71,7 @@ public class TileTower extends TileEntity implements IUpdateOnWatch, IManualJunc
 		return neighborsInfo[1]==-1||neighborsInfo[4]==-1;
 	}
 	
-	public static double distanceOf(int[] coordinates){
+	public static double distanceOf(double[] coordinates){
 		return Math.sqrt(Math.pow(coordinates[0]-coordinates[3], 2) +
 				  	     Math.pow(coordinates[1]-coordinates[4], 2) +
 				  	     Math.pow(coordinates[2]-coordinates[5], 2));
@@ -172,7 +172,7 @@ public class TileTower extends TileEntity implements IUpdateOnWatch, IManualJunc
             return 0.1F;
 
         if (neighbor instanceof TileTower) {
-            return (float) (0.2 * distanceOf(new int[] {
+            return (float) (0.2 * distanceOf(new double[] {
                     ((TileTower) neighbor).xCoord, ((TileTower) neighbor).yCoord, ((TileTower) neighbor).zCoord,
                     xCoord, yCoord, zCoord }));
         }
