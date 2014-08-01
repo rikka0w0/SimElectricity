@@ -21,6 +21,7 @@ package simElectricity.Common.Items;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 import simElectricity.API.Common.Items.ItemSE;
@@ -43,7 +44,7 @@ public class ItemHVWire extends ItemSE {
         if (!world.isRemote) {
 
             if (!(world.getTileEntity(x, y, z) instanceof TileTower)) {
-                Util.chat(player, StatCollector.translateToLocal("sime.TgtNotTw"));
+                Util.chat(player, EnumChatFormatting.RED + StatCollector.translateToLocal("sime.TgtNotTw") + EnumChatFormatting.RESET);
                 return true;
             }
 
@@ -61,6 +62,12 @@ public class ItemHVWire extends ItemSE {
             } else {
                 if (!(lastCoordinate[0] == x && lastCoordinate[1] == y && lastCoordinate[2] == z) &&
                         world.getTileEntity(lastCoordinate[0], lastCoordinate[1], lastCoordinate[2]) instanceof TileTower) {
+
+                    if (Math.pow(x - lastCoordinate[0], 2) + Math.pow(z - lastCoordinate[2], 2) < 100) {
+                        Util.chat(player, EnumChatFormatting.RED + StatCollector.translateToLocal("sime.TwClose") + EnumChatFormatting.RESET);
+                        return true;
+                    }
+
                     TileTower tower1 = (TileTower) world.getTileEntity(lastCoordinate[0], lastCoordinate[1], lastCoordinate[2]);
                     TileTower tower2 = (TileTower) world.getTileEntity(x, y, z);
 

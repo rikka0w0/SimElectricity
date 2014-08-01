@@ -1,12 +1,12 @@
 package simElectricity.API.Client;
 
 import net.minecraft.client.renderer.Tessellator;
-
 import org.lwjgl.opengl.GL11;
 
 /**
  * Provides a easy way of rendering cubes and other shapes made of cubes </p>
- * e.g. parabolas</p>
+ * e.g. parabolas
+ * </p>
  * @author rikka0w0
  *
  */
@@ -26,7 +26,7 @@ public class CubeRender {
     public void render_cube(double maxX, double maxY, double maxZ) {
     	render_cube(maxX, maxY, maxZ, 0);
     }
-	
+
     /**
      * Render a cube, from current normal, with a given size and texture
 	 * @param maxX Size of x
@@ -94,7 +94,7 @@ public class CubeRender {
 
         GL11.glPopMatrix();
     }
-    
+
     /**
      * Render a parabola (made of intervals)
      * @param length The distance between two intersections with x-axis
@@ -108,16 +108,16 @@ public class CubeRender {
 		double b = 4 * maxDisplacement / length;
 		double a = -b / length;
 		double unitLength = length / steps;
-		
+
 		double x0, y0, x1, y1;
-		
+
 		for (int i = 0; i < steps / (half ? 2 : 1); i++){
 			x0 = i * unitLength;
 			y0 = x0 * x0 * a + x0 * b;
 			x1 = (i + 1) * unitLength;
-			y1 = x1 * x1 * a + x1 * b;			
-			
-			GL11.glPushMatrix(); 
+			y1 = x1 * x1 * a + x1 * b;
+
+			GL11.glPushMatrix();
 			GL11.glTranslated(y0, i*unitLength, 0);
 			GL11.glRotated(Math.toDegrees(Math.atan2(y0-y1, unitLength)), 0, 0, 1);
 			render_cube(thickness, Math.sqrt(unitLength * unitLength + Math.pow(y1 - y0, 2)) ,thickness,textureIndex);
