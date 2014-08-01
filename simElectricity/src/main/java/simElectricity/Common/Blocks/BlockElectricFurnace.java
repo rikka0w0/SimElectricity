@@ -141,7 +141,8 @@ public class BlockElectricFurnace extends BlockStandardSEMachine {
 
     @Override
     public void updateTick(World world, int x, int y, int z, Random random) {
-        world.markBlockForUpdate(x, y, z);
+        super.updateTick(world, x, y, z, random);
+    	world.markBlockForUpdate(x, y, z);
     }
 
     @Override

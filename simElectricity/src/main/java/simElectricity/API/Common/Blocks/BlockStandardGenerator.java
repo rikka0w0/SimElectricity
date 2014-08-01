@@ -52,7 +52,5 @@ public abstract class BlockStandardGenerator extends BlockContainerSE {
         ForgeDirection functionalSide = AutoFacing.autoConnect(te, Util.getPlayerSight(player).getOpposite());
 
         ((TileStandardGenerator) te).setFunctionalSide(functionalSide);
-        
-        Util.updateTileEntityFunctionalSide(te);
     }
 }

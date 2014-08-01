@@ -49,7 +49,10 @@ public abstract class BlockContainerSE extends BlockContainer {
             setCreativeTab(Util.SETab);
     }
 
-    
+    /**
+     * Update facing when the block is placed!
+     * Don't forget to write super()!!
+     */
     @Override
     public void updateTick(World world, int x, int y, int z, Random random) {
         if (world.isRemote)
@@ -63,9 +66,7 @@ public abstract class BlockContainerSE extends BlockContainer {
         if (te instanceof IUpdateOnWatch)
         	((IUpdateOnWatch)te).onWatch();
     }
-    /**
-     * Called after a block is placed
-     */
+
     @Override
 	public void onPostBlockPlaced(World world, int x, int y, int z,int meta) {
     	Util.scheduleBlockUpdate(world.getTileEntity(x, y, z));

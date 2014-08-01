@@ -37,8 +37,6 @@ import simElectricity.API.ISidedFacing;
 import simElectricity.API.Util;
 import simElectricity.Common.Core.SEItems;
 
-import java.util.Random;
-
 public class BlockWindMillTop extends BlockContainerSE {
     private IIcon[] iconBuffer = new IIcon[6];
 
@@ -128,33 +126,7 @@ public class BlockWindMillTop extends BlockContainerSE {
     }
 
     @Override
-    public void updateTick(World world, int x, int y, int z, Random random) {
-        if (world.isRemote)
-            return;
-
-        TileEntity te = world.getTileEntity(x, y, z);
-
-        Util.updateTileEntityFacing(te);
-        Util.updateTileEntityField(te, "settled");
-    }
-
-    @Override
-    public void onNeighborBlockChange(World world, int x, int y, int z, Block block) {
-        if (world.isRemote)
-            return;
-
-        //Server side only!
-        TileEntity te = world.getTileEntity(x, y, z);
-        Util.updateTileEntityFacing(te);
-    }
-
-    @Override
     public TileEntity createNewTileEntity(World world, int meta) {
         return new TileWindMillTop();
-    }
-
-    @Override
-    public int damageDropped(int meta) {
-        return meta;
     }
 }
