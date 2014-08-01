@@ -25,8 +25,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
-import simElectricity.API.Common.TileStandardSEMachine;
 import simElectricity.API.Util;
+import simElectricity.API.Common.TileStandardSEMachine;
 
 /**
  * Standard SE machine block
@@ -44,7 +44,8 @@ public abstract class BlockStandardSEMachine extends BlockContainerSE {
 
     @Override
     public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase player, ItemStack itemStack) {
-        TileEntity te = world.getTileEntity(x, y, z);
+    	super.onBlockPlacedBy(world, x, y, z, player, itemStack);
+    	TileEntity te = world.getTileEntity(x, y, z);
 
         if (!(te instanceof TileStandardSEMachine))
             return;
@@ -56,8 +57,5 @@ public abstract class BlockStandardSEMachine extends BlockContainerSE {
         functionalSide = AutoFacing.autoConnect(te, functionalSide);
 
         ((TileStandardSEMachine) te).setFunctionalSide(functionalSide);
-        
-        Util.updateTileEntityFacing(te);
-        Util.updateTileEntityFunctionalSide(te);
     }
 }

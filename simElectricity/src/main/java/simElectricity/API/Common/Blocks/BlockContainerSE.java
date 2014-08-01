@@ -30,6 +30,9 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import simElectricity.API.Common.Items.ItemBlockSE;
+import simElectricity.API.EnergyTile.IEnergyTile;
+import simElectricity.API.ISidedFacing;
+import simElectricity.API.IUpdateOnWatch;
 import simElectricity.API.Util;
 
 import java.util.Random;
@@ -40,13 +43,28 @@ import java.util.Random;
  * @author <Meow J>
  */
 public abstract class BlockContainerSE extends BlockContainer {
-
     public BlockContainerSE(Material material) {
         super(material);
         if (registerInCreativeTab())
             setCreativeTab(Util.SETab);
     }
 
+    /**
+     * Called after a block is placed
+     */
+    @Override
+	public void onPostBlockPlaced(World world, int x, int y, int z,int meta) {
+        if (!world.isRemote){
+	        TileEntity te = world.getTileEntity(x, y, z);
+	        if (te instanceof ISidedFacing)
+	        	Util.updateTileEntityFacing(te);
+	        if (te instanceof IEnergyTile)
+	        	Util.updateTileEntityFunctionalSide(te);
+	        if (te instanceof IUpdateOnWatch)
+	        	((IUpdateOnWatch)te).onWatch();
+        }
+	}
+    
     @Override
     public int damageDropped(int meta) {
         return meta;
