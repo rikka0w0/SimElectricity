@@ -1,6 +1,10 @@
 package simElectricity.API.Client;
 
+import simElectricity.Common.ConfigManager;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
+@SideOnly(Side.CLIENT)
 public class CableRender extends CubeRender {
     public CableRender(ITextureProvider textureProvider) {
         super(textureProvider);
@@ -21,7 +25,7 @@ public class CableRender extends CubeRender {
     public void renderParabolicCable(double xStart, double yStart, double zStart, double xEnd, double yEnd, double zEnd, double thickness, int textureIndex) {
         double distance = RenderUtil.distanceOf(xStart, yStart, zStart, xEnd, yEnd, zEnd);
         RenderUtil.p2pRotation(xStart, yStart, zStart, xEnd, yEnd, zEnd);
-        render_parabola(distance, false, 6, 12, thickness, textureIndex);
+        render_parabola(distance, false, 6, ConfigManager.parabolaRenderSteps, thickness, textureIndex);
     }
 
     /**
@@ -39,7 +43,7 @@ public class CableRender extends CubeRender {
     public void renderHalfParabolicCable(double xStart, double yStart, double zStart, double xEnd, double yEnd, double zEnd, double thickness, int textureIndex) {
         double distance = RenderUtil.distanceOf(xStart, yStart, zStart, xEnd, yEnd, zEnd);
         RenderUtil.p2pRotation(xStart, yStart, zStart, xEnd, yEnd, zEnd);
-        render_parabola(distance, true, distance * 0.075, 12, thickness, textureIndex);
+        render_parabola(distance, true, distance * 0.075, ConfigManager.parabolaRenderSteps, thickness, textureIndex);
     }
 
     /**

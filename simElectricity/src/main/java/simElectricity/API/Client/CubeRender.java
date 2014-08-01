@@ -3,6 +3,9 @@ package simElectricity.API.Client;
 import net.minecraft.client.renderer.Tessellator;
 import org.lwjgl.opengl.GL11;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 /**
  * Provides a easy way of rendering cubes and other shapes made of cubes </p>
  * e.g. parabolas
@@ -10,6 +13,7 @@ import org.lwjgl.opengl.GL11;
  * @author rikka0w0
  *
  */
+@SideOnly(Side.CLIENT)
 public class CubeRender {
 	private ITextureProvider textureProvider;
 

@@ -78,6 +78,13 @@ public class TileTower extends TileEntity implements IUpdateOnWatch, IManualJunc
 	}
 	
 	@SideOnly(Side.CLIENT)
+    @Override
+    public double getMaxRenderDistanceSquared()
+    {
+        return 100000;
+    }
+	
+	@SideOnly(Side.CLIENT)
 	@Override
     public AxisAlignedBB getRenderBoundingBox(){
     	return INFINITE_EXTENT_AABB;

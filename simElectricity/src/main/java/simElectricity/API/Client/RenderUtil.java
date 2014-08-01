@@ -2,6 +2,10 @@ package simElectricity.API.Client;
 
 import org.lwjgl.opengl.GL11;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
+@SideOnly(Side.CLIENT)
 public class RenderUtil {
     /**
      * Rotate the coordinate system so that the object in it can lay between two points

@@ -1,10 +1,14 @@
 package simElectricity.API.Client;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 /**
  * Provides texture for custom render
  *
  * @author rikka0w0
  */
+@SideOnly(Side.CLIENT)
 public interface ITextureProvider {
     /**
      * Do bindTexture(ResourceLocation) here!
