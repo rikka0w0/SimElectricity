@@ -50,6 +50,7 @@ public class BlockTower extends BlockContainerSE {
         } else {
             tower.facing = 0;
         }
+        Util.updateTileEntityField(tower, "facing");
     }
 
     @Override

@@ -56,5 +56,8 @@ public abstract class BlockStandardSEMachine extends BlockContainerSE {
         functionalSide = AutoFacing.autoConnect(te, functionalSide);
 
         ((TileStandardSEMachine) te).setFunctionalSide(functionalSide);
+        
+        Util.updateTileEntityFacing(te);
+        Util.updateTileEntityFunctionalSide(te);
     }
 }

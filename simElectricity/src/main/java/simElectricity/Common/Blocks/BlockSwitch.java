@@ -113,6 +113,9 @@ public class BlockSwitch extends BlockContainerSE {
 
         te.inputSide = AutoFacing.autoConnect(te, ForgeDirection.UP, te.getFacing());
         te.outputSide = AutoFacing.autoConnect(te, te.inputSide.getOpposite(), new ForgeDirection[] { te.inputSide, te.getFacing() });
+        Util.updateTileEntityField(te, "inputSide");
+        Util.updateTileEntityField(te, "outputSide");
+        Util.updateTileEntityFacing(te);
     }
 
     @Override
