@@ -55,7 +55,7 @@ public class Util {
      * Update a client tileEntity field from the server
      */
     public static void updateTileEntityField(TileEntity tileEntity, String field) {
-        SimElectricity.instance.packetPipeline.sendToDimension(new PacketTileEntityFieldUpdate(tileEntity, field), tileEntity.getWorldObj().getWorldInfo().getVanillaDimension());
+        SimElectricity.instance.packetPipeline.sendToDimension(new PacketTileEntityFieldUpdate(tileEntity, field), tileEntity.getWorldObj().provider.dimensionId);
     }
 
     /**
@@ -69,14 +69,14 @@ public class Util {
      * Update a tileEntity's facing on client side
      */
     public static void updateTileEntityFacing(TileEntity tileEntity) {
-        SimElectricity.instance.packetPipeline.sendToDimension(new PacketTileEntitySideUpdate(tileEntity, (byte) 0), tileEntity.getWorldObj().getWorldInfo().getVanillaDimension());
+        SimElectricity.instance.packetPipeline.sendToDimension(new PacketTileEntitySideUpdate(tileEntity, (byte) 0), tileEntity.getWorldObj().provider.dimensionId);
     }
 
     /**
      * Update a tileEntity's functional side on client side
      */
     public static void updateTileEntityFunctionalSide(TileEntity tileEntity) {
-        SimElectricity.instance.packetPipeline.sendToDimension(new PacketTileEntitySideUpdate(tileEntity, (byte) 1), tileEntity.getWorldObj().getWorldInfo().getVanillaDimension());
+        SimElectricity.instance.packetPipeline.sendToDimension(new PacketTileEntitySideUpdate(tileEntity, (byte) 1), tileEntity.getWorldObj().provider.dimensionId);
     }
 
     // Util
