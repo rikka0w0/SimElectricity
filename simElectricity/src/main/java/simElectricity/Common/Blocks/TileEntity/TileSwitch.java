@@ -86,6 +86,7 @@ public class TileSwitch extends TileEntity implements IManualJunction, IConnecta
 	public void addNetworkFields(List fields) {
 		fields.add("inputSide");
 		fields.add("outputSide");
+		fields.add("facing");
 		fields.add("isOn");
         worldObj.notifyBlockChange(xCoord, yCoord, zCoord, 
         		worldObj.getBlock(xCoord, yCoord, zCoord));

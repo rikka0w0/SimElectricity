@@ -54,7 +54,7 @@ public class SimElectricity {
     @Instance(Util.MODID)
     public static SimElectricity instance;
 
-    public SimpleNetworkWrapper networkChannel;
+    public static SimpleNetworkWrapper networkChannel;
 
     /**
      * PreInitialize

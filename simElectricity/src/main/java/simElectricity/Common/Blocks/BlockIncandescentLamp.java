@@ -26,7 +26,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import simElectricity.API.Util;
 import simElectricity.API.Common.Blocks.BlockStandardSEMachine;
 import simElectricity.Common.Blocks.TileEntity.TileIncandescentLamp;
 
@@ -93,9 +92,6 @@ public class BlockIncandescentLamp extends BlockStandardSEMachine {
 
     @Override
     public void updateTick(World world, int x, int y, int z, Random random) {
-        super.updateTick(world, x, y, z, random);
-        TileEntity te = world.getTileEntity(x, y, z);
-        Util.updateNetworkFields(te);
     	world.markBlockForUpdate(x, y, z);
     }
 

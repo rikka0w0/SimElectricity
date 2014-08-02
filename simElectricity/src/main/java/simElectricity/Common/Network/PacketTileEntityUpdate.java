@@ -2,9 +2,9 @@ package simElectricity.Common.Network;
 
 import java.lang.reflect.Field;
 
+import simElectricity.SimElectricity;
 import simElectricity.API.INetworkEventHandler;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -178,7 +178,7 @@ public class PacketTileEntityUpdate implements IMessage{
         	World world;
         		
         	if (ctx.side == Side.CLIENT){
-        		world = Minecraft.getMinecraft().theWorld;
+        		world = SimElectricity.proxy.getClientWorld();
         	}else{
         		world = ctx.getServerHandler().playerEntity.worldObj;
         	}
@@ -192,7 +192,7 @@ public class PacketTileEntityUpdate implements IMessage{
         	
             if (te == null)
                 return null;
-        	
+            System.out.println("!");
         	//Set value to variables
         	try {	
         		for (int i=0; i<message.fields_count;i++){
