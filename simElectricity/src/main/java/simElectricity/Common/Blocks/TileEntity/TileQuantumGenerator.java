@@ -19,18 +19,33 @@
 
 package simElectricity.Common.Blocks.TileEntity;
 
-import simElectricity.API.Common.TileStandardGenerator;
+import simElectricity.API.Common.TileSidedGenerator;
 import simElectricity.API.Energy;
-import simElectricity.API.ISyncPacketHandler;
 
-public class TileQuantumGenerator extends TileStandardGenerator implements ISyncPacketHandler {
+public class TileQuantumGenerator extends TileSidedGenerator{
+	
     @Override
-    public void onClient2ServerUpdate(String field, Object value, short type) {
-        if (field.contains("outputVoltage") | field.contains("outputResistance"))
-            Energy.postTileChangeEvent(this);
+	public void onLoad() {
+    	if (this.outputResistance == Float.MAX_VALUE){
+    		outputResistance = 0.001F;
+    		outputVoltage = 230;
+    	}
     }
+	
+	@Override
+	public void onFieldUpdate(String[] fields, Object[] values, boolean isClient) {
+        if(!isClient){
+			for (String s:fields){
+	        	if (s.contains("outputVoltage") || s.contains("outputResistance")){
+	        		Energy.postTileChangeEvent(this);
+	        	}
+	        }
+        }
+        super.onFieldUpdate(fields, values, isClient);
+	}
 
-    @Override
-    public void onServer2ClientUpdate(String field, Object value, short type) {
-    }
+	@Override
+	public int getInventorySize() {
+		return 0;
+	}
 }

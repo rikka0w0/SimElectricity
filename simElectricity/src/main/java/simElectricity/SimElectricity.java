@@ -28,6 +28,7 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
+import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.creativetab.CreativeTabs;
@@ -38,10 +39,8 @@ import simElectricity.Common.ConfigManager;
 import simElectricity.Common.Core.SEBlocks;
 import simElectricity.Common.Core.SEItems;
 import simElectricity.Common.EnergyNet.EnergyNetEventHandler;
-import simElectricity.Common.GlobalEventHandler;
-import simElectricity.Common.Network.PacketPipeline;
-import simElectricity.Common.Network.PacketTileEntityFieldUpdate;
-import simElectricity.Common.Network.PacketTileEntitySideUpdate;
+import simElectricity.Common.Network.NetworkManager;
+import simElectricity.Common.Network.PacketTileEntityUpdate;
 
 @Mod(modid = Util.MODID, name = Util.NAME, version = "1.0.0", guiFactory = "simElectricity.Client.SimEGuiFactory", dependencies = "required-after:Forge@[10.12.2.1147,)")
 public class SimElectricity {
@@ -55,7 +54,7 @@ public class SimElectricity {
     @Instance(Util.MODID)
     public static SimElectricity instance;
 
-    public PacketPipeline packetPipeline = new PacketPipeline();
+    public SimpleNetworkWrapper networkChannel;
 
     /**
      * PreInitialize
@@ -67,7 +66,7 @@ public class SimElectricity {
         ConfigManager.init(event);
 
         //Add to event bus
-        new GlobalEventHandler();
+        new NetworkManager();
         new EnergyNetEventHandler();
 
         //CreativeTab
@@ -84,6 +83,11 @@ public class SimElectricity {
 
         //Register Items
         SEItems.init();
+        
+        //Register network channel
+        networkChannel = NetworkRegistry.INSTANCE.newSimpleChannel(Util.MODID);
+        networkChannel.registerMessage(PacketTileEntityUpdate.Handler.class, PacketTileEntityUpdate.class, 0, Side.CLIENT);
+        networkChannel.registerMessage(PacketTileEntityUpdate.Handler.class, PacketTileEntityUpdate.class, 1, Side.SERVER);
     }
 
     /**
@@ -95,7 +99,6 @@ public class SimElectricity {
         NetworkRegistry.INSTANCE.registerGuiHandler(instance, proxy);
 
         //Initialize network proxy
-        packetPipeline.initialize();
         proxy.registerTileEntitySpecialRenderer();
 
         //Register TileEntities
@@ -107,9 +110,6 @@ public class SimElectricity {
      */
     @EventHandler
     public void postInit(FMLPostInitializationEvent event) {
-        //Register network packets
-        packetPipeline.registerPacket(PacketTileEntityFieldUpdate.class);
-        packetPipeline.registerPacket(PacketTileEntitySideUpdate.class);
-        packetPipeline.postInitialize();
+    	
     }
 }

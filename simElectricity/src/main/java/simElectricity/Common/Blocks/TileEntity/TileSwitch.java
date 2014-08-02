@@ -30,7 +30,7 @@ import simElectricity.API.EnergyTile.IManualJunction;
 
 import java.util.List;
 
-public class TileSwitch extends TileEntity implements IManualJunction, IConnectable, ISyncPacketHandler, ISidedFacing, IUpdateOnWatch, IEnergyNetUpdateHandler {
+public class TileSwitch extends TileEntity implements IManualJunction, IConnectable, ISidedFacing, IEnergyNetUpdateHandler, INetworkEventHandler {
     protected boolean isAddedToEnergyNet = false;
     public float current=0F;
     
@@ -82,23 +82,33 @@ public class TileSwitch extends TileEntity implements IManualJunction, IConnecta
         tagCompound.setByte("facing", (byte) facing.ordinal());
     }
 
-    @Override
-    public void onClient2ServerUpdate(String field, Object value, short type) {
-        if (field.contains("inputSide") || field.contains("outputSide") || field.contains("isOn")) {
-            Energy.postTileRejoinEvent(this);
-            onWatch();
-        } else if (field.contains("resistance")) {
-            Energy.postTileChangeEvent(this);
-        } else if (field.contains("maxCurrent")) {
-            onEnergyNetUpdate();
-        }
-    }
-
-    @Override
-    public void onServer2ClientUpdate(String field, Object value, short type) {
-        worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-    }
-
+	@Override
+	public void addNetworkFields(List fields) {
+		fields.add("inputSide");
+		fields.add("outputSide");
+		fields.add("isOn");
+        worldObj.notifyBlockChange(xCoord, yCoord, zCoord, 
+        		worldObj.getBlock(xCoord, yCoord, zCoord));
+	}
+    
+	@Override
+	public void onFieldUpdate(String[] fields, Object[] values, boolean isClient) {
+		if (isClient){
+			worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+		}else{
+			for (String s:fields){
+		        if (s.contains("inputSide") || s.contains("outputSide") || s.contains("isOn")) {
+		            Energy.postTileRejoinEvent(this);
+		            Util.updateNetworkFields(this);
+		        } else if (s.contains("resistance")) {
+		            Energy.postTileChangeEvent(this);
+		        } else if (s.contains("maxCurrent")) {
+		            onEnergyNetUpdate();
+		        }
+			}
+		}
+	}
+    
     @Override
     public float getResistance() {
         return resistance;
@@ -138,16 +148,7 @@ public class TileSwitch extends TileEntity implements IManualJunction, IConnecta
     public boolean canSetFacing(ForgeDirection newFacing) {
         return newFacing != inputSide && newFacing != outputSide;
     }
-
-    @Override
-    public void onWatch() {
-        Util.updateTileEntityField(this, "inputSide");
-        Util.updateTileEntityField(this, "outputSide");
-        Util.updateTileEntityField(this, "isOn");
-        worldObj.notifyBlockChange(xCoord, yCoord, zCoord, 
-        		worldObj.getBlock(xCoord, yCoord, zCoord));
-    }
-
+	
     @Override
     public void onEnergyNetUpdate() {
     	current = getCurrent();

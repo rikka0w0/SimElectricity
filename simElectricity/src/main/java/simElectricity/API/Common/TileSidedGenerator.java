@@ -19,6 +19,8 @@
 
 package simElectricity.API.Common;
 
+import net.minecraft.nbt.NBTTagCompound;
+
 public abstract class TileSidedGenerator extends TileStandardSEMachine {
     public float outputVoltage = 0;
     public float outputResistance = Float.MAX_VALUE;
@@ -31,5 +33,21 @@ public abstract class TileSidedGenerator extends TileStandardSEMachine {
     @Override
     public float getOutputVoltage() {
         return outputVoltage;
+    }
+    
+    @Override
+    public void readFromNBT(NBTTagCompound tagCompound) {
+        super.readFromNBT(tagCompound);
+
+        outputVoltage = tagCompound.getFloat("outputVoltage");
+        outputResistance = tagCompound.getFloat("outputResistance");
+    }
+
+    @Override
+    public void writeToNBT(NBTTagCompound tagCompound) {
+        super.writeToNBT(tagCompound);
+
+        tagCompound.setFloat("outputResistance",outputResistance);
+        tagCompound.setFloat("outputVoltage",outputVoltage);
     }
 }

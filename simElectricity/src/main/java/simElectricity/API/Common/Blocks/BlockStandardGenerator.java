@@ -25,8 +25,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
-import simElectricity.API.Common.TileStandardGenerator;
 import simElectricity.API.Util;
+import simElectricity.API.Common.TileSidedGenerator;
 
 /**
  * Standard generator block
@@ -46,11 +46,11 @@ public abstract class BlockStandardGenerator extends BlockContainerSE {
     public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase player, ItemStack itemStack) {
         TileEntity te = world.getTileEntity(x, y, z);
 
-        if (!(te instanceof TileStandardGenerator))
+        if (!(te instanceof TileSidedGenerator))
             return;
 
         ForgeDirection functionalSide = AutoFacing.autoConnect(te, Util.getPlayerSight(player).getOpposite());
 
-        ((TileStandardGenerator) te).setFunctionalSide(functionalSide);
+        ((TileSidedGenerator) te).setFunctionalSide(functionalSide);
     }
 }

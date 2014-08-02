@@ -30,12 +30,12 @@ import simElectricity.API.EnergyTile.IBaseComponent;
 import simElectricity.API.EnergyTile.IConductor;
 import simElectricity.API.EnergyTile.IConnectable;
 import simElectricity.API.EnergyTile.IManualJunction;
-import simElectricity.API.IUpdateOnWatch;
+import simElectricity.API.INetworkEventHandler;
 import simElectricity.API.Util;
 
 import java.util.List;
 
-public class TileTower extends TileEntity implements IUpdateOnWatch, IManualJunction, IConnectable {
+public class TileTower extends TileEntity implements INetworkEventHandler, IManualJunction, IConnectable {
     public int facing;
     public int neighborsInfo[] = new int[] { 0, -1, 0, 0, -1, 0 };
     protected boolean isAddedToEnergyNet = false;
@@ -137,11 +137,15 @@ public class TileTower extends TileEntity implements IUpdateOnWatch, IManualJunc
         tagCompound.setIntArray("neighborsInfo", this.neighborsInfo);
     }
 
-    @Override
-    public void onWatch() {
-        Util.updateTileEntityField(this, "facing");
-        Util.updateTileEntityField(this, "neighborsInfo");
-    }
+	@Override
+	public void addNetworkFields(List fields) {
+		fields.add("facing");
+		fields.add("neighborsInfo");
+	}
+	
+	@Override
+	public void onFieldUpdate(String[] fields, Object[] values, boolean isClient) {
+	}
 
     @Override
     public float getResistance() {

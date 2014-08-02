@@ -20,10 +20,10 @@
 package simElectricity.Common.Blocks.TileEntity;
 
 import net.minecraftforge.common.util.ForgeDirection;
-import simElectricity.API.Common.TileStandardGenerator;
+import simElectricity.API.Common.TileSidedGenerator;
 import simElectricity.API.Energy;
 
-public class TileSolarPanel extends TileStandardGenerator {
+public class TileSolarPanel extends TileSidedGenerator {
     @Override
     public void updateEntity() {
         super.updateEntity();
@@ -55,4 +55,10 @@ public class TileSolarPanel extends TileStandardGenerator {
     public boolean canSetFunctionalSide(ForgeDirection newFunctionalSide) {
         return newFunctionalSide != ForgeDirection.UP;
     }
+
+	@Override
+	public int getInventorySize() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 }

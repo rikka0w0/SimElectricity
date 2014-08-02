@@ -17,7 +17,9 @@
  * USA
  */
 
-package simElectricity.Common;
+package simElectricity.Common.Network;
+
+import java.util.ArrayList;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
@@ -25,18 +27,45 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.ChunkWatchEvent;
+import simElectricity.SimElectricity;
 import simElectricity.API.EnergyTile.IConductor;
-import simElectricity.API.EnergyTile.IEnergyTile;
-import simElectricity.API.ISidedFacing;
-import simElectricity.API.IUpdateOnWatch;
+import simElectricity.API.INetworkEventHandler;
 import simElectricity.API.Util;
 
-public class GlobalEventHandler {
-    public GlobalEventHandler() {
+public class NetworkManager {
+    public NetworkManager() {
         MinecraftForge.EVENT_BUS.register(this);
         FMLCommonHandler.instance().bus().register(this);
     }
 
+    /**
+     * Update a client tileEntity field from the server
+     */
+    public static void updateTileEntityFields(TileEntity tileEntity, String[] fields) {
+    	SimElectricity.instance.networkChannel.sendToDimension(new PacketTileEntityUpdate(tileEntity, fields), tileEntity.getWorldObj().provider.dimensionId);
+    }
+    
+    /**
+     * Update a client tileEntity field from the server
+     */
+    public static void updateTileEntityFieldsToServer(TileEntity tileEntity, String[] fields) {
+    	SimElectricity.instance.networkChannel.sendToServer(new PacketTileEntityUpdate(tileEntity, fields));
+    }
+    
+    /**
+     * Attempt to update a tileEntity's network fields
+     */
+    public static void updateNetworkFields(TileEntity tileEntity){
+    	if (!(tileEntity instanceof INetworkEventHandler))
+    		return;
+    	
+    	INetworkEventHandler networkEventHandler = (INetworkEventHandler) tileEntity;
+    	ArrayList<String> fields = new ArrayList<String>();
+    	networkEventHandler.addNetworkFields(fields);
+    	
+    	updateTileEntityFields(tileEntity,(String[]) fields.toArray(new String[1]));
+    }
+    
     //When a player see the chunk, update facing, functionalside, wire rendering
     @SubscribeEvent
     public void onChunkWatchEvent(ChunkWatchEvent.Watch event) {
@@ -44,10 +73,8 @@ public class GlobalEventHandler {
 
         for (Object tileEntity : chunk.chunkTileEntityMap.values()) {
             TileEntity te = (TileEntity) tileEntity;
-            if (te instanceof IEnergyTile)
-                Util.updateTileEntityFunctionalSide(te);
-            if (te instanceof ISidedFacing)
-                Util.updateTileEntityFacing(te);
+            updateNetworkFields(te);
+            
             if (te instanceof IConductor) {
             	Util.scheduleBlockUpdate(te);
             	//Send onNeighborBlockChange to IConductors, do reRender here
@@ -57,8 +84,8 @@ public class GlobalEventHandler {
                         te.zCoord % 16 == 0 || te.zCoord % 16 == 1 || te.zCoord % 16 == 15)
                     te.getWorldObj().notifyBlocksOfNeighborChange(te.xCoord, te.yCoord, te.zCoord, null);
             }
-            if (te instanceof IUpdateOnWatch)
-                ((IUpdateOnWatch) te).onWatch();
         }
     }
-}
+    
+
+ }

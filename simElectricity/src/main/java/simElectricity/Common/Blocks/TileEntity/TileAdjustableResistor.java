@@ -22,9 +22,8 @@ package simElectricity.Common.Blocks.TileEntity;
 import net.minecraft.nbt.NBTTagCompound;
 import simElectricity.API.Common.TileStandardSEMachine;
 import simElectricity.API.Energy;
-import simElectricity.API.ISyncPacketHandler;
 
-public class TileAdjustableResistor extends TileStandardSEMachine implements ISyncPacketHandler {
+public class TileAdjustableResistor extends TileStandardSEMachine  {
     public float resistance = 1000;
     public float powerConsumed = 0;
     public float power = 0;
@@ -54,15 +53,13 @@ public class TileAdjustableResistor extends TileStandardSEMachine implements ISy
         tagCompound.setFloat("resistance", resistance);
     }
 
-    @Override
-    public void onClient2ServerUpdate(String field, Object value, short type) {
-        if (field.contains("resistance"))
-            Energy.postTileChangeEvent(this);
-    }
-
-    @Override
-    public void onServer2ClientUpdate(String field, Object value, short type) {
-    }
+	@Override
+	public void onFieldUpdate(String[] fields, Object[] values, boolean isClient) {
+        for (String s:fields)
+        	if (s.contains("resistance"))
+        		Energy.postTileChangeEvent(this);
+        super.onFieldUpdate(fields, values, isClient);
+	}
 
     @Override
     public float getOutputVoltage() {
@@ -78,5 +75,4 @@ public class TileAdjustableResistor extends TileStandardSEMachine implements ISy
     public int getInventorySize() {
         return 0;
     }
-
 }

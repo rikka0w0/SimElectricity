@@ -19,14 +19,15 @@
 
 package simElectricity.Common.Blocks.TileEntity;
 
+import java.util.List;
+
 import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.Common.TileStandardSEMachine;
 import simElectricity.API.Energy;
 import simElectricity.API.IEnergyNetUpdateHandler;
-import simElectricity.API.IUpdateOnWatch;
 import simElectricity.API.Util;
 
-public class TileIncandescentLamp extends TileStandardSEMachine implements IEnergyNetUpdateHandler, IUpdateOnWatch {
+public class TileIncandescentLamp extends TileStandardSEMachine implements IEnergyNetUpdateHandler {
     public int lightLevel = 0;
 
     @Override
@@ -57,12 +58,13 @@ public class TileIncandescentLamp extends TileStandardSEMachine implements IEner
         if (Energy.getVoltage(this) > 265)
             worldObj.createExplosion(null, xCoord, yCoord, zCoord, 4F + Energy.getVoltage(this) / 265, true);
 
-        onWatch();
+        Util.updateNetworkFields(this);
     }
-
-    @Override
-    public void onWatch() {
-        Util.updateTileEntityField(this, "lightLevel");
-        Util.scheduleBlockUpdate(this);
-    }
+    
+	@Override
+	public void addNetworkFields(List fields) {
+		fields.add("lightLevel");
+        Util.scheduleBlockUpdate(this);		
+		super.addNetworkFields(fields);
+	}
 }

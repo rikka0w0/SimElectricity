@@ -22,12 +22,11 @@ package simElectricity.Common.Blocks.WindMill;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.Common.TileSidedFacingMachine;
-import simElectricity.API.IUpdateOnWatch;
-import simElectricity.API.Util;
 
+import java.util.List;
 import java.util.Random;
 
-public class TileWindMillTop extends TileSidedFacingMachine implements IUpdateOnWatch {
+public class TileWindMillTop extends TileSidedFacingMachine{
     public int randAngle = (new Random()).nextInt(180);
     public boolean settled, initialized;
 
@@ -62,8 +61,9 @@ public class TileWindMillTop extends TileSidedFacingMachine implements IUpdateOn
     }
 
 	@Override
-	public void onWatch() {
-        Util.updateTileEntityField(this, "settled");
+	public void addNetworkFields(List fields) {
+		fields.add("settled");
+		super.addNetworkFields(fields);
 	}
 
 }

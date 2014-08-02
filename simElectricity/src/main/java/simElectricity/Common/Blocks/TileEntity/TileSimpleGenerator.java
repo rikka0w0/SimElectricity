@@ -19,16 +19,16 @@
 
 package simElectricity.Common.Blocks.TileEntity;
 
+import java.util.List;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntityFurnace;
 import simElectricity.API.Common.TileSidedGenerator;
 import simElectricity.API.Energy;
-import simElectricity.API.ISyncPacketHandler;
-import simElectricity.API.IUpdateOnWatch;
 import simElectricity.API.Util;
 
-public class TileSimpleGenerator extends TileSidedGenerator implements ISyncPacketHandler, IUpdateOnWatch {
+public class TileSimpleGenerator extends TileSidedGenerator {
     public static int normalOutputV = 230;
     public static int normalOutputR = 1;
 
@@ -105,7 +105,7 @@ public class TileSimpleGenerator extends TileSidedGenerator implements ISyncPack
             if (burned <= 0)
                 burned = burnTime;
         }
-        onWatch();
+        Util.updateNetworkFields(this);
     }
 
     @Override
@@ -163,20 +163,23 @@ public class TileSimpleGenerator extends TileSidedGenerator implements ISyncPack
     public boolean canExtractItem(int slot, ItemStack itemStack, int side) {
         return slot == 0;
     }
-
-    @Override
-    public void onWatch() {
-        Util.updateTileEntityField(this, "isWorking");
-        Util.scheduleBlockUpdate(this);
-    }
     
-    @Override
-    public void onServer2ClientUpdate(String field, Object value, short type) {
-        if (field.contains("isWorking"))
-            worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-    }
-
-    @Override
-    public void onClient2ServerUpdate(String field, Object value, short type) {
-    }
+	@Override
+	public void addNetworkFields(List fields) {
+		fields.add("isWorking");
+		Util.scheduleBlockUpdate(this);
+		super.addNetworkFields(fields);
+	}
+    
+	@Override
+	public void onFieldUpdate(String[] fields, Object[] values, boolean isClient) {
+        if(!isClient){
+			for (String s:fields){
+	        	if (s.contains("isWorking")){
+	        		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+	        	}
+	        }
+        }
+        super.onFieldUpdate(fields, values, isClient);
+	}
 }

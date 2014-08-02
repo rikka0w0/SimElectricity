@@ -54,7 +54,7 @@ public class ItemGlove extends ItemSE {
 
             if (te.canSetFacing(newFacing)) {
                 te.setFacing(newFacing);
-                Util.updateTileEntityFacing((TileEntity) te);
+                Util.updateNetworkFields((TileEntity) te);
                 itemStack.damageItem(1, player);
             }
             return true;

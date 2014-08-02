@@ -26,10 +26,8 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import simElectricity.API.ISidedFacing;
 import simElectricity.API.Util;
 import simElectricity.API.Common.Blocks.BlockStandardSEMachine;
-import simElectricity.API.EnergyTile.IEnergyTile;
 import simElectricity.Common.Blocks.TileEntity.TileIncandescentLamp;
 
 import java.util.Random;
@@ -97,10 +95,7 @@ public class BlockIncandescentLamp extends BlockStandardSEMachine {
     public void updateTick(World world, int x, int y, int z, Random random) {
         super.updateTick(world, x, y, z, random);
         TileEntity te = world.getTileEntity(x, y, z);
-        if (te instanceof ISidedFacing)
-        	Util.updateTileEntityFacing(te);
-        if (te instanceof IEnergyTile)
-        	Util.updateTileEntityFunctionalSide(te);
+        Util.updateNetworkFields(te);
     	world.markBlockForUpdate(x, y, z);
     }
 

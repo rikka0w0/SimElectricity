@@ -20,10 +20,10 @@
 package simElectricity.Common.Blocks.TileEntity;
 
 import net.minecraftforge.common.util.ForgeDirection;
-import simElectricity.API.Common.TileStandardGenerator;
+import simElectricity.API.Common.TileSidedGenerator;
 import simElectricity.API.Energy;
 
-public class TileBatteryBox extends TileStandardGenerator {
+public class TileBatteryBox extends TileSidedGenerator {
 
     private float chargingVoltage = 115;
     private float dischargeVoltage = 110;
@@ -67,4 +67,10 @@ public class TileBatteryBox extends TileStandardGenerator {
     public boolean canSetFunctionalSide(ForgeDirection newFunctionalSide) {
         return newFunctionalSide != ForgeDirection.UP;
     }
+
+	@Override
+	public int getInventorySize() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 }

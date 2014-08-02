@@ -19,16 +19,17 @@
 
 package simElectricity.Common.Blocks.TileEntity;
 
+import java.util.List;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.Energy;
 import simElectricity.API.EnergyTile.ITransformer;
-import simElectricity.API.ISyncPacketHandler;
-import simElectricity.API.IUpdateOnWatch;
+import simElectricity.API.INetworkEventHandler;
 import simElectricity.API.Util;
 
-public class TileAdjustableTransformer extends TileEntity implements ITransformer, ISyncPacketHandler, IUpdateOnWatch {
+public class TileAdjustableTransformer extends TileEntity implements ITransformer, INetworkEventHandler {
     public Primary primary = new ITransformer.Primary(this);
     public Secondary secondary = new ITransformer.Secondary(this);
     protected boolean isAddedToEnergyNet = false;
@@ -76,21 +77,6 @@ public class TileAdjustableTransformer extends TileEntity implements ITransforme
     }
 
     @Override
-    public void onClient2ServerUpdate(String field, Object value, short type) {
-        if (field.contains("primarySide") || field.contains("secondarySide")) {
-            Energy.postTileRejoinEvent(this);
-            onWatch();
-        } else if (field.contains("outputResistance") || field.contains("ratio")) {
-            Energy.postTileChangeEvent(this);
-        }
-    }
-
-    @Override
-    public void onServer2ClientUpdate(String field, Object value, short type) {
-        worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-    }
-
-    @Override
     public float getResistance() {
         return outputResistance;
     }
@@ -120,11 +106,29 @@ public class TileAdjustableTransformer extends TileEntity implements ITransforme
         return secondary;
     }
 
-    @Override
-    public void onWatch() {
-        Util.updateTileEntityField(this, "primarySide");
-        Util.updateTileEntityField(this, "secondarySide");
+	@Override
+	public void onFieldUpdate(String[] fields, Object[] values, boolean isClient) {
+		if (isClient){
+			worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+		}else{
+			for (String s:fields){
+		        if (s.contains("primarySide") || s.contains("secondarySide")) {
+		            Energy.postTileRejoinEvent(this);
+		            Util.updateNetworkFields(this);
+		        } else if (s.contains("outputResistance") || s.contains("ratio")) {
+		            Energy.postTileChangeEvent(this);
+		        }				
+			}
+
+		}
+	}
+
+	@Override
+	public void addNetworkFields(List fields) {
+		fields.add("primarySide");
+		fields.add("secondarySide");
+		
         worldObj.notifyBlockChange(xCoord, yCoord, zCoord, 
         		worldObj.getBlock(xCoord, yCoord, zCoord));
-    }
+	}
 }

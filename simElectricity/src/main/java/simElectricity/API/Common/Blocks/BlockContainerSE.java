@@ -30,9 +30,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import simElectricity.API.Common.Items.ItemBlockSE;
-import simElectricity.API.EnergyTile.IEnergyTile;
-import simElectricity.API.ISidedFacing;
-import simElectricity.API.IUpdateOnWatch;
+import simElectricity.API.INetworkEventHandler;
 import simElectricity.API.Util;
 
 import java.util.Random;
@@ -59,12 +57,9 @@ public abstract class BlockContainerSE extends BlockContainer {
             return;
         
         TileEntity te = world.getTileEntity(x, y, z);
-        if (te instanceof ISidedFacing)
-        	Util.updateTileEntityFacing(te);
-        if (te instanceof IEnergyTile)
-        	Util.updateTileEntityFunctionalSide(te);
-        if (te instanceof IUpdateOnWatch)
-        	((IUpdateOnWatch)te).onWatch();
+
+        if (te instanceof INetworkEventHandler)
+        	Util.updateNetworkFields(te);
     }
 
     @Override

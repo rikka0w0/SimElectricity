@@ -33,9 +33,7 @@ import simElectricity.API.EnergyTile.IConductor;
 import simElectricity.API.EnergyTile.IConnectable;
 import simElectricity.API.EnergyTile.IEnergyTile;
 import simElectricity.API.EnergyTile.ITransformer;
-import simElectricity.Common.Network.PacketTileEntityFieldUpdate;
-import simElectricity.Common.Network.PacketTileEntitySideUpdate;
-import simElectricity.SimElectricity;
+import simElectricity.Common.Network.NetworkManager;
 
 public class Util {
 
@@ -55,30 +53,23 @@ public class Util {
      * Update a client tileEntity field from the server
      */
     public static void updateTileEntityField(TileEntity tileEntity, String field) {
-        SimElectricity.instance.packetPipeline.sendToDimension(new PacketTileEntityFieldUpdate(tileEntity, field), tileEntity.getWorldObj().provider.dimensionId);
+    	NetworkManager.updateTileEntityFields(tileEntity, new String[]{field});
     }
 
     /**
      * Update a server tileEntity field from a client
      */
     public static void updateTileEntityFieldToServer(TileEntity tileEntity, String field) {
-        SimElectricity.instance.packetPipeline.sendToServer(new PacketTileEntityFieldUpdate(tileEntity, field));
+    	NetworkManager.updateTileEntityFieldsToServer(tileEntity, new String[]{field});
     }
 
     /**
-     * Update a tileEntity's facing on client side
+     * Attempt to update a tileEntity's network fields
      */
-    public static void updateTileEntityFacing(TileEntity tileEntity) {
-        SimElectricity.instance.packetPipeline.sendToDimension(new PacketTileEntitySideUpdate(tileEntity, (byte) 0), tileEntity.getWorldObj().provider.dimensionId);
+    public static void updateNetworkFields(TileEntity tileEntity){
+    	NetworkManager.updateNetworkFields(tileEntity);
     }
-
-    /**
-     * Update a tileEntity's functional side on client side
-     */
-    public static void updateTileEntityFunctionalSide(TileEntity tileEntity) {
-        SimElectricity.instance.packetPipeline.sendToDimension(new PacketTileEntitySideUpdate(tileEntity, (byte) 1), tileEntity.getWorldObj().provider.dimensionId);
-    }
-
+    
     // Util
 
     /**

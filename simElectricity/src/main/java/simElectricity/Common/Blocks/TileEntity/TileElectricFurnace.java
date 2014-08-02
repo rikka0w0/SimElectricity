@@ -20,6 +20,8 @@
 package simElectricity.Common.Blocks.TileEntity;
 
 
+import java.util.List;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.nbt.NBTTagCompound;
@@ -27,7 +29,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.Common.TileStandardSEMachine;
 import simElectricity.API.*;
 
-public class TileElectricFurnace extends TileStandardSEMachine implements ISyncPacketHandler, IEnergyNetUpdateHandler, IUpdateOnWatch {
+public class TileElectricFurnace extends TileStandardSEMachine implements IEnergyNetUpdateHandler {
     public static float energyPerItem = 1000F;
     public static float onResistance = 100F;
 
@@ -67,7 +69,7 @@ public class TileElectricFurnace extends TileStandardSEMachine implements ISyncP
             }
 
             isWorking = true;
-            onWatch();
+            Util.updateNetworkFields(this);
 
             if (energyStored > energyPerItem) {
                 ItemStack newResult = result.copy();
@@ -103,7 +105,7 @@ public class TileElectricFurnace extends TileStandardSEMachine implements ISyncP
             Energy.postTileChangeEvent(this);
         }
         isWorking = false;
-        onWatch();
+        Util.updateNetworkFields(this);
     }
     
     public ItemStack getResult(ItemStack i) {
@@ -129,15 +131,20 @@ public class TileElectricFurnace extends TileStandardSEMachine implements ISyncP
         tagCompound.setFloat("energyStored", energyStored);
     }
 
-    @Override
-    public void onServer2ClientUpdate(String field, Object value, short type) {
-        if (field.contains("isWorking"))
-            worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-    }
-
-    @Override
-    public void onClient2ServerUpdate(String field, Object value, short type) {
-    }
+	@Override
+	public void addNetworkFields(List fields) {
+		fields.add("isWorking");
+		Util.scheduleBlockUpdate(this);		
+		super.addNetworkFields(fields);
+	}
+    
+	@Override
+	public void onFieldUpdate(String[] fields, Object[] values, boolean isClient) {
+		if (isClient){
+			worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+		}
+		super.onFieldUpdate(fields, values, isClient);
+	}
 
     @Override
     public float getResistance() {
@@ -156,7 +163,7 @@ public class TileElectricFurnace extends TileStandardSEMachine implements ISyncP
 
         if(Energy.getVoltage(this)==0){
         	isWorking = false;
-            onWatch();
+            Util.updateNetworkFields(this);
         }
     }
 
@@ -185,10 +192,4 @@ public class TileElectricFurnace extends TileStandardSEMachine implements ISyncP
     public boolean canExtractItem(int slot, ItemStack itemStack, int side) {
         return slot == 1;
     }
-
-	@Override
-	public void onWatch() {
-		Util.updateTileEntityField(this, "isWorking");
-		Util.scheduleBlockUpdate(this);
-	}
 }
