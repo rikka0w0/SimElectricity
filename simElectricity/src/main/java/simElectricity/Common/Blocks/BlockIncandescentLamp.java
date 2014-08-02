@@ -26,15 +26,16 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
-import simElectricity.API.Common.Blocks.BlockStandardSEMachine;
+import simElectricity.API.ISidedFacing;
 import simElectricity.API.Util;
+import simElectricity.API.Common.Blocks.BlockStandardSEMachine;
+import simElectricity.API.EnergyTile.IEnergyTile;
 import simElectricity.Common.Blocks.TileEntity.TileIncandescentLamp;
 
 import java.util.Random;
 
 public class BlockIncandescentLamp extends BlockStandardSEMachine {
-    private IIcon[] iconBuffer = new IIcon[6];
+    private IIcon[] iconBuffer = new IIcon[4];
 
     public BlockIncandescentLamp() {
         super();
@@ -46,12 +47,10 @@ public class BlockIncandescentLamp extends BlockStandardSEMachine {
     @Override
     @SideOnly(Side.CLIENT)
     public void registerBlockIcons(IIconRegister r) {
-        iconBuffer[0] = r.registerIcon("simElectricity:SolarPanel_Bottom");
-        iconBuffer[1] = r.registerIcon("simElectricity:SolarPanel_Bottom");
-        iconBuffer[2] = r.registerIcon("simElectricity:SolarPanel_Front");
-        iconBuffer[3] = r.registerIcon("simElectricity:SolarPanel_Side");
-        iconBuffer[4] = r.registerIcon("simElectricity:SolarPanel_Side");
-        iconBuffer[5] = r.registerIcon("simElectricity:SolarPanel_Side");
+        iconBuffer[0] = r.registerIcon("simElectricity:IncandescentLamp_Side_Off");
+        iconBuffer[1] = r.registerIcon("simElectricity:IncandescentLamp_Side_On");
+        iconBuffer[2] = r.registerIcon("simElectricity:IncandescentLamp_Front_Off");
+        iconBuffer[3] = r.registerIcon("simElectricity:IncandescentLamp_Front_On");
     }
 
     @SideOnly(Side.CLIENT)
@@ -62,23 +61,26 @@ public class BlockIncandescentLamp extends BlockStandardSEMachine {
         if (!(te instanceof TileIncandescentLamp))
             return iconBuffer[0];
 
-        int iconIndex = Util.getTextureOnSide(side, ((TileIncandescentLamp) te).getFunctionalSide());
-
-        if (((TileIncandescentLamp) te).getFunctionalSide() == ForgeDirection.DOWN) {
-            if (iconIndex == 3) {
-                iconIndex = 1;
-            } else if (iconIndex == 1) {
-                iconIndex = 3;
-            }
+        if (((TileIncandescentLamp) te).lightLevel>8){
+        	if (((TileIncandescentLamp) te).getFunctionalSide().ordinal() == side)
+        		return iconBuffer[3];
+        	else
+        		return iconBuffer[1];
+        }else{
+        	if (((TileIncandescentLamp) te).getFunctionalSide().ordinal() == side)
+        		return iconBuffer[2];
+        	else
+        		return iconBuffer[0];       	
         }
-
-        return iconBuffer[iconIndex];
     }
 
     @SideOnly(Side.CLIENT)
     @Override
     public IIcon getIcon(int side, int meta) {
-        return iconBuffer[Util.getTextureOnSide(side, ForgeDirection.WEST)];
+        if (side == 4)
+            return iconBuffer[2];
+        else
+            return iconBuffer[0];
     }
 
     @Override
@@ -94,6 +96,11 @@ public class BlockIncandescentLamp extends BlockStandardSEMachine {
     @Override
     public void updateTick(World world, int x, int y, int z, Random random) {
         super.updateTick(world, x, y, z, random);
+        TileEntity te = world.getTileEntity(x, y, z);
+        if (te instanceof ISidedFacing)
+        	Util.updateTileEntityFacing(te);
+        if (te instanceof IEnergyTile)
+        	Util.updateTileEntityFunctionalSide(te);
     	world.markBlockForUpdate(x, y, z);
     }
 
