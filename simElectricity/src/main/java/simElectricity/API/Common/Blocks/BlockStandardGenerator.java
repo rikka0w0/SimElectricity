@@ -44,7 +44,10 @@ public abstract class BlockStandardGenerator extends BlockContainerSE {
 
     @Override
     public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase player, ItemStack itemStack) {
-        TileEntity te = world.getTileEntity(x, y, z);
+        if (world.isRemote)
+        	return;
+    	
+    	TileEntity te = world.getTileEntity(x, y, z);
 
         if (!(te instanceof TileSidedGenerator))
             return;

@@ -47,24 +47,11 @@ public abstract class BlockContainerSE extends BlockContainer {
             setCreativeTab(Util.SETab);
     }
 
-    /**
-     * Update facing when the block is placed!
-     * Don't forget to write super()!!
-     */
-    @Override
-    public void updateTick(World world, int x, int y, int z, Random random) {
-        if (world.isRemote)
-            return;
-        
-        TileEntity te = world.getTileEntity(x, y, z);
-
-        if (te instanceof INetworkEventHandler)
-        	Util.updateNetworkFields(te);
-    }
-
     @Override
 	public void onPostBlockPlaced(World world, int x, int y, int z,int meta) {
-    	Util.scheduleBlockUpdate(world.getTileEntity(x, y, z));
+    	TileEntity te = world.getTileEntity(x, y, z);
+        if (te instanceof INetworkEventHandler)
+        	Util.updateNetworkFields(te);
 	}
     
     @Override

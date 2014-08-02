@@ -45,6 +45,9 @@ public abstract class BlockStandardSEMachine extends BlockContainerSE {
     @Override
     public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase player, ItemStack itemStack) {
     	super.onBlockPlacedBy(world, x, y, z, player, itemStack);
+    	if (world.isRemote)
+    		return;
+    	
     	TileEntity te = world.getTileEntity(x, y, z);
 
         if (!(te instanceof TileStandardSEMachine))

@@ -192,7 +192,7 @@ public class PacketTileEntityUpdate implements IMessage{
         	
             if (te == null)
                 return null;
-            System.out.println("!");
+            
         	//Set value to variables
         	try {	
         		for (int i=0; i<message.fields_count;i++){

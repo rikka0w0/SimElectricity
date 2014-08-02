@@ -19,6 +19,8 @@
 
 package simElectricity.Common.Blocks.TileEntity;
 
+import java.util.List;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.nbt.NBTTagCompound;
@@ -26,11 +28,12 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.Energy;
+import simElectricity.API.INetworkEventHandler;
 import simElectricity.API.EnergyTile.IConductor;
 import simElectricity.API.Util;
 import simElectricity.Common.Blocks.BlockWire;
 
-public class TileWire extends TileEntity implements IConductor {
+public class TileWire extends TileEntity implements IConductor, INetworkEventHandler {
     protected boolean isAddedToEnergyNet = false;
     public boolean[] renderSides = new boolean[6];
 
@@ -113,4 +116,15 @@ public class TileWire extends TileEntity implements IConductor {
     public boolean isConnected(ForgeDirection direction) {
         return direction.ordinal() < 6 && direction.ordinal() >= 0 && renderSides[direction.ordinal()];
     }
+
+	@Override
+	public void addNetworkFields(List fields) {
+		updateSides();
+		fields.add("renderSides");
+	}
+	
+	@Override
+	public void onFieldUpdate(String[] fields, Object[] values, boolean isClient) {
+
+	}
 }
