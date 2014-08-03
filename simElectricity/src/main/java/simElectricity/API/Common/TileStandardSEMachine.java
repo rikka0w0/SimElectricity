@@ -19,12 +19,12 @@
 
 package simElectricity.API.Common;
 
-import java.util.List;
-
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.Energy;
 import simElectricity.API.EnergyTile.IEnergyTile;
+
+import java.util.List;
 
 /**
  * A standard SE machine can inherits this class, make things easier and less confusion
@@ -91,22 +91,23 @@ public abstract class TileStandardSEMachine extends TileSidedFacingMachine imple
 
         tagCompound.setByte("functionalSide", (byte) functionalSide.ordinal());
     }
-    
-	@Override
-	public void addNetworkFields(List fields) {
-		fields.add("functionalSide");
-		super.addNetworkFields(fields);
-	}
 
-	@Override
-	public void onFieldUpdate(String[] fields, Object[] values, boolean isClient) {
-        if(isClient){
-			for (String s:fields){
-	        	if (s.contains("functionalSide")){
-	        		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-	        	}
-	        }
+    @SuppressWarnings("unchecked")
+    @Override
+    public void addNetworkFields(List fields) {
+        fields.add("functionalSide");
+        super.addNetworkFields(fields);
+    }
+
+    @Override
+    public void onFieldUpdate(String[] fields, Object[] values, boolean isClient) {
+        if (isClient) {
+            for (String s : fields) {
+                if (s.contains("functionalSide")) {
+                    worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+                }
+            }
         }
         super.onFieldUpdate(fields, values, isClient);
-	}
+    }
 }

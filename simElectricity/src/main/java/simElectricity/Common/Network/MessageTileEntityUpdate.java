@@ -1,52 +1,52 @@
 package simElectricity.Common.Network;
 
-import java.lang.reflect.Field;
-
-import simElectricity.SimElectricity;
-import simElectricity.API.INetworkEventHandler;
-
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
-import io.netty.buffer.ByteBuf;
 import cpw.mods.fml.common.network.ByteBufUtils;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import cpw.mods.fml.relauncher.Side;
+import io.netty.buffer.ByteBuf;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
+import net.minecraftforge.common.util.ForgeDirection;
+import simElectricity.API.INetworkEventHandler;
+import simElectricity.SimElectricity;
 
-public class PacketTileEntityUpdate implements IMessage{
-	private int xCoord, yCoord, zCoord, dimensionID, fields_count;
+import java.lang.reflect.Field;
+
+public class MessageTileEntityUpdate implements IMessage{
+	private int xCoord, yCoord, zCoord, dimensionID, fieldsCount;
 	private String[] fields;
 	private short[] types;
 	private Object[] values;
-	
-    public PacketTileEntityUpdate() { }
 
-    public PacketTileEntityUpdate(TileEntity te, String[] fields) {
+    public MessageTileEntityUpdate() {
+    }
+
+    public MessageTileEntityUpdate(TileEntity te, String[] fields) {
         if (te == null)
             return;
 
         if (te.getWorldObj() == null)
             return;
-    	
+
     	this.xCoord = te.xCoord;
     	this.yCoord = te.yCoord;
     	this.zCoord = te.zCoord;
     	this.dimensionID = te.getWorldObj().provider.dimensionId;
-    	this.fields_count = fields.length;
-      	
+    	this.fieldsCount = fields.length;
+
     	this.fields = fields;
-    	this.types = new short[fields_count];
-    	this.values = new Object[fields_count];
-    	
+    	this.types = new short[fieldsCount];
+    	this.values = new Object[fieldsCount];
+
     	try{
-    		
-    		for (int i=0; i < fields_count; i++){
+
+    		for (int i=0; i < fieldsCount; i++){
 	    		Field f = te.getClass().getField(fields[i]);
-	    		
+
 	    		values[i] = f.get(te);
-	    		
+
 				if (f.getType() == boolean.class){
 					types[i] = 0;
 				}else if (f.getType() == int.class){
@@ -71,16 +71,16 @@ public class PacketTileEntityUpdate implements IMessage{
     		e.printStackTrace();
     	}
     }
-	
+
     @Override
     public void toBytes(ByteBuf buf) {
     	buf.writeInt(xCoord);
     	buf.writeInt(yCoord);
     	buf.writeInt(zCoord);
     	buf.writeInt(dimensionID);
-    	buf.writeInt(fields_count);
-    	
-    	for (int i=0; i<fields_count;i++){
+    	buf.writeInt(fieldsCount);
+
+    	for (int i=0; i< fieldsCount;i++){
 	    	buf.writeShort(types[i]);
 	    	ByteBufUtils.writeUTF8String(buf,fields[i]);
 	    	switch (types[i]){
@@ -89,7 +89,7 @@ public class PacketTileEntityUpdate implements IMessage{
 	    		break;
 	    	case 1:
 	    		buf.writeInt((Integer) values[i]);
-	    		break;   	
+	    		break;
 	    	case 2:
 	    		buf.writeFloat((Float) values[i]);
 	    		break;
@@ -117,20 +117,20 @@ public class PacketTileEntityUpdate implements IMessage{
 	    	}
     	}
     }
-    
+
     @Override
     public void fromBytes(ByteBuf buf) {
     	xCoord = buf.readInt();
     	yCoord = buf.readInt();
     	zCoord = buf.readInt();
     	dimensionID = buf.readInt();
-    	fields_count = buf.readInt();
-    	
-    	fields = new String[fields_count];
-    	types = new short[fields_count];
-    	values = new Object[fields_count];
-    	
-    	for (int i=0; i<fields_count;i++){
+    	fieldsCount = buf.readInt();
+
+    	fields = new String[fieldsCount];
+    	types = new short[fieldsCount];
+    	values = new Object[fieldsCount];
+
+    	for (int i=0; i< fieldsCount;i++){
 	    	types[i] = buf.readShort();
 	    	fields[i] = ByteBufUtils.readUTF8String(buf);
 	    	switch (types[i]){
@@ -139,7 +139,7 @@ public class PacketTileEntityUpdate implements IMessage{
 	    		break;
 	    	case 1:
 	    		values[i] = buf.readInt();
-	    		break;   	
+	    		break;
 	    	case 2:
 	    		values[i] = buf.readFloat();
 	    		break;
@@ -166,39 +166,39 @@ public class PacketTileEntityUpdate implements IMessage{
 	    	case 7:
 	    		values[i] = ForgeDirection.getOrientation(buf.readByte());
 	    		break;
-	    	}	
+	    	}
     	}
     }
 
 
 
-    public static class Handler implements IMessageHandler<PacketTileEntityUpdate, IMessage> {
+    public static class Handler implements IMessageHandler<MessageTileEntityUpdate, IMessage> {
         @Override
-        public IMessage onMessage(PacketTileEntityUpdate message, MessageContext ctx) {
+        public IMessage onMessage(MessageTileEntityUpdate message, MessageContext ctx) {
         	World world;
-        		
+
         	if (ctx.side == Side.CLIENT){
         		world = SimElectricity.proxy.getClientWorld();
         	}else{
         		world = ctx.getServerHandler().playerEntity.worldObj;
         	}
-        		
+
         	if (world.provider.dimensionId != message.dimensionID){
-        		System.out.println("An dimensionID mismatch error occured during sync! This could be an error");
+        		System.out.println("An dimensionID mismatch error occurred during sync! This could be an error");
         		return null;
         	}
-        		
+
         	TileEntity te = world.getTileEntity(message.xCoord, message.yCoord, message.zCoord);
-        	
+
             if (te == null)
                 return null;
-            
+
         	//Set value to variables
-        	try {	
-        		for (int i=0; i<message.fields_count;i++){
+        	try {
+        		for (int i=0; i<message.fieldsCount;i++){
         			Field f = te.getClass().getField(message.fields[i]);
         			f.set(te, message.values[i]);
-        		}      		 
+        		}
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -206,7 +206,7 @@ public class PacketTileEntityUpdate implements IMessage{
         	//Fire onFieldUpdate events
         	if (te instanceof INetworkEventHandler)
         		((INetworkEventHandler)te).onFieldUpdate(message.fields, message.values, world.isRemote);
-        	
+
             return null;
         }
     }

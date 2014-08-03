@@ -25,9 +25,9 @@ package simElectricity.API.EnergyTile;
 public interface IConductor extends IBaseComponent {
     /**
      * Return the color of the wire
-     * </p>
+     * <p/>
      * 0 will allow any other wires connect to this wire
-     * </p>
+     * <p/>
      * Any other values will only connect to the certain value or 0
      */
     int getColor();

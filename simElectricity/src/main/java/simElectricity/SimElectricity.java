@@ -39,8 +39,8 @@ import simElectricity.Common.ConfigManager;
 import simElectricity.Common.Core.SEBlocks;
 import simElectricity.Common.Core.SEItems;
 import simElectricity.Common.EnergyNet.EnergyNetEventHandler;
+import simElectricity.Common.Network.MessageTileEntityUpdate;
 import simElectricity.Common.Network.NetworkManager;
-import simElectricity.Common.Network.PacketTileEntityUpdate;
 
 @Mod(modid = Util.MODID, name = Util.NAME, version = "1.0.0", guiFactory = "simElectricity.Client.SimEGuiFactory", dependencies = "required-after:Forge@[10.12.2.1147,)")
 public class SimElectricity {
@@ -83,11 +83,11 @@ public class SimElectricity {
 
         //Register Items
         SEItems.init();
-        
+
         //Register network channel
         networkChannel = NetworkRegistry.INSTANCE.newSimpleChannel(Util.MODID);
-        networkChannel.registerMessage(PacketTileEntityUpdate.Handler.class, PacketTileEntityUpdate.class, 0, Side.CLIENT);
-        networkChannel.registerMessage(PacketTileEntityUpdate.Handler.class, PacketTileEntityUpdate.class, 1, Side.SERVER);
+        networkChannel.registerMessage(MessageTileEntityUpdate.Handler.class, MessageTileEntityUpdate.class, 0, Side.CLIENT);
+        networkChannel.registerMessage(MessageTileEntityUpdate.Handler.class, MessageTileEntityUpdate.class, 1, Side.SERVER);
     }
 
     /**
@@ -110,6 +110,6 @@ public class SimElectricity {
      */
     @EventHandler
     public void postInit(FMLPostInitializationEvent event) {
-    	
+
     }
 }

@@ -53,23 +53,23 @@ public class Util {
      * Update a client tileEntity field from the server
      */
     public static void updateTileEntityField(TileEntity tileEntity, String field) {
-    	NetworkManager.updateTileEntityFields(tileEntity, new String[]{field});
+        NetworkManager.updateTileEntityFields(tileEntity, new String[] { field });
     }
 
     /**
      * Update a server tileEntity field from a client
      */
     public static void updateTileEntityFieldToServer(TileEntity tileEntity, String field) {
-    	NetworkManager.updateTileEntityFieldsToServer(tileEntity, new String[]{field});
+        NetworkManager.updateTileEntityFieldsToServer(tileEntity, new String[] { field });
     }
 
     /**
      * Attempt to update a tileEntity's network fields
      */
-    public static void updateNetworkFields(TileEntity tileEntity){
-    	NetworkManager.updateNetworkFields(tileEntity);
+    public static void updateNetworkFields(TileEntity tileEntity) {
+        NetworkManager.updateNetworkFields(tileEntity);
     }
-    
+
     // Util
 
     /**

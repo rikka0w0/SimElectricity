@@ -44,9 +44,9 @@ public class ConfigManager {
     }
 
     private static void syncConfig() {
-        optimizeNodes = config.get(Configuration.CATEGORY_GENERAL, "Optimize_Nodes", false, "A function that can improve the performance by reducing the total number of conductor nodes (May be buggy)").getBoolean();
-        parabolaRenderSteps = config.get(Configuration.CATEGORY_GENERAL, "Parabola_Render_Steps", 12, "Decides how smooth the parabola cable is(must be a even number!Client ONLY!)").getInt(12);
-        
+        optimizeNodes = config.get(Configuration.CATEGORY_GENERAL, "OptimizeNodes", false, "A function that can improve the performance by reducing the total number of conductor nodes (May be buggy)").getBoolean();
+        parabolaRenderSteps = config.get(Configuration.CATEGORY_GENERAL, "ParabolaRenderSteps", 12, "Decides how smooth the parabola cable is(must be a even number!Client ONLY!)").getInt(12);
+
         if (config.hasChanged())
             config.save();
     }

@@ -1,8 +1,8 @@
 package simElectricity.API.Client;
 
-import simElectricity.Common.ConfigManager;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import simElectricity.Common.ConfigManager;
 
 @SideOnly(Side.CLIENT)
 public class CableRender extends CubeRender {

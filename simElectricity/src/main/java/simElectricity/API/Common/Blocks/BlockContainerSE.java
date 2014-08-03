@@ -48,12 +48,12 @@ public abstract class BlockContainerSE extends BlockContainer {
     }
 
     @Override
-	public void onPostBlockPlaced(World world, int x, int y, int z,int meta) {
-    	TileEntity te = world.getTileEntity(x, y, z);
+    public void onPostBlockPlaced(World world, int x, int y, int z, int meta) {
+        TileEntity te = world.getTileEntity(x, y, z);
         if (te instanceof INetworkEventHandler)
-        	Util.updateNetworkFields(te);
-	}
-    
+            Util.updateNetworkFields(te);
+    }
+
     @Override
     public int damageDropped(int meta) {
         return meta;

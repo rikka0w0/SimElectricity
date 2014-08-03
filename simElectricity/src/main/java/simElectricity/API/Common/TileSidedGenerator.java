@@ -34,7 +34,7 @@ public abstract class TileSidedGenerator extends TileStandardSEMachine {
     public float getOutputVoltage() {
         return outputVoltage;
     }
-    
+
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
@@ -47,7 +47,7 @@ public abstract class TileSidedGenerator extends TileStandardSEMachine {
     public void writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
 
-        tagCompound.setFloat("outputResistance",outputResistance);
-        tagCompound.setFloat("outputVoltage",outputVoltage);
+        tagCompound.setFloat("outputResistance", outputResistance);
+        tagCompound.setFloat("outputVoltage", outputVoltage);
     }
 }
