@@ -26,9 +26,9 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.ChunkWatchEvent;
+import simElectricity.API.EnergyTile.IEnergyTile;
 import simElectricity.API.INetworkEventHandler;
 import simElectricity.API.ISidedFacing;
-import simElectricity.API.EnergyTile.IEnergyTile;
 import simElectricity.SimElectricity;
 
 import java.util.ArrayList;
@@ -65,21 +65,21 @@ public class NetworkManager {
     	INetworkEventHandler networkEventHandler = (INetworkEventHandler) tileEntity;
     	ArrayList<String> fields = new ArrayList<String>();
     	networkEventHandler.addNetworkFields(fields);
-    	
+
     	//Return when no field needs to be updated
     	if (fields.isEmpty())
     		return;
-    	
+
     	updateTileEntityFields(tileEntity, fields.toArray(new String[0]));
     }
-    
+
     /**
      * Update a tileEntity's functional side
      */
     public static void updateFunctionalSide(TileEntity tileEntity){
     	if (!(tileEntity instanceof IEnergyTile))
     		return;
-    	
+
     	SimElectricity.instance.networkChannel.sendToDimension(
     			new MessageTileEntityUpdate(tileEntity, ((IEnergyTile)tileEntity).getFunctionalSide(), false),
     			tileEntity.getWorldObj().provider.dimensionId);
@@ -91,12 +91,12 @@ public class NetworkManager {
     public static void updateFacing(TileEntity tileEntity){
     	if (!(tileEntity instanceof ISidedFacing))
     		return;
-    	
+
     	SimElectricity.instance.networkChannel.sendToDimension(
     			new MessageTileEntityUpdate(tileEntity, ((ISidedFacing)tileEntity).getFacing(), true),
     			tileEntity.getWorldObj().provider.dimensionId);
     }
-    
+
     /**
      * Send the NBT of a tileEntity from the server to the client
      */
@@ -105,7 +105,7 @@ public class NetworkManager {
     	if (packet != null)
     		MinecraftServer.getServer().getConfigurationManager().sendPacketToAllPlayersInDimension(packet, tileEntity.getWorldObj().provider.dimensionId);
     }
-    
+
     //When a player see the chunk, update facing, functionalside, wire rendering
     @SubscribeEvent
     public void onChunkWatchEvent(ChunkWatchEvent.Watch event) {

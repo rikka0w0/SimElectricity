@@ -5,9 +5,9 @@ import java.util.List;
 public interface INetworkEventHandler {
     /**
      * When the updating packet is processed on the target side, this function is fired
-     * <p>
+     * <p/>
      * fields[] and values[] are corresponding
-     * <p>
+     * <p/>
      * use worldObj.isRemote to check the side of the handler (true for client)
      */
     void onFieldUpdate(String[] fields, Object[] values);

@@ -19,6 +19,7 @@
 
 package simElectricity.API;
 
+import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
@@ -29,6 +30,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.MathHelper;
 import net.minecraftforge.common.util.ForgeDirection;
+import org.apache.logging.log4j.Level;
 import simElectricity.API.EnergyTile.IConductor;
 import simElectricity.API.EnergyTile.IConnectable;
 import simElectricity.API.EnergyTile.IEnergyTile;
@@ -196,5 +198,10 @@ public class Util {
      */
     public static Item getItem(String name) {
         return GameRegistry.findItem(MODID, name);
+    }
+
+
+    public static void warn(Object object) {
+        FMLLog.log(NAME, Level.WARN, String.valueOf(object));
     }
 }

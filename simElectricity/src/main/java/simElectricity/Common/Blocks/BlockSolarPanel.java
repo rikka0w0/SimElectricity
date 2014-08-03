@@ -29,9 +29,9 @@ import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
-import simElectricity.API.Common.TileSidedGenerator;
 import simElectricity.API.Common.Blocks.AutoFacing;
 import simElectricity.API.Common.Blocks.BlockStandardGenerator;
+import simElectricity.API.Common.TileSidedGenerator;
 import simElectricity.API.Util;
 import simElectricity.Common.Blocks.TileEntity.TileSolarPanel;
 
@@ -49,26 +49,24 @@ public class BlockSolarPanel extends BlockStandardGenerator {
     public TileEntity createNewTileEntity(World world, int meta) {
         return new TileSolarPanel();
     }
-    
+
     @Override
     public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase player, ItemStack itemStack) {
         if (world.isRemote)
-        	return;
-    	
-    	TileEntity te = world.getTileEntity(x, y, z);
+            return;
+
+        TileEntity te = world.getTileEntity(x, y, z);
 
         if (!(te instanceof TileSidedGenerator))
             return;
 
         ForgeDirection functionalSide = AutoFacing.autoConnect(te, Util.getPlayerSight(player).getOpposite(), ForgeDirection.UP);
+        if (functionalSide == ForgeDirection.UP)
+            functionalSide = ForgeDirection.DOWN;
 
-        if (functionalSide == ForgeDirection.UP){
-        	functionalSide = ForgeDirection.NORTH;
-        }
-        
         ((TileSidedGenerator) te).setFunctionalSide(functionalSide);
     }
-    
+
     @Override
     @SideOnly(Side.CLIENT)
     public void registerBlockIcons(IIconRegister r) {
@@ -87,11 +85,11 @@ public class BlockSolarPanel extends BlockStandardGenerator {
             return iconBuffer[0];
 
         if (((TileSolarPanel) te).getFunctionalSide().ordinal() == side) {
-        	return iconBuffer[2];
-        }else if(side == 0){ //Down
-        	return iconBuffer[0];
-        }else if(side == 1){ //Up
-        	return iconBuffer[1];
+            return iconBuffer[2];
+        } else if (side == 0) { //Down
+            return iconBuffer[0];
+        } else if (side == 1) { //Up
+            return iconBuffer[1];
         }
 
         return iconBuffer[3];
@@ -100,11 +98,11 @@ public class BlockSolarPanel extends BlockStandardGenerator {
     @SideOnly(Side.CLIENT)
     @Override
     public IIcon getIcon(int side, int meta) {
-    	if (side == 4)
-    		return iconBuffer[2];
-    	else if(side == 1) //Up
-        	return iconBuffer[1];
-    	else
-    		return iconBuffer[3];
+        if (side == 4)
+            return iconBuffer[2];
+        else if (side == 1) //Up
+            return iconBuffer[1];
+        else
+            return iconBuffer[3];
     }
 }

@@ -57,9 +57,8 @@ public class TileSolarPanel extends TileSidedGenerator {
     }
     
 
-	@Override
-	public int getInventorySize() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+    @Override
+    public int getInventorySize() {
+        return 0;
+    }
 }

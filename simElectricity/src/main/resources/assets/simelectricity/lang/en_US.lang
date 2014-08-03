@@ -33,3 +33,4 @@ sime.TwSelect=Tower Selected.
 sime.TwConnect=Tower Connected.
 sime.ActionCancel=Action Cancelled.
 sime.TgtNotTw=Target is not a Tower.
+sime.TwClose=Two targets are too close.

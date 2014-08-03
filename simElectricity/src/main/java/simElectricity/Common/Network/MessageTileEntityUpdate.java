@@ -9,9 +9,10 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
+import simElectricity.API.EnergyTile.IEnergyTile;
 import simElectricity.API.INetworkEventHandler;
 import simElectricity.API.ISidedFacing;
-import simElectricity.API.EnergyTile.IEnergyTile;
+import simElectricity.API.Util;
 import simElectricity.SimElectricity;
 
 import java.lang.reflect.Field;
@@ -38,18 +39,18 @@ public class MessageTileEntityUpdate implements IMessage{
     	this.zCoord = te.zCoord;
     	this.dimensionID = te.getWorldObj().provider.dimensionId;
     }
-    
+
     public MessageTileEntityUpdate(TileEntity te, ForgeDirection direction, boolean isFacing) {
     	initHead(te);
-    	
+
     	this.fieldsCount = (byte) (isFacing ? -1 : -2);
-    	
+
     	this.values = new ForgeDirection[]{direction};
     }
-    
+
     public MessageTileEntityUpdate(TileEntity te, String[] fields) {
     	initHead(te);
-    	    	
+
     	if (fields.length == 1 && fields[0] == null)
     		this.fieldsCount = 0;
     	else
@@ -59,7 +60,7 @@ public class MessageTileEntityUpdate implements IMessage{
     		System.out.println("No fields to be update! This might be a bug!");
     		return;
     	}
-    	
+
     	this.fields = fields;
     	this.types = new short[fieldsCount];
     	this.values = new Object[fieldsCount];
@@ -106,7 +107,7 @@ public class MessageTileEntityUpdate implements IMessage{
     	if (fieldsCount == -1 || fieldsCount == -2){
     		buf.writeByte(((ForgeDirection)values[0]).ordinal());
     	}
-    	
+
     	for (int i=0; i< fieldsCount;i++){
 	    	buf.writeShort(types[i]);
 	    	ByteBufUtils.writeUTF8String(buf,fields[i]);
@@ -153,11 +154,11 @@ public class MessageTileEntityUpdate implements IMessage{
     	dimensionID = buf.readInt();
     	fieldsCount = buf.readInt();
 
-    	if (fieldsCount > 0){ 	
+    	if (fieldsCount > 0){
 	    	fields = new String[fieldsCount];
 	    	types = new short[fieldsCount];
 	    	values = new Object[fieldsCount];
-	
+
 	    	for (int i=0; i< fieldsCount;i++){
 		    	types[i] = buf.readShort();
 		    	fields[i] = ByteBufUtils.readUTF8String(buf);
@@ -219,7 +220,7 @@ public class MessageTileEntityUpdate implements IMessage{
         	}
 
         	if (world.provider.dimensionId != message.dimensionID){
-        		System.out.println("An dimensionID mismatch error occurred during sync! This could be an error");
+                Util.warn("[SimElectricity] An dimensionID mismatch error occurred during sync! This could be an error");
         		return null;
         	}
 
@@ -246,7 +247,7 @@ public class MessageTileEntityUpdate implements IMessage{
         		((IEnergyTile)te).setFunctionalSide((ForgeDirection) message.values[0]);
         		world.markBlockForUpdate(message.xCoord, message.yCoord, message.zCoord);
         	}
-        	
+
         	//Fire onFieldUpdate event
         	if (te instanceof INetworkEventHandler)
         		((INetworkEventHandler)te).onFieldUpdate(message.fields, message.values);

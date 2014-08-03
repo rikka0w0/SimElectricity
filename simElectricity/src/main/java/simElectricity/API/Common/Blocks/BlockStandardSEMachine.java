@@ -25,8 +25,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
-import simElectricity.API.Util;
 import simElectricity.API.Common.TileStandardSEMachine;
+import simElectricity.API.Util;
 
 /**
  * Standard SE machine block
@@ -34,6 +34,9 @@ import simElectricity.API.Common.TileStandardSEMachine;
  * @author <Meow J>
  */
 public abstract class BlockStandardSEMachine extends BlockContainerSE {
+
+    public ForgeDirection[] exceptionDirs;
+
     public BlockStandardSEMachine(Material material) {
         super(material);
     }
@@ -44,21 +47,19 @@ public abstract class BlockStandardSEMachine extends BlockContainerSE {
 
     @Override
     public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase player, ItemStack itemStack) {
-    	super.onBlockPlacedBy(world, x, y, z, player, itemStack);
-    	if (world.isRemote)
-    		return;
-    	
-    	TileEntity te = world.getTileEntity(x, y, z);
+        super.onBlockPlacedBy(world, x, y, z, player, itemStack);
+        if (world.isRemote)
+            return;
+
+        TileEntity te = world.getTileEntity(x, y, z);
 
         if (!(te instanceof TileStandardSEMachine))
             return;
 
         ForgeDirection functionalSide = Util.getPlayerSight(player);
-
         ((TileStandardSEMachine) te).setFacing(functionalSide.getOpposite());
 
-        functionalSide = AutoFacing.autoConnect(te, functionalSide);
-
+        functionalSide = AutoFacing.autoConnect(te, functionalSide, this.exceptionDirs);
         ((TileStandardSEMachine) te).setFunctionalSide(functionalSide);
     }
 }

@@ -24,9 +24,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
+import simElectricity.API.Common.Items.ItemSE;
 import simElectricity.API.Network;
 import simElectricity.API.Util;
-import simElectricity.API.Common.Items.ItemSE;
 import simElectricity.Common.Blocks.TileEntity.TileTower;
 
 import java.util.HashMap;
@@ -64,7 +64,7 @@ public class ItemHVWire extends ItemSE {
                 if (!(lastCoordinate[0] == x && lastCoordinate[1] == y && lastCoordinate[2] == z) &&
                         world.getTileEntity(lastCoordinate[0], lastCoordinate[1], lastCoordinate[2]) instanceof TileTower) {
 
-                    if (Math.pow(x - lastCoordinate[0], 2) + Math.pow(z - lastCoordinate[2], 2) < 36) {
+                    if (Math.pow(x - lastCoordinate[0], 2) + Math.pow(z - lastCoordinate[2], 2) < 64) {
                         Util.chat(player, EnumChatFormatting.RED + StatCollector.translateToLocal("sime.TwClose") + EnumChatFormatting.RESET);
                         return true;
                     }
