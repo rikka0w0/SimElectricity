@@ -92,7 +92,7 @@ public class BlockAdjustableTransformer extends BlockContainerSE {
         if (!(te instanceof TileAdjustableTransformer))
             return;
 
-        ((TileAdjustableTransformer) te).secondarySide = Util.getPlayerSight(player);
+        ((TileAdjustableTransformer) te).secondarySide = Util.getPlayerSight(player, false);
         ((TileAdjustableTransformer) te).primarySide = ((TileAdjustableTransformer) te).secondarySide.getOpposite();
     }
 

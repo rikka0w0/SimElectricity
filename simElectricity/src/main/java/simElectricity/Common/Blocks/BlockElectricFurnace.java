@@ -142,7 +142,7 @@ public class BlockElectricFurnace extends BlockStandardSEMachine {
     @Override
     public void updateTick(World world, int x, int y, int z, Random random) {
         super.updateTick(world, x, y, z, random);
-    	world.markBlockForUpdate(x, y, z);
+        world.markBlockForUpdate(x, y, z);
     }
 
     @Override
@@ -157,5 +157,10 @@ public class BlockElectricFurnace extends BlockStandardSEMachine {
             return 0;
 
         return ((TileElectricFurnace) te).isWorking ? 13 : 0;
+    }
+
+    @Override
+    public boolean ignoreVerticalFacing() {
+        return true;
     }
 }

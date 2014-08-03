@@ -143,17 +143,19 @@ public class Util {
 
     /**
      * Return which direction the player is looking at
+     *
+     * @param ignoreVertical return direction will ignore vertical directions(UP, DOWN) if this parameter set to true
      */
-    public static ForgeDirection getPlayerSight(EntityLivingBase player) {
+    public static ForgeDirection getPlayerSight(EntityLivingBase player, boolean ignoreVertical) {
         int heading = MathHelper.floor_double(player.rotationYaw * 4.0F / 360.0F + 0.5D) & 3;
         int pitch = Math.round(player.rotationPitch);
+        if (!ignoreVertical) {
+            if (pitch >= 65)
+                return ForgeDirection.DOWN;  //1
 
-        if (pitch >= 65)
-            return ForgeDirection.DOWN;  //1
-
-        if (pitch <= -65)
-            return ForgeDirection.UP;    //0
-
+            if (pitch <= -65)
+                return ForgeDirection.UP;    //0
+        }
         switch (heading) {
             case 0:
                 return ForgeDirection.SOUTH; //2

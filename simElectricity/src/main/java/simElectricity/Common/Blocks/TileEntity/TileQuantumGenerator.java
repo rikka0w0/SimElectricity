@@ -19,48 +19,51 @@
 
 package simElectricity.Common.Blocks.TileEntity;
 
-import java.util.List;
-
 import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.Common.TileSidedGenerator;
 import simElectricity.API.Energy;
 import simElectricity.API.INetworkEventHandler;
 
-public class TileQuantumGenerator extends TileSidedGenerator implements INetworkEventHandler{
-	
+import java.util.List;
+
+public class TileQuantumGenerator extends TileSidedGenerator implements INetworkEventHandler {
+
     @Override
-	public void onLoad() {
-    	if (this.outputResistance == Float.MAX_VALUE){
-    		outputResistance = 0.001F;
-    		outputVoltage = 230;
-    	}
-    }
-	
-	@Override
-	public void onFieldUpdate(String[] fields, Object[] values) {
-		//Handling on server side
-		if (!worldObj.isRemote){
-			for (String s:fields){
-	        	if (s.contains("outputVoltage") || s.contains("outputResistance")){
-	        		Energy.postTileChangeEvent(this);
-	        	}
-	        }
+    public void onLoad() {
+        if (this.outputResistance == Float.MAX_VALUE) {
+            outputResistance = 0.001F;
+            outputVoltage = 230;
         }
-	}
-	
+    }
+
+    @Override
+    public void onFieldUpdate(String[] fields, Object[] values) {
+        //Handling on server side
+        if (!worldObj.isRemote) {
+            for (String s : fields) {
+                if (s.contains("outputVoltage") || s.contains("outputResistance")) {
+                    Energy.postTileChangeEvent(this);
+                }
+            }
+        }
+    }
+
     @Override
     public boolean canSetFunctionalSide(ForgeDirection newFunctionalSide) {
         return true;
     }
 
-	@Override
-	public int getInventorySize() {
-		return 0;
-	}
+    @Override
+    public int getInventorySize() {
+        return 0;
+    }
 
-	@Override
-	public void addNetworkFields(List fields) {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public void addNetworkFields(List fields) {
+    }
+
+    @Override
+    public boolean canSetFacing(ForgeDirection newFacing) {
+        return newFacing != ForgeDirection.UP && newFacing != ForgeDirection.DOWN;
+    }
 }

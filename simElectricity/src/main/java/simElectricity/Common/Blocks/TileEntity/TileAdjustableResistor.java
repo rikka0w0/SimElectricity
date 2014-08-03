@@ -19,14 +19,14 @@
 
 package simElectricity.Common.Blocks.TileEntity;
 
-import java.util.List;
-
 import net.minecraft.nbt.NBTTagCompound;
 import simElectricity.API.Common.TileStandardSEMachine;
 import simElectricity.API.Energy;
 import simElectricity.API.INetworkEventHandler;
 
-public class TileAdjustableResistor extends TileStandardSEMachine implements INetworkEventHandler  {
+import java.util.List;
+
+public class TileAdjustableResistor extends TileStandardSEMachine implements INetworkEventHandler {
     public float resistance = 1000;
     public float powerConsumed = 0;
     public float power = 0;
@@ -56,15 +56,15 @@ public class TileAdjustableResistor extends TileStandardSEMachine implements INe
         tagCompound.setFloat("resistance", resistance);
     }
 
-	@Override
-	public void onFieldUpdate(String[] fields, Object[] values) {
-		//Handling on server side
-		if (!worldObj.isRemote){
-			for (String s:fields)
-	        	if (s.contains("resistance"))
-	        		Energy.postTileChangeEvent(this);
+    @Override
+    public void onFieldUpdate(String[] fields, Object[] values) {
+        //Handling on server side
+        if (!worldObj.isRemote) {
+            for (String s : fields)
+                if (s.contains("resistance"))
+                    Energy.postTileChangeEvent(this);
         }
-	}
+    }
 
     @Override
     public float getOutputVoltage() {
@@ -81,8 +81,8 @@ public class TileAdjustableResistor extends TileStandardSEMachine implements INe
         return 0;
     }
 
-	@Override
-	public void addNetworkFields(List fields) {
+    @Override
+    public void addNetworkFields(List fields) {
 
-	}
+    }
 }

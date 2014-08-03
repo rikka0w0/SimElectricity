@@ -110,7 +110,7 @@ public class BlockSwitch extends BlockContainerSE {
     public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase player, ItemStack itemStack) {
         TileSwitch te = (TileSwitch) world.getTileEntity(x, y, z);
 
-        te.setFacing(Util.getPlayerSight(player).getOpposite());
+        te.setFacing(Util.getPlayerSight(player, false).getOpposite());
 
         te.inputSide = AutoFacing.autoConnect(te, ForgeDirection.UP, te.getFacing());
         te.outputSide = AutoFacing.autoConnect(te, te.inputSide.getOpposite(), new ForgeDirection[] { te.inputSide, te.getFacing() });

@@ -19,16 +19,23 @@
 
 package simElectricity.Common.Blocks.TileEntity;
 
-import java.util.List;
-
+import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.Common.TileStandardSEMachine;
 import simElectricity.API.Energy;
 import simElectricity.API.IEnergyNetUpdateHandler;
 import simElectricity.API.INetworkEventHandler;
 import simElectricity.API.Network;
 
+import java.util.List;
+
 public class TileIncandescentLamp extends TileStandardSEMachine implements IEnergyNetUpdateHandler, INetworkEventHandler {
     public int lightLevel = 0;
+
+    @Override
+    public boolean canSetFunctionalSide(ForgeDirection newFunctionalSide) {
+        //FunctionalSide Facing
+        return true;
+    }
 
     @Override
     public float getOutputVoltage() {
@@ -55,15 +62,14 @@ public class TileIncandescentLamp extends TileStandardSEMachine implements IEner
 
         Network.updateNetworkFields(this);
     }
-    
-	@Override
-	public void addNetworkFields(List fields) {
-		fields.add("lightLevel");
-		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-	}
 
-	@Override
-	public void onFieldUpdate(String[] fields, Object[] values) {
-		
-	}
+    @Override
+    public void addNetworkFields(List fields) {
+        fields.add("lightLevel");
+        worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+    }
+
+    @Override
+    public void onFieldUpdate(String[] fields, Object[] values) {
+    }
 }

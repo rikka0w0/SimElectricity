@@ -43,6 +43,13 @@ public abstract class BlockStandardSEMachine extends BlockContainerSE {
         this(Material.iron);
     }
 
+    /**
+     * If this machine only has horizontal facing, override this method and set to true.
+     */
+    public boolean ignoreVerticalFacing() {
+        return false;
+    }
+
     @Override
     public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase player, ItemStack itemStack) {
         super.onBlockPlacedBy(world, x, y, z, player, itemStack);
@@ -54,7 +61,7 @@ public abstract class BlockStandardSEMachine extends BlockContainerSE {
         if (!(te instanceof TileStandardSEMachine))
             return;
 
-        ForgeDirection functionalSide = Util.getPlayerSight(player);
+        ForgeDirection functionalSide = Util.getPlayerSight(player, ignoreVerticalFacing());
         ((TileStandardSEMachine) te).setFacing(functionalSide.getOpposite());
 
         functionalSide = AutoFacing.autoConnect(te, functionalSide);

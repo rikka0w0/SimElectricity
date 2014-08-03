@@ -60,7 +60,7 @@ public class BlockSolarPanel extends BlockStandardGenerator {
         if (!(te instanceof TileSidedGenerator))
             return;
 
-        ForgeDirection functionalSide = AutoFacing.autoConnect(te, Util.getPlayerSight(player).getOpposite(), ForgeDirection.UP);
+        ForgeDirection functionalSide = AutoFacing.autoConnect(te, Util.getPlayerSight(player, false).getOpposite(), ForgeDirection.UP);
         if (functionalSide == ForgeDirection.UP)
             functionalSide = ForgeDirection.DOWN;
 

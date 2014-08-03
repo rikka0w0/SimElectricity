@@ -153,4 +153,9 @@ public class BlockSimpleGenerator extends BlockStandardSEMachine {
 
         return ((TileSimpleGenerator) te).isWorking ? 13 : 0;
     }
+
+    @Override
+    public boolean ignoreVerticalFacing() {
+        return true;
+    }
 }

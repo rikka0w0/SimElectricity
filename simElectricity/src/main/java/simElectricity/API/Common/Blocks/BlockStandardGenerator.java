@@ -42,6 +42,13 @@ public abstract class BlockStandardGenerator extends BlockContainerSE {
         this(Material.iron);
     }
 
+    /**
+     * If this generator only has horizontal facing, override this method and set to true.
+     */
+    public boolean ignoreVerticalFacing() {
+        return false;
+    }
+
     @Override
     public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase player, ItemStack itemStack) {
         if (world.isRemote)
@@ -52,7 +59,7 @@ public abstract class BlockStandardGenerator extends BlockContainerSE {
         if (!(te instanceof TileSidedGenerator))
             return;
 
-        ForgeDirection functionalSide = AutoFacing.autoConnect(te, Util.getPlayerSight(player).getOpposite());
+        ForgeDirection functionalSide = AutoFacing.autoConnect(te, Util.getPlayerSight(player, ignoreVerticalFacing()).getOpposite());
         ((TileSidedGenerator) te).setFunctionalSide(functionalSide);
     }
 }

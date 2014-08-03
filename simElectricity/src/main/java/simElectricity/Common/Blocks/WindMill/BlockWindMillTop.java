@@ -55,10 +55,10 @@ public class BlockWindMillTop extends BlockContainerSE {
                 return false;
 
             dropBlockAsItem(world, x, y + 1, z, new ItemStack(SEItems.fan, 1));
-            
+
             te.settled = false;
-            if(!world.isRemote)
-            	Network.updateTileEntityField(te, "settled");
+            if (!world.isRemote)
+                Network.updateTileEntityField(te, "settled");
         } else {
             if (playerItem == null)
                 return false;
@@ -67,8 +67,8 @@ public class BlockWindMillTop extends BlockContainerSE {
                 return false;
 
             te.settled = true;
-            if(!world.isRemote)
-            	Network.updateTileEntityField(te, "settled");
+            if (!world.isRemote)
+                Network.updateTileEntityField(te, "settled");
         }
 
         return true;
@@ -123,7 +123,7 @@ public class BlockWindMillTop extends BlockContainerSE {
     public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase player, ItemStack itemStack) {
         TileEntity te = world.getTileEntity(x, y, z);
 
-        ((ISidedFacing) te).setFacing(Util.getPlayerSight(player).getOpposite());
+        ((ISidedFacing) te).setFacing(Util.getPlayerSight(player, false).getOpposite());
     }
 
     @Override
