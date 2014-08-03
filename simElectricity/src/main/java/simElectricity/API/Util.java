@@ -25,6 +25,8 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
+import net.minecraft.network.Packet;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.MathHelper;
@@ -70,6 +72,12 @@ public class Util {
         NetworkManager.updateNetworkFields(tileEntity);
     }
 
+    public static void syncTileEntityNBT(TileEntity tileEntity){
+    	Packet packet = tileEntity.getDescriptionPacket();
+    	if (packet != null)
+    		MinecraftServer.getServer().getConfigurationManager().sendPacketToAllPlayersInDimension(packet, tileEntity.getWorldObj().provider.dimensionId);
+    }
+    
     // Util
 
     /**

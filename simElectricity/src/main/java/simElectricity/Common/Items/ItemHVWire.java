@@ -24,8 +24,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
-import simElectricity.API.Common.Items.ItemSE;
 import simElectricity.API.Util;
+import simElectricity.API.Common.Items.ItemSE;
 import simElectricity.Common.Blocks.TileEntity.TileTower;
 
 import java.util.HashMap;
@@ -63,7 +63,7 @@ public class ItemHVWire extends ItemSE {
                 if (!(lastCoordinate[0] == x && lastCoordinate[1] == y && lastCoordinate[2] == z) &&
                         world.getTileEntity(lastCoordinate[0], lastCoordinate[1], lastCoordinate[2]) instanceof TileTower) {
 
-                    if (Math.pow(x - lastCoordinate[0], 2) + Math.pow(z - lastCoordinate[2], 2) < 100) {
+                    if (Math.pow(x - lastCoordinate[0], 2) + Math.pow(z - lastCoordinate[2], 2) < 36) {
                         Util.chat(player, EnumChatFormatting.RED + StatCollector.translateToLocal("sime.TwClose") + EnumChatFormatting.RESET);
                         return true;
                     }
@@ -75,9 +75,9 @@ public class ItemHVWire extends ItemSE {
                         tower1.addNeighbor(tower2);
                         tower2.addNeighbor(tower1);
 
-                        Util.updateTileEntityField(tower1, "neighborsInfo");
-                        Util.updateTileEntityField(tower2, "neighborsInfo");
-
+                        Util.syncTileEntityNBT(tower1);
+                        Util.syncTileEntityNBT(tower2);
+                        
                         Util.chat(player, StatCollector.translateToLocal("sime.TwConnect"));
                     } else
                         Util.chat(player, StatCollector.translateToLocal("sime.ActionCancel"));

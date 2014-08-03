@@ -34,8 +34,16 @@ public class MessageTileEntityUpdate implements IMessage{
     	this.yCoord = te.yCoord;
     	this.zCoord = te.zCoord;
     	this.dimensionID = te.getWorldObj().provider.dimensionId;
-    	this.fieldsCount = fields.length;
+    	if (fields.length == 1 && fields[0] == null)
+    		this.fieldsCount = 0;
+    	else
+    		this.fieldsCount = fields.length;
 
+    	if (this.fieldsCount == 0){
+    		System.out.println("No fields to be update! This might be a bug!");
+    		return;
+    	}
+    	
     	this.fields = fields;
     	this.types = new short[fieldsCount];
     	this.values = new Object[fieldsCount];

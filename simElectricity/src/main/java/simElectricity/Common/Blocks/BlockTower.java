@@ -43,7 +43,10 @@ public class BlockTower extends BlockContainerSE {
 
     @Override
     public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase player, ItemStack stack) {
-        TileTower tower = (TileTower) world.getTileEntity(x, y, z);
+        if (world.isRemote)
+        	return;
+        
+    	TileTower tower = (TileTower) world.getTileEntity(x, y, z);
         ForgeDirection playerSight = Util.getPlayerSight(player);
         if (playerSight == ForgeDirection.EAST || playerSight == ForgeDirection.WEST) {
             tower.facing = 1;

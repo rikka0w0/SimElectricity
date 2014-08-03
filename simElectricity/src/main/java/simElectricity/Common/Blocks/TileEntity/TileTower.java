@@ -22,35 +22,35 @@ package simElectricity.Common.Blocks.TileEntity;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.Packet;
+import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.Energy;
+import simElectricity.API.Util;
 import simElectricity.API.EnergyTile.IBaseComponent;
 import simElectricity.API.EnergyTile.IConductor;
 import simElectricity.API.EnergyTile.IConnectable;
 import simElectricity.API.EnergyTile.IManualJunction;
-import simElectricity.API.INetworkEventHandler;
-import simElectricity.API.Util;
 
 import java.util.List;
 
-public class TileTower extends TileEntity implements INetworkEventHandler, IManualJunction, IConnectable {
+public class TileTower extends TileEntity implements IManualJunction, IConnectable {
     public int facing;
     public int neighborsInfo[] = new int[] { 0, -1, 0, 0, -1, 0 };
     protected boolean isAddedToEnergyNet = false;
 	
 	public void addNeighbor(TileEntity te){
-		if (neighborsInfo[1]==-1){
-		neighborsInfo[0] = te.xCoord;
-		neighborsInfo[1] = te.yCoord;
-		neighborsInfo[2] = te.zCoord;
-		Energy.postTileRejoinEvent(this);
-		}else if(neighborsInfo[4]==-1){
-			neighborsInfo[3] = te.xCoord;
-			neighborsInfo[4] = te.yCoord;
-			neighborsInfo[5] = te.zCoord;	
-			Energy.postTileRejoinEvent(this);
+		for (int i=0; i<neighborsInfo.length; i+=3){
+			if (neighborsInfo[i+1] == -1){
+				neighborsInfo[i] = te.xCoord;
+				neighborsInfo[i+1] = te.yCoord;
+				neighborsInfo[i+2] = te.zCoord;
+				Energy.postTileRejoinEvent(this);
+				return;
+			}
 		}
 	}
 	
@@ -68,13 +68,11 @@ public class TileTower extends TileEntity implements INetworkEventHandler, IManu
 	}
 	
 	public boolean hasVacant(){
-		return neighborsInfo[1]==-1||neighborsInfo[4]==-1;
-	}
-	
-	public static double distanceOf(double[] coordinates){
-		return Math.sqrt(Math.pow(coordinates[0]-coordinates[3], 2) +
-				  	     Math.pow(coordinates[1]-coordinates[4], 2) +
-				  	     Math.pow(coordinates[2]-coordinates[5], 2));
+		for (int i=0; i<neighborsInfo.length; i+=3){
+			if (neighborsInfo[i+1] == -1)
+				return true;
+		}
+		return false;
 	}
 	
 	@SideOnly(Side.CLIENT)
@@ -109,7 +107,7 @@ public class TileTower extends TileEntity implements INetworkEventHandler, IManu
                 TileTower neighbor = (TileTower) getWorldObj().getTileEntity(neighborsInfo[i], neighborsInfo[i + 1], neighborsInfo[i + 2]);
                 if (neighbor != null) {
                     neighbor.delNeighbor(this);
-                    Util.updateTileEntityField(neighbor, "neighborsInfo");
+                    Util.syncTileEntityNBT(this);
                 }
             }
         }
@@ -136,16 +134,6 @@ public class TileTower extends TileEntity implements INetworkEventHandler, IManu
         tagCompound.setInteger("facing", facing);
         tagCompound.setIntArray("neighborsInfo", this.neighborsInfo);
     }
-
-	@Override
-	public void addNetworkFields(List fields) {
-		fields.add("facing");
-		fields.add("neighborsInfo");
-	}
-	
-	@Override
-	public void onFieldUpdate(String[] fields, Object[] values, boolean isClient) {
-	}
 
     @Override
     public float getResistance() {
@@ -183,11 +171,25 @@ public class TileTower extends TileEntity implements INetworkEventHandler, IManu
             return 0.1F;
 
         if (neighbor instanceof TileTower) {
-            return (float) (0.2 * distanceOf(new double[] {
-                    ((TileTower) neighbor).xCoord, ((TileTower) neighbor).yCoord, ((TileTower) neighbor).zCoord,
-                    xCoord, yCoord, zCoord }));
+            return (float) (0.2 * Math.sqrt(getDistanceFrom(((TileEntity) neighbor).xCoord, ((TileEntity) neighbor).yCoord, ((TileTower) neighbor).zCoord)));
         }
 
         return Float.MAX_VALUE;
+    }
+    
+    @Override
+	public Packet getDescriptionPacket()
+    {
+		NBTTagCompound nbttagcompound = new NBTTagCompound();
+		writeToNBT(nbttagcompound);
+		return new S35PacketUpdateTileEntity(xCoord, yCoord, zCoord, -999, nbttagcompound);
+
+    }
+    
+    @Override
+	public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity pkt)
+    {
+		super.onDataPacket(net, pkt);
+		readFromNBT(pkt.func_148857_g());
     }
 }
