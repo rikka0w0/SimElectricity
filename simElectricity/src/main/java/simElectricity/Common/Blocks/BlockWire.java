@@ -40,6 +40,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.Common.Blocks.BlockContainerSE;
 import simElectricity.API.Energy;
+import simElectricity.API.Network;
 import simElectricity.API.EnergyTile.IConductor;
 import simElectricity.API.Util;
 import simElectricity.Common.Blocks.TileEntity.TileWire;
@@ -83,7 +84,7 @@ public class BlockWire extends BlockContainerSE {
                 if (!world.isRemote) {
                     wire.color = stack.getItemDamage() + 1;           //Set the color
                     Energy.postTileRejoinEvent(tileEntity);           //Reconnect the wire to the energy network
-                    Util.updateTileEntityField(tileEntity, "color");  //Update the field color to every client within the dimension
+                    Network.updateTileEntityField(tileEntity, "color");  //Update the field color to every client within the dimension
                     onBlockPlacedBy(world, x, y, z, player, null);    //Update rests to clients
                 }
 
@@ -118,7 +119,7 @@ public class BlockWire extends BlockContainerSE {
 
     void updateRenderSides(TileEntity te) {
         if (te instanceof IConductor) {
-        	Util.updateNetworkFields(te);
+        	Network.updateNetworkFields(te);
         }
     }
 

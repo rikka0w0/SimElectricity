@@ -26,7 +26,7 @@ import simElectricity.API.Common.TileStandardSEMachine;
 import simElectricity.API.Energy;
 import simElectricity.API.IEnergyNetUpdateHandler;
 import simElectricity.API.INetworkEventHandler;
-import simElectricity.API.Util;
+import simElectricity.API.Network;
 
 public class TileIncandescentLamp extends TileStandardSEMachine implements IEnergyNetUpdateHandler, INetworkEventHandler {
     public int lightLevel = 0;
@@ -59,7 +59,7 @@ public class TileIncandescentLamp extends TileStandardSEMachine implements IEner
         if (Energy.getVoltage(this) > 265)
             worldObj.createExplosion(null, xCoord, yCoord, zCoord, 4F + Energy.getVoltage(this) / 265, true);
 
-        Util.updateNetworkFields(this);
+        Network.updateNetworkFields(this);
     }
     
 	@Override

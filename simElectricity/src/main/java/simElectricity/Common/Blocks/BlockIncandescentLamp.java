@@ -29,8 +29,6 @@ import net.minecraft.world.World;
 import simElectricity.API.Common.Blocks.BlockStandardSEMachine;
 import simElectricity.Common.Blocks.TileEntity.TileIncandescentLamp;
 
-import java.util.Random;
-
 public class BlockIncandescentLamp extends BlockStandardSEMachine {
     private IIcon[] iconBuffer = new IIcon[4];
 
@@ -88,11 +86,6 @@ public class BlockIncandescentLamp extends BlockStandardSEMachine {
             return 0;
 
         return ((TileIncandescentLamp) te).lightLevel;
-    }
-
-    @Override
-    public void updateTick(World world, int x, int y, int z, Random random) {
-    	world.markBlockForUpdate(x, y, z);
     }
 
     @Override

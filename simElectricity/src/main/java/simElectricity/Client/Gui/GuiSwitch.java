@@ -28,7 +28,8 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
 import net.minecraftforge.common.util.ForgeDirection;
 import org.lwjgl.opengl.GL11;
-import simElectricity.API.Util;
+
+import simElectricity.API.Network;
 import simElectricity.Common.Blocks.Container.ContainerSwitch;
 import simElectricity.Common.Blocks.TileEntity.TileSwitch;
 
@@ -36,7 +37,6 @@ import simElectricity.Common.Blocks.TileEntity.TileSwitch;
 public class GuiSwitch extends GuiContainer {
     protected TileSwitch te;
 
-    @SuppressWarnings("unchecked")
     @Override
     public void initGui() {
         super.initGui();
@@ -114,14 +114,14 @@ public class GuiSwitch extends GuiContainer {
         if (te.resistance > 100)
             te.resistance = 100;
         if (button.id < 4)
-            Util.updateTileEntityFieldToServer(te, "resistance");
+        	Network.updateTileEntityFieldToServer(te, "resistance");
 
         if (te.maxCurrent < 0.1)
             te.maxCurrent = 0.1F;
         if (te.maxCurrent > 1000)
             te.maxCurrent = 1000;
         if (button.id < 8 && button.id > 3)
-            Util.updateTileEntityFieldToServer(te, "maxCurrent");
+        	Network.updateTileEntityFieldToServer(te, "maxCurrent");
 
     }
 
@@ -151,7 +151,7 @@ public class GuiSwitch extends GuiContainer {
         if (selectedDirection == ForgeDirection.UNKNOWN) {
             if (tx > 80 && tx < 110 && ty > 66 && ty < 72) {
                 te.isOn = !te.isOn;
-                Util.updateTileEntityFieldToServer(te, "isOn");
+                Network.updateTileEntityFieldToServer(te, "isOn");
             }
             return;
         }
@@ -169,8 +169,8 @@ public class GuiSwitch extends GuiContainer {
             te.outputSide = selectedDirection;
         }
 
-        Util.updateTileEntityFieldToServer(te, "inputSide");
-        Util.updateTileEntityFieldToServer(te, "outputSide");
+        Network.updateTileEntityFieldToServer(te, "inputSide");
+        Network.updateTileEntityFieldToServer(te, "outputSide");
     }
 
     public GuiSwitch(InventoryPlayer inventoryPlayer, TileEntity tileEntity) {

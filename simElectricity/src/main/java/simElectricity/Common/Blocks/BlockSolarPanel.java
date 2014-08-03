@@ -22,17 +22,21 @@ package simElectricity.Common.Blocks;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
+import simElectricity.API.Common.TileSidedGenerator;
+import simElectricity.API.Common.Blocks.AutoFacing;
 import simElectricity.API.Common.Blocks.BlockStandardGenerator;
 import simElectricity.API.Util;
 import simElectricity.Common.Blocks.TileEntity.TileSolarPanel;
 
 public class BlockSolarPanel extends BlockStandardGenerator {
-    private IIcon[] iconBuffer = new IIcon[6];
+    private IIcon[] iconBuffer = new IIcon[4];
 
     public BlockSolarPanel() {
         super();
@@ -42,14 +46,36 @@ public class BlockSolarPanel extends BlockStandardGenerator {
     }
 
     @Override
+    public TileEntity createNewTileEntity(World world, int meta) {
+        return new TileSolarPanel();
+    }
+    
+    @Override
+    public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase player, ItemStack itemStack) {
+        if (world.isRemote)
+        	return;
+    	
+    	TileEntity te = world.getTileEntity(x, y, z);
+
+        if (!(te instanceof TileSidedGenerator))
+            return;
+
+        ForgeDirection functionalSide = AutoFacing.autoConnect(te, Util.getPlayerSight(player).getOpposite(), ForgeDirection.UP);
+
+        if (functionalSide == ForgeDirection.UP){
+        	functionalSide = ForgeDirection.NORTH;
+        }
+        
+        ((TileSidedGenerator) te).setFunctionalSide(functionalSide);
+    }
+    
+    @Override
     @SideOnly(Side.CLIENT)
     public void registerBlockIcons(IIconRegister r) {
         iconBuffer[0] = r.registerIcon("simElectricity:SolarPanel_Bottom");
         iconBuffer[1] = r.registerIcon("simElectricity:SolarPanel_Top");
         iconBuffer[2] = r.registerIcon("simElectricity:SolarPanel_Front");
         iconBuffer[3] = r.registerIcon("simElectricity:SolarPanel_Side");
-        iconBuffer[4] = r.registerIcon("simElectricity:SolarPanel_Side");
-        iconBuffer[5] = r.registerIcon("simElectricity:SolarPanel_Side");
     }
 
     @SideOnly(Side.CLIENT)
@@ -60,27 +86,25 @@ public class BlockSolarPanel extends BlockStandardGenerator {
         if (!(te instanceof TileSolarPanel))
             return iconBuffer[0];
 
-        int iconIndex = Util.getTextureOnSide(side, ((TileSolarPanel) te).getFunctionalSide());
-
-        if (((TileSolarPanel) te).getFunctionalSide() == ForgeDirection.DOWN) {
-            if (iconIndex == 3) {
-                iconIndex = 1;
-            } else if (iconIndex == 1) {
-                iconIndex = 3;
-            }
+        if (((TileSolarPanel) te).getFunctionalSide().ordinal() == side) {
+        	return iconBuffer[2];
+        }else if(side == 0){ //Down
+        	return iconBuffer[0];
+        }else if(side == 1){ //Up
+        	return iconBuffer[1];
         }
 
-        return iconBuffer[iconIndex];
+        return iconBuffer[3];
     }
 
     @SideOnly(Side.CLIENT)
     @Override
     public IIcon getIcon(int side, int meta) {
-        return iconBuffer[Util.getTextureOnSide(side, ForgeDirection.WEST)];
-    }
-
-    @Override
-    public TileEntity createNewTileEntity(World world, int meta) {
-        return new TileSolarPanel();
+    	if (side == 4)
+    		return iconBuffer[2];
+    	else if(side == 1) //Up
+        	return iconBuffer[1];
+    	else
+    		return iconBuffer[3];
     }
 }

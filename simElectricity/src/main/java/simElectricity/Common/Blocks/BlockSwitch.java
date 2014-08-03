@@ -34,12 +34,13 @@ import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.Common.Blocks.AutoFacing;
 import simElectricity.API.Common.Blocks.BlockContainerSE;
 import simElectricity.API.Energy;
+import simElectricity.API.Network;
 import simElectricity.API.Util;
 import simElectricity.Common.Blocks.TileEntity.TileSwitch;
 import simElectricity.SimElectricity;
 
 public class BlockSwitch extends BlockContainerSE {
-    private IIcon[] iconBuffer = new IIcon[6];
+    private IIcon[] iconBuffer = new IIcon[5];
 
     @Override
     public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float f1, float f2, float f3) {
@@ -53,7 +54,7 @@ public class BlockSwitch extends BlockContainerSE {
         } else {
             if (!world.isRemote) {
                 te.isOn = !te.isOn;
-                Util.updateTileEntityField(te, "isOn");
+                Network.updateTileEntityField(te, "isOn");
                 Energy.postTileRejoinEvent(te);
             }
         }

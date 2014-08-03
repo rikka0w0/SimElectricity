@@ -140,12 +140,6 @@ public class BlockSimpleGenerator extends BlockStandardSEMachine {
         return iconBuffer[Util.getTextureOnSide(side, ForgeDirection.WEST)];
     }
 
-
-    @Override
-    public void updateTick(World world, int x, int y, int z, Random random) {
-        world.markBlockForUpdate(x, y, z);
-    }
-
     @Override
     public TileEntity createNewTileEntity(World world, int meta) {
         return new TileSimpleGenerator();

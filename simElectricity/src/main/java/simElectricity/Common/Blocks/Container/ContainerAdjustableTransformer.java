@@ -22,7 +22,7 @@ package simElectricity.Common.Blocks.Container;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.tileentity.TileEntity;
 import simElectricity.API.Common.ContainerBase;
-import simElectricity.API.Util;
+import simElectricity.API.Network;
 
 public class ContainerAdjustableTransformer extends ContainerBase {
     public ContainerAdjustableTransformer(InventoryPlayer inventoryPlayer, TileEntity te) {
@@ -52,10 +52,10 @@ public class ContainerAdjustableTransformer extends ContainerBase {
     @Override
     public void init() {
         if (!tileEntity.getWorldObj().isRemote) {
-            Util.updateTileEntityField(tileEntity, "ratio");
-            Util.updateTileEntityField(tileEntity, "outputResistance");
-            Util.updateTileEntityField(tileEntity, "primarySide");
-            Util.updateTileEntityField(tileEntity, "secondarySide");
+        	Network.updateTileEntityField(tileEntity, "ratio");
+        	Network.updateTileEntityField(tileEntity, "outputResistance");
+        	Network.updateTileEntityField(tileEntity, "primarySide");
+        	Network.updateTileEntityField(tileEntity, "secondarySide");
         }
     }
 

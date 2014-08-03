@@ -26,6 +26,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.Energy;
+import simElectricity.API.Network;
 import simElectricity.API.Util;
 import simElectricity.API.Common.TileEntitySE;
 import simElectricity.API.EnergyTile.IBaseComponent;
@@ -105,7 +106,7 @@ public class TileTower extends TileEntitySE implements IManualJunction, IConnect
                 TileTower neighbor = (TileTower) getWorldObj().getTileEntity(neighborsInfo[i], neighborsInfo[i + 1], neighborsInfo[i + 2]);
                 if (neighbor != null) {
                     neighbor.delNeighbor(this);
-                    Util.updateTileEntityNBT(this);
+                    Network.updateTileEntityNBT(this);
                 }
             }
         }

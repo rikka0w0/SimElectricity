@@ -24,6 +24,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
+import simElectricity.API.Network;
 import simElectricity.API.Util;
 import simElectricity.API.Common.Items.ItemSE;
 import simElectricity.Common.Blocks.TileEntity.TileTower;
@@ -75,8 +76,8 @@ public class ItemHVWire extends ItemSE {
                         tower1.addNeighbor(tower2);
                         tower2.addNeighbor(tower1);
 
-                        Util.updateTileEntityNBT(tower1);
-                        Util.updateTileEntityNBT(tower2);
+                        Network.updateTileEntityNBT(tower1);
+                        Network.updateTileEntityNBT(tower2);
                         
                         Util.chat(player, StatCollector.translateToLocal("sime.TwConnect"));
                     } else

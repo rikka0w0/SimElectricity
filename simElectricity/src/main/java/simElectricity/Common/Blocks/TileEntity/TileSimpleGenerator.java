@@ -28,7 +28,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.Common.TileSidedGenerator;
 import simElectricity.API.Energy;
 import simElectricity.API.INetworkEventHandler;
-import simElectricity.API.Util;
+import simElectricity.API.Network;
 
 public class TileSimpleGenerator extends TileSidedGenerator implements INetworkEventHandler{
     public static int normalOutputV = 230;
@@ -107,7 +107,7 @@ public class TileSimpleGenerator extends TileSidedGenerator implements INetworkE
             if (burned <= 0)
                 burned = burnTime;
         }
-        Util.updateNetworkFields(this);
+        Network.updateNetworkFields(this);
     }
 
     @Override

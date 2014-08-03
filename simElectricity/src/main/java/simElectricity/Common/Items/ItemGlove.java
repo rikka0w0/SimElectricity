@@ -29,7 +29,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.Common.Items.ItemSE;
 import simElectricity.API.ISidedFacing;
-import simElectricity.API.Util;
+import simElectricity.API.Network;
 
 public class ItemGlove extends ItemSE {
     public ItemGlove() {
@@ -54,7 +54,7 @@ public class ItemGlove extends ItemSE {
 
             if (te.canSetFacing(newFacing)) {
                 te.setFacing(newFacing);
-                Util.updateFacing((TileEntity) te);
+                Network.updateFacing((TileEntity) te);
                 itemStack.damageItem(1, player);
             }
             return true;

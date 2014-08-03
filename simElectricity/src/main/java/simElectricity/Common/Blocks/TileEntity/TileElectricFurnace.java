@@ -69,7 +69,7 @@ public class TileElectricFurnace extends TileStandardSEMachine implements IEnerg
             }
 
             isWorking = true;
-            Util.updateNetworkFields(this);
+            Network.updateNetworkFields(this);
 
             if (energyStored > energyPerItem) {
                 ItemStack newResult = result.copy();
@@ -105,7 +105,7 @@ public class TileElectricFurnace extends TileStandardSEMachine implements IEnerg
             Energy.postTileChangeEvent(this);
         }
         isWorking = false;
-        Util.updateNetworkFields(this);
+        Network.updateNetworkFields(this);
     }
     
     public ItemStack getResult(ItemStack i) {
@@ -159,7 +159,7 @@ public class TileElectricFurnace extends TileStandardSEMachine implements IEnerg
 
         if(Energy.getVoltage(this)==0){
         	isWorking = false;
-            Util.updateNetworkFields(this);
+        	Network.updateNetworkFields(this);
         }
     }
 

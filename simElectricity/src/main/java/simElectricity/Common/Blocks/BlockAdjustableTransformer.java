@@ -36,7 +36,7 @@ import simElectricity.Common.Blocks.TileEntity.TileAdjustableTransformer;
 import simElectricity.SimElectricity;
 
 public class BlockAdjustableTransformer extends BlockContainerSE {
-    private IIcon[] iconBuffer = new IIcon[6];
+    private IIcon[] iconBuffer = new IIcon[3];
 
     @Override
     public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int i1, float f1, float f2, float f3) {
