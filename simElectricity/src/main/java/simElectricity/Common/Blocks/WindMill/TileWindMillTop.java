@@ -23,7 +23,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.Common.TileSidedFacingMachine;
 
-import java.util.List;
 import java.util.Random;
 
 public class TileWindMillTop extends TileSidedFacingMachine{
@@ -59,11 +58,4 @@ public class TileWindMillTop extends TileSidedFacingMachine{
     public int getInventorySize() {
         return 0;
     }
-
-	@Override
-	public void addNetworkFields(List fields) {
-		fields.add("settled");
-		super.addNetworkFields(fields);
-	}
-
 }

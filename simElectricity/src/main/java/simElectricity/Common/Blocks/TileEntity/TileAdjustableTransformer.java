@@ -22,14 +22,13 @@ package simElectricity.Common.Blocks.TileEntity;
 import java.util.List;
 
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.Energy;
+import simElectricity.API.Common.TileEntitySE;
 import simElectricity.API.EnergyTile.ITransformer;
 import simElectricity.API.INetworkEventHandler;
-import simElectricity.API.Util;
 
-public class TileAdjustableTransformer extends TileEntity implements ITransformer, INetworkEventHandler {
+public class TileAdjustableTransformer extends TileEntitySE implements ITransformer, INetworkEventHandler {
     public Primary primary = new ITransformer.Primary(this);
     public Secondary secondary = new ITransformer.Secondary(this);
     protected boolean isAddedToEnergyNet = false;
@@ -107,14 +106,14 @@ public class TileAdjustableTransformer extends TileEntity implements ITransforme
     }
 
 	@Override
-	public void onFieldUpdate(String[] fields, Object[] values, boolean isClient) {
-		if (isClient){
-			worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-		}else{
+	public void onFieldUpdate(String[] fields, Object[] values) {
+		//Handling on server side
+		if (!worldObj.isRemote){
 			for (String s:fields){
 		        if (s.contains("primarySide") || s.contains("secondarySide")) {
 		            Energy.postTileRejoinEvent(this);
-		            Util.updateNetworkFields(this);
+		            worldObj.notifyBlockChange(xCoord, yCoord, zCoord, 
+		            		worldObj.getBlock(xCoord, yCoord, zCoord));
 		        } else if (s.contains("outputResistance") || s.contains("ratio")) {
 		            Energy.postTileChangeEvent(this);
 		        }				
@@ -125,10 +124,6 @@ public class TileAdjustableTransformer extends TileEntity implements ITransforme
 
 	@Override
 	public void addNetworkFields(List fields) {
-		fields.add("primarySide");
-		fields.add("secondarySide");
-		
-        worldObj.notifyBlockChange(xCoord, yCoord, zCoord, 
-        		worldObj.getBlock(xCoord, yCoord, zCoord));
+
 	}
 }

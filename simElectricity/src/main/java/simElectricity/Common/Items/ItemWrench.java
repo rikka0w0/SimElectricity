@@ -56,7 +56,7 @@ public class ItemWrench extends ItemSE {
             if (te.canSetFunctionalSide(newFacing)) {
                 te.setFunctionalSide(newFacing);
                 Energy.postTileRejoinEvent((TileEntity) te);
-                Util.updateNetworkFields((TileEntity) te);
+                Util.updateFunctionalSide((TileEntity) te);
                 world.notifyBlocksOfNeighborChange(x, y, z, null);
                 itemStack.damageItem(1, player);
             }

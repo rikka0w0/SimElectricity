@@ -25,8 +25,6 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
-import net.minecraft.network.Packet;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.MathHelper;
@@ -55,7 +53,7 @@ public class Util {
      * Update a client tileEntity field from the server
      */
     public static void updateTileEntityField(TileEntity tileEntity, String field) {
-        NetworkManager.updateTileEntityFields(tileEntity, new String[] { field });
+    	NetworkManager.updateTileEntityFields(tileEntity, new String[] { field });
     }
 
     /**
@@ -63,6 +61,20 @@ public class Util {
      */
     public static void updateTileEntityFieldToServer(TileEntity tileEntity, String field) {
         NetworkManager.updateTileEntityFieldsToServer(tileEntity, new String[] { field });
+    }
+    
+    /**
+     * Update a tileEntity's functional side
+     */
+    public static void updateFunctionalSide(TileEntity tileEntity){
+    	NetworkManager.updateFunctionalSide(tileEntity);
+    }
+    
+    /**
+     * Update a tileEntity's facing
+     */
+    public static void updateFacing(TileEntity tileEntity){
+    	NetworkManager.updateFacing(tileEntity);
     }
 
     /**
@@ -72,10 +84,11 @@ public class Util {
         NetworkManager.updateNetworkFields(tileEntity);
     }
 
-    public static void syncTileEntityNBT(TileEntity tileEntity){
-    	Packet packet = tileEntity.getDescriptionPacket();
-    	if (packet != null)
-    		MinecraftServer.getServer().getConfigurationManager().sendPacketToAllPlayersInDimension(packet, tileEntity.getWorldObj().provider.dimensionId);
+    /**
+     * Send the NBT of a tileEntity from the server to the client
+     */
+    public static void updateTileEntityNBT(TileEntity tileEntity){
+    	NetworkManager.updateTileEntityNBT(tileEntity);
     }
     
     // Util

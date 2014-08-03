@@ -27,9 +27,10 @@ import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.Common.TileSidedGenerator;
 import simElectricity.API.Energy;
+import simElectricity.API.INetworkEventHandler;
 import simElectricity.API.Util;
 
-public class TileSimpleGenerator extends TileSidedGenerator {
+public class TileSimpleGenerator extends TileSidedGenerator implements INetworkEventHandler{
     public static int normalOutputV = 230;
     public static int normalOutputR = 1;
 
@@ -168,20 +169,19 @@ public class TileSimpleGenerator extends TileSidedGenerator {
 	@Override
 	public void addNetworkFields(List fields) {
 		fields.add("isWorking");
-		Util.scheduleBlockUpdate(this);
-		super.addNetworkFields(fields);
+		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 	}
     
 	@Override
-	public void onFieldUpdate(String[] fields, Object[] values, boolean isClient) {
-        if(!isClient){
+	public void onFieldUpdate(String[] fields, Object[] values) {
+		//Handling on server side
+		if (!worldObj.isRemote){
 			for (String s:fields){
 	        	if (s.contains("isWorking")){
 	        		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 	        	}
 	        }
         }
-        super.onFieldUpdate(fields, values, isClient);
 	}
 	
     @Override

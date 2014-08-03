@@ -22,14 +22,12 @@ package simElectricity.Common.Blocks.TileEntity;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.Packet;
-import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.Energy;
 import simElectricity.API.Util;
+import simElectricity.API.Common.TileEntitySE;
 import simElectricity.API.EnergyTile.IBaseComponent;
 import simElectricity.API.EnergyTile.IConductor;
 import simElectricity.API.EnergyTile.IConnectable;
@@ -37,7 +35,7 @@ import simElectricity.API.EnergyTile.IManualJunction;
 
 import java.util.List;
 
-public class TileTower extends TileEntity implements IManualJunction, IConnectable {
+public class TileTower extends TileEntitySE implements IManualJunction, IConnectable {
     public int facing;
     public int neighborsInfo[] = new int[] { 0, -1, 0, 0, -1, 0 };
     protected boolean isAddedToEnergyNet = false;
@@ -107,7 +105,7 @@ public class TileTower extends TileEntity implements IManualJunction, IConnectab
                 TileTower neighbor = (TileTower) getWorldObj().getTileEntity(neighborsInfo[i], neighborsInfo[i + 1], neighborsInfo[i + 2]);
                 if (neighbor != null) {
                     neighbor.delNeighbor(this);
-                    Util.syncTileEntityNBT(this);
+                    Util.updateTileEntityNBT(this);
                 }
             }
         }
@@ -175,21 +173,5 @@ public class TileTower extends TileEntity implements IManualJunction, IConnectab
         }
 
         return Float.MAX_VALUE;
-    }
-    
-    @Override
-	public Packet getDescriptionPacket()
-    {
-		NBTTagCompound nbttagcompound = new NBTTagCompound();
-		writeToNBT(nbttagcompound);
-		return new S35PacketUpdateTileEntity(xCoord, yCoord, zCoord, -999, nbttagcompound);
-
-    }
-    
-    @Override
-	public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity pkt)
-    {
-		super.onDataPacket(net, pkt);
-		readFromNBT(pkt.func_148857_g());
     }
 }

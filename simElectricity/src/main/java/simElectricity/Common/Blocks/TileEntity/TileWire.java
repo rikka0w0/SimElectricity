@@ -124,7 +124,7 @@ public class TileWire extends TileEntity implements IConductor, INetworkEventHan
 	}
 	
 	@Override
-	public void onFieldUpdate(String[] fields, Object[] values, boolean isClient) {
+	public void onFieldUpdate(String[] fields, Object[] values) {
 
 	}
 }

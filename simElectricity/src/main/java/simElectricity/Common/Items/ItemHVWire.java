@@ -75,8 +75,8 @@ public class ItemHVWire extends ItemSE {
                         tower1.addNeighbor(tower2);
                         tower2.addNeighbor(tower1);
 
-                        Util.syncTileEntityNBT(tower1);
-                        Util.syncTileEntityNBT(tower2);
+                        Util.updateTileEntityNBT(tower1);
+                        Util.updateTileEntityNBT(tower2);
                         
                         Util.chat(player, StatCollector.translateToLocal("sime.TwConnect"));
                     } else

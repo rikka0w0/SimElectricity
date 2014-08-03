@@ -24,10 +24,9 @@ import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.Constants;
 
-public abstract class TileInventoryMachine extends TileEntity implements ISidedInventory {
+public abstract class TileInventoryMachine extends TileEntitySE implements ISidedInventory {
     protected ItemStack[] inv;
 
     /**

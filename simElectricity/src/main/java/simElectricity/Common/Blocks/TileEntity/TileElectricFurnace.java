@@ -29,7 +29,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.Common.TileStandardSEMachine;
 import simElectricity.API.*;
 
-public class TileElectricFurnace extends TileStandardSEMachine implements IEnergyNetUpdateHandler {
+public class TileElectricFurnace extends TileStandardSEMachine implements IEnergyNetUpdateHandler, INetworkEventHandler {
     public static float energyPerItem = 1000F;
     public static float onResistance = 100F;
 
@@ -134,16 +134,12 @@ public class TileElectricFurnace extends TileStandardSEMachine implements IEnerg
 	@Override
 	public void addNetworkFields(List fields) {
 		fields.add("isWorking");
-		Util.scheduleBlockUpdate(this);		
-		super.addNetworkFields(fields);
+		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 	}
     
 	@Override
-	public void onFieldUpdate(String[] fields, Object[] values, boolean isClient) {
-		if (isClient){
-			worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-		}
-		super.onFieldUpdate(fields, values, isClient);
+	public void onFieldUpdate(String[] fields, Object[] values) {
+		
 	}
 
     @Override

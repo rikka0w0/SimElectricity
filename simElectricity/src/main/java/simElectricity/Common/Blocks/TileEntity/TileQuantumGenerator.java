@@ -19,11 +19,14 @@
 
 package simElectricity.Common.Blocks.TileEntity;
 
+import java.util.List;
+
 import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.Common.TileSidedGenerator;
 import simElectricity.API.Energy;
+import simElectricity.API.INetworkEventHandler;
 
-public class TileQuantumGenerator extends TileSidedGenerator{
+public class TileQuantumGenerator extends TileSidedGenerator implements INetworkEventHandler{
 	
     @Override
 	public void onLoad() {
@@ -34,15 +37,15 @@ public class TileQuantumGenerator extends TileSidedGenerator{
     }
 	
 	@Override
-	public void onFieldUpdate(String[] fields, Object[] values, boolean isClient) {
-        if(!isClient){
+	public void onFieldUpdate(String[] fields, Object[] values) {
+		//Handling on server side
+		if (!worldObj.isRemote){
 			for (String s:fields){
 	        	if (s.contains("outputVoltage") || s.contains("outputResistance")){
 	        		Energy.postTileChangeEvent(this);
 	        	}
 	        }
         }
-        super.onFieldUpdate(fields, values, isClient);
 	}
 	
     @Override
@@ -53,5 +56,11 @@ public class TileQuantumGenerator extends TileSidedGenerator{
 	@Override
 	public int getInventorySize() {
 		return 0;
+	}
+
+	@Override
+	public void addNetworkFields(List fields) {
+		// TODO Auto-generated method stub
+		
 	}
 }

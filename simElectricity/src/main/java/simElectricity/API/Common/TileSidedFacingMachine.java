@@ -21,12 +21,9 @@ package simElectricity.API.Common;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.ForgeDirection;
-import simElectricity.API.INetworkEventHandler;
 import simElectricity.API.ISidedFacing;
 
-import java.util.List;
-
-public abstract class TileSidedFacingMachine extends TileInventoryMachine implements ISidedFacing, INetworkEventHandler {
+public abstract class TileSidedFacingMachine extends TileInventoryMachine implements ISidedFacing {
     public ForgeDirection facing = ForgeDirection.NORTH;
 
     @Override
@@ -57,22 +54,5 @@ public abstract class TileSidedFacingMachine extends TileInventoryMachine implem
     @Override
     public boolean canSetFacing(ForgeDirection newFacing) {
         return true;
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public void addNetworkFields(List fields) {
-        fields.add("facing");
-    }
-
-    @Override
-    public void onFieldUpdate(String[] fields, Object[] values, boolean isClient) {
-        if (isClient) {
-            for (String s : fields) {
-                if (s.contains("facing")) {
-                    worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-                }
-            }
-        }
     }
 }

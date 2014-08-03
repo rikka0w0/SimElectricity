@@ -23,6 +23,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.*;
+import simElectricity.API.Common.TileEntitySE;
 import simElectricity.API.EnergyTile.IBaseComponent;
 import simElectricity.API.EnergyTile.IConductor;
 import simElectricity.API.EnergyTile.IConnectable;
@@ -30,7 +31,7 @@ import simElectricity.API.EnergyTile.IManualJunction;
 
 import java.util.List;
 
-public class TileSwitch extends TileEntity implements IManualJunction, IConnectable, ISidedFacing, IEnergyNetUpdateHandler, INetworkEventHandler {
+public class TileSwitch extends TileEntitySE implements IManualJunction, IConnectable, ISidedFacing, IEnergyNetUpdateHandler, INetworkEventHandler {
     protected boolean isAddedToEnergyNet = false;
     public float current=0F;
     
@@ -84,23 +85,18 @@ public class TileSwitch extends TileEntity implements IManualJunction, IConnecta
 
 	@Override
 	public void addNetworkFields(List fields) {
-		fields.add("inputSide");
-		fields.add("outputSide");
-		fields.add("facing");
-		fields.add("isOn");
-        worldObj.notifyBlockChange(xCoord, yCoord, zCoord, 
-        		worldObj.getBlock(xCoord, yCoord, zCoord));
+
 	}
     
 	@Override
-	public void onFieldUpdate(String[] fields, Object[] values, boolean isClient) {
-		if (isClient){
-			worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-		}else{
+	public void onFieldUpdate(String[] fields, Object[] values) {
+		//Handling on server side
+		if (!worldObj.isRemote){
 			for (String s:fields){
 		        if (s.contains("inputSide") || s.contains("outputSide") || s.contains("isOn")) {
 		            Energy.postTileRejoinEvent(this);
-		            Util.updateNetworkFields(this);
+		            worldObj.notifyBlockChange(xCoord, yCoord, zCoord, 
+		               		worldObj.getBlock(xCoord, yCoord, zCoord));
 		        } else if (s.contains("resistance")) {
 		            Energy.postTileChangeEvent(this);
 		        } else if (s.contains("maxCurrent")) {

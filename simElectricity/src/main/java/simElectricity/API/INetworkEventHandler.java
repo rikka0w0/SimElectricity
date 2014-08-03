@@ -7,10 +7,10 @@ public interface INetworkEventHandler {
      * When the updating packet is processed on the target side, this function is fired
      * <p>
      * fields[] and values[] are corresponding
-     *
-     * @param isClient true for client handling packet(Processing on the client side)
+     * <p>
+     * use worldObj.isRemote to check the side of the handler (true for client)
      */
-    void onFieldUpdate(String[] fields, Object[] values, boolean isClient);
+    void onFieldUpdate(String[] fields, Object[] values);
 
     /**
      * Add network fields!
