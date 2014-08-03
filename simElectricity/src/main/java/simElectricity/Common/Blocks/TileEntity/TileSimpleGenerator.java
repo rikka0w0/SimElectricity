@@ -129,6 +129,7 @@ public class TileSimpleGenerator extends TileSidedGenerator implements INetworkE
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
+        isWorking = tagCompound.getBoolean("isWorking");
         burnTime = tagCompound.getInteger("burnTime");
         burned = tagCompound.getFloat("burned");
     }
@@ -136,6 +137,7 @@ public class TileSimpleGenerator extends TileSidedGenerator implements INetworkE
     @Override
     public void writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
+        tagCompound.setBoolean("isWorking", isWorking);
         tagCompound.setInteger("burnTime", burnTime);
         tagCompound.setFloat("burned", burned);
     }
@@ -174,8 +176,8 @@ public class TileSimpleGenerator extends TileSidedGenerator implements INetworkE
     
 	@Override
 	public void onFieldUpdate(String[] fields, Object[] values) {
-		//Handling on server side
-		if (!worldObj.isRemote){
+		//Handling on client side
+		if (worldObj.isRemote){
 			for (String s:fields){
 	        	if (s.contains("isWorking")){
 	        		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
