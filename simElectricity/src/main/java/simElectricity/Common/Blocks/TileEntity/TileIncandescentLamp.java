@@ -21,7 +21,6 @@ package simElectricity.Common.Blocks.TileEntity;
 
 import java.util.List;
 
-import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.Common.TileStandardSEMachine;
 import simElectricity.API.Energy;
 import simElectricity.API.IEnergyNetUpdateHandler;
@@ -30,11 +29,6 @@ import simElectricity.API.Network;
 
 public class TileIncandescentLamp extends TileStandardSEMachine implements IEnergyNetUpdateHandler, INetworkEventHandler {
     public int lightLevel = 0;
-
-    @Override
-    public boolean canSetFunctionalSide(ForgeDirection newFunctionalSide) {
-        return newFunctionalSide != ForgeDirection.UP;
-    }
 
     @Override
     public float getOutputVoltage() {

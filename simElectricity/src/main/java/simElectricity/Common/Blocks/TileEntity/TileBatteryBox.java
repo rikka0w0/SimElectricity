@@ -19,7 +19,6 @@
 
 package simElectricity.Common.Blocks.TileEntity;
 
-import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.Common.TileSidedGenerator;
 import simElectricity.API.Energy;
 
@@ -61,11 +60,6 @@ public class TileBatteryBox extends TileSidedGenerator {
             outputResistance = resistance;
             Energy.postTileChangeEvent(this);
         }
-    }
-
-    @Override
-    public boolean canSetFunctionalSide(ForgeDirection newFunctionalSide) {
-        return newFunctionalSide != ForgeDirection.UP;
     }
 
 	@Override
