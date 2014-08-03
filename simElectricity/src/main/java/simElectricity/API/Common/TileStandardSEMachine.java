@@ -75,7 +75,12 @@ public abstract class TileStandardSEMachine extends TileSidedFacingMachine imple
 
     @Override
     public boolean canSetFunctionalSide(ForgeDirection newFunctionalSide) {
-        return true;
+        return newFunctionalSide != facing;
+    }
+    
+    @Override
+    public boolean canSetFacing(ForgeDirection newFacing) {
+        return newFacing != functionalSide;
     }
 
     @Override

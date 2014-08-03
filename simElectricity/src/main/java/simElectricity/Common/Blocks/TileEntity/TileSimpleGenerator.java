@@ -24,6 +24,7 @@ import java.util.List;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntityFurnace;
+import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.Common.TileSidedGenerator;
 import simElectricity.API.Energy;
 import simElectricity.API.Util;
@@ -182,4 +183,9 @@ public class TileSimpleGenerator extends TileSidedGenerator {
         }
         super.onFieldUpdate(fields, values, isClient);
 	}
+	
+    @Override
+    public boolean canSetFunctionalSide(ForgeDirection newFunctionalSide) {
+        return true;
+    }
 }

@@ -330,6 +330,7 @@ public final class EnergyNet {
             for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
                 ICircuitComponent subComponent = ((IComplexTile) te).getCircuitComponent(direction);
                 if (subComponent instanceof IBaseComponent) {
+                	tileEntityGraph.addVertex(subComponent);
                     TileEntity neighbor = Util.getTileEntityonDirection(te, direction);
                     if (neighbor instanceof IConductor)  // Connected properly
                         neighborMap.put((IBaseComponent) neighbor, subComponent);
@@ -341,6 +342,9 @@ public final class EnergyNet {
             ITransformerWinding primary = ((ITransformer) te).getPrimary();
             ITransformerWinding secondary = ((ITransformer) te).getSecondary();
 
+            tileEntityGraph.addVertex(primary);
+            tileEntityGraph.addVertex(secondary);
+            
             TileEntity neighbor;
 
             neighbor = Util.getTileEntityonDirection(te, transformer.getPrimarySide());
@@ -352,13 +356,13 @@ public final class EnergyNet {
                 neighborMap.put((IBaseComponent) neighbor, secondary);
 
         } else { // IBaseComponent and IConductor
+        	tileEntityGraph.addVertex((IBaseComponent) te);
             List<IBaseComponent> neighborList = neighborListOf(te);
             for (IBaseComponent neighbor : neighborList)
                 neighborMap.put(neighbor, (IBaseComponent) te);
         }
 
         for (IBaseComponent neighbor : neighborMap.keySet()) {
-            tileEntityGraph.addVertex(neighbor);
             tileEntityGraph.addVertex(neighborMap.get(neighbor));
             tileEntityGraph.addEdge(neighbor, neighborMap.get(neighbor));
         }

@@ -27,14 +27,12 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.Common.Blocks.BlockStandardSEMachine;
-import simElectricity.API.Util;
 import simElectricity.Common.Blocks.TileEntity.TileVoltageMeter;
 import simElectricity.SimElectricity;
 
 public class BlockVoltageMeter extends BlockStandardSEMachine {
-    private IIcon[] iconBuffer = new IIcon[6];
+    private IIcon[] iconBuffer = new IIcon[3];
 
     @Override
     public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int i1, float f1, float f2, float f3) {
@@ -56,11 +54,8 @@ public class BlockVoltageMeter extends BlockStandardSEMachine {
     @SideOnly(Side.CLIENT)
     public void registerBlockIcons(IIconRegister r) {
         iconBuffer[0] = r.registerIcon("simElectricity:VoltageMeter_Side");
-        iconBuffer[1] = r.registerIcon("simElectricity:VoltageMeter_Side");
-        iconBuffer[2] = r.registerIcon("simElectricity:VoltageMeter_Front");
-        iconBuffer[3] = r.registerIcon("simElectricity:VoltageMeter_Back");
-        iconBuffer[4] = r.registerIcon("simElectricity:VoltageMeter_Side");
-        iconBuffer[5] = r.registerIcon("simElectricity:VoltageMeter_Side");
+        iconBuffer[1] = r.registerIcon("simElectricity:VoltageMeter_Front");
+        iconBuffer[2] = r.registerIcon("simElectricity:VoltageMeter_Back");
     }
 
 
@@ -71,14 +66,21 @@ public class BlockVoltageMeter extends BlockStandardSEMachine {
 
         if (!(te instanceof TileVoltageMeter))
             return iconBuffer[0];
-
-        return iconBuffer[Util.getTextureOnSide(side, ((TileVoltageMeter) te).getFacing())];
+        
+        if (((TileVoltageMeter)te).getFacing().ordinal() == side)
+        	return iconBuffer[1];
+        else if (((TileVoltageMeter)te).getFunctionalSide().ordinal() == side)
+    		return iconBuffer[2];
+        
+        return iconBuffer[0];
     }
 
     @SideOnly(Side.CLIENT)
     @Override
     public IIcon getIcon(int side, int meta) {
-        return iconBuffer[Util.getTextureOnSide(side, ForgeDirection.WEST)];
+    	if (side == 4)
+    		return iconBuffer[1];
+        return iconBuffer[0];
     }
 
     @Override

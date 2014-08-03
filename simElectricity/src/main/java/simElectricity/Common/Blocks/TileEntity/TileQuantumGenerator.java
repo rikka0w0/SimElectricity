@@ -19,6 +19,7 @@
 
 package simElectricity.Common.Blocks.TileEntity;
 
+import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.Common.TileSidedGenerator;
 import simElectricity.API.Energy;
 
@@ -43,6 +44,11 @@ public class TileQuantumGenerator extends TileSidedGenerator{
         }
         super.onFieldUpdate(fields, values, isClient);
 	}
+	
+    @Override
+    public boolean canSetFunctionalSide(ForgeDirection newFunctionalSide) {
+        return true;
+    }
 
 	@Override
 	public int getInventorySize() {
