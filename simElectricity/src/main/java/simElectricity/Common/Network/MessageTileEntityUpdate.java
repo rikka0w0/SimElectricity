@@ -220,7 +220,7 @@ public class MessageTileEntityUpdate implements IMessage{
         	}
 
         	if (world.provider.dimensionId != message.dimensionID){
-                Util.warn("[SimElectricity] An dimensionID mismatch error occurred during sync! This could be an error");
+                Util.warn("An dimensionID mismatch error occurred during sync! This could be an error");
         		return null;
         	}
 

@@ -110,6 +110,5 @@ public class SimElectricity {
      */
     @EventHandler
     public void postInit(FMLPostInitializationEvent event) {
-
     }
 }
