@@ -35,8 +35,6 @@ import simElectricity.API.Util;
  */
 public abstract class BlockStandardSEMachine extends BlockContainerSE {
 
-    public ForgeDirection[] exceptionDirs;
-
     public BlockStandardSEMachine(Material material) {
         super(material);
     }
@@ -59,7 +57,7 @@ public abstract class BlockStandardSEMachine extends BlockContainerSE {
         ForgeDirection functionalSide = Util.getPlayerSight(player);
         ((TileStandardSEMachine) te).setFacing(functionalSide.getOpposite());
 
-        functionalSide = AutoFacing.autoConnect(te, functionalSide, this.exceptionDirs);
+        functionalSide = AutoFacing.autoConnect(te, functionalSide);
         ((TileStandardSEMachine) te).setFunctionalSide(functionalSide);
     }
 }
