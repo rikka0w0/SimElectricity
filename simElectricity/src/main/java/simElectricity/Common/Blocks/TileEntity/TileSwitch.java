@@ -90,8 +90,9 @@ public class TileSwitch extends TileEntitySE implements IManualJunction, IConnec
     
 	@Override
 	public void onFieldUpdate(String[] fields, Object[] values) {
-		//Handling on server side
-		if (!worldObj.isRemote){
+		if (worldObj.isRemote){
+			worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+		}else{//Handling on server side
 			for (String s:fields){
 		        if (s.contains("inputSide") || s.contains("outputSide") || s.contains("isOn")) {
 		            Energy.postTileRejoinEvent(this);
