@@ -102,23 +102,6 @@ public class Util {
     }
 
     //Facing and Rendering
-
-    /**
-     * Update a block rendering after 10 ticks
-     */
-    public static void scheduleBlockUpdate(TileEntity tileEntity) {
-        scheduleBlockUpdate(tileEntity, 10);
-    }
-
-    /**
-     * Update a block rendering after some ticks
-     */
-    public static void scheduleBlockUpdate(TileEntity tileEntity, int time) {
-        if (tileEntity == null)
-            return;
-        tileEntity.getWorldObj().scheduleBlockUpdate(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord, tileEntity.getWorldObj().getBlock(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord), time);
-    }
-
     /**
      * Get the texture index for a given side with a rotation
      */

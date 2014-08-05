@@ -42,12 +42,10 @@ import simElectricity.API.Common.Blocks.BlockContainerSE;
 import simElectricity.API.Energy;
 import simElectricity.API.Network;
 import simElectricity.API.EnergyTile.IConductor;
-import simElectricity.API.Util;
 import simElectricity.Common.Blocks.TileEntity.TileWire;
 import simElectricity.Common.Items.ItemBlocks.ItemBlockWire;
 
 import java.util.List;
-import java.util.Random;
 
 public class BlockWire extends BlockContainerSE {
 
@@ -97,9 +95,8 @@ public class BlockWire extends BlockContainerSE {
     @Override
     public void onNeighborBlockChange(World world, int x, int y, int z, Block block) {
         if (!world.isRemote) {
-        	TileEntity te = world.getTileEntity(x, y, z);
-            Util.scheduleBlockUpdate(te);
-            updateRenderSides(te);
+        	TileWire te = (TileWire) world.getTileEntity(x, y, z);
+        	te.needsUpdate = true;
         }
     }
 
@@ -108,8 +105,8 @@ public class BlockWire extends BlockContainerSE {
         if (world.isRemote)
             return;
 
-        TileEntity te = world.getTileEntity(x, y, z);
-        Util.scheduleBlockUpdate(te);
+        TileWire te = (TileWire) world.getTileEntity(x, y, z);
+        te.needsUpdate = true;
         updateRenderSides(te);
 
         for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) { //Update neighbors
@@ -123,19 +120,8 @@ public class BlockWire extends BlockContainerSE {
         }
     }
 
-    
-    @Override
-    public void updateTick(World world, int x, int y, int z, Random random) {
-        if (world.isRemote)
-            return;
-        
-        TileEntity te = world.getTileEntity(x, y, z);
-        updateRenderSides(te);
-    }
-
 
     // Rendering
-
     @Override
     public void setBlockBoundsForItemRender() {
         setBlockBounds(1F, 0.6F, 1F, 0.0F, 0.6F, 0.0F);

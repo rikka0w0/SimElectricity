@@ -21,7 +21,6 @@ package simElectricity.API.Common;
 
 import simElectricity.API.Energy;
 import simElectricity.API.EnergyTile.IComplexTile;
-import simElectricity.API.Util;
 
 public abstract class TileComplexMachine extends TileInventoryMachine implements IComplexTile {
     protected boolean isAddedToEnergyNet = false;
@@ -39,7 +38,6 @@ public abstract class TileComplexMachine extends TileInventoryMachine implements
             onLoad();
             Energy.postTileAttachEvent(this);
             this.isAddedToEnergyNet = true;
-            Util.scheduleBlockUpdate(this);
         }
     }
 

@@ -29,6 +29,7 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.Energy;
 import simElectricity.API.INetworkEventHandler;
+import simElectricity.API.Network;
 import simElectricity.API.EnergyTile.IConductor;
 import simElectricity.API.Util;
 import simElectricity.Common.Blocks.BlockWire;
@@ -42,6 +43,9 @@ public class TileWire extends TileEntity implements IConductor, INetworkEventHan
     public float width = 0.1F;
     public String textureString;
 
+    private int tick = 0;
+    public boolean needsUpdate = false;
+    
     public TileWire() {
     }
 
@@ -74,6 +78,16 @@ public class TileWire extends TileEntity implements IConductor, INetworkEventHan
         if (!worldObj.isRemote && !isAddedToEnergyNet) {
             Energy.postTileAttachEvent(this);
             this.isAddedToEnergyNet = true;
+        }
+        
+        if (!worldObj.isRemote && needsUpdate){
+        	tick++;
+        	if(tick > 2){
+        		needsUpdate = false;
+        		tick = 0;
+        		
+        		Network.updateNetworkFields(this);
+        	}
         }
     }
 
