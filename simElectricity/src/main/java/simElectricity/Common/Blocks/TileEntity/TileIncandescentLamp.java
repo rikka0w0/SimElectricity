@@ -31,6 +31,8 @@ import java.util.List;
 public class TileIncandescentLamp extends TileStandardSEMachine implements IEnergyNetUpdateHandler, INetworkEventHandler {
     public int lightLevel = 0;
 
+    private short overVoltageTick = -1;
+    
     @Override
     public boolean canSetFunctionalSide(ForgeDirection newFunctionalSide) {
         //FunctionalSide Facing
@@ -53,14 +55,35 @@ public class TileIncandescentLamp extends TileStandardSEMachine implements IEner
     }
 
     @Override
+    public void updateEntity(){
+    	super.updateEntity();
+    	
+    	if (worldObj.isRemote)
+    		return;
+    	
+    	if (overVoltageTick != -1){
+    		overVoltageTick++;
+    		if (overVoltageTick>10){
+    			overVoltageTick = -1;
+    			worldObj.createExplosion(null, xCoord, yCoord, zCoord, 4F + Energy.getVoltage(this) / 265, true);
+    		}
+    	} 	
+    }
+    
+    @Override
     public void onEnergyNetUpdate() {
         lightLevel = (int) (Energy.getPower(this) / 0.3F);
         if (lightLevel > 15)
             lightLevel = 15;
-        if (Energy.getVoltage(this) > 265)
-            worldObj.createExplosion(null, xCoord, yCoord, zCoord, 4F + Energy.getVoltage(this) / 265, true);
-
+        
         Network.updateNetworkFields(this);
+
+        if (Energy.getVoltage(this) > 265){
+        	if (overVoltageTick == -1)
+        		overVoltageTick = 0;
+        }else{
+        	overVoltageTick = -1;
+        }
     }
 
     @Override

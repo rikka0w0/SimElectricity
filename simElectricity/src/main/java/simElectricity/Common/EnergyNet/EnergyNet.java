@@ -256,12 +256,9 @@ public final class EnergyNet {
                 		if (winding.getCore() instanceof IEnergyNetUpdateHandler && winding.isPrimary())
                 			((IEnergyNetUpdateHandler) winding.getCore()).onEnergyNetUpdate();
                 	}
-                	
                     if (tile instanceof IEnergyNetUpdateHandler) {
                         ((IEnergyNetUpdateHandler) tile).onEnergyNetUpdate();
                     }
-                    
-                    //Call overVoltage()
                 }
             } catch (Exception ignored) {
             }
