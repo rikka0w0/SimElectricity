@@ -2,20 +2,21 @@ package simElectricity.Common.Blocks.TileEntity;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.ForgeDirection;
-import simElectricity.API.Energy;
-import simElectricity.API.IEnergyNetUpdateHandler;
 import simElectricity.API.Common.TileEntitySE;
+import simElectricity.API.Energy;
 import simElectricity.API.EnergyTile.ITransformer;
+import simElectricity.API.IEnergyNetUpdateHandler;
+import simElectricity.Common.SEUtils;
 
 public class TileRegulator extends TileEntitySE implements ITransformer, IEnergyNetUpdateHandler{
     public ForgeDirection inputSide = ForgeDirection.NORTH, outputSide = ForgeDirection.SOUTH;
-    
+
     public Primary primary = new ITransformer.Primary(this);
     public Secondary secondary = new ITransformer.Secondary(this);
-    
+
     public float ratio = 10, outputResistance = 0.1F;
     public float outputVoltage = 230;
-    
+
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
@@ -35,7 +36,7 @@ public class TileRegulator extends TileEntitySE implements ITransformer, IEnergy
         tagCompound.setByte("inputSide", (byte) inputSide.ordinal());
         tagCompound.setByte("outputSide", (byte) outputSide.ordinal());
     }
-    
+
 	@Override
 	public boolean attachToEnergyNet() {
 		return true;
@@ -71,7 +72,7 @@ public class TileRegulator extends TileEntitySE implements ITransformer, IEnergy
         return secondary;
     }
 
-    
+
     float aError = 0;
 	@Override
 	public void onEnergyNetUpdate() {
@@ -83,11 +84,11 @@ public class TileRegulator extends TileEntitySE implements ITransformer, IEnergy
 			ratio += i * aError;
 			aError += error;
 			Energy.postTileChangeEvent(this);
-			System.out.println(vo);
+            SEUtils.logInfo(vo);
 		} else {
 			aError = 0;
 		}
-		
+
 		if (ratio >25.5){
 			ratio =25.5F;
 		}
@@ -95,5 +96,5 @@ public class TileRegulator extends TileEntitySE implements ITransformer, IEnergy
 			ratio = 0.00001F;
 		}
 	}
-	
+
 }

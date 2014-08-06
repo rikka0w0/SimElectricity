@@ -23,7 +23,6 @@ import cpw.mods.fml.client.event.ConfigChangedEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.common.config.Configuration;
-import simElectricity.API.Util;
 
 public class ConfigManager {
 
@@ -56,7 +55,7 @@ public class ConfigManager {
 
     @SubscribeEvent
     public void onConfigChanged(ConfigChangedEvent.OnConfigChangedEvent event) {
-        if (event.modID.equalsIgnoreCase(Util.MODID))
+        if (event.modID.equalsIgnoreCase(SEUtils.MODID))
             syncConfig();
     }
 }
