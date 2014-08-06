@@ -31,28 +31,13 @@ import simElectricity.API.INetworkEventHandler;
 public class TileAdjustableTransformer extends TileEntitySE implements ITransformer, INetworkEventHandler {
     public Primary primary = new ITransformer.Primary(this);
     public Secondary secondary = new ITransformer.Secondary(this);
-    protected boolean isAddedToEnergyNet = false;
-
+    
     public ForgeDirection primarySide = ForgeDirection.NORTH, secondarySide = ForgeDirection.SOUTH;
     public float ratio = 10, outputResistance = 1;
 
     @Override
-    public void updateEntity() {
-        super.updateEntity();
-        if (!worldObj.isRemote && !isAddedToEnergyNet) {
-            Energy.postTileAttachEvent(this);
-            this.isAddedToEnergyNet = true;
-        }
-    }
-
-    @Override
-    public void invalidate() {
-        if (!worldObj.isRemote & isAddedToEnergyNet) {
-            Energy.postTileDetachEvent(this);
-            this.isAddedToEnergyNet = false;
-        }
-
-        super.invalidate();
+	public boolean attachToEnergyNet(){
+    	return true;
     }
 
     @Override

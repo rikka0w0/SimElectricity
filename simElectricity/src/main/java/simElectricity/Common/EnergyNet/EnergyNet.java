@@ -252,6 +252,10 @@ public final class EnergyNet {
             //Check power distribution
             try {
                 for (IBaseComponent tile : energyNet.tileEntityGraph.vertexSet()) {
+                	if (tile instanceof ITransformerWinding){
+                		if (((ITransformerWinding) tile).getCore()  instanceof IEnergyNetUpdateHandler)
+                			((IEnergyNetUpdateHandler) ((ITransformerWinding) tile).getCore()).onEnergyNetUpdate();
+                	}
                     if (tile instanceof IEnergyNetUpdateHandler) {
                         ((IEnergyNetUpdateHandler) tile).onEnergyNetUpdate();
                     }

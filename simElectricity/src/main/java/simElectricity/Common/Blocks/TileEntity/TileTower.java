@@ -87,32 +87,21 @@ public class TileTower extends TileEntitySE implements IManualJunction, IConnect
     	return INFINITE_EXTENT_AABB;
     }
 
-    @Override
-    public void updateEntity() {
-        super.updateEntity();
-        if (!worldObj.isRemote && !isAddedToEnergyNet) {
-            Energy.postTileAttachEvent(this);
-            this.isAddedToEnergyNet = true;
-        }
-    }
-
-    @Override
-    public void invalidate() {
-        if (!worldObj.isRemote & isAddedToEnergyNet) {
-            Energy.postTileDetachEvent(this);
-            this.isAddedToEnergyNet = false;
-
-            for (int i = 0; i < neighborsInfo.length; i += 3) {
-                TileTower neighbor = (TileTower) getWorldObj().getTileEntity(neighborsInfo[i], neighborsInfo[i + 1], neighborsInfo[i + 2]);
-                if (neighbor != null) {
-                    neighbor.delNeighbor(this);
-                    Network.updateTileEntityNBT(this);
-                }
+	@Override
+	public boolean attachToEnergyNet() {
+		return true;
+	}
+    
+	@Override
+	public void onUnload(){
+        for (int i = 0; i < neighborsInfo.length; i += 3) {
+            TileTower neighbor = (TileTower) getWorldObj().getTileEntity(neighborsInfo[i], neighborsInfo[i + 1], neighborsInfo[i + 2]);
+            if (neighbor != null) {
+                neighbor.delNeighbor(this);
+                Network.updateTileEntityNBT(this);
             }
-        }
-
-        super.invalidate();
-    }
+        }		
+	}
 
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {

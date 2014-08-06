@@ -32,7 +32,6 @@ import simElectricity.API.EnergyTile.IManualJunction;
 import java.util.List;
 
 public class TileSwitch extends TileEntitySE implements IManualJunction, IConnectable, ISidedFacing, IEnergyNetUpdateHandler, INetworkEventHandler {
-    protected boolean isAddedToEnergyNet = false;
     public float current=0F;
     
     public ForgeDirection inputSide = ForgeDirection.NORTH, outputSide = ForgeDirection.SOUTH, facing = ForgeDirection.WEST;
@@ -40,24 +39,10 @@ public class TileSwitch extends TileEntitySE implements IManualJunction, IConnec
     public float maxCurrent = 1F;
     public boolean isOn = false;
 
-    @Override
-    public void updateEntity() {
-        super.updateEntity();
-        if (!worldObj.isRemote && !isAddedToEnergyNet) {
-            Energy.postTileAttachEvent(this);
-            this.isAddedToEnergyNet = true;
-        }
-    }
-
-    @Override
-    public void invalidate() {
-        if (!worldObj.isRemote & isAddedToEnergyNet) {
-            Energy.postTileDetachEvent(this);
-            this.isAddedToEnergyNet = false;
-        }
-
-        super.invalidate();
-    }
+	@Override
+	public boolean attachToEnergyNet() {
+		return true;
+	}
 
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {

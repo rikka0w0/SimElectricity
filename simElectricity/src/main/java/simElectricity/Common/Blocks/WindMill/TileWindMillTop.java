@@ -58,4 +58,9 @@ public class TileWindMillTop extends TileSidedFacingMachine{
     public int getInventorySize() {
         return 0;
     }
+
+	@Override
+	public boolean attachToEnergyNet() {
+		return false;
+	}
 }

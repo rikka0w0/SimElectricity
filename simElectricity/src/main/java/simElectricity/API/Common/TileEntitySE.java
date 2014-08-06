@@ -1,12 +1,44 @@
 package simElectricity.API.Common;
 
+import simElectricity.API.Energy;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 
-public class TileEntitySE extends TileEntity{
+public abstract class TileEntitySE extends TileEntity{
+    protected boolean isAddedToEnergyNet;
+    
+    public void onLoad() {
+    }
+
+    public void onUnload() {
+    }
+    
+    public abstract boolean attachToEnergyNet();
+	
+	@Override
+    public void updateEntity() {
+        super.updateEntity();
+        if (!worldObj.isRemote && !isAddedToEnergyNet && attachToEnergyNet()) {
+            onLoad();
+            Energy.postTileAttachEvent(this);
+            this.isAddedToEnergyNet = true;
+        }
+    }
+
+    @Override
+    public void invalidate() {
+        if (!worldObj.isRemote && isAddedToEnergyNet && attachToEnergyNet()) {
+            onUnload();
+            Energy.postTileDetachEvent(this);
+            this.isAddedToEnergyNet = false;
+        }
+
+        super.invalidate();
+    }
+	
     @Override
 	public Packet getDescriptionPacket()
     {

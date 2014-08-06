@@ -21,7 +21,6 @@ package simElectricity.API.Common;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.ForgeDirection;
-import simElectricity.API.Energy;
 import simElectricity.API.EnergyTile.IEnergyTile;
 
 /**
@@ -30,36 +29,11 @@ import simElectricity.API.EnergyTile.IEnergyTile;
 public abstract class TileStandardSEMachine extends TileSidedFacingMachine implements IEnergyTile {
     public ForgeDirection functionalSide = ForgeDirection.NORTH;
 
-    protected boolean isAddedToEnergyNet = false;
-
-    public void onLoad() {
-    }
-
-    public void onUnload() {
-    }
-
     @Override
-    public void updateEntity() {
-        super.updateEntity();
-        if (!worldObj.isRemote && !isAddedToEnergyNet) {
-            onLoad();
-            Energy.postTileAttachEvent(this);
-            this.isAddedToEnergyNet = true;
-        }
+	public boolean attachToEnergyNet(){
+    	return true;
     }
-
-    @Override
-    public void invalidate() {
-        if (!worldObj.isRemote & isAddedToEnergyNet) {
-            onUnload();
-            Energy.postTileDetachEvent(this);
-            this.isAddedToEnergyNet = false;
-        }
-
-        super.invalidate();
-    }
-
-
+    
     // IEnergyTile
     @Override
     public ForgeDirection getFunctionalSide() {
