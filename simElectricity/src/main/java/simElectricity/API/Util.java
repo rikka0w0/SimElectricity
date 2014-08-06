@@ -19,7 +19,6 @@
 
 package simElectricity.API;
 
-import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
@@ -30,19 +29,14 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.MathHelper;
 import net.minecraftforge.common.util.ForgeDirection;
-import org.apache.logging.log4j.Level;
 import simElectricity.API.EnergyTile.IConductor;
 import simElectricity.API.EnergyTile.IConnectable;
 import simElectricity.API.EnergyTile.IEnergyTile;
 import simElectricity.API.EnergyTile.ITransformer;
+import simElectricity.Common.SEUtils;
 
 public class Util {
 
-    /**
-     * For getBlock/Item
-     */
-    public static final String MODID = "SimElectricity";
-    public static final String NAME = "SimElectricity";
     /**
      * Creative Tab for SimElectricity project
      */
@@ -102,6 +96,7 @@ public class Util {
     }
 
     //Facing and Rendering
+
     /**
      * Get the texture index for a given side with a rotation
      */
@@ -173,7 +168,7 @@ public class Util {
      * @return The block or null if not found
      */
     public static Block getBlock(String name) {
-        return GameRegistry.findBlock(MODID, name);
+        return GameRegistry.findBlock(SEUtils.MODID, name);
     }
 
     /**
@@ -182,11 +177,6 @@ public class Util {
      * @return The item or null if not found
      */
     public static Item getItem(String name) {
-        return GameRegistry.findItem(MODID, name);
-    }
-
-
-    public static void warn(Object object) {
-        FMLLog.log(NAME, Level.WARN, String.valueOf(object));
+        return GameRegistry.findItem(SEUtils.MODID, name);
     }
 }

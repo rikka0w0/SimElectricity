@@ -41,8 +41,9 @@ import simElectricity.Common.Core.SEItems;
 import simElectricity.Common.EnergyNet.EnergyNetEventHandler;
 import simElectricity.Common.Network.MessageTileEntityUpdate;
 import simElectricity.Common.Network.NetworkManager;
+import simElectricity.Common.SEUtils;
 
-@Mod(modid = Util.MODID, name = Util.NAME, version = "1.0.0", guiFactory = "simElectricity.Client.SimEGuiFactory", dependencies = "required-after:Forge@[10.12.2.1147,)")
+@Mod(modid = SEUtils.MODID, name = SEUtils.NAME, version = "1.0.0", guiFactory = "simElectricity.Client.SimEGuiFactory", dependencies = "required-after:Forge@[10.12.2.1147,)")
 public class SimElectricity {
 
     /**
@@ -51,7 +52,7 @@ public class SimElectricity {
     @SidedProxy(clientSide = "simElectricity.Client.ClientProxy", serverSide = "simElectricity.Common.CommonProxy")
     public static CommonProxy proxy;
 
-    @Instance(Util.MODID)
+    @Instance(SEUtils.MODID)
     public static SimElectricity instance;
 
     public SimpleNetworkWrapper networkChannel;
@@ -70,7 +71,7 @@ public class SimElectricity {
         new EnergyNetEventHandler();
 
         //CreativeTab
-        Util.SETab = new CreativeTabs(Util.MODID) {
+        Util.SETab = new CreativeTabs(SEUtils.MODID) {
             @Override
             @SideOnly(Side.CLIENT)
             public Item getTabIconItem() {
@@ -85,7 +86,7 @@ public class SimElectricity {
         SEItems.init();
 
         //Register network channel
-        networkChannel = NetworkRegistry.INSTANCE.newSimpleChannel(Util.MODID);
+        networkChannel = NetworkRegistry.INSTANCE.newSimpleChannel(SEUtils.MODID);
         networkChannel.registerMessage(MessageTileEntityUpdate.Handler.class, MessageTileEntityUpdate.class, 0, Side.CLIENT);
         networkChannel.registerMessage(MessageTileEntityUpdate.Handler.class, MessageTileEntityUpdate.class, 1, Side.SERVER);
     }

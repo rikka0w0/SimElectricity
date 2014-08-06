@@ -20,10 +20,10 @@
 package simElectricity.Common.Core;
 
 import cpw.mods.fml.common.registry.GameRegistry;
-import simElectricity.API.Util;
 import simElectricity.Common.Items.*;
+import simElectricity.Common.SEUtils;
 
-@GameRegistry.ObjectHolder(Util.MODID)
+@GameRegistry.ObjectHolder(SEUtils.MODID)
 public class SEItems {
 
     public static ItemFan fan;
