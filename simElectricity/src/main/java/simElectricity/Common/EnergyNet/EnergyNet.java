@@ -27,6 +27,7 @@ import simElectricity.API.EnergyTile.ITransformer.ITransformerWinding;
 import simElectricity.API.IEnergyNetUpdateHandler;
 import simElectricity.API.Util;
 import simElectricity.Common.ConfigManager;
+import simElectricity.Common.SEUtils;
 
 import java.util.*;
 
@@ -100,16 +101,16 @@ public final class EnergyNet {
     }
 
     //Simulator------------------------------------------------------------------------
-    @SuppressWarnings( { "unchecked" })
+    @SuppressWarnings({ "unchecked" })
     private void runSimulator() {
         BakaGraph optimizedTileEntityGraph = (BakaGraph) tileEntityGraph.clone();
 
         //try to optimization
         if (ConfigManager.optimizeNodes) {
-            System.out.printf("raw:%d nodes\n", optimizedTileEntityGraph.vertexSet().size());
+            SEUtils.logInfo("raw:" + optimizedTileEntityGraph.vertexSet().size() + " nodes");
             VirtualConductor.mapClear();
             while (mergeIConductorNode(optimizedTileEntityGraph)) ;
-            System.out.printf("optimized:%d nodes\n", optimizedTileEntityGraph.vertexSet().size());
+            SEUtils.logInfo("optimized:" + optimizedTileEntityGraph.vertexSet().size() + " nodes");
         }
 
 
@@ -250,12 +251,12 @@ public final class EnergyNet {
             //Check power distribution
             try {
                 for (IBaseComponent tile : energyNet.tileEntityGraph.vertexSet()) {
-                	//Call onEnergyNetUpdate()
-                	if (tile instanceof ITransformerWinding){
-                		ITransformerWinding winding = (ITransformerWinding) tile;
-                		if (winding.getCore() instanceof IEnergyNetUpdateHandler && winding.isPrimary())
-                			((IEnergyNetUpdateHandler) winding.getCore()).onEnergyNetUpdate();
-                	}
+                    //Call onEnergyNetUpdate()
+                    if (tile instanceof ITransformerWinding) {
+                        ITransformerWinding winding = (ITransformerWinding) tile;
+                        if (winding.getCore() instanceof IEnergyNetUpdateHandler && winding.isPrimary())
+                            ((IEnergyNetUpdateHandler) winding.getCore()).onEnergyNetUpdate();
+                    }
                     if (tile instanceof IEnergyNetUpdateHandler) {
                         ((IEnergyNetUpdateHandler) tile).onEnergyNetUpdate();
                     }
@@ -278,15 +279,15 @@ public final class EnergyNet {
             for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
                 temp = Util.getTileEntityonDirection(te, direction);
                 if (temp instanceof IConductor) {  //Conductor
-                	IConductor wire = (IConductor) te;
-                	IConductor neighbor = (IConductor) temp;
-                    
-                	if (wire.getColor() == 0 || 
-                		neighbor.getColor() == 0 ||
-                		wire.getColor() == neighbor.getColor()){
-                		result.add(neighbor);
-                	}
-                	
+                    IConductor wire = (IConductor) te;
+                    IConductor neighbor = (IConductor) temp;
+
+                    if (wire.getColor() == 0 ||
+                            neighbor.getColor() == 0 ||
+                            wire.getColor() == neighbor.getColor()) {
+                        result.add(neighbor);
+                    }
+
                 } else if (temp instanceof IEnergyTile) {   //IEnergyTile
                     if (((IEnergyTile) temp).getFunctionalSide() == direction.getOpposite())
                         result.add((IEnergyTile) temp);
@@ -334,7 +335,7 @@ public final class EnergyNet {
             for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
                 ICircuitComponent subComponent = ((IComplexTile) te).getCircuitComponent(direction);
                 if (subComponent instanceof IBaseComponent) {
-                	tileEntityGraph.addVertex(subComponent);
+                    tileEntityGraph.addVertex(subComponent);
                     TileEntity neighbor = Util.getTileEntityonDirection(te, direction);
                     if (neighbor instanceof IConductor)  // Connected properly
                         neighborMap.put((IBaseComponent) neighbor, subComponent);
@@ -348,7 +349,7 @@ public final class EnergyNet {
 
             tileEntityGraph.addVertex(primary);
             tileEntityGraph.addVertex(secondary);
-            
+
             TileEntity neighbor;
 
             neighbor = Util.getTileEntityonDirection(te, transformer.getPrimarySide());
@@ -360,7 +361,7 @@ public final class EnergyNet {
                 neighborMap.put((IBaseComponent) neighbor, secondary);
 
         } else { // IBaseComponent and IConductor
-        	tileEntityGraph.addVertex((IBaseComponent) te);
+            tileEntityGraph.addVertex((IBaseComponent) te);
             List<IBaseComponent> neighborList = neighborListOf(te);
             for (IBaseComponent neighbor : neighborList)
                 neighborMap.put(neighbor, (IBaseComponent) te);
@@ -379,10 +380,10 @@ public final class EnergyNet {
      */
     public void removeTileEntity(TileEntity te) {
         if (te instanceof IComplexTile) { //For a complexTile every subComponents has to be removed!            
-            for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS){
-            	ICircuitComponent subComponent = ((IComplexTile) te).getCircuitComponent(direction);
-            	if (subComponent != null)
-            		tileEntityGraph.removeVertex(subComponent);
+            for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
+                ICircuitComponent subComponent = ((IComplexTile) te).getCircuitComponent(direction);
+                if (subComponent != null)
+                    tileEntityGraph.removeVertex(subComponent);
             }
         } else if (te instanceof ITransformer) {
             tileEntityGraph.removeVertex(((ITransformer) te).getPrimary());
@@ -412,14 +413,14 @@ public final class EnergyNet {
      * Creation of the energy network
      */
     public EnergyNet(World world) {
-        System.out.println("EnergyNet has been created for DIM"+String.valueOf(world.provider.dimensionId));
+        SEUtils.logInfo("EnergyNet has been created for DIM" + String.valueOf(world.provider.dimensionId));
     }
-    
+
     /**
      * Calculate the voltage of a given EnergyTile RELATIVE TO GROUND!
      */
     public static float getVoltage(IBaseComponent Tile, World world) {
-    	EnergyNet energyNet = WorldData.getEnergyNetForWorld(world);
+        EnergyNet energyNet = WorldData.getEnergyNetForWorld(world);
         if (energyNet.voltageCache.containsKey(Tile))
             return energyNet.voltageCache.get(Tile);
         else

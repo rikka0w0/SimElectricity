@@ -12,7 +12,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.EnergyTile.IEnergyTile;
 import simElectricity.API.INetworkEventHandler;
 import simElectricity.API.ISidedFacing;
-import simElectricity.API.Util;
+import simElectricity.Common.SEUtils;
 import simElectricity.SimElectricity;
 
 import java.lang.reflect.Field;
@@ -57,7 +57,7 @@ public class MessageTileEntityUpdate implements IMessage{
     		this.fieldsCount = fields.length;
 
     	if (this.fieldsCount == 0){
-    		System.out.println("No fields to be update! This might be a bug!");
+    		SEUtils.logWarn("No fields to be update! This might be a bug!");
     		return;
     	}
 
@@ -220,7 +220,7 @@ public class MessageTileEntityUpdate implements IMessage{
         	}
 
         	if (world.provider.dimensionId != message.dimensionID){
-                Util.warn("An dimensionID mismatch error occurred during sync! This could be an error");
+                SEUtils.logWarn("An dimensionID mismatch error occurred during sync! This could be an error");
         		return null;
         	}
 
