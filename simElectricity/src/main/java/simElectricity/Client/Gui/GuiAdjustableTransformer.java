@@ -28,10 +28,10 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
 import net.minecraftforge.common.util.ForgeDirection;
 import org.lwjgl.opengl.GL11;
+
 import simElectricity.API.Network;
 import simElectricity.Common.Blocks.Container.ContainerAdjustableTransformer;
 import simElectricity.Common.Blocks.TileEntity.TileAdjustableTransformer;
-import simElectricity.Common.SEUtils;
 
 
 public class GuiAdjustableTransformer extends GuiContainer {
@@ -115,14 +115,14 @@ public class GuiAdjustableTransformer extends GuiContainer {
         if (te.outputResistance > 100)
             te.outputResistance = 100;
         if (button.id < 4)
-            Network.updateTileEntityFieldToServer(te, "outputResistance");
+        	Network.updateTileEntityFieldToServer(te, "outputResistance");
 
         if (te.ratio < 0.1)
             te.ratio = 0.1F;
         if (te.ratio > 1000)
             te.ratio = 1000;
         if (button.id < 8 && button.id > 3)
-            Network.updateTileEntityFieldToServer(te, "ratio");
+        	Network.updateTileEntityFieldToServer(te, "ratio");
 
     }
 
@@ -169,7 +169,7 @@ public class GuiAdjustableTransformer extends GuiContainer {
 
         //te.getWorldObj().markBlockForUpdate(te.xCoord, te.yCoord, te.zCoord);
 
-        SEUtils.logInfo(button);
+        System.out.println(button);
     }
 
     public GuiAdjustableTransformer(InventoryPlayer inventoryPlayer, TileEntity tileEntity) {

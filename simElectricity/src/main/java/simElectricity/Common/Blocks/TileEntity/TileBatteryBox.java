@@ -22,7 +22,6 @@ package simElectricity.Common.Blocks.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.Common.TileSidedGenerator;
 import simElectricity.API.Energy;
-import simElectricity.Common.SEUtils;
 
 public class TileBatteryBox extends TileSidedGenerator {
 
@@ -44,12 +43,12 @@ public class TileBatteryBox extends TileSidedGenerator {
             checkAndSendChange(0, 100F);
             wattTickStore += (Energy.getPower(this) * 0.05);
 
-            SEUtils.logInfo("charging, wattTickStore: " + wattTickStore);
+            System.out.printf("charging, wattTickStore: %f\n", wattTickStore);
         } else if ((Energy.getVoltage(this) <= (dischargeVoltage + 0.1F)) && (wattTickStore > 0)) {
             checkAndSendChange(dischargeVoltage, 0.8F);
             wattTickStore -= Energy.getWorkDonePerTick(this);
 
-            SEUtils.logInfo("discharge, wattTickStore: " + wattTickStore);
+            System.out.printf("discharge, wattTickStore: %f\n", wattTickStore);
         } else {
             checkAndSendChange(0, Float.MAX_VALUE);
         }

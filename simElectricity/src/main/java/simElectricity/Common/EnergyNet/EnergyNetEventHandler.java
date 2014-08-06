@@ -35,7 +35,6 @@ import simElectricity.API.Events.TileChangeEvent;
 import simElectricity.API.Events.TileDetachEvent;
 import simElectricity.API.Events.TileRejoinEvent;
 import simElectricity.Common.ConfigManager;
-import simElectricity.Common.SEUtils;
 
 public class EnergyNetEventHandler {
     public EnergyNetEventHandler() {
@@ -63,22 +62,22 @@ public class EnergyNetEventHandler {
     public void onAttachEvent(TileAttachEvent event) {
         TileEntity te = event.energyTile;
         if (!te.getWorldObj().blockExists(te.xCoord, te.yCoord, te.zCoord)) {
-            SEUtils.logInfo(te + " is added to the energy net too early!, abort!");
+            System.out.println(te + " is added to the energy net too early!, abort!");
             return;
         }
 
         if (te.isInvalid()) {
-            SEUtils.logInfo("Invalid tileentity " + te + " is trying to attach to the energy network, aborting");
+            System.out.println("Invalid tileentity " + te + " is trying to attach to the energy network, aborting");
             return;
         }
 
         if (!(te instanceof IBaseComponent) && !(te instanceof IComplexTile) && !(te instanceof ITransformer)) {
-            SEUtils.logInfo("Unacceptable tileentity " + te + " is trying to attach to the energy network, aborting");
+            System.out.println("Unacceptable tileentity " + te + " is trying to attach to the energy network, aborting");
             return;
         }
 
         if (te.getWorldObj().isRemote) {
-            SEUtils.logInfo("Client tileentity " + te + " is requesting, abort!");
+            System.out.println("Client tileentity " + te + " is requesting, abort!");
             return;
         }
 
@@ -86,7 +85,7 @@ public class EnergyNetEventHandler {
         WorldData.getEnergyNetForWorld(te.getWorldObj()).addTileEntity(te);
 
         if (ConfigManager.showEnergyNetInfo)
-            SEUtils.logInfo("Tileentity " + te + " has attached to the energy network!");
+        	System.out.println("Tileentity " + te + " has attached to the energy network!");
     }
 
     @SubscribeEvent
@@ -94,14 +93,14 @@ public class EnergyNetEventHandler {
         TileEntity te = event.energyTile;
 
         if (te.getWorldObj().isRemote) {
-            SEUtils.logInfo("Client tileentity " + te + " is requesting, abort!");
+            System.out.println("Client tileentity " + te + " is requesting, abort!");
             return;
         }
 
         WorldData.getEnergyNetForWorld(te.getWorldObj()).removeTileEntity(te);
 
         if (ConfigManager.showEnergyNetInfo)
-            SEUtils.logInfo("Tileentity " + te + " has detached from the energy network!");
+        	System.out.println("Tileentity " + te + " has detached from the energy network!");
     }
 
     @SubscribeEvent
@@ -109,14 +108,14 @@ public class EnergyNetEventHandler {
         TileEntity te = event.energyTile;
 
         if (te.getWorldObj().isRemote) {
-            SEUtils.logInfo("Client tileentity " + te + " is requesting, abort!");
+            System.out.println("Client tileentity " + te + " is requesting, abort!");
             return;
         }
 
         WorldData.getEnergyNetForWorld(te.getWorldObj()).rejoinTileEntity(te);
-
+        
         if (ConfigManager.showEnergyNetInfo)
-            SEUtils.logInfo("Tileentity " + te + " has rejoined the energy network!");
+        	System.out.println("Tileentity " + te + " has rejoined the energy network!");
     }
 
     @SubscribeEvent
@@ -124,13 +123,13 @@ public class EnergyNetEventHandler {
         TileEntity te = event.energyTile;
 
         if (te.getWorldObj().isRemote) {
-            SEUtils.logInfo("Client tileentity " + te + " is requesting, aborting");
+            System.out.println("Client tileentity " + te + " is requesting, aborting");
             return;
         }
 
         WorldData.getEnergyNetForWorld(te.getWorldObj()).markForUpdate(te);
 
         if (ConfigManager.showEnergyNetInfo)
-            SEUtils.logInfo("Tileentity " + te + " causes the energy network to update!");
+        	System.out.println("Tileentity " + te + " causes the energy network to update!");
     }
 }
