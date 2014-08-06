@@ -252,9 +252,11 @@ public final class EnergyNet {
                 for (IBaseComponent tile : energyNet.tileEntityGraph.vertexSet()) {
                 	//Call onEnergyNetUpdate()
                 	if (tile instanceof ITransformerWinding){
-                		if (((ITransformerWinding) tile).getCore()  instanceof IEnergyNetUpdateHandler)
-                			((IEnergyNetUpdateHandler) ((ITransformerWinding) tile).getCore()).onEnergyNetUpdate();
+                		ITransformerWinding winding = (ITransformerWinding) tile;
+                		if (winding.getCore() instanceof IEnergyNetUpdateHandler && winding.isPrimary())
+                			((IEnergyNetUpdateHandler) winding.getCore()).onEnergyNetUpdate();
                 	}
+                	
                     if (tile instanceof IEnergyNetUpdateHandler) {
                         ((IEnergyNetUpdateHandler) tile).onEnergyNetUpdate();
                     }

@@ -187,6 +187,6 @@ public class Util {
 
 
     public static void warn(Object object) {
-        FMLLog.log(NAME, Level.WARN, "[SimElectricity] " + String.valueOf(object));
+        FMLLog.log(NAME, Level.WARN, String.valueOf(object));
     }
 }
