@@ -10,12 +10,22 @@ import net.minecraft.tileentity.TileEntity;
 public abstract class TileEntitySE extends TileEntity{
     protected boolean isAddedToEnergyNet;
     
+    /**
+     * Called just before joining the energyNet, do some initialization here
+     */
     public void onLoad() {
     }
 
+    /**
+     * Called just before detaching from the energyNet
+     */    
     public void onUnload() {
     }
     
+    /**
+     * Override this to false to prevent from joining the energyNet automatically
+     * @return
+     */
     public abstract boolean attachToEnergyNet();
 	
 	@Override

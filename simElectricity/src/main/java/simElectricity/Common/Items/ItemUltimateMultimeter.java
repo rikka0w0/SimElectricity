@@ -57,13 +57,15 @@ public class ItemUltimateMultimeter extends ItemSE {
 
             Util.chat(player, "-----------------------");
             Util.chat(player, "Transformer");
-            Util.chat(player, "Primary Voltage: " + String.valueOf(Energy.getVoltage(primary)));
-            Util.chat(player, "Secondary Voltage: " + String.valueOf(Energy.getVoltage(secondary)));
-
+            Util.chat(player, "Primary Voltage: " + String.valueOf(Energy.getVoltage(primary)) + "V");
+            Util.chat(player, "Secondary Voltage: " + String.valueOf(Energy.getVoltage(secondary)) + "V");
+            Util.chat(player, "PS ratio: 1:" + String.valueOf(transformer.getRatio()));
+            
             float secondaryResistance = transformer.getResistance();
             float secondaryCurrent = (transformer.getRatio() * Energy.getVoltage(primary) - Energy.getVoltage(secondary)) / secondaryResistance;
-            Util.chat(player, "Secondary current: " + String.valueOf(secondaryCurrent));
-            Util.chat(player, "Power loss: " + String.valueOf(secondaryCurrent * secondaryCurrent * secondaryResistance));
+            Util.chat(player, "Internal Resistance: " + secondaryResistance + "\u03a9");
+            Util.chat(player, "Secondary current: " + String.valueOf(secondaryCurrent)+"A");
+            Util.chat(player, "Power loss: " + String.valueOf(secondaryCurrent * secondaryCurrent * secondaryResistance)+"A");
         }
 
         if ((tile instanceof IBaseComponent || tile instanceof IComplexTile) && (!(world.isRemote))) {

@@ -28,7 +28,45 @@ import simElectricity.API.EnergyTile.IEnergyTile;
  */
 public abstract class TileStandardSEMachine extends TileSidedFacingMachine implements IEnergyTile {
     public ForgeDirection functionalSide = ForgeDirection.NORTH;
-
+    public short overVoltageTick = -1;
+    
+    /**
+     * Continuous over voltage occurs! Oops! Do explosions here! Override this when necessary 0w0
+     */
+    public void onOverVoltage(){}
+    
+    /**
+     * The maximum allowed ticks for continuous over voltage
+     * @return
+     */
+    public int getMaxOverVoltageTick(){return 10;}
+    
+    /**
+     * Check the input voltage
+     * @param voltage The voltage supplied into this machine
+     */
+    public void checkVoltage(float voltage,float maxVoltage){
+        if (voltage > maxVoltage && overVoltageTick == -1){
+        	overVoltageTick = 0;
+        }else{
+        	overVoltageTick = -1;
+        }
+    }
+    
+    @Override
+    public void updateEntity(){
+    	super.updateEntity();
+    	
+    	//Find out continuous over voltage
+    	if (!worldObj.isRemote && overVoltageTick != -1){
+    		overVoltageTick++;
+    		if (overVoltageTick>getMaxOverVoltageTick()){
+    			overVoltageTick = -1;
+    			onOverVoltage();
+    		}
+    	} 	
+    }
+    
     @Override
 	public boolean attachToEnergyNet(){
     	return true;

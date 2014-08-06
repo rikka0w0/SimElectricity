@@ -8,7 +8,7 @@ import simElectricity.API.EnergyTile.ITransformer;
 import simElectricity.API.IEnergyNetUpdateHandler;
 import simElectricity.Common.SEUtils;
 
-public class TileRegulator extends TileEntitySE implements ITransformer, IEnergyNetUpdateHandler{
+public class TileSolarInverter extends TileEntitySE implements ITransformer, IEnergyNetUpdateHandler{
     public ForgeDirection inputSide = ForgeDirection.NORTH, outputSide = ForgeDirection.SOUTH;
 
     public Primary primary = new ITransformer.Primary(this);
@@ -76,25 +76,38 @@ public class TileRegulator extends TileEntitySE implements ITransformer, IEnergy
     float aError = 0;
 	@Override
 	public void onEnergyNetUpdate() {
-		double p = 0.02, i = 0.0000001;
+		double p = 0.04, i = 0.0000001;
 		double vo = Energy.getVoltage(secondary);
 		double error = outputVoltage - vo;
-		if (Math.abs(error) > 1 && 1< Energy.getVoltage(primary)){
+		boolean needUpdate = false;
+		if (Math.abs(error) > 1 && Energy.getVoltage(primary) > 8){
 			ratio += p * error;
 			ratio += i * aError;
 			aError += error;
-			Energy.postTileChangeEvent(this);
-            SEUtils.logInfo(vo);
+			needUpdate = true;
 		} else {
 			aError = 0;
 		}
 
-		if (ratio >25.5){
-			ratio =25.5F;
+		if (Energy.getVoltage(primary) == 0){
+			ratio = 1;
 		}
+		
+		if (ratio >30){
+			needUpdate = false;
+			ratio =30;
+		}
+
 		if (ratio <0){
+			needUpdate = false;
 			ratio = 0.00001F;
 		}
+		
+		if (needUpdate)
+			Energy.postTileChangeEvent(this);
+
+		
+		SEUtils.logInfo(String.valueOf(vo)+":"+String.valueOf(ratio));
 	}
 
 }

@@ -30,11 +30,12 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import simElectricity.SimElectricity;
 import simElectricity.API.Common.Blocks.BlockContainerSE;
 import simElectricity.API.Util;
-import simElectricity.Common.Blocks.TileEntity.TileRegulator;
+import simElectricity.Common.Blocks.TileEntity.TileSolarInverter;
 
-public class BlockRegulator extends BlockContainerSE {
+public class BlockSolarInverter extends BlockContainerSE {
     private IIcon[] iconBuffer = new IIcon[3];
 
     @Override
@@ -42,15 +43,15 @@ public class BlockRegulator extends BlockContainerSE {
         if (player.isSneaking())
             return false;
 
-        //player.openGui(SimElectricity.instance, 0, world, x, y, z);
+        player.openGui(SimElectricity.instance, 0, world, x, y, z);
         return true;
     }
 
-    public BlockRegulator() {
+    public BlockSolarInverter() {
         super(Material.iron);
         setHardness(2.0F);
         setResistance(5.0F);
-        setBlockName("Regulator");
+        setBlockName("SolarInverter");
         setCreativeTab(Util.SETab);
     }
 
@@ -65,7 +66,7 @@ public class BlockRegulator extends BlockContainerSE {
     @SideOnly(Side.CLIENT)
     @Override
     public IIcon getIcon(IBlockAccess world, int x, int y, int z, int side) {
-    	TileRegulator te = (TileRegulator) world.getTileEntity(x, y, z);
+    	TileSolarInverter te = (TileSolarInverter) world.getTileEntity(x, y, z);
 
 
         if (side == te.inputSide.ordinal())
@@ -89,12 +90,12 @@ public class BlockRegulator extends BlockContainerSE {
     public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase player, ItemStack itemStack) {
         TileEntity te = world.getTileEntity(x, y, z);
 
-        ((TileRegulator) te).inputSide = Util.getPlayerSight(player, false);
-        ((TileRegulator) te).outputSide = ((TileRegulator) te).inputSide.getOpposite();
+        ((TileSolarInverter) te).outputSide = Util.getPlayerSight(player, false);
+        ((TileSolarInverter) te).inputSide = ((TileSolarInverter) te).outputSide.getOpposite();
     }
 
     @Override
     public TileEntity createNewTileEntity(World world, int meta) {
-        return new TileRegulator();
+        return new TileSolarInverter();
     }
 }
