@@ -138,9 +138,6 @@ public class Energy {
      * Calculate the voltage of a given EnergyTile RELATIVE TO GROUND!
      */
     public static float getVoltage(IBaseComponent Tile, World world) {
-        if (EnergyNet.getForWorld(world).voltageCache.containsKey(Tile))
-            return EnergyNet.getForWorld(world).voltageCache.get(Tile);
-        else
-            return 0;
+        return EnergyNet.getVoltage(Tile, world);
     }
 }

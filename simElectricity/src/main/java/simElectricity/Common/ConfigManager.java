@@ -33,6 +33,7 @@ public class ConfigManager {
      * Enable Optimized Nodes
      */
     public static boolean optimizeNodes;
+    public static boolean showEnergyNetInfo;
     public static int parabolaRenderSteps;
 
 
@@ -45,8 +46,10 @@ public class ConfigManager {
 
     private static void syncConfig() {
         optimizeNodes = config.get(Configuration.CATEGORY_GENERAL, "OptimizeNodes", false, "A function that can improve the performance by reducing the total number of conductor nodes (May be buggy)").getBoolean();
+        showEnergyNetInfo = config.get(Configuration.CATEGORY_GENERAL, "ShowEnergyNetInfo", false, "Display energy net infomations, such as joining/leaving/changging").getBoolean();
         parabolaRenderSteps = config.get(Configuration.CATEGORY_GENERAL, "ParabolaRenderSteps", 12, "Decides how smooth the parabola cable is(must be a even number!Client ONLY!)").getInt(12);
-
+        
+        
         if (config.hasChanged())
             config.save();
     }

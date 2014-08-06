@@ -34,6 +34,7 @@ import simElectricity.API.Events.TileAttachEvent;
 import simElectricity.API.Events.TileChangeEvent;
 import simElectricity.API.Events.TileDetachEvent;
 import simElectricity.API.Events.TileRejoinEvent;
+import simElectricity.Common.ConfigManager;
 
 public class EnergyNetEventHandler {
     public EnergyNetEventHandler() {
@@ -61,7 +62,7 @@ public class EnergyNetEventHandler {
     public void onAttachEvent(TileAttachEvent event) {
         TileEntity te = event.energyTile;
         if (!te.getWorldObj().blockExists(te.xCoord, te.yCoord, te.zCoord)) {
-            System.out.println(te + " is added to the energy net too early!, aborting");
+            System.out.println(te + " is added to the energy net too early!, abort!");
             return;
         }
 
@@ -76,15 +77,15 @@ public class EnergyNetEventHandler {
         }
 
         if (te.getWorldObj().isRemote) {
-            System.out.println("Client tileentity " + te + " is requesting, aborting");
+            System.out.println("Client tileentity " + te + " is requesting, abort!");
             return;
         }
 
 
-        EnergyNet.getForWorld(te.getWorldObj()).addTileEntity(te);
+        WorldData.getEnergyNetForWorld(te.getWorldObj()).addTileEntity(te);
 
-        System.out.println("Tileentity " + te
-                + " is attached to the energy network!");
+        if (ConfigManager.showEnergyNetInfo)
+        	System.out.println("Tileentity " + te + " has attached to the energy network!");
     }
 
     @SubscribeEvent
@@ -92,13 +93,14 @@ public class EnergyNetEventHandler {
         TileEntity te = event.energyTile;
 
         if (te.getWorldObj().isRemote) {
-            System.out.println("Client tileentity " + te + " is requesting, aborting");
+            System.out.println("Client tileentity " + te + " is requesting, abort!");
             return;
         }
 
-        EnergyNet.getForWorld(te.getWorldObj()).removeTileEntity(te);
+        WorldData.getEnergyNetForWorld(te.getWorldObj()).removeTileEntity(te);
 
-        System.out.println("Tileentity " + te + " is detach from the energy network!");
+        if (ConfigManager.showEnergyNetInfo)
+        	System.out.println("Tileentity " + te + " has detached from the energy network!");
     }
 
     @SubscribeEvent
@@ -106,13 +108,14 @@ public class EnergyNetEventHandler {
         TileEntity te = event.energyTile;
 
         if (te.getWorldObj().isRemote) {
-            System.out.println("Client tileentity " + te + " is requesting, aborting");
+            System.out.println("Client tileentity " + te + " is requesting, abort!");
             return;
         }
 
-        EnergyNet.getForWorld(te.getWorldObj()).rejoinTileEntity(te);
-
-        System.out.println("Tileentity " + te + " is rejoined from the energy network!");
+        WorldData.getEnergyNetForWorld(te.getWorldObj()).rejoinTileEntity(te);
+        
+        if (ConfigManager.showEnergyNetInfo)
+        	System.out.println("Tileentity " + te + " has rejoined the energy network!");
     }
 
     @SubscribeEvent
@@ -124,8 +127,9 @@ public class EnergyNetEventHandler {
             return;
         }
 
-        EnergyNet.getForWorld(te.getWorldObj()).markForUpdate(te);
+        WorldData.getEnergyNetForWorld(te.getWorldObj()).markForUpdate(te);
 
-        System.out.println("Tileentity " + te + " cause the energy network to update!");
+        if (ConfigManager.showEnergyNetInfo)
+        	System.out.println("Tileentity " + te + " causes the energy network to update!");
     }
 }

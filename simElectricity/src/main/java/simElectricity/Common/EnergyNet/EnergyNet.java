@@ -31,13 +31,11 @@ import simElectricity.Common.ConfigManager;
 import java.util.*;
 
 public final class EnergyNet {
-    // private WeightedMultigraph<IBaseComponent, Resistor> tileEntityGraph =
-    // new WeightedMultigraph<IBaseComponent, Resistor>(Resistor.class);
+    //Represents the relationship between components
     private BakaGraph tileEntityGraph = new BakaGraph();
-    public Map<IBaseComponent, Float> voltageCache = new HashMap<IBaseComponent, Float>();
-    /**
-     * A flag for recalculate the energynet
-     */
+    //A map for storing voltage value of nodes, be private to avoid cheating 0w0
+    private Map<IBaseComponent, Float> voltageCache = new HashMap<IBaseComponent, Float>();
+    //A flag for energyNet updating
     private boolean calc = false;
 
     //Optimization--------------------------------------------------------------------
@@ -243,7 +241,7 @@ public final class EnergyNet {
      * Called in each tick to attempt to do calculation
      */
     public static void onTick(World world) {
-        EnergyNet energyNet = getForWorld(world);
+        EnergyNet energyNet = WorldData.getEnergyNetForWorld(world);
         //energyNet.calc = true;
         if (energyNet.calc) {
             energyNet.calc = false;
@@ -252,6 +250,7 @@ public final class EnergyNet {
             //Check power distribution
             try {
                 for (IBaseComponent tile : energyNet.tileEntityGraph.vertexSet()) {
+                	//Call onEnergyNetUpdate()
                 	if (tile instanceof ITransformerWinding){
                 		if (((ITransformerWinding) tile).getCore()  instanceof IEnergyNetUpdateHandler)
                 			((IEnergyNetUpdateHandler) ((ITransformerWinding) tile).getCore()).onEnergyNetUpdate();
@@ -259,6 +258,8 @@ public final class EnergyNet {
                     if (tile instanceof IEnergyNetUpdateHandler) {
                         ((IEnergyNetUpdateHandler) tile).onEnergyNetUpdate();
                     }
+                    
+                    //Call overVoltage()
                 }
             } catch (Exception ignored) {
             }
@@ -409,17 +410,20 @@ public final class EnergyNet {
     }
 
     /**
-     * Return a instance of energynet for a specific world
-     */
-    public static EnergyNet getForWorld(World world) {
-        WorldData worldData = WorldData.get(world);
-        return worldData.energyNet;
-    }
-
-    /**
      * Creation of the energy network
      */
-    public EnergyNet() {
-        System.out.println("EnergyNet create");
+    public EnergyNet(World world) {
+        System.out.println("EnergyNet has been created for DIM"+String.valueOf(world.provider.dimensionId));
+    }
+    
+    /**
+     * Calculate the voltage of a given EnergyTile RELATIVE TO GROUND!
+     */
+    public static float getVoltage(IBaseComponent Tile, World world) {
+    	EnergyNet energyNet = WorldData.getEnergyNetForWorld(world);
+        if (energyNet.voltageCache.containsKey(Tile))
+            return energyNet.voltageCache.get(Tile);
+        else
+            return 0;
     }
 }

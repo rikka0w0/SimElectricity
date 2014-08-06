@@ -28,9 +28,14 @@ public class WorldData {
     @SuppressWarnings("unchecked")
     public static Map<World, WorldData> mapping = new WeakHashMap();
 
-    public EnergyNet energyNet = new EnergyNet();
+    public EnergyNet energyNet;
 
-    public static WorldData get(World world) {
+    /**
+     * Return the instance of energyNet for a specific world
+     * <p/>
+     * If target not exist, it will automatically be created
+     */
+    public static EnergyNet getEnergyNetForWorld(World world) {
         if (world == null)
             throw new IllegalArgumentException("world is null");
 
@@ -38,10 +43,11 @@ public class WorldData {
 
         if (ret == null) {
             ret = new WorldData();
+            ret.energyNet = new EnergyNet(world);
             mapping.put(world, ret);
         }
 
-        return ret;
+        return ret.energyNet;
     }
 
     public static void onWorldUnload(World world) {

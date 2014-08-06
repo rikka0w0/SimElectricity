@@ -75,11 +75,11 @@ public class TileRegulator extends TileEntitySE implements ITransformer, IEnergy
     float aError = 0;
 	@Override
 	public void onEnergyNetUpdate() {
-		double p = 0.01, i = 0.0000001;
+		double p = 0.02, i = 0.0000001;
 		double vo = Energy.getVoltage(secondary);
 		double error = outputVoltage - vo;
 		if (Math.abs(error) > 1 && 1< Energy.getVoltage(primary)){
-			ratio -= -p * error;
+			ratio += p * error;
 			ratio += i * aError;
 			aError += error;
 			Energy.postTileChangeEvent(this);
