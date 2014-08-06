@@ -9,6 +9,31 @@ import net.minecraft.tileentity.TileEntity;
 
 public abstract class TileEntitySE extends TileEntity{
     protected boolean isAddedToEnergyNet;
+    protected short overVoltageTick = -1;
+    
+    /**
+     * Continuous over voltage occurs! Oops! Do explosions here! Override this when necessary 0w0
+     */
+    public void onOverVoltage(){}
+    
+    /**
+     * The maximum allowed ticks for continuous over voltage
+     * @return
+     */
+    public int getMaxOverVoltageTick(){return 10;}
+    
+    /**
+     * Check the input voltage
+     * @param voltage The voltage supplied into this machine
+     */
+    public void checkVoltage(float voltage,float maxVoltage){
+        if (voltage > maxVoltage){
+        	if (overVoltageTick == -1)
+        		overVoltageTick = 0;
+        }else{
+        	overVoltageTick = -1;
+        }
+    }
     
     /**
      * Called just before joining the energyNet, do some initialization here
@@ -31,11 +56,25 @@ public abstract class TileEntitySE extends TileEntity{
 	@Override
     public void updateEntity() {
         super.updateEntity();
-        if (!worldObj.isRemote && !isAddedToEnergyNet && attachToEnergyNet()) {
+        
+        //No client side operation
+        if (worldObj.isRemote)
+        	return;
+        	
+        if (!isAddedToEnergyNet && attachToEnergyNet()) {
             onLoad();
             Energy.postTileAttachEvent(this);
             this.isAddedToEnergyNet = true;
         }
+        
+    	//Find out continuous over voltage
+    	if (overVoltageTick != -1){
+    		overVoltageTick++;
+    		if (overVoltageTick>getMaxOverVoltageTick()){
+    			overVoltageTick = -1;
+    			onOverVoltage();
+    		}
+    	} 	
     }
 
     @Override

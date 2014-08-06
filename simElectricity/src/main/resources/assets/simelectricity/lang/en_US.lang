@@ -17,6 +17,7 @@ tile.sime:BatteryBox.name=BatteryBox
 tile.sime:IncandescentLamp.name=Incandescent Lamp (5w)
 tile.sime:Switch.name=Switch
 tile.sime:Tower.name=Tower
+tile.sime:SolarInverter.name=Solar Inverter (Regulated)
 
 # Items
 item.sime:UltimateMultimeter.name=Ultimate Multimeter

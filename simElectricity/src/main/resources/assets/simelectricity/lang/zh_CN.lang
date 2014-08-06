@@ -16,6 +16,7 @@ tile.sime:WindMillTop.name=风力发电机
 tile.sime:BatteryBox.name=电池箱
 tile.sime:IncandescentLamp.name=节能灯 (5w)
 tile.sime:Switch.name=空气开关
+tile.sime:SolarInverter.name=太阳能专用稳压逆变器
 
 # Items
 item.sime:UltimateMultimeter.name=高级万用表

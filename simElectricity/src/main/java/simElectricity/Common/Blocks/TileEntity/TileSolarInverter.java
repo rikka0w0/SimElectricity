@@ -1,14 +1,16 @@
 package simElectricity.Common.Blocks.TileEntity;
 
+import java.util.List;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.Common.TileEntitySE;
 import simElectricity.API.Energy;
+import simElectricity.API.INetworkEventHandler;
 import simElectricity.API.EnergyTile.ITransformer;
 import simElectricity.API.IEnergyNetUpdateHandler;
-import simElectricity.Common.SEUtils;
 
-public class TileSolarInverter extends TileEntitySE implements ITransformer, IEnergyNetUpdateHandler{
+public class TileSolarInverter extends TileEntitySE implements ITransformer, IEnergyNetUpdateHandler, INetworkEventHandler{
     public ForgeDirection inputSide = ForgeDirection.NORTH, outputSide = ForgeDirection.SOUTH;
 
     public Primary primary = new ITransformer.Primary(this);
@@ -25,6 +27,7 @@ public class TileSolarInverter extends TileEntitySE implements ITransformer, IEn
         outputResistance = tagCompound.getFloat("outputResistance");
         inputSide = ForgeDirection.getOrientation(tagCompound.getByte("inputSide"));
         outputSide = ForgeDirection.getOrientation(tagCompound.getByte("outputSide"));
+        outputVoltage = tagCompound.getFloat("outputVoltage");
     }
 
     @Override
@@ -35,6 +38,7 @@ public class TileSolarInverter extends TileEntitySE implements ITransformer, IEn
         tagCompound.setFloat("outputResistance", outputResistance);
         tagCompound.setByte("inputSide", (byte) inputSide.ordinal());
         tagCompound.setByte("outputSide", (byte) outputSide.ordinal());
+        tagCompound.setFloat("outputVoltage", outputVoltage);
     }
 
 	@Override
@@ -72,11 +76,17 @@ public class TileSolarInverter extends TileEntitySE implements ITransformer, IEn
         return secondary;
     }
 
-
-    float aError = 0;
+    @Override
+    public void onOverVoltage(){
+    	worldObj.createExplosion(null, xCoord, yCoord, zCoord, 4F + Energy.getVoltage(primary) / 60, true);
+    }
+    
+    private float aError = 0;                       //PI accumulated error
+    private static float p = 0.04F, i = 0.0000001F; //PI controller parameters
 	@Override
 	public void onEnergyNetUpdate() {
-		double p = 0.04, i = 0.0000001;
+		checkVoltage(Energy.getVoltage(primary), 60);
+		
 		double vo = Energy.getVoltage(secondary);
 		double error = outputVoltage - vo;
 		boolean needUpdate = false;
@@ -105,9 +115,28 @@ public class TileSolarInverter extends TileEntitySE implements ITransformer, IEn
 		
 		if (needUpdate)
 			Energy.postTileChangeEvent(this);
+	}
 
+	@Override
+	public void onFieldUpdate(String[] fields, Object[] values) {
+		//Handling on server side
+		if (!worldObj.isRemote){
+			for (String s:fields){
+		        if (s.contains("inputSide") || s.contains("outputSide")) {
+		            Energy.postTileRejoinEvent(this);
+		            worldObj.notifyBlockChange(xCoord, yCoord, zCoord, 
+		            		worldObj.getBlock(xCoord, yCoord, zCoord));
+		        } else if (s.contains("outputResistance") || s.contains("outputVoltage")) {
+		            Energy.postTileChangeEvent(this);
+		        }				
+			}
+
+		}		
+	}
+
+	@Override
+	public void addNetworkFields(List fields) {
 		
-		SEUtils.logInfo(String.valueOf(vo)+":"+String.valueOf(ratio));
 	}
 
 }

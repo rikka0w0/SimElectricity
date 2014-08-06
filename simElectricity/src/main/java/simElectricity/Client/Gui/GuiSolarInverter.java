@@ -29,12 +29,12 @@ import net.minecraft.util.StatCollector;
 import net.minecraftforge.common.util.ForgeDirection;
 import org.lwjgl.opengl.GL11;
 import simElectricity.API.Network;
-import simElectricity.Common.Blocks.Container.ContainerAdjustableTransformer;
-import simElectricity.Common.Blocks.TileEntity.TileAdjustableTransformer;
+import simElectricity.Common.Blocks.Container.ContainerSolarInverter;
+import simElectricity.Common.Blocks.TileEntity.TileSolarInverter;
 
 
-public class GuiAdjustableTransformer extends GuiContainer {
-    protected TileAdjustableTransformer te;
+public class GuiSolarInverter extends GuiContainer {
+    protected TileSolarInverter te;
 
     @Override
     public void initGui() {
@@ -83,27 +83,27 @@ public class GuiAdjustableTransformer extends GuiContainer {
 
             case 4:
                 if (GuiScreen.isCtrlKeyDown())
-                    te.ratio -= 100;
+                    te.outputVoltage -= 100;
                 else
-                    te.ratio -= 10;
+                    te.outputVoltage -= 10;
                 break;
             case 5:
                 if (GuiScreen.isCtrlKeyDown())
-                    te.ratio -= 0.1;
+                    te.outputVoltage -= 0.1;
                 else
-                    te.ratio -= 1;
+                    te.outputVoltage -= 1;
                 break;
             case 6:
                 if (GuiScreen.isCtrlKeyDown())
-                    te.ratio += 0.1;
+                    te.outputVoltage += 0.1;
                 else
-                    te.ratio += 1;
+                    te.outputVoltage += 1;
                 break;
             case 7:
                 if (GuiScreen.isCtrlKeyDown())
-                    te.ratio += 100;
+                    te.outputVoltage += 100;
                 else
-                    te.ratio += 10;
+                    te.outputVoltage += 10;
                 break;
 
             default:
@@ -116,12 +116,12 @@ public class GuiAdjustableTransformer extends GuiContainer {
         if (button.id < 4)
             Network.updateTileEntityFieldToServer(te, "outputResistance");
 
-        if (te.ratio < 0.1)
-            te.ratio = 0.1F;
-        if (te.ratio > 1000)
-            te.ratio = 1000;
+        if (te.outputVoltage < 200)
+            te.outputVoltage = 200;
+        if (te.outputVoltage > 240)
+            te.outputVoltage = 240;
         if (button.id < 8 && button.id > 3)
-            Network.updateTileEntityFieldToServer(te, "ratio");
+            Network.updateTileEntityFieldToServer(te, "outputVoltage");
 
     }
 
@@ -153,23 +153,23 @@ public class GuiAdjustableTransformer extends GuiContainer {
 
         if (button == 0) {        //Left key
             if (te.getSecondarySide() == selectedDirection)
-                te.secondarySide = te.primarySide;
+                te.outputSide = te.inputSide;
 
-            te.primarySide = selectedDirection;
+            te.inputSide = selectedDirection;
         } else if (button == 1) { //Right key
             if (te.getPrimarySide() == selectedDirection)
-                te.primarySide = te.secondarySide;
+                te.inputSide = te.outputSide;
 
-            te.secondarySide = selectedDirection;
+            te.outputSide = selectedDirection;
         }
 
-        Network.updateTileEntityFieldToServer(te, "primarySide");
-        Network.updateTileEntityFieldToServer(te, "secondarySide");
+        Network.updateTileEntityFieldToServer(te, "inputSide");
+        Network.updateTileEntityFieldToServer(te, "outputSide");
     }
 
-    public GuiAdjustableTransformer(InventoryPlayer inventoryPlayer, TileEntity tileEntity) {
-        super(new ContainerAdjustableTransformer(inventoryPlayer, tileEntity));
-        te = (TileAdjustableTransformer) tileEntity;
+    public GuiSolarInverter(InventoryPlayer inventoryPlayer, TileEntity tileEntity) {
+        super(new ContainerSolarInverter(inventoryPlayer, tileEntity));
+        te =(TileSolarInverter) tileEntity;
     }
 
     @Override
@@ -177,11 +177,11 @@ public class GuiAdjustableTransformer extends GuiContainer {
         //draw text and stuff here
         //the parameters for drawString are: string, x, y, color
 
-        fontRendererObj.drawString(StatCollector.translateToLocal("tile.sime:AdjustableTransformer.name"), 8, 6, 4210752);
+        fontRendererObj.drawString(StatCollector.translateToLocal("tile.sime:SolarInverter.name"), 8, 6, 4210752);
 
-        fontRendererObj.drawString("1:" + String.format("%.1f", te.ratio), 32, 26, 4210752);
+        fontRendererObj.drawString("Vo: " + String.format("%.1f", te.outputVoltage) + "V", 32, 26, 4210752);
 
-        fontRendererObj.drawString(String.format("%.3f", te.outputResistance) + " \u03a9", 32, 42, 4210752);
+        fontRendererObj.drawString("Ro: " + String.format("%.3f", te.outputResistance) + " \u03a9", 32, 42, 4210752);
 
         //draws "Inventory" or your regional equivalent
         fontRendererObj.drawString(StatCollector.translateToLocal("container.inventory"), 8, ySize - 96, 4210752);
@@ -191,7 +191,7 @@ public class GuiAdjustableTransformer extends GuiContainer {
     protected void drawGuiContainerBackgroundLayer(float opacity, int par2, int par3) {
         //draw your Gui here, only thing you need to change is the path
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        mc.renderEngine.bindTexture(new ResourceLocation("simElectricity:textures/gui/GUI_AdjustableTransformer.png"));
+        mc.renderEngine.bindTexture(new ResourceLocation("simElectricity:textures/gui/GUI_SolarInverter.png"));
         int x = (width - xSize) / 2;
         int y = (height - ySize) / 2;
         this.drawTexturedModalRect(x, y, 0, 0, xSize, ySize);
