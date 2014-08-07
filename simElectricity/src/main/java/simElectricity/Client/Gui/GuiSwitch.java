@@ -19,6 +19,8 @@
 
 package simElectricity.Client.Gui;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
@@ -28,12 +30,11 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
 import net.minecraftforge.common.util.ForgeDirection;
 import org.lwjgl.opengl.GL11;
-
 import simElectricity.API.Network;
 import simElectricity.Common.Blocks.Container.ContainerSwitch;
 import simElectricity.Common.Blocks.TileEntity.TileSwitch;
 
-
+@SideOnly(Side.CLIENT)
 public class GuiSwitch extends GuiContainer {
     protected TileSwitch te;
 
@@ -114,14 +115,14 @@ public class GuiSwitch extends GuiContainer {
         if (te.resistance > 100)
             te.resistance = 100;
         if (button.id < 4)
-        	Network.updateTileEntityFieldToServer(te, "resistance");
+            Network.updateTileEntityFieldToServer(te, "resistance");
 
         if (te.maxCurrent < 0.1)
             te.maxCurrent = 0.1F;
         if (te.maxCurrent > 1000)
             te.maxCurrent = 1000;
         if (button.id < 8 && button.id > 3)
-        	Network.updateTileEntityFieldToServer(te, "maxCurrent");
+            Network.updateTileEntityFieldToServer(te, "maxCurrent");
 
     }
 
@@ -171,6 +172,7 @@ public class GuiSwitch extends GuiContainer {
 
         Network.updateTileEntityFieldToServer(te, "inputSide");
         Network.updateTileEntityFieldToServer(te, "outputSide");
+        te.getWorldObj().markBlockForUpdate(te.xCoord, te.yCoord, te.zCoord);
     }
 
     public GuiSwitch(InventoryPlayer inventoryPlayer, TileEntity tileEntity) {

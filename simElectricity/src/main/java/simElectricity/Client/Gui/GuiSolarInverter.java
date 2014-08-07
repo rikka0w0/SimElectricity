@@ -19,6 +19,8 @@
 
 package simElectricity.Client.Gui;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
@@ -32,7 +34,7 @@ import simElectricity.API.Network;
 import simElectricity.Common.Blocks.Container.ContainerSolarInverter;
 import simElectricity.Common.Blocks.TileEntity.TileSolarInverter;
 
-
+@SideOnly(Side.CLIENT)
 public class GuiSolarInverter extends GuiContainer {
     protected TileSolarInverter te;
 
@@ -165,11 +167,12 @@ public class GuiSolarInverter extends GuiContainer {
 
         Network.updateTileEntityFieldToServer(te, "inputSide");
         Network.updateTileEntityFieldToServer(te, "outputSide");
+        te.getWorldObj().markBlockForUpdate(te.xCoord, te.yCoord, te.zCoord);
     }
 
     public GuiSolarInverter(InventoryPlayer inventoryPlayer, TileEntity tileEntity) {
         super(new ContainerSolarInverter(inventoryPlayer, tileEntity));
-        te =(TileSolarInverter) tileEntity;
+        te = (TileSolarInverter) tileEntity;
     }
 
     @Override

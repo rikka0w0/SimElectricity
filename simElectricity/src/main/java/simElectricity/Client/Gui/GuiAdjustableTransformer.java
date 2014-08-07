@@ -32,7 +32,6 @@ import simElectricity.API.Network;
 import simElectricity.Common.Blocks.Container.ContainerAdjustableTransformer;
 import simElectricity.Common.Blocks.TileEntity.TileAdjustableTransformer;
 
-
 public class GuiAdjustableTransformer extends GuiContainer {
     protected TileAdjustableTransformer te;
 
@@ -165,6 +164,7 @@ public class GuiAdjustableTransformer extends GuiContainer {
 
         Network.updateTileEntityFieldToServer(te, "primarySide");
         Network.updateTileEntityFieldToServer(te, "secondarySide");
+        te.getWorldObj().markBlockForUpdate(te.xCoord, te.yCoord, te.zCoord);
     }
 
     public GuiAdjustableTransformer(InventoryPlayer inventoryPlayer, TileEntity tileEntity) {

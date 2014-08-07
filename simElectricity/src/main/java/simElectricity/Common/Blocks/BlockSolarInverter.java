@@ -21,7 +21,6 @@ package simElectricity.Common.Blocks;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -30,10 +29,10 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import simElectricity.SimElectricity;
 import simElectricity.API.Common.Blocks.BlockContainerSE;
 import simElectricity.API.Util;
 import simElectricity.Common.Blocks.TileEntity.TileSolarInverter;
+import simElectricity.SimElectricity;
 
 public class BlockSolarInverter extends BlockContainerSE {
     private IIcon[] iconBuffer = new IIcon[3];
@@ -48,11 +47,8 @@ public class BlockSolarInverter extends BlockContainerSE {
     }
 
     public BlockSolarInverter() {
-        super(Material.iron);
-        setHardness(2.0F);
-        setResistance(5.0F);
+        super();
         setBlockName("SolarInverter");
-        setCreativeTab(Util.SETab);
     }
 
     @Override
@@ -66,7 +62,7 @@ public class BlockSolarInverter extends BlockContainerSE {
     @SideOnly(Side.CLIENT)
     @Override
     public IIcon getIcon(IBlockAccess world, int x, int y, int z, int side) {
-    	TileSolarInverter te = (TileSolarInverter) world.getTileEntity(x, y, z);
+        TileSolarInverter te = (TileSolarInverter) world.getTileEntity(x, y, z);
 
 
         if (side == te.inputSide.ordinal())

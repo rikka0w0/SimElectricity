@@ -19,6 +19,8 @@
 
 package simElectricity.Client.Gui;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.ResourceLocation;
@@ -27,6 +29,7 @@ import org.lwjgl.opengl.GL11;
 import simElectricity.Common.Blocks.Container.ContainerElectricFurnace;
 import simElectricity.Common.Blocks.TileEntity.TileElectricFurnace;
 
+@SideOnly(Side.CLIENT)
 public class GuiElectricFurnace extends GuiContainer {
     protected TileElectricFurnace tileentity;
 

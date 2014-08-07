@@ -21,7 +21,6 @@ package simElectricity.Common.Blocks;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -62,9 +61,7 @@ public class BlockSwitch extends BlockContainerSE {
     }
 
     public BlockSwitch() {
-        super(Material.iron);
-        setHardness(2.0F);
-        setResistance(5.0F);
+        super();
         setBlockName("Switch");
     }
 
@@ -113,10 +110,10 @@ public class BlockSwitch extends BlockContainerSE {
         te.setFacing(Util.getPlayerSight(player, false).getOpposite());
 
         te.inputSide = AutoFacing.autoConnect(te, ForgeDirection.UP, te.getFacing());
-        te.outputSide = AutoFacing.autoConnect(te, te.inputSide.getOpposite(), new ForgeDirection[] { te.getFacing(),te.inputSide  });
-    
+        te.outputSide = AutoFacing.autoConnect(te, te.inputSide.getOpposite(), new ForgeDirection[] { te.getFacing(), te.inputSide });
+
         if (te.outputSide == te.getFacing())
-        	te.outputSide = te.outputSide.getRotation(ForgeDirection.UP);
+            te.outputSide = te.outputSide.getRotation(ForgeDirection.UP);
     }
 
     @Override

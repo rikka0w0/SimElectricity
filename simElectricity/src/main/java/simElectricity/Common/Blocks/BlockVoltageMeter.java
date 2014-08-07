@@ -45,8 +45,6 @@ public class BlockVoltageMeter extends BlockStandardSEMachine {
 
     public BlockVoltageMeter() {
         super();
-        setHardness(2.0F);
-        setResistance(5.0F);
         setBlockName("VoltageMeter");
     }
 
@@ -66,20 +64,20 @@ public class BlockVoltageMeter extends BlockStandardSEMachine {
 
         if (!(te instanceof TileVoltageMeter))
             return iconBuffer[0];
-        
-        if (((TileVoltageMeter)te).getFacing().ordinal() == side)
-        	return iconBuffer[1];
-        else if (((TileVoltageMeter)te).getFunctionalSide().ordinal() == side)
-    		return iconBuffer[2];
-        
+
+        if (((TileVoltageMeter) te).getFacing().ordinal() == side)
+            return iconBuffer[1];
+        else if (((TileVoltageMeter) te).getFunctionalSide().ordinal() == side)
+            return iconBuffer[2];
+
         return iconBuffer[0];
     }
 
     @SideOnly(Side.CLIENT)
     @Override
     public IIcon getIcon(int side, int meta) {
-    	if (side == 4)
-    		return iconBuffer[1];
+        if (side == 4)
+            return iconBuffer[1];
         return iconBuffer[0];
     }
 

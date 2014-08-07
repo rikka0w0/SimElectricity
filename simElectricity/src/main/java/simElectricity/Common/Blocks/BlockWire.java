@@ -40,8 +40,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.Common.Blocks.BlockContainerSE;
 import simElectricity.API.Energy;
-import simElectricity.API.Network;
 import simElectricity.API.EnergyTile.IConductor;
+import simElectricity.API.Network;
 import simElectricity.Common.Blocks.TileEntity.TileWire;
 import simElectricity.Common.Items.ItemBlocks.ItemBlockWire;
 
@@ -61,7 +61,6 @@ public class BlockWire extends BlockContainerSE {
     public BlockWire() {
         super(Material.circuits);
         setHardness(0.2F);
-        setResistance(5.0F);
         setBlockName("Wire");
     }
 
@@ -95,8 +94,8 @@ public class BlockWire extends BlockContainerSE {
     @Override
     public void onNeighborBlockChange(World world, int x, int y, int z, Block block) {
         if (!world.isRemote) {
-        	TileWire te = (TileWire) world.getTileEntity(x, y, z);
-        	te.needsUpdate = true;
+            TileWire te = (TileWire) world.getTileEntity(x, y, z);
+            te.needsUpdate = true;
         }
     }
 
@@ -116,7 +115,7 @@ public class BlockWire extends BlockContainerSE {
 
     void updateRenderSides(TileEntity te) {
         if (te instanceof IConductor) {
-        	Network.updateNetworkFields(te);
+            Network.updateNetworkFields(te);
         }
     }
 
@@ -291,7 +290,7 @@ public class BlockWire extends BlockContainerSE {
     }
 
     @Override
-    @SuppressWarnings( { "rawtypes", "unchecked" })
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     @SideOnly(Side.CLIENT)
     public void getSubBlocks(Item par1, CreativeTabs par2CreativeTabs, List subItems) {
         for (int ix = 0; ix < subNames.length; ix++) {

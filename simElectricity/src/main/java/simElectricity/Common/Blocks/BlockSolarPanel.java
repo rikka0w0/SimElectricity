@@ -40,8 +40,6 @@ public class BlockSolarPanel extends BlockStandardGenerator {
 
     public BlockSolarPanel() {
         super();
-        setHardness(2.0F);
-        setResistance(5.0F);
         setBlockName("SolarPanel");
     }
 

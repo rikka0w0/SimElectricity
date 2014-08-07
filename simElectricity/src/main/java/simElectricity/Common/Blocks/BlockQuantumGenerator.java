@@ -48,8 +48,6 @@ public class BlockQuantumGenerator extends BlockStandardGenerator {
 
     public BlockQuantumGenerator() {
         super();
-        setHardness(2.0F);
-        setResistance(5.0F);
         setBlockName("QuantumGenerator");
     }
 

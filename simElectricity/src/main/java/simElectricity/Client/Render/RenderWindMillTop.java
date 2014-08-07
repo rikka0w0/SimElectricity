@@ -19,6 +19,8 @@
 
 package simElectricity.Client.Render;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
@@ -29,7 +31,7 @@ import net.minecraft.world.World;
 import org.lwjgl.opengl.GL11;
 import simElectricity.Common.Blocks.WindMill.TileWindMillTop;
 
-
+@SideOnly(Side.CLIENT)
 public class RenderWindMillTop extends TileEntitySpecialRenderer {
     public TileWindMillTop te;
 

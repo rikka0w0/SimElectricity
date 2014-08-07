@@ -20,7 +20,6 @@
 package simElectricity.Common.Blocks;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -35,9 +34,7 @@ public class BlockTower extends BlockContainerSE {
 
 
     public BlockTower() {
-        super(Material.iron);
-        setHardness(2.0F);
-        setResistance(5.0F);
+        super();
         setBlockName("Tower");
     }
 

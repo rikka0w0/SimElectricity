@@ -54,8 +54,6 @@ public class BlockElectricFurnace extends BlockStandardSEMachine {
 
     public BlockElectricFurnace() {
         super();
-        setHardness(2.0F);
-        setResistance(5.0F);
         setBlockName("ElectricFurnace");
     }
 

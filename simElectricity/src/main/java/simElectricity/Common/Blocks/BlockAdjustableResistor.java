@@ -48,8 +48,6 @@ public class BlockAdjustableResistor extends BlockStandardSEMachine {
 
     public BlockAdjustableResistor() {
         super();
-        setHardness(2.0F);
-        setResistance(5.0F);
         setBlockName("AdjustableResistor");
     }
 

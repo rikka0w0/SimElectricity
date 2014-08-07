@@ -34,8 +34,6 @@ public class BlockIncandescentLamp extends BlockStandardSEMachine {
 
     public BlockIncandescentLamp() {
         super();
-        setHardness(2.0F);
-        setResistance(5.0F);
         setBlockName("IncandescentLamp");
     }
 

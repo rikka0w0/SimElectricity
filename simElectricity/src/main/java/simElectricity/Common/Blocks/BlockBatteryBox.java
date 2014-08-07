@@ -36,8 +36,6 @@ public class BlockBatteryBox extends BlockStandardGenerator {
 
     public BlockBatteryBox() {
         super();
-        setHardness(2.0F);
-        setResistance(5.0F);
         setBlockName("BatteryBox");
     }
 

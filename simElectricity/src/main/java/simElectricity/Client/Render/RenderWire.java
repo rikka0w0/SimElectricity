@@ -19,6 +19,8 @@
 
 package simElectricity.Client.Render;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
@@ -30,6 +32,7 @@ import org.lwjgl.opengl.GL12;
 import simElectricity.Common.Blocks.BlockWire;
 import simElectricity.Common.Blocks.TileEntity.TileWire;
 
+@SideOnly(Side.CLIENT)
 public class RenderWire extends TileEntitySpecialRenderer {
     public float WIDTH = 0.2F;
     public String textureString = "";

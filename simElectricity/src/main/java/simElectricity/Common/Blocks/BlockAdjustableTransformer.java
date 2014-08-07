@@ -21,7 +21,6 @@ package simElectricity.Common.Blocks;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -48,11 +47,8 @@ public class BlockAdjustableTransformer extends BlockContainerSE {
     }
 
     public BlockAdjustableTransformer() {
-        super(Material.iron);
-        setHardness(2.0F);
-        setResistance(5.0F);
+        super();
         setBlockName("AdjustableTransformer");
-        setCreativeTab(Util.SETab);
     }
 
     @Override

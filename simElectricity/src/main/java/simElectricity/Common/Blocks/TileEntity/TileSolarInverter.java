@@ -1,14 +1,14 @@
 package simElectricity.Common.Blocks.TileEntity;
 
-import java.util.List;
-
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.Common.TileEntitySE;
 import simElectricity.API.Energy;
-import simElectricity.API.INetworkEventHandler;
 import simElectricity.API.EnergyTile.ITransformer;
 import simElectricity.API.IEnergyNetUpdateHandler;
+import simElectricity.API.INetworkEventHandler;
+
+import java.util.List;
 
 public class TileSolarInverter extends TileEntitySE implements ITransformer, IEnergyNetUpdateHandler, INetworkEventHandler{
     public ForgeDirection inputSide = ForgeDirection.NORTH, outputSide = ForgeDirection.SOUTH;
@@ -80,13 +80,13 @@ public class TileSolarInverter extends TileEntitySE implements ITransformer, IEn
     public void onOverVoltage(){
     	worldObj.createExplosion(null, xCoord, yCoord, zCoord, 4F + Energy.getVoltage(primary) / 60, true);
     }
-    
+
     private float aError = 0;                       //PI accumulated error
     private static float p = 0.04F, i = 0.0000001F; //PI controller parameters
 	@Override
 	public void onEnergyNetUpdate() {
 		checkVoltage(Energy.getVoltage(primary), 60);
-		
+
 		double vo = Energy.getVoltage(secondary);
 		double error = outputVoltage - vo;
 		boolean needUpdate = false;
@@ -102,7 +102,7 @@ public class TileSolarInverter extends TileEntitySE implements ITransformer, IEn
 		if (Energy.getVoltage(primary) == 0){
 			ratio = 1;
 		}
-		
+
 		if (ratio >30){
 			needUpdate = false;
 			ratio =30;
@@ -112,7 +112,7 @@ public class TileSolarInverter extends TileEntitySE implements ITransformer, IEn
 			needUpdate = false;
 			ratio = 0.00001F;
 		}
-		
+
 		if (needUpdate)
 			Energy.postTileChangeEvent(this);
 	}
@@ -124,19 +124,18 @@ public class TileSolarInverter extends TileEntitySE implements ITransformer, IEn
 			for (String s:fields){
 		        if (s.contains("inputSide") || s.contains("outputSide")) {
 		            Energy.postTileRejoinEvent(this);
-		            worldObj.notifyBlockChange(xCoord, yCoord, zCoord, 
+		            worldObj.notifyBlockChange(xCoord, yCoord, zCoord,
 		            		worldObj.getBlock(xCoord, yCoord, zCoord));
 		        } else if (s.contains("outputResistance") || s.contains("outputVoltage")) {
 		            Energy.postTileChangeEvent(this);
-		        }				
+		        }
 			}
 
-		}		
+		}
 	}
 
 	@Override
 	public void addNetworkFields(List fields) {
-		
 	}
 
 }

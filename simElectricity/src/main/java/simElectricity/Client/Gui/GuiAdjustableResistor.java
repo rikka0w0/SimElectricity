@@ -19,6 +19,8 @@
 
 package simElectricity.Client.Gui;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
@@ -27,12 +29,11 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
 import org.lwjgl.opengl.GL11;
-
 import simElectricity.API.Network;
 import simElectricity.Common.Blocks.Container.ContainerQuantumGenerator;
 import simElectricity.Common.Blocks.TileEntity.TileAdjustableResistor;
 
-
+@SideOnly(Side.CLIENT)
 public class GuiAdjustableResistor extends GuiContainer {
     protected TileAdjustableResistor te;
 
@@ -84,7 +85,7 @@ public class GuiAdjustableResistor extends GuiContainer {
         if (te.resistance > 10000)
             te.resistance = 10000;
         if (button.id < 4)
-        	Network.updateTileEntityFieldToServer(te, "resistance");
+            Network.updateTileEntityFieldToServer(te, "resistance");
     }
 
     public GuiAdjustableResistor(InventoryPlayer inventoryPlayer, TileEntity tileEntity) {

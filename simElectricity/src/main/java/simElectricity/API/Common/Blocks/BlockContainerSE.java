@@ -44,6 +44,12 @@ public abstract class BlockContainerSE extends BlockContainer {
         super(material);
         if (registerInCreativeTab())
             setCreativeTab(Util.SETab);
+        setHardness(2.0F);
+        setResistance(5.0F);
+    }
+
+    public BlockContainerSE() {
+        this(Material.iron);
     }
 
     @Override
