@@ -25,7 +25,7 @@ import simElectricity.API.Common.TileSidedFacingMachine;
 
 import java.util.Random;
 
-public class TileWindMillTop extends TileSidedFacingMachine{
+public class TileWindMillTop extends TileSidedFacingMachine {
     public int randAngle = (new Random()).nextInt(180);
     public boolean settled, initialized;
 
@@ -59,8 +59,8 @@ public class TileWindMillTop extends TileSidedFacingMachine{
         return 0;
     }
 
-	@Override
-	public boolean attachToEnergyNet() {
-		return false;
-	}
+    @Override
+    public boolean attachToEnergyNet() {
+        return false;
+    }
 }

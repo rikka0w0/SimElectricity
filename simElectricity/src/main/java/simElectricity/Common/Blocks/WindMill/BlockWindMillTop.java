@@ -123,7 +123,7 @@ public class BlockWindMillTop extends BlockContainerSE {
     public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase player, ItemStack itemStack) {
         TileEntity te = world.getTileEntity(x, y, z);
 
-        ((ISidedFacing) te).setFacing(Util.getPlayerSight(player, false).getOpposite());
+        ((ISidedFacing) te).setFacing(Util.getPlayerSight(player, true).getOpposite());
     }
 
     @Override
