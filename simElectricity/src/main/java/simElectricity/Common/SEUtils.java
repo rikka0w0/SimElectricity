@@ -22,6 +22,8 @@ package simElectricity.Common;
 import cpw.mods.fml.common.FMLLog;
 import org.apache.logging.log4j.Level;
 
+import simElectricity.API.Util;
+
 /**
  * Created by <Meow J> on 8/6/2014.
  *
@@ -29,23 +31,22 @@ import org.apache.logging.log4j.Level;
  */
 public class SEUtils {
 
-    public static final String MODID = "SimElectricity";
-    public static final String NAME = "SimElectricity";
+
 
 
     public static void logInfo(Object object) {
-        FMLLog.log(NAME, Level.INFO, "[SimElectricity] " + String.valueOf(object));
+        FMLLog.log(Util.NAME, Level.INFO, "[SimElectricity] " + String.valueOf(object));
     }
 
     public static void logWarn(Object object) {
-        FMLLog.log(NAME, Level.WARN, "[SimElectricity] " + String.valueOf(object));
+        FMLLog.log(Util.NAME, Level.WARN, "[SimElectricity] " + String.valueOf(object));
     }
 
     public static void logError(Object object) {
-        FMLLog.log(NAME, Level.ERROR, "[SimElectricity] " + String.valueOf(object));
+        FMLLog.log(Util.NAME, Level.ERROR, "[SimElectricity] " + String.valueOf(object));
     }
 
     public static void logFatal(Object object) {
-        FMLLog.log(NAME, Level.FATAL, "[SimElectricity] " + String.valueOf(object));
+        FMLLog.log(Util.NAME, Level.FATAL, "[SimElectricity] " + String.valueOf(object));
     }
 }

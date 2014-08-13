@@ -33,16 +33,18 @@ import simElectricity.API.EnergyTile.IConductor;
 import simElectricity.API.EnergyTile.IConnectable;
 import simElectricity.API.EnergyTile.IEnergyTile;
 import simElectricity.API.EnergyTile.ITransformer;
-import simElectricity.Common.SEUtils;
 
 public class Util {
-
+    public static final String MODID = "SimElectricity";
+    public static final String NAME = "SimElectricity";
+    
+    public static boolean isSELoaded = false;;
+    
     /**
      * Creative Tab for SimElectricity project
      */
     public static CreativeTabs SETab;
-
-
+    
     /**
      * Post some text in chat box. (Other player cannot see it)
      */
@@ -168,7 +170,7 @@ public class Util {
      * @return The block or null if not found
      */
     public static Block getBlock(String name) {
-        return GameRegistry.findBlock(SEUtils.MODID, name);
+        return GameRegistry.findBlock(MODID, name);
     }
 
     /**
@@ -177,6 +179,6 @@ public class Util {
      * @return The item or null if not found
      */
     public static Item getItem(String name) {
-        return GameRegistry.findItem(SEUtils.MODID, name);
+        return GameRegistry.findItem(MODID, name);
     }
 }

@@ -20,13 +20,13 @@
 package simElectricity.Common.Core;
 
 import cpw.mods.fml.common.registry.GameRegistry;
+import simElectricity.API.Util;
 import simElectricity.Common.Blocks.*;
 import simElectricity.Common.Blocks.TileEntity.*;
 import simElectricity.Common.Blocks.WindMill.BlockWindMillTop;
 import simElectricity.Common.Blocks.WindMill.TileWindMillTop;
-import simElectricity.Common.SEUtils;
 
-@GameRegistry.ObjectHolder(SEUtils.MODID)
+@GameRegistry.ObjectHolder(Util.MODID)
 public class SEBlocks {
 
     public static BlockAdjustableResistor adjustableResistor;

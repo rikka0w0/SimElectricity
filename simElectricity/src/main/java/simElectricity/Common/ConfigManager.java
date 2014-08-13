@@ -19,6 +19,7 @@
 
 package simElectricity.Common;
 
+import simElectricity.API.Util;
 import cpw.mods.fml.client.event.ConfigChangedEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
@@ -55,7 +56,7 @@ public class ConfigManager {
 
     @SubscribeEvent
     public void onConfigChanged(ConfigChangedEvent.OnConfigChangedEvent event) {
-        if (event.modID.equalsIgnoreCase(SEUtils.MODID))
+        if (event.modID.equalsIgnoreCase(Util.MODID))
             syncConfig();
     }
 }
