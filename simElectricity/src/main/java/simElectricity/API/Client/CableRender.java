@@ -25,7 +25,7 @@ public class CableRender extends CubeRender {
     public void renderParabolicCable(double xStart, double yStart, double zStart, double xEnd, double yEnd, double zEnd, double thickness, int textureIndex) {
         double distance = RenderUtil.distanceOf(xStart, yStart, zStart, xEnd, yEnd, zEnd);
         RenderUtil.p2pRotation(xStart, yStart, zStart, xEnd, yEnd, zEnd);
-        render_parabola(distance, false, 6, ConfigManager.parabolaRenderSteps, thickness, textureIndex);
+        render_parabola(distance, false, RenderUtil.distanceOf(xStart, zStart, xEnd, zEnd) * 0.075, ConfigManager.parabolaRenderSteps, thickness, textureIndex);
     }
 
     /**
@@ -43,7 +43,7 @@ public class CableRender extends CubeRender {
     public void renderHalfParabolicCable(double xStart, double yStart, double zStart, double xEnd, double yEnd, double zEnd, double thickness, int textureIndex) {
         double distance = RenderUtil.distanceOf(xStart, yStart, zStart, xEnd, yEnd, zEnd);
         RenderUtil.p2pRotation(xStart, yStart, zStart, xEnd, yEnd, zEnd);
-        render_parabola(distance, true, distance * 0.075, ConfigManager.parabolaRenderSteps, thickness, textureIndex);
+        render_parabola(distance, true, RenderUtil.distanceOf(xStart, zStart, xEnd, zEnd) * 0.075, ConfigManager.parabolaRenderSteps, thickness, textureIndex);
     }
 
     /**

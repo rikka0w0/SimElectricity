@@ -19,20 +19,47 @@
 
 package simElectricity.Common.Blocks;
 
+import java.util.List;
+
+import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.Common.Blocks.BlockContainerSE;
 import simElectricity.API.Util;
 import simElectricity.Common.Blocks.TileEntity.TileTower;
+import simElectricity.Common.Items.ItemBlocks.ItemBlockTower;
 
 public class BlockTower extends BlockContainerSE {
+	public static final String[] subNames = {"0","1"};
 
+    @Override
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SideOnly(Side.CLIENT)
+    public void getSubBlocks(Item par1, CreativeTabs par2CreativeTabs, List subItems) {
+        for (int ix = 0; ix < subNames.length; ix++) {
+            subItems.add(new ItemStack(this, 1, ix));
+        }
+    }
 
+    @Override
+    public Block setBlockName(String name) {
+        GameRegistry.registerBlock(this, ItemBlockTower.class, name);
+        return super.setBlockName(name);
+    }
+
+    @Override
+    public boolean shouldRegister() {
+        return false;
+    }
+	
     public BlockTower() {
         super();
         setBlockName("Tower");
@@ -44,12 +71,7 @@ public class BlockTower extends BlockContainerSE {
             return;
 
         TileTower tower = (TileTower) world.getTileEntity(x, y, z);
-        ForgeDirection playerSight = Util.getPlayerSight(player, false);
-        if (playerSight == ForgeDirection.EAST || playerSight == ForgeDirection.WEST) {
-            tower.facing = 1;
-        } else {
-            tower.facing = 0;
-        }
+        tower.facing = Util.getPlayerSight(player, true).ordinal();
     }
 
     @Override

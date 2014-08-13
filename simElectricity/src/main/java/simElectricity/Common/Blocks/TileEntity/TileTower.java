@@ -26,6 +26,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.Energy;
+import simElectricity.API.IHVTower;
 import simElectricity.API.Network;
 import simElectricity.API.Util;
 import simElectricity.API.Common.TileEntitySE;
@@ -36,7 +37,7 @@ import simElectricity.API.EnergyTile.IManualJunction;
 
 import java.util.List;
 
-public class TileTower extends TileEntitySE implements IManualJunction, IConnectable {
+public class TileTower extends TileEntitySE implements IManualJunction, IConnectable, IHVTower {
     public int facing;
     public int neighborsInfo[] = new int[] { 0, -1, 0, 0, -1, 0 };
     protected boolean isAddedToEnergyNet = false;
@@ -164,4 +165,23 @@ public class TileTower extends TileEntitySE implements IManualJunction, IConnect
 
         return Float.MAX_VALUE;
     }
+
+	@Override
+	public float[] offsetArray() {
+		switch (getBlockMetadata()){
+		case 0:return new float[]{-3, 3, 0, 0, 3, 0, 3, 3, 0};
+		case 1:return new float[]{-1, -0.5F, 0, 1, 1, 0, 1.5F, -0.5F, 0};
+		default: return null;
+		}
+	}
+
+	@Override
+	public int[] getNeighborInfo() {
+		return neighborsInfo;
+	}
+	
+	@Override
+	public int getFacing(){
+		return facing;
+	}
 }

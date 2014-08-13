@@ -37,4 +37,17 @@ public class RenderUtil {
                 Math.pow(yStart - yEnd, 2) +
                 Math.pow(zStart - zEnd, 2));
     }
+    
+    /**
+     * Calculate the distance between two points
+     *
+     * @param xStart Start X coordinate
+     * @param zStart Start Z coordinate
+     * @param xEnd   End X coordinate
+     * @param zEnd   End Z coordinate
+     */
+    public static double distanceOf(double xStart, double zStart, double xEnd, double zEnd) {
+        return Math.sqrt(Math.pow(xStart - xEnd, 2) +
+                Math.pow(zStart - zEnd, 2));
+    }
 }
