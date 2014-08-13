@@ -170,7 +170,7 @@ public class TileTower extends TileEntitySE implements IManualJunction, IConnect
 	public float[] offsetArray() {
 		switch (getBlockMetadata()){
 		case 0:return new float[]{-3, 3, 0, 0, 3, 0, 3, 3, 0};
-		case 1:return new float[]{-1, -0.5F, 0, 1, 1, 0, 1.5F, -0.5F, 0};
+		case 1:return new float[]{-1, -0.55F, 0, 1, 0.95F, 0, 1.5F, -0.55F, 0};
 		default: return null;
 		}
 	}
