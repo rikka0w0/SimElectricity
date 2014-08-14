@@ -38,7 +38,9 @@ public abstract class TileInventoryMachine extends TileEntitySE implements ISide
     /**
      * Used to get the size of the inventory, should return a constant!
      */
-    public abstract int getInventorySize();
+    public int getInventorySize(){
+    	return 0;
+    }
 
     /**
      * {@link net.minecraft.inventory.ISidedInventory} - Override this method when necessary!

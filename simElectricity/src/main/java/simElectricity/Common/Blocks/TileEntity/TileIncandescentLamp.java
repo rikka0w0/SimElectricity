@@ -48,11 +48,6 @@ public class TileIncandescentLamp extends TileStandardSEMachine implements IEner
     }
 
     @Override
-    public int getInventorySize() {
-        return 0;
-    }
-
-    @Override
 	public void onOverVoltage(){
     	worldObj.createExplosion(null, xCoord, yCoord, zCoord, 4F + Energy.getVoltage(this) / 265, true);
     }

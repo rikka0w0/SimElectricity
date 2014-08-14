@@ -43,6 +43,7 @@ public class SEBlocks {
     public static BlockWire wire;
     public static BlockTower tower;
     public static BlockSolarInverter solarInverter;
+    public static BlockIC2Consumer ic2Consumer;
 
     public static void preInit() {
         adjustableResistor = new BlockAdjustableResistor();
@@ -59,6 +60,7 @@ public class SEBlocks {
         wire = new BlockWire();
         tower = new BlockTower();
         solarInverter = new BlockSolarInverter();
+        ic2Consumer = new BlockIC2Consumer();
     }
 
     public static void init() {
@@ -76,5 +78,6 @@ public class SEBlocks {
         GameRegistry.registerTileEntity(TileSwitch.class, "TileSwitch");
         GameRegistry.registerTileEntity(TileTower.class, "TileTower");
         GameRegistry.registerTileEntity(TileSolarInverter.class, "TileSolarInverter");
+        GameRegistry.registerTileEntity(TileIC2Consumer.class, "TileIC2Consumer");
     }
 }

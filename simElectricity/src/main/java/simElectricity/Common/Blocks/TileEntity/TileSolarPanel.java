@@ -55,10 +55,4 @@ public class TileSolarPanel extends TileSidedGenerator {
     public boolean canSetFunctionalSide(ForgeDirection newFunctionalSide) {
         return newFunctionalSide != ForgeDirection.UP;
     }
-    
-
-    @Override
-    public int getInventorySize() {
-        return 0;
-    }
 }

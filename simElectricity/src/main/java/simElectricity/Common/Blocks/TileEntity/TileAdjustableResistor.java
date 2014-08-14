@@ -75,12 +75,7 @@ public class TileAdjustableResistor extends TileStandardSEMachine implements INe
     public float getResistance() {
         return resistance;
     }
-
-    @Override
-    public int getInventorySize() {
-        return 0;
-    }
-
+    
     @Override
     public void addNetworkFields(List fields) {
 

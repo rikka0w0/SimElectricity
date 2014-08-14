@@ -33,9 +33,4 @@ public class TileVoltageMeter extends TileStandardSEMachine {
     public float getOutputVoltage() {
         return 0;
     }
-
-    @Override
-    public int getInventorySize() {
-        return 0;
-    }
 }

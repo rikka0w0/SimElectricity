@@ -52,12 +52,7 @@ public class TileQuantumGenerator extends TileSidedGenerator implements INetwork
     public boolean canSetFunctionalSide(ForgeDirection newFunctionalSide) {
         return true;
     }
-
-    @Override
-    public int getInventorySize() {
-        return 0;
-    }
-
+    
     @Override
     public void addNetworkFields(List fields) {
     }
