@@ -152,6 +152,18 @@ public class TileTower extends TileEntitySE implements IManualJunction, IConnect
             if (te instanceof TileTower)
                 list.add((IManualJunction) te);
         }
+        
+        if (this.getBlockMetadata() == 1){
+        	te = worldObj.getTileEntity(xCoord,yCoord - 2,zCoord);
+        	if (te instanceof TileTower && te.getBlockMetadata() == 2)
+        		list.add((IManualJunction) te);
+        }
+        
+        if (this.getBlockMetadata() == 2){
+        	te = worldObj.getTileEntity(xCoord,yCoord + 2,zCoord);
+        	if (te instanceof TileTower && te.getBlockMetadata() == 1)
+        		list.add((IManualJunction) te);
+        }
     }
 
     @Override
@@ -171,6 +183,7 @@ public class TileTower extends TileEntitySE implements IManualJunction, IConnect
 		switch (getBlockMetadata()){
 		case 0:return new float[]{-3, 3, 0, 0, 3, 0, 3, 3, 0};
 		case 1:return new float[]{-1, -0.55F, 0, 1, 0.95F, 0, 1.5F, -0.55F, 0};
+		case 2:return new float[]{-1.5F, 0, 0.2F, 0.5F, 0, 0.2F, 1.5F, 0, 0.2F};
 		default: return null;
 		}
 	}

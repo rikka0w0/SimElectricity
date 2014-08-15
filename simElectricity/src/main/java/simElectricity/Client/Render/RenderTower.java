@@ -48,9 +48,45 @@ public class RenderTower extends RenderHVTowerBase{
         switch (tileEntity.getBlockMetadata()){
         case 0: renderTower0();break;
         case 1: renderTower1();break;
+        case 2: renderTower2();break;
         }
     }
+    
+    @Override
+    public void renderCable(TileEntity tileEntity, double x, double y, double z){
+    	super.renderCable(tileEntity,x,y,z);
         
+    	if (tileEntity.getBlockMetadata() == 1 || tileEntity.getBlockMetadata() == 2){
+        	renderCableTo(tileEntity, tileEntity.getWorldObj().getTileEntity(tileEntity.xCoord,tileEntity.yCoord + (tileEntity.getBlockMetadata() == 1 ? -2 : 2),tileEntity.zCoord) , x, y, z);
+        }   	
+    }
+        
+    private void renderTower2() {
+    	GL11.glTranslated(0.2, 0.6, -1.5);
+    	
+    	GL11.glPushMatrix();
+    	GL11.glRotatef(90F, 1.0F, 0.0F, 0.0F);
+        render.render_cube(0.2, 3, 0.2);
+        GL11.glPopMatrix();
+        
+        GL11.glPushMatrix();
+        GL11.glRotatef(180F, 0.0F, 0.0F, 1.0F);
+        renderInsulator(4,0.6);
+        GL11.glPopMatrix();   
+        
+        GL11.glPushMatrix();
+        GL11.glTranslated(0, 0, 3);
+        GL11.glRotatef(180F, 0.0F, 0.0F, 1.0F);
+        renderInsulator(4,0.6);
+        GL11.glPopMatrix();  
+        
+        GL11.glPushMatrix();
+        GL11.glTranslated(0, 0, 2);
+        GL11.glRotatef(180F, 0.0F, 0.0F, 1.0F);
+        renderInsulator(4,0.6);
+        GL11.glPopMatrix();  
+    }
+    
     private void renderTower1() {
     	GL11.glTranslated(0, -8, 0);
     	

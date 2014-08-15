@@ -38,7 +38,7 @@ import simElectricity.Common.Blocks.TileEntity.TileTower;
 import simElectricity.Common.Items.ItemBlocks.ItemBlockTower;
 
 public class BlockTower extends BlockContainerSE {
-	public static final String[] subNames = {"0","1"};
+	public static final String[] subNames = {"0","1","2"};
 
     @Override
     @SuppressWarnings({ "rawtypes", "unchecked" })

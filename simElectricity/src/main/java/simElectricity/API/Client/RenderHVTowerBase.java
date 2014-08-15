@@ -11,6 +11,14 @@ public abstract class RenderHVTowerBase extends TileEntitySpecialRenderer implem
 
 	public abstract void renderTower(TileEntity tower, double x, double y, double z);
 	
+	public void renderCable(TileEntity tileEntity, double x, double y, double z){
+		IHVTower tower = (IHVTower) tileEntity;
+		for (int i = 0; i < tower.getNeighborInfo().length; i += 3) {
+        	renderCableTo(tileEntity,
+        			tileEntity.getWorldObj().getTileEntity(tower.getNeighborInfo()[i], tower.getNeighborInfo()[i + 1], tower.getNeighborInfo()[i + 2]),x,y,z);
+	    }
+	}
+	
 	/**
 	 * Render a hv insulator
 	 * @param num Number of rings
@@ -28,6 +36,106 @@ public abstract class RenderHVTowerBase extends TileEntitySpecialRenderer implem
         }
     }
 	
+    public void renderCableTo(TileEntity tileEntity,TileEntity neighbor, double x, double y, double z){
+    	IHVTower tower = (IHVTower) tileEntity;
+        if (neighbor instanceof IHVTower) {
+	        IHVTower towerNeighbor = (IHVTower) neighbor;
+	        
+	        boolean swap = false;
+	        if (getDirection(tower) == getDirection(towerNeighbor)){           //Same
+	        	swap = false;
+	        }else if (getDirection(tower)%2 == getDirection(towerNeighbor)%2){ //Opposite
+	        	swap = true;
+	        }else if (getDirection(tower)%2 ==0){
+	        	    if (neighbor.xCoord > tileEntity.xCoord) {
+                        if (neighbor.zCoord > tileEntity.zCoord){//1
+                        	swap = getDirection(towerNeighbor) == 1;
+                        	if (getDirection(tower) == 2)
+                        		swap =! swap;
+                        }else{									 //4
+                        	swap = getDirection(towerNeighbor) == 3;
+                        	if (getDirection(tower) == 2)
+                        		swap =! swap;
+                        }
+                    } else {
+                        if (neighbor.zCoord > tileEntity.zCoord){//1
+                        	swap = getDirection(towerNeighbor) == 3;
+                        	if (getDirection(tower) == 2)
+                        		swap =! swap;
+                        }else{									 //4
+                        	swap = getDirection(towerNeighbor) == 1;
+                        	if (getDirection(tower) == 2)
+                        		swap =! swap;
+                        }
+                    }
+	        }else{
+        	    if (neighbor.xCoord > tileEntity.xCoord) {
+                    if (neighbor.zCoord > tileEntity.zCoord){//1
+                    	swap = getDirection(towerNeighbor) == 0;
+                    	if (getDirection(tower) == 3)
+                    		swap =! swap;
+                    }else{									 //4
+                    	swap = getDirection(towerNeighbor) == 2;
+                    	if (getDirection(tower) == 3)
+                    		swap =! swap;
+                    }
+                } else {
+                    if (neighbor.zCoord > tileEntity.zCoord){//1
+                    	swap = getDirection(towerNeighbor) == 2;
+                    	if (getDirection(tower) == 3)
+                    		swap =! swap;
+                    }else{									 //4
+                    	swap = getDirection(towerNeighbor) == 0;
+                    	if (getDirection(tower) == 3)
+                    		swap =! swap;
+                    }
+                }		        	
+	        }
+	        
+	        //Mid
+	        float[] offset1 = getRotatedOffset(tower,1);
+	        float[] offset2 = getRotatedOffset(towerNeighbor,1);
+	        GL11.glPushMatrix();
+	        GL11.glTranslated(x, y, z);
+	        GL11.glTranslated(0.5 + offset1[0], offset1[1], 0.5 + offset1[2]);
+	        
+	        render.renderHalfParabolicCable(
+	        		tileEntity.xCoord + offset1[0], tileEntity.yCoord + offset1[1], tileEntity.zCoord + offset1[2],
+	        		neighbor.xCoord + offset2[0], neighbor.yCoord + offset2[1], neighbor.zCoord + offset2[2],
+	                0.075, 1);
+	        
+	        GL11.glPopMatrix();       
+	        
+	        //R
+	        offset1 = getRotatedOffset(tower, swap ? 0 :2);
+	        offset2 = getRotatedOffset(towerNeighbor,2);
+	        GL11.glPushMatrix();
+	        GL11.glTranslated(x, y, z);
+	        GL11.glTranslated(0.5 + offset1[0], offset1[1], 0.5 + offset1[2]);
+	        
+	        render.renderHalfParabolicCable(
+	        		tileEntity.xCoord + offset1[0], tileEntity.yCoord + offset1[1], tileEntity.zCoord + offset1[2],
+	        		neighbor.xCoord + offset2[0], neighbor.yCoord + offset2[1], neighbor.zCoord + offset2[2],
+	        		0.075, 1);
+	        
+	        GL11.glPopMatrix();
+	        
+	        //L
+	        offset1 = getRotatedOffset(tower,swap ? 2 :0);
+	        offset2 = getRotatedOffset(towerNeighbor,0);
+	        GL11.glPushMatrix();
+	        GL11.glTranslated(x, y, z);
+	        GL11.glTranslated(0.5 + offset1[0], offset1[1], 0.5 + offset1[2]);
+	        
+	        render.renderHalfParabolicCable(
+	        		tileEntity.xCoord + offset1[0], tileEntity.yCoord + offset1[1], tileEntity.zCoord + offset1[2],
+	        		neighbor.xCoord + offset2[0], neighbor.yCoord + offset2[1], neighbor.zCoord + offset2[2],
+	        		0.075, 1);
+	        
+	        GL11.glPopMatrix();
+        }
+    }
+    
 	@Override
     public void renderTileEntityAt(TileEntity tileEntity, double x, double y, double z, float f) {
     	IHVTower tower = (IHVTower) tileEntity;
@@ -50,105 +158,7 @@ public abstract class RenderHVTowerBase extends TileEntitySpecialRenderer implem
         //End of tower rendering
         
         //Cable rendering
-        for (int i = 0; i < tower.getNeighborInfo().length; i += 3) {
-	        TileEntity neighbor = tileEntity.getWorldObj().getTileEntity(tower.getNeighborInfo()[i], tower.getNeighborInfo()[i + 1], tower.getNeighborInfo()[i + 2]);
-	        if (neighbor instanceof IHVTower) {
-		        IHVTower towerNeighbor = (IHVTower) neighbor;
-		        
-		        boolean swap = false;
-		        if (getDirection(tower) == getDirection(towerNeighbor)){           //Same
-		        	swap = false;
-		        }else if (getDirection(tower)%2 == getDirection(towerNeighbor)%2){ //Opposite
-		        	swap = true;
-		        }else if (getDirection(tower)%2 ==0){
-		        	    if (neighbor.xCoord > tileEntity.xCoord) {
-	                        if (neighbor.zCoord > tileEntity.zCoord){//1
-	                        	swap = getDirection(towerNeighbor) == 1;
-	                        	if (getDirection(tower) == 2)
-	                        		swap =! swap;
-	                        }else{									 //4
-	                        	swap = getDirection(towerNeighbor) == 3;
-	                        	if (getDirection(tower) == 2)
-	                        		swap =! swap;
-	                        }
-	                    } else {
-	                        if (neighbor.zCoord > tileEntity.zCoord){//1
-	                        	swap = getDirection(towerNeighbor) == 3;
-	                        	if (getDirection(tower) == 2)
-	                        		swap =! swap;
-	                        }else{									 //4
-	                        	swap = getDirection(towerNeighbor) == 1;
-	                        	if (getDirection(tower) == 2)
-	                        		swap =! swap;
-	                        }
-	                    }
-		        }else{
-	        	    if (neighbor.xCoord > tileEntity.xCoord) {
-                        if (neighbor.zCoord > tileEntity.zCoord){//1
-                        	swap = getDirection(towerNeighbor) == 0;
-                        	if (getDirection(tower) == 3)
-                        		swap =! swap;
-                        }else{									 //4
-                        	swap = getDirection(towerNeighbor) == 2;
-                        	if (getDirection(tower) == 3)
-                        		swap =! swap;
-                        }
-                    } else {
-                        if (neighbor.zCoord > tileEntity.zCoord){//1
-                        	swap = getDirection(towerNeighbor) == 2;
-                        	if (getDirection(tower) == 3)
-                        		swap =! swap;
-                        }else{									 //4
-                        	swap = getDirection(towerNeighbor) == 0;
-                        	if (getDirection(tower) == 3)
-                        		swap =! swap;
-                        }
-                    }		        	
-		        }
-		        
-		        //Mid
-		        float[] offset1 = getRotatedOffset(tower,1);
-		        float[] offset2 = getRotatedOffset(towerNeighbor,1);
-		        GL11.glPushMatrix();
-		        GL11.glTranslated(x, y, z);
-		        GL11.glTranslated(0.5 + offset1[0], offset1[1], 0.5 + offset1[2]);
-		        
-		        render.renderHalfParabolicCable(
-		        		tileEntity.xCoord + offset1[0], tileEntity.yCoord + offset1[1], tileEntity.zCoord + offset1[2],
-		        		neighbor.xCoord + offset2[0], neighbor.yCoord + offset2[1], neighbor.zCoord + offset2[2],
-		                0.1, 1);
-		        
-		        GL11.glPopMatrix();       
-		        
-		        //R
-		        offset1 = getRotatedOffset(tower, swap ? 0 :2);
-		        offset2 = getRotatedOffset(towerNeighbor,2);
-		        GL11.glPushMatrix();
-		        GL11.glTranslated(x, y, z);
-		        GL11.glTranslated(0.5 + offset1[0], offset1[1], 0.5 + offset1[2]);
-		        
-		        render.renderHalfParabolicCable(
-		        		tileEntity.xCoord + offset1[0], tileEntity.yCoord + offset1[1], tileEntity.zCoord + offset1[2],
-		        		neighbor.xCoord + offset2[0], neighbor.yCoord + offset2[1], neighbor.zCoord + offset2[2],
-		                0.1, 1);
-		        
-		        GL11.glPopMatrix();
-		        
-		        //L
-		        offset1 = getRotatedOffset(tower,swap ? 2 :0);
-		        offset2 = getRotatedOffset(towerNeighbor,0);
-		        GL11.glPushMatrix();
-		        GL11.glTranslated(x, y, z);
-		        GL11.glTranslated(0.5 + offset1[0], offset1[1], 0.5 + offset1[2]);
-		        
-		        render.renderHalfParabolicCable(
-		        		tileEntity.xCoord + offset1[0], tileEntity.yCoord + offset1[1], tileEntity.zCoord + offset1[2],
-		        		neighbor.xCoord + offset2[0], neighbor.yCoord + offset2[1], neighbor.zCoord + offset2[2],
-		                0.1, 1);
-		        
-		        GL11.glPopMatrix();
-	        }
-	    }
+        renderCable(tileEntity,x,y,z);
     }
     
     float[] getRotatedOffset(IHVTower tower, int index){
