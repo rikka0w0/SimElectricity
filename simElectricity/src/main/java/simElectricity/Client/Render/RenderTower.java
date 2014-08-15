@@ -25,6 +25,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
+import simElectricity.Common.Blocks.TileEntity.TileTower;
 import simElectricity.API.Client.RenderHVTowerBase;
 
 @SideOnly(Side.CLIENT)
@@ -56,9 +57,17 @@ public class RenderTower extends RenderHVTowerBase{
     public void renderCable(TileEntity tileEntity, double x, double y, double z){
     	super.renderCable(tileEntity,x,y,z);
         
-    	if (tileEntity.getBlockMetadata() == 1 || tileEntity.getBlockMetadata() == 2){
-        	renderCableTo(tileEntity, tileEntity.getWorldObj().getTileEntity(tileEntity.xCoord,tileEntity.yCoord + (tileEntity.getBlockMetadata() == 1 ? -2 : 2),tileEntity.zCoord) , x, y, z);
+    	TileEntity neighbor;
+    	if (tileEntity.getBlockMetadata() == 1){ 
+    		neighbor = tileEntity.getWorldObj().getTileEntity(tileEntity.xCoord,tileEntity.yCoord - 2,tileEntity.zCoord);
+        	if (neighbor instanceof TileTower && neighbor.getBlockMetadata() == 2)
+        		renderCableTo(tileEntity, neighbor, x, y, z, 0.4);
         }   	
+    	if (tileEntity.getBlockMetadata() == 2){
+    		neighbor = tileEntity.getWorldObj().getTileEntity(tileEntity.xCoord,tileEntity.yCoord + 2,tileEntity.zCoord);
+        	if (neighbor instanceof TileTower && neighbor.getBlockMetadata() == 1)
+        		renderCableTo(tileEntity, neighbor, x, y, z, 0.4);		
+    	}
     }
         
     private void renderTower2() {

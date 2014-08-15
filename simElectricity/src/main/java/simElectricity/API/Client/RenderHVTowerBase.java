@@ -15,7 +15,8 @@ public abstract class RenderHVTowerBase extends TileEntitySpecialRenderer implem
 		IHVTower tower = (IHVTower) tileEntity;
 		for (int i = 0; i < tower.getNeighborInfo().length; i += 3) {
         	renderCableTo(tileEntity,
-        			tileEntity.getWorldObj().getTileEntity(tower.getNeighborInfo()[i], tower.getNeighborInfo()[i + 1], tower.getNeighborInfo()[i + 2]),x,y,z);
+        			tileEntity.getWorldObj().getTileEntity(tower.getNeighborInfo()[i], tower.getNeighborInfo()[i + 1], tower.getNeighborInfo()[i + 2]),
+        			x,y,z,RenderUtil.distanceOf(tileEntity.xCoord, tileEntity.zCoord, tower.getNeighborInfo()[i], tower.getNeighborInfo()[i + 2]) * 0.06);
 	    }
 	}
 	
@@ -36,7 +37,7 @@ public abstract class RenderHVTowerBase extends TileEntitySpecialRenderer implem
         }
     }
 	
-    public void renderCableTo(TileEntity tileEntity,TileEntity neighbor, double x, double y, double z){
+    public void renderCableTo(TileEntity tileEntity,TileEntity neighbor, double x, double y, double z, double tension){
     	IHVTower tower = (IHVTower) tileEntity;
         if (neighbor instanceof IHVTower) {
 	        IHVTower towerNeighbor = (IHVTower) neighbor;
@@ -94,7 +95,7 @@ public abstract class RenderHVTowerBase extends TileEntitySpecialRenderer implem
 	        
 	        //Mid
 	        float[] offset1 = getRotatedOffset(tower,1);
-	        float[] offset2 = getRotatedOffset(towerNeighbor,1);
+	        float[] offset2 = getRotatedOffset(towerNeighbor,1);        
 	        GL11.glPushMatrix();
 	        GL11.glTranslated(x, y, z);
 	        GL11.glTranslated(0.5 + offset1[0], offset1[1], 0.5 + offset1[2]);
@@ -102,7 +103,7 @@ public abstract class RenderHVTowerBase extends TileEntitySpecialRenderer implem
 	        render.renderHalfParabolicCable(
 	        		tileEntity.xCoord + offset1[0], tileEntity.yCoord + offset1[1], tileEntity.zCoord + offset1[2],
 	        		neighbor.xCoord + offset2[0], neighbor.yCoord + offset2[1], neighbor.zCoord + offset2[2],
-	                0.075, 1);
+	                0.075, tension, 1);
 	        
 	        GL11.glPopMatrix();       
 	        
@@ -116,7 +117,7 @@ public abstract class RenderHVTowerBase extends TileEntitySpecialRenderer implem
 	        render.renderHalfParabolicCable(
 	        		tileEntity.xCoord + offset1[0], tileEntity.yCoord + offset1[1], tileEntity.zCoord + offset1[2],
 	        		neighbor.xCoord + offset2[0], neighbor.yCoord + offset2[1], neighbor.zCoord + offset2[2],
-	        		0.075, 1);
+	        		0.075, tension, 1);
 	        
 	        GL11.glPopMatrix();
 	        
@@ -130,7 +131,7 @@ public abstract class RenderHVTowerBase extends TileEntitySpecialRenderer implem
 	        render.renderHalfParabolicCable(
 	        		tileEntity.xCoord + offset1[0], tileEntity.yCoord + offset1[1], tileEntity.zCoord + offset1[2],
 	        		neighbor.xCoord + offset2[0], neighbor.yCoord + offset2[1], neighbor.zCoord + offset2[2],
-	        		0.075, 1);
+	        		0.075, tension, 1);
 	        
 	        GL11.glPopMatrix();
         }
@@ -165,6 +166,10 @@ public abstract class RenderHVTowerBase extends TileEntitySpecialRenderer implem
     	float x = tower.offsetArray()[3*index];
     	float y = tower.offsetArray()[3*index+1];
     	float z = tower.offsetArray()[3*index+2];
+    	
+    	if (tower.getFacing() == 2 || tower.getFacing() == 3){
+    		z = -z;
+    	}
     	
     	switch (tower.getFacing()) {
 	        case 2: //N
