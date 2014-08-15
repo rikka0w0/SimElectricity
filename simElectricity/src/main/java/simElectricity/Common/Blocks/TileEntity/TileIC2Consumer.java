@@ -15,6 +15,35 @@ public class TileIC2Consumer extends TileSidedGenerator implements IEnergySink{
 	public double powerRate = 0;
 	public double aError = 0;
 	
+	@Override
+    public void updateEntity() {
+        super.updateEntity();
+        
+        //No client side operation
+        if (worldObj.isRemote)
+        	return;
+        
+        outputVoltage = 230;
+        double vo = Energy.getVoltage(this);
+        double po = vo * (outputVoltage - vo) / outputResistance;
+        boolean update = false;
+        if (powerRate > 0 && Math.abs(powerRate - po) > 0.1){
+        	outputResistance = (float) (vo * (outputVoltage - vo) / powerRate); 
+        	update = true;
+        }
+        
+        if (outputResistance <1)
+        	outputResistance = 1;
+        
+        bufferedEnergy -= Math.min(powerRate,po);
+        
+        if (bufferedEnergy < 0)
+        	outputResistance = Float.MAX_VALUE;
+        
+        if (update)
+        	Energy.postTileChangeEvent(this);
+	}
+	
     @Override
 	public void onLoad() {
     	MinecraftForge.EVENT_BUS.post(new EnergyTileLoadEvent(this));
@@ -24,59 +53,7 @@ public class TileIC2Consumer extends TileSidedGenerator implements IEnergySink{
 	public void onUnload() {
     	MinecraftForge.EVENT_BUS.post(new EnergyTileUnloadEvent(this));
     }
-	
-	@Override
-    public void updateEntity() {
-        super.updateEntity();
-        
-        //No client side operation
-        if (worldObj.isRemote)
-        	return;
-        
-        float convertRatio = 1F;
-        double vo = Energy.getVoltage(this);
-        double po = convertRatio * 0.05 * outputVoltage * (outputVoltage-vo)/outputResistance;
-        if (bufferedEnergy > 0 && po >= 0){
-	        bufferedEnergy -= po;
-	        
-	        double error = powerRate - po;
-	        if (Math.abs(error) > 0.1){
-	        	outputVoltage += 10 * error;
-	        	outputVoltage += 0.000001 * aError;
-				aError += error;
-				
-
-	        }else {
-				aError = 0;
-			}
-	        
-	        if (aError>10000)
-	        	aError = 10000;
-	        if (aError<-10000)
-	        	aError = -10000;        
-	        
-			if (outputVoltage>230)
-				outputVoltage=230;
-			if (outputVoltage<0)
-				outputVoltage=0;
-	        
-	        outputResistance = 1F;
-	        
-        }else{
-        	outputResistance = Float.MAX_VALUE;
-        	aError = 0;
-        }
-        
-       
-        Energy.postTileChangeEvent(this);
-        
-        //System.out.print(po);
-        //System.out.print(":");
-        //System.out.print(powerRate); 
-        //System.out.print(":");
-        //System.out.println(bufferedEnergy);
-	}
-	
+    
 	@Override
     public boolean canSetFunctionalSide(ForgeDirection newFunctionalSide) {
         return true;
@@ -99,8 +76,8 @@ public class TileIC2Consumer extends TileSidedGenerator implements IEnergySink{
 
 	@Override
 	public double injectEnergy(ForgeDirection directionFrom, double amount, double voltage) {
-		powerRate = amount;
-		bufferedEnergy += powerRate;
+		powerRate = amount;	
+		bufferedEnergy += amount;
 		return 0;
 	}
 
