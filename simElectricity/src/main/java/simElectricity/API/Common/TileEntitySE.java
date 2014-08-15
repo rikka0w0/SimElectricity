@@ -20,7 +20,7 @@ public abstract class TileEntitySE extends TileEntity{
      * The maximum allowed ticks for continuous over voltage
      * @return
      */
-    public int getMaxOverVoltageTick(){return 10;}
+    public int getMaxOverVoltageTick(){return 15;}
     
     /**
      * Check the input voltage

@@ -116,14 +116,14 @@ public class GuiSolarInverter extends GuiContainer {
         if (te.outputResistance > 100)
             te.outputResistance = 100;
         if (button.id < 4)
-            Network.updateTileEntityFieldToServer(te, "outputResistance");
+            Network.updateTileEntityFieldsToServer(te, "outputResistance");
 
         if (te.outputVoltage < 200)
             te.outputVoltage = 200;
         if (te.outputVoltage > 240)
             te.outputVoltage = 240;
         if (button.id < 8 && button.id > 3)
-            Network.updateTileEntityFieldToServer(te, "outputVoltage");
+            Network.updateTileEntityFieldsToServer(te, "outputVoltage");
 
     }
 
@@ -165,8 +165,7 @@ public class GuiSolarInverter extends GuiContainer {
             te.outputSide = selectedDirection;
         }
 
-        Network.updateTileEntityFieldToServer(te, "inputSide");
-        Network.updateTileEntityFieldToServer(te, "outputSide");
+        Network.updateTileEntityFieldsToServer(te, "inputSide", "outputSide");
         te.getWorldObj().markBlockForUpdate(te.xCoord, te.yCoord, te.zCoord);
     }
 

@@ -113,14 +113,14 @@ public class GuiAdjustableTransformer extends GuiContainer {
         if (te.outputResistance > 100)
             te.outputResistance = 100;
         if (button.id < 4)
-            Network.updateTileEntityFieldToServer(te, "outputResistance");
+            Network.updateTileEntityFieldsToServer(te, "outputResistance");
 
         if (te.ratio < 0.1)
             te.ratio = 0.1F;
         if (te.ratio > 1000)
             te.ratio = 1000;
         if (button.id < 8 && button.id > 3)
-            Network.updateTileEntityFieldToServer(te, "ratio");
+            Network.updateTileEntityFieldsToServer(te, "ratio");
 
     }
 
@@ -162,8 +162,7 @@ public class GuiAdjustableTransformer extends GuiContainer {
             te.secondarySide = selectedDirection;
         }
 
-        Network.updateTileEntityFieldToServer(te, "primarySide");
-        Network.updateTileEntityFieldToServer(te, "secondarySide");
+        Network.updateTileEntityFieldsToServer(te, "primarySide", "secondarySide");
         te.getWorldObj().markBlockForUpdate(te.xCoord, te.yCoord, te.zCoord);
     }
 

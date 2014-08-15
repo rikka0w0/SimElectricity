@@ -85,7 +85,7 @@ public class GuiQuantumGenerator extends GuiContainer {
                 tileentity.outputVoltage = 0.1F;
             if (tileentity.outputVoltage > 10000)
                 tileentity.outputVoltage = 10000;
-            Network.updateTileEntityFieldToServer(tileentity, "outputVoltage");
+            Network.updateTileEntityFieldsToServer(tileentity, "outputVoltage");
         } else if (button.id <= 8) {
             switch (button.id) {
                 case 4:
@@ -119,7 +119,7 @@ public class GuiQuantumGenerator extends GuiContainer {
                 tileentity.outputResistance = 0.001F;
             if (tileentity.outputResistance > 100)
                 tileentity.outputResistance = 100;
-            Network.updateTileEntityFieldToServer(tileentity, "outputResistance");
+            Network.updateTileEntityFieldsToServer(tileentity, "outputResistance");
         }
     }
 

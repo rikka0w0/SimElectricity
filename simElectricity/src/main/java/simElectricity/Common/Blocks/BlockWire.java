@@ -81,7 +81,7 @@ public class BlockWire extends BlockContainerSE {
                 if (!world.isRemote) {
                     wire.color = stack.getItemDamage() + 1;           //Set the color
                     Energy.postTileRejoinEvent(tileEntity);           //Reconnect the wire to the energy network
-                    Network.updateTileEntityField(tileEntity, "color");  //Update the field color to every client within the dimension
+                    Network.updateTileEntityFields(tileEntity, "color");  //Update the field color to every client within the dimension
                     onBlockPlacedBy(world, x, y, z, player, null);    //Update rests to clients
                 }
 

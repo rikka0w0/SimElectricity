@@ -35,7 +35,7 @@ public class ContainerVoltageMeter extends ContainerBase {
     public void detectAndSendChanges() {
         super.detectAndSendChanges();
         ((TileVoltageMeter) tileEntity).voltage = Energy.getVoltage(((TileVoltageMeter) tileEntity));
-        Network.updateTileEntityField(tileEntity, "voltage");
+        Network.updateTileEntityFields(tileEntity, "voltage");
     }
 
     @Override

@@ -53,7 +53,7 @@ public class BlockSwitch extends BlockContainerSE {
         } else {
             if (!world.isRemote) {
                 te.isOn = !te.isOn;
-                Network.updateTileEntityField(te, "isOn");
+                Network.updateTileEntityFields(te, "isOn");
                 Energy.postTileRejoinEvent(te);
             }
         }

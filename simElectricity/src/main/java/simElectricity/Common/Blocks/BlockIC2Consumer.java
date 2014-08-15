@@ -8,7 +8,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import simElectricity.API.Util;
+import simElectricity.SimElectricity;
 import simElectricity.API.Common.Blocks.BlockStandardSEMachine;
 import simElectricity.Common.Blocks.TileEntity.TileIC2Consumer;
 
@@ -22,14 +22,10 @@ public class BlockIC2Consumer extends BlockStandardSEMachine{
     
     @Override
     public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int i1, float f1, float f2, float f3) {
-    	TileIC2Consumer te = (TileIC2Consumer) world.getTileEntity(x, y, z);
-
         if (player.isSneaking())
             return false;
         
-        if (!world.isRemote)
-        	Util.chat(player, "Buffered:" + String.valueOf(te.bufferedEnergy));
-        
+        player.openGui(SimElectricity.instance, 0, world, x, y, z);
 		return true;
     }
         

@@ -36,7 +36,8 @@ import simElectricity.Common.EnergyNet.EnergyNet;
  * Energy net
  */
 public class Energy {
-
+	public static final float ic2ConvertRatio = 20;
+	
     /**
      * Post a {@link simElectricity.API.Events.TileAttachEvent} for a tileEntity
      */

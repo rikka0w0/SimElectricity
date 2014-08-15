@@ -115,14 +115,14 @@ public class GuiSwitch extends GuiContainer {
         if (te.resistance > 100)
             te.resistance = 100;
         if (button.id < 4)
-            Network.updateTileEntityFieldToServer(te, "resistance");
+            Network.updateTileEntityFieldsToServer(te, "resistance");
 
         if (te.maxCurrent < 0.1)
             te.maxCurrent = 0.1F;
         if (te.maxCurrent > 1000)
             te.maxCurrent = 1000;
         if (button.id < 8 && button.id > 3)
-            Network.updateTileEntityFieldToServer(te, "maxCurrent");
+            Network.updateTileEntityFieldsToServer(te, "maxCurrent");
 
     }
 
@@ -152,7 +152,7 @@ public class GuiSwitch extends GuiContainer {
         if (selectedDirection == ForgeDirection.UNKNOWN) {
             if (tx > 80 && tx < 110 && ty > 66 && ty < 72) {
                 te.isOn = !te.isOn;
-                Network.updateTileEntityFieldToServer(te, "isOn");
+                Network.updateTileEntityFieldsToServer(te, "isOn");
             }
             return;
         }
@@ -170,8 +170,7 @@ public class GuiSwitch extends GuiContainer {
             te.outputSide = selectedDirection;
         }
 
-        Network.updateTileEntityFieldToServer(te, "inputSide");
-        Network.updateTileEntityFieldToServer(te, "outputSide");
+        Network.updateTileEntityFieldsToServer(te, "inputSide", "outputSide");
         te.getWorldObj().markBlockForUpdate(te.xCoord, te.yCoord, te.zCoord);
     }
 

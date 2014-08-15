@@ -7,15 +7,15 @@ public class Network {
     /**
      * Update a client tileEntity field from the server
      */
-    public static void updateTileEntityField(TileEntity tileEntity, String field) {
-        NetworkManager.updateTileEntityFields(tileEntity, new String[] { field });
+    public static void updateTileEntityFields(TileEntity tileEntity, String ... field) {
+    	NetworkManager.updateTileEntityFields(tileEntity, field);
     }
 
     /**
      * Update a server tileEntity field from a client
      */
-    public static void updateTileEntityFieldToServer(TileEntity tileEntity, String field) {
-        NetworkManager.updateTileEntityFieldsToServer(tileEntity, new String[] { field });
+    public static void updateTileEntityFieldsToServer(TileEntity tileEntity, String ... field) {
+        NetworkManager.updateTileEntityFieldsToServer(tileEntity, field);
     }
 
     /**

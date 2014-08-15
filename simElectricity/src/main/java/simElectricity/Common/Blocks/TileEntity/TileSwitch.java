@@ -138,7 +138,7 @@ public class TileSwitch extends TileEntitySE implements IManualJunction, IConnec
         if (current > maxCurrent) {
             isOn = false;
             Energy.postTileRejoinEvent(this);
-            Network.updateTileEntityField(this, "isOn");
+            Network.updateTileEntityFields(this, "isOn");
         }
     }
 

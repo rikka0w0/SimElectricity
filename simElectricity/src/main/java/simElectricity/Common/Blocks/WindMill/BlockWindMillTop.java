@@ -57,7 +57,7 @@ public class BlockWindMillTop extends BlockContainerSE {
 
             te.settled = false;
             if (!world.isRemote)
-                Network.updateTileEntityField(te, "settled");
+                Network.updateTileEntityFields(te, "settled");
         } else {
             if (playerItem == null)
                 return false;
@@ -67,7 +67,7 @@ public class BlockWindMillTop extends BlockContainerSE {
 
             te.settled = true;
             if (!world.isRemote)
-                Network.updateTileEntityField(te, "settled");
+                Network.updateTileEntityFields(te, "settled");
         }
 
         return true;

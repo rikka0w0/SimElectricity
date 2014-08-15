@@ -18,6 +18,7 @@ tile.sime:IncandescentLamp.name=Incandescent Lamp (5w)
 tile.sime:Switch.name=Switch
 tile.sime:Tower.name=Tower
 tile.sime:SolarInverter.name=Solar Inverter (Regulated)
+tile.sime:IC2Consumer.name = IC2 Energy Consumer
 
 # Items
 item.sime:UltimateMultimeter.name=Ultimate Multimeter
