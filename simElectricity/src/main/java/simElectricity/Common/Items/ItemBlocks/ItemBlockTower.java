@@ -6,7 +6,7 @@ import simElectricity.API.Common.Items.ItemBlockSE;
 import simElectricity.Common.Blocks.BlockTower;
 
 public class ItemBlockTower extends ItemBlockSE {
-	
+
     public ItemBlockTower(Block block) {
         super(block);
         setHasSubtypes(true);
