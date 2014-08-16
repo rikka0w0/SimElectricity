@@ -26,7 +26,7 @@ public abstract class TileEntitySE extends TileEntity{
      * Check the input voltage
      * @param voltage The voltage supplied into this machine
      */
-    public void checkVoltage(float voltage,float maxVoltage){
+    public void checkVoltage(double voltage,double maxVoltage){
         if (voltage > maxVoltage){
         	if (overVoltageTick == -1)
         		overVoltageTick = 0;

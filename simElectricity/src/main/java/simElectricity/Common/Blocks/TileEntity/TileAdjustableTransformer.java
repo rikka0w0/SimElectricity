@@ -61,12 +61,12 @@ public class TileAdjustableTransformer extends TileEntitySE implements ITransfor
     }
 
     @Override
-    public float getResistance() {
+    public double getResistance() {
         return outputResistance;
     }
 
     @Override
-    public float getRatio() {
+    public double getRatio() {
         return ratio;
     }
 

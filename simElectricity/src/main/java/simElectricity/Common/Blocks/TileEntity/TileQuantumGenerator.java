@@ -30,8 +30,8 @@ public class TileQuantumGenerator extends TileSidedGenerator implements INetwork
 
     @Override
     public void onLoad() {
-        if (this.outputResistance == Float.MAX_VALUE) {
-            outputResistance = 0.001F;
+        if (this.outputResistance == Double.MAX_VALUE) {
+            outputResistance = 0.001;
             outputVoltage = 230;
         }
     }

@@ -40,5 +40,5 @@ public interface IBaseComponent {
      * For a energy sink, the smaller resistance it has, the more energy it will consume.
      * For a conductor and energy source, the smaller resistance it has, the lower voltage drop it will have (better performance)
      */
-    float getResistance();
+    double getResistance();
 }

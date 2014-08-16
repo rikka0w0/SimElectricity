@@ -146,19 +146,19 @@ public class TileElectricFurnace extends TileStandardSEMachine implements IEnerg
     }
 
     @Override
-    public float getResistance() {
+    public double getResistance() {
         return resistance;
     }
 
     @Override
-    public float getOutputVoltage() {
+    public double getOutputVoltage() {
         return 0;
     }
 
     @Override
     public void onEnergyNetUpdate() {
         if (Energy.getVoltage(this) > 265)
-            worldObj.createExplosion(null, xCoord, yCoord, zCoord, 4F + Energy.getVoltage(this) / 265, true);
+            worldObj.createExplosion(null, xCoord, yCoord, zCoord, (float) (4F + Energy.getVoltage(this) / 265), true);
 
         if (Energy.getVoltage(this) == 0) {
             isWorking = false;

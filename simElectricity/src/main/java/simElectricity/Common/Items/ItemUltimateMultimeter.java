@@ -61,8 +61,8 @@ public class ItemUltimateMultimeter extends ItemSE {
             Util.chat(player, "Secondary Voltage: " + String.valueOf(Energy.getVoltage(secondary)) + "V");
             Util.chat(player, "PS ratio: 1:" + String.valueOf(transformer.getRatio()));
             
-            float secondaryResistance = transformer.getResistance();
-            float secondaryCurrent = (transformer.getRatio() * Energy.getVoltage(primary) - Energy.getVoltage(secondary)) / secondaryResistance;
+            double secondaryResistance = transformer.getResistance();
+            double secondaryCurrent = (transformer.getRatio() * Energy.getVoltage(primary) - Energy.getVoltage(secondary)) / secondaryResistance;
             Util.chat(player, "Internal Resistance: " + secondaryResistance + "\u03a9");
             Util.chat(player, "Secondary current: " + String.valueOf(secondaryCurrent)+"A");
             Util.chat(player, "Power loss: " + String.valueOf(secondaryCurrent * secondaryCurrent * secondaryResistance)+"A");
@@ -80,7 +80,7 @@ public class ItemUltimateMultimeter extends ItemSE {
                 return false;
 
             String tileType = "Unknown";
-            float outputVoltage = 0;
+            double outputVoltage = 0;
 
 
             Util.chat(player, "-----------------------");
@@ -111,9 +111,12 @@ public class ItemUltimateMultimeter extends ItemSE {
 
             if (te instanceof ICircuitComponent && outputVoltage > 0)
                 Util.chat(player, "Internal resistance: " + String.valueOf(te.getResistance()) + "\u03a9");
-            else
-                Util.chat(player, "Resistance: " + String.valueOf(te.getResistance()) + "\u03a9");
-
+            else if (te instanceof IConductor ||
+            		(te instanceof IManualJunction && ((IManualJunction)te).getResistance() != 0))
+                Util.chat(player, "Resistance (Per Block) : " + String.valueOf(te.getResistance()*2) + "\u03a9");
+            else if (te instanceof ICircuitComponent)
+            	Util.chat(player, "Resistance : " + String.valueOf(te.getResistance()) + "\u03a9");
+            
             if (te instanceof ICircuitComponent) {
                 Util.chat(player, "Current: " + String.valueOf(Energy.getCurrent((ICircuitComponent) te, tile.getWorldObj())) + "A");
                 Util.chat(player, "Power rate: " + String.valueOf(Energy.getPower((ICircuitComponent) te, tile.getWorldObj())) + "W");

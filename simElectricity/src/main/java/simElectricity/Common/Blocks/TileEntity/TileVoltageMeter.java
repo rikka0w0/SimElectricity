@@ -22,15 +22,15 @@ package simElectricity.Common.Blocks.TileEntity;
 import simElectricity.API.Common.TileStandardSEMachine;
 
 public class TileVoltageMeter extends TileStandardSEMachine {
-    public float voltage = 0;
+    public double voltage = 0;
 
     @Override
-    public float getResistance() {
+    public double getResistance() {
         return 1e6F;
     }
 
     @Override
-    public float getOutputVoltage() {
+    public double getOutputVoltage() {
         return 0;
     }
 }

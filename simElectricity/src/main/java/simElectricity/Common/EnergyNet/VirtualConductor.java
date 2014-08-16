@@ -49,7 +49,7 @@ public class VirtualConductor implements IConductor {
     private float totalResistance = 0;
 
     @Override
-    public float getResistance() {
+    public double getResistance() {
         return totalResistance;
     }
 

@@ -23,7 +23,7 @@ public class MatrixOperation {
     public static final double EPSILON = (double) 1e-10;
 
     // Gaussian elimination with partial pivoting
-    public static float[] lsolve(double[][] A, double[] b) {
+    public static double[] lsolve(double[][] A, double[] b) {
         int N = b.length;
 
         for (int p = 0; p < N; p++) {
@@ -60,14 +60,14 @@ public class MatrixOperation {
         }
 
         // back substitution
-        float[] x = new float[N];
+        double[] x = new double[N];
         for (int i = N - 1; i >= 0; i--) {
             if (A[i][i] != 0) {//Ignore any line with all zero
                 double sum = 0.0;
                 for (int j = i + 1; j < N; j++) {
                     sum += A[i][j] * x[j];
                 }
-                x[i] = (float) ((b[i] - sum) / A[i][i]);
+                x[i] = (b[i] - sum) / A[i][i];
             }
         }
         return x;

@@ -47,12 +47,12 @@ public class TileSolarInverter extends TileEntitySE implements ITransformer, IEn
 	}
 
     @Override
-    public float getResistance() {
+    public double getResistance() {
         return outputResistance;
     }
 
     @Override
-    public float getRatio() {
+    public double getRatio() {
         return ratio;
     }
 
@@ -78,7 +78,7 @@ public class TileSolarInverter extends TileEntitySE implements ITransformer, IEn
 
     @Override
     public void onOverVoltage(){
-    	worldObj.createExplosion(null, xCoord, yCoord, zCoord, 4F + Energy.getVoltage(primary) / 60, true);
+    	worldObj.createExplosion(null, xCoord, yCoord, zCoord, (float) (4F + Energy.getVoltage(primary) / 60), true);
     }
 
     private float aError = 0;                       //PI accumulated error

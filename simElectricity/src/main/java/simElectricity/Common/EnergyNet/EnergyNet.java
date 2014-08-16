@@ -35,7 +35,7 @@ public final class EnergyNet {
     //Represents the relationship between components
     private BakaGraph tileEntityGraph = new BakaGraph();
     //A map for storing voltage value of nodes, be private to avoid cheating 0w0
-    private Map<IBaseComponent, Float> voltageCache = new HashMap<IBaseComponent, Float>();
+    private Map<IBaseComponent, Double> voltageCache = new HashMap<IBaseComponent, Double>();
     //A flag for energyNet updating
     private boolean calc = false;
 
@@ -178,7 +178,7 @@ public final class EnergyNet {
 
                     if (rowIndex == columnIndex) { //Key cell
                         if (neighbor != null) {
-                            cellData += 2.0D / neighbor.getResistance();
+                            cellData += 1.0D / neighbor.getResistance();
                         }
 
                         //Add internal resistance for fixed voltage sources
@@ -194,7 +194,7 @@ public final class EnergyNet {
                         }
                     } else {
                         if (neighbor == unknownVoltageNodes.get(columnIndex)) {
-                            cellData = -2.0D / neighbor.getResistance();
+                            cellData = -1.0D / neighbor.getResistance();
                         } else if (currentRowComponent instanceof ITransformerWinding) { //Add transformer association
                             IBaseComponent currentColumnComponent = unknownVoltageNodes.get(columnIndex);
                             ITransformerWinding winding = (ITransformerWinding) currentRowComponent;
@@ -213,7 +213,7 @@ public final class EnergyNet {
 
         }
 
-        float[] x = MatrixOperation.lsolve(A, b);
+        double[] x = MatrixOperation.lsolve(A, b);
 
         voltageCache.clear();
         for (int i = 0; i < x.length; i++) {
@@ -223,12 +223,12 @@ public final class EnergyNet {
 
     public double getResistance(IBaseComponent node, IBaseComponent neighbor) {
         if (node instanceof IConductor) {            //IConductor
-            return node.getResistance() / 2D;
+            return node.getResistance();
         } else if (node instanceof IManualJunction) { //IManualJunction
             if (node.getResistance() == 0) {
                 return ((IManualJunction) node).getResistance(neighbor);
             } else {
-                return node.getResistance() / 2D;
+                return node.getResistance();
             }
         } else {
             return 0;
@@ -419,7 +419,7 @@ public final class EnergyNet {
     /**
      * Calculate the voltage of a given EnergyTile RELATIVE TO GROUND!
      */
-    public static float getVoltage(IBaseComponent Tile, World world) {
+    public static double getVoltage(IBaseComponent Tile, World world) {
         EnergyNet energyNet = WorldData.getEnergyNetForWorld(world);
         if (energyNet.voltageCache.containsKey(Tile))
             return energyNet.voltageCache.get(Tile);

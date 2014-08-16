@@ -38,7 +38,7 @@ public class TileAdjustableResistor extends TileStandardSEMachine implements INe
         if (worldObj.isRemote)
             return;
 
-        power = Energy.getPower(this);
+        power = (float) Energy.getPower(this);
         powerConsumed += power / 20F;
     }
 
@@ -67,12 +67,12 @@ public class TileAdjustableResistor extends TileStandardSEMachine implements INe
     }
 
     @Override
-    public float getOutputVoltage() {
+    public double getOutputVoltage() {
         return 0;
     }
 
     @Override
-    public float getResistance() {
+    public double getResistance() {
         return resistance;
     }
     

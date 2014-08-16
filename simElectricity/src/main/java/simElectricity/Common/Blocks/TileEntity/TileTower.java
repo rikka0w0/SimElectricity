@@ -125,7 +125,7 @@ public class TileTower extends TileEntitySE implements IManualJunction, IConnect
     }
 
     @Override
-    public float getResistance() {
+    public double getResistance() {
         return 0;
     }
 
@@ -167,7 +167,7 @@ public class TileTower extends TileEntitySE implements IManualJunction, IConnect
     }
 
     @Override
-    public float getResistance(IBaseComponent neighbor) {
+    public double getResistance(IBaseComponent neighbor) {
         if (neighbor == Util.getTileEntityonDirection(this, ForgeDirection.DOWN))
             return 0.1F;
 

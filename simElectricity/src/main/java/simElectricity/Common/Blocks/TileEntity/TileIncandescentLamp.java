@@ -38,18 +38,18 @@ public class TileIncandescentLamp extends TileStandardSEMachine implements IEner
     }
 
     @Override
-    public float getOutputVoltage() {
+    public double getOutputVoltage() {
         return 0;
     }
 
     @Override
-    public float getResistance() {
+    public double getResistance() {
         return 9900; // 5 watt at 220V
     }
 
     @Override
 	public void onOverVoltage(){
-    	worldObj.createExplosion(null, xCoord, yCoord, zCoord, 4F + Energy.getVoltage(this) / 265, true);
+    	worldObj.createExplosion(null, xCoord, yCoord, zCoord, (float) (4F + Energy.getVoltage(this) / 265), true);
     }
     
     @Override

@@ -36,7 +36,7 @@ import simElectricity.Common.EnergyNet.EnergyNet;
  * Energy net
  */
 public class Energy {
-	public static final float ic2ConvertRatio = 20;
+	public static final double ic2ConvertRatio = 20;
 	
     /**
      * Post a {@link simElectricity.API.Events.TileAttachEvent} for a tileEntity
@@ -70,7 +70,7 @@ public class Energy {
      * Calculate the energy output from a {@link simElectricity.API.EnergyTile.IEnergyTile} in one tick (1/20 second)
      * For {@link simElectricity.API.EnergyTile.IEnergyTile} Only!
      */
-    public static float getWorkDonePerTick(IEnergyTile Tile) {
+    public static double getWorkDonePerTick(IEnergyTile Tile) {
         return getWorkDonePerTick(Tile, ((TileEntity) Tile).getWorldObj());
     }
 
@@ -78,7 +78,7 @@ public class Energy {
      * Calculate the consumed power for a given EnergyTile
      * For {@link simElectricity.API.EnergyTile.IEnergyTile} and {@link simElectricity.API.EnergyTile.IConductor} Only!
      */
-    public static float getPower(IEnergyTile Tile) {
+    public static double getPower(IEnergyTile Tile) {
         return getPower(Tile, ((TileEntity) Tile).getWorldObj());
     }
 
@@ -86,7 +86,7 @@ public class Energy {
      * Calculate the input/output for a given EnergyTile
      * For {@link simElectricity.API.EnergyTile.IEnergyTile} and {@link simElectricity.API.EnergyTile.IConductor} Only!
      */
-    public static float getCurrent(IEnergyTile Tile) {
+    public static double getCurrent(IEnergyTile Tile) {
         return getCurrent(Tile, ((TileEntity) Tile).getWorldObj());
     }
 
@@ -94,7 +94,7 @@ public class Energy {
      * Calculate the voltage of a given EnergyTile RELATIVE TO GROUND!
      * For {@link simElectricity.API.EnergyTile.IEnergyTile} and {@link simElectricity.API.EnergyTile.IConductor} Only!
      */
-    public static float getVoltage(IBaseComponent Tile) {
+    public static double getVoltage(IBaseComponent Tile) {
         if (Tile instanceof ITransformerWinding) {
             return getVoltage(Tile, ((TileEntity) (((ITransformerWinding) Tile).getCore())).getWorldObj());
         } else {
@@ -105,9 +105,9 @@ public class Energy {
     /**
      * Calculate the energy output from a {@link simElectricity.API.EnergyTile.IEnergyTile} in one tick (1/20 second)
      */
-    public static float getWorkDonePerTick(ICircuitComponent Tile, World world) {
+    public static double getWorkDonePerTick(ICircuitComponent Tile, World world) {
         if (Tile.getOutputVoltage() > 0) {//Energy Source
-            return (float) (0.05 * getVoltage(Tile, world) * getCurrent(Tile, world));
+            return (double) (0.05 * getVoltage(Tile, world) * getCurrent(Tile, world));
         } else {//Energy Sink
             return 0;
         }
@@ -116,7 +116,7 @@ public class Energy {
     /**
      * Calculate the consumed power for a given EnergyTile
      */
-    public static float getPower(ICircuitComponent Tile, World world) {
+    public static double getPower(ICircuitComponent Tile, World world) {
         if (Tile.getOutputVoltage() > 0) {//Energy Source
             return ((Tile.getOutputVoltage() - getVoltage(Tile, world)) * (Tile.getOutputVoltage() - getVoltage(Tile, world))) / Tile.getResistance();
         } else {//Energy Sink
@@ -127,7 +127,7 @@ public class Energy {
     /**
      * Calculate the input/output for a given EnergyTile
      */
-    public static float getCurrent(ICircuitComponent Tile, World world) {
+    public static double getCurrent(ICircuitComponent Tile, World world) {
         if (Tile.getOutputVoltage() > 0) {            //Energy Source
             return (Tile.getOutputVoltage() - getVoltage(Tile, world)) / Tile.getResistance();
         } else {                                    //Energy Sink
@@ -138,7 +138,7 @@ public class Energy {
     /**
      * Calculate the voltage of a given EnergyTile RELATIVE TO GROUND!
      */
-    public static float getVoltage(IBaseComponent Tile, World world) {
+    public static double getVoltage(IBaseComponent Tile, World world) {
         return EnergyNet.getVoltage(Tile, world);
     }
 }

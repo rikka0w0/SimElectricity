@@ -50,12 +50,12 @@ public interface ITransformer {
     /**
      * Return the output resistance of the transformer, must not be zero!
      */
-    float getResistance();
+    double getResistance();
 
     /**
      * Return the primary-secondary ratio, >1 for step up, <1for step down
      */
-    float getRatio();
+    double getRatio();
 
 
     /**
@@ -75,7 +75,7 @@ public interface ITransformer {
          * Usually do not alternate this
          */
         @Override
-        public float getResistance() {
+        public double getResistance() {
             return core.getResistance();
         }
 
@@ -83,7 +83,7 @@ public interface ITransformer {
          * Usually do not alternate this
          */
         @Override
-        public float getRatio() {
+        public double getRatio() {
             return core.getRatio();
         }
 
@@ -122,7 +122,7 @@ public interface ITransformer {
      * This class represents either primary or secondary of a transformer, Usually internal uses only! So don't worry about this 0_0
      */
     public interface ITransformerWinding extends IBaseComponent {
-        float getRatio();
+        double getRatio();
 
         boolean isPrimary();
 

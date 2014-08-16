@@ -65,7 +65,7 @@ public class GuiVoltageMeter extends GuiContainer {
         int y = (height - ySize) / 2;
         this.drawTexturedModalRect(x, y, 0, 0, xSize, ySize);
 
-        float v = tileentity.voltage;
+        float v = (float) tileentity.voltage;
         if (v == 0)
             sqr = 0;
         else

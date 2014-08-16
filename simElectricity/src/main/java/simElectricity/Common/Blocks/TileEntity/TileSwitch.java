@@ -32,10 +32,10 @@ import simElectricity.API.EnergyTile.IManualJunction;
 import java.util.List;
 
 public class TileSwitch extends TileEntitySE implements IManualJunction, IConnectable, ISidedFacing, IEnergyNetUpdateHandler, INetworkEventHandler {
-    public float current=0F;
+    public double current=0F;
     
     public ForgeDirection inputSide = ForgeDirection.NORTH, outputSide = ForgeDirection.SOUTH, facing = ForgeDirection.WEST;
-    public float resistance = 0.1F;
+    public float resistance = 0.005F;
     public float maxCurrent = 1F;
     public boolean isOn = false;
 
@@ -93,8 +93,8 @@ public class TileSwitch extends TileEntitySE implements IManualJunction, IConnec
 	}
     
     @Override
-    public float getResistance() {
-        return resistance;
+    public double getResistance() {
+        return resistance / 2;
     }
 
     @Override
@@ -142,7 +142,7 @@ public class TileSwitch extends TileEntitySE implements IManualJunction, IConnec
         }
     }
 
-    private float getCurrent() {
+    private double getCurrent() {
         if (!isOn)
             return 0;
 
@@ -150,7 +150,7 @@ public class TileSwitch extends TileEntitySE implements IManualJunction, IConnec
         for (ForgeDirection dir : new ForgeDirection[] { inputSide, outputSide }) {
             neighbor = Util.getTileEntityonDirection(this, dir);
             if (neighbor instanceof IConductor) {
-                return 2F * Math.abs((Energy.getVoltage((IConductor) neighbor) - (Energy.getVoltage(this))) /
+                return Math.abs((Energy.getVoltage((IConductor) neighbor) - (Energy.getVoltage(this))) /
                         (((IConductor) neighbor).getResistance() + this.getResistance()));
             }
         }
@@ -158,7 +158,7 @@ public class TileSwitch extends TileEntitySE implements IManualJunction, IConnec
     }
 
 	@Override
-	public float getResistance(IBaseComponent neighbor) {
+	public double getResistance(IBaseComponent neighbor) {
 		return 0;
 	}
 }

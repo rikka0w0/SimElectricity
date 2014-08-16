@@ -42,5 +42,5 @@ public interface IManualJunction extends IBaseComponent {
      * <p/>
      * Should return the resistance between this tileEntity and the neighbor
      */
-    float getResistance(IBaseComponent neighbor);
+    double getResistance(IBaseComponent neighbor);
 }

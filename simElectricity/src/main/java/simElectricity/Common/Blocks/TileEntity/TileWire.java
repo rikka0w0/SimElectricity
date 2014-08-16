@@ -118,7 +118,7 @@ public class TileWire extends TileEntity implements IConductor, INetworkEventHan
     }
 
     @Override
-    public float getResistance() {
+    public double getResistance() {
         return resistance;
     }
 

@@ -33,5 +33,5 @@ public interface ICircuitComponent extends IBaseComponent {
     /**
      * Return 0 for sink(typically machines), other value for source(e.g generator)
      */
-    float getOutputVoltage();
+	double getOutputVoltage();
 }
