@@ -24,24 +24,21 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
-import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.Energy;
 import simElectricity.API.IHVTower;
 import simElectricity.API.Network;
-import simElectricity.API.Util;
 import simElectricity.API.Common.TileEntitySE;
 import simElectricity.API.EnergyTile.IBaseComponent;
-import simElectricity.API.EnergyTile.IConductor;
-import simElectricity.API.EnergyTile.IConnectable;
 import simElectricity.API.EnergyTile.IManualJunction;
 
 import java.util.List;
 
-public class TileTower extends TileEntitySE implements IManualJunction, IConnectable, IHVTower {
+public class TileTower extends TileEntitySE implements IManualJunction, IHVTower {
     public int facing;
     public int neighborsInfo[] = new int[] { 0, -1, 0, 0, -1, 0 };
     protected boolean isAddedToEnergyNet = false;
 	
+	@Override
 	public void addNeighbor(TileEntity te){
 		for (int i=0; i<neighborsInfo.length; i+=3){
 			if (neighborsInfo[i+1] == -1){
@@ -67,6 +64,7 @@ public class TileTower extends TileEntitySE implements IManualJunction, IConnect
 		Energy.postTileRejoinEvent(this);
 	}
 	
+	@Override
 	public boolean hasVacant(){
 		for (int i=0; i<neighborsInfo.length; i+=3){
 			if (neighborsInfo[i+1] == -1)
@@ -129,17 +127,9 @@ public class TileTower extends TileEntitySE implements IManualJunction, IConnect
         return 0;
     }
 
-    @Override
-    public boolean canConnectOnSide(ForgeDirection side) {
-        return side == ForgeDirection.DOWN;
-    }
 
     @Override
     public void addNeighbors(List<IBaseComponent> list) {
-        TileEntity downTile = Util.getTileEntityonDirection(this, ForgeDirection.DOWN);
-        if (downTile instanceof IConductor)
-            list.add((IBaseComponent) downTile);
-
         TileEntity te;
         if (neighborsInfo[1] != -1) {
             te = worldObj.getTileEntity(neighborsInfo[0], neighborsInfo[1], neighborsInfo[2]);
@@ -157,6 +147,9 @@ public class TileTower extends TileEntitySE implements IManualJunction, IConnect
         	te = worldObj.getTileEntity(xCoord,yCoord - 2,zCoord);
         	if (te instanceof TileTower && te.getBlockMetadata() == 2)
         		list.add((IManualJunction) te);
+        	
+        	if (te instanceof TileCableClamp)
+        		list.add((IManualJunction) te);
         }
         
         if (this.getBlockMetadata() == 2){
@@ -168,7 +161,7 @@ public class TileTower extends TileEntitySE implements IManualJunction, IConnect
 
     @Override
     public double getResistance(IBaseComponent neighbor) {
-        if (neighbor == Util.getTileEntityonDirection(this, ForgeDirection.DOWN))
+        if (neighbor == worldObj.getTileEntity(xCoord,yCoord - 2,zCoord))
             return 0.1F;
 
         if (neighbor instanceof TileTower) {

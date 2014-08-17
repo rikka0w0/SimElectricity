@@ -25,9 +25,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import simElectricity.Client.Gui.*;
-import simElectricity.Client.Render.RenderTower;
-import simElectricity.Client.Render.RenderWindMillTop;
-import simElectricity.Client.Render.RenderWire;
+import simElectricity.Client.Render.*;
 import simElectricity.Common.Blocks.TileEntity.*;
 import simElectricity.Common.Blocks.WindMill.TileWindMillTop;
 import simElectricity.Common.CommonProxy;
@@ -43,6 +41,7 @@ public class ClientProxy extends CommonProxy {
         ClientRegistry.bindTileEntitySpecialRenderer(TileWire.class, new RenderWire());
         ClientRegistry.bindTileEntitySpecialRenderer(TileWindMillTop.class, new RenderWindMillTop());
         ClientRegistry.bindTileEntitySpecialRenderer(TileTower.class, new RenderTower());
+        ClientRegistry.bindTileEntitySpecialRenderer(TileCableClamp.class, new RenderCableClamp());
     }
 
     @Override

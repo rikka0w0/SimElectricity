@@ -6,6 +6,23 @@ import org.lwjgl.opengl.GL11;
 
 @SideOnly(Side.CLIENT)
 public class RenderUtil {
+	public static void facingRotate(int facing) {
+		GL11.glRotatef(getDirection(facing)*270F + 90F, 0F, 1F, 0F);
+	}
+	
+    public static int getDirection(int facing) {
+        switch (facing) {
+            case 2: //N
+                return 0;
+            case 5: //E
+                return 1;
+            case 3: //S
+                return 2;
+            default://W
+                return 3;
+        }
+    }
+	
     /**
      * Rotate the coordinate system so that the object in it can lay between two points
      *

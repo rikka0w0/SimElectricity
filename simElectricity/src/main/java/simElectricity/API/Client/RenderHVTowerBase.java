@@ -7,7 +7,7 @@ import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
 
 public abstract class RenderHVTowerBase extends TileEntitySpecialRenderer implements ITextureProvider {
-	public CableRender render = new CableRender(this);	
+	public final CableRender render = new CableRender(this);	
 
 	public abstract void renderTower(TileEntity tower, double x, double y, double z);
 	
@@ -184,15 +184,6 @@ public abstract class RenderHVTowerBase extends TileEntitySpecialRenderer implem
     }
     
     int getDirection(IHVTower tower) {
-        switch (tower.getFacing()) {
-            case 2: //N
-                return 0;
-            case 5: //E
-                return 1;
-            case 3: //S
-                return 2;
-            default://W
-                return 3;
-        }
+        return RenderUtil.getDirection(tower.getFacing());
     }
 }

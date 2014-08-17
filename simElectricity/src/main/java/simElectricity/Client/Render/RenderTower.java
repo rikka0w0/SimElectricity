@@ -25,6 +25,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
+import simElectricity.Common.Blocks.TileEntity.TileCableClamp;
 import simElectricity.Common.Blocks.TileEntity.TileTower;
 import simElectricity.API.Client.RenderHVTowerBase;
 
@@ -60,7 +61,8 @@ public class RenderTower extends RenderHVTowerBase{
     	TileEntity neighbor;
     	if (tileEntity.getBlockMetadata() == 1){ 
     		neighbor = tileEntity.getWorldObj().getTileEntity(tileEntity.xCoord,tileEntity.yCoord - 2,tileEntity.zCoord);
-        	if (neighbor instanceof TileTower && neighbor.getBlockMetadata() == 2)
+        	if (neighbor instanceof TileTower && neighbor.getBlockMetadata() == 2 ||
+        		neighbor instanceof TileCableClamp)
         		renderCableTo(tileEntity, neighbor, x, y, z, 0.4);
         }   	
     	if (tileEntity.getBlockMetadata() == 2){
@@ -71,6 +73,10 @@ public class RenderTower extends RenderHVTowerBase{
     }
         
     private void renderTower2() {
+    	GL11.glPushMatrix();
+        render.render_cube(0.25, 1, 0.25);
+        GL11.glPopMatrix();
+    	
     	GL11.glTranslated(0.2, 0.6, -1.5);
     	
     	GL11.glPushMatrix();
@@ -100,7 +106,8 @@ public class RenderTower extends RenderHVTowerBase{
     	GL11.glTranslated(0, -8, 0);
     	
     	GL11.glPushMatrix();
-        render.render_cube(0.2, 10, 0.2);
+    	GL11.glTranslated(0, 8, 0);
+        render.render_cube(0.25, 2, 0.25);
         GL11.glPopMatrix();
         
         GL11.glPushMatrix();

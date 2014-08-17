@@ -21,13 +21,14 @@ package simElectricity.Common.Items;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 import simElectricity.API.Common.Items.ItemSE;
 import simElectricity.API.Network;
 import simElectricity.API.Util;
-import simElectricity.Common.Blocks.TileEntity.TileTower;
+import simElectricity.API.IHVTower;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -44,7 +45,7 @@ public class ItemHVWire extends ItemSE {
     public boolean onItemUse(ItemStack itemStack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
         if (!world.isRemote) {
 
-            if (!(world.getTileEntity(x, y, z) instanceof TileTower)) {
+            if (!(world.getTileEntity(x, y, z) instanceof IHVTower)) {
                 Util.chat(player, EnumChatFormatting.RED + StatCollector.translateToLocal("sime.TgtNotTw") + EnumChatFormatting.RESET);
                 return true;
             }
@@ -62,22 +63,22 @@ public class ItemHVWire extends ItemSE {
                 Util.chat(player, StatCollector.translateToLocal("sime.TwSelect"));
             } else {
                 if (!(lastCoordinate[0] == x && lastCoordinate[1] == y && lastCoordinate[2] == z) &&
-                        world.getTileEntity(lastCoordinate[0], lastCoordinate[1], lastCoordinate[2]) instanceof TileTower) {
+                        world.getTileEntity(lastCoordinate[0], lastCoordinate[1], lastCoordinate[2]) instanceof IHVTower) {
 
                     if (Math.pow(x - lastCoordinate[0], 2) + Math.pow(z - lastCoordinate[2], 2) < 64) {
                         Util.chat(player, EnumChatFormatting.RED + StatCollector.translateToLocal("sime.TwClose") + EnumChatFormatting.RESET);
                         return true;
                     }
 
-                    TileTower tower1 = (TileTower) world.getTileEntity(lastCoordinate[0], lastCoordinate[1], lastCoordinate[2]);
-                    TileTower tower2 = (TileTower) world.getTileEntity(x, y, z);
+                    IHVTower tower1 = (IHVTower) world.getTileEntity(lastCoordinate[0], lastCoordinate[1], lastCoordinate[2]);
+                    IHVTower tower2 = (IHVTower) world.getTileEntity(x, y, z);
 
                     if (tower1.hasVacant() && tower2.hasVacant()) {
-                        tower1.addNeighbor(tower2);
-                        tower2.addNeighbor(tower1);
+                        tower1.addNeighbor((TileEntity) tower2);
+                        tower2.addNeighbor((TileEntity) tower1);
 
-                        Network.updateTileEntityNBT(tower1);
-                        Network.updateTileEntityNBT(tower2);
+                        Network.updateTileEntityNBT((TileEntity) tower1);
+                        Network.updateTileEntityNBT((TileEntity) tower2);
                         
                         Util.chat(player, StatCollector.translateToLocal("sime.TwConnect"));
                     } else
