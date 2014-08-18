@@ -89,6 +89,7 @@ public class ItemHVWire extends ItemSE {
                 lastCoordinate[0] = 0;
                 lastCoordinate[1] = -1;
                 lastCoordinate[2] = 0;
+                lastCoordinates.put(player, lastCoordinate);
             }
         }
 

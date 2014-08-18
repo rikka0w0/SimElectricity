@@ -36,7 +36,6 @@ import java.util.List;
 public class TileTower extends TileEntitySE implements IManualJunction, IHVTower {
     public int facing;
     public int neighborsInfo[] = new int[] { 0, -1, 0, 0, -1, 0 };
-    protected boolean isAddedToEnergyNet = false;
 	
 	@Override
 	public void addNeighbor(TileEntity te){
@@ -112,6 +111,9 @@ public class TileTower extends TileEntitySE implements IManualJunction, IHVTower
             neighborsInfo = new int[] { 0, -1, 0, 0, -1, 0 };
         if (neighborsInfo.length != 6)
             neighborsInfo = new int[] { 0, -1, 0, 0, -1, 0 };
+        
+        if (xCoord==127)
+        	return;
     }
 
     @Override

@@ -20,10 +20,14 @@
 package simElectricity.Common.Blocks.WindMill;
 
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.Common.TileSidedFacingMachine;
 
 import java.util.Random;
+
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class TileWindMillTop extends TileSidedFacingMachine {
     public int randAngle = (new Random()).nextInt(180);
@@ -62,5 +66,18 @@ public class TileWindMillTop extends TileSidedFacingMachine {
     @Override
     public boolean attachToEnergyNet() {
         return false;
+    }
+    
+	@SideOnly(Side.CLIENT)
+    @Override
+    public double getMaxRenderDistanceSquared()
+    {
+        return 100000;
+    }
+	
+	@SideOnly(Side.CLIENT)
+	@Override
+    public AxisAlignedBB getRenderBoundingBox(){
+    	return INFINITE_EXTENT_AABB;
     }
 }
