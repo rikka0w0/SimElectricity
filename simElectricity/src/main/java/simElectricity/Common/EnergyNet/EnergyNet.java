@@ -26,7 +26,6 @@ import simElectricity.API.EnergyTile.*;
 import simElectricity.API.EnergyTile.ITransformer.ITransformerWinding;
 import simElectricity.API.IEnergyNetUpdateHandler;
 import simElectricity.API.Util;
-import simElectricity.Common.ConfigManager;
 import simElectricity.Common.SEUtils;
 
 import java.util.*;
@@ -37,82 +36,13 @@ public final class EnergyNet {
     //A map for storing voltage value of nodes, be private to avoid cheating 0w0
     private Map<IBaseComponent, Double> voltageCache = new HashMap<IBaseComponent, Double>();
     //A flag for energyNet updating
-    private boolean calc = false;
-
-    //Optimization--------------------------------------------------------------------
-    private boolean nodeIsLine(IBaseComponent conductor, BakaGraph optimizedTileEntityGraph) {
-        if (conductor.getClass() == VirtualConductor.class)
-            return false;
-        if (!(conductor instanceof IConductor))
-            return false;
-        if (VirtualConductor.conductorInVirtual((IConductor) conductor))
-            return false;
-
-        List<IBaseComponent> list = optimizedTileEntityGraph.neighborListOf(conductor);
-        for (IBaseComponent iBaseComponent : list) {
-            if (!(iBaseComponent instanceof IConductor))
-                return false;
-        }
-
-        return list.size() == 2;
-    }
-
-    private VirtualConductor floodFill(IBaseComponent conductor, VirtualConductor virtualConductor, BakaGraph optimizedTileEntityGraph) {
-        if (nodeIsLine(conductor, optimizedTileEntityGraph)) {
-            if (virtualConductor == null)
-                virtualConductor = new VirtualConductor();
-            virtualConductor.append((IConductor) conductor);
-            List<IBaseComponent> neighborList = optimizedTileEntityGraph.neighborListOf(conductor);
-            for (IBaseComponent iBaseComponent : neighborList) {
-                floodFill(iBaseComponent, virtualConductor, optimizedTileEntityGraph);
-            }
-        } else if (virtualConductor != null) {
-            virtualConductor.appendConnection(conductor);
-        }
-
-        return virtualConductor;
-    }
-
-    private boolean mergeIConductorNode(BakaGraph optimizedTileEntityGraph) {
-        boolean result = false;
-        VirtualConductor virtualConductor = null;
-
-        Set<IBaseComponent> iBaseComponentSet = optimizedTileEntityGraph.vertexSet();
-        for (IBaseComponent iBaseComponent : iBaseComponentSet) {
-            virtualConductor = floodFill(iBaseComponent, virtualConductor, optimizedTileEntityGraph);
-
-            if (virtualConductor != null) {
-                break;
-            }
-        }
-
-        if (virtualConductor != null) {
-            optimizedTileEntityGraph.addVertex(virtualConductor);
-            optimizedTileEntityGraph.addEdge(virtualConductor, virtualConductor.getConnection(0));
-            optimizedTileEntityGraph.addEdge(virtualConductor, virtualConductor.getConnection(1));
-
-            for (IConductor conductor : VirtualConductor.allConductorInVirtual())
-                optimizedTileEntityGraph.removeVertex(conductor);
-
-            result = true;
-        }
-
-        return result;
-    }
+    private boolean calc = false;  
 
     //Simulator------------------------------------------------------------------------
-    @SuppressWarnings({ "unchecked" })
     private void runSimulator() {
-        BakaGraph optimizedTileEntityGraph = (BakaGraph) tileEntityGraph.clone();
+        BakaGraph optimizedTileEntityGraph = (BakaGraph) tileEntityGraph;//.clone();
 
-        //try to optimization
-        if (ConfigManager.optimizeNodes) {
-            SEUtils.logInfo("raw:" + optimizedTileEntityGraph.vertexSet().size() + " nodes");
-            VirtualConductor.mapClear();
-            while (mergeIConductorNode(optimizedTileEntityGraph)) ;
-            SEUtils.logInfo("optimized:" + optimizedTileEntityGraph.vertexSet().size() + " nodes");
-        }
-
+        //Optimizer.optimize(optimizedTileEntityGraph);
 
         List<IBaseComponent> unknownVoltageNodes = new ArrayList<IBaseComponent>();
         unknownVoltageNodes.addAll(optimizedTileEntityGraph.vertexSet());
@@ -271,7 +201,7 @@ public final class EnergyNet {
     /**
      * Internal use only, return a list containing neighbor TileEntities (Just for IBaseComponent)
      */
-    private static List<IBaseComponent> neighborListOf(TileEntity te) {
+    private List<IBaseComponent> neighborListOf(TileEntity te) {
         List<IBaseComponent> result = new ArrayList<IBaseComponent>();
         TileEntity temp;
 
