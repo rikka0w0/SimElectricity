@@ -198,183 +198,123 @@ public class RenderTower extends RenderHVTowerBase{
         //1
         GL11.glPushMatrix();
         GL11.glTranslated(-2.4, -9.85, -2.385);
-        GL11.glRotatef(-52F, 0.0F, 0.0F, 1.0F);
-        GL11.glRotatef(5.3F, 1.0F, 0.0F, 0.0F);
-        render.render_cube(0.15, 5.5, 0.15);
+        GL11.glRotatef(-24F, 0.0F, 0.0F, 1.0F);
+        GL11.glRotatef(7.8F, 1.0F, 0.0F, 0.0F);
+        render.render_cube(0.15, 8.8, 0.15);
         GL11.glPopMatrix(); 
         
         GL11.glPushMatrix();
         GL11.glTranslated(-2.385, -9.85, -2.4);
-        GL11.glRotatef(52F, 1.0F, 0.0F, 0.0F);
-        GL11.glRotatef(-5.3F, 0.0F, 0.0F, 1.0F);
-        render.render_cube(0.15, 5.5, 0.15);
+        GL11.glRotatef(24F, 1.0F, 0.0F, 0.0F);
+        GL11.glRotatef(-7.8F, 0.0F, 0.0F, 1.0F);
+        render.render_cube(0.15, 8.8, 0.15);
         GL11.glPopMatrix(); 
         
         //2
         GL11.glPushMatrix();
         GL11.glTranslated(2.4, -9.85, 2.385);
-        GL11.glRotatef(52F, 0.0F, 0.0F, 1.0F);
-        GL11.glRotatef(-5.3F, 1.0F, 0.0F, 0.0F);
-        render.render_cube(0.15, 5.5, 0.15);
+        GL11.glRotatef(24F, 0.0F, 0.0F, 1.0F);
+        GL11.glRotatef(-7.8F, 1.0F, 0.0F, 0.0F);
+        render.render_cube(0.15, 8.8, 0.15);
         GL11.glPopMatrix(); 
         
         GL11.glPushMatrix();
         GL11.glTranslated(2.385, -9.85, 2.4);
-        GL11.glRotatef(-52F, 1.0F, 0.0F, 0.0F);
-        GL11.glRotatef(5.3F, 0.0F, 0.0F, 1.0F);
-        render.render_cube(0.15, 5.5, 0.15);
+        GL11.glRotatef(-24F, 1.0F, 0.0F, 0.0F);
+        GL11.glRotatef(7.8F, 0.0F, 0.0F, 1.0F);
+        render.render_cube(0.15, 8.8, 0.15);
         GL11.glPopMatrix(); 
         
         
         //3
         GL11.glPushMatrix();
         GL11.glTranslated(2.4, -9.85, -2.385);
-        GL11.glRotatef(52F, 0.0F, 0.0F, 1.0F);
-        GL11.glRotatef(5.3F, 1.0F, 0.0F, 0.0F);
-        render.render_cube(0.15, 5.5, 0.15);
+        GL11.glRotatef(24F, 0.0F, 0.0F, 1.0F);
+        GL11.glRotatef(7.8F, 1.0F, 0.0F, 0.0F);
+        render.render_cube(0.15, 8.8, 0.15);
         GL11.glPopMatrix(); 
         
         GL11.glPushMatrix();
         GL11.glTranslated(2.385, -9.85, -2.4);
-        GL11.glRotatef(52F, 1.0F, 0.0F, 0.0F);
-        GL11.glRotatef(5.3F, 0.0F, 0.0F, 1.0F);
-        render.render_cube(0.15, 5.5, 0.15);
+        GL11.glRotatef(24F, 1.0F, 0.0F, 0.0F);
+        GL11.glRotatef(7.8F, 0.0F, 0.0F, 1.0F);
+        render.render_cube(0.15, 8.8, 0.15);
         GL11.glPopMatrix(); 
         
         //4
         GL11.glPushMatrix();
         GL11.glTranslated(-2.4, -9.85, 2.385);
-        GL11.glRotatef(-52F, 0.0F, 0.0F, 1.0F);
-        GL11.glRotatef(-5.3F, 1.0F, 0.0F, 0.0F);
-        render.render_cube(0.15, 5.5, 0.15);
+        GL11.glRotatef(-24F, 0.0F, 0.0F, 1.0F);
+        GL11.glRotatef(-7.8F, 1.0F, 0.0F, 0.0F);
+        render.render_cube(0.15, 8.8, 0.15);
         GL11.glPopMatrix(); 
         
         GL11.glPushMatrix();
         GL11.glTranslated(-2.385, -9.85, 2.4);
-        GL11.glRotatef(-52F, 1.0F, 0.0F, 0.0F);
-        GL11.glRotatef(-5.3F, 0.0F, 0.0F, 1.0F);
-        render.render_cube(0.15, 5.5, 0.15);
+        GL11.glRotatef(-24F, 1.0F, 0.0F, 0.0F);
+        GL11.glRotatef(-7.8F, 0.0F, 0.0F, 1.0F);
+        render.render_cube(0.15, 8.8, 0.15);
         GL11.glPopMatrix(); 
+               
         
         //1
         GL11.glPushMatrix();
-        GL11.glTranslated(-1.85, -6.5, -1.85);
-        GL11.glRotatef(-45F, 0.0F, 0.0F, 1.0F);
-        GL11.glRotatef(5.8F, 1.0F, 0.0F, 0.0F);
-        render.render_cube(0.15, 4.6, 0.15);
-        GL11.glPopMatrix(); 
-        
-        GL11.glPushMatrix();
-        GL11.glTranslated(-1.85, -6.5, -1.85);
-        GL11.glRotatef(45F, 1.0F, 0.0F, 0.0F);
-        GL11.glRotatef(-5.8F, 0.0F, 0.0F, 1.0F);
-        render.render_cube(0.15, 4.6, 0.15);
-        GL11.glPopMatrix(); 
-        
-        //2
-        GL11.glPushMatrix();
-        GL11.glTranslated(-1.85, -6.5, 1.85);
-        GL11.glRotatef(-45F, 0.0F, 0.0F, 1.0F);
-        GL11.glRotatef(-5.8F, 1.0F, 0.0F, 0.0F);
-        render.render_cube(0.15, 4.6, 0.15);
-        GL11.glPopMatrix(); 
-        
-        GL11.glPushMatrix();
-        GL11.glTranslated(-1.85, -6.5, 1.85);
-        GL11.glRotatef(-45F, 1.0F, 0.0F, 0.0F);
-        GL11.glRotatef(-5.8F, 0.0F, 0.0F, 1.0F);
-        render.render_cube(0.15, 4.6, 0.15);
-        GL11.glPopMatrix(); 
-        
-        //3
-        GL11.glPushMatrix();
-        GL11.glTranslated(1.85, -6.5, 1.85);
-        GL11.glRotatef(45F, 0.0F, 0.0F, 1.0F);
-        GL11.glRotatef(-5.8F, 1.0F, 0.0F, 0.0F);
-        render.render_cube(0.15, 4.6, 0.15);
-        GL11.glPopMatrix(); 
-        
-        GL11.glPushMatrix();
-        GL11.glTranslated(1.85, -6.5, 1.85);
-        GL11.glRotatef(-45F, 1.0F, 0.0F, 0.0F);
-        GL11.glRotatef(5.8F, 0.0F, 0.0F, 1.0F);
-        render.render_cube(0.15, 4.6, 0.15);
-        GL11.glPopMatrix();
-        
-        //4
-        GL11.glPushMatrix();
-        GL11.glTranslated(1.85, -6.5, -1.85);
-        GL11.glRotatef(45F, 0.0F, 0.0F, 1.0F);
-        GL11.glRotatef(5.8F, 1.0F, 0.0F, 0.0F);
-        render.render_cube(0.15, 4.6, 0.15);
-        GL11.glPopMatrix(); 
-        
-        GL11.glPushMatrix();
-        GL11.glTranslated(1.85, -6.5, -1.85);
-        GL11.glRotatef(45F, 1.0F, 0.0F, 0.0F);
-        GL11.glRotatef(5.8F, 0.0F, 0.0F, 1.0F);
-        render.render_cube(0.15, 4.6, 0.15);
-        GL11.glPopMatrix(); 
-        
-        
-        //1
-        GL11.glPushMatrix();
-        GL11.glTranslated(-1.35, -3.2, -1.35);
-        GL11.glRotatef(-28F, 0.0F, 0.0F, 1.0F);
+        GL11.glTranslated(-1.18, -1.8, -1.18);
+        GL11.glRotatef(-38F, 0.0F, 0.0F, 1.0F);
         GL11.glRotatef(7F, 1.0F, 0.0F, 0.0F);
-        render.render_cube(0.15, 4.5, 0.15);
+        render.render_cube(0.15, 3.3, 0.15);
         GL11.glPopMatrix(); 
         
         GL11.glPushMatrix();
-        GL11.glTranslated(-1.35, -3.2, -1.35);
-        GL11.glRotatef(28F, 1.0F, 0.0F, 0.0F);
+        GL11.glTranslated(-1.18, -1.8, -1.18);
+        GL11.glRotatef(38F, 1.0F, 0.0F, 0.0F);
         GL11.glRotatef(-7F, 0.0F, 0.0F, 1.0F);
-        render.render_cube(0.15, 4.5, 0.15);
+        render.render_cube(0.15, 3.3, 0.15);
         GL11.glPopMatrix();
         
         //2
         GL11.glPushMatrix();
-        GL11.glTranslated(-1.35, -3.2, 1.35);
-        GL11.glRotatef(-28F, 0.0F, 0.0F, 1.0F);
+        GL11.glTranslated(-1.18, -1.8, 1.18);
+        GL11.glRotatef(-38F, 0.0F, 0.0F, 1.0F);
         GL11.glRotatef(-7F, 1.0F, 0.0F, 0.0F);
-        render.render_cube(0.15, 4.5, 0.15);
+        render.render_cube(0.15, 3.3, 0.15);
         GL11.glPopMatrix(); 
         
         GL11.glPushMatrix();
-        GL11.glTranslated(-1.35, -3.2, 1.35);
-        GL11.glRotatef(-28F, 1.0F, 0.0F, 0.0F);
+        GL11.glTranslated(-1.18, -1.8, 1.18);
+        GL11.glRotatef(-38F, 1.0F, 0.0F, 0.0F);
         GL11.glRotatef(-7F, 0.0F, 0.0F, 1.0F);
-        render.render_cube(0.15, 4.5, 0.15);
+        render.render_cube(0.15, 3.3, 0.15);
         GL11.glPopMatrix();
         
         //3
         GL11.glPushMatrix();
-        GL11.glTranslated(1.35, -3.2, 1.35);
-        GL11.glRotatef(28F, 0.0F, 0.0F, 1.0F);
+        GL11.glTranslated(1.18, -1.8, 1.18);
+        GL11.glRotatef(38F, 0.0F, 0.0F, 1.0F);
         GL11.glRotatef(-7F, 1.0F, 0.0F, 0.0F);
-        render.render_cube(0.15, 4.5, 0.15);
+        render.render_cube(0.15, 3.3, 0.15);
         GL11.glPopMatrix(); 
         
         GL11.glPushMatrix();
-        GL11.glTranslated(1.35, -3.2, 1.35);
-        GL11.glRotatef(-28F, 1.0F, 0.0F, 0.0F);
+        GL11.glTranslated(1.18, -1.8, 1.18);
+        GL11.glRotatef(-38F, 1.0F, 0.0F, 0.0F);
         GL11.glRotatef(7F, 0.0F, 0.0F, 1.0F);
-        render.render_cube(0.15, 4.5, 0.15);
+        render.render_cube(0.15, 3.3, 0.15);
         GL11.glPopMatrix();
         
         //4
         GL11.glPushMatrix();
-        GL11.glTranslated(1.35, -3.2, -1.35);
-        GL11.glRotatef(28F, 0.0F, 0.0F, 1.0F);
+        GL11.glTranslated(1.18, -1.8, -1.18);
+        GL11.glRotatef(38F, 0.0F, 0.0F, 1.0F);
         GL11.glRotatef(7F, 1.0F, 0.0F, 0.0F);
-        render.render_cube(0.15, 4.5, 0.15);
+        render.render_cube(0.15, 3.3, 0.15);
         GL11.glPopMatrix(); 
         
         GL11.glPushMatrix();
-        GL11.glTranslated(1.35, -3.2, -1.35);
-        GL11.glRotatef(28F, 1.0F, 0.0F, 0.0F);
+        GL11.glTranslated(1.18, -1.8, -1.18);
+        GL11.glRotatef(38F, 1.0F, 0.0F, 0.0F);
         GL11.glRotatef(7F, 0.0F, 0.0F, 1.0F);
-        render.render_cube(0.15, 4.5, 0.15);
+        render.render_cube(0.15, 3.3, 0.15);
         GL11.glPopMatrix();
         
         
