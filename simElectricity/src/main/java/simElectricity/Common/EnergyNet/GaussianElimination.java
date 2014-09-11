@@ -19,9 +19,39 @@
 
 package simElectricity.Common.EnergyNet;
 
-public class MatrixOperation {
+public class GaussianElimination implements MatrixResolver{
     public static final double EPSILON = (double) 1e-10;
 
+    double[][] matrix;
+    int currentRow;
+    int currentColumn;
+    
+	@Override
+	public void newMatrix(int size) {
+		matrix = new double[size][size];
+		currentRow = 0;
+		currentColumn = 0;
+	}
+
+	@Override
+	public void pushCoefficient(double value) {
+		matrix[currentColumn][currentRow] = value;
+		currentRow++;
+	}
+
+	@Override
+	public void pushColumn() {
+		currentColumn++;
+		currentRow = 0;
+	}
+
+	@Override
+	public void solve(double[] b) {
+		double[] x = lsolve(matrix,b);
+		for (int i=0;i<b.length;i++)
+			b[i] = x[i];
+	}
+    
     // Gaussian elimination with partial pivoting
     public static double[] lsolve(double[][] A, double[] b) {
         int N = b.length;

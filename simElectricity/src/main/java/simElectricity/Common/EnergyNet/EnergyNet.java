@@ -38,6 +38,8 @@ public final class EnergyNet {
     //A flag for energyNet updating
     private boolean calc = false;  
 
+    private MatrixResolver matrix = new GaussianElimination();
+    
     //Simulator------------------------------------------------------------------------
     private void runSimulator() {
         BakaGraph optimizedTileEntityGraph = (BakaGraph) tileEntityGraph;//.clone();
@@ -48,8 +50,7 @@ public final class EnergyNet {
         unknownVoltageNodes.addAll(optimizedTileEntityGraph.vertexSet());
 
         int matrixSize = unknownVoltageNodes.size();
-
-        double[][] A = new double[matrixSize][matrixSize]; //A initialized 0 matrix
+        matrix.newMatrix(matrixSize);
         double[] b = new double[matrixSize];
 
         for (int rowIndex = 0; rowIndex < matrixSize; rowIndex++) {
@@ -93,7 +94,7 @@ public final class EnergyNet {
 
                     }
 
-                    A[rowIndex][columnIndex] = cellData;
+                    matrix.pushCoefficient(cellData);
                 }
             } else { //For other nodes (can only have a IConductor neighbor or no neighbor!)
                 //Find the only possible neighbor (maybe not exist)
@@ -136,18 +137,18 @@ public final class EnergyNet {
                         }
                     }
 
-                    A[rowIndex][columnIndex] = cellData;
+                    matrix.pushCoefficient(cellData);
                 }
             }
 
-
+            matrix.pushColumn();
         }
 
-        double[] x = MatrixOperation.lsolve(A, b);
+        matrix.solve(b);
 
         voltageCache.clear();
-        for (int i = 0; i < x.length; i++) {
-            voltageCache.put(unknownVoltageNodes.get(i), x[i]);
+        for (int i = 0; i < b.length; i++) {
+            voltageCache.put(unknownVoltageNodes.get(i), b[i]);
         }
     }
 

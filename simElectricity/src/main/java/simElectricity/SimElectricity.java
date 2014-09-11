@@ -62,7 +62,7 @@ public class SimElectricity {
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
     	Util.isSELoaded = true;
-    	
+
         //Load Configs
         FMLCommonHandler.instance().bus().register(new ConfigManager());
         ConfigManager.init(event);
