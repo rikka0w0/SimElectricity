@@ -38,7 +38,7 @@ public final class EnergyNet {
     //A flag for energyNet updating
     private boolean calc = false;  
 
-    private MatrixResolver matrix = new GaussianElimination();
+    private MatrixResolver matrix = new SparseMatrix();
     
     //Simulator------------------------------------------------------------------------
     private void runSimulator() {
