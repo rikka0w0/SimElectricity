@@ -125,8 +125,6 @@ public class SparseMatrix implements MatrixResolver{
 	    	j++;
 	    }
 		
-	    boolean result =  Dcs_lusol.cs_lusol(1, matrix, b, 1.0); //Result will be in b
-	    
-	    System.out.println(result);
+	    Dcs_lusol.cs_lusol(1, matrix, b, 1.0); //Result will be in b
 	}
 }

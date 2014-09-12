@@ -39,7 +39,6 @@ import simElectricity.Common.ConfigManager;
 import simElectricity.Common.Core.SEBlocks;
 import simElectricity.Common.Core.SEItems;
 import simElectricity.Common.EnergyNet.EnergyNetEventHandler;
-import simElectricity.Common.EnergyNet.SparseMatrix;
 import simElectricity.Common.Network.MessageTileEntityUpdate;
 import simElectricity.Common.Network.NetworkManager;
 
@@ -63,7 +62,7 @@ public class SimElectricity {
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
     	Util.isSELoaded = true;
-SparseMatrix.demo2();
+
         //Load Configs
         FMLCommonHandler.instance().bus().register(new ConfigManager());
         ConfigManager.init(event);
