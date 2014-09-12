@@ -7,6 +7,8 @@ import edu.emory.mathcs.csparsej.tdouble.Dcs_lusol;
 import edu.emory.mathcs.csparsej.tdouble.Dcs_util;
 
 public class SparseMatrix implements MatrixResolver{
+	public static final double EPSILON = (double) 1e-10;
+	
 	public static boolean demo(){
 	    int size = 4; //Size of the square matrix
 	    int nz = 10;  //Number of non zero entries
@@ -87,7 +89,7 @@ public class SparseMatrix implements MatrixResolver{
 
 	@Override
 	public void pushCoefficient(double value) {
-		if (value == 0){
+		if (Math.abs(value) < EPSILON){
 			currentRow++;
 		}else{
 			AiList.add(currentRow);
