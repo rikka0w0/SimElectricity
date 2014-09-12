@@ -192,4 +192,15 @@ public class TileTower extends TileEntitySE implements IManualJunction, IHVTower
 	public int getFacing(){
 		return facing;
 	}
+	
+	@Override
+	public float getWireTension() {
+		switch (getBlockMetadata()){
+		case 1:
+			return 0.03f;
+		case 2:
+			return 0.03f;
+		}
+		return 0.06F;
+	}
 }

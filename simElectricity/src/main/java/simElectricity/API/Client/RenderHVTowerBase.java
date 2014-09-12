@@ -16,7 +16,7 @@ public abstract class RenderHVTowerBase extends TileEntitySpecialRenderer implem
 		for (int i = 0; i < tower.getNeighborInfo().length; i += 3) {
         	renderCableTo(tileEntity,
         			tileEntity.getWorldObj().getTileEntity(tower.getNeighborInfo()[i], tower.getNeighborInfo()[i + 1], tower.getNeighborInfo()[i + 2]),
-        			x,y,z,RenderUtil.distanceOf(tileEntity.xCoord, tileEntity.zCoord, tower.getNeighborInfo()[i], tower.getNeighborInfo()[i + 2]) * 0.06);
+        			x,y,z);
 	    }
 	}
 	
@@ -37,6 +37,11 @@ public abstract class RenderHVTowerBase extends TileEntitySpecialRenderer implem
         }
     }
 	
+    public void renderCableTo(TileEntity tileEntity,TileEntity neighbor, double x, double y, double z){
+    	if (neighbor!=null)
+    		renderCableTo(tileEntity, neighbor, x, y, z, calculateTension(tileEntity, neighbor));
+    }
+    
     public void renderCableTo(TileEntity tileEntity,TileEntity neighbor, double x, double y, double z, double tension){
     	IHVTower tower = (IHVTower) tileEntity;
         if (neighbor instanceof IHVTower) {
@@ -185,5 +190,16 @@ public abstract class RenderHVTowerBase extends TileEntitySpecialRenderer implem
     
     int getDirection(IHVTower tower) {
         return RenderUtil.getDirection(tower.getFacing());
+    }
+        
+    double getTension(TileEntity te){
+    	if (te instanceof IHVTower)
+    		return ((IHVTower) te).getWireTension();
+    	return 0;
+    }
+    
+    double calculateTension(TileEntity te1, TileEntity te2){
+    	return (RenderUtil.distanceOf(te1.xCoord, te1.zCoord, te2.xCoord, te2.zCoord) 
+    			* (getTension(te1)+getTension(te2))/2.0f);
     }
 }

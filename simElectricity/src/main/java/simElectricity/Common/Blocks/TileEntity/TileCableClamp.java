@@ -88,4 +88,9 @@ public class TileCableClamp extends TileEntitySE implements IManualJunction, ICo
 	public boolean hasVacant() {
 		return false;
 	}
+
+	@Override
+	public float getWireTension() {
+		return 0.06F;
+	}
 }
