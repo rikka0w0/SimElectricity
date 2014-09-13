@@ -27,7 +27,7 @@ package simElectricity.API.EnergyTile;
  * Detailed instruction is available on
  * <a href="https://github.com/RoyalAliceAcademyOfSciences/SimElectricity/wiki">the wiki of simElectricity</a>
  */
-public interface IBaseComponent {
+public interface IBaseComponent{
     /**
      * Return the resistance of the machine
      * or

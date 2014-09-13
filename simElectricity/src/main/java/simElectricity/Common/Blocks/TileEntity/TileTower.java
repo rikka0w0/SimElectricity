@@ -123,7 +123,7 @@ public class TileTower extends TileEntitySE implements IManualJunction, IHVTower
         tagCompound.setInteger("facing", facing);
         tagCompound.setIntArray("neighborsInfo", this.neighborsInfo);
     }
-
+    
     @Override
     public double getResistance() {
         return 0;

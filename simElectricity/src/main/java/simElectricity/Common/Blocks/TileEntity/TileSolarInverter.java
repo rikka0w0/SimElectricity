@@ -45,7 +45,7 @@ public class TileSolarInverter extends TileEntitySE implements ITransformer, IEn
 	public boolean attachToEnergyNet() {
 		return true;
 	}
-
+	
     @Override
     public double getResistance() {
         return outputResistance;

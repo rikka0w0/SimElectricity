@@ -56,8 +56,7 @@ public interface ITransformer {
      * Return the primary-secondary ratio, >1 for step up, <1for step down
      */
     double getRatio();
-
-
+    
     /**
      * This class represents the primary of a transformer
      * <p/>
@@ -70,7 +69,7 @@ public interface ITransformer {
         public Primary(ITransformer core) {
             this.core = core;
         }
-
+        
         /**
          * Usually do not alternate this
          */

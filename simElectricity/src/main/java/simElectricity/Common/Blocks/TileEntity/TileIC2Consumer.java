@@ -25,7 +25,7 @@ public class TileIC2Consumer extends TileSidedGenerator implements IEnergySink, 
         //No client side operation
         if (worldObj.isRemote)
         	return;
-
+        	
         double vo = Energy.getVoltage(this);
         double po = vo * (outputVoltage - vo) / (outputResistance * Energy.ic2ConvertRatio);
         boolean update = false;

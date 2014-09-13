@@ -6,7 +6,7 @@ import edu.emory.mathcs.csparsej.tdouble.Dcs_common;
 import edu.emory.mathcs.csparsej.tdouble.Dcs_qrsol;
 import edu.emory.mathcs.csparsej.tdouble.Dcs_util;
 
-public class SparseMatrix implements MatrixResolver{
+public class QR implements MatrixResolver{
 	public static final double EPSILON = (double) 1e-10;
 	
 	//Left hand side generation

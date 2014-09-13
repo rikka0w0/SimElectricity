@@ -32,10 +32,9 @@ public class ConfigManager {
     /**
      * Enable Optimized Nodes
      */
-    public static boolean optimizeNodes;
     public static boolean showEnergyNetInfo;
     public static int parabolaRenderSteps;
-
+    public static String matrixSolver;
 
     public static void init(FMLPreInitializationEvent event) {
         if (config == null) {
@@ -45,10 +44,10 @@ public class ConfigManager {
     }
 
     private static void syncConfig() {
-        optimizeNodes = config.get(Configuration.CATEGORY_GENERAL, "OptimizeNodes", false, "A function that can improve the performance by reducing the total number of conductor nodes (May be buggy)").getBoolean();
         showEnergyNetInfo = config.get(Configuration.CATEGORY_GENERAL, "ShowEnergyNetInfo", false, "Display energy net information, such as joining/leaving/changing").getBoolean();
-        parabolaRenderSteps = config.get(Configuration.CATEGORY_GENERAL, "ParabolaRenderSteps", 12, "Decides how smooth the parabola cable is(must be a even number!Client ONLY!)").getInt(12);
-
+        parabolaRenderSteps = config.get("Client", "ParabolaRenderSteps", 12, "Decides how smooth the parabola cable is(must be a even number!Client ONLY!)").getInt(12);
+        matrixSolver = config.get(Configuration.CATEGORY_GENERAL, "MatrixSolver", "QR", "Which algorithsm is used for solving matrix(QR is much more effective than Gaussian, options:QR,Gaussian)").getString();
+        
         if (config.hasChanged())
             config.save();
     }

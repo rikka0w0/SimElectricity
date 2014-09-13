@@ -26,6 +26,7 @@ import simElectricity.API.EnergyTile.*;
 import simElectricity.API.EnergyTile.ITransformer.ITransformerWinding;
 import simElectricity.API.IEnergyNetUpdateHandler;
 import simElectricity.API.Util;
+import simElectricity.Common.ConfigManager;
 import simElectricity.Common.SEUtils;
 
 import java.util.*;
@@ -40,7 +41,8 @@ public final class EnergyNet {
     private boolean structureChanged = false;
     private List<IBaseComponent> changedComponents = new LinkedList<IBaseComponent>();
     
-    private MatrixResolver matrix = new SparseMatrix();
+    //For partial update
+    private MatrixResolver matrix = MatrixResolver.MatrixHelper.newResolver(ConfigManager.matrixSolver);
     private Map<IBaseComponent, Integer> componentIndex = new HashMap<IBaseComponent, Integer>();
     List<IBaseComponent> unknownVoltageNodes = new ArrayList<IBaseComponent>();
     
@@ -221,12 +223,11 @@ public final class EnergyNet {
             	runSimulator();
             }else{
             	partialUpdate();
-            	changedComponents.clear();
             }
             
             structureChanged = false;
             calc = false;
-        	
+        	changedComponents.clear();
             
             //Check power distribution
             try {

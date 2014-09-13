@@ -19,4 +19,15 @@ public interface MatrixResolver {
 	void selectColumn(int column);
 	/**Update the value of an EXISTING cell, this method MUST NOT be invoked before selectColumn()*/
 	void setCell(double value);
+	
+	public static class MatrixHelper{
+		public static MatrixResolver newResolver(String name){
+			try {
+				return (MatrixResolver) Class.forName("simElectricity.Common.EnergyNet." + name).newInstance();
+			} catch (Exception e) {
+				e.printStackTrace();
+				return null;
+			}
+		}
+	}
 }
