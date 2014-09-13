@@ -37,113 +37,105 @@ public final class EnergyNet {
     private Map<IBaseComponent, Double> voltageCache = new HashMap<IBaseComponent, Double>();
     //A flag for energyNet updating
     private boolean calc = false;  
-
-    private MatrixResolver matrix = new GaussianElimination();
+    private LinkedList<IBaseComponent> changedComponents = new LinkedList<IBaseComponent>();
+    
+    private MatrixResolver matrix = new SparseMatrix();
     
     //Simulator------------------------------------------------------------------------
+    private double getCoefficient(int rowIndex,List<IBaseComponent> neighborList, int columnIndex, IBaseComponent currentColumnComponent, List<IBaseComponent> unknownVoltageNodes, int matrixSize){
+    	double cellData = 0;
+
+        if (currentColumnComponent instanceof IConductor || currentColumnComponent instanceof IManualJunction) {
+	    	if (columnIndex == rowIndex) { //Key cell
+	    		//Add neighbor resistance
+	    		for (IBaseComponent neighbor : neighborList) {
+	                if (neighbor instanceof IConductor || neighbor instanceof IManualJunction) {
+	                	cellData += 1.0D / (getResistance(currentColumnComponent, neighbor) + getResistance(neighbor, currentColumnComponent));  // IConductor next to IConductor
+	                } else {
+	                        cellData += 1.0D / getResistance(currentColumnComponent, neighbor);                              // IConductor next to other components
+	                }
+	            }
+	        } else {
+	        	IBaseComponent currentrowComponent = unknownVoltageNodes.get(rowIndex);
+	            if (neighborList.contains(currentrowComponent)) {
+	                if (currentrowComponent instanceof IConductor || currentrowComponent instanceof IManualJunction) {
+	                    cellData = -1.0D / (getResistance(currentColumnComponent, currentrowComponent) + getResistance(currentrowComponent, currentColumnComponent));
+	                } else {
+	                    cellData = -1.0D / getResistance(currentColumnComponent, currentrowComponent);
+	                }
+	            }
+	        }
+	    }else{
+	    	//For other nodes (can only have a IConductor neighbor or no neighbor!)
+            IConductor neighbor = (IConductor) (neighborList.isEmpty() ? null : neighborList.get(0));
+            	
+            if (columnIndex == rowIndex) { //Key cell
+                if (neighbor != null) {
+                    cellData += 1.0D / neighbor.getResistance();
+                }
+
+                //Add internal resistance for fixed voltage sources
+                if (currentColumnComponent instanceof ICircuitComponent) {
+                    cellData += 1.0 / currentColumnComponent.getResistance();
+                } else if (currentColumnComponent instanceof ITransformerWinding) {
+                    ITransformerWinding winding = (ITransformerWinding) currentColumnComponent;
+                    if (winding.isPrimary()) {
+                         cellData += winding.getRatio() * winding.getRatio() / winding.getResistance();
+                    } else {
+                         cellData += 1.0 / winding.getResistance();
+                    }
+                }
+            } else {
+                if (neighbor == unknownVoltageNodes.get(rowIndex)) {
+                	cellData = -1.0D / neighbor.getResistance();
+                } else if (currentColumnComponent instanceof ITransformerWinding) { //Add transformer association
+                    IBaseComponent currentrowComponent = unknownVoltageNodes.get(rowIndex);
+                    ITransformerWinding winding = (ITransformerWinding) currentColumnComponent;
+                    ITransformer core = winding.getCore();
+
+                     if ((winding.isPrimary() && core.getSecondary() == currentrowComponent) ||
+                        ((!winding.isPrimary()) && core.getPrimary() == currentrowComponent))
+                    	 cellData = -winding.getRatio() / winding.getResistance();
+                }
+            } 
+	    }
+        return cellData;	
+    }
+    
+    private double getB(IBaseComponent currentColumnComponent){
+        //Add fixed voltage sources
+        if (currentColumnComponent instanceof ICircuitComponent) {
+            //Possible voltage source, getOutputVoltage()=0 for sinks, getOutputVoltage>0 for sources
+        	return ((ICircuitComponent) currentColumnComponent).getOutputVoltage()
+                    / currentColumnComponent.getResistance();
+        } else {
+            //Normal conductor nodes
+            return 0;
+        }    	
+    }
+    
     private void runSimulator() {
-        BakaGraph optimizedTileEntityGraph = (BakaGraph) tileEntityGraph;//.clone();
-
-        //Optimizer.optimize(optimizedTileEntityGraph);
-
         List<IBaseComponent> unknownVoltageNodes = new ArrayList<IBaseComponent>();
-        unknownVoltageNodes.addAll(optimizedTileEntityGraph.vertexSet());
+        unknownVoltageNodes.addAll(tileEntityGraph.vertexSet());
 
         int matrixSize = unknownVoltageNodes.size();
         matrix.newMatrix(matrixSize);
         double[] b = new double[matrixSize];
 
-        for (int rowIndex = 0; rowIndex < matrixSize; rowIndex++) {
-            IBaseComponent currentRowComponent = unknownVoltageNodes.get(rowIndex);
+        for (int columnIndex = 0; columnIndex < matrixSize; columnIndex++) {
+            IBaseComponent currentColumnComponent = unknownVoltageNodes.get(columnIndex);
 
-            //Add fixed voltage sources
-            if (currentRowComponent instanceof ICircuitComponent) {
-                //Possible voltage source, getOutputVoltage()=0 for sinks, getOutputVoltage>0 for sources
-                b[rowIndex] = ((ICircuitComponent) currentRowComponent).getOutputVoltage()
-                        / currentRowComponent.getResistance();
-            } else {
-                //Normal conductor nodes
-                b[rowIndex] = 0;
-            }
+            //Get the constant side of matrix
+            b[columnIndex] = getB(currentColumnComponent);
 
-
-            List<IBaseComponent> neighborList = optimizedTileEntityGraph.neighborListOf(currentRowComponent);
-            //Generate row for conductor node
-            if (currentRowComponent instanceof IConductor || currentRowComponent instanceof IManualJunction) {
-                for (int columnIndex = 0; columnIndex < matrixSize; columnIndex++) {
-                    double cellData = 0;
-
-                    if (rowIndex == columnIndex) { //Key cell
-                        //Add neighbor resistance
-                        for (IBaseComponent neighbor : neighborList) {
-                            if (neighbor instanceof IConductor || neighbor instanceof IManualJunction) {
-                                cellData += 1.0D / (getResistance(currentRowComponent, neighbor) + getResistance(neighbor, currentRowComponent));  // IConductor next to IConductor
-                            } else {
-                                cellData += 1.0D / getResistance(currentRowComponent, neighbor);                              // IConductor next to other components
-                            }
-                        }
-                    } else {
-                        IBaseComponent currentColumnComponent = unknownVoltageNodes.get(columnIndex);
-                        if (neighborList.contains(currentColumnComponent)) {
-                            if (currentColumnComponent instanceof IConductor || currentColumnComponent instanceof IManualJunction) {
-                                cellData = -1.0D / (getResistance(currentRowComponent, currentColumnComponent) + getResistance(currentColumnComponent, currentRowComponent));
-                            } else {
-                                cellData = -1.0D / getResistance(currentRowComponent, currentColumnComponent);
-                            }
-                        }
-
-                    }
-
-                    matrix.pushCoefficient(cellData);
-                }
-            } else { //For other nodes (can only have a IConductor neighbor or no neighbor!)
-                //Find the only possible neighbor (maybe not exist)
-                IConductor neighbor = null;
-                for (IBaseComponent possibleNeighbor : neighborList) {
-                    if (possibleNeighbor != null)
-                        neighbor = (IConductor) possibleNeighbor; //Must be a IConductor!
-                }
-
-                for (int columnIndex = 0; columnIndex < matrixSize; columnIndex++) {
-                    double cellData = 0;
-
-                    if (rowIndex == columnIndex) { //Key cell
-                        if (neighbor != null) {
-                            cellData += 1.0D / neighbor.getResistance();
-                        }
-
-                        //Add internal resistance for fixed voltage sources
-                        if (currentRowComponent instanceof ICircuitComponent) {
-                            cellData += 1.0 / currentRowComponent.getResistance();
-                        } else if (currentRowComponent instanceof ITransformerWinding) {
-                            ITransformerWinding winding = (ITransformerWinding) currentRowComponent;
-                            if (winding.isPrimary()) {
-                                cellData += winding.getRatio() * winding.getRatio() / winding.getResistance();
-                            } else {
-                                cellData += 1.0 / winding.getResistance();
-                            }
-                        }
-                    } else {
-                        if (neighbor == unknownVoltageNodes.get(columnIndex)) {
-                            cellData = -1.0D / neighbor.getResistance();
-                        } else if (currentRowComponent instanceof ITransformerWinding) { //Add transformer association
-                            IBaseComponent currentColumnComponent = unknownVoltageNodes.get(columnIndex);
-                            ITransformerWinding winding = (ITransformerWinding) currentRowComponent;
-                            ITransformer core = winding.getCore();
-
-                            if ((winding.isPrimary() && core.getSecondary() == currentColumnComponent) ||
-                                    ((!winding.isPrimary()) && core.getPrimary() == currentColumnComponent))
-                                cellData = -winding.getRatio() / winding.getResistance();
-                        }
-                    }
-
-                    matrix.pushCoefficient(cellData);
-                }
-            }
-
+        	List<IBaseComponent> neighborList = tileEntityGraph.neighborListOf(currentColumnComponent);
+        	for (int rowIndex = 0; rowIndex < matrixSize; rowIndex++) {
+        		matrix.pushCoefficient(getCoefficient(rowIndex, neighborList, columnIndex,currentColumnComponent,unknownVoltageNodes,matrixSize));
+        	}
             matrix.pushColumn();
         }
-
+        
+        matrix.finalizeLHS();
         matrix.solve(b);
 
         voltageCache.clear();
@@ -177,7 +169,14 @@ public final class EnergyNet {
         //energyNet.calc = true;
         if (energyNet.calc) {
             energyNet.calc = false;
-            energyNet.runSimulator();
+            
+            if(energyNet.changedComponents.isEmpty()){
+            	energyNet.runSimulator();
+            }else{
+            	//TODO
+            	energyNet.runSimulator();
+            	energyNet.changedComponents.clear();
+            }
 
             //Check power distribution
             try {
@@ -338,6 +337,7 @@ public final class EnergyNet {
      */
     public void markForUpdate(TileEntity te) {
         calc = true;
+        changedComponents.add((IBaseComponent)te);
     }
 
     /**

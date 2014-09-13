@@ -45,6 +45,9 @@ public class GaussianElimination implements MatrixResolver{
 		currentRow = 0;
 	}
 
+	@Override	
+	public void finalizeLHS(){}
+	
 	@Override
 	public void solve(double[] b) {
 		double[] x = lsolve(matrix,b);

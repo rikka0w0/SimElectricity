@@ -3,19 +3,22 @@ package simElectricity.Common.EnergyNet;
 import java.util.LinkedList;
 
 import edu.emory.mathcs.csparsej.tdouble.Dcs_common;
-import edu.emory.mathcs.csparsej.tdouble.Dcs_lusol;
+import edu.emory.mathcs.csparsej.tdouble.Dcs_qrsol;
 import edu.emory.mathcs.csparsej.tdouble.Dcs_util;
 
 public class SparseMatrix implements MatrixResolver{
 	public static final double EPSILON = (double) 1e-10;
 	
-	int size;					//Size of the square matrix
+	//Left hand side generation
+	int size;					//Size of the square matrix	
 	int[] Ap;					//Column offset (length = size+1)
 	LinkedList<Integer> AiList;	//Index of entries
 	LinkedList<Double> AxList;	//Value of entries
 	int currentColumn;
 	int currentRow;
 	int nZ;						//Total number of non zero elements
+	//----------------------------------------------------------------
+	Dcs_common.Dcs matrix;		//The matrix object
 	
 	@Override
 	public void newMatrix(int size) {
@@ -48,11 +51,11 @@ public class SparseMatrix implements MatrixResolver{
 		Ap[currentColumn] = nZ;
 	}
 
-	@Override
-	public void solve(double[] b) {
-	    Dcs_common.Dcs matrix = Dcs_util.cs_spalloc(size, size, nZ, true, false);
+	@Override	
+	public void finalizeLHS(){
+		matrix = Dcs_util.cs_spalloc(size, size, nZ, true, false);
 	    matrix.p = Ap;
-
+	    		
 	    //Shift the list into array
 	    Integer i = AiList.poll();
 	    int j = 0;
@@ -68,8 +71,24 @@ public class SparseMatrix implements MatrixResolver{
 	    	matrix.x[j] = k;
 	    	k = AxList.poll();	    	
 	    	j++;
-	    }
-		
-	    Dcs_lusol.cs_lusol(1, matrix, b, 1.0); //Result will be in b
+	    }		
+	    
+	    size = -1;
+	    Ap = null;
+	    AiList = null;
+	    AxList = null;
+	    currentColumn = -1;
+	    currentRow = -1;
+	    nZ = -1;
+	}
+	
+	@Override
+	public void solve(double[] b) {
+	    boolean r = Dcs_qrsol.cs_qrsol(1, matrix, b); //Result will be in b
+	    
+	    for (int i=0;i<matrix.m;i++)
+	    	if (Double.isNaN(b[i]))
+	    		b[i] =0 ;
+	   	System.out.println(r);
 	}
 }
