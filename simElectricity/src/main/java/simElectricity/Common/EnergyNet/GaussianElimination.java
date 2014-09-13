@@ -105,4 +105,9 @@ public class GaussianElimination implements MatrixResolver{
         }
         return x;
     }
+    
+    @Override
+    public void selectColumn(int column){}
+    @Override
+	public void setCell(double value){}
 }

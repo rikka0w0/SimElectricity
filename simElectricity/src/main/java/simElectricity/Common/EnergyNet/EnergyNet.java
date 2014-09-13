@@ -36,13 +36,30 @@ public final class EnergyNet {
     //A map for storing voltage value of nodes, be private to avoid cheating 0w0
     private Map<IBaseComponent, Double> voltageCache = new HashMap<IBaseComponent, Double>();
     //A flag for energyNet updating
-    private boolean calc = false;  
-    private LinkedList<IBaseComponent> changedComponents = new LinkedList<IBaseComponent>();
+    private boolean calc = false;
+    private boolean structureChanged = false;
+    private List<IBaseComponent> changedComponents = new LinkedList<IBaseComponent>();
     
     private MatrixResolver matrix = new SparseMatrix();
+    private Map<IBaseComponent, Integer> componentIndex = new HashMap<IBaseComponent, Integer>();
+    List<IBaseComponent> unknownVoltageNodes = new ArrayList<IBaseComponent>();
     
     //Simulator------------------------------------------------------------------------
-    private double getCoefficient(int rowIndex,List<IBaseComponent> neighborList, int columnIndex, IBaseComponent currentColumnComponent, List<IBaseComponent> unknownVoltageNodes, int matrixSize){
+    public double getResistance(IBaseComponent node, IBaseComponent neighbor) {
+        if (node instanceof IConductor) {            //IConductor
+            return node.getResistance();
+        } else if (node instanceof IManualJunction) { //IManualJunction
+            if (node.getResistance() == 0) {
+                return ((IManualJunction) node).getResistance(neighbor);
+            } else {
+                return node.getResistance();
+            }
+        } else {
+            return 0;
+        }
+    }
+
+    private double getCoefficient(int rowIndex,List<IBaseComponent> neighborList, int columnIndex, IBaseComponent currentColumnComponent){
     	double cellData = 0;
 
         if (currentColumnComponent instanceof IConductor || currentColumnComponent instanceof IManualJunction) {
@@ -115,22 +132,24 @@ public final class EnergyNet {
     }
     
     private void runSimulator() {
-        List<IBaseComponent> unknownVoltageNodes = new ArrayList<IBaseComponent>();
+        unknownVoltageNodes.clear();
         unknownVoltageNodes.addAll(tileEntityGraph.vertexSet());
 
         int matrixSize = unknownVoltageNodes.size();
         matrix.newMatrix(matrixSize);
         double[] b = new double[matrixSize];
 
-        for (int columnIndex = 0; columnIndex < matrixSize; columnIndex++) {
+        componentIndex.clear();
+        for (int columnIndex = 0; columnIndex < matrixSize; columnIndex++) {       	
             IBaseComponent currentColumnComponent = unknownVoltageNodes.get(columnIndex);
-
+        	componentIndex.put(currentColumnComponent, columnIndex);
+            
             //Get the constant side of matrix
             b[columnIndex] = getB(currentColumnComponent);
 
         	List<IBaseComponent> neighborList = tileEntityGraph.neighborListOf(currentColumnComponent);
         	for (int rowIndex = 0; rowIndex < matrixSize; rowIndex++) {
-        		matrix.pushCoefficient(getCoefficient(rowIndex, neighborList, columnIndex,currentColumnComponent,unknownVoltageNodes,matrixSize));
+        		matrix.pushCoefficient(getCoefficient(rowIndex, neighborList, columnIndex,currentColumnComponent));
         	}
             matrix.pushColumn();
         }
@@ -139,22 +158,51 @@ public final class EnergyNet {
         matrix.solve(b);
 
         voltageCache.clear();
-        for (int i = 0; i < b.length; i++) {
+        for (int i = 0; i < matrixSize; i++) {
             voltageCache.put(unknownVoltageNodes.get(i), b[i]);
         }
     }
 
-    public double getResistance(IBaseComponent node, IBaseComponent neighbor) {
-        if (node instanceof IConductor) {            //IConductor
-            return node.getResistance();
-        } else if (node instanceof IManualJunction) { //IManualJunction
-            if (node.getResistance() == 0) {
-                return ((IManualJunction) node).getResistance(neighbor);
-            } else {
-                return node.getResistance();
-            }
-        } else {
-            return 0;
+    private void partialUpdate(){
+    	if (componentIndex.size() == 0){
+    		runSimulator();
+    		return;
+    	}
+    		
+    	List<IBaseComponent> updateList = new LinkedList<IBaseComponent>();
+    	for (IBaseComponent c: changedComponents){
+    		if (!updateList.contains(c)) updateList.add(c);
+    		for (IBaseComponent neighbor: tileEntityGraph.neighborListOf(c)){
+    			if (!updateList.contains(neighbor)) updateList.add(neighbor);
+    		}
+    	}
+    	
+    	int matrixSize = unknownVoltageNodes.size();
+    	double[] b = new double[matrixSize];
+    	boolean bCalcutated = false;
+    	for (IBaseComponent columnComponent: updateList){
+    		int columnIndex = componentIndex.get(columnComponent);
+    		matrix.selectColumn(columnIndex);
+    		
+    		List<IBaseComponent> neighborList = tileEntityGraph.neighborListOf(columnComponent);    		
+    		for (int rowIndex = 0; rowIndex<matrixSize; rowIndex++){
+    			IBaseComponent rowComponent = unknownVoltageNodes.get(rowIndex);
+    			
+    			//Calculate the right hand side of the matrix in the first traverse
+    			if(!bCalcutated) b[rowIndex] = getB(rowComponent);
+    			
+    			matrix.setCell(getCoefficient(rowIndex, neighborList, columnIndex, columnComponent));
+    		}
+    		bCalcutated = true;
+    		
+    		columnIndex++;
+    	}
+    	
+        matrix.solve(b);
+
+        voltageCache.clear();
+        for (int i = 0; i < matrixSize; i++) {
+            voltageCache.put(unknownVoltageNodes.get(i), b[i]);
         }
     }
     
@@ -164,23 +212,25 @@ public final class EnergyNet {
     /**
      * Called in each tick to attempt to do calculation
      */
-    public static void onTick(World world) {
-        EnergyNet energyNet = WorldData.getEnergyNetForWorld(world);
+    public void onTick() {
         //energyNet.calc = true;
-        if (energyNet.calc) {
-            energyNet.calc = false;
-            
-            if(energyNet.changedComponents.isEmpty()){
-            	energyNet.runSimulator();
-            }else{
-            	//TODO
-            	energyNet.runSimulator();
-            	energyNet.changedComponents.clear();
-            }
+        if (calc) {
 
+            
+            if(structureChanged){
+            	runSimulator();
+            }else{
+            	partialUpdate();
+            	changedComponents.clear();
+            }
+            
+            structureChanged = false;
+            calc = false;
+        	
+            
             //Check power distribution
             try {
-                for (IBaseComponent tile : energyNet.tileEntityGraph.vertexSet()) {
+                for (IBaseComponent tile : tileEntityGraph.vertexSet()) {
                     //Call onEnergyNetUpdate()
                     if (tile instanceof ITransformerWinding) {
                         ITransformerWinding winding = (ITransformerWinding) tile;
@@ -303,6 +353,7 @@ public final class EnergyNet {
         }
 
         calc = true;
+        structureChanged = true;
     }
 
     /**
@@ -322,6 +373,7 @@ public final class EnergyNet {
             tileEntityGraph.removeVertex((IBaseComponent) te);
         }
         calc = true;
+        structureChanged = true;
     }
 
     /**
@@ -337,7 +389,18 @@ public final class EnergyNet {
      */
     public void markForUpdate(TileEntity te) {
         calc = true;
-        changedComponents.add((IBaseComponent)te);
+        if (te instanceof IComplexTile) { //For a complexTile every subComponents has to be removed!            
+            for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
+                ICircuitComponent subComponent = ((IComplexTile) te).getCircuitComponent(direction);
+                if (subComponent != null)
+                	changedComponents.add(subComponent);
+            }
+        } else if (te instanceof ITransformer) {
+        	changedComponents.add(((ITransformer) te).getPrimary());
+        	changedComponents.add(((ITransformer) te).getSecondary());
+        } else {  //IBaseComponent and IConductor
+        	changedComponents.add((IBaseComponent)te);
+        }
     }
 
     /**
@@ -347,14 +410,17 @@ public final class EnergyNet {
         SEUtils.logInfo("EnergyNet has been created for DIM" + String.valueOf(world.provider.dimensionId));
     }
 
+    public double getVoltage(IBaseComponent Tile){
+         if (voltageCache.containsKey(Tile))
+            return voltageCache.get(Tile);
+        else
+            return 0;   	
+    }
+    
     /**
      * Calculate the voltage of a given EnergyTile RELATIVE TO GROUND!
      */
     public static double getVoltage(IBaseComponent Tile, World world) {
-        EnergyNet energyNet = WorldData.getEnergyNetForWorld(world);
-        if (energyNet.voltageCache.containsKey(Tile))
-            return energyNet.voltageCache.get(Tile);
-        else
-            return 0;
+        return WorldData.getEnergyNetForWorld(world).getVoltage(Tile);
     }
 }

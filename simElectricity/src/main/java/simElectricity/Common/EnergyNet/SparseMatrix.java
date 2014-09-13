@@ -91,4 +91,22 @@ public class SparseMatrix implements MatrixResolver{
 	    		b[i] =0 ;
 	   	System.out.println(r);
 	}
+
+	@Override
+	public void selectColumn(int column){
+	    currentColumn = column;
+	    currentRow = 0;
+	    nZ = 0;
+	}
+	
+	@Override
+	public void setCell(double value) {
+		if (Math.abs(value) < EPSILON){
+			currentRow++;
+		}else{
+			matrix.x[matrix.p[currentColumn]+nZ] = value;
+			currentRow++;
+			nZ++;
+		}	
+	}
 }

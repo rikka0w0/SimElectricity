@@ -55,7 +55,7 @@ public class EnergyNetEventHandler {
         if (event.side != Side.SERVER)
             return;
 
-        EnergyNet.onTick(event.world);
+        WorldData.getEnergyNetForWorld(event.world).onTick();
     }
 
     //Energy net --------------------------------------------------------------------------------------------------------------

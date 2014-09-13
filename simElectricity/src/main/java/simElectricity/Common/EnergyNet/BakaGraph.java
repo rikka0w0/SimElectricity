@@ -29,7 +29,7 @@ import java.util.*;
  * @author <rikka0w0>
  */
 public class BakaGraph {
-    protected Map<IBaseComponent, ArrayList<IBaseComponent>> graph;
+    private Map<IBaseComponent, ArrayList<IBaseComponent>> graph;
 
     public BakaGraph() {
         graph = new HashMap<IBaseComponent, ArrayList<IBaseComponent>>();
@@ -97,5 +97,12 @@ public class BakaGraph {
         }
 
         graph.remove(node);
+    }
+    
+    /**
+     * @return the number of vertexes within the graph
+     */
+    public int size(){
+    	return graph.size();
     }
 }
