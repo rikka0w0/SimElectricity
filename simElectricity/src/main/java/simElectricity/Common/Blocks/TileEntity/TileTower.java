@@ -26,7 +26,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import simElectricity.API.Energy;
 import simElectricity.API.IHVTower;
-import simElectricity.API.Network;
 import simElectricity.API.Common.TileEntitySE;
 import simElectricity.API.EnergyTile.IBaseComponent;
 import simElectricity.API.EnergyTile.IManualJunction;
@@ -90,16 +89,16 @@ public class TileTower extends TileEntitySE implements IManualJunction, IHVTower
 		return true;
 	}
     
-	@Override
-	public void onUnload(){
-        for (int i = 0; i < neighborsInfo.length; i += 3) {
-            TileTower neighbor = (TileTower) getWorldObj().getTileEntity(neighborsInfo[i], neighborsInfo[i + 1], neighborsInfo[i + 2]);
-            if (neighbor != null) {
-                neighbor.delNeighbor(this);
-                Network.updateTileEntityNBT(this);
-            }
-        }		
-	}
+	//@Override
+	//public void onUnload(){
+    //    for (int i = 0; i < neighborsInfo.length; i += 3) {
+    //        TileTower neighbor = (TileTower) getWorldObj().getTileEntity(neighborsInfo[i], neighborsInfo[i + 1], neighborsInfo[i + 2]);
+    //        if (neighbor != null) {
+    //            neighbor.delNeighbor(this);
+    //            Network.updateTileEntityNBT(this);
+    //        }
+    //    }		
+	//}
 
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {

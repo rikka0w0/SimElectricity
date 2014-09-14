@@ -24,17 +24,16 @@ import java.util.List;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraftforge.common.util.ForgeDirection;
-import simElectricity.API.Energy;
 import simElectricity.API.INetworkEventHandler;
 import simElectricity.API.Network;
+import simElectricity.API.Common.TileEntitySE;
 import simElectricity.API.EnergyTile.IConductor;
 import simElectricity.API.Util;
 import simElectricity.Common.Blocks.BlockWire;
 
-public class TileWire extends TileEntity implements IConductor, INetworkEventHandler {
+public class TileWire extends TileEntitySE implements IConductor, INetworkEventHandler {
     protected boolean isAddedToEnergyNet = false;
     public boolean[] renderSides = new boolean[6];
 
@@ -74,11 +73,6 @@ public class TileWire extends TileEntity implements IConductor, INetworkEventHan
     @Override
     public void updateEntity() {
         super.updateEntity();
-
-        if (!worldObj.isRemote && !isAddedToEnergyNet) {
-            Energy.postTileAttachEvent(this);
-            this.isAddedToEnergyNet = true;
-        }
         
         if (!worldObj.isRemote && needsUpdate){
         	tick++;
@@ -89,16 +83,6 @@ public class TileWire extends TileEntity implements IConductor, INetworkEventHan
         		Network.updateNetworkFields(this);
         	}
         }
-    }
-
-    @Override
-    public void invalidate() {
-        if (!worldObj.isRemote & isAddedToEnergyNet) {
-            Energy.postTileDetachEvent(this);
-            this.isAddedToEnergyNet = false;
-        }
-
-        super.invalidate();
     }
 
     @Override
@@ -117,6 +101,11 @@ public class TileWire extends TileEntity implements IConductor, INetworkEventHan
         tagCompound.setInteger("color", color);
     }
 
+	@Override
+	public boolean attachToEnergyNet() {
+		return true;
+	}
+    
     @Override
     public double getResistance() {
         return resistance;

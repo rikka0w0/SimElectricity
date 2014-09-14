@@ -54,7 +54,6 @@ public class TileIncandescentLamp extends TileStandardSEMachine implements IEner
     
     @Override
     public void onEnergyNetUpdate() {
-    	double voltage = Energy.getVoltage(this);
         lightLevel = (int) (Energy.getPower(this) / 0.3F);
         if (lightLevel > 15)
             lightLevel = 15;

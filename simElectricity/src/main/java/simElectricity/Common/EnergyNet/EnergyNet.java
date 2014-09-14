@@ -161,6 +161,7 @@ public final class EnergyNet {
         if (!matrix.solve(b)){
         	throw new RuntimeException("Due to incorrect value of components, the energy net has been shutdown!");
         }
+        System.out.println("Run!");
     }
     
     private void runSimulator() {

@@ -89,6 +89,11 @@ public abstract class TileEntitySE extends TileEntity{
     }
 	
     @Override
+    public void onChunkUnload(){
+    	invalidate();
+    }
+    
+    @Override
 	public Packet getDescriptionPacket()
     {
 		NBTTagCompound nbttagcompound = new NBTTagCompound();
