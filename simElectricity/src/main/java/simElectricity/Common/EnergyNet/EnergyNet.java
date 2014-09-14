@@ -46,8 +46,32 @@ public final class EnergyNet {
     private Map<IBaseComponent, Integer> componentIndex = new HashMap<IBaseComponent, Integer>();
     List<IBaseComponent> unknownVoltageNodes = new ArrayList<IBaseComponent>();
     
+    public String[] info(){
+    	String[] temp = matrix.toString().split("[.]");
+    	
+    	if (tileEntityGraph.size() == 0){
+    		return new String[]{
+    				"EnergyNet is empty and idle",
+    				"Matrix solving algorithsm: " + temp[temp.length-1].split("@")[0]
+    		};
+    	}
+    	
+    	return new String[]{		
+    	"Loaded entities: " + String.valueOf(tileEntityGraph.size()),
+    	"Non-zero elements: " + String.valueOf(matrix.getTotalNonZeros()),
+    	"Sparse rate: " + String.valueOf(matrix.getTotalNonZeros() * 100 / (tileEntityGraph.size() * tileEntityGraph.size())) + "%",
+    	"Matrix solving algorithsm: " + temp[temp.length-1].split("@")[0]
+    	};
+    }
+    
+    public void reFresh(){
+        structureChanged = true;
+        calc = true;
+    	onTick();
+    }
+    
     //Simulator------------------------------------------------------------------------
-    public double getResistance(IBaseComponent node, IBaseComponent neighbor) {
+    private double getResistance(IBaseComponent node, IBaseComponent neighbor) {
         if (node instanceof IConductor) {            //IConductor
             return node.getResistance();
         } else if (node instanceof IManualJunction) { //IManualJunction
@@ -133,6 +157,12 @@ public final class EnergyNet {
         }    	
     }
     
+    private void attemptSolving(double[] b){
+        if (!matrix.solve(b)){
+        	throw new RuntimeException("Due to incorrect value of components, the energy net has been shutdown!");
+        }
+    }
+    
     private void runSimulator() {
         unknownVoltageNodes.clear();
         unknownVoltageNodes.addAll(tileEntityGraph.vertexSet());
@@ -157,7 +187,7 @@ public final class EnergyNet {
         }
         
         matrix.finalizeLHS();
-        matrix.solve(b);
+        attemptSolving(b);
 
         voltageCache.clear();
         for (int i = 0; i < matrixSize; i++) {
@@ -200,7 +230,7 @@ public final class EnergyNet {
     		columnIndex++;
     	}
     	
-        matrix.solve(b);
+    	attemptSolving(b);
 
         voltageCache.clear();
         for (int i = 0; i < matrixSize; i++) {
@@ -412,10 +442,11 @@ public final class EnergyNet {
     }
 
     public double getVoltage(IBaseComponent Tile){
-         if (voltageCache.containsKey(Tile))
-            return voltageCache.get(Tile);
-        else
-            return 0;   	
+         if (voltageCache.containsKey(Tile)){
+        	double voltage = voltageCache.get(Tile);
+        	if (!Double.isNaN(voltage))	return voltage;
+         }
+         return 0;   	
     }
     
     /**

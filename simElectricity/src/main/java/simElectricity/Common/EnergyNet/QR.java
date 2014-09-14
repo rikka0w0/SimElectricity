@@ -83,13 +83,8 @@ public class QR implements MatrixResolver{
 	}
 	
 	@Override
-	public void solve(double[] b) {
-	    boolean r = Dcs_qrsol.cs_qrsol(1, matrix, b); //Result will be in b
-	    
-	    for (int i=0;i<matrix.m;i++)
-	    	if (Double.isNaN(b[i]))
-	    		b[i] =0 ;
-	   	System.out.println(r);
+	public boolean solve(double[] b) {
+	    return Dcs_qrsol.cs_qrsol(1, matrix, b); //Result will be in b
 	}
 
 	@Override
@@ -108,5 +103,12 @@ public class QR implements MatrixResolver{
 			currentRow++;
 			nZ++;
 		}	
+	}
+	
+	@Override
+	public int getTotalNonZeros(){
+		if (matrix == null)
+			return 0;
+		return matrix.nzmax;
 	}
 }

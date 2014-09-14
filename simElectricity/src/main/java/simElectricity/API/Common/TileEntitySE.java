@@ -79,13 +79,13 @@ public abstract class TileEntitySE extends TileEntity{
 
     @Override
     public void invalidate() {
+    	super.invalidate();
+    	
         if (!worldObj.isRemote && isAddedToEnergyNet && attachToEnergyNet()) {
             onUnload();
             Energy.postTileDetachEvent(this);
             this.isAddedToEnergyNet = false;
         }
-
-        super.invalidate();
     }
 	
     @Override

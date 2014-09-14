@@ -27,6 +27,7 @@ import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import cpw.mods.fml.relauncher.Side;
@@ -34,6 +35,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import simElectricity.API.Util;
+import simElectricity.Common.CommandSimE;
 import simElectricity.Common.CommonProxy;
 import simElectricity.Common.ConfigManager;
 import simElectricity.Common.Core.SEBlocks;
@@ -42,8 +44,9 @@ import simElectricity.Common.EnergyNet.EnergyNetEventHandler;
 import simElectricity.Common.Network.MessageTileEntityUpdate;
 import simElectricity.Common.Network.NetworkManager;
 
-@Mod(modid = Util.MODID, name = Util.NAME, version = "1.0.0", guiFactory = "simElectricity.Client.SimEGuiFactory", dependencies = "required-after:Forge@[10.12.2.1147,)")
+@Mod(modid = Util.MODID, name = Util.NAME, version = SimElectricity.version, guiFactory = "simElectricity.Client.SimEGuiFactory", dependencies = "required-after:Forge@[10.12.2.1147,)")
 public class SimElectricity {
+	public static final String version = "1.0.0";
 
     /**
      * Server and Client Proxy
@@ -112,5 +115,10 @@ public class SimElectricity {
      */
     @EventHandler
     public void postInit(FMLPostInitializationEvent event) {
+    }
+    
+    @EventHandler
+    public void serverStart(FMLServerStartingEvent event){
+    	event.registerServerCommand(new CommandSimE());
     }
 }

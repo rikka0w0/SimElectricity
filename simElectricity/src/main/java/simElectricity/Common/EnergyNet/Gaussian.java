@@ -25,16 +25,21 @@ public class Gaussian implements MatrixResolver{
     double[][] matrix;
     int currentRow;
     int currentColumn;
+    int nZ;
     
 	@Override
 	public void newMatrix(int size) {
 		matrix = new double[size][size];
 		currentRow = 0;
 		currentColumn = 0;
+		nZ = 0;
 	}
 
 	@Override
 	public void pushCoefficient(double value) {
+		if (Math.abs(value) >= EPSILON)
+			nZ++;
+			
 		matrix[currentColumn][currentRow] = value;
 		currentRow++;
 	}
@@ -52,15 +57,18 @@ public class Gaussian implements MatrixResolver{
 	}
 	
 	@Override
-	public void solve(double[] b) {
+	public boolean solve(double[] b) {
 		double[][] A = new double[b.length][b.length];
 		for (int i=0;i<b.length;i++)
 			for (int j=0;j<b.length;j++)
 				A[i][j] = matrix[i][j];
 		
 		double[] x = lsolve(A,b);
+		if (x == null)
+			return false;
 		for (int i=0;i<b.length;i++)
 			b[i] = x[i];
+		return true;
 	}
     
     // Gaussian elimination with partial pivoting
@@ -85,6 +93,7 @@ public class Gaussian implements MatrixResolver{
 
             // singular or nearly singular
             if (Math.abs(A[p][p]) <= EPSILON) {
+            	return null;
                 //throw new RuntimeException(	"Matrix is singular or nearly singular");
             }
 
@@ -119,9 +128,15 @@ public class Gaussian implements MatrixResolver{
     	currentColumn = column;
     	currentRow = 0;
     }
+    
     @Override
 	public void setCell(double value){
 		matrix[currentColumn][currentRow] = value;
 		currentRow++;
     }
+    
+	@Override
+	public int getTotalNonZeros(){
+		return nZ;
+	}
 }

@@ -14,11 +14,13 @@ public interface MatrixResolver {
 	void finalizeLHS();
 	/**Solve the matrix, results will be located in array b
 	 * @param b the array of right hand side values*/
-	void solve(double[] b);	
+	boolean solve(double[] b);	
 	/**Select a column that is going to be updated, this method MUST NOT be invoked before finalizeLHS()*/
 	void selectColumn(int column);
 	/**Update the value of an EXISTING cell, this method MUST NOT be invoked before selectColumn()*/
 	void setCell(double value);
+	/**Return the number of non-zero elements with in the matrix*/
+	int getTotalNonZeros();
 	
 	public static class MatrixHelper{
 		public static MatrixResolver newResolver(String name){

@@ -33,6 +33,11 @@ public class TileSolarPanel extends TileSidedGenerator {
 
         //Server only
 
+        if (!worldObj.provider.isSurfaceWorld()){
+        	checkAndSendChange(10, 100);
+        	return;
+        }
+        
         if (worldObj.isDaytime()) {
             if (worldObj.canBlockSeeTheSky(xCoord, yCoord + 1, zCoord))
                 checkAndSendChange(18, 0.8F);
