@@ -50,7 +50,7 @@ public class ConfigManager {
         showEnergyNetInfo = config.get(Configuration.CATEGORY_GENERAL, "ShowEnergyNetInfo", false, "Display energy net information, such as joining/leaving/changing").getBoolean();
         parabolaRenderSteps = config.get(Configuration.CATEGORY_GENERAL, "ParabolaRenderSteps", 12, "Decides how smooth the parabola cable is(must be a even number!Client ONLY!)").getInt(12);
         // matrixSolver = config.get(Configuration.CATEGORY_GENERAL, "MatrixSolver", "QR", "Which algorithms is used for solving matrix(QR is much more effective than Gaussian, options: QR, Gaussian)").getString();
-        matrixSolver = config.getString("MatrixSolver", Configuration.CATEGORY_GENERAL, "QR", "Which algorithms is used for solving matrix(QR is much more effective than Gaussian.", new String[] { "QR", "Gaussian" });
+        matrixSolver = config.getString("MatrixSolver", Configuration.CATEGORY_GENERAL, "QR", "Which algorithms is used for solving matrix(QR is much more effective than Gaussian.).Options: QR, Gaussian", new String[] { "QR", "Gaussian" });
 
         if (config.hasChanged())
             config.save();
