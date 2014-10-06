@@ -1,12 +1,14 @@
 package simElectricity.Common.Blocks;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import simElectricity.API.Util;
 import simElectricity.API.Common.Blocks.BlockContainerSE;
+import simElectricity.API.Util;
 import simElectricity.Common.Blocks.TileEntity.TileCableClamp;
 
 public class BlockCableClamp extends BlockContainerSE{
@@ -31,6 +33,7 @@ public class BlockCableClamp extends BlockContainerSE{
 
     //This will tell minecraft not to render any side of our cube.
     @Override
+    @SideOnly(Side.CLIENT)
     public boolean shouldSideBeRendered(IBlockAccess iblockaccess, int i, int j, int k, int l) {
         return false;
     }

@@ -1,16 +1,16 @@
 package simElectricity.Common.EnergyNet;
 
-import java.util.LinkedList;
-
 import edu.emory.mathcs.csparsej.tdouble.Dcs_common;
 import edu.emory.mathcs.csparsej.tdouble.Dcs_qrsol;
 import edu.emory.mathcs.csparsej.tdouble.Dcs_util;
 
+import java.util.LinkedList;
+
 public class QR implements MatrixResolver{
 	public static final double EPSILON = (double) 1e-10;
-	
+
 	//Left hand side generation
-	int size;					//Size of the square matrix	
+	int size;					//Size of the square matrix
 	int[] Ap;					//Column offset (length = size+1)
 	LinkedList<Integer> AiList;	//Index of entries
 	LinkedList<Double> AxList;	//Value of entries
@@ -19,7 +19,7 @@ public class QR implements MatrixResolver{
 	int nZ;						//Total number of non zero elements
 	//----------------------------------------------------------------
 	Dcs_common.Dcs matrix;		//The matrix object
-	
+
 	@Override
 	public void newMatrix(int size) {
 		this.size = size;
@@ -51,11 +51,11 @@ public class QR implements MatrixResolver{
 		Ap[currentColumn] = nZ;
 	}
 
-	@Override	
+	@Override
 	public void finalizeLHS(){
 		matrix = Dcs_util.cs_spalloc(size, size, nZ, true, false);
 	    matrix.p = Ap;
-	    		
+
 	    //Shift the list into array
 	    Integer i = AiList.poll();
 	    int j = 0;
@@ -64,15 +64,15 @@ public class QR implements MatrixResolver{
 	    	i = AiList.poll();
 	    	j++;
 	    }
-	    
+
 	    Double k = AxList.poll();
 	    j = 0;
 	    while (k!=null){
 	    	matrix.x[j] = k;
-	    	k = AxList.poll();	    	
+	    	k = AxList.poll();
 	    	j++;
-	    }		
-	    
+	    }
+
 	    size = -1;
 	    Ap = null;
 	    AiList = null;
@@ -81,7 +81,7 @@ public class QR implements MatrixResolver{
 	    currentRow = -1;
 	    nZ = -1;
 	}
-	
+
 	@Override
 	public boolean solve(double[] b) {
 	    return Dcs_qrsol.cs_qrsol(1, matrix, b); //Result will be in b
@@ -93,7 +93,7 @@ public class QR implements MatrixResolver{
 	    currentRow = 0;
 	    nZ = 0;
 	}
-	
+
 	@Override
 	public void setCell(double value) {
 		if (Math.abs(value) < EPSILON){
@@ -102,9 +102,9 @@ public class QR implements MatrixResolver{
 			matrix.x[matrix.p[currentColumn]+nZ] = value;
 			currentRow++;
 			nZ++;
-		}	
+		}
 	}
-	
+
 	@Override
 	public int getTotalNonZeros(){
 		if (matrix == null)

@@ -19,8 +19,6 @@
 
 package simElectricity.Common.Blocks;
 
-import java.util.List;
-
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -36,6 +34,8 @@ import simElectricity.API.Common.Blocks.BlockContainerSE;
 import simElectricity.API.Util;
 import simElectricity.Common.Blocks.TileEntity.TileTower;
 import simElectricity.Common.Items.ItemBlocks.ItemBlockTower;
+
+import java.util.List;
 
 public class BlockTower extends BlockContainerSE {
 	public static final String[] subNames = {"0","1","2"};
@@ -92,6 +92,7 @@ public class BlockTower extends BlockContainerSE {
 
     //This will tell minecraft not to render any side of our cube.
     @Override
+    @SideOnly(Side.CLIENT)
     public boolean shouldSideBeRendered(IBlockAccess iblockaccess, int i, int j, int k, int l) {
         return false;
     }

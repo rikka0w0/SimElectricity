@@ -40,36 +40,36 @@ public final class EnergyNet {
     private boolean calc = false;
     private boolean structureChanged = false;
     private List<IBaseComponent> changedComponents = new LinkedList<IBaseComponent>();
-    
+
     //For partial update
     private MatrixResolver matrix = MatrixResolver.MatrixHelper.newResolver(ConfigManager.matrixSolver);
     private Map<IBaseComponent, Integer> componentIndex = new HashMap<IBaseComponent, Integer>();
     List<IBaseComponent> unknownVoltageNodes = new ArrayList<IBaseComponent>();
-    
+
     public String[] info(){
     	String[] temp = matrix.toString().split("[.]");
-    	
+
     	if (tileEntityGraph.size() == 0){
     		return new String[]{
     				"EnergyNet is empty and idle",
     				"Matrix solving algorithsm: " + temp[temp.length-1].split("@")[0]
     		};
     	}
-    	
-    	return new String[]{		
+
+    	return new String[]{
     	"Loaded entities: " + String.valueOf(tileEntityGraph.size()),
     	"Non-zero elements: " + String.valueOf(matrix.getTotalNonZeros()),
     	"Sparse rate: " + String.valueOf(matrix.getTotalNonZeros() * 100 / (tileEntityGraph.size() * tileEntityGraph.size())) + "%",
     	"Matrix solving algorithsm: " + temp[temp.length-1].split("@")[0]
     	};
     }
-    
+
     public void reFresh(){
         structureChanged = true;
         calc = true;
     	onTick();
     }
-    
+
     //Simulator------------------------------------------------------------------------
     private double getResistance(IBaseComponent node, IBaseComponent neighbor) {
         if (node instanceof IConductor) {            //IConductor
@@ -111,7 +111,7 @@ public final class EnergyNet {
 	    }else{
 	    	//For other nodes (can only have a IConductor neighbor or no neighbor!)
             IConductor neighbor = (IConductor) (neighborList.isEmpty() ? null : neighborList.get(0));
-            	
+
             if (columnIndex == rowIndex) { //Key cell
                 if (neighbor != null) {
                     cellData += 1.0D / neighbor.getResistance();
@@ -140,11 +140,11 @@ public final class EnergyNet {
                         ((!winding.isPrimary()) && core.getPrimary() == currentrowComponent))
                     	 cellData = -winding.getRatio() / winding.getResistance();
                 }
-            } 
+            }
 	    }
-        return cellData;	
+        return cellData;
     }
-    
+
     private double getB(IBaseComponent currentColumnComponent){
         //Add fixed voltage sources
         if (currentColumnComponent instanceof ICircuitComponent) {
@@ -154,16 +154,16 @@ public final class EnergyNet {
         } else {
             //Normal conductor nodes
             return 0;
-        }    	
+        }
     }
-    
+
     private void attemptSolving(double[] b){
         if (!matrix.solve(b)){
         	throw new RuntimeException("Due to incorrect value of components, the energy net has been shutdown!");
         }
         System.out.println("Run!");
     }
-    
+
     private void runSimulator() {
         unknownVoltageNodes.clear();
         unknownVoltageNodes.addAll(tileEntityGraph.vertexSet());
@@ -173,10 +173,10 @@ public final class EnergyNet {
         double[] b = new double[matrixSize];
 
         componentIndex.clear();
-        for (int columnIndex = 0; columnIndex < matrixSize; columnIndex++) {       	
+        for (int columnIndex = 0; columnIndex < matrixSize; columnIndex++) {
             IBaseComponent currentColumnComponent = unknownVoltageNodes.get(columnIndex);
         	componentIndex.put(currentColumnComponent, columnIndex);
-            
+
             //Get the constant side of matrix
             b[columnIndex] = getB(currentColumnComponent);
 
@@ -186,7 +186,7 @@ public final class EnergyNet {
         	}
             matrix.pushColumn();
         }
-        
+
         matrix.finalizeLHS();
         attemptSolving(b);
 
@@ -201,7 +201,7 @@ public final class EnergyNet {
     		runSimulator();
     		return;
     	}
-    		
+
     	List<IBaseComponent> updateList = new LinkedList<IBaseComponent>();
     	for (IBaseComponent c: changedComponents){
     		if (!updateList.contains(c)) updateList.add(c);
@@ -209,28 +209,28 @@ public final class EnergyNet {
     			if (!updateList.contains(neighbor)) updateList.add(neighbor);
     		}
     	}
-    	
+
     	int matrixSize = unknownVoltageNodes.size();
     	double[] b = new double[matrixSize];
     	boolean bCalcutated = false;
     	for (IBaseComponent columnComponent: updateList){
     		int columnIndex = componentIndex.get(columnComponent);
     		matrix.selectColumn(columnIndex);
-    		
-    		List<IBaseComponent> neighborList = tileEntityGraph.neighborListOf(columnComponent);    		
+
+    		List<IBaseComponent> neighborList = tileEntityGraph.neighborListOf(columnComponent);
     		for (int rowIndex = 0; rowIndex<matrixSize; rowIndex++){
     			IBaseComponent rowComponent = unknownVoltageNodes.get(rowIndex);
-    			
+
     			//Calculate the right hand side of the matrix in the first traverse
     			if(!bCalcutated) b[rowIndex] = getB(rowComponent);
-    			
+
     			matrix.setCell(getCoefficient(rowIndex, neighborList, columnIndex, columnComponent));
     		}
     		bCalcutated = true;
-    		
+
     		columnIndex++;
     	}
-    	
+
     	attemptSolving(b);
 
         voltageCache.clear();
@@ -249,17 +249,17 @@ public final class EnergyNet {
         //energyNet.calc = true;
         if (calc) {
 
-            
+
             if(structureChanged){
             	runSimulator();
             }else{
             	partialUpdate();
             }
-            
+
             structureChanged = false;
             calc = false;
         	changedComponents.clear();
-            
+
             //Check power distribution
             try {
                 for (IBaseComponent tile : tileEntityGraph.vertexSet()) {
@@ -447,9 +447,9 @@ public final class EnergyNet {
         	double voltage = voltageCache.get(Tile);
         	if (!Double.isNaN(voltage))	return voltage;
          }
-         return 0;   	
+         return 0;
     }
-    
+
     /**
      * Calculate the voltage of a given EnergyTile RELATIVE TO GROUND!
      */

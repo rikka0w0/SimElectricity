@@ -37,14 +37,15 @@ import simElectricity.API.EnergyTile.ITransformer;
 public class Util {
     public static final String MODID = "SimElectricity";
     public static final String NAME = "SimElectricity";
-    
-    public static boolean isSELoaded = false;;
-    
+
+    public static boolean isSELoaded = false;
+    ;
+
     /**
      * Creative Tab for SimElectricity project
      */
     public static CreativeTabs SETab;
-    
+
     /**
      * Post some text in chat box. (Other player cannot see it)
      */

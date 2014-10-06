@@ -245,6 +245,7 @@ public class BlockWire extends BlockContainerSE {
 
     //This will tell minecraft not to render any side of our cube.
     @Override
+    @SideOnly(Side.CLIENT)
     public boolean shouldSideBeRendered(IBlockAccess iblockaccess, int i, int j, int k, int l) {
         return false;
     }

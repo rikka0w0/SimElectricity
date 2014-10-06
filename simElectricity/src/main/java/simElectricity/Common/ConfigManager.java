@@ -19,11 +19,13 @@
 
 package simElectricity.Common;
 
-import simElectricity.API.Util;
 import cpw.mods.fml.client.event.ConfigChangedEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.common.config.Configuration;
+import simElectricity.API.Util;
 
 public class ConfigManager {
 
@@ -33,6 +35,7 @@ public class ConfigManager {
      * Enable Optimized Nodes
      */
     public static boolean showEnergyNetInfo;
+    @SideOnly(Side.CLIENT)
     public static int parabolaRenderSteps;
     public static String matrixSolver;
 
@@ -45,9 +48,10 @@ public class ConfigManager {
 
     private static void syncConfig() {
         showEnergyNetInfo = config.get(Configuration.CATEGORY_GENERAL, "ShowEnergyNetInfo", false, "Display energy net information, such as joining/leaving/changing").getBoolean();
-        parabolaRenderSteps = config.get("Client", "ParabolaRenderSteps", 12, "Decides how smooth the parabola cable is(must be a even number!Client ONLY!)").getInt(12);
-        matrixSolver = config.get(Configuration.CATEGORY_GENERAL, "MatrixSolver", "QR", "Which algorithsm is used for solving matrix(QR is much more effective than Gaussian, options:QR,Gaussian)").getString();
-        
+        parabolaRenderSteps = config.get(Configuration.CATEGORY_GENERAL, "ParabolaRenderSteps", 12, "Decides how smooth the parabola cable is(must be a even number!Client ONLY!)").getInt(12);
+        // matrixSolver = config.get(Configuration.CATEGORY_GENERAL, "MatrixSolver", "QR", "Which algorithms is used for solving matrix(QR is much more effective than Gaussian, options: QR, Gaussian)").getString();
+        matrixSolver = config.getString("MatrixSolver", Configuration.CATEGORY_GENERAL, "QR", "Which algorithms is used for solving matrix(QR is much more effective than Gaussian.).Options: QR, Gaussian", new String[] { "QR", "Gaussian" });
+
         if (config.hasChanged())
             config.save();
     }

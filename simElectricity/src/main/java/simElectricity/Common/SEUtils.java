@@ -21,7 +21,6 @@ package simElectricity.Common;
 
 import cpw.mods.fml.common.FMLLog;
 import org.apache.logging.log4j.Level;
-
 import simElectricity.API.Util;
 
 /**
@@ -30,10 +29,6 @@ import simElectricity.API.Util;
  * @author Meow J
  */
 public class SEUtils {
-
-
-
-
     public static void logInfo(Object object) {
         FMLLog.log(Util.NAME, Level.INFO, "[SimElectricity] " + String.valueOf(object));
     }

@@ -1,12 +1,13 @@
 package simElectricity.Client.Render;
 
-import org.lwjgl.opengl.GL11;
-
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
+import org.lwjgl.opengl.GL11;
 import simElectricity.API.Client.RenderHVTowerBase;
 import simElectricity.Common.Blocks.TileEntity.TileTower;
-
+@SideOnly(Side.CLIENT)
 public class RenderCableClamp extends RenderHVTowerBase {
 
 	@Override
