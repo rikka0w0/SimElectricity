@@ -1,11 +1,12 @@
 package simElectricity.API.Client;
 
-import org.lwjgl.opengl.GL11;
-
-import simElectricity.API.IHVTower;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
-
+import org.lwjgl.opengl.GL11;
+import simElectricity.API.IHVTower;
+@SideOnly(Side.CLIENT)
 public abstract class RenderHVTowerBase extends TileEntitySpecialRenderer implements ITextureProvider {
 	public final CableRender render = new CableRender(this);	
 

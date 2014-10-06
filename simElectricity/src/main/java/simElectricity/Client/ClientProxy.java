@@ -21,15 +21,21 @@ package simElectricity.Client;
 
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.client.registry.ClientRegistry;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import simElectricity.Client.Gui.*;
-import simElectricity.Client.Render.*;
+import simElectricity.Client.Render.RenderCableClamp;
+import simElectricity.Client.Render.RenderTower;
+import simElectricity.Client.Render.RenderWindMillTop;
+import simElectricity.Client.Render.RenderWire;
 import simElectricity.Common.Blocks.TileEntity.*;
 import simElectricity.Common.Blocks.WindMill.TileWindMillTop;
 import simElectricity.Common.CommonProxy;
 
+@SideOnly(Side.CLIENT)
 public class ClientProxy extends CommonProxy {
     @Override
     public World getClientWorld() {
@@ -65,8 +71,8 @@ public class ClientProxy extends CommonProxy {
         if (te instanceof TileSolarInverter)
             return new GuiSolarInverter(player.inventory, te);
         if (te instanceof TileIC2Consumer)
-        	return new GuiIC2Consumer(player.inventory, te);
-        
+            return new GuiIC2Consumer(player.inventory, te);
+
         return null;
     }
 }
