@@ -31,6 +31,7 @@ public class SEItems {
     public static ItemUltimateMultimeter ultimateMultimeter;
     public static ItemWrench wrench;
     public static ItemHVWire hvWire;
+    public static ItemIceIngot iceIngot;
 
     public static void init() {
         fan = new ItemFan();
@@ -38,5 +39,6 @@ public class SEItems {
         ultimateMultimeter = new ItemUltimateMultimeter();
         wrench = new ItemWrench();
         hvWire = new ItemHVWire();
+        iceIngot = new ItemIceIngot();
     }
 }

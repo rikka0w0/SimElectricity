@@ -18,7 +18,8 @@ tile.sime:IncandescentLamp.name=Incandescent Lamp (5w)
 tile.sime:Switch.name=Switch
 tile.sime:Tower.name=Tower
 tile.sime:SolarInverter.name=Solar Inverter (Regulated)
-tile.sime:IC2Consumer.name = IC2 Energy Consumer
+tile.sime:IC2Consumer.name=IC2 Energy Consumer
+tile.sime:IceMachine.name=Cirno Ice Machine
 
 # Items
 item.sime:UltimateMultimeter.name=Ultimate Multimeter
@@ -26,6 +27,7 @@ item.sime:Glove.name=Glove
 item.sime:Wrench.name=Wrench
 item.sime:Fan.name=WindMill Turbine
 item.sime:HVWire.name=HV Wire
+item.sime:IceIngot.name=Ice Ingot
 
 # Text
 sime.Output=Output:

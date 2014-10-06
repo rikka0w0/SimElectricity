@@ -35,6 +35,11 @@ public abstract class TileStandardSEMachine extends TileSidedFacingMachine imple
     }
     
     // IEnergyTile
+	@Override
+	public double getOutputVoltage() {
+		return 0;
+	}
+    
     @Override
     public ForgeDirection getFunctionalSide() {
         return functionalSide;

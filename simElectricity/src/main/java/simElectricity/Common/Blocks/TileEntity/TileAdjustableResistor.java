@@ -67,11 +67,6 @@ public class TileAdjustableResistor extends TileStandardSEMachine implements INe
     }
 
     @Override
-    public double getOutputVoltage() {
-        return 0;
-    }
-
-    @Override
     public double getResistance() {
         return resistance;
     }

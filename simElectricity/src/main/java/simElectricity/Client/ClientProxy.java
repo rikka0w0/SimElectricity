@@ -66,6 +66,8 @@ public class ClientProxy extends CommonProxy {
             return new GuiSolarInverter(player.inventory, te);
         if (te instanceof TileIC2Consumer)
         	return new GuiIC2Consumer(player.inventory, te);
+        if (te instanceof TileIceMachine)
+        	return new GuiIceMachine(player.inventory, te); 
         
         return null;
     }
