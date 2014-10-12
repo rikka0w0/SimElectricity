@@ -27,33 +27,37 @@ public class TileIC2Consumer extends TileSidedGenerator implements IEnergySink, 
         if (worldObj.isRemote)
         	return;
         
-        double KP = 0.5, KI = 0.1;
+        double KP = 1, KI = 0.1;
         double Vo = Energy.getVoltage(this);
-        double Pin = powerRate * Energy.ic2ConvertRatio;
-        double RSet = Vo * (outputVoltage - Vo) / Pin;
+        double Po = Vo * (outputVoltage - Vo) / outputResistance;	//In SE unit
+        double Pin = powerRate * Energy.ic2ConvertRatio;			//In SE unit
+        double newR = outputResistance;
         
-        if (Pin < 10E-14){
-        	RSet = 10E5;
+        double RSet = Vo * (outputVoltage - Vo) / Pin;
+        if (Pin < 10E-14)	RSet = 10E5;	//Avoid NaH
+	                
+	    double Rerr = RSet - newR;
+	    //double delta = KP*Rerr + KI*lastErr;	//For debugging
+	    newR += KP*Rerr + KI*lastErr;
+	    lastErr = Rerr;
+	        
+	    if (newR <0.1)
+	    	newR = 0.1;
+	    if (newR > 10E5)
+	    	newR = 10E5;
+        
+        bufferedEnergy -= Math.min(powerRate,Po / Energy.ic2ConvertRatio);
+        
+        //Buffer runs out
+        if (bufferedEnergy < 0){
+        	newR = Float.MAX_VALUE;
         }
         
-        double po = Vo * (outputVoltage - Vo) / outputResistance;
-        
-        double Rerr = RSet - outputResistance;
-        double delta = KP*Rerr + KI*lastErr;
-        outputResistance += delta;
-        lastErr = Rerr;
-        
-        if (outputResistance <0.1)
-        	outputResistance = 0.1;
-        if (outputResistance > 10E4)
-        	outputResistance = 10E4;
-        
-        bufferedEnergy -= Math.min(powerRate,po / Energy.ic2ConvertRatio);
-        
-        if (bufferedEnergy < 0)
-        	outputResistance = Float.MAX_VALUE;
-        
-        Energy.postTileChangeEvent(this);
+        //Large enough resistance error
+        if (Math.abs(newR - outputResistance) > 10E-3){
+        	outputResistance = newR;
+        	Energy.postTileChangeEvent(this);
+        }
 	}
 	
     @Override
