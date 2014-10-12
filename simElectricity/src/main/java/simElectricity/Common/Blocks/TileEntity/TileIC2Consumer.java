@@ -16,7 +16,8 @@ public class TileIC2Consumer extends TileSidedGenerator implements IEnergySink, 
 	public double bufferedEnergy = 0;
 	public double maxBufferedEnergy = 10000;
 	public double powerRate = 0;
-	public double aError = 0;
+	public double lastErr = 0;
+	
 	
 	@Override
     public void updateEntity() {
@@ -25,33 +26,41 @@ public class TileIC2Consumer extends TileSidedGenerator implements IEnergySink, 
         //No client side operation
         if (worldObj.isRemote)
         	return;
-        	
-        double vo = Energy.getVoltage(this);
-        double po = vo * (outputVoltage - vo) / (outputResistance * Energy.ic2ConvertRatio);
-        boolean update = false;
-        if (powerRate > 0 && Math.abs(powerRate - po) > 0.1){
-        	outputResistance = (float) (vo * (outputVoltage - vo) / (powerRate * Energy.ic2ConvertRatio)); 
-        	update = true;
+        
+        double KP = 0.5, KI = 0.1;
+        double Vo = Energy.getVoltage(this);
+        double Pin = powerRate * Energy.ic2ConvertRatio;
+        double RSet = Vo * (outputVoltage - Vo) / Pin;
+        
+        if (Pin < 10E-14){
+        	RSet = 10E5;
         }
         
-        if (outputResistance <1)
-        	outputResistance = 1;
+        double po = Vo * (outputVoltage - Vo) / outputResistance;
         
-        bufferedEnergy -= Math.min(powerRate,po);
+        double Rerr = RSet - outputResistance;
+        double delta = KP*Rerr + KI*lastErr;
+        outputResistance += delta;
+        lastErr = Rerr;
+        
+        if (outputResistance <0.1)
+        	outputResistance = 0.1;
+        if (outputResistance > 10E4)
+        	outputResistance = 10E4;
+        
+        bufferedEnergy -= Math.min(powerRate,po / Energy.ic2ConvertRatio);
         
         if (bufferedEnergy < 0)
         	outputResistance = Float.MAX_VALUE;
         
-        if (update)
-        	Energy.postTileChangeEvent(this);
+        Energy.postTileChangeEvent(this);
 	}
 	
     @Override
 	public void onLoad() {
     	MinecraftForge.EVENT_BUS.post(new EnergyTileLoadEvent(this));
         
-    	if (this.outputResistance == Float.MAX_VALUE) {
-            outputResistance = 0.001F;
+    	if (this.outputResistance == Double.MAX_VALUE) {
             outputVoltage = 230;
         }
     }
