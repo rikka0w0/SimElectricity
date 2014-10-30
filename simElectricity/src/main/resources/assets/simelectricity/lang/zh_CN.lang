@@ -17,7 +17,8 @@ tile.sime:BatteryBox.name=电池箱
 tile.sime:IncandescentLamp.name=节能灯 (5w)
 tile.sime:Switch.name=空气开关
 tile.sime:SolarInverter.name=太阳能专用稳压逆变器
-tile.sime:IC2Consumer.name=IC2能源输入
+tile.sime:IC2Consumer.name=IC2->SE能源转换器
+tile.sime:IC2Generator.name=SE->IC2能源转换器
 tile.sime:IceMachine.name=⑨牌制冰机
 
 # Items
