@@ -19,14 +19,13 @@
 
 package simElectricity.Common.EnergyNet;
 
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.gameevent.TickEvent.Phase;
-import cpw.mods.fml.common.gameevent.TickEvent.WorldTickEvent;
-import cpw.mods.fml.relauncher.Side;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.WorldEvent;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.fml.relauncher.Side;
 import simElectricity.API.EnergyTile.IBaseComponent;
 import simElectricity.API.EnergyTile.IComplexTile;
 import simElectricity.API.EnergyTile.ITransformer;
@@ -49,8 +48,8 @@ public class EnergyNetEventHandler {
     }
 
     @SubscribeEvent
-    public void tick(WorldTickEvent event) {
-        if (event.phase != Phase.START)
+    public void tick(TickEvent.WorldTickEvent event) {
+        if (event.phase != TickEvent.Phase.START)
             return;
         if (event.side != Side.SERVER)
             return;
@@ -62,7 +61,7 @@ public class EnergyNetEventHandler {
     @SubscribeEvent
     public void onAttachEvent(TileAttachEvent event) {
         TileEntity te = event.energyTile;
-        if (!te.getWorldObj().blockExists(te.xCoord, te.yCoord, te.zCoord)) {
+        if (te.getWorld().isAirBlock(te.getPos())) {//TODO .blockExists(te.xCoord, te.yCoord, te.zCoord
             SEUtils.logInfo(te + " is added to the energy net too early!, abort!");
             return;
         }
@@ -77,13 +76,13 @@ public class EnergyNetEventHandler {
             return;
         }
 
-        if (te.getWorldObj().isRemote) {
+        if (te.getWorld().isRemote) {
             SEUtils.logInfo("Client tileentity " + te + " is requesting, abort!");
             return;
         }
 
 
-        WorldData.getEnergyNetForWorld(te.getWorldObj()).addTileEntity(te);
+        WorldData.getEnergyNetForWorld(te.getWorld()).addTileEntity(te);
 
         if (ConfigManager.showEnergyNetInfo)
             SEUtils.logInfo("Tileentity " + te + " has attached to the energy network!");
@@ -93,12 +92,12 @@ public class EnergyNetEventHandler {
     public void onTileDetach(TileDetachEvent event) {
         TileEntity te = event.energyTile;
 
-        if (te.getWorldObj().isRemote) {
+        if (te.getWorld().isRemote) {
             SEUtils.logInfo("Client tileentity " + te + " is requesting, abort!");
             return;
         }
 
-        WorldData.getEnergyNetForWorld(te.getWorldObj()).removeTileEntity(te);
+        WorldData.getEnergyNetForWorld(te.getWorld()).removeTileEntity(te);
 
         if (ConfigManager.showEnergyNetInfo)
             SEUtils.logInfo("Tileentity " + te + " has detached from the energy network!");
@@ -108,12 +107,12 @@ public class EnergyNetEventHandler {
     public void onTileRejoin(TileRejoinEvent event) {
         TileEntity te = event.energyTile;
 
-        if (te.getWorldObj().isRemote) {
+        if (te.getWorld().isRemote) {
             SEUtils.logInfo("Client tileentity " + te + " is requesting, abort!");
             return;
         }
 
-        WorldData.getEnergyNetForWorld(te.getWorldObj()).rejoinTileEntity(te);
+        WorldData.getEnergyNetForWorld(te.getWorld()).rejoinTileEntity(te);
 
         if (ConfigManager.showEnergyNetInfo)
             SEUtils.logInfo("Tileentity " + te + " has rejoined the energy network!");
@@ -123,12 +122,12 @@ public class EnergyNetEventHandler {
     public void onTileChange(TileChangeEvent event) {
         TileEntity te = event.energyTile;
 
-        if (te.getWorldObj().isRemote) {
+        if (te.getWorld().isRemote) {
             SEUtils.logInfo("Client tileentity " + te + " is requesting, aborting");
             return;
         }
 
-        WorldData.getEnergyNetForWorld(te.getWorldObj()).markForUpdate(te);
+        WorldData.getEnergyNetForWorld(te.getWorld()).markForUpdate(te);
 
         if (ConfigManager.showEnergyNetInfo)
             SEUtils.logInfo("Tileentity " + te + " causes the energy network to update!");

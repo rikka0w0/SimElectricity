@@ -19,24 +19,31 @@
 
 package simElectricity.Client.Gui;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 import simElectricity.API.Network;
 import simElectricity.Common.Blocks.Container.ContainerSolarInverter;
 import simElectricity.Common.Blocks.TileEntity.TileSolarInverter;
 
+import java.io.IOException;
+
 @SideOnly(Side.CLIENT)
 public class GuiSolarInverter extends GuiContainer {
     protected TileSolarInverter te;
+
+    public GuiSolarInverter(InventoryPlayer inventoryPlayer, TileEntity tileEntity) {
+        super(new ContainerSolarInverter(inventoryPlayer, tileEntity));
+        te = (TileSolarInverter) tileEntity;
+    }
 
     @Override
     public void initGui() {
@@ -128,29 +135,29 @@ public class GuiSolarInverter extends GuiContainer {
     }
 
     @Override
-    public void mouseClicked(int x, int y, int button) {
+    public void mouseClicked(int x, int y, int button) throws IOException {
         super.mouseClicked(x, y, button);
 
         int tx = x - guiLeft, ty = y - guiTop;
-        ForgeDirection selectedDirection = ForgeDirection.UNKNOWN;
+        EnumFacing selectedDirection = null;
 
         if (tx >= 139 && tx <= 150 && ty >= 61 && ty <= 63) {
-            selectedDirection = ForgeDirection.NORTH;
+            selectedDirection = EnumFacing.NORTH;
         } else if (tx >= 139 && tx <= 150 && ty >= 76 && ty <= 78) {
-            selectedDirection = ForgeDirection.SOUTH;
+            selectedDirection = EnumFacing.SOUTH;
         }
         if (tx >= 136 && tx <= 138 && ty >= 64 && ty <= 75) {
-            selectedDirection = ForgeDirection.WEST;
+            selectedDirection = EnumFacing.WEST;
         } else if (tx >= 151 && tx <= 153 && ty >= 64 && ty <= 75) {
-            selectedDirection = ForgeDirection.EAST;
+            selectedDirection = EnumFacing.EAST;
         }
         if (tx >= 141 && tx <= 148 && ty >= 66 && ty <= 73) {
-            selectedDirection = ForgeDirection.UP;
+            selectedDirection = EnumFacing.UP;
         } else if (tx >= 159 && tx <= 166 && ty >= 66 && ty <= 73) {
-            selectedDirection = ForgeDirection.DOWN;
+            selectedDirection = EnumFacing.DOWN;
         }
 
-        if (selectedDirection == ForgeDirection.UNKNOWN)
+        if (selectedDirection == null)
             return;
 
         if (button == 0) {        //Left key
@@ -166,12 +173,7 @@ public class GuiSolarInverter extends GuiContainer {
         }
 
         Network.updateTileEntityFieldsToServer(te, "inputSide", "outputSide");
-        te.getWorldObj().markBlockForUpdate(te.xCoord, te.yCoord, te.zCoord);
-    }
-
-    public GuiSolarInverter(InventoryPlayer inventoryPlayer, TileEntity tileEntity) {
-        super(new ContainerSolarInverter(inventoryPlayer, tileEntity));
-        te = (TileSolarInverter) tileEntity;
+        te.getWorld().markBlockForUpdate(te.getPos());
     }
 
     @Override
@@ -201,7 +203,7 @@ public class GuiSolarInverter extends GuiContainer {
         drawFacingBar(x + 130, y + 61, te.getPrimarySide(), te.getSecondarySide());
     }
 
-    protected void drawFacingBar(int x, int y, ForgeDirection red, ForgeDirection blue) {
+    protected void drawFacingBar(int x, int y, EnumFacing red, EnumFacing blue) {
         switch (red) {
             case WEST:
                 this.drawTexturedModalRect(x + 6, y + 2, 176, 0, 3, 14);

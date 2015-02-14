@@ -19,10 +19,10 @@
 
 package simElectricity.Client;
 
-import cpw.mods.fml.client.config.GuiConfig;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraftforge.common.config.ConfigElement;
 import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.fml.client.config.GuiConfig;
 import simElectricity.API.Util;
 import simElectricity.Common.ConfigManager;
 

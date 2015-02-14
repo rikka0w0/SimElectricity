@@ -19,7 +19,7 @@
 
 package simElectricity.Common.Core;
 
-import cpw.mods.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import simElectricity.API.Util;
 import simElectricity.Common.Items.*;
 

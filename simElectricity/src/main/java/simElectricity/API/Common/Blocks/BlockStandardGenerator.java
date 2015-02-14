@@ -20,11 +20,13 @@
 package simElectricity.API.Common.Blocks;
 
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.Common.TileSidedGenerator;
 import simElectricity.API.Util;
 
@@ -50,16 +52,16 @@ public abstract class BlockStandardGenerator extends BlockContainerSE {
     }
 
     @Override
-    public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase player, ItemStack itemStack) {
+    public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase player, ItemStack itemStack) {
         if (world.isRemote)
             return;
 
-        TileEntity te = world.getTileEntity(x, y, z);
+        TileEntity te = world.getTileEntity(pos);
 
         if (!(te instanceof TileSidedGenerator))
             return;
 
-        ForgeDirection functionalSide = AutoFacing.autoConnect(te, Util.getPlayerSight(player, ignoreVerticalFacing()).getOpposite());
+        EnumFacing functionalSide = AutoFacing.autoConnect(te, Util.getPlayerSight(player, ignoreVerticalFacing()).getOpposite());
         ((TileSidedGenerator) te).setFunctionalSide(functionalSide);
     }
 }

@@ -19,8 +19,6 @@
 
 package simElectricity.Common.Blocks.Container;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.ICrafting;
@@ -29,16 +27,17 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import simElectricity.API.Common.ContainerBase;
 import simElectricity.Common.Blocks.TileEntity.TileElectricFurnace;
 
 public class ContainerElectricFurnace extends ContainerBase {
+    protected int progress;
+
     public ContainerElectricFurnace(InventoryPlayer inventoryPlayer, TileEntity te) {
         super(inventoryPlayer, te);
     }
-
-    protected int progress;
-
 
     @Override
     public void addCraftingToCrafters(ICrafting par1iCrafting) {
@@ -89,7 +88,7 @@ public class ContainerElectricFurnace extends ContainerBase {
         addSlotToContainer(new Slot((IInventory) tileEntity, 0, 43, 33) {
             @Override
             public boolean isItemValid(ItemStack itemStack) {
-                ItemStack result = FurnaceRecipes.smelting().getSmeltingResult(itemStack);
+                ItemStack result = FurnaceRecipes.instance().getSmeltingResult(itemStack);
                 return result != null;
             }
         });
@@ -117,7 +116,7 @@ public class ContainerElectricFurnace extends ContainerBase {
                     return null;
             }
             //places it into the tileEntity is possible since its in the player inventory
-            else if (FurnaceRecipes.smelting().getSmeltingResult(stackInSlot) != null) {// one input slot only!!!!
+            else if (FurnaceRecipes.instance().getSmeltingResult(stackInSlot) != null) {// one input slot only!!!!
                 if (!this.mergeItemStack(stackInSlot, getTileInventoryStartIndex(), getTileInventoryEndIndex(), false))// input slot
                     return null;
             }// else if(remaining slots)   for multiple input slots

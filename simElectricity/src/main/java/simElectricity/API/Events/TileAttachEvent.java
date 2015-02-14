@@ -19,8 +19,8 @@
 
 package simElectricity.API.Events;
 
-import cpw.mods.fml.common.eventhandler.Event;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.fml.common.eventhandler.Event;
 
 /**
  * Should be posted when a tileEntity is joining the energy net,

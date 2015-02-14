@@ -19,12 +19,12 @@
 
 package simElectricity.Client.Gui;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 import simElectricity.Common.Blocks.Container.ContainerSimpleGenerator;
 import simElectricity.Common.Blocks.TileEntity.TileSimpleGenerator;

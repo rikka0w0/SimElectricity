@@ -19,10 +19,11 @@
 
 package simElectricity.Common;
 
-import cpw.mods.fml.common.network.IGuiHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.network.IGuiHandler;
 import simElectricity.Common.Blocks.Container.*;
 import simElectricity.Common.Blocks.TileEntity.*;
 
@@ -41,7 +42,7 @@ public class CommonProxy implements IGuiHandler {
 
     @Override
     public Object getServerGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
-        TileEntity te = world.getTileEntity(x, y, z);
+        TileEntity te = world.getTileEntity(new BlockPos(x, y, z));
 
         if (te instanceof TileQuantumGenerator)
             return new ContainerQuantumGenerator(player.inventory, te);
@@ -58,14 +59,14 @@ public class CommonProxy implements IGuiHandler {
         if (te instanceof TileSwitch)
             return new ContainerSwitch(player.inventory, te);
         if (te instanceof TileSolarInverter)
-        	return new ContainerSolarInverter(player.inventory, te);
+            return new ContainerSolarInverter(player.inventory, te);
         if (te instanceof TileIC2Consumer)
-        	return new ContainerIC2Consumer(player.inventory, te);
+            return new ContainerIC2Consumer(player.inventory, te);
         if (te instanceof TileIC2Generator)
-        	return new ContainerIC2Generator(player.inventory, te);
+            return new ContainerIC2Generator(player.inventory, te);
         if (te instanceof TileIceMachine)
-        	return new ContainerIceMachine(player.inventory, te);   
-        
+            return new ContainerIceMachine(player.inventory, te);
+
         return null;
     }
 }

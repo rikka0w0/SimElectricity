@@ -1,8 +1,9 @@
 package simElectricity.API.Client;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 
 /**
@@ -39,62 +40,64 @@ public class CubeRender {
      * @param maxZ Size of z
      */
     public void render_cube(double maxX, double maxY, double maxZ, int textureIndex) {
-        Tessellator t = Tessellator.instance;
+        Tessellator t = Tessellator.getInstance();
+        WorldRenderer worldRenderer = t.getWorldRenderer();
 
         GL11.glPushMatrix();
 
         textureProvider.bindTexture(textureIndex, 4);
-        t.startDrawingQuads();
-        t.setNormal(-1, 0, 0);
-        t.addVertexWithUV(-maxX / 2, 0, -maxZ / 2, 0, 1);
-        t.addVertexWithUV(-maxX / 2, 0, maxZ / 2, 1, 1);
-        t.addVertexWithUV(-maxX / 2, maxY, maxZ / 2, 1, 0);
-        t.addVertexWithUV(-maxX / 2, maxY, -maxZ / 2, 0, 0);
+
+        worldRenderer.startDrawingQuads();
+        worldRenderer.setNormal(-1, 0, 0);
+        worldRenderer.addVertexWithUV(-maxX / 2, 0, -maxZ / 2, 0, 1);
+        worldRenderer.addVertexWithUV(-maxX / 2, 0, maxZ / 2, 1, 1);
+        worldRenderer.addVertexWithUV(-maxX / 2, maxY, maxZ / 2, 1, 0);
+        worldRenderer.addVertexWithUV(-maxX / 2, maxY, -maxZ / 2, 0, 0);
         t.draw();
 
         textureProvider.bindTexture(textureIndex, 5);
-        t.startDrawingQuads();
-        t.setNormal(1, 0, 0);
-        t.addVertexWithUV(maxX / 2, maxY, -maxZ / 2, 1, 0);
-        t.addVertexWithUV(maxX / 2, maxY, maxZ / 2, 0, 0);
-        t.addVertexWithUV(maxX / 2, 0, maxZ / 2, 0, 1);
-        t.addVertexWithUV(maxX / 2, 0, -maxZ / 2, 1, 1);
+        worldRenderer.startDrawingQuads();
+        worldRenderer.setNormal(1, 0, 0);
+        worldRenderer.addVertexWithUV(maxX / 2, maxY, -maxZ / 2, 1, 0);
+        worldRenderer.addVertexWithUV(maxX / 2, maxY, maxZ / 2, 0, 0);
+        worldRenderer.addVertexWithUV(maxX / 2, 0, maxZ / 2, 0, 1);
+        worldRenderer.addVertexWithUV(maxX / 2, 0, -maxZ / 2, 1, 1);
         t.draw();
 
         textureProvider.bindTexture(textureIndex, 2);
-        t.startDrawingQuads();
-        t.setNormal(0, 0, -1);
-        t.addVertexWithUV(-maxX / 2, maxY, -maxZ / 2, 1, 0);
-        t.addVertexWithUV(maxX / 2, maxY, -maxZ / 2, 0, 0);
-        t.addVertexWithUV(maxX / 2, 0, -maxZ / 2, 0, 1);
-        t.addVertexWithUV(-maxX / 2, 0, -maxZ / 2, 1, 1);
+        worldRenderer.startDrawingQuads();
+        worldRenderer.setNormal(0, 0, -1);
+        worldRenderer.addVertexWithUV(-maxX / 2, maxY, -maxZ / 2, 1, 0);
+        worldRenderer.addVertexWithUV(maxX / 2, maxY, -maxZ / 2, 0, 0);
+        worldRenderer.addVertexWithUV(maxX / 2, 0, -maxZ / 2, 0, 1);
+        worldRenderer.addVertexWithUV(-maxX / 2, 0, -maxZ / 2, 1, 1);
         t.draw();
 
         textureProvider.bindTexture(textureIndex, 3);
-        t.startDrawingQuads();
-        t.setNormal(0, 0, 1);
-        t.addVertexWithUV(-maxX / 2, maxY, maxZ / 2, 0, 0);
-        t.addVertexWithUV(-maxX / 2, 0, maxZ / 2, 0, 1);
-        t.addVertexWithUV(maxX / 2, 0, maxZ / 2, 1, 1);
-        t.addVertexWithUV(maxX / 2, maxY, maxZ / 2, 1, 0);
+        worldRenderer.startDrawingQuads();
+        worldRenderer.setNormal(0, 0, 1);
+        worldRenderer.addVertexWithUV(-maxX / 2, maxY, maxZ / 2, 0, 0);
+        worldRenderer.addVertexWithUV(-maxX / 2, 0, maxZ / 2, 0, 1);
+        worldRenderer.addVertexWithUV(maxX / 2, 0, maxZ / 2, 1, 1);
+        worldRenderer.addVertexWithUV(maxX / 2, maxY, maxZ / 2, 1, 0);
         t.draw();
 
         textureProvider.bindTexture(textureIndex, 1);
-        t.startDrawingQuads();
-        t.setNormal(0, 1, 0);
-        t.addVertexWithUV(-maxX / 2, maxY, maxZ / 2, 0, 0);
-        t.addVertexWithUV(maxX / 2, maxY, maxZ / 2, 1, 0);
-        t.addVertexWithUV(maxX / 2, maxY, -maxZ / 2, 1, 1);
-        t.addVertexWithUV(-maxX / 2, maxY, -maxZ / 2, 0, 1);
+        worldRenderer.startDrawingQuads();
+        worldRenderer.setNormal(0, 1, 0);
+        worldRenderer.addVertexWithUV(-maxX / 2, maxY, maxZ / 2, 0, 0);
+        worldRenderer.addVertexWithUV(maxX / 2, maxY, maxZ / 2, 1, 0);
+        worldRenderer.addVertexWithUV(maxX / 2, maxY, -maxZ / 2, 1, 1);
+        worldRenderer.addVertexWithUV(-maxX / 2, maxY, -maxZ / 2, 0, 1);
         t.draw();
 
         textureProvider.bindTexture(textureIndex, 0);
-        t.startDrawingQuads();
-        t.setNormal(0, -1, 0);
-        t.addVertexWithUV(-maxX / 2, 0, -maxZ / 2, 0, 1);
-        t.addVertexWithUV(maxX / 2, 0, -maxZ / 2, 1, 1);
-        t.addVertexWithUV(maxX / 2, 0, maxZ / 2, 1, 0);
-        t.addVertexWithUV(-maxX / 2, 0, maxZ / 2, 0, 0);
+        worldRenderer.startDrawingQuads();
+        worldRenderer.setNormal(0, -1, 0);
+        worldRenderer.addVertexWithUV(-maxX / 2, 0, -maxZ / 2, 0, 1);
+        worldRenderer.addVertexWithUV(maxX / 2, 0, -maxZ / 2, 1, 1);
+        worldRenderer.addVertexWithUV(maxX / 2, 0, maxZ / 2, 1, 0);
+        worldRenderer.addVertexWithUV(-maxX / 2, 0, maxZ / 2, 0, 0);
         t.draw();
 
         GL11.glPopMatrix();

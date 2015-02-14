@@ -19,18 +19,18 @@
 
 package simElectricity.Client.Render;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
-
+import simElectricity.API.Client.RenderHVTowerBase;
 import simElectricity.Common.Blocks.TileEntity.TileCableClamp;
 import simElectricity.Common.Blocks.TileEntity.TileTower;
-import simElectricity.API.Client.RenderHVTowerBase;
 
 @SideOnly(Side.CLIENT)
-public class RenderTower extends RenderHVTowerBase{
+public class RenderTower extends RenderHVTowerBase {
     @Override
     public void bindTexture(int index, int side) {
         switch (index) {
@@ -46,280 +46,286 @@ public class RenderTower extends RenderHVTowerBase{
     }
 
     @Override
-    public void renderTower(TileEntity tileEntity, double x, double y, double z){
-        switch (tileEntity.getBlockMetadata()){
-        case 0: renderTower0();break;
-        case 1: renderTower1();break;
-        case 2: renderTower2();break;
+    public void renderTower(TileEntity tileEntity, double x, double y, double z) {
+        switch (tileEntity.getBlockMetadata()) {
+            case 0:
+                renderTower0();
+                break;
+            case 1:
+                renderTower1();
+                break;
+            case 2:
+                renderTower2();
+                break;
         }
     }
-    
+
     @Override
-    public void renderCable(TileEntity tileEntity, double x, double y, double z){
-    	super.renderCable(tileEntity,x,y,z);
-        
-    	TileEntity neighbor;
-    	if (tileEntity.getBlockMetadata() == 1){ 
-    		neighbor = tileEntity.getWorldObj().getTileEntity(tileEntity.xCoord,tileEntity.yCoord - 2,tileEntity.zCoord);
-        	if (neighbor instanceof TileTower && neighbor.getBlockMetadata() == 2 ||
-        		neighbor instanceof TileCableClamp)
-        		renderCableTo(tileEntity, neighbor, x, y, z, 0.4);
-        }   	
-    	if (tileEntity.getBlockMetadata() == 2){
-    		neighbor = tileEntity.getWorldObj().getTileEntity(tileEntity.xCoord,tileEntity.yCoord + 2,tileEntity.zCoord);
-        	if (neighbor instanceof TileTower && neighbor.getBlockMetadata() == 1)
-        		renderCableTo(tileEntity, neighbor, x, y, z, 0.4);		
-    	}
+    public void renderCable(TileEntity tileEntity, double x, double y, double z) {
+        super.renderCable(tileEntity, x, y, z);
+
+        TileEntity neighbor;
+        if (tileEntity.getBlockMetadata() == 1) {
+            neighbor = tileEntity.getWorld().getTileEntity(new BlockPos(tileEntity.getPos().getX(), tileEntity.getPos().getY() - 2, tileEntity.getPos().getZ()));
+            if (neighbor instanceof TileTower && neighbor.getBlockMetadata() == 2 ||
+                    neighbor instanceof TileCableClamp)
+                renderCableTo(tileEntity, neighbor, x, y, z, 0.4);
+        }
+        if (tileEntity.getBlockMetadata() == 2) {
+            neighbor = tileEntity.getWorld().getTileEntity(new BlockPos(tileEntity.getPos().getX(), tileEntity.getPos().getY() + 2, tileEntity.getPos().getZ()));
+            if (neighbor instanceof TileTower && neighbor.getBlockMetadata() == 1)
+                renderCableTo(tileEntity, neighbor, x, y, z, 0.4);
+        }
     }
-        
+
     private void renderTower2() {
-    	GL11.glPushMatrix();
+        GL11.glPushMatrix();
         render.render_cube(0.25, 1, 0.25);
         GL11.glPopMatrix();
-    	
-    	GL11.glTranslated(0.2, 0.6, -1.5);
-    	
-    	GL11.glPushMatrix();
-    	GL11.glRotatef(90F, 1.0F, 0.0F, 0.0F);
+
+        GL11.glTranslated(0.2, 0.6, -1.5);
+
+        GL11.glPushMatrix();
+        GL11.glRotatef(90F, 1.0F, 0.0F, 0.0F);
         render.render_cube(0.2, 3, 0.2);
         GL11.glPopMatrix();
-        
+
         GL11.glPushMatrix();
         GL11.glRotatef(180F, 0.0F, 0.0F, 1.0F);
-        renderInsulator(4,0.6);
-        GL11.glPopMatrix();   
-        
+        renderInsulator(4, 0.6);
+        GL11.glPopMatrix();
+
         GL11.glPushMatrix();
         GL11.glTranslated(0, 0, 3);
         GL11.glRotatef(180F, 0.0F, 0.0F, 1.0F);
-        renderInsulator(4,0.6);
-        GL11.glPopMatrix();  
-        
+        renderInsulator(4, 0.6);
+        GL11.glPopMatrix();
+
         GL11.glPushMatrix();
         GL11.glTranslated(0, 0, 2);
         GL11.glRotatef(180F, 0.0F, 0.0F, 1.0F);
-        renderInsulator(4,0.6);
-        GL11.glPopMatrix();  
+        renderInsulator(4, 0.6);
+        GL11.glPopMatrix();
     }
-    
+
     private void renderTower1() {
-    	GL11.glTranslated(0, -8, 0);
-    	
-    	GL11.glPushMatrix();
-    	GL11.glTranslated(0, 8, 0);
+        GL11.glTranslated(0, -8, 0);
+
+        GL11.glPushMatrix();
+        GL11.glTranslated(0, 8, 0);
         render.render_cube(0.25, 2, 0.25);
         GL11.glPopMatrix();
-        
+
         GL11.glPushMatrix();
         GL11.glTranslated(0, 8, -1);
         GL11.glRotatef(90F, 1.0F, 0.0F, 0.0F);
         render.render_cube(0.1, 2.5, 0.1);
         GL11.glPopMatrix();
-    
+
         GL11.glPushMatrix();
         GL11.glTranslated(0, 9.5, 0);
         GL11.glRotatef(90F, 1.0F, 0.0F, 0.0F);
         render.render_cube(0.1, 1, 0.1);
         GL11.glPopMatrix();
-        
+
         GL11.glPushMatrix();
         GL11.glTranslated(0, 8, -1);
         GL11.glRotatef(180F, 0.0F, 0.0F, 1.0F);
-        renderInsulator(4,0.6);
+        renderInsulator(4, 0.6);
         GL11.glPopMatrix();
-        
+
         GL11.glPushMatrix();
         GL11.glTranslated(0, 8, 1.5);
         GL11.glRotatef(180F, 0.0F, 0.0F, 1.0F);
-        renderInsulator(4,0.6);
+        renderInsulator(4, 0.6);
         GL11.glPopMatrix();
-        
+
         GL11.glPushMatrix();
         GL11.glTranslated(0, 9.5, 1);
         GL11.glRotatef(180F, 0.0F, 0.0F, 1.0F);
-        renderInsulator(4,0.6);
+        renderInsulator(4, 0.6);
         GL11.glPopMatrix();
     }
-    
+
     private void renderTower0() {
-    	//1
+        //1
         GL11.glPushMatrix();
         GL11.glTranslated(-2.455, -9.85, -2.385);
         GL11.glRotatef(-90F, 0.0F, 0.0F, 1.0F);
         render.render_cube(0.15, 0.5, 0.15);
-        GL11.glPopMatrix(); 	
-        
+        GL11.glPopMatrix();
+
         GL11.glPushMatrix();
         GL11.glTranslated(-2.385, -9.85, -2.455);
         GL11.glRotatef(90F, 1.0F, 0.0F, 0.0F);
         render.render_cube(0.15, 0.5, 0.15);
         GL11.glPopMatrix();
-        
+
         //2
         GL11.glPushMatrix();
         GL11.glTranslated(2.455, -9.85, 2.385);
         GL11.glRotatef(90F, 0.0F, 0.0F, 1.0F);
         render.render_cube(0.15, 0.5, 0.15);
-        GL11.glPopMatrix(); 	
-        
+        GL11.glPopMatrix();
+
         GL11.glPushMatrix();
         GL11.glTranslated(2.385, -9.85, 2.455);
         GL11.glRotatef(-90F, 1.0F, 0.0F, 0.0F);
         render.render_cube(0.15, 0.5, 0.15);
         GL11.glPopMatrix();
-        
-    	//3
+
+        //3
         GL11.glPushMatrix();
         GL11.glTranslated(2.455, -9.85, -2.385);
         GL11.glRotatef(90F, 0.0F, 0.0F, 1.0F);
         render.render_cube(0.15, 0.5, 0.15);
-        GL11.glPopMatrix(); 	
-        
+        GL11.glPopMatrix();
+
         GL11.glPushMatrix();
         GL11.glTranslated(2.385, -9.85, -2.455);
         GL11.glRotatef(90F, 1.0F, 0.0F, 0.0F);
         render.render_cube(0.15, 0.5, 0.15);
         GL11.glPopMatrix();
-        
+
         //4
         GL11.glPushMatrix();
         GL11.glTranslated(-2.455, -9.85, 2.385);
         GL11.glRotatef(-90F, 0.0F, 0.0F, 1.0F);
         render.render_cube(0.15, 0.5, 0.15);
-        GL11.glPopMatrix(); 	
-        
+        GL11.glPopMatrix();
+
         GL11.glPushMatrix();
         GL11.glTranslated(-2.385, -9.85, 2.455);
         GL11.glRotatef(-90F, 1.0F, 0.0F, 0.0F);
         render.render_cube(0.15, 0.5, 0.15);
         GL11.glPopMatrix();
-        
-        
+
+
         //1
         GL11.glPushMatrix();
         GL11.glTranslated(-2.4, -9.85, -2.385);
         GL11.glRotatef(-24F, 0.0F, 0.0F, 1.0F);
         GL11.glRotatef(7.8F, 1.0F, 0.0F, 0.0F);
         render.render_cube(0.15, 8.8, 0.15);
-        GL11.glPopMatrix(); 
-        
+        GL11.glPopMatrix();
+
         GL11.glPushMatrix();
         GL11.glTranslated(-2.385, -9.85, -2.4);
         GL11.glRotatef(24F, 1.0F, 0.0F, 0.0F);
         GL11.glRotatef(-7.8F, 0.0F, 0.0F, 1.0F);
         render.render_cube(0.15, 8.8, 0.15);
-        GL11.glPopMatrix(); 
-        
+        GL11.glPopMatrix();
+
         //2
         GL11.glPushMatrix();
         GL11.glTranslated(2.4, -9.85, 2.385);
         GL11.glRotatef(24F, 0.0F, 0.0F, 1.0F);
         GL11.glRotatef(-7.8F, 1.0F, 0.0F, 0.0F);
         render.render_cube(0.15, 8.8, 0.15);
-        GL11.glPopMatrix(); 
-        
+        GL11.glPopMatrix();
+
         GL11.glPushMatrix();
         GL11.glTranslated(2.385, -9.85, 2.4);
         GL11.glRotatef(-24F, 1.0F, 0.0F, 0.0F);
         GL11.glRotatef(7.8F, 0.0F, 0.0F, 1.0F);
         render.render_cube(0.15, 8.8, 0.15);
-        GL11.glPopMatrix(); 
-        
-        
+        GL11.glPopMatrix();
+
+
         //3
         GL11.glPushMatrix();
         GL11.glTranslated(2.4, -9.85, -2.385);
         GL11.glRotatef(24F, 0.0F, 0.0F, 1.0F);
         GL11.glRotatef(7.8F, 1.0F, 0.0F, 0.0F);
         render.render_cube(0.15, 8.8, 0.15);
-        GL11.glPopMatrix(); 
-        
+        GL11.glPopMatrix();
+
         GL11.glPushMatrix();
         GL11.glTranslated(2.385, -9.85, -2.4);
         GL11.glRotatef(24F, 1.0F, 0.0F, 0.0F);
         GL11.glRotatef(7.8F, 0.0F, 0.0F, 1.0F);
         render.render_cube(0.15, 8.8, 0.15);
-        GL11.glPopMatrix(); 
-        
+        GL11.glPopMatrix();
+
         //4
         GL11.glPushMatrix();
         GL11.glTranslated(-2.4, -9.85, 2.385);
         GL11.glRotatef(-24F, 0.0F, 0.0F, 1.0F);
         GL11.glRotatef(-7.8F, 1.0F, 0.0F, 0.0F);
         render.render_cube(0.15, 8.8, 0.15);
-        GL11.glPopMatrix(); 
-        
+        GL11.glPopMatrix();
+
         GL11.glPushMatrix();
         GL11.glTranslated(-2.385, -9.85, 2.4);
         GL11.glRotatef(-24F, 1.0F, 0.0F, 0.0F);
         GL11.glRotatef(-7.8F, 0.0F, 0.0F, 1.0F);
         render.render_cube(0.15, 8.8, 0.15);
-        GL11.glPopMatrix(); 
-               
-        
+        GL11.glPopMatrix();
+
+
         //1
         GL11.glPushMatrix();
         GL11.glTranslated(-1.18, -1.8, -1.18);
         GL11.glRotatef(-38F, 0.0F, 0.0F, 1.0F);
         GL11.glRotatef(7F, 1.0F, 0.0F, 0.0F);
         render.render_cube(0.15, 3.3, 0.15);
-        GL11.glPopMatrix(); 
-        
+        GL11.glPopMatrix();
+
         GL11.glPushMatrix();
         GL11.glTranslated(-1.18, -1.8, -1.18);
         GL11.glRotatef(38F, 1.0F, 0.0F, 0.0F);
         GL11.glRotatef(-7F, 0.0F, 0.0F, 1.0F);
         render.render_cube(0.15, 3.3, 0.15);
         GL11.glPopMatrix();
-        
+
         //2
         GL11.glPushMatrix();
         GL11.glTranslated(-1.18, -1.8, 1.18);
         GL11.glRotatef(-38F, 0.0F, 0.0F, 1.0F);
         GL11.glRotatef(-7F, 1.0F, 0.0F, 0.0F);
         render.render_cube(0.15, 3.3, 0.15);
-        GL11.glPopMatrix(); 
-        
+        GL11.glPopMatrix();
+
         GL11.glPushMatrix();
         GL11.glTranslated(-1.18, -1.8, 1.18);
         GL11.glRotatef(-38F, 1.0F, 0.0F, 0.0F);
         GL11.glRotatef(-7F, 0.0F, 0.0F, 1.0F);
         render.render_cube(0.15, 3.3, 0.15);
         GL11.glPopMatrix();
-        
+
         //3
         GL11.glPushMatrix();
         GL11.glTranslated(1.18, -1.8, 1.18);
         GL11.glRotatef(38F, 0.0F, 0.0F, 1.0F);
         GL11.glRotatef(-7F, 1.0F, 0.0F, 0.0F);
         render.render_cube(0.15, 3.3, 0.15);
-        GL11.glPopMatrix(); 
-        
+        GL11.glPopMatrix();
+
         GL11.glPushMatrix();
         GL11.glTranslated(1.18, -1.8, 1.18);
         GL11.glRotatef(-38F, 1.0F, 0.0F, 0.0F);
         GL11.glRotatef(7F, 0.0F, 0.0F, 1.0F);
         render.render_cube(0.15, 3.3, 0.15);
         GL11.glPopMatrix();
-        
+
         //4
         GL11.glPushMatrix();
         GL11.glTranslated(1.18, -1.8, -1.18);
         GL11.glRotatef(38F, 0.0F, 0.0F, 1.0F);
         GL11.glRotatef(7F, 1.0F, 0.0F, 0.0F);
         render.render_cube(0.15, 3.3, 0.15);
-        GL11.glPopMatrix(); 
-        
+        GL11.glPopMatrix();
+
         GL11.glPushMatrix();
         GL11.glTranslated(1.18, -1.8, -1.18);
         GL11.glRotatef(38F, 1.0F, 0.0F, 0.0F);
         GL11.glRotatef(7F, 0.0F, 0.0F, 1.0F);
         render.render_cube(0.15, 3.3, 0.15);
         GL11.glPopMatrix();
-        
-        
-    	GL11.glTranslated(0, -6, 0);
-    	
+
+
+        GL11.glTranslated(0, -6, 0);
+
         //Base1
         GL11.glPushMatrix();
         GL11.glTranslated(2.4, -3.9, -2.4);
@@ -349,7 +355,7 @@ public class RenderTower extends RenderHVTowerBase{
         render.render_cube(0.15, 10.9, 0.15);
         GL11.glPopMatrix();
 
-        
+
         //Base2 (H)
         GL11.glPushMatrix();
         GL11.glTranslated(-0.8, 6.7, -0.9);
@@ -422,17 +428,17 @@ public class RenderTower extends RenderHVTowerBase{
         //Insulators
         GL11.glPushMatrix();
         GL11.glTranslated(0, 9, 0);
-        renderInsulator(8,1);
+        renderInsulator(8, 1);
         GL11.glPopMatrix();
 
         GL11.glPushMatrix();
         GL11.glTranslated(0, 9, -3);
-        renderInsulator(8,1);
+        renderInsulator(8, 1);
         GL11.glPopMatrix();
 
         GL11.glPushMatrix();
         GL11.glTranslated(0, 9, 3);
-        renderInsulator(8,1);
+        renderInsulator(8, 1);
         GL11.glPopMatrix();
 
         GL11.glPushMatrix();

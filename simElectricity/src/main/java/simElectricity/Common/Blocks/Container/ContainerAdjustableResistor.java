@@ -51,7 +51,7 @@ public class ContainerAdjustableResistor extends ContainerBase {
 
     @Override
     public void init() {
-        if (!tileEntity.getWorldObj().isRemote) {
+        if (!tileEntity.getWorld().isRemote) {
         	Network.updateTileEntityFields(tileEntity, "resistance");
         }
     }

@@ -19,14 +19,14 @@
 
 package simElectricity.Client.Render;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Vec3;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 import simElectricity.Common.Blocks.BlockWire;
@@ -38,12 +38,12 @@ public class RenderWire extends TileEntitySpecialRenderer {
     public String textureString = "";
 
     @Override
-    public void renderTileEntityAt(TileEntity tileEntity, double x, double y, double z, float tick) {
+    public void renderTileEntityAt(TileEntity tileEntity, double x, double y, double z, float tick, int it) {
         TileWire wire = (TileWire) tileEntity;
         WIDTH = wire.width;
         textureString = wire.textureString;
 
-        Tessellator t = Tessellator.instance;
+        Tessellator t = Tessellator.getInstance();
         GL11.glPushMatrix();
         GL11.glTranslated(x + 0.5, y + 0.5, z + 0.5);
         renderWireBox(t, -1, wire.renderSides);
@@ -55,16 +55,16 @@ public class RenderWire extends TileEntitySpecialRenderer {
     }
 
     private void renderWireBox(Tessellator t, int side, boolean[] sideArr) {
-        ForgeDirection[] dirs = ForgeDirection.values();
+        EnumFacing[] dirs = EnumFacing.values();
         Vec3
-                v1 = Vec3.createVectorHelper(-WIDTH, -WIDTH, -WIDTH),
-                v2 = Vec3.createVectorHelper(WIDTH, -WIDTH, -WIDTH),
-                v3 = Vec3.createVectorHelper(WIDTH, -WIDTH, WIDTH),
-                v4 = Vec3.createVectorHelper(-WIDTH, -WIDTH, WIDTH),
-                v5 = Vec3.createVectorHelper(-WIDTH, WIDTH, -WIDTH),
-                v6 = Vec3.createVectorHelper(WIDTH, WIDTH, -WIDTH),
-                v7 = Vec3.createVectorHelper(WIDTH, WIDTH, WIDTH),
-                v8 = Vec3.createVectorHelper(-WIDTH, WIDTH, WIDTH);
+                v1 = new Vec3(-WIDTH, -WIDTH, -WIDTH),
+                v2 = new Vec3(WIDTH, -WIDTH, -WIDTH),
+                v3 = new Vec3(WIDTH, -WIDTH, WIDTH),
+                v4 = new Vec3(-WIDTH, -WIDTH, WIDTH),
+                v5 = new Vec3(-WIDTH, WIDTH, -WIDTH),
+                v6 = new Vec3(WIDTH, WIDTH, -WIDTH),
+                v7 = new Vec3(WIDTH, WIDTH, WIDTH),
+                v8 = new Vec3(-WIDTH, WIDTH, WIDTH);
         GL11.glPushMatrix();
         GL11.glEnable(GL12.GL_RESCALE_NORMAL);
         GL11.glDisable(GL11.GL_LIGHTING);
@@ -170,8 +170,8 @@ public class RenderWire extends TileEntitySpecialRenderer {
                 bindTexture(new ResourceLocation("simelectricity", "textures/blocks/Wiring/" + textureString + "_Side2.png"));
             }
 
-            t.startDrawingQuads();
-            t.setNormal(dx, dy, dz);
+            t.getWorldRenderer().startDrawingQuads();
+            t.getWorldRenderer().setNormal(dx, dy, dz);
 
             addVertex(t, vec4, 0.0, 1.0);
             addVertex(t, vec3, 1.0, 1.0);
@@ -186,7 +186,7 @@ public class RenderWire extends TileEntitySpecialRenderer {
     }
 
     void addVertex(Tessellator t, Vec3 vec3, double texU, double texV) {
-        t.addVertexWithUV(vec3.xCoord, vec3.yCoord, vec3.zCoord, texU, texV);
+        t.getWorldRenderer().addVertexWithUV(vec3.xCoord, vec3.yCoord, vec3.zCoord, texU, texV);
     }
 
     private boolean doesRenderSide(int blockSide, int subSide, boolean[] sideArr) {

@@ -71,7 +71,7 @@ public class Energy {
      * For {@link simElectricity.API.EnergyTile.IEnergyTile} Only!
      */
     public static double getWorkDonePerTick(IEnergyTile Tile) {
-        return getWorkDonePerTick(Tile, ((TileEntity) Tile).getWorldObj());
+        return getWorkDonePerTick(Tile, ((TileEntity) Tile).getWorld());
     }
 
     /**
@@ -79,7 +79,7 @@ public class Energy {
      * For {@link simElectricity.API.EnergyTile.IEnergyTile} and {@link simElectricity.API.EnergyTile.IConductor} Only!
      */
     public static double getPower(IEnergyTile Tile) {
-        return getPower(Tile, ((TileEntity) Tile).getWorldObj());
+        return getPower(Tile, ((TileEntity) Tile).getWorld());
     }
 
     /**
@@ -87,7 +87,7 @@ public class Energy {
      * For {@link simElectricity.API.EnergyTile.IEnergyTile} and {@link simElectricity.API.EnergyTile.IConductor} Only!
      */
     public static double getCurrent(IEnergyTile Tile) {
-        return getCurrent(Tile, ((TileEntity) Tile).getWorldObj());
+        return getCurrent(Tile, ((TileEntity) Tile).getWorld());
     }
 
     /**
@@ -96,9 +96,9 @@ public class Energy {
      */
     public static double getVoltage(IBaseComponent Tile) {
         if (Tile instanceof ITransformerWinding) {
-            return getVoltage(Tile, ((TileEntity) (((ITransformerWinding) Tile).getCore())).getWorldObj());
+            return getVoltage(Tile, ((TileEntity) (((ITransformerWinding) Tile).getCore())).getWorld());
         } else {
-            return getVoltage(Tile, ((TileEntity) Tile).getWorldObj());
+            return getVoltage(Tile, ((TileEntity) Tile).getWorld());
         }
     }
 

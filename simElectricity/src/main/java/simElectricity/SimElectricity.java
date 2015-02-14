@@ -19,21 +19,20 @@
 
 package simElectricity;
 
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.Mod.EventHandler;
-import cpw.mods.fml.common.Mod.Instance;
-import cpw.mods.fml.common.SidedProxy;
-import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLPostInitializationEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.event.FMLServerStartingEvent;
-import cpw.mods.fml.common.network.NetworkRegistry;
-import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.SidedProxy;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import simElectricity.API.Util;
 import simElectricity.Common.CommandSimE;
 import simElectricity.Common.CommonProxy;
@@ -46,7 +45,7 @@ import simElectricity.Common.Network.NetworkManager;
 
 @Mod(modid = Util.MODID, name = Util.NAME, version = SimElectricity.version, guiFactory = "simElectricity.Client.SimEGuiFactory", dependencies = "required-after:Forge@[10.12.2.1147,)")
 public class SimElectricity {
-	public static final String version = "1.0.0";
+    public static final String version = "1.0.0";
 
     /**
      * Server and Client Proxy
@@ -54,7 +53,7 @@ public class SimElectricity {
     @SidedProxy(clientSide = "simElectricity.Client.ClientProxy", serverSide = "simElectricity.Common.CommonProxy")
     public static CommonProxy proxy;
 
-    @Instance(Util.MODID)
+    @Mod.Instance(Util.MODID)
     public static SimElectricity instance;
 
     public SimpleNetworkWrapper networkChannel;
@@ -62,9 +61,9 @@ public class SimElectricity {
     /**
      * PreInitialize
      */
-    @EventHandler
+    @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
-    	Util.isSELoaded = true;
+        Util.isSELoaded = true;
 
         //Load Configs
         FMLCommonHandler.instance().bus().register(new ConfigManager());
@@ -98,7 +97,7 @@ public class SimElectricity {
     /**
      * Initialize
      */
-    @EventHandler
+    @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
         //Register GUI handler
         NetworkRegistry.INSTANCE.registerGuiHandler(instance, proxy);
@@ -113,12 +112,12 @@ public class SimElectricity {
     /**
      * PostInitialize
      */
-    @EventHandler
+    @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent event) {
     }
-    
-    @EventHandler
-    public void serverStart(FMLServerStartingEvent event){
-    	event.registerServerCommand(new CommandSimE());
+
+    @Mod.EventHandler
+    public void serverStart(FMLServerStartingEvent event) {
+        event.registerServerCommand(new CommandSimE());
     }
 }

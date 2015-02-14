@@ -19,17 +19,20 @@
 
 package simElectricity.Common.Blocks;
 
-import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import simElectricity.API.Common.Blocks.BlockContainerSE;
 import simElectricity.API.Util;
 import simElectricity.Common.Blocks.TileEntity.TileTower;
@@ -38,10 +41,15 @@ import simElectricity.Common.Items.ItemBlocks.ItemBlockTower;
 import java.util.List;
 
 public class BlockTower extends BlockContainerSE {
-	public static final String[] subNames = {"0","1","2"};
+    public static final String[] subNames = {"0", "1", "2"};
+
+    public BlockTower() {
+        super();
+        setBlockName("Tower");
+    }
 
     @Override
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({"rawtypes", "unchecked"})
     @SideOnly(Side.CLIENT)
     public void getSubBlocks(Item par1, CreativeTabs par2CreativeTabs, List subItems) {
         for (int ix = 0; ix < subNames.length; ix++) {
@@ -59,30 +67,25 @@ public class BlockTower extends BlockContainerSE {
     public boolean shouldRegister() {
         return false;
     }
-	
-    public BlockTower() {
-        super();
-        setBlockName("Tower");
-    }
 
     @Override
-    public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase player, ItemStack stack) {
+    public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack itemStack) {
         if (world.isRemote)
             return;
 
-        TileTower tower = (TileTower) world.getTileEntity(x, y, z);
-        tower.facing = Util.getPlayerSight(player, true).ordinal();
+        TileTower tower = (TileTower) world.getTileEntity(pos);
+        tower.facing = Util.getPlayerSight(placer, true).ordinal();
     }
 
     @Override
-    public void breakBlock(World world, int x, int y, int z, Block block, int meta) {
-        if (world.getTileEntity(x, y, z) instanceof TileTower) {
-            TileTower tower = (TileTower) world.getTileEntity(x, y, z);
+    public void breakBlock(World world, BlockPos pos, IBlockState state) {
+        if (world.getTileEntity(pos) instanceof TileTower) {
+            TileTower tower = (TileTower) world.getTileEntity(pos);
             for (int i = 0; i < tower.neighborsInfo.length; i += 3)
-                if (world.getTileEntity(tower.neighborsInfo[i], tower.neighborsInfo[i + 1], tower.neighborsInfo[i + 2]) instanceof TileTower)
-                    ((TileTower) world.getTileEntity(tower.neighborsInfo[i], tower.neighborsInfo[i + 1], tower.neighborsInfo[i + 2])).delNeighbor(tower);
+                if (world.getTileEntity(new BlockPos(tower.neighborsInfo[i], tower.neighborsInfo[i + 1], tower.neighborsInfo[i + 2])) instanceof TileTower)
+                    ((TileTower) world.getTileEntity(new BlockPos(tower.neighborsInfo[i], tower.neighborsInfo[i + 1], tower.neighborsInfo[i + 2]))).delNeighbor(tower);
         }
-        super.breakBlock(world, x, y, z, block, meta);
+        super.breakBlock(world, pos, state);
     }
 
     @Override
@@ -93,7 +96,7 @@ public class BlockTower extends BlockContainerSE {
     //This will tell minecraft not to render any side of our cube.
     @Override
     @SideOnly(Side.CLIENT)
-    public boolean shouldSideBeRendered(IBlockAccess iblockaccess, int i, int j, int k, int l) {
+    public boolean shouldSideBeRendered(IBlockAccess world, BlockPos pos, EnumFacing side) {
         return false;
     }
 

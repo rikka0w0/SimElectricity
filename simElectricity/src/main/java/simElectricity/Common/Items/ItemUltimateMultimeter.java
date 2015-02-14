@@ -19,12 +19,11 @@
 
 package simElectricity.Common.Items;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import simElectricity.API.Common.Items.ItemSE;
 import simElectricity.API.Energy;
@@ -41,14 +40,8 @@ public class ItemUltimateMultimeter extends ItemSE {
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
-    public void registerIcons(IIconRegister r) {
-        itemIcon = r.registerIcon("simElectricity:Item_UltimateMultimeter");
-    }
-
-    @Override
-    public boolean onItemUse(ItemStack itemStack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
-        TileEntity tile = world.getTileEntity(x, y, z);
+    public boolean onItemUse(ItemStack itemStack, EntityPlayer player, World world, BlockPos blockPos, EnumFacing side, float hitX, float hitY, float hitZ) {
+        TileEntity tile = world.getTileEntity(blockPos);
 
         if (tile instanceof ITransformer && (!(world.isRemote))) {
             ITransformer transformer = (ITransformer) tile;
@@ -60,12 +53,12 @@ public class ItemUltimateMultimeter extends ItemSE {
             Util.chat(player, "Primary Voltage: " + String.valueOf(Energy.getVoltage(primary)) + "V");
             Util.chat(player, "Secondary Voltage: " + String.valueOf(Energy.getVoltage(secondary)) + "V");
             Util.chat(player, "PS ratio: 1:" + String.valueOf(transformer.getRatio()));
-            
+
             double secondaryResistance = transformer.getResistance();
             double secondaryCurrent = (transformer.getRatio() * Energy.getVoltage(primary) - Energy.getVoltage(secondary)) / secondaryResistance;
             Util.chat(player, "Internal Resistance: " + secondaryResistance + "\u03a9");
-            Util.chat(player, "Secondary current: " + String.valueOf(secondaryCurrent)+"A");
-            Util.chat(player, "Power loss: " + String.valueOf(secondaryCurrent * secondaryCurrent * secondaryResistance)+"A");
+            Util.chat(player, "Secondary current: " + String.valueOf(secondaryCurrent) + "A");
+            Util.chat(player, "Power loss: " + String.valueOf(secondaryCurrent * secondaryCurrent * secondaryResistance) + "A");
         }
 
         if ((tile instanceof IBaseComponent || tile instanceof IComplexTile) && (!(world.isRemote))) {
@@ -112,19 +105,19 @@ public class ItemUltimateMultimeter extends ItemSE {
             if (te instanceof ICircuitComponent && outputVoltage > 0)
                 Util.chat(player, "Internal resistance: " + String.valueOf(te.getResistance()) + "\u03a9");
             else if (te instanceof IConductor ||
-            		(te instanceof IManualJunction && ((IManualJunction)te).getResistance() != 0))
-                Util.chat(player, "Resistance (Per Block) : " + String.valueOf(te.getResistance()*2) + "\u03a9");
+                    (te instanceof IManualJunction && ((IManualJunction) te).getResistance() != 0))
+                Util.chat(player, "Resistance (Per Block) : " + String.valueOf(te.getResistance() * 2) + "\u03a9");
             else if (te instanceof ICircuitComponent)
-            	Util.chat(player, "Resistance : " + String.valueOf(te.getResistance()) + "\u03a9");
-            
+                Util.chat(player, "Resistance : " + String.valueOf(te.getResistance()) + "\u03a9");
+
             if (te instanceof ICircuitComponent) {
-                Util.chat(player, "Current: " + String.valueOf(Energy.getCurrent((ICircuitComponent) te, tile.getWorldObj())) + "A");
-                Util.chat(player, "Power rate: " + String.valueOf(Energy.getPower((ICircuitComponent) te, tile.getWorldObj())) + "W");
+                Util.chat(player, "Current: " + String.valueOf(Energy.getCurrent((ICircuitComponent) te, tile.getWorld())) + "A");
+                Util.chat(player, "Power rate: " + String.valueOf(Energy.getPower((ICircuitComponent) te, tile.getWorld())) + "W");
             }
-            Util.chat(player, "Voltage: " + String.valueOf(Energy.getVoltage(te, tile.getWorldObj())) + "V");
+            Util.chat(player, "Voltage: " + String.valueOf(Energy.getVoltage(te, tile.getWorld())) + "V");
             if (outputVoltage > 0) { //Energy Source
                 Util.chat(player, "Internal voltage: " + String.valueOf(outputVoltage) + "V");
-                Util.chat(player, "Output rate: " + String.valueOf(outputVoltage * Energy.getCurrent((ICircuitComponent) te, tile.getWorldObj())) + "W");
+                Util.chat(player, "Output rate: " + String.valueOf(outputVoltage * Energy.getCurrent((ICircuitComponent) te, tile.getWorld())) + "W");
             }
             if (te instanceof IConductor) {
                 Util.chat(player, "Color: " + String.valueOf(((IConductor) te).getColor()));

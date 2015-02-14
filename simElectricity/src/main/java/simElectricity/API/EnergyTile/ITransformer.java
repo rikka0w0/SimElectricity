@@ -19,7 +19,8 @@
 
 package simElectricity.API.EnergyTile;
 
-import net.minecraftforge.common.util.ForgeDirection;
+
+import net.minecraft.util.EnumFacing;
 
 /**
  * This interface represents a transformer
@@ -30,12 +31,12 @@ public interface ITransformer {
     /**
      * Return the facing of the primary
      */
-    ForgeDirection getPrimarySide();
+    EnumFacing getPrimarySide();
 
     /**
      * Return the facing of the secondary
      */
-    ForgeDirection getSecondarySide();
+    EnumFacing getSecondarySide();
 
     /**
      * Return the instance of the primary

@@ -19,8 +19,6 @@
 
 package simElectricity.Common.Blocks.Container;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.ICrafting;
@@ -29,15 +27,17 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityFurnace;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import simElectricity.API.Common.ContainerBase;
 import simElectricity.Common.Blocks.TileEntity.TileSimpleGenerator;
 
 public class ContainerSimpleGenerator extends ContainerBase {
+    protected int progress, outputVoltage, outputResistance;
+
     public ContainerSimpleGenerator(InventoryPlayer inventoryPlayer, TileEntity te) {
         super(inventoryPlayer, te);
     }
-
-    protected int progress, outputVoltage, outputResistance;
 
     @Override
     public void addCraftingToCrafters(ICrafting par1iCrafting) {

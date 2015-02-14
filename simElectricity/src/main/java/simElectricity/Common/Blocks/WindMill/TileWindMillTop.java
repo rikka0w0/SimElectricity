@@ -21,29 +21,28 @@ package simElectricity.Common.Blocks.WindMill;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import simElectricity.API.Common.TileSidedFacingMachine;
 
 import java.util.Random;
-
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 public class TileWindMillTop extends TileSidedFacingMachine {
     public int randAngle = (new Random()).nextInt(180);
     public boolean settled, initialized;
 
     @Override
-    public void updateEntity() {
-        super.updateEntity();
+    public void update() {
+        super.update();
         if (!worldObj.isRemote && !initialized) {
             this.initialized = true;
         }
     }
 
     @Override
-    public boolean canSetFacing(ForgeDirection newFacing) {
-        return newFacing != ForgeDirection.UP && newFacing != ForgeDirection.DOWN;
+    public boolean canSetFacing(EnumFacing newFacing) {
+        return newFacing != EnumFacing.UP && newFacing != EnumFacing.DOWN;
     }
 
     @Override
@@ -67,17 +66,16 @@ public class TileWindMillTop extends TileSidedFacingMachine {
     public boolean attachToEnergyNet() {
         return false;
     }
-    
-	@SideOnly(Side.CLIENT)
+
+    @SideOnly(Side.CLIENT)
     @Override
-    public double getMaxRenderDistanceSquared()
-    {
+    public double getMaxRenderDistanceSquared() {
         return 100000;
     }
-	
-	@SideOnly(Side.CLIENT)
-	@Override
-    public AxisAlignedBB getRenderBoundingBox(){
-    	return INFINITE_EXTENT_AABB;
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public AxisAlignedBB getRenderBoundingBox() {
+        return INFINITE_EXTENT_AABB;
     }
 }

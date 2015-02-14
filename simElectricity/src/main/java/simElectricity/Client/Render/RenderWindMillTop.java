@@ -19,24 +19,26 @@
 
 package simElectricity.Client.Render;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 import simElectricity.Common.Blocks.WindMill.TileWindMillTop;
 
 @SideOnly(Side.CLIENT)
 public class RenderWindMillTop extends TileEntitySpecialRenderer {
+    public static float half_thickness = 0.03125F;
     public TileWindMillTop te;
 
     @Override
-    public void renderTileEntityAt(TileEntity tileEntity, double x, double y, double z, float tick) {
+    public void renderTileEntityAt(TileEntity tileEntity, double x, double y, double z, float tick, int i) {
         te = (TileWindMillTop) tileEntity;
 
         if (!te.settled)
@@ -45,7 +47,7 @@ public class RenderWindMillTop extends TileEntitySpecialRenderer {
         GL11.glPushMatrix();
 
         GL11.glTranslatef((float) x, (float) y, (float) z);
-        renderBlockYour(tileEntity.getWorldObj(), tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord);
+        renderBlockYour(tileEntity.getWorld(), tileEntity.getPos().getX(), tileEntity.getPos().getY(), tileEntity.getPos().getZ());
 
         GL11.glPopMatrix();
     }
@@ -83,8 +85,6 @@ public class RenderWindMillTop extends TileEntitySpecialRenderer {
         OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 0, 240);
     }
 
-    public static float half_thickness = 0.03125F;
-
     private void draw() {
         float radius = 10;
         float start_x = -radius / 2.0F;
@@ -106,49 +106,51 @@ public class RenderWindMillTop extends TileEntitySpecialRenderer {
                 float texture_top = j / radius;
                 float texture_bottom = (j + 1) / radius;
 
-                Tessellator tessellator = Tessellator.instance;
-                tessellator.startDrawingQuads();
+                Tessellator tessellator = Tessellator.getInstance();
+                WorldRenderer worldRenderer = tessellator.getWorldRenderer();
 
-                tessellator.setNormal(0.0F, 0.0F, -1.0F);
-                tessellator.addVertexWithUV(right, top, half_thickness, texture_right, texture_top);
-                tessellator.addVertexWithUV(left, top, half_thickness, texture_left, texture_top);
-                tessellator.addVertexWithUV(left, bottom, half_thickness, texture_left, texture_bottom);
-                tessellator.addVertexWithUV(right, bottom, half_thickness, texture_right, texture_bottom);
+                worldRenderer.startDrawingQuads();
 
-
-                tessellator.setNormal(0.0F, 0.0F, 1.0F);
-                tessellator.addVertexWithUV(left, top, -half_thickness, 0, 0);
-                tessellator.addVertexWithUV(right, top, -half_thickness, 0, 0);
-                tessellator.addVertexWithUV(right, bottom, -half_thickness, 0, 0);
-                tessellator.addVertexWithUV(left, bottom, -half_thickness, 0, 0);
+                worldRenderer.setNormal(0.0F, 0.0F, -1.0F);
+                worldRenderer.addVertexWithUV(right, top, half_thickness, texture_right, texture_top);
+                worldRenderer.addVertexWithUV(left, top, half_thickness, texture_left, texture_top);
+                worldRenderer.addVertexWithUV(left, bottom, half_thickness, texture_left, texture_bottom);
+                worldRenderer.addVertexWithUV(right, bottom, half_thickness, texture_right, texture_bottom);
 
 
-                tessellator.setNormal(0.0F, 1.0F, 0.0F);
-                tessellator.addVertexWithUV(right, top, -half_thickness, 0, 0);
-                tessellator.addVertexWithUV(left, top, -half_thickness, 0, 0);
-                tessellator.addVertexWithUV(left, top, half_thickness, 0, 0);
-                tessellator.addVertexWithUV(right, top, half_thickness, 0, 0);
+                worldRenderer.setNormal(0.0F, 0.0F, 1.0F);
+                worldRenderer.addVertexWithUV(left, top, -half_thickness, 0, 0);
+                worldRenderer.addVertexWithUV(right, top, -half_thickness, 0, 0);
+                worldRenderer.addVertexWithUV(right, bottom, -half_thickness, 0, 0);
+                worldRenderer.addVertexWithUV(left, bottom, -half_thickness, 0, 0);
 
 
-                tessellator.setNormal(0.0F, -1.0F, 0.0F);
-                tessellator.addVertexWithUV(right, bottom, half_thickness, 0, 0);
-                tessellator.addVertexWithUV(left, bottom, half_thickness, 0, 0);
-                tessellator.addVertexWithUV(left, bottom, -half_thickness, 0, 0);
-                tessellator.addVertexWithUV(right, bottom, -half_thickness, 0, 0);
+                worldRenderer.setNormal(0.0F, 1.0F, 0.0F);
+                worldRenderer.addVertexWithUV(right, top, -half_thickness, 0, 0);
+                worldRenderer.addVertexWithUV(left, top, -half_thickness, 0, 0);
+                worldRenderer.addVertexWithUV(left, top, half_thickness, 0, 0);
+                worldRenderer.addVertexWithUV(right, top, half_thickness, 0, 0);
 
 
-                tessellator.setNormal(-1.0F, 0.0F, 0.0F);
-                tessellator.addVertexWithUV(left, top, half_thickness, 0, 0);
-                tessellator.addVertexWithUV(left, top, -half_thickness, 0, 0);
-                tessellator.addVertexWithUV(left, bottom, -half_thickness, 0, 0);
-                tessellator.addVertexWithUV(left, bottom, half_thickness, 0, 0);
+                worldRenderer.setNormal(0.0F, -1.0F, 0.0F);
+                worldRenderer.addVertexWithUV(right, bottom, half_thickness, 0, 0);
+                worldRenderer.addVertexWithUV(left, bottom, half_thickness, 0, 0);
+                worldRenderer.addVertexWithUV(left, bottom, -half_thickness, 0, 0);
+                worldRenderer.addVertexWithUV(right, bottom, -half_thickness, 0, 0);
 
 
-                tessellator.setNormal(1.0F, 0.0F, 0.0F);
-                tessellator.addVertexWithUV(right, top, -half_thickness, 0, 0);
-                tessellator.addVertexWithUV(right, top, half_thickness, 0, 0);
-                tessellator.addVertexWithUV(right, bottom, half_thickness, 0, 0);
-                tessellator.addVertexWithUV(right, bottom, -half_thickness, 0, 0);
+                worldRenderer.setNormal(-1.0F, 0.0F, 0.0F);
+                worldRenderer.addVertexWithUV(left, top, half_thickness, 0, 0);
+                worldRenderer.addVertexWithUV(left, top, -half_thickness, 0, 0);
+                worldRenderer.addVertexWithUV(left, bottom, -half_thickness, 0, 0);
+                worldRenderer.addVertexWithUV(left, bottom, half_thickness, 0, 0);
+
+
+                worldRenderer.setNormal(1.0F, 0.0F, 0.0F);
+                worldRenderer.addVertexWithUV(right, top, -half_thickness, 0, 0);
+                worldRenderer.addVertexWithUV(right, top, half_thickness, 0, 0);
+                worldRenderer.addVertexWithUV(right, bottom, half_thickness, 0, 0);
+                worldRenderer.addVertexWithUV(right, bottom, -half_thickness, 0, 0);
 
                 tessellator.draw();
             }

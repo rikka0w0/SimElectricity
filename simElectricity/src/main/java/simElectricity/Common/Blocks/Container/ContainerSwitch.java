@@ -51,8 +51,8 @@ public class ContainerSwitch extends ContainerBase {
 
     @Override
     public void init() {
-        if (!tileEntity.getWorldObj().isRemote) {
-        	Network.updateTileEntityFields(tileEntity, "resistance", "maxCurrent", "isOn", "inputSide", "outputSide");
+        if (!tileEntity.getWorld().isRemote) {
+            Network.updateTileEntityFields(tileEntity, "resistance", "maxCurrent", "isOn", "inputSide", "outputSide");
         }
     }
 

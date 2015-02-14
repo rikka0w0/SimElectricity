@@ -32,8 +32,8 @@ public class TileAdjustableResistor extends TileStandardSEMachine implements INe
     public float power = 0;
 
     @Override
-    public void updateEntity() {
-        super.updateEntity();
+    public void update() {
+        super.update();
 
         if (worldObj.isRemote)
             return;
@@ -70,9 +70,11 @@ public class TileAdjustableResistor extends TileStandardSEMachine implements INe
     public double getResistance() {
         return resistance;
     }
-    
+
     @Override
     public void addNetworkFields(List fields) {
 
     }
+
+
 }

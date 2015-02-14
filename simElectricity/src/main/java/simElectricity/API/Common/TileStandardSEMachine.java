@@ -20,14 +20,14 @@
 package simElectricity.API.Common;
 
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import simElectricity.API.EnergyTile.IEnergyTile;
 
 /**
  * A standard SE machine can inherits this class, make things easier and less confusion
  */
 public abstract class TileStandardSEMachine extends TileSidedFacingMachine implements IEnergyTile {
-    public ForgeDirection functionalSide = ForgeDirection.NORTH;
+    public EnumFacing functionalSide = EnumFacing.NORTH;
     
     @Override
 	public boolean attachToEnergyNet(){
@@ -41,22 +41,22 @@ public abstract class TileStandardSEMachine extends TileSidedFacingMachine imple
 	}
     
     @Override
-    public ForgeDirection getFunctionalSide() {
+    public EnumFacing getFunctionalSide() {
         return functionalSide;
     }
 
     @Override
-    public void setFunctionalSide(ForgeDirection newFunctionalSide) {
+    public void setFunctionalSide(EnumFacing newFunctionalSide) {
         functionalSide = newFunctionalSide;
     }
 
     @Override
-    public boolean canSetFunctionalSide(ForgeDirection newFunctionalSide) {
+    public boolean canSetFunctionalSide(EnumFacing newFunctionalSide) {
         return newFunctionalSide != facing;
     }
     
     @Override
-    public boolean canSetFacing(ForgeDirection newFacing) {
+    public boolean canSetFacing(EnumFacing newFacing) {
         return newFacing != functionalSide;
     }
 
@@ -64,7 +64,7 @@ public abstract class TileStandardSEMachine extends TileSidedFacingMachine imple
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
 
-        functionalSide = ForgeDirection.getOrientation(tagCompound.getByte("functionalSide"));
+        functionalSide = EnumFacing.getFront(tagCompound.getByte("functionalSide"));
     }
 
     @Override

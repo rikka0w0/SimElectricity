@@ -19,7 +19,8 @@
 
 package simElectricity.API.EnergyTile;
 
-import net.minecraftforge.common.util.ForgeDirection;
+
+import net.minecraft.util.EnumFacing;
 
 /**
  * This interface can represent a energy source or a energy sink
@@ -33,15 +34,15 @@ public interface IEnergyTile extends ICircuitComponent {
     /**
      * Return a side that is designed to interact with energyNet
      */
-    ForgeDirection getFunctionalSide();
+    EnumFacing getFunctionalSide();
 
     /**
      * Called when the functional side is going to be set
      */
-    void setFunctionalSide(ForgeDirection newFunctionalSide);
+    void setFunctionalSide(EnumFacing newFunctionalSide);
 
     /**
      * Usually called by the wrench, to determine set or not
      */
-    boolean canSetFunctionalSide(ForgeDirection newFunctionalSide);
+    boolean canSetFunctionalSide(EnumFacing newFunctionalSide);
 }

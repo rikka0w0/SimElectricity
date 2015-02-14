@@ -51,8 +51,8 @@ public class ContainerSolarInverter extends ContainerBase {
 
     @Override
     public void init() {
-        if (!tileEntity.getWorldObj().isRemote) {
-        	Network.updateTileEntityFields(tileEntity, "outputVoltage", "outputResistance", "inputSide", "outputSide");
+        if (!tileEntity.getWorld().isRemote) {
+            Network.updateTileEntityFields(tileEntity, "outputVoltage", "outputResistance", "inputSide", "outputSide");
         }
     }
 

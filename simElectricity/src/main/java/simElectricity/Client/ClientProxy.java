@@ -19,13 +19,14 @@
 
 package simElectricity.Client;
 
-import cpw.mods.fml.client.FMLClientHandler;
-import cpw.mods.fml.client.registry.ClientRegistry;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.client.FMLClientHandler;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import simElectricity.Client.Gui.*;
 import simElectricity.Client.Render.RenderCableClamp;
 import simElectricity.Client.Render.RenderTower;
@@ -52,7 +53,7 @@ public class ClientProxy extends CommonProxy {
 
     @Override
     public Object getClientGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
-        TileEntity te = world.getTileEntity(x, y, z);
+        TileEntity te = world.getTileEntity(new BlockPos(x, y, z));
 
         if (te instanceof TileQuantumGenerator)
             return new GuiQuantumGenerator(player.inventory, (TileQuantumGenerator) te);
@@ -75,8 +76,8 @@ public class ClientProxy extends CommonProxy {
         if (te instanceof TileIC2Generator)
             return new GuiIC2Generator(player.inventory, te);
         if (te instanceof TileIceMachine)
-            return new GuiIceMachine(player.inventory, te); 
-        
+            return new GuiIceMachine(player.inventory, te);
+
 
         return null;
     }

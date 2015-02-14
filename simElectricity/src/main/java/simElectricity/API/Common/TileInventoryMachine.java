@@ -24,10 +24,18 @@ import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.IChatComponent;
 import net.minecraftforge.common.util.Constants;
 
 public abstract class TileInventoryMachine extends TileEntitySE implements ISidedInventory {
     protected ItemStack[] inv;
+
+    //Initialize
+    public TileInventoryMachine() {
+        inv = new ItemStack[getInventorySize()];
+    }
 
     /**
      * Called when the content of the inventory changes
@@ -38,37 +46,8 @@ public abstract class TileInventoryMachine extends TileEntitySE implements ISide
     /**
      * Used to get the size of the inventory, should return a constant!
      */
-    public int getInventorySize(){
-    	return 0;
-    }
-
-    /**
-     * {@link net.minecraft.inventory.ISidedInventory} - Override this method when necessary!
-     */
-    @Override
-    public int[] getAccessibleSlotsFromSide(int side) {
-        return new int[] { };
-    }
-
-    /**
-     * {@link net.minecraft.inventory.ISidedInventory} - Override this method when necessary!
-     */
-    @Override
-    public boolean canInsertItem(int slot, ItemStack itemStack, int side) {
-        return false;
-    }
-
-    /**
-     * {@link net.minecraft.inventory.ISidedInventory} - Override this method when necessary!
-     */
-    @Override
-    public boolean canExtractItem(int slot, ItemStack itemStack, int side) {
-        return false;
-    }
-
-    //Initialize
-    public TileInventoryMachine() {
-        inv = new ItemStack[getInventorySize()];
+    public int getInventorySize() {
+        return 0;
     }
 
     //NBT
@@ -147,10 +126,6 @@ public abstract class TileInventoryMachine extends TileEntitySE implements ISide
         onInventoryChanged();
     }
 
-    @Override
-    public boolean hasCustomInventoryName() {
-        return false;
-    }
 
     @Override
     public int getInventoryStackLimit() {
@@ -159,24 +134,71 @@ public abstract class TileInventoryMachine extends TileEntitySE implements ISide
 
     @Override
     public boolean isUseableByPlayer(EntityPlayer player) {
-        return worldObj.getTileEntity(xCoord, yCoord, zCoord) == this && player.getDistanceSq(xCoord + 0.5, yCoord + 0.5, zCoord + 0.5) < 64;
+        return worldObj.getTileEntity(pos) == this && player.getDistanceSq(new BlockPos(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5)) < 64;
     }
 
     @Override
-    public void openInventory() {
+    public int[] getSlotsForFace(EnumFacing side) {
+        return new int[0];
     }
 
     @Override
-    public void closeInventory() {
+    public boolean canInsertItem(int index, ItemStack itemStackIn, EnumFacing direction) {
+        return false;
     }
 
     @Override
-    public boolean isItemValidForSlot(int slot, ItemStack itemStack) {
+    public boolean canExtractItem(int index, ItemStack stack, EnumFacing direction) {
+        return false;
+    }
+
+    @Override
+    public void openInventory(EntityPlayer player) {
+
+    }
+
+    @Override
+    public void closeInventory(EntityPlayer player) {
+
+    }
+
+    @Override
+    public boolean isItemValidForSlot(int index, ItemStack stack) {
         return true;
     }
 
     @Override
-    public String getInventoryName() {
+    public int getField(int id) {
+        return 0;
+    }
+
+    @Override
+    public void setField(int id, int value) {
+
+    }
+
+    @Override
+    public int getFieldCount() {
+        return 0;
+    }
+
+    @Override
+    public void clear() {
+
+    }
+
+    @Override
+    public String getName() {
         return this.toString();
+    }
+
+    @Override
+    public boolean hasCustomName() {
+        return false;
+    }
+
+    @Override
+    public IChatComponent getDisplayName() {
+        return null;
     }
 }

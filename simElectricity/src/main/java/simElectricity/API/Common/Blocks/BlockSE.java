@@ -19,10 +19,10 @@
 
 package simElectricity.API.Common.Blocks;
 
-import cpw.mods.fml.common.registry.GameRegistry;
+import com.google.common.collect.ImmutableSet;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import simElectricity.API.Common.Items.ItemBlockSE;
+import net.minecraft.block.state.IBlockState;
 import simElectricity.API.Util;
 
 /**
@@ -31,32 +31,18 @@ import simElectricity.API.Util;
  * @author <Meow J>
  */
 public abstract class BlockSE extends Block {
+
+    public ImmutableSet<IBlockState> presetStates;
+
     public BlockSE(Material material) {
         super(material);
         if (registerInCreativeTab())
             setCreativeTab(Util.SETab);
     }
 
-    /**
-     * If this block has its own ItemBlock, just override this method and shouldRegister(set to false).
-     *
-     * @param name name of this block.
-     *
-     * @see simElectricity.Common.Blocks.BlockWire
-     * @see simElectricity.Common.Items.ItemBlocks.ItemBlockWire
-     */
-    @Override
-    public Block setBlockName(String name) {
-        if (shouldRegister())
-            GameRegistry.registerBlock(this, ItemBlockSE.class, name);
-        return super.setBlockName(name);
-    }
 
     public boolean registerInCreativeTab() {
         return true;
     }
 
-    public boolean shouldRegister() {
-        return true;
-    }
 }
