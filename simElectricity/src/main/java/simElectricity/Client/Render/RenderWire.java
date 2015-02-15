@@ -163,11 +163,11 @@ public class RenderWire extends TileEntitySpecialRenderer {
             GL11.glPushMatrix();
             if (side == -1) {
                 if (a == 1 && sideArr[dirs[i].getOpposite().ordinal()])
-                    bindTexture(new ResourceLocation("simelectricity", "textures/blocks/Wiring/" + textureString + "_Head.png"));
+                    bindTexture(new ResourceLocation("simelectricity", "textures/blocks/Wiring/" + textureString + "_head.png"));
                 else
-                    bindTexture(new ResourceLocation("simelectricity", "textures/blocks/Wiring/" + textureString + "_Side.png"));
+                    bindTexture(new ResourceLocation("simelectricity", "textures/blocks/Wiring/" + textureString + "_side.png"));
             } else {
-                bindTexture(new ResourceLocation("simelectricity", "textures/blocks/Wiring/" + textureString + "_Side2.png"));
+                bindTexture(new ResourceLocation("simelectricity", "textures/blocks/Wiring/" + textureString + "_side2.png"));
             }
 
             t.getWorldRenderer().startDrawingQuads();

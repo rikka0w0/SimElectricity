@@ -33,7 +33,7 @@ public class BlockQuantumGenerator extends BlockStandardGenerator {
 
     public BlockQuantumGenerator() {
         super();
-        setUnlocalizedName("QuantumGenerator");
+        setUnlocalizedName("quantum_generator");
     }
 
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumFacing side, float hitX, float hitY, float hitZ) {

@@ -36,7 +36,7 @@ public class BlockAdjustableTransformer extends BlockContainerSE {
 
     public BlockAdjustableTransformer() {
         super();
-        setUnlocalizedName("AdjustableTransformer");
+        setUnlocalizedName("adjustable_transformer");
     }
 
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumFacing side, float hitX, float hitY, float hitZ) {

@@ -37,7 +37,7 @@ public class GuiIceMachine extends GuiContainer {
 
         //Bind SpriteNumber=0,texture "/terrain.png"
         TextureManager texturemanager = Minecraft.getMinecraft().getTextureManager();
-        texturemanager.bindTexture(new ResourceLocation("minecraft:terrain"));//TODO temp replacement
+        texturemanager.bindTexture(new ResourceLocation("minecraft:textures/blocks/water_still.png"));//TODO temp replacement
 //		texturemanager.bindTexture(texturemanager.getResourceLocation(0));
 
 

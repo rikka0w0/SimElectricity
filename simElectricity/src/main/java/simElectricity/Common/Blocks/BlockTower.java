@@ -45,7 +45,7 @@ public class BlockTower extends BlockContainerSE {
 
     public BlockTower() {
         super();
-        setUnlocalizedName("Tower");
+        setUnlocalizedName("tower");
     }
 
     @Override

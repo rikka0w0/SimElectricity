@@ -13,7 +13,7 @@ public class BlockIC2Consumer extends BlockStandardSEMachine {
 
     public BlockIC2Consumer() {
         super();
-        setUnlocalizedName("IC2Consumer");
+        setUnlocalizedName("ic2consumer");
     }
 
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumFacing side, float hitX, float hitY, float hitZ) {

@@ -33,7 +33,7 @@ public class BlockVoltageMeter extends BlockStandardSEMachine {
 
     public BlockVoltageMeter() {
         super();
-        setUnlocalizedName("VoltageMeter");
+        setUnlocalizedName("voltage_meter");
     }
 
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumFacing side, float hitX, float hitY, float hitZ) {

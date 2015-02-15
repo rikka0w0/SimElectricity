@@ -36,7 +36,7 @@ public class BlockSolarPanel extends BlockStandardGenerator {
 
     public BlockSolarPanel() {
         super();
-        setUnlocalizedName("SolarPanel");
+        setUnlocalizedName("solar_panel");
     }
 
     @Override

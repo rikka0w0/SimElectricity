@@ -21,6 +21,9 @@ package simElectricity.Common.Blocks;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.properties.PropertyEnum;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
@@ -33,6 +36,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.IStringSerializable;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -50,7 +54,8 @@ import java.util.List;
 
 public class BlockWire extends BlockContainerSE {
 
-    public static final String[] subNames = {"CopperCable_Thin", "CopperCable_Medium", "CopperCable_Thick"};
+    public static final PropertyEnum VARIANT = PropertyEnum.create("variant", WireType.class);
+    public static final String[] subNames = {WireType.THIN.getName(), WireType.MEDIUM.getName(), WireType.THICK.getName()};
     public static final float[] resistanceList = {0.27F, 0.09F, 0.03F};
     public static final float[] collisionWidthList = {0.12F, 0.22F, 0.32F};
     public static final float[] renderingWidthList = {0.1F, 0.2F, 0.3F};
@@ -59,8 +64,9 @@ public class BlockWire extends BlockContainerSE {
     //Initialize Block
     public BlockWire() {
         super(Material.circuits);
+        this.setDefaultState(this.blockState.getBaseState().withProperty(VARIANT, WireType.THIN));
         setHardness(0.2F);
-        setUnlocalizedName("Wire");
+        setUnlocalizedName("wire");
     }
 
     @Override
@@ -170,10 +176,9 @@ public class BlockWire extends BlockContainerSE {
 
     @Override
     public void setBlockBoundsBasedOnState(IBlockAccess world, BlockPos pos) {
-        float WIDTH = collisionWidthList[world.getBlockState(pos).getBlock().getMetaFromState(world.getBlockState(pos))];
-
         if (!(world.getTileEntity(pos) instanceof TileWire))
             return;
+        float WIDTH = collisionWidthList[world.getBlockState(pos).getBlock().getMetaFromState(world.getBlockState(pos))];
 
         TileWire wire = (TileWire) world.getTileEntity(pos);
 
@@ -205,10 +210,9 @@ public class BlockWire extends BlockContainerSE {
 
     @Override
     public AxisAlignedBB getCollisionBoundingBox(World world, BlockPos pos, IBlockState state) {
-        float WIDTH = collisionWidthList[world.getBlockState(pos).getBlock().getMetaFromState(state)];
-
         if (!(world.getTileEntity(pos) instanceof TileWire))
             return new AxisAlignedBB(pos.getX(), pos.getY(), pos.getZ(), pos.getX() + 1, pos.getY() + 1, pos.getZ() + 1);
+        float WIDTH = collisionWidthList[world.getBlockState(pos).getBlock().getMetaFromState(state)];
 
         TileWire wire = (TileWire) world.getTileEntity(pos);
 
@@ -266,10 +270,10 @@ public class BlockWire extends BlockContainerSE {
     @Override
     @SuppressWarnings({"rawtypes", "unchecked"})
     @SideOnly(Side.CLIENT)
-    public void getSubBlocks(Item par1, CreativeTabs par2CreativeTabs, List subItems) {
-        for (int ix = 0; ix < subNames.length; ix++) {
-            subItems.add(new ItemStack(this, 1, ix));
-        }
+    public void getSubBlocks(Item item, CreativeTabs par2CreativeTabs, List list) {
+        list.add(new ItemStack(item, 1, WireType.THIN.getMetadata()));
+        list.add(new ItemStack(item, 1, WireType.MEDIUM.getMetadata()));
+        list.add(new ItemStack(item, 1, WireType.THICK.getMetadata()));
     }
 
     @Override
@@ -284,7 +288,47 @@ public class BlockWire extends BlockContainerSE {
     }
 
     @Override
+    public IBlockState getStateFromMeta(int meta) {
+        return this.getDefaultState().withProperty(VARIANT, WireType.values()[meta]);
+    }
+
+    @Override
+    public int getMetaFromState(IBlockState state) {
+        return ((WireType) state.getValue(VARIANT)).getMetadata();
+    }
+
+    @Override
+    protected BlockState createBlockState() {
+        return new BlockState(this, new IProperty[]{VARIANT});
+    }
+
+    @Override
     public TileEntity createNewTileEntity(World world, int meta) {
         return new TileWire(meta);
+    }
+
+    public static enum WireType implements IStringSerializable {
+        THIN(0, "thin"), MEDIUM(1, "medium"), THICK(2, "thick");
+
+        private final int meta;
+        private final String name;
+
+        private WireType(int meta, String name) {
+            this.meta = meta;
+            this.name = name;
+        }
+
+        public int getMetadata() {
+            return this.meta;
+        }
+
+        public String toString() {
+            return this.name;
+        }
+
+        public String getName() {
+            return this.name;
+        }
+
     }
 }

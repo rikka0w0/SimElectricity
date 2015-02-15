@@ -19,7 +19,6 @@
 
 package simElectricity.Common.Blocks;
 
-import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
@@ -31,11 +30,10 @@ import simElectricity.Common.Blocks.TileEntity.TileAdjustableResistor;
 import simElectricity.SimElectricity;
 
 public class BlockAdjustableResistor extends BlockStandardSEMachine {
-    public static final PropertyDirection FACING = PropertyDirection.create("facing", EnumFacing.Plane.HORIZONTAL);
 
     public BlockAdjustableResistor() {
         super();
-        setUnlocalizedName("AdjustableResistor");
+        setUnlocalizedName("adjustable_resistor");
     }
 
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumFacing side, float hitX, float hitY, float hitZ) {

@@ -21,6 +21,7 @@ package simElectricity.API.Common.Blocks;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.IBlockState;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import simElectricity.API.Common.Items.ItemBlockSE;
 import simElectricity.API.Util;

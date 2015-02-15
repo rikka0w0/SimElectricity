@@ -19,12 +19,20 @@
 
 package simElectricity.Common.Core;
 
+import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.model.ModelBakery;
+import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.item.Item;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import simElectricity.API.Util;
 import simElectricity.Common.Blocks.*;
 import simElectricity.Common.Blocks.TileEntity.*;
 import simElectricity.Common.Blocks.WindMill.BlockWindMillTop;
 import simElectricity.Common.Blocks.WindMill.TileWindMillTop;
+import simElectricity.Common.Items.ItemBlocks.ItemBlockWire;
 
 @GameRegistry.ObjectHolder(Util.MODID)
 public class SEBlocks {
@@ -88,5 +96,28 @@ public class SEBlocks {
         GameRegistry.registerTileEntity(TileCableClamp.class, "TileCableClamp");
         GameRegistry.registerTileEntity(TileIceMachine.class, "TileIceMachine");
 //        GameRegistry.registerTileEntity(TileIC2Generator.class, "TileIC2Generator");
+    }
+
+    public static void registerRenders() {
+        registerRender(iceMachine);
+        ModelBakery.addVariantName(Item.getItemFromBlock(wire), Util.MODID + ":wire_thin", Util.MODID + ":wire_medium", Util.MODID + ":wire_thick");
+        registerRender(wire, 0, "wire_thin");
+        registerRender(wire, 1, "wire_medium");
+        registerRender(wire, 2, "wire_thick");
+    }
+
+    @SideOnly(Side.CLIENT)
+    private static void registerRender(Block block) {
+        Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(Item.getItemFromBlock(block), 0, new ModelResourceLocation(Util.MODID + ":" + block.getUnlocalizedName().substring(5), "inventory"));
+    }
+
+    @SideOnly(Side.CLIENT)
+    private static void registerRender(Block block, int meta, String identifier) {
+        Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(Item.getItemFromBlock(block), meta, new ModelResourceLocation(Util.MODID + ":" + identifier, "inventory"));
+    }
+
+    @SideOnly(Side.CLIENT)
+    private static void registerRender(Item item, int meta, String identifier) {
+        Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(item, meta, new ModelResourceLocation(Util.MODID + ":" + identifier, "inventory"));
     }
 }

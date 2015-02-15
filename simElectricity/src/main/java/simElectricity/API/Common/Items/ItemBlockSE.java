@@ -20,6 +20,7 @@
 package simElectricity.API.Common.Items;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 

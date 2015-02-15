@@ -13,7 +13,7 @@ public class BlockIC2Generator extends BlockStandardSEMachine {
 
     public BlockIC2Generator() {
         super();
-        setUnlocalizedName("IC2Generator");
+        setUnlocalizedName("ic2generator");
     }
 
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumFacing side, float hitX, float hitY, float hitZ) {

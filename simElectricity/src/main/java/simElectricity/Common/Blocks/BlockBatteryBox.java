@@ -28,7 +28,7 @@ public class BlockBatteryBox extends BlockStandardGenerator {
 
     public BlockBatteryBox() {
         super();
-        setUnlocalizedName("BatteryBox");
+        setUnlocalizedName("battery_box");
     }
 
     @Override

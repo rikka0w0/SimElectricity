@@ -29,7 +29,7 @@ public class BlockIncandescentLamp extends BlockStandardSEMachine {
 
     public BlockIncandescentLamp() {
         super();
-        setUnlocalizedName("IncandescentLamp");
+        setUnlocalizedName("incandescent_lamp");
     }
 
     //TODO

@@ -36,7 +36,7 @@ public class BlockSolarInverter extends BlockContainerSE {
 
     public BlockSolarInverter() {
         super();
-        setUnlocalizedName("SolarInverter");
+        setUnlocalizedName("solar_inverter");
     }
 
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumFacing side, float hitX, float hitY, float hitZ) {

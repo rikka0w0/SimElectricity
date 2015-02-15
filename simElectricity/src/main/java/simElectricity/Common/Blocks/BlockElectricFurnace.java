@@ -40,7 +40,7 @@ public class BlockElectricFurnace extends BlockStandardSEMachine {
 
     public BlockElectricFurnace(boolean isBurning) {
         super();
-        setUnlocalizedName("ElectricFurnace");
+        setUnlocalizedName("electric_furnace");
         this.isBurning = isBurning;
         if (isBurning)
             this.lightValue = 13;

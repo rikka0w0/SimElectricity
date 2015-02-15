@@ -33,7 +33,7 @@ public class BlockIceMachine extends BlockStandardSEMachine {
 
     public BlockIceMachine() {
         super();
-        setUnlocalizedName("IceMachine");
+        setUnlocalizedName("icemachine");
     }
 
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumFacing side, float hitX, float hitY, float hitZ) {

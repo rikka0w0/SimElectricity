@@ -2,25 +2,25 @@
 itemGroup.SimElectricity=SimElectricity
 
 # Blocks
-tile.sime:QuantumGenerator.name=Quantum Generator
-tile.sime:VoltageMeter.name=Voltage Meter(1MOhm)
-tile.sime:ElectricFurnace.name=Electric Furnace
-tile.sime:SolarPanel.name=Solar Panel
-tile.sime:Wire.CopperCable_Thin.name=Thin Copper Cable
-tile.sime:Wire.CopperCable_Medium.name=Medium Copper Cable
-tile.sime:Wire.CopperCable_Thick.name=Thick Copper Cable
-tile.sime:AdjustableResistor.name=Adjustable Resistor
-tile.sime:SimpleGenerator.name=Simple Generator
-tile.sime:AdjustableTransformer.name=Adjustable Transformer
-tile.sime:WindMillTop.name=WindMill
-tile.sime:BatteryBox.name=BatteryBox
-tile.sime:IncandescentLamp.name=Incandescent Lamp (5w)
-tile.sime:Switch.name=Switch
-tile.sime:Tower.name=Tower
-tile.sime:SolarInverter.name=Solar Inverter (Regulated)
-tile.sime:IC2Consumer.name=IC2->SE Converter
-tile.sime:IC2Generator.name=SE->IC2 Converter
-tile.sime:IceMachine.name=No.9 Ice Machine
+tile.sime:quantum_generator.name=Quantum Generator
+tile.sime:voltage_meter.name=Voltage Meter(1MOhm)
+tile.sime:electric_furnace.name=Electric Furnace
+tile.sime:solar_panel.name=Solar Panel
+tile.sime:wire.thin.name=Thin Copper Cable
+tile.sime:wire.medium.name=Medium Copper Cable
+tile.sime:wire.thick.name=Thick Copper Cable
+tile.sime:adjustable_resistor.name=Adjustable Resistor
+tile.sime:simple_generator.name=Simple Generator
+tile.sime:adjustable_transformer.name=Adjustable Transformer
+tile.sime:windmill_top.name=WindMill
+tile.sime:battery_box.name=BatteryBox
+tile.sime:incandescent_lamp.name=Incandescent Lamp (5w)
+tile.sime:switch.name=Switch
+tile.sime:tower.name=Tower
+tile.sime:solar_inverter.name=Solar Inverter (Regulated)
+tile.sime:ic2consumer.name=IC2->SE Converter
+tile.sime:ic2generator.name=SE->IC2 Converter
+tile.sime:icemachine.name=No.9 Ice Machine
 
 # Items
 item.sime:ultimate_multimeter.name=Ultimate Multimeter

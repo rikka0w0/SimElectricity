@@ -88,4 +88,15 @@ public abstract class BlockContainerSE extends BlockContainer {
     public int damageDropped(IBlockState state) {
         return getMetaFromState(state);
     }
+
+    /**
+     * <li>-1 = doesn’t render at all, eg BlockAir</li>
+     * <li>1 = renders as a flowing liquid (animated texture) using BlockFluidRenderer.renderFluid – eg lava and water.</li>
+     * <li>2 = doesn’t render anything in the block layers, but has an associated TileEntitySpecialRenderer which does draw something, eg BlockChest.</li>
+     * <li>3 = renders using an IBakedModel, BlockModelRenderer.renderModel.  This is described in more detail below.</li>
+     */
+    @Override
+    public int getRenderType() {
+        return 3;
+    }
 }

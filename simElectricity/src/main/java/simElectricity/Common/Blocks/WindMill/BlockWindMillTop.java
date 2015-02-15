@@ -38,7 +38,7 @@ public class BlockWindMillTop extends BlockContainerSE {
 
     public BlockWindMillTop() {
         super();
-        setUnlocalizedName("WindMillTop");
+        setUnlocalizedName("windmill_top");
     }
 
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumFacing side, float hitX, float hitY, float hitZ) {

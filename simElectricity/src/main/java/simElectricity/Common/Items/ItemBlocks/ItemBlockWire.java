@@ -45,7 +45,7 @@ public class ItemBlockWire extends ItemBlockSE {
 
     @Override
     public String getUnlocalizedName(ItemStack itemstack) {
-        return getUnlocalizedName() + "." + BlockWire.subNames[itemstack.getItemDamage()];
+        return getUnlocalizedName() + "." + BlockWire.WireType.values()[itemstack.getMetadata()];
     }
 
     @SuppressWarnings("unchecked")

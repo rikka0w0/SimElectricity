@@ -25,6 +25,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
+import simElectricity.API.Common.Blocks.BlockSidedFacingMachine;
 import simElectricity.API.Common.Items.ItemSE;
 import simElectricity.API.ISidedFacing;
 import simElectricity.API.Network;
@@ -41,11 +42,12 @@ public class ItemGlove extends ItemSE {
 
     @Override
     public boolean onItemUse(ItemStack itemStack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ) {
-        if ((world.getTileEntity(pos) instanceof ISidedFacing) & (!world.isRemote)) {
+        if ((world.getTileEntity(pos) instanceof ISidedFacing) && (world.getBlockState(pos).getBlock() instanceof BlockSidedFacingMachine) && (!world.isRemote)) {
             ISidedFacing te = (ISidedFacing) world.getTileEntity(pos);
 
             if (te.canSetFacing(side)) {
                 te.setFacing(side);
+                world.setBlockState(pos, world.getBlockState(pos).withProperty(((BlockSidedFacingMachine) world.getBlockState(pos).getBlock()).FACING, player.getHorizontalFacing().getOpposite()), 2);
                 Network.updateFacing((TileEntity) te);
                 itemStack.damageItem(1, player);
             }

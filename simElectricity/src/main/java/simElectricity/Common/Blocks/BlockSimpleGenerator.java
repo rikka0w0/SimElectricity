@@ -39,7 +39,7 @@ public class BlockSimpleGenerator extends BlockStandardSEMachine {
 
     public BlockSimpleGenerator(boolean isWorking) {
         super();
-        setUnlocalizedName("SimpleGenerator");
+        setUnlocalizedName("simple_generator");
         this.isWorking = isWorking;
         if (isWorking)
             this.lightValue = 13;

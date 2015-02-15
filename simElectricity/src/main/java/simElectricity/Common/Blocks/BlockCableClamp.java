@@ -17,7 +17,7 @@ import simElectricity.Common.Blocks.TileEntity.TileCableClamp;
 public class BlockCableClamp extends BlockContainerSE {
     public BlockCableClamp() {
         super();
-        setUnlocalizedName("CableClamp");
+        setUnlocalizedName("cable_clamp");
     }
 
     public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase player, ItemStack stack) {
