@@ -32,7 +32,6 @@ import simElectricity.Common.Blocks.*;
 import simElectricity.Common.Blocks.TileEntity.*;
 import simElectricity.Common.Blocks.WindMill.BlockWindMillTop;
 import simElectricity.Common.Blocks.WindMill.TileWindMillTop;
-import simElectricity.Common.Items.ItemBlocks.ItemBlockWire;
 
 @GameRegistry.ObjectHolder(Util.MODID)
 public class SEBlocks {
@@ -100,6 +99,7 @@ public class SEBlocks {
 
     public static void registerRenders() {
         registerRender(iceMachine);
+        registerRender(windMillTop);
         ModelBakery.addVariantName(Item.getItemFromBlock(wire), Util.MODID + ":wire_thin", Util.MODID + ":wire_medium", Util.MODID + ":wire_thick");
         registerRender(wire, 0, "wire_thin");
         registerRender(wire, 1, "wire_medium");

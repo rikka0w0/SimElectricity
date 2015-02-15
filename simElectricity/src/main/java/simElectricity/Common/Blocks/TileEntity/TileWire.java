@@ -77,7 +77,6 @@ public class TileWire extends TileEntitySE implements IConductor, INetworkEventH
             if (tick > 2) {
                 needsUpdate = false;
                 tick = 0;
-
                 Network.updateNetworkFields(this);
             }
         }

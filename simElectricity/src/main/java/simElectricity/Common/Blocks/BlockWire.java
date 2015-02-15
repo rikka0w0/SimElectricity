@@ -123,7 +123,6 @@ public class BlockWire extends BlockContainerSE {
         }
     }
 
-
     // Rendering
     @Override
     public void setBlockBoundsForItemRender() {

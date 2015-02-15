@@ -53,15 +53,15 @@ public class RenderWindMillTop extends TileEntitySpecialRenderer {
     }
 
     int getDirection() {
-        switch (te.getFacing().ordinal()) {
+        switch (te.getWorld().getBlockState(te.getPos()).getBlock().getMetaFromState(te.getWorld().getBlockState(te.getPos()))) {
             case 2:
                 return 0;
-            case 5:
-                return 1;
-            case 3:
-                return 2;
-            default:
+            case 1:
                 return 3;
+            case 3:
+                return 1;
+            default:
+                return 2;
         }
     }
 

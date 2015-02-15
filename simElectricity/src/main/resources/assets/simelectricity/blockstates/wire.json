@@ -1,8 +1,0 @@
-{
-  "variants": {
-    "facing=north": { "model": "simelectricity:icemachine" },
-    "facing=south": { "model": "simelectricity:icemachine", "y": 180 },
-    "facing=west":  { "model": "simelectricity:icemachine", "y": 270 },
-    "facing=east":  { "model": "simelectricity:icemachine", "y": 90 }
-  }
-}

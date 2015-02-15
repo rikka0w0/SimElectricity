@@ -19,6 +19,9 @@
 
 package simElectricity.Common.Blocks.WindMill;
 
+import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.properties.PropertyDirection;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -34,11 +37,34 @@ import simElectricity.API.Util;
 import simElectricity.Common.Core.SEItems;
 
 public class BlockWindMillTop extends BlockContainerSE {
+    public static final PropertyDirection FACING = PropertyDirection.create("facing", EnumFacing.Plane.HORIZONTAL);
 
 
     public BlockWindMillTop() {
         super();
         setUnlocalizedName("windmill_top");
+        this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
+    }
+
+    @Override
+    public IBlockState onBlockPlaced(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
+        IBlockState state = super.onBlockPlaced(world, pos, facing, hitX, hitY, hitZ, meta, placer);
+        return state.withProperty(FACING, placer.getHorizontalFacing().getOpposite());
+    }
+
+    @Override
+    public int getMetaFromState(IBlockState state) {
+        return ((EnumFacing) state.getValue(FACING)).getHorizontalIndex();
+    }
+
+    @Override
+    public IBlockState getStateFromMeta(int meta) {
+        return this.getDefaultState().withProperty(FACING, EnumFacing.getHorizontal(meta));
+    }
+
+    @Override
+    protected BlockState createBlockState() {
+        return new BlockState(this, new IProperty[]{FACING});
     }
 
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumFacing side, float hitX, float hitY, float hitZ) {
@@ -53,7 +79,7 @@ public class BlockWindMillTop extends BlockContainerSE {
             if (playerItem != null)
                 return false;
 
-//            dropBlockAsItem(world, pos.add(0, 1, 0), state, new ItemStack(SEItems.fan, 1), 1);
+            spawnAsEntity(world, pos.add(0, 1, 0), new ItemStack(SEItems.fan, 1));
 
             te.settled = false;
             if (!world.isRemote)
@@ -78,8 +104,8 @@ public class BlockWindMillTop extends BlockContainerSE {
         TileEntity te = world.getTileEntity(pos);
 
         if (te instanceof TileWindMillTop) {
-//            if (((TileWindMillTop) te).settled)
-//                dropBlockAsItem(world, x, y, z, new ItemStack(SEItems.fan, 1));
+            if (((TileWindMillTop) te).settled)
+                spawnAsEntity(world, pos.add(0, 1, 0), new ItemStack(SEItems.fan, 1));
         }
 
         super.breakBlock(world, pos, state);
