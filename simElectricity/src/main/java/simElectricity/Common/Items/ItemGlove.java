@@ -34,7 +34,7 @@ public class ItemGlove extends ItemSE {
         super();
         maxStackSize = 1;
         setHasSubtypes(true);
-        setUnlocalizedName("Glove");
+        setUnlocalizedName("glove");
         setMaxDamage(256);
     }
 

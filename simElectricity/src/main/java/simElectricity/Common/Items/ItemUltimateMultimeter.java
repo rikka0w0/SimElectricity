@@ -35,7 +35,7 @@ public class ItemUltimateMultimeter extends ItemSE {
         super();
         maxStackSize = 1;
         setHasSubtypes(true);
-        setUnlocalizedName("UltimateMultimeter");
+        setUnlocalizedName("ultimate_multimeter");
         setMaxDamage(256);
     }
 

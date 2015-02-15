@@ -103,7 +103,7 @@ public class SimElectricity {
         NetworkRegistry.INSTANCE.registerGuiHandler(instance, proxy);
 
         //Initialize network proxy
-        proxy.registerTileEntitySpecialRenderer();
+        proxy.registerRenders();
 
         //Register TileEntities
         SEBlocks.init();

@@ -40,7 +40,7 @@ public class ItemHVWire extends ItemSE {
 
     public ItemHVWire() {
         super();
-        setUnlocalizedName("HVWire");
+        setUnlocalizedName("hvwire");
     }
 
     @Override

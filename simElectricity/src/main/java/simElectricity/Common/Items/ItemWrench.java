@@ -35,7 +35,7 @@ public class ItemWrench extends ItemSE {
         super();
         maxStackSize = 1;
         setHasSubtypes(true);
-        setUnlocalizedName("Wrench");
+        setUnlocalizedName("wrench");
         setMaxDamage(256);
     }
 

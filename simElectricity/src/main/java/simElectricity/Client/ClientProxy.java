@@ -35,6 +35,7 @@ import simElectricity.Client.Render.RenderWire;
 import simElectricity.Common.Blocks.TileEntity.*;
 import simElectricity.Common.Blocks.WindMill.TileWindMillTop;
 import simElectricity.Common.CommonProxy;
+import simElectricity.Common.Core.SEItems;
 
 @SideOnly(Side.CLIENT)
 public class ClientProxy extends CommonProxy {
@@ -44,7 +45,8 @@ public class ClientProxy extends CommonProxy {
     }
 
     @Override
-    public void registerTileEntitySpecialRenderer() {
+    public void registerRenders() {
+        SEItems.registerRenders();
         ClientRegistry.bindTileEntitySpecialRenderer(TileWire.class, new RenderWire());
         ClientRegistry.bindTileEntitySpecialRenderer(TileWindMillTop.class, new RenderWindMillTop());
         ClientRegistry.bindTileEntitySpecialRenderer(TileTower.class, new RenderTower());

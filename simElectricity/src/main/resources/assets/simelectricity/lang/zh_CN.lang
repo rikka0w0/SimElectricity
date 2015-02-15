@@ -22,11 +22,11 @@ tile.sime:IC2Generator.name=SE->IC2能源转换器
 tile.sime:IceMachine.name=⑨牌制冰机
 
 # Items
-item.sime:UltimateMultimeter.name=高级万用表
-item.sime:Glove.name=手套
-item.sime:Wrench.name=扳手
-item.sime:Fan.name=风力发电机叶片
-item.sime:IceIngot.name=冰锭
+item.sime:ultimate_multimeter.name=高级万用表
+item.sime:glove.name=手套
+item.sime:wrench.name=扳手
+item.sime:fan.name=风力发电机叶片
+item.sime:iceingot.name=冰锭
 
 # Text
 sime.Output=输出:

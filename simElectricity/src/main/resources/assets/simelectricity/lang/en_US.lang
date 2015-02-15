@@ -23,12 +23,12 @@ tile.sime:IC2Generator.name=SE->IC2 Converter
 tile.sime:IceMachine.name=No.9 Ice Machine
 
 # Items
-item.sime:UltimateMultimeter.name=Ultimate Multimeter
-item.sime:Glove.name=Glove
-item.sime:Wrench.name=Wrench
-item.sime:Fan.name=WindMill Turbine
-item.sime:HVWire.name=HV Wire
-item.sime:IceIngot.name=Ice Ingot
+item.sime:ultimate_multimeter.name=Ultimate Multimeter
+item.sime:glove.name=Glove
+item.sime:wrench.name=Wrench
+item.sime:fan.name=WindMill Turbine
+item.sime:hvwire.name=HV Wire
+item.sime:iceingot.name=Ice Ingot
 
 # Text
 sime.Output=Output:

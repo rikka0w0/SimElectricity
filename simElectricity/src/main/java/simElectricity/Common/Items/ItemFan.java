@@ -24,6 +24,6 @@ import simElectricity.API.Common.Items.ItemSE;
 public class ItemFan extends ItemSE {
     public ItemFan() {
         super();
-        setUnlocalizedName("Fan");
+        setUnlocalizedName("fan");
     }
 }

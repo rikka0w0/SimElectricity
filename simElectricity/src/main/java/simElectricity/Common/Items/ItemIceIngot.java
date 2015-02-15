@@ -24,6 +24,6 @@ import simElectricity.API.Common.Items.ItemSE;
 public class ItemIceIngot extends ItemSE {
     public ItemIceIngot() {
         super();
-        setUnlocalizedName("IceIngot");
+        setUnlocalizedName("iceingot");
     }
 }
