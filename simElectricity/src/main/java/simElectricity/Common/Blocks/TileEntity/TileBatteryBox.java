@@ -19,7 +19,7 @@
 
 package simElectricity.Common.Blocks.TileEntity;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import simElectricity.API.Common.TileSidedGenerator;
 import simElectricity.API.Energy;
 import simElectricity.Common.SEUtils;
@@ -33,8 +33,8 @@ public class TileBatteryBox extends TileSidedGenerator {
     private float wattTickStoreMax = 1000000;
 
     @Override
-    public void updateEntity() {
-        super.updateEntity();
+    public void update() {
+        super.update();
 
         //Server only
         if (worldObj.isRemote)
@@ -70,7 +70,7 @@ public class TileBatteryBox extends TileSidedGenerator {
     }
 
     @Override
-    public boolean canSetFunctionalSide(ForgeDirection newFunctionalSide) {
+    public boolean canSetFunctionalSide(EnumFacing newFunctionalSide) {
         // FunctionalSide Facing
         return true;
     }

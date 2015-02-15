@@ -17,7 +17,7 @@
  * USA
  */
 
-package simElectricity.Client.Gui;
+/*package simElectricity.Client.Gui;
 
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
@@ -116,4 +116,4 @@ public class GuiIC2Consumer extends GuiContainer {
         int y = (height - ySize) / 2;
         this.drawTexturedModalRect(x, y, 0, 0, xSize, ySize);
     }
-}
+}*/

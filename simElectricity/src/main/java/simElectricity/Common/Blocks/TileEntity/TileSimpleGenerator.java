@@ -19,29 +19,34 @@
 
 package simElectricity.Common.Blocks.TileEntity;
 
-import java.util.List;
-
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntityFurnace;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import simElectricity.API.Common.TileSidedGenerator;
 import simElectricity.API.Energy;
 import simElectricity.API.INetworkEventHandler;
 import simElectricity.API.Network;
 
-public class TileSimpleGenerator extends TileSidedGenerator implements INetworkEventHandler{
+import java.util.List;
+
+public class TileSimpleGenerator extends TileSidedGenerator implements INetworkEventHandler {
     public static int normalOutputV = 230;
     public static int normalOutputR = 1;
 
     public boolean isWorking;
+    public int progress;
     protected int burnTime;
     protected float burned;
-    public int progress;
+
+    //Statics
+    public static int getBurnTime(ItemStack in) {
+        return TileEntityFurnace.getItemBurnTime(in);
+    }
 
     @Override
-    public void updateEntity() {
-        super.updateEntity();
+    public void update() {
+        super.update();
 
         if (worldObj.isRemote)
             return;
@@ -142,11 +147,6 @@ public class TileSimpleGenerator extends TileSidedGenerator implements INetworkE
         tagCompound.setFloat("burned", burned);
     }
 
-    //Statics
-    public static int getBurnTime(ItemStack in) {
-        return TileEntityFurnace.getItemBurnTime(in);
-    }
-
     //Functions
     @Override
     public int getInventorySize() {
@@ -154,40 +154,41 @@ public class TileSimpleGenerator extends TileSidedGenerator implements INetworkE
     }
 
     @Override
-    public int[] getAccessibleSlotsFromSide(int side) {
-        return new int[] { 0 };
+    public int[] getSlotsForFace(EnumFacing side) {
+        return new int[]{0};
     }
 
+
     @Override
-    public boolean canInsertItem(int slot, ItemStack itemStack, int side) {
+    public boolean canInsertItem(int slot, ItemStack itemStack, EnumFacing side) {
         return slot == 0 && TileEntityFurnace.isItemFuel(itemStack);
     }
 
     @Override
-    public boolean canExtractItem(int slot, ItemStack itemStack, int side) {
+    public boolean canExtractItem(int slot, ItemStack itemStack, EnumFacing side) {
         return slot == 0;
     }
-    
-	@Override
-	public void addNetworkFields(List fields) {
-		fields.add("isWorking");
-		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-	}
-    
-	@Override
-	public void onFieldUpdate(String[] fields, Object[] values) {
-		//Handling on client side
-		if (worldObj.isRemote){
-			for (String s:fields){
-	        	if (s.contains("isWorking")){
-	        		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-	        	}
-	        }
-        }
-	}
-	
+
     @Override
-    public boolean canSetFunctionalSide(ForgeDirection newFunctionalSide) {
+    public void addNetworkFields(List fields) {
+        fields.add("isWorking");
+        worldObj.markBlockForUpdate(pos);
+    }
+
+    @Override
+    public void onFieldUpdate(String[] fields, Object[] values) {
+        //Handling on client side
+        if (worldObj.isRemote) {
+            for (String s : fields) {
+                if (s.contains("isWorking")) {
+                    worldObj.markBlockForUpdate(pos);
+                }
+            }
+        }
+    }
+
+    @Override
+    public boolean canSetFunctionalSide(EnumFacing newFunctionalSide) {
         return true;
     }
 }

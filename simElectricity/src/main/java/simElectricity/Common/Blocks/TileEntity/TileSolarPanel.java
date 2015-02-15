@@ -19,27 +19,28 @@
 
 package simElectricity.Common.Blocks.TileEntity;
 
-import net.minecraftforge.common.util.ForgeDirection;
+
+import net.minecraft.util.EnumFacing;
 import simElectricity.API.Common.TileSidedGenerator;
 import simElectricity.API.Energy;
 
 public class TileSolarPanel extends TileSidedGenerator {
     @Override
-    public void updateEntity() {
-        super.updateEntity();
+    public void update() {
+        super.update();
 
         if (worldObj.isRemote)
             return;
 
         //Server only
 
-        if (!worldObj.provider.isSurfaceWorld()){
-        	checkAndSendChange(10, 100);
-        	return;
+        if (!worldObj.provider.isSurfaceWorld()) {
+            checkAndSendChange(10, 100);
+            return;
         }
-        
+
         if (worldObj.isDaytime()) {
-            if (worldObj.canBlockSeeTheSky(xCoord, yCoord + 1, zCoord))
+            if (worldObj.canBlockSeeSky(pos.add(0, 1, 0)))
                 checkAndSendChange(18, 0.8F);
             else
                 checkAndSendChange(0, Float.MAX_VALUE);
@@ -57,7 +58,7 @@ public class TileSolarPanel extends TileSidedGenerator {
     }
 
     @Override
-    public boolean canSetFunctionalSide(ForgeDirection newFunctionalSide) {
-        return newFunctionalSide != ForgeDirection.UP;
+    public boolean canSetFunctionalSide(EnumFacing newFunctionalSide) {
+        return newFunctionalSide != EnumFacing.UP;
     }
 }

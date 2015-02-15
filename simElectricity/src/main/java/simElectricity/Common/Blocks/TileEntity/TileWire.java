@@ -19,32 +19,30 @@
 
 package simElectricity.Common.Blocks.TileEntity;
 
-import java.util.List;
-
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
-import net.minecraftforge.common.util.ForgeDirection;
-import simElectricity.API.INetworkEventHandler;
-import simElectricity.API.Network;
+import net.minecraft.util.EnumFacing;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import simElectricity.API.Common.TileEntitySE;
 import simElectricity.API.EnergyTile.IConductor;
+import simElectricity.API.INetworkEventHandler;
+import simElectricity.API.Network;
 import simElectricity.API.Util;
 import simElectricity.Common.Blocks.BlockWire;
 
-public class TileWire extends TileEntitySE implements IConductor, INetworkEventHandler {
-    protected boolean isAddedToEnergyNet = false;
-    public boolean[] renderSides = new boolean[6];
+import java.util.List;
 
+public class TileWire extends TileEntitySE implements IConductor, INetworkEventHandler {
+    public boolean[] renderSides = new boolean[6];
     public int color = 0;
     public float resistance = 100;
     public float width = 0.1F;
     public String textureString;
-
-    private int tick = 0;
     public boolean needsUpdate = false;
-    
+    protected boolean isAddedToEnergyNet = false;
+    private int tick = 0;
+
     public TileWire() {
     }
 
@@ -56,7 +54,7 @@ public class TileWire extends TileEntitySE implements IConductor, INetworkEventH
     }
 
     public void updateSides() {
-        ForgeDirection[] dirs = ForgeDirection.values();
+        EnumFacing[] dirs = EnumFacing.values();
         for (int i = 0; i < 6; i++) {
             renderSides[i] = Util.possibleConnection(this, dirs[i]);
         }
@@ -66,22 +64,22 @@ public class TileWire extends TileEntitySE implements IConductor, INetworkEventH
     @SideOnly(Side.CLIENT)
     public AxisAlignedBB getRenderBoundingBox() {
         AxisAlignedBB bb = INFINITE_EXTENT_AABB;
-        bb = AxisAlignedBB.getBoundingBox(xCoord, yCoord, zCoord, xCoord + 1, yCoord + 1, zCoord + 1);
+        bb = new AxisAlignedBB(pos.getX(), pos.getY(), pos.getZ(), pos.getX() + 1, pos.getY() + 1, pos.getZ() + 1);
         return bb;
     }
 
     @Override
-    public void updateEntity() {
-        super.updateEntity();
-        
-        if (!worldObj.isRemote && needsUpdate){
-        	tick++;
-        	if(tick > 2){
-        		needsUpdate = false;
-        		tick = 0;
-        		
-        		Network.updateNetworkFields(this);
-        	}
+    public void update() {
+        super.update();
+
+        if (!worldObj.isRemote && needsUpdate) {
+            tick++;
+            if (tick > 2) {
+                needsUpdate = false;
+                tick = 0;
+
+                Network.updateNetworkFields(this);
+            }
         }
     }
 
@@ -101,11 +99,11 @@ public class TileWire extends TileEntitySE implements IConductor, INetworkEventH
         tagCompound.setInteger("color", color);
     }
 
-	@Override
-	public boolean attachToEnergyNet() {
-		return true;
-	}
-    
+    @Override
+    public boolean attachToEnergyNet() {
+        return true;
+    }
+
     @Override
     public double getResistance() {
         return resistance;
@@ -116,18 +114,19 @@ public class TileWire extends TileEntitySE implements IConductor, INetworkEventH
         return color;
     }
 
-    public boolean isConnected(ForgeDirection direction) {
+    public boolean isConnected(EnumFacing direction) {
         return direction.ordinal() < 6 && direction.ordinal() >= 0 && renderSides[direction.ordinal()];
     }
 
-	@Override
-	public void addNetworkFields(List fields) {
-		updateSides();
-		fields.add("renderSides");
-	}
-	
-	@Override
-	public void onFieldUpdate(String[] fields, Object[] values) {
+    @SuppressWarnings("unchecked")
+    @Override
+    public void addNetworkFields(List fields) {
+        updateSides();
+        fields.add("renderSides");
+    }
 
-	}
+    @Override
+    public void onFieldUpdate(String[] fields, Object[] values) {
+
+    }
 }

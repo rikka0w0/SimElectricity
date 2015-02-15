@@ -19,78 +19,78 @@
 
 package simElectricity.Common.Blocks.TileEntity;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
-import simElectricity.API.Energy;
-import simElectricity.API.IHVTower;
+import net.minecraft.util.BlockPos;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import simElectricity.API.Common.TileEntitySE;
+import simElectricity.API.Energy;
 import simElectricity.API.EnergyTile.IBaseComponent;
 import simElectricity.API.EnergyTile.IManualJunction;
+import simElectricity.API.IHVTower;
 
 import java.util.List;
 
 public class TileTower extends TileEntitySE implements IManualJunction, IHVTower {
     public int facing;
-    public int neighborsInfo[] = new int[] { 0, -1, 0, 0, -1, 0 };
-	
-	@Override
-	public void addNeighbor(TileEntity te){
-		for (int i=0; i<neighborsInfo.length; i+=3){
-			if (neighborsInfo[i+1] == -1){
-				neighborsInfo[i] = te.xCoord;
-				neighborsInfo[i+1] = te.yCoord;
-				neighborsInfo[i+2] = te.zCoord;
-				Energy.postTileRejoinEvent(this);
-				return;
-			}
-		}
-	}
-	
-	public void delNeighbor(TileEntity te){
-		for (int i=0;i<neighborsInfo.length;i+=3){
-			if (neighborsInfo[i] == te.xCoord &&
-				neighborsInfo[i+1] == te.yCoord &&
-				neighborsInfo[i+2] == te.zCoord){
-				neighborsInfo[i] = 0;
-				neighborsInfo[i+1] = -1;
-				neighborsInfo[i+2] = 0;				
-			}	
-		}
-		Energy.postTileRejoinEvent(this);
-	}
-	
-	@Override
-	public boolean hasVacant(){
-		for (int i=0; i<neighborsInfo.length; i+=3){
-			if (neighborsInfo[i+1] == -1)
-				return true;
-		}
-		return false;
-	}
-	
-	@SideOnly(Side.CLIENT)
+    public int neighborsInfo[] = new int[]{0, -1, 0, 0, -1, 0};
+
     @Override
-    public double getMaxRenderDistanceSquared()
-    {
-        return 100000;
-    }
-	
-	@SideOnly(Side.CLIENT)
-	@Override
-    public AxisAlignedBB getRenderBoundingBox(){
-    	return INFINITE_EXTENT_AABB;
+    public void addNeighbor(TileEntity te) {
+        for (int i = 0; i < neighborsInfo.length; i += 3) {
+            if (neighborsInfo[i + 1] == -1) {
+                neighborsInfo[i] = te.getPos().getX();
+                neighborsInfo[i + 1] = te.getPos().getY();
+                neighborsInfo[i + 2] = te.getPos().getY();
+                Energy.postTileRejoinEvent(this);
+                return;
+            }
+        }
     }
 
-	@Override
-	public boolean attachToEnergyNet() {
-		return true;
-	}
-    
-	//@Override
-	//public void onUnload(){
+    public void delNeighbor(TileEntity te) {
+        for (int i = 0; i < neighborsInfo.length; i += 3) {
+            if (neighborsInfo[i] == te.getPos().getX() &&
+                    neighborsInfo[i + 1] == te.getPos().getY() &&
+                    neighborsInfo[i + 2] == te.getPos().getZ()) {
+                neighborsInfo[i] = 0;
+                neighborsInfo[i + 1] = -1;
+                neighborsInfo[i + 2] = 0;
+            }
+        }
+        Energy.postTileRejoinEvent(this);
+    }
+
+    @Override
+    public boolean hasVacant() {
+        for (int i = 0; i < neighborsInfo.length; i += 3) {
+            if (neighborsInfo[i + 1] == -1)
+                return true;
+        }
+        return false;
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public double getMaxRenderDistanceSquared() {
+        return 100000;
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public AxisAlignedBB getRenderBoundingBox() {
+        return INFINITE_EXTENT_AABB;
+    }
+
+    @Override
+    public boolean attachToEnergyNet() {
+        return true;
+    }
+
+    //@Override
+    //public void onUnload(){
     //    for (int i = 0; i < neighborsInfo.length; i += 3) {
     //        TileTower neighbor = (TileTower) getWorldObj().getTileEntity(neighborsInfo[i], neighborsInfo[i + 1], neighborsInfo[i + 2]);
     //        if (neighbor != null) {
@@ -98,7 +98,7 @@ public class TileTower extends TileEntitySE implements IManualJunction, IHVTower
     //            Network.updateTileEntityNBT(this);
     //        }
     //    }		
-	//}
+    //}
 
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
@@ -107,12 +107,12 @@ public class TileTower extends TileEntitySE implements IManualJunction, IHVTower
         facing = tagCompound.getInteger("facing");
         neighborsInfo = tagCompound.getIntArray("neighborsInfo");
         if (neighborsInfo == null)
-            neighborsInfo = new int[] { 0, -1, 0, 0, -1, 0 };
+            neighborsInfo = new int[]{0, -1, 0, 0, -1, 0};
         if (neighborsInfo.length != 6)
-            neighborsInfo = new int[] { 0, -1, 0, 0, -1, 0 };
-        
-        if (xCoord==127)
-        	return;
+            neighborsInfo = new int[]{0, -1, 0, 0, -1, 0};
+
+        if (pos.getX() == 127)
+            return;
     }
 
     @Override
@@ -122,7 +122,7 @@ public class TileTower extends TileEntitySE implements IManualJunction, IHVTower
         tagCompound.setInteger("facing", facing);
         tagCompound.setIntArray("neighborsInfo", this.neighborsInfo);
     }
-    
+
     @Override
     public double getResistance() {
         return 0;
@@ -133,73 +133,77 @@ public class TileTower extends TileEntitySE implements IManualJunction, IHVTower
     public void addNeighbors(List<IBaseComponent> list) {
         TileEntity te;
         if (neighborsInfo[1] != -1) {
-            te = worldObj.getTileEntity(neighborsInfo[0], neighborsInfo[1], neighborsInfo[2]);
+            te = worldObj.getTileEntity(new BlockPos(neighborsInfo[0], neighborsInfo[1], neighborsInfo[2]));
             if (te instanceof TileTower)
                 list.add((IManualJunction) te);
         }
 
         if (neighborsInfo[4] != -1) {
-            te = worldObj.getTileEntity(neighborsInfo[3], neighborsInfo[4], neighborsInfo[5]);
+            te = worldObj.getTileEntity(new BlockPos(neighborsInfo[3], neighborsInfo[4], neighborsInfo[5]));
             if (te instanceof TileTower)
                 list.add((IManualJunction) te);
         }
-        
-        if (this.getBlockMetadata() == 1){
-        	te = worldObj.getTileEntity(xCoord,yCoord - 2,zCoord);
-        	if (te instanceof TileTower && te.getBlockMetadata() == 2)
-        		list.add((IManualJunction) te);
-        	
-        	if (te instanceof TileCableClamp)
-        		list.add((IManualJunction) te);
+
+        if (this.getBlockMetadata() == 1) {
+            te = worldObj.getTileEntity(pos.add(0, -2, 0));
+            if (te instanceof TileTower && te.getBlockMetadata() == 2)
+                list.add((IManualJunction) te);
+
+            if (te instanceof TileCableClamp)
+                list.add((IManualJunction) te);
         }
-        
-        if (this.getBlockMetadata() == 2){
-        	te = worldObj.getTileEntity(xCoord,yCoord + 2,zCoord);
-        	if (te instanceof TileTower && te.getBlockMetadata() == 1)
-        		list.add((IManualJunction) te);
+
+        if (this.getBlockMetadata() == 2) {
+            te = worldObj.getTileEntity(pos.add(0, +2, 0));
+            if (te instanceof TileTower && te.getBlockMetadata() == 1)
+                list.add((IManualJunction) te);
         }
     }
 
     @Override
     public double getResistance(IBaseComponent neighbor) {
-        if (neighbor == worldObj.getTileEntity(xCoord,yCoord - 2,zCoord))
+        if (neighbor == worldObj.getTileEntity(pos.add(0, -2, 0)))
             return 0.1F;
 
         if (neighbor instanceof TileTower) {
-            return (float) (0.2 * Math.sqrt(getDistanceFrom(((TileEntity) neighbor).xCoord, ((TileEntity) neighbor).yCoord, ((TileTower) neighbor).zCoord)));
+            return (float) (0.2 * Math.sqrt(getDistanceSq(((TileEntity) neighbor).getPos().getX(), ((TileEntity) neighbor).getPos().getY(), ((TileTower) neighbor).getPos().getZ())));
         }
 
         return Float.MAX_VALUE;
     }
 
-	@Override
-	public float[] offsetArray() {
-		switch (getBlockMetadata()){
-		case 0:return new float[]{-3, 3, 0, 0, 3, 0, 3, 3, 0};
-		case 1:return new float[]{-1, -0.55F, 0, 1, 0.95F, 0, 1.5F, -0.55F, 0};
-		case 2:return new float[]{-1.5F, 0, 0.2F, 0.5F, 0, 0.2F, 1.5F, 0, 0.2F};
-		default: return null;
-		}
-	}
+    @Override
+    public float[] offsetArray() {
+        switch (getBlockMetadata()) {
+            case 0:
+                return new float[]{-3, 3, 0, 0, 3, 0, 3, 3, 0};
+            case 1:
+                return new float[]{-1, -0.55F, 0, 1, 0.95F, 0, 1.5F, -0.55F, 0};
+            case 2:
+                return new float[]{-1.5F, 0, 0.2F, 0.5F, 0, 0.2F, 1.5F, 0, 0.2F};
+            default:
+                return null;
+        }
+    }
 
-	@Override
-	public int[] getNeighborInfo() {
-		return neighborsInfo;
-	}
-	
-	@Override
-	public int getFacing(){
-		return facing;
-	}
-	
-	@Override
-	public float getWireTension() {
-		switch (getBlockMetadata()){
-		case 1:
-			return 0.03f;
-		case 2:
-			return 0.03f;
-		}
-		return 0.06F;
-	}
+    @Override
+    public int[] getNeighborInfo() {
+        return neighborsInfo;
+    }
+
+    @Override
+    public int getFacing() {
+        return facing;
+    }
+
+    @Override
+    public float getWireTension() {
+        switch (getBlockMetadata()) {
+            case 1:
+                return 0.03f;
+            case 2:
+                return 0.03f;
+        }
+        return 0.06F;
+    }
 }

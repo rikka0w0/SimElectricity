@@ -19,15 +19,13 @@
 
 package simElectricity.Common.Blocks;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.IIcon;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import simElectricity.API.Common.Blocks.BlockContainerSE;
 import simElectricity.API.Util;
@@ -35,56 +33,22 @@ import simElectricity.Common.Blocks.TileEntity.TileAdjustableTransformer;
 import simElectricity.SimElectricity;
 
 public class BlockAdjustableTransformer extends BlockContainerSE {
-    private IIcon[] iconBuffer = new IIcon[3];
-
-    @Override
-    public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int i1, float f1, float f2, float f3) {
-        if (player.isSneaking())
-            return false;
-
-        player.openGui(SimElectricity.instance, 0, world, x, y, z);
-        return true;
-    }
 
     public BlockAdjustableTransformer() {
         super();
-        setBlockName("AdjustableTransformer");
+        setUnlocalizedName("AdjustableTransformer");
     }
 
-    @Override
-    @SideOnly(Side.CLIENT)
-    public void registerBlockIcons(IIconRegister r) {
-        iconBuffer[0] = r.registerIcon("simElectricity:Transformer_Side");
-        iconBuffer[1] = r.registerIcon("simElectricity:Transformer_Secondary");
-        iconBuffer[2] = r.registerIcon("simElectricity:Transformer_Primary");
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumFacing side, float hitX, float hitY, float hitZ) {
+        if (player.isSneaking())
+            return false;
+
+        player.openGui(SimElectricity.instance, 0, world, pos.getX(), pos.getY(), pos.getZ());
+        return true;
     }
 
-    @SideOnly(Side.CLIENT)
-    @Override
-    public IIcon getIcon(IBlockAccess world, int x, int y, int z, int side) {
-        TileAdjustableTransformer te = (TileAdjustableTransformer) world.getTileEntity(x, y, z);
-
-
-        if (side == te.primarySide.ordinal())
-            return iconBuffer[2];
-        else if (side == te.secondarySide.ordinal())
-            return iconBuffer[1];
-        else
-            return iconBuffer[0];
-    }
-
-    @SideOnly(Side.CLIENT)
-    @Override
-    public IIcon getIcon(int side, int meta) {
-        if (side == 4)
-            return iconBuffer[1];
-        else
-            return iconBuffer[0];
-    }
-
-    @Override
-    public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase player, ItemStack itemStack) {
-        TileEntity te = world.getTileEntity(x, y, z);
+    public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase player, ItemStack stack) {
+        TileEntity te = world.getTileEntity(pos);
         if (!(te instanceof TileAdjustableTransformer))
             return;
 

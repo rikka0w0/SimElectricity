@@ -52,10 +52,10 @@ public class SEBlocks {
         adjustableResistor = new BlockAdjustableResistor();
         adjustableTransformer = new BlockAdjustableTransformer();
         batteryBox = new BlockBatteryBox();
-        electricFurnace = new BlockElectricFurnace();
+        electricFurnace = new BlockElectricFurnace(false);
         incandescentLamp = new BlockIncandescentLamp();
         quantumGenerator = new BlockQuantumGenerator();
-        simpleGenerator = new BlockSimpleGenerator();
+        simpleGenerator = new BlockSimpleGenerator(false);
         solarPanel = new BlockSolarPanel();
         blockSwitch = new BlockSwitch();
         voltageMeter = new BlockVoltageMeter();
@@ -84,9 +84,9 @@ public class SEBlocks {
         GameRegistry.registerTileEntity(TileSwitch.class, "TileSwitch");
         GameRegistry.registerTileEntity(TileTower.class, "TileTower");
         GameRegistry.registerTileEntity(TileSolarInverter.class, "TileSolarInverter");
-        GameRegistry.registerTileEntity(TileIC2Consumer.class, "TileIC2Consumer");
+//        GameRegistry.registerTileEntity(TileIC2Consumer.class, "TileIC2Consumer");
         GameRegistry.registerTileEntity(TileCableClamp.class, "TileCableClamp");
         GameRegistry.registerTileEntity(TileIceMachine.class, "TileIceMachine");
-        GameRegistry.registerTileEntity(TileIC2Generator.class, "TileIC2Generator");
+//        GameRegistry.registerTileEntity(TileIC2Generator.class, "TileIC2Generator");
     }
 }

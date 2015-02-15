@@ -19,7 +19,7 @@
 
 package simElectricity.Common.Blocks.TileEntity;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import simElectricity.API.Common.TileStandardSEMachine;
 import simElectricity.API.Energy;
 import simElectricity.API.IEnergyNetUpdateHandler;
@@ -30,9 +30,9 @@ import java.util.List;
 
 public class TileIncandescentLamp extends TileStandardSEMachine implements IEnergyNetUpdateHandler, INetworkEventHandler {
     public int lightLevel = 0;
-    
+
     @Override
-    public boolean canSetFunctionalSide(ForgeDirection newFunctionalSide) {
+    public boolean canSetFunctionalSide(EnumFacing newFunctionalSide) {
         //FunctionalSide Facing
         return true;
     }
@@ -48,16 +48,16 @@ public class TileIncandescentLamp extends TileStandardSEMachine implements IEner
     }
 
     @Override
-	public void onOverVoltage(){
-    	worldObj.createExplosion(null, xCoord, yCoord, zCoord, (float) (4F + Energy.getVoltage(this) / 265), true);
+    public void onOverVoltage() {
+        worldObj.createExplosion(null, pos.getX(), pos.getY(), pos.getZ(), (float) (4F + Energy.getVoltage(this) / 265), true);
     }
-    
+
     @Override
     public void onEnergyNetUpdate() {
         lightLevel = (int) (Energy.getPower(this) / 0.3F);
         if (lightLevel > 15)
             lightLevel = 15;
-        
+
         Network.updateNetworkFields(this);
 
         checkVoltage(Energy.getVoltage(this), 265);
@@ -66,7 +66,7 @@ public class TileIncandescentLamp extends TileStandardSEMachine implements IEner
     @Override
     public void addNetworkFields(List fields) {
         fields.add("lightLevel");
-        worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+        worldObj.markBlockForUpdate(pos);
     }
 
     @Override

@@ -19,7 +19,7 @@
 
 package simElectricity.Common.Blocks.TileEntity;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import simElectricity.API.Common.TileSidedGenerator;
 import simElectricity.API.Energy;
 import simElectricity.API.INetworkEventHandler;
@@ -49,16 +49,16 @@ public class TileQuantumGenerator extends TileSidedGenerator implements INetwork
     }
 
     @Override
-    public boolean canSetFunctionalSide(ForgeDirection newFunctionalSide) {
+    public boolean canSetFunctionalSide(EnumFacing newFunctionalSide) {
         return true;
     }
-    
+
     @Override
     public void addNetworkFields(List fields) {
     }
 
     @Override
-    public boolean canSetFacing(ForgeDirection newFacing) {
-        return newFacing != ForgeDirection.UP && newFacing != ForgeDirection.DOWN;
+    public boolean canSetFacing(EnumFacing newFacing) {
+        return newFacing != EnumFacing.UP && newFacing != EnumFacing.DOWN;
     }
 }

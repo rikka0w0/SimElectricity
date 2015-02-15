@@ -45,7 +45,7 @@ public class BlockTower extends BlockContainerSE {
 
     public BlockTower() {
         super();
-        setBlockName("Tower");
+        setUnlocalizedName("Tower");
     }
 
     @Override
@@ -58,9 +58,9 @@ public class BlockTower extends BlockContainerSE {
     }
 
     @Override
-    public Block setBlockName(String name) {
+    public Block setUnlocalizedName(String name) {
         GameRegistry.registerBlock(this, ItemBlockTower.class, name);
-        return super.setBlockName(name);
+        return super.setUnlocalizedName(name);
     }
 
     @Override

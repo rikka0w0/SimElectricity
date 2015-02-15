@@ -19,142 +19,86 @@
 
 package simElectricity.Common.Blocks;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.IIcon;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import simElectricity.API.Common.Blocks.BlockStandardSEMachine;
-import simElectricity.API.Util;
 import simElectricity.Common.Blocks.TileEntity.TileElectricFurnace;
 import simElectricity.SimElectricity;
 
 import java.util.Random;
 
 public class BlockElectricFurnace extends BlockStandardSEMachine {
-    private IIcon[] iconBuffer = new IIcon[7];
 
-    @Override
-    public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int i1, float f1, float f2, float f3) {
-        TileEntity te = world.getTileEntity(x, y, z);
+    private final boolean isBurning;
+
+    public BlockElectricFurnace(boolean isBurning) {
+        super();
+        setUnlocalizedName("ElectricFurnace");
+        this.isBurning = isBurning;
+        if (isBurning)
+            this.lightValue = 13;
+    }
+
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumFacing side, float hitX, float hitY, float hitZ) {
+        TileEntity te = world.getTileEntity(pos);
 
         if (player.isSneaking())
             return false;
 
         if (!(te instanceof TileElectricFurnace))
             return false;
-
-        player.openGui(SimElectricity.instance, 0, world, x, y, z);
+        player.openGui(SimElectricity.instance, 0, world, pos.getX(), pos.getY(), pos.getZ());
         return true;
     }
 
-    public BlockElectricFurnace() {
-        super();
-        setBlockName("ElectricFurnace");
-    }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public void registerBlockIcons(IIconRegister r) {
-        iconBuffer[0] = r.registerIcon("simElectricity:ElectricFurnace_Bottom");
-        iconBuffer[1] = r.registerIcon("simElectricity:ElectricFurnace_Top");
-        iconBuffer[2] = r.registerIcon("simElectricity:ElectricFurnace_Front");
-        iconBuffer[3] = r.registerIcon("simElectricity:ElectricFurnace_Side");
-        iconBuffer[4] = r.registerIcon("simElectricity:ElectricFurnace_Side");
-        iconBuffer[5] = r.registerIcon("simElectricity:ElectricFurnace_Side");
-        iconBuffer[6] = r.registerIcon("simElectricity:ElectricFurnace_Front_W");
-    }
-
 
     @SideOnly(Side.CLIENT)
     @Override
-    public IIcon getIcon(IBlockAccess world, int x, int y, int z, int side) {
-        TileEntity te = world.getTileEntity(x, y, z);
+    public void randomDisplayTick(World worldIn, BlockPos pos, IBlockState state, Random rand) {
+        if (this.isBurning) {
+            EnumFacing enumfacing = (EnumFacing) state.getValue(FACING);
+            double d0 = (double) pos.getX() + 0.5D;
+            double d1 = (double) pos.getY() + rand.nextDouble() * 6.0D / 16.0D;
+            double d2 = (double) pos.getZ() + 0.5D;
+            double d3 = 0.52D;
+            double d4 = rand.nextDouble() * 0.6D - 0.3D;
 
-        if (!(te instanceof TileElectricFurnace))
-            return iconBuffer[0];
-
-        int iconIndex = Util.getTextureOnSide(side, ((TileElectricFurnace) te).getFacing());
-        if (((TileElectricFurnace) te).isWorking && iconIndex == 2)
-            iconIndex = 6;
-
-        return iconBuffer[iconIndex];
-    }
-
-    @SideOnly(Side.CLIENT)
-    @Override
-    public IIcon getIcon(int side, int meta) {
-        return iconBuffer[Util.getTextureOnSide(side, ForgeDirection.WEST)];
-    }
-
-    @SideOnly(Side.CLIENT)
-    @Override
-    public void randomDisplayTick(World world, int x, int y, int z, Random random) {
-        TileEntity te = world.getTileEntity(x, y, z);
-        if (!(te instanceof TileElectricFurnace))
-            return;
-
-        if (((TileElectricFurnace) te).isWorking) {
-            double d0 = (x);
-            double d1 = (y);
-            double d2 = (z);
-            double d3 = 0.2199999988079071D;
-            double d4 = 0.27000001072883606D;
-            world.spawnParticle("smoke", d0 + d4 + 0.25F, d1 + d3 + 1F, d2 + 0.5F, 0.0D, 0.0D, 0.0D);
-            world.spawnParticle("smoke", d0 + d4 + 0.15F, d1 + d3 + 1F, d2 + 0.5F, 0.0D, 0.0D, 0.0D);
-            world.spawnParticle("smoke", d0 + d4 + 0.4F, d1 + d3 + 1F, d2 + 0.6F, 0.0D, 0.0D, 0.0D);
-            switch (((TileElectricFurnace) te).getFacing()) {
+            switch (enumfacing) {
                 case WEST:
-                    d0 -= 0.4F;
-                    d1 += 0.1F;
-                    d2 += 0.5F;
-                    break;
-                case SOUTH:
-                    d0 += 0.25F;
-                    d1 += 0.1F;
-                    d2 += 1.1F;
-                    break;
-                case NORTH:
-                    d0 += 0.25F;
-                    d1 += 0.1F;
-                    d2 -= 0.1F;
+                    worldIn.spawnParticle(EnumParticleTypes.SMOKE_NORMAL, d0 - d3, d1, d2 + d4, 0.0D, 0.0D, 0.0D, new int[0]);
+                    worldIn.spawnParticle(EnumParticleTypes.FLAME, d0 - d3, d1, d2 + d4, 0.0D, 0.0D, 0.0D, new int[0]);
                     break;
                 case EAST:
-                    d0 += 0.8F;
-                    d1 += 0.1F;
-                    d2 += 0.5F;
+                    worldIn.spawnParticle(EnumParticleTypes.SMOKE_NORMAL, d0 + d3, d1, d2 + d4, 0.0D, 0.0D, 0.0D, new int[0]);
+                    worldIn.spawnParticle(EnumParticleTypes.FLAME, d0 + d3, d1, d2 + d4, 0.0D, 0.0D, 0.0D, new int[0]);
                     break;
-                default:
+                case NORTH:
+                    worldIn.spawnParticle(EnumParticleTypes.SMOKE_NORMAL, d0 + d4, d1, d2 - d3, 0.0D, 0.0D, 0.0D, new int[0]);
+                    worldIn.spawnParticle(EnumParticleTypes.FLAME, d0 + d4, d1, d2 - d3, 0.0D, 0.0D, 0.0D, new int[0]);
                     break;
+                case SOUTH:
+                    worldIn.spawnParticle(EnumParticleTypes.SMOKE_NORMAL, d0 + d4, d1, d2 + d3, 0.0D, 0.0D, 0.0D, new int[0]);
+                    worldIn.spawnParticle(EnumParticleTypes.FLAME, d0 + d4, d1, d2 + d3, 0.0D, 0.0D, 0.0D, new int[0]);
             }
-
-            world.spawnParticle("smoke", d0 + d4, d1 + d3, d2, 0.0D, 0.0D, 0.0D);
-            world.spawnParticle("flame", d0 + d4, d1 + d3, d2, 0.0D, 0.0D, 0.0D);
         }
     }
 
-    @Override
-    public void updateTick(World world, int x, int y, int z, Random random) {
-        super.updateTick(world, x, y, z, random);
-        world.markBlockForUpdate(x, y, z);
+
+    public void updateTick(World worldIn, BlockPos pos, IBlockState state, Random rand) {
+        super.updateTick(worldIn, pos, state, rand);
+        worldIn.markBlockForUpdate(pos);
     }
 
     @Override
     public TileEntity createNewTileEntity(World world, int meta) {
         return new TileElectricFurnace();
-    }
-
-    @Override
-    public int getLightValue(IBlockAccess world, int x, int y, int z) {
-        TileEntity te = world.getTileEntity(x, y, z);
-        if (!(te instanceof TileElectricFurnace))
-            return 0;
-
-        return ((TileElectricFurnace) te).isWorking ? 13 : 0;
     }
 
     @Override

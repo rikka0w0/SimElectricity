@@ -19,17 +19,14 @@
 
 package simElectricity.Common.Blocks;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.IIcon;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.Common.Blocks.AutoFacing;
 import simElectricity.API.Common.Blocks.BlockContainerSE;
 import simElectricity.API.Energy;
@@ -39,17 +36,20 @@ import simElectricity.Common.Blocks.TileEntity.TileSwitch;
 import simElectricity.SimElectricity;
 
 public class BlockSwitch extends BlockContainerSE {
-    private IIcon[] iconBuffer = new IIcon[5];
 
-    @Override
-    public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float f1, float f2, float f3) {
+    public BlockSwitch() {
+        super();
+        setUnlocalizedName("Switch");
+    }
+
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumFacing side, float hitX, float hitY, float hitZ) {
         if (player.isSneaking())
             return false;
 
-        TileSwitch te = (TileSwitch) world.getTileEntity(x, y, z);
+        TileSwitch te = (TileSwitch) world.getTileEntity(pos);
 
-        if (te.getFacing() != ForgeDirection.getOrientation(side)) {
-            player.openGui(SimElectricity.instance, 0, world, x, y, z);
+        if (te.getFacing() != side) {
+            player.openGui(SimElectricity.instance, 0, world, pos.getX(), pos.getY(), pos.getZ());
         } else {
             if (!world.isRemote) {
                 te.isOn = !te.isOn;
@@ -60,60 +60,17 @@ public class BlockSwitch extends BlockContainerSE {
         return true;
     }
 
-    public BlockSwitch() {
-        super();
-        setBlockName("Switch");
-    }
-
     @Override
-    @SideOnly(Side.CLIENT)
-    public void registerBlockIcons(IIconRegister r) {
-        iconBuffer[0] = r.registerIcon("simElectricity:Transformer_Side");
-        iconBuffer[1] = r.registerIcon("simElectricity:Switch_Out");
-        iconBuffer[2] = r.registerIcon("simElectricity:Switch_In");
-        iconBuffer[3] = r.registerIcon("simElectricity:Switch_On");
-        iconBuffer[4] = r.registerIcon("simElectricity:Switch_Off");
-    }
-
-    @SideOnly(Side.CLIENT)
-    @Override
-    public IIcon getIcon(IBlockAccess world, int x, int y, int z, int side) {
-        TileSwitch te = (TileSwitch) world.getTileEntity(x, y, z);
-
-
-        if (side == te.inputSide.ordinal())
-            return iconBuffer[2];
-        else if (side == te.outputSide.ordinal())
-            return iconBuffer[1];
-        else if (side == te.getFacing().ordinal()) {
-            if (te.isOn)
-                return iconBuffer[3];
-            else
-                return iconBuffer[4];
-        } else
-            return iconBuffer[0];
-    }
-
-    @SideOnly(Side.CLIENT)
-    @Override
-    public IIcon getIcon(int side, int meta) {
-        if (side == 4)
-            return iconBuffer[3];
-        else
-            return iconBuffer[0];
-    }
-
-    @Override
-    public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase player, ItemStack itemStack) {
-        TileSwitch te = (TileSwitch) world.getTileEntity(x, y, z);
+    public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase player, ItemStack itemStack) {
+        TileSwitch te = (TileSwitch) world.getTileEntity(pos);
 
         te.setFacing(Util.getPlayerSight(player, false).getOpposite());
 
-        te.inputSide = AutoFacing.autoConnect(te, ForgeDirection.UP, te.getFacing());
-        te.outputSide = AutoFacing.autoConnect(te, te.inputSide.getOpposite(), new ForgeDirection[] { te.getFacing(), te.inputSide });
+        te.inputSide = AutoFacing.autoConnect(te, EnumFacing.UP, te.getFacing());
+        te.outputSide = AutoFacing.autoConnect(te, te.inputSide.getOpposite(), new EnumFacing[]{te.getFacing(), te.inputSide});
 
         if (te.outputSide == te.getFacing())
-            te.outputSide = te.outputSide.getRotation(ForgeDirection.UP);
+            te.outputSide = te.outputSide.rotateY();
     }
 
     @Override

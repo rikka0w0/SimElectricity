@@ -60,10 +60,10 @@ public class CommonProxy implements IGuiHandler {
             return new ContainerSwitch(player.inventory, te);
         if (te instanceof TileSolarInverter)
             return new ContainerSolarInverter(player.inventory, te);
-        if (te instanceof TileIC2Consumer)
-            return new ContainerIC2Consumer(player.inventory, te);
-        if (te instanceof TileIC2Generator)
-            return new ContainerIC2Generator(player.inventory, te);
+//        if (te instanceof TileIC2Consumer)
+//            return new ContainerIC2Consumer(player.inventory, te);
+//        if (te instanceof TileIC2Generator)
+//            return new ContainerIC2Generator(player.inventory, te);
         if (te instanceof TileIceMachine)
             return new ContainerIceMachine(player.inventory, te);
 

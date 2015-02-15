@@ -28,18 +28,18 @@ import simElectricity.API.EnergyTile.IEnergyTile;
  */
 public abstract class TileStandardSEMachine extends TileSidedFacingMachine implements IEnergyTile {
     public EnumFacing functionalSide = EnumFacing.NORTH;
-    
+
     @Override
-	public boolean attachToEnergyNet(){
-    	return true;
+    public boolean attachToEnergyNet() {
+        return true;
     }
-    
+
     // IEnergyTile
-	@Override
-	public double getOutputVoltage() {
-		return 0;
-	}
-    
+    @Override
+    public double getOutputVoltage() {
+        return 0;
+    }
+
     @Override
     public EnumFacing getFunctionalSide() {
         return functionalSide;
@@ -54,7 +54,7 @@ public abstract class TileStandardSEMachine extends TileSidedFacingMachine imple
     public boolean canSetFunctionalSide(EnumFacing newFunctionalSide) {
         return newFunctionalSide != facing;
     }
-    
+
     @Override
     public boolean canSetFacing(EnumFacing newFacing) {
         return newFacing != functionalSide;

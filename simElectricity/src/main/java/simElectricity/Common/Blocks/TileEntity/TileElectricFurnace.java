@@ -23,7 +23,7 @@ package simElectricity.Common.Blocks.TileEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import simElectricity.API.Common.TileStandardSEMachine;
 import simElectricity.API.Energy;
 import simElectricity.API.IEnergyNetUpdateHandler;
@@ -56,8 +56,8 @@ public class TileElectricFurnace extends TileStandardSEMachine implements IEnerg
     }
 
     @Override
-    public void updateEntity() {
-        super.updateEntity();
+    public void update() {
+        super.update();
 
         if (worldObj.isRemote)
             return;
@@ -114,7 +114,7 @@ public class TileElectricFurnace extends TileStandardSEMachine implements IEnerg
     public ItemStack getResult(ItemStack i) {
         if (i == null)
             return null;
-        return FurnaceRecipes.smelting().getSmeltingResult(i.copy());
+        return FurnaceRecipes.instance().getSmeltingResult(i.copy());
     }
 
     @Override
@@ -137,7 +137,7 @@ public class TileElectricFurnace extends TileStandardSEMachine implements IEnerg
     @Override
     public void addNetworkFields(List fields) {
         fields.add("isWorking");
-        worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+        worldObj.markBlockForUpdate(pos);
     }
 
     @Override
@@ -158,7 +158,7 @@ public class TileElectricFurnace extends TileStandardSEMachine implements IEnerg
     @Override
     public void onEnergyNetUpdate() {
         if (Energy.getVoltage(this) > 265)
-            worldObj.createExplosion(null, xCoord, yCoord, zCoord, (float) (4F + Energy.getVoltage(this) / 265), true);
+            worldObj.createExplosion(null, pos.getX(), pos.getY(), pos.getZ(), (float) (4F + Energy.getVoltage(this) / 265), true);
 
         if (Energy.getVoltage(this) == 0) {
             isWorking = false;
@@ -167,8 +167,8 @@ public class TileElectricFurnace extends TileStandardSEMachine implements IEnerg
     }
 
     @Override
-    public boolean canSetFacing(ForgeDirection newFacing) {
-        return newFacing != ForgeDirection.UP && newFacing != ForgeDirection.DOWN;
+    public boolean canSetFacing(EnumFacing newFacing) {
+        return newFacing != EnumFacing.UP && newFacing != EnumFacing.DOWN;
     }
 
     //Inventory
@@ -178,17 +178,17 @@ public class TileElectricFurnace extends TileStandardSEMachine implements IEnerg
     }
 
     @Override
-    public int[] getAccessibleSlotsFromSide(int side) {
-        return new int[] { 0, 1 };
+    public int[] getSlotsForFace(EnumFacing side) {
+        return new int[]{0, 1};
     }
 
     @Override
-    public boolean canInsertItem(int slot, ItemStack itemStack, int side) {
-        return slot == 0 && FurnaceRecipes.smelting().getSmeltingResult(itemStack) != null;
+    public boolean canInsertItem(int slot, ItemStack itemStack, EnumFacing direction) {
+        return slot == 0 && FurnaceRecipes.instance().getSmeltingResult(itemStack) != null;
     }
 
     @Override
-    public boolean canExtractItem(int slot, ItemStack itemStack, int side) {
-        return slot == 1;
+    public boolean canExtractItem(int index, ItemStack stack, EnumFacing direction) {
+        return index == 1;
     }
 }

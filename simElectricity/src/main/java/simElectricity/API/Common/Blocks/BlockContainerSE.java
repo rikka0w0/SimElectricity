@@ -51,7 +51,6 @@ public abstract class BlockContainerSE extends BlockContainer {
     }
 
 
-
     public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
         TileEntity tileentity = worldIn.getTileEntity(pos);
 
@@ -63,19 +62,19 @@ public abstract class BlockContainerSE extends BlockContainer {
         super.breakBlock(worldIn, pos, state);
     }
 
-//    /**
-//     * If this block has its own ItemBlock, just override this method and shouldRegister(set to false).
-//     *
-//     * @param name name of this block.
-//     * @see simElectricity.Common.Blocks.BlockWire
-//     * @see simElectricity.Common.Items.ItemBlocks.ItemBlockWire
-//     */
-//    @Override
-//    public Block setBlockName(String name) {
-//        if (shouldRegister())
-//            GameRegistry.registerBlock(this, ItemBlockSE.class, name);
-//        return super.setBlockName(name);
-//    }
+    /**
+     * If this block has its own ItemBlock, just override this method and shouldRegister(set to false).
+     *
+     * @param name name of this block.
+     * @see simElectricity.Common.Blocks.BlockWire
+     * @see simElectricity.Common.Items.ItemBlocks.ItemBlockWire
+     */
+    @Override
+    public Block setUnlocalizedName(String name) {
+        if (shouldRegister())
+            GameRegistry.registerBlock(this, ItemBlockSE.class, name);
+        return super.setUnlocalizedName(name);
+    }
 
     public boolean registerInCreativeTab() {
         return true;

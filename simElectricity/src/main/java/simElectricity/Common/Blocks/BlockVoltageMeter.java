@@ -19,66 +19,29 @@
 
 package simElectricity.Common.Blocks;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.IIcon;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import simElectricity.API.Common.Blocks.BlockStandardSEMachine;
 import simElectricity.Common.Blocks.TileEntity.TileVoltageMeter;
 import simElectricity.SimElectricity;
 
 public class BlockVoltageMeter extends BlockStandardSEMachine {
-    private IIcon[] iconBuffer = new IIcon[3];
-
-    @Override
-    public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int i1, float f1, float f2, float f3) {
-        if (player.isSneaking())
-            return false;
-
-        player.openGui(SimElectricity.instance, 0, world, x, y, z);
-        return true;
-    }
 
     public BlockVoltageMeter() {
         super();
-        setBlockName("VoltageMeter");
+        setUnlocalizedName("VoltageMeter");
     }
 
-    @Override
-    @SideOnly(Side.CLIENT)
-    public void registerBlockIcons(IIconRegister r) {
-        iconBuffer[0] = r.registerIcon("simElectricity:VoltageMeter_Side");
-        iconBuffer[1] = r.registerIcon("simElectricity:VoltageMeter_Front");
-        iconBuffer[2] = r.registerIcon("simElectricity:VoltageMeter_Back");
-    }
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumFacing side, float hitX, float hitY, float hitZ) {
+        if (player.isSneaking())
+            return false;
 
-
-    @SideOnly(Side.CLIENT)
-    @Override
-    public IIcon getIcon(IBlockAccess world, int x, int y, int z, int side) {
-        TileEntity te = world.getTileEntity(x, y, z);
-
-        if (!(te instanceof TileVoltageMeter))
-            return iconBuffer[0];
-
-        if (((TileVoltageMeter) te).getFacing().ordinal() == side)
-            return iconBuffer[1];
-        else if (((TileVoltageMeter) te).getFunctionalSide().ordinal() == side)
-            return iconBuffer[2];
-
-        return iconBuffer[0];
-    }
-
-    @SideOnly(Side.CLIENT)
-    @Override
-    public IIcon getIcon(int side, int meta) {
-        if (side == 4)
-            return iconBuffer[1];
-        return iconBuffer[0];
+        player.openGui(SimElectricity.instance, 0, world, pos.getX(), pos.getY(), pos.getZ());
+        return true;
     }
 
     @Override

@@ -35,7 +35,7 @@ import simElectricity.API.Util;
  *
  * @author <Meow J>
  */
-public abstract class BlockStandardSEMachine extends BlockContainerSE {
+public abstract class BlockStandardSEMachine extends BlockSidedFacingMachine {
 
     public BlockStandardSEMachine(Material material) {
         super(material);

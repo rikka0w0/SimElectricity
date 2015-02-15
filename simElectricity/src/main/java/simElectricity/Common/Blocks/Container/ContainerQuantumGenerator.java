@@ -51,8 +51,8 @@ public class ContainerQuantumGenerator extends ContainerBase {
 
     @Override
     public void init() {
-        if (!tileEntity.getWorldObj().isRemote) {
-        	Network.updateTileEntityFields(tileEntity, "outputVoltage", "outputResistance");
+        if (!tileEntity.getWorld().isRemote) {
+            Network.updateTileEntityFields(tileEntity, "outputVoltage", "outputResistance");
         }
     }
 }
