@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "facing=north": { "model": "simelectricity:quantum_generator" },
+    "facing=south": { "model": "simelectricity:quantum_generator", "y": 180 },
+    "facing=west":  { "model": "simelectricity:quantum_generator", "y": 270 },
+    "facing=east":  { "model": "simelectricity:quantum_generator", "y": 90 },
+    "facing=down":  { "model": "simelectricity:quantum_generator", "x": 90 },
+    "facing=up":  { "model": "simelectricity:quantum_generator", "x": 270 }
+  }
+}

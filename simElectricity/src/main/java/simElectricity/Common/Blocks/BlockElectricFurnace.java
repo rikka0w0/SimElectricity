@@ -19,31 +19,70 @@
 
 package simElectricity.Common.Blocks;
 
+import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.InventoryHelper;
+import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import simElectricity.API.Common.Blocks.BlockStandardSEMachine;
+import simElectricity.API.Common.Blocks.BlockStandardSEHoriMachine;
+import simElectricity.API.Util;
 import simElectricity.Common.Blocks.TileEntity.TileElectricFurnace;
+import simElectricity.Common.Core.SEBlocks;
+import simElectricity.Common.SEUtils;
 import simElectricity.SimElectricity;
 
 import java.util.Random;
 
-public class BlockElectricFurnace extends BlockStandardSEMachine {
+public class BlockElectricFurnace extends BlockStandardSEHoriMachine {
 
-    private final boolean isBurning;
+    private static boolean keepInventory;
+    public final boolean isBurning;
+
 
     public BlockElectricFurnace(boolean isBurning) {
         super();
-        setUnlocalizedName("electric_furnace");
         this.isBurning = isBurning;
         if (isBurning)
-            this.lightValue = 13;
+            setUnlocalizedName("electric_furnace_lit");
+        else {
+            setCreativeTab(Util.SETab);
+            setUnlocalizedName("electric_furnace");
+        }
+    }
+
+    public static void setState(boolean active, World world, BlockPos pos, TileElectricFurnace tileEntity) {
+        IBlockState state = world.getBlockState(pos);
+        SEUtils.logInfo("test");
+        keepInventory = true;
+
+        if (active) {
+            world.setBlockState(pos, SEBlocks.electricFurnace_lit.getDefaultState().withProperty(FACING, state.getValue(FACING)), 3);
+            world.setBlockState(pos, SEBlocks.electricFurnace_lit.getDefaultState().withProperty(FACING, state.getValue(FACING)), 3);
+        } else {
+            world.setBlockState(pos, SEBlocks.electricFurnace.getDefaultState().withProperty(FACING, state.getValue(FACING)), 3);
+            world.setBlockState(pos, SEBlocks.electricFurnace.getDefaultState().withProperty(FACING, state.getValue(FACING)), 3);
+        }
+
+        keepInventory = false;
+
+        if (tileEntity != null) {
+            tileEntity.validate();
+            world.setTileEntity(pos, tileEntity);
+        }
+    }
+
+    @Override
+    public int getLightValue(IBlockAccess world, BlockPos pos) {
+        return isBurning ? 13 : 0;
     }
 
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumFacing side, float hitX, float hitY, float hitZ) {
@@ -57,7 +96,6 @@ public class BlockElectricFurnace extends BlockStandardSEMachine {
         player.openGui(SimElectricity.instance, 0, world, pos.getX(), pos.getY(), pos.getZ());
         return true;
     }
-
 
     @SideOnly(Side.CLIENT)
     @Override
@@ -90,10 +128,9 @@ public class BlockElectricFurnace extends BlockStandardSEMachine {
         }
     }
 
-
-    public void updateTick(World worldIn, BlockPos pos, IBlockState state, Random rand) {
-        super.updateTick(worldIn, pos, state, rand);
-        worldIn.markBlockForUpdate(pos);
+    @Override
+    public boolean registerInCreativeTab() {
+        return false;
     }
 
     @Override
@@ -102,7 +139,25 @@ public class BlockElectricFurnace extends BlockStandardSEMachine {
     }
 
     @Override
-    public boolean ignoreVerticalFacing() {
-        return true;
+    protected BlockState createBlockState() {
+        return new BlockState(this, new IProperty[]{FACING});
+    }
+
+    public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
+        if (!keepInventory) {
+            TileEntity tileentity = worldIn.getTileEntity(pos);
+
+            if (tileentity instanceof TileElectricFurnace) {
+                InventoryHelper.dropInventoryItems(worldIn, pos, (TileElectricFurnace) tileentity);
+                worldIn.updateComparatorOutputLevel(pos, this);
+            }
+        }
+
+        super.breakBlock(worldIn, pos, state);
+    }
+
+    @Override
+    public Item getItemDropped(IBlockState state, Random rand, int fortune) {
+        return Item.getItemFromBlock(SEBlocks.electricFurnace);
     }
 }

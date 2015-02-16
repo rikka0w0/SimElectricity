@@ -1,0 +1,9 @@
+{
+	"parent": "simelectricity:block/machine",
+	"textures": {
+        "top": "simelectricity:blocks/AdjustableResistor_Top",
+        "front": "simelectricity:blocks/AdjustableResistor_Front",
+        "side": "simelectricity:blocks/AdjustableResistor_Side",
+        "bottom": "simelectricity:blocks/AdjustableResistor_Bottom"
+	}
+}

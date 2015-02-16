@@ -1,0 +1,10 @@
+{
+	"variants": {
+      "facing=north": { "model": "simelectricity:battery_box" },
+      "facing=south": { "model": "simelectricity:battery_box", "y": 180 },
+      "facing=west":  { "model": "simelectricity:battery_box", "y": 270 },
+      "facing=east":  { "model": "simelectricity:battery_box", "y": 90 },
+      "facing=down":  { "model": "simelectricity:battery_box", "x": 90 },
+      "facing=up":  { "model": "simelectricity:battery_box", "x": 270 }
+	}
+}

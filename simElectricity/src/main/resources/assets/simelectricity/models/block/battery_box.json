@@ -1,0 +1,8 @@
+{
+  "parent": "block/orientable",
+  "textures": {
+    "top": "simelectricity:blocks/SolarPanel_Bottom",
+    "front": "simelectricity:blocks/SolarPanel_Front",
+    "side": "simelectricity:blocks/SolarPanel_Side"
+  }
+}

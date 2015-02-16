@@ -26,6 +26,7 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import simElectricity.API.Common.Blocks.BlockSidedFacingMachine;
+import simElectricity.API.Common.Blocks.BlockSidedHoriFacingMachine;
 import simElectricity.API.Common.Items.ItemSE;
 import simElectricity.API.ISidedFacing;
 import simElectricity.API.Network;
@@ -43,7 +44,7 @@ public class ItemGlove extends ItemSE {
 
     @Override
     public boolean onItemUse(ItemStack itemStack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ) {
-        if ((world.getTileEntity(pos) instanceof ISidedFacing) && ((world.getBlockState(pos).getBlock() instanceof BlockSidedFacingMachine) || (world.getBlockState(pos).getBlock() instanceof BlockWindMillTop)) && (!world.isRemote)) {
+        if ((world.getTileEntity(pos) instanceof ISidedFacing) && ((world.getBlockState(pos).getBlock() instanceof BlockSidedFacingMachine)||(world.getBlockState(pos).getBlock() instanceof BlockSidedHoriFacingMachine) || (world.getBlockState(pos).getBlock() instanceof BlockWindMillTop)) && (!world.isRemote)) {
             ISidedFacing te = (ISidedFacing) world.getTileEntity(pos);
 
             if (te.canSetFacing(side)) {

@@ -1,0 +1,7 @@
+{
+	"parent": "simelectricity:block/frontside",
+	"textures": {
+        "front": "simelectricity:blocks/QuantumGenerator_Front",
+        "side": "simelectricity:blocks/QuantumGenerator_Side"
+	}
+}

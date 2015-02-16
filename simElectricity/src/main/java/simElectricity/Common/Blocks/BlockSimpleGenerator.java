@@ -28,13 +28,14 @@ import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import simElectricity.API.Common.Blocks.BlockStandardSEHoriMachine;
 import simElectricity.API.Common.Blocks.BlockStandardSEMachine;
 import simElectricity.Common.Blocks.TileEntity.TileSimpleGenerator;
 import simElectricity.SimElectricity;
 
 import java.util.Random;
 
-public class BlockSimpleGenerator extends BlockStandardSEMachine {
+public class BlockSimpleGenerator extends BlockStandardSEHoriMachine {
     private final boolean isWorking;
 
     public BlockSimpleGenerator(boolean isWorking) {
@@ -95,8 +96,4 @@ public class BlockSimpleGenerator extends BlockStandardSEMachine {
         return new TileSimpleGenerator();
     }
 
-    @Override
-    public boolean ignoreVerticalFacing() {
-        return true;
-    }
 }

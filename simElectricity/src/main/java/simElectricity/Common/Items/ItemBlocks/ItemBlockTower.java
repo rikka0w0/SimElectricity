@@ -20,6 +20,6 @@ public class ItemBlockTower extends ItemBlockSE {
 
     @Override
     public String getUnlocalizedName(ItemStack itemstack) {
-        return getUnlocalizedName() + "." + BlockTower.subNames[itemstack.getItemDamage()];
+        return getUnlocalizedName() + "." + BlockTower.TowerType.values()[itemstack.getMetadata()];
     }
 }

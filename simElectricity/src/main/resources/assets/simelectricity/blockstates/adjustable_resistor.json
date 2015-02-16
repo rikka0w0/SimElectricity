@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": { "model": "simelectricity:adjustable_resistor" },
+    "facing=south": { "model": "simelectricity:adjustable_resistor", "y": 180 },
+    "facing=west":  { "model": "simelectricity:adjustable_resistor", "y": 270 },
+    "facing=east":  { "model": "simelectricity:adjustable_resistor", "y": 90 }
+  }
+}

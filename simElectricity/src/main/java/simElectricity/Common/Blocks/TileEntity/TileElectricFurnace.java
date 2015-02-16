@@ -29,6 +29,7 @@ import simElectricity.API.Energy;
 import simElectricity.API.IEnergyNetUpdateHandler;
 import simElectricity.API.INetworkEventHandler;
 import simElectricity.API.Network;
+import simElectricity.Common.Blocks.BlockElectricFurnace;
 
 import java.util.List;
 
@@ -36,8 +37,8 @@ public class TileElectricFurnace extends TileStandardSEMachine implements IEnerg
     public static float energyPerItem = 1000F;
     public static float onResistance = 100F;
 
-    public boolean isWorking = false;
     public int progress = 0;
+    public boolean isWorking = false;
     public float resistance = Float.MAX_VALUE;
     public float energyStored;
     public ItemStack result;
@@ -62,7 +63,7 @@ public class TileElectricFurnace extends TileStandardSEMachine implements IEnerg
         if (worldObj.isRemote)
             return;
         //TODO inv[1] == null | (inv[1] != null && inv[1].isItemEqual(result))
-        if (Energy.getPower(this) > 0 && result != null && (inv[1] == null || (inv[1] != null && inv[1].stackSize < 64 && inv[1].isItemEqual(result)))) {
+        if (Energy.getPower(this) > 0 && result != null && (inv[1] == null || (inv[1].stackSize < 64 && inv[1].isItemEqual(result)))) {
             energyStored += Energy.getPower(this) * 0.02;
             progress = ((int) (energyStored * 100 / energyPerItem));
 
@@ -71,8 +72,6 @@ public class TileElectricFurnace extends TileStandardSEMachine implements IEnerg
                 Energy.postTileChangeEvent(this);
             }
 
-            isWorking = true;
-            Network.updateNetworkFields(this);
 
             if (energyStored > energyPerItem) {
                 ItemStack newResult = result.copy();
@@ -93,11 +92,18 @@ public class TileElectricFurnace extends TileStandardSEMachine implements IEnerg
                 progress = 0;
                 energyStored = 0;
             }
+            isWorking = true;
+            Network.updateNetworkFields(this);
+            BlockElectricFurnace.setState(true, worldObj, pos, this);
         }
 
         if (result == null && isWorking) {
             stop();
         }
+    }
+
+    private boolean isWorking() {
+        return energyStored > 0 && inv[0] != null;
     }
 
     void stop() {
@@ -109,6 +115,7 @@ public class TileElectricFurnace extends TileStandardSEMachine implements IEnerg
         }
         isWorking = false;
         Network.updateNetworkFields(this);
+        BlockElectricFurnace.setState(false, worldObj, pos, this);
     }
 
     public ItemStack getResult(ItemStack i) {
@@ -163,6 +170,7 @@ public class TileElectricFurnace extends TileStandardSEMachine implements IEnerg
         if (Energy.getVoltage(this) == 0) {
             isWorking = false;
             Network.updateNetworkFields(this);
+            BlockElectricFurnace.setState(false, worldObj, pos, this);
         }
     }
 

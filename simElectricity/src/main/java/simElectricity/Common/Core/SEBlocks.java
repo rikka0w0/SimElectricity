@@ -40,6 +40,7 @@ public class SEBlocks {
     public static BlockAdjustableTransformer adjustableTransformer;
     public static BlockBatteryBox batteryBox;
     public static BlockElectricFurnace electricFurnace;
+    public static BlockElectricFurnace electricFurnace_lit;
     public static BlockIncandescentLamp incandescentLamp;
     public static BlockQuantumGenerator quantumGenerator;
     public static BlockSimpleGenerator simpleGenerator;
@@ -60,6 +61,7 @@ public class SEBlocks {
         adjustableTransformer = new BlockAdjustableTransformer();
         batteryBox = new BlockBatteryBox();
         electricFurnace = new BlockElectricFurnace(false);
+        electricFurnace_lit = new BlockElectricFurnace(true);
         incandescentLamp = new BlockIncandescentLamp();
         quantumGenerator = new BlockQuantumGenerator();
         simpleGenerator = new BlockSimpleGenerator(false);
@@ -100,6 +102,21 @@ public class SEBlocks {
     public static void registerRenders() {
         registerRender(iceMachine);
         registerRender(windMillTop);
+        registerRender(adjustableResistor);
+        registerRender(quantumGenerator);
+        registerRender(batteryBox);
+        registerRender(ic2Consumer);
+        registerRender(ic2Generator);
+        registerRender(incandescentLamp);
+        registerRender(quantumGenerator);
+        registerRender(simpleGenerator);
+        registerRender(solarInverter);
+        registerRender(solarPanel);
+        registerRender(blockSwitch);
+        registerRender(voltageMeter);
+        registerRender(electricFurnace);
+        registerRender(electricFurnace_lit);
+        ModelBakery.addVariantName(Item.getItemFromBlock(tower), Util.MODID + ":tower_0", Util.MODID + ":tower_1", Util.MODID + ":tower_2");
         ModelBakery.addVariantName(Item.getItemFromBlock(wire), Util.MODID + ":wire_thin", Util.MODID + ":wire_medium", Util.MODID + ":wire_thick");
         registerRender(wire, 0, "wire_thin");
         registerRender(wire, 1, "wire_medium");
@@ -114,10 +131,5 @@ public class SEBlocks {
     @SideOnly(Side.CLIENT)
     private static void registerRender(Block block, int meta, String identifier) {
         Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(Item.getItemFromBlock(block), meta, new ModelResourceLocation(Util.MODID + ":" + identifier, "inventory"));
-    }
-
-    @SideOnly(Side.CLIENT)
-    private static void registerRender(Item item, int meta, String identifier) {
-        Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(item, meta, new ModelResourceLocation(Util.MODID + ":" + identifier, "inventory"));
     }
 }

@@ -86,7 +86,7 @@ public abstract class TileEntitySE extends TileEntity implements IUpdatePlayerLi
     public void invalidate() {
         super.invalidate();
 
-        if (!worldObj.isRemote && isAddedToEnergyNet && attachToEnergyNet()) {
+        if (isAddedToEnergyNet && attachToEnergyNet()) {
             onUnload();
             Energy.postTileDetachEvent(this);
             this.isAddedToEnergyNet = false;

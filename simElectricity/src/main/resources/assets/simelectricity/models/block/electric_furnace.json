@@ -1,0 +1,9 @@
+{
+	"parent": "simelectricity:block/machine",
+	"textures": {
+        "top": "simelectricity:blocks/ElectricFurnace_Top",
+        "front": "simelectricity:blocks/ElectricFurnace_Front",
+        "side": "simelectricity:blocks/ElectricFurnace_Side",
+        "bottom": "simelectricity:blocks/ElectricFurnace_Bottom"
+	}
+}

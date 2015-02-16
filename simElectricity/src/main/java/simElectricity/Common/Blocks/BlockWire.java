@@ -105,8 +105,8 @@ public class BlockWire extends BlockContainerSE {
     }
 
     public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
-        if (world.isRemote)
-            return;
+//        if (world.isRemote)
+//            return;
 
         TileWire te = (TileWire) world.getTileEntity(pos);
         te.needsUpdate = true;

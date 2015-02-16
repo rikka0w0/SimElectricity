@@ -16,16 +16,16 @@ public class RenderCableClamp extends RenderHVTowerBase {
     public void bindTexture(int index, int side) {
         switch (index) {
             case 1:
-                bindTexture(new ResourceLocation("simelectricity", "textures/blocks/Wiring/CopperCable_Thin_Side.png"));
+                bindTexture(new ResourceLocation("simelectricity", "textures/blocks/Wiring/thin_side.png"));
                 return;
             case 2:
                 bindTexture(new ResourceLocation("simelectricity", "textures/render/HvInsulator.png"));
                 return;
             case 3:
                 if (side == 5)
-                    bindTexture(new ResourceLocation("simelectricity", "textures/blocks/Wiring/CopperCable_Thin_Head.png"));
+                    bindTexture(new ResourceLocation("simelectricity", "textures/blocks/Wiring/thin_head.png"));
                 else
-                    bindTexture(new ResourceLocation("simelectricity", "textures/blocks/Wiring/CopperCable_Thin_Side.png"));
+                    bindTexture(new ResourceLocation("simelectricity", "textures/blocks/Wiring/thin_side.png"));
                 return;
             default:
                 bindTexture(new ResourceLocation("simelectricity", "textures/blocks/AdjustableResistor_Top.png"));

@@ -20,6 +20,9 @@
 package simElectricity.API.Common.Blocks;
 
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.properties.PropertyDirection;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
@@ -36,32 +39,49 @@ import simElectricity.API.Util;
  * @author <Meow J>
  */
 public abstract class BlockStandardGenerator extends BlockContainerSE {
+    public static final PropertyDirection FACING = PropertyDirection.create("facing");
+
     public BlockStandardGenerator(Material material) {
         super(material);
     }
 
     public BlockStandardGenerator() {
         this(Material.iron);
+        this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
     }
 
-    /**
-     * If this generator only has horizontal facing, override this method and set to true.
-     */
-    public boolean ignoreVerticalFacing() {
-        return false;
+
+    @Override
+    public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
+        if (!world.isRemote) {
+            TileEntity te = world.getTileEntity(pos);
+
+            if (!(te instanceof TileSidedGenerator))
+                return;
+
+            EnumFacing functionalSide = AutoFacing.autoConnect(te, Util.getPlayerSight(placer, false).getOpposite());
+            ((TileSidedGenerator) te).setFunctionalSide(functionalSide);
+        }
     }
 
     @Override
-    public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase player, ItemStack itemStack) {
-        if (world.isRemote)
-            return;
+    public IBlockState onBlockPlaced(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
+        IBlockState state = super.onBlockPlaced(world, pos, facing, hitX, hitY, hitZ, meta, placer);
+        return state.withProperty(FACING, Util.getPlayerSight(placer, false).getOpposite());
+    }
 
-        TileEntity te = world.getTileEntity(pos);
+    @Override
+    public int getMetaFromState(IBlockState state) {
+        return ((EnumFacing) state.getValue(FACING)).getIndex();
+    }
 
-        if (!(te instanceof TileSidedGenerator))
-            return;
+    @Override
+    public IBlockState getStateFromMeta(int meta) {
+        return this.getDefaultState().withProperty(FACING, EnumFacing.getFront(meta));
+    }
 
-        EnumFacing functionalSide = AutoFacing.autoConnect(te, Util.getPlayerSight(player, ignoreVerticalFacing()).getOpposite());
-        ((TileSidedGenerator) te).setFunctionalSide(functionalSide);
+    @Override
+    protected BlockState createBlockState() {
+        return new BlockState(this, new IProperty[]{FACING});
     }
 }
