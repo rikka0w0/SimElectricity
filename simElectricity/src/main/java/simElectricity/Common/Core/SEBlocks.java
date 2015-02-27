@@ -40,7 +40,6 @@ public class SEBlocks {
     public static BlockAdjustableTransformer adjustableTransformer;
     public static BlockBatteryBox batteryBox;
     public static BlockElectricFurnace electricFurnace;
-    public static BlockElectricFurnace electricFurnace_lit;
     public static BlockIncandescentLamp incandescentLamp;
     public static BlockQuantumGenerator quantumGenerator;
     public static BlockSimpleGenerator simpleGenerator;
@@ -60,8 +59,7 @@ public class SEBlocks {
         adjustableResistor = new BlockAdjustableResistor();
         adjustableTransformer = new BlockAdjustableTransformer();
         batteryBox = new BlockBatteryBox();
-        electricFurnace = new BlockElectricFurnace(false);
-        electricFurnace_lit = new BlockElectricFurnace(true);
+        electricFurnace = new BlockElectricFurnace();
         incandescentLamp = new BlockIncandescentLamp();
         quantumGenerator = new BlockQuantumGenerator();
         simpleGenerator = new BlockSimpleGenerator(false);
@@ -115,7 +113,6 @@ public class SEBlocks {
         registerRender(blockSwitch);
         registerRender(voltageMeter);
         registerRender(electricFurnace);
-        registerRender(electricFurnace_lit);
         ModelBakery.addVariantName(Item.getItemFromBlock(tower), Util.MODID + ":tower_0", Util.MODID + ":tower_1", Util.MODID + ":tower_2");
         ModelBakery.addVariantName(Item.getItemFromBlock(wire), Util.MODID + ":wire_thin", Util.MODID + ":wire_medium", Util.MODID + ":wire_thick");
         registerRender(wire, 0, "wire_thin");

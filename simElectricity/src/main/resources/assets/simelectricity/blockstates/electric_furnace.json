@@ -1,8 +1,12 @@
 {
 	"variants": {
-      "facing=north": { "model": "simelectricity:electric_furnace" },
-      "facing=south": { "model": "simelectricity:electric_furnace", "y": 180 },
-      "facing=west":  { "model": "simelectricity:electric_furnace", "y": 270 },
-      "facing=east":  { "model": "simelectricity:electric_furnace", "y": 90 }
+      "facing=north,working=false": { "model": "simelectricity:electric_furnace" },
+      "facing=south,working=false": { "model": "simelectricity:electric_furnace", "y": 180 },
+      "facing=west,working=false":  { "model": "simelectricity:electric_furnace", "y": 270 },
+      "facing=east,working=false":  { "model": "simelectricity:electric_furnace", "y": 90 },
+      "facing=north,working=true":  { "model": "simelectricity:electric_furnace_lit" },
+      "facing=south,working=true":  { "model": "simelectricity:electric_furnace_lit", "y": 180 },
+      "facing=west,working=true":   { "model": "simelectricity:electric_furnace_lit", "y": 270 },
+      "facing=east,working=true":   { "model": "simelectricity:electric_furnace_lit", "y": 90 }
 	}
 }

@@ -1,7 +1,7 @@
 {
     "parent": "block/cube",
     "textures": {
-        "particle": "#front",
+        "particle": "#side",
         "down": "#bottom",
         "up": "#top",
         "north": "#front",

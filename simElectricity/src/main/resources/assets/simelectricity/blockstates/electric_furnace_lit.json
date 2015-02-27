@@ -1,8 +1,0 @@
-{
-	"variants": {
-      "facing=north": { "model": "simelectricity:electric_furnace_lit" },
-      "facing=south": { "model": "simelectricity:electric_furnace_lit", "y": 180 },
-      "facing=west":  { "model": "simelectricity:electric_furnace_lit", "y": 270 },
-      "facing=east":  { "model": "simelectricity:electric_furnace_lit", "y": 90 }
-	}
-}

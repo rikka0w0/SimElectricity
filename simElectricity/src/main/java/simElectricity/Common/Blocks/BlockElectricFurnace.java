@@ -24,7 +24,6 @@ import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.InventoryHelper;
-import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
@@ -34,55 +33,28 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import simElectricity.API.Common.Blocks.BlockStandardSEHoriMachine;
-import simElectricity.API.Util;
+import simElectricity.API.Common.Blocks.BlockStates;
+import simElectricity.API.ISidedFacing;
 import simElectricity.Common.Blocks.TileEntity.TileElectricFurnace;
-import simElectricity.Common.Core.SEBlocks;
-import simElectricity.Common.SEUtils;
 import simElectricity.SimElectricity;
 
 import java.util.Random;
 
 public class BlockElectricFurnace extends BlockStandardSEHoriMachine {
 
-    private static boolean keepInventory;
-    public final boolean isBurning;
 
-
-    public BlockElectricFurnace(boolean isBurning) {
+    public BlockElectricFurnace() {
         super();
-        this.isBurning = isBurning;
-        if (isBurning)
-            setUnlocalizedName("electric_furnace_lit");
-        else {
-            setCreativeTab(Util.SETab);
-            setUnlocalizedName("electric_furnace");
-        }
+        setUnlocalizedName("electric_furnace");
     }
 
-    public static void setState(boolean active, World world, BlockPos pos, TileElectricFurnace tileEntity) {
-        IBlockState state = world.getBlockState(pos);
-        SEUtils.logInfo("test");
-        keepInventory = true;
-
-        if (active) {
-            world.setBlockState(pos, SEBlocks.electricFurnace_lit.getDefaultState().withProperty(FACING, state.getValue(FACING)), 3);
-            world.setBlockState(pos, SEBlocks.electricFurnace_lit.getDefaultState().withProperty(FACING, state.getValue(FACING)), 3);
-        } else {
-            world.setBlockState(pos, SEBlocks.electricFurnace.getDefaultState().withProperty(FACING, state.getValue(FACING)), 3);
-            world.setBlockState(pos, SEBlocks.electricFurnace.getDefaultState().withProperty(FACING, state.getValue(FACING)), 3);
-        }
-
-        keepInventory = false;
-
-        if (tileEntity != null) {
-            tileEntity.validate();
-            world.setTileEntity(pos, tileEntity);
-        }
-    }
 
     @Override
     public int getLightValue(IBlockAccess world, BlockPos pos) {
-        return isBurning ? 13 : 0;
+        TileEntity tile = world.getTileEntity(pos);
+        if (tile != null && tile instanceof TileElectricFurnace)
+            return ((TileElectricFurnace) tile).isWorking ? 13 : 0;
+        return 0;
     }
 
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumFacing side, float hitX, float hitY, float hitZ) {
@@ -100,37 +72,34 @@ public class BlockElectricFurnace extends BlockStandardSEHoriMachine {
     @SideOnly(Side.CLIENT)
     @Override
     public void randomDisplayTick(World worldIn, BlockPos pos, IBlockState state, Random rand) {
-        if (this.isBurning) {
-            EnumFacing enumfacing = (EnumFacing) state.getValue(FACING);
-            double d0 = (double) pos.getX() + 0.5D;
-            double d1 = (double) pos.getY() + rand.nextDouble() * 6.0D / 16.0D;
-            double d2 = (double) pos.getZ() + 0.5D;
-            double d3 = 0.52D;
-            double d4 = rand.nextDouble() * 0.6D - 0.3D;
+        TileEntity tile = worldIn.getTileEntity(pos);
+        if (tile != null && tile instanceof TileElectricFurnace)
+            if (((TileElectricFurnace) tile).isWorking) {
+                EnumFacing enumfacing = (EnumFacing) state.getValue(FACING);
+                double d0 = (double) pos.getX() + 0.5D;
+                double d1 = (double) pos.getY() + rand.nextDouble() * 6.0D / 16.0D;
+                double d2 = (double) pos.getZ() + 0.5D;
+                double d3 = 0.52D;
+                double d4 = rand.nextDouble() * 0.6D - 0.3D;
 
-            switch (enumfacing) {
-                case WEST:
-                    worldIn.spawnParticle(EnumParticleTypes.SMOKE_NORMAL, d0 - d3, d1, d2 + d4, 0.0D, 0.0D, 0.0D, new int[0]);
-                    worldIn.spawnParticle(EnumParticleTypes.FLAME, d0 - d3, d1, d2 + d4, 0.0D, 0.0D, 0.0D, new int[0]);
-                    break;
-                case EAST:
-                    worldIn.spawnParticle(EnumParticleTypes.SMOKE_NORMAL, d0 + d3, d1, d2 + d4, 0.0D, 0.0D, 0.0D, new int[0]);
-                    worldIn.spawnParticle(EnumParticleTypes.FLAME, d0 + d3, d1, d2 + d4, 0.0D, 0.0D, 0.0D, new int[0]);
-                    break;
-                case NORTH:
-                    worldIn.spawnParticle(EnumParticleTypes.SMOKE_NORMAL, d0 + d4, d1, d2 - d3, 0.0D, 0.0D, 0.0D, new int[0]);
-                    worldIn.spawnParticle(EnumParticleTypes.FLAME, d0 + d4, d1, d2 - d3, 0.0D, 0.0D, 0.0D, new int[0]);
-                    break;
-                case SOUTH:
-                    worldIn.spawnParticle(EnumParticleTypes.SMOKE_NORMAL, d0 + d4, d1, d2 + d3, 0.0D, 0.0D, 0.0D, new int[0]);
-                    worldIn.spawnParticle(EnumParticleTypes.FLAME, d0 + d4, d1, d2 + d3, 0.0D, 0.0D, 0.0D, new int[0]);
+                switch (enumfacing) {
+                    case WEST:
+                        worldIn.spawnParticle(EnumParticleTypes.SMOKE_NORMAL, d0 - d3, d1, d2 + d4, 0.0D, 0.0D, 0.0D, new int[0]);
+                        worldIn.spawnParticle(EnumParticleTypes.FLAME, d0 - d3, d1, d2 + d4, 0.0D, 0.0D, 0.0D, new int[0]);
+                        break;
+                    case EAST:
+                        worldIn.spawnParticle(EnumParticleTypes.SMOKE_NORMAL, d0 + d3, d1, d2 + d4, 0.0D, 0.0D, 0.0D, new int[0]);
+                        worldIn.spawnParticle(EnumParticleTypes.FLAME, d0 + d3, d1, d2 + d4, 0.0D, 0.0D, 0.0D, new int[0]);
+                        break;
+                    case NORTH:
+                        worldIn.spawnParticle(EnumParticleTypes.SMOKE_NORMAL, d0 + d4, d1, d2 - d3, 0.0D, 0.0D, 0.0D, new int[0]);
+                        worldIn.spawnParticle(EnumParticleTypes.FLAME, d0 + d4, d1, d2 - d3, 0.0D, 0.0D, 0.0D, new int[0]);
+                        break;
+                    case SOUTH:
+                        worldIn.spawnParticle(EnumParticleTypes.SMOKE_NORMAL, d0 + d4, d1, d2 + d3, 0.0D, 0.0D, 0.0D, new int[0]);
+                        worldIn.spawnParticle(EnumParticleTypes.FLAME, d0 + d4, d1, d2 + d3, 0.0D, 0.0D, 0.0D, new int[0]);
+                }
             }
-        }
-    }
-
-    @Override
-    public boolean registerInCreativeTab() {
-        return false;
     }
 
     @Override
@@ -140,24 +109,28 @@ public class BlockElectricFurnace extends BlockStandardSEHoriMachine {
 
     @Override
     protected BlockState createBlockState() {
-        return new BlockState(this, new IProperty[]{FACING});
-    }
-
-    public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
-        if (!keepInventory) {
-            TileEntity tileentity = worldIn.getTileEntity(pos);
-
-            if (tileentity instanceof TileElectricFurnace) {
-                InventoryHelper.dropInventoryItems(worldIn, pos, (TileElectricFurnace) tileentity);
-                worldIn.updateComparatorOutputLevel(pos, this);
-            }
-        }
-
-        super.breakBlock(worldIn, pos, state);
+        return new BlockState(this, new IProperty[]{FACING, BlockStates.ISWORKING});
     }
 
     @Override
-    public Item getItemDropped(IBlockState state, Random rand, int fortune) {
-        return Item.getItemFromBlock(SEBlocks.electricFurnace);
+    public IBlockState getActualState(IBlockState state, IBlockAccess worldIn, BlockPos pos) {
+        TileEntity tile = worldIn.getTileEntity(pos);
+        if (tile instanceof ISidedFacing) {
+            state = state.withProperty(FACING, ((ISidedFacing) tile).getFacing());
+        }
+        if (tile instanceof TileElectricFurnace) {
+            state = state.withProperty(BlockStates.ISWORKING, ((TileElectricFurnace) tile).isWorking);
+        }
+        return state;
+    }
+
+    public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
+        TileEntity tileentity = worldIn.getTileEntity(pos);
+
+        if (tileentity instanceof TileElectricFurnace) {
+            InventoryHelper.dropInventoryItems(worldIn, pos, (TileElectricFurnace) tileentity);
+            worldIn.updateComparatorOutputLevel(pos, this);
+        }
+        super.breakBlock(worldIn, pos, state);
     }
 }

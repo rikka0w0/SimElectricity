@@ -29,7 +29,6 @@ import simElectricity.API.Energy;
 import simElectricity.API.IEnergyNetUpdateHandler;
 import simElectricity.API.INetworkEventHandler;
 import simElectricity.API.Network;
-import simElectricity.Common.Blocks.BlockElectricFurnace;
 
 import java.util.List;
 
@@ -62,7 +61,6 @@ public class TileElectricFurnace extends TileStandardSEMachine implements IEnerg
 
         if (worldObj.isRemote)
             return;
-        //TODO inv[1] == null | (inv[1] != null && inv[1].isItemEqual(result))
         if (Energy.getPower(this) > 0 && result != null && (inv[1] == null || (inv[1].stackSize < 64 && inv[1].isItemEqual(result)))) {
             energyStored += Energy.getPower(this) * 0.02;
             progress = ((int) (energyStored * 100 / energyPerItem));
@@ -72,6 +70,9 @@ public class TileElectricFurnace extends TileStandardSEMachine implements IEnerg
                 Energy.postTileChangeEvent(this);
             }
 
+            isWorking = true;
+            Network.updateNetworkFields(this);
+            worldObj.markBlockForUpdate(pos);
 
             if (energyStored > energyPerItem) {
                 ItemStack newResult = result.copy();
@@ -92,9 +93,6 @@ public class TileElectricFurnace extends TileStandardSEMachine implements IEnerg
                 progress = 0;
                 energyStored = 0;
             }
-            isWorking = true;
-            Network.updateNetworkFields(this);
-            BlockElectricFurnace.setState(true, worldObj, pos, this);
         }
 
         if (result == null && isWorking) {
@@ -115,7 +113,7 @@ public class TileElectricFurnace extends TileStandardSEMachine implements IEnerg
         }
         isWorking = false;
         Network.updateNetworkFields(this);
-        BlockElectricFurnace.setState(false, worldObj, pos, this);
+        worldObj.markBlockForUpdate(pos);
     }
 
     public ItemStack getResult(ItemStack i) {
@@ -170,7 +168,7 @@ public class TileElectricFurnace extends TileStandardSEMachine implements IEnerg
         if (Energy.getVoltage(this) == 0) {
             isWorking = false;
             Network.updateNetworkFields(this);
-            BlockElectricFurnace.setState(false, worldObj, pos, this);
+            worldObj.markBlockForUpdate(pos);
         }
     }
 
