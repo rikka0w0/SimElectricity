@@ -29,7 +29,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import simElectricity.API.Common.Blocks.BlockStandardSEHoriMachine;
-import simElectricity.API.Common.Blocks.BlockStandardSEMachine;
+import simElectricity.API.Common.Blocks.BlockStates;
 import simElectricity.Common.Blocks.TileEntity.TileSimpleGenerator;
 import simElectricity.SimElectricity;
 
@@ -50,7 +50,7 @@ public class BlockSimpleGenerator extends BlockStandardSEHoriMachine {
     @Override
     public void randomDisplayTick(World worldIn, BlockPos pos, IBlockState state, Random rand) {
         if (this.isWorking) {
-            EnumFacing enumfacing = (EnumFacing) state.getValue(FACING);
+            EnumFacing enumfacing = (EnumFacing) state.getValue(BlockStates.HORIFACING);
             double d0 = (double) pos.getX() + 0.5D;
             double d1 = (double) pos.getY() + rand.nextDouble() * 6.0D / 16.0D;
             double d2 = (double) pos.getZ() + 0.5D;

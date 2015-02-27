@@ -72,7 +72,6 @@ public class TileElectricFurnace extends TileStandardSEMachine implements IEnerg
 
             isWorking = true;
             Network.updateNetworkFields(this);
-            worldObj.markBlockForUpdate(pos);
 
             if (energyStored > energyPerItem) {
                 ItemStack newResult = result.copy();
@@ -95,7 +94,7 @@ public class TileElectricFurnace extends TileStandardSEMachine implements IEnerg
             }
         }
 
-        if (result == null && isWorking) {
+        if (result == null && isWorking()) {
             stop();
         }
     }
@@ -113,7 +112,6 @@ public class TileElectricFurnace extends TileStandardSEMachine implements IEnerg
         }
         isWorking = false;
         Network.updateNetworkFields(this);
-        worldObj.markBlockForUpdate(pos);
     }
 
     public ItemStack getResult(ItemStack i) {
@@ -168,7 +166,6 @@ public class TileElectricFurnace extends TileStandardSEMachine implements IEnerg
         if (Energy.getVoltage(this) == 0) {
             isWorking = false;
             Network.updateNetworkFields(this);
-            worldObj.markBlockForUpdate(pos);
         }
     }
 

@@ -75,7 +75,7 @@ public class BlockElectricFurnace extends BlockStandardSEHoriMachine {
         TileEntity tile = worldIn.getTileEntity(pos);
         if (tile != null && tile instanceof TileElectricFurnace)
             if (((TileElectricFurnace) tile).isWorking) {
-                EnumFacing enumfacing = (EnumFacing) state.getValue(FACING);
+                EnumFacing enumfacing = (EnumFacing) state.getValue(BlockStates.HORIFACING);
                 double d0 = (double) pos.getX() + 0.5D;
                 double d1 = (double) pos.getY() + rand.nextDouble() * 6.0D / 16.0D;
                 double d2 = (double) pos.getZ() + 0.5D;
@@ -109,14 +109,14 @@ public class BlockElectricFurnace extends BlockStandardSEHoriMachine {
 
     @Override
     protected BlockState createBlockState() {
-        return new BlockState(this, new IProperty[]{FACING, BlockStates.ISWORKING});
+        return new BlockState(this, new IProperty[]{BlockStates.HORIFACING, BlockStates.ISWORKING});
     }
 
     @Override
     public IBlockState getActualState(IBlockState state, IBlockAccess worldIn, BlockPos pos) {
         TileEntity tile = worldIn.getTileEntity(pos);
         if (tile instanceof ISidedFacing) {
-            state = state.withProperty(FACING, ((ISidedFacing) tile).getFacing());
+            state = state.withProperty(BlockStates.HORIFACING, ((ISidedFacing) tile).getFacing());
         }
         if (tile instanceof TileElectricFurnace) {
             state = state.withProperty(BlockStates.ISWORKING, ((TileElectricFurnace) tile).isWorking);

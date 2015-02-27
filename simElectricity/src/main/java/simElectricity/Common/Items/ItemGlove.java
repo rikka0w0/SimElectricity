@@ -27,6 +27,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import simElectricity.API.Common.Blocks.BlockSidedFacingMachine;
 import simElectricity.API.Common.Blocks.BlockSidedHoriFacingMachine;
+import simElectricity.API.Common.Blocks.BlockStates;
 import simElectricity.API.Common.Items.ItemSE;
 import simElectricity.API.ISidedFacing;
 import simElectricity.API.Network;
@@ -44,16 +45,16 @@ public class ItemGlove extends ItemSE {
 
     @Override
     public boolean onItemUse(ItemStack itemStack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ) {
-        if ((world.getTileEntity(pos) instanceof ISidedFacing) && ((world.getBlockState(pos).getBlock() instanceof BlockSidedFacingMachine)||(world.getBlockState(pos).getBlock() instanceof BlockSidedHoriFacingMachine) || (world.getBlockState(pos).getBlock() instanceof BlockWindMillTop)) && (!world.isRemote)) {
+        if ((world.getTileEntity(pos) instanceof ISidedFacing) && ((world.getBlockState(pos).getBlock() instanceof BlockSidedFacingMachine) || (world.getBlockState(pos).getBlock() instanceof BlockSidedHoriFacingMachine) || (world.getBlockState(pos).getBlock() instanceof BlockWindMillTop)) && (!world.isRemote)) {
             ISidedFacing te = (ISidedFacing) world.getTileEntity(pos);
 
             if (te.canSetFacing(side)) {
                 te.setFacing(side);
                 Network.updateFacing((TileEntity) te);
-                if (world.getBlockState(pos).getBlock() instanceof BlockSidedFacingMachine)
-                    world.setBlockState(pos, world.getBlockState(pos).withProperty(((BlockSidedFacingMachine) world.getBlockState(pos).getBlock()).FACING, side), 2);
-                else if (world.getBlockState(pos).getBlock() instanceof BlockWindMillTop)
-                    world.setBlockState(pos, world.getBlockState(pos).withProperty(((BlockWindMillTop) world.getBlockState(pos).getBlock()).FACING, side), 2);
+                if (world.getBlockState(pos).getBlock() instanceof BlockSidedFacingMachine )
+                    world.setBlockState(pos, world.getBlockState(pos).withProperty(BlockStates.FACING, side), 2);
+                if(world.getBlockState(pos).getBlock() instanceof BlockWindMillTop || world.getBlockState(pos).getBlock() instanceof BlockSidedHoriFacingMachine)
+                    world.setBlockState(pos, world.getBlockState(pos).withProperty(BlockStates.HORIFACING, side), 2);
                 itemStack.damageItem(1, player);
                 //TODO windmill sync
             }
