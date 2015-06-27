@@ -1,0 +1,16 @@
+{
+	"variants": {
+      "facing=north,working=false": { "model": "simelectricity:incandescent_lamp" },
+      "facing=south,working=false": { "model": "simelectricity:incandescent_lamp", "y": 180 },
+      "facing=west,working=false":  { "model": "simelectricity:incandescent_lamp", "y": 270 },
+      "facing=east,working=false":  { "model": "simelectricity:incandescent_lamp", "y": 90 },
+      "facing=up,working=false":  { "model": "simelectricity:incandescent_lamp", "x": 270 },
+      "facing=down,working=false":  { "model": "simelectricity:incandescent_lamp", "x": 90 },
+      "facing=north,working=true":  { "model": "simelectricity:incandescent_lamp_lit" },
+      "facing=south,working=true":  { "model": "simelectricity:incandescent_lamp_lit", "y": 180 },
+      "facing=west,working=true":   { "model": "simelectricity:incandescent_lamp_lit", "y": 270 },
+      "facing=east,working=true":   { "model": "simelectricity:incandescent_lamp_lit", "y": 90 },
+      "facing=up,working=true":  { "model": "simelectricity:incandescent_lamp_lit", "x": 270 },
+      "facing=down,working=true":  { "model": "simelectricity:incandescent_lamp_lit", "x": 90 }
+	}
+}

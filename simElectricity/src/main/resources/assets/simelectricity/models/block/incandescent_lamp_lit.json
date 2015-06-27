@@ -1,0 +1,7 @@
+{
+	"parent": "simelectricity:block/frontside",
+	"textures": {
+        "front": "simelectricity:blocks/IncandescentLamp_Front_On",
+        "side": "simelectricity:blocks/IncandescentLamp_Side_On"
+	}
+}

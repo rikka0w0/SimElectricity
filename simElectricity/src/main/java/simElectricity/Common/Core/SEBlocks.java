@@ -62,7 +62,7 @@ public class SEBlocks {
         electricFurnace = new BlockElectricFurnace();
         incandescentLamp = new BlockIncandescentLamp();
         quantumGenerator = new BlockQuantumGenerator();
-        simpleGenerator = new BlockSimpleGenerator(false);
+        simpleGenerator = new BlockSimpleGenerator();
         solarPanel = new BlockSolarPanel();
         blockSwitch = new BlockSwitch();
         voltageMeter = new BlockVoltageMeter();

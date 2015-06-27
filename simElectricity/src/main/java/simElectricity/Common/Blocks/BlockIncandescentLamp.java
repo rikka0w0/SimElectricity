@@ -19,10 +19,16 @@
 
 package simElectricity.Common.Blocks;
 
+import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.state.BlockState;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import simElectricity.API.Common.Blocks.BlockStandardSEMachine;
+import simElectricity.API.Common.Blocks.BlockStates;
+import simElectricity.API.ISidedFacing;
 import simElectricity.Common.Blocks.TileEntity.TileIncandescentLamp;
 
 public class BlockIncandescentLamp extends BlockStandardSEMachine {
@@ -32,19 +38,33 @@ public class BlockIncandescentLamp extends BlockStandardSEMachine {
         setUnlocalizedName("incandescent_lamp");
     }
 
-    //TODO
-//    @Override
-//    public int getLightValue(IBlockAccess world, int x, int y, int z) {
-//        TileEntity te = world.getTileEntity(x, y, z);
-//
-//        if (!(te instanceof TileIncandescentLamp))
-//            return 0;
-//
-//        return ((TileIncandescentLamp) te).lightLevel;
-//    }
+    @Override
+    public int getLightValue(IBlockAccess world, BlockPos pos) {
+        TileEntity tile = world.getTileEntity(pos);
+        if (tile != null && tile instanceof TileIncandescentLamp)
+            return (((TileIncandescentLamp) tile).lightLevel);
+        return 0;
+    }
 
     @Override
     public TileEntity createNewTileEntity(World world, int meta) {
         return new TileIncandescentLamp();
+    }
+
+    @Override
+    protected BlockState createBlockState() {
+        return new BlockState(this, new IProperty[]{BlockStates.FACING, BlockStates.ISWORKING});
+    }
+
+    @Override
+    public IBlockState getActualState(IBlockState state, IBlockAccess worldIn, BlockPos pos) {
+        TileEntity tile = worldIn.getTileEntity(pos);
+        if (tile instanceof ISidedFacing) {
+            state = state.withProperty(BlockStates.FACING, ((ISidedFacing) tile).getFacing());
+        }
+        if (tile instanceof TileIncandescentLamp) {
+            state = state.withProperty(BlockStates.ISWORKING, ((TileIncandescentLamp) tile).lightLevel > 0);
+        }
+        return state;
     }
 }

@@ -1,0 +1,10 @@
+{
+	"variants": {
+      "facing=north": { "model": "simelectricity:solar_panel" },
+      "facing=south": { "model": "simelectricity:solar_panel", "y": 180 },
+      "facing=west":  { "model": "simelectricity:solar_panel", "y": 270 },
+      "facing=east":  { "model": "simelectricity:solar_panel", "y": 90 },
+      "facing=down":  { "model": "simelectricity:solar_panel" },
+      "facing=up":  { "model": "simelectricity:solar_panel" }
+	}
+}

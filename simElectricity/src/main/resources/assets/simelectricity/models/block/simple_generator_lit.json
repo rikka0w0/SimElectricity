@@ -1,0 +1,9 @@
+{
+	"parent": "simelectricity:block/machine",
+	"textures": {
+        "top": "simelectricity:blocks/SimpleGenerator_Top",
+        "front": "simelectricity:blocks/SimpleGenerator_Front_W",
+        "side": "simelectricity:blocks/SimpleGenerator_Side",
+        "bottom": "simelectricity:blocks/SimpleGenerator_Bottom"
+	}
+}

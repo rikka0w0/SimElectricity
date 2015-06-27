@@ -1,0 +1,8 @@
+{
+	"parent": "simelectricity:block/frontback",
+	"textures": {
+        "front": "simelectricity:blocks/VoltageMeter_Front",
+        "side": "simelectricity:blocks/VoltageMeter_Side",
+        "back": "simelectricity:blocks/VoltageMeter_Back"
+	}
+}

@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "facing=north": { "model": "simelectricity:voltage_meter" },
+    "facing=south": { "model": "simelectricity:voltage_meter", "y": 180 },
+    "facing=west":  { "model": "simelectricity:voltage_meter", "y": 270 },
+    "facing=east":  { "model": "simelectricity:voltage_meter", "y": 90 },
+    "facing=down":  { "model": "simelectricity:voltage_meter", "x": 90 },
+    "facing=up":  { "model": "simelectricity:voltage_meter", "x": 270 }
+  }
+}
