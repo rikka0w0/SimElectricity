@@ -1,10 +1,13 @@
 package simElectricity.Common.Network;
 
 import io.netty.buffer.ByteBuf;
+import net.minecraft.client.Minecraft;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.IThreadListener;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
@@ -210,24 +213,41 @@ public class MessageTileEntityUpdate implements IMessage {
 
     public static class Handler implements IMessageHandler<MessageTileEntityUpdate, IMessage> {
         @Override
-        public IMessage onMessage(MessageTileEntityUpdate message, MessageContext ctx) {
-            World world;
+        public IMessage onMessage(final MessageTileEntityUpdate message, MessageContext ctx) {
+            final World world;
+            IThreadListener mainThread;
 
             if (ctx.side == Side.CLIENT) {
                 world = SimElectricity.proxy.getClientWorld();
+                mainThread = Minecraft.getMinecraft();
             } else {
                 world = ctx.getServerHandler().playerEntity.worldObj;
+                mainThread = (WorldServer) ctx.getServerHandler().playerEntity.worldObj;
             }
 
             if (world.provider.getDimensionId() != message.dimensionID) {
                 SEUtils.logWarn("An dimensionID mismatch error occurred during sync! This could be an error");
                 return null;
             }
+            if (mainThread.isCallingFromMinecraftThread()) {
+                process(message, world);
+            } else {
+                mainThread.addScheduledTask(new Runnable() {
+                    @Override
+                    public void run() {
+                        process(message, world);
+                    }
+                });
+            }
 
+            return null;
+        }
+
+        public void process(MessageTileEntityUpdate message, World world) {
             TileEntity te = world.getTileEntity(new BlockPos(message.xCoord, message.yCoord, message.zCoord));
 
             if (te == null)
-                return null;
+                return;
 
             //Set value to variables
             try {
@@ -251,8 +271,6 @@ public class MessageTileEntityUpdate implements IMessage {
             //Fire onFieldUpdate event
             if (te instanceof INetworkEventHandler)
                 ((INetworkEventHandler) te).onFieldUpdate(message.fields, message.values);
-
-            return null;
         }
     }
 
