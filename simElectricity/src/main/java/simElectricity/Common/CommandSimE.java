@@ -1,6 +1,7 @@
 package simElectricity.Common;
 
 import net.minecraft.command.CommandBase;
+import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.world.World;
@@ -12,7 +13,7 @@ import simElectricity.SimElectricity;
 public class CommandSimE extends CommandBase {
 
     @Override
-    public String getName() {
+    public String getCommandName() {
         return "sime";
     }
 
@@ -21,24 +22,8 @@ public class CommandSimE extends CommandBase {
         return "/sime (info | refresh) [dimensionID]";
     }
 
-    private void info(ICommandSender sender, int dim) {
-        World world = DimensionManager.getWorld(dim);
-        EnergyNet energyNet = WorldData.getEnergyNetForWorld(world);
-        sender.addChatMessage(new ChatComponentText("-----------------------------------"));
-        sender.addChatMessage(new ChatComponentText("EnergyNet for dimension " + dim + ":"));
-        for (String s : energyNet.info())
-            sender.addChatMessage(new ChatComponentText(s));
-    }
-
-    private void refresh(ICommandSender sender, int dim) {
-        EnergyNet energyNet = WorldData.getEnergyNetForWorld(
-                DimensionManager.getWorld(dim));
-        energyNet.reFresh();
-        sender.addChatMessage(new ChatComponentText("EnergyNet for dimension " + dim + " has been refreshed!"));
-    }
-
     @Override
-    public void execute(ICommandSender sender, String[] args) {
+    public void processCommand(ICommandSender sender, String[] args) throws CommandException {
         if (args.length == 0) {
             sender.addChatMessage(new ChatComponentText("SimElectricity Version: " + SimElectricity.version));
             info(sender, sender.getEntityWorld().provider.getDimensionId());
@@ -55,5 +40,20 @@ public class CommandSimE extends CommandBase {
                 refresh(sender, Integer.valueOf(args[1]));
             }
         }
+    }
+
+    private void info(ICommandSender sender, int dim) {
+        World world = DimensionManager.getWorld(dim);
+        EnergyNet energyNet = WorldData.getEnergyNetForWorld(world);
+        sender.addChatMessage(new ChatComponentText("-----------------------------------"));
+        sender.addChatMessage(new ChatComponentText("EnergyNet for dimension " + dim + ":"));
+        for (String s : energyNet.info())
+            sender.addChatMessage(new ChatComponentText(s));
+    }
+
+    private void refresh(ICommandSender sender, int dim) {
+        EnergyNet energyNet = WorldData.getEnergyNetForWorld(DimensionManager.getWorld(dim));
+        energyNet.reFresh();
+        sender.addChatMessage(new ChatComponentText("EnergyNet for dimension " + dim + " has been refreshed!"));
     }
 }
