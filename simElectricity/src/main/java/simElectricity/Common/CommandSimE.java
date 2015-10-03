@@ -2,6 +2,7 @@ package simElectricity.Common;
 
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
+import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.world.World;
@@ -55,5 +56,15 @@ public class CommandSimE extends CommandBase {
         EnergyNet energyNet = WorldData.getEnergyNetForWorld(DimensionManager.getWorld(dim));
         energyNet.reFresh();
         sender.addChatMessage(new ChatComponentText("EnergyNet for dimension " + dim + " has been refreshed!"));
+    }
+
+    @Override
+    public int compareTo(ICommand command) {
+        return this.getCommandName().compareTo(command.getCommandName());
+    }
+
+    @Override
+    public int compareTo(Object command) {
+        return this.compareTo((ICommand) command);
     }
 }
