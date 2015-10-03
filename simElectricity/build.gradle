@@ -12,28 +12,15 @@ buildscript {
 }
 apply plugin: 'net.minecraftforge.gradle.forge'
 
-repositories {
-    maven {
-        name = "chickenbones"
-        url = "http://chickenbones.net/maven"
-    }
-}
-
 version = "1.0.0"
-group= "com.Rikka0_0.SimElectricity" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+group= "com.Rikka0_0.SimElectricity"
 archivesBaseName = "SimElectricity"
 
 minecraft {
-    version = "1.8-11.14.3.1504"
-    runDir = "eclipse"
+    version = "1.8-11.14.3.1519"
+    runDir = "run"
 
     mappings = "snapshot_20150715"
-}
-
-dependencies {
-    compile "codechicken:CodeChickenLib:1.8-1.1.2.139:dev"
-    compile "codechicken:CodeChickenCore:1.8-1.0.5.36:dev"
-    compile "codechicken:NotEnoughItems:1.8-1.0.5.104:dev"
 }
 
 processResources
@@ -49,10 +36,6 @@ processResources
     // copy everything else, thats not the mcmod.info
     from(sourceSets.main.resources.srcDirs) {
         exclude 'mcmod.info'
-    }
-    
-    dependencies {
-        compile fileTree(dir: 'lib',includes: ['*.jar'])        
     }
 }
 
