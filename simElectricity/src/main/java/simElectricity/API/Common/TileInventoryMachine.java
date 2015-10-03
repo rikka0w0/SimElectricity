@@ -188,7 +188,7 @@ public abstract class TileInventoryMachine extends TileEntitySE implements ISide
     }
 
     @Override
-    public String getName() {
+    public String getCommandSenderName() {
         return this.toString();
     }
 

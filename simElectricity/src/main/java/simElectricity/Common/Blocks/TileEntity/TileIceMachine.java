@@ -28,9 +28,9 @@ public class TileIceMachine extends TileStandardSEMachine implements IFluidHandl
     public int fluidID, amountP, progress, isPowered;
 
 
-    void dowork(FluidStack fluid) {
+    void doWork(FluidStack fluid) {
         if (this.tank.getFluidAmount() >= waterPerIceIngot && operationalVoltage &&    //Enough water
-                (inv[2] != null ? inv[2].stackSize < inv[2].getMaxStackSize() : true)) {    //Enough space
+                (inv[2] == null || inv[2].stackSize < inv[2].getMaxStackSize())) {    //Enough space
             if (resistance != onResistance) {
                 resistance = onResistance;
                 Energy.postTileChangeEvent(this);
@@ -75,7 +75,7 @@ public class TileIceMachine extends TileStandardSEMachine implements IFluidHandl
             if (fluid.amount == 0)
                 fluid = null;
             else
-                dowork(fluid);
+                doWork(fluid);
 
         FluidStack l = FluidUtil.drainContainer(maxCapacity, fluid, inv, 0, 1);
         if (l != null) {
@@ -88,7 +88,7 @@ public class TileIceMachine extends TileStandardSEMachine implements IFluidHandl
         tank.setFluid(fluid);
 
         if (fluid != null) {
-            fluidID = fluid.fluidID;
+            fluidID = fluid.getFluidID();
             amountP = fluid.amount * 1000 / maxCapacity;
         } else
             fluidID = 0;

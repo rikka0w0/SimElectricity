@@ -40,8 +40,8 @@ public class ContainerElectricFurnace extends ContainerBase {
     }
 
     @Override
-    public void addCraftingToCrafters(ICrafting par1iCrafting) {
-        super.addCraftingToCrafters(par1iCrafting);
+    public void onCraftGuiOpened(ICrafting par1iCrafting) {
+        super.onCraftGuiOpened(par1iCrafting);
         par1iCrafting.sendProgressBarUpdate(this, 0, ((TileElectricFurnace) tileEntity).progress);
     }
 

@@ -40,8 +40,8 @@ public class ContainerSimpleGenerator extends ContainerBase {
     }
 
     @Override
-    public void addCraftingToCrafters(ICrafting par1iCrafting) {
-        super.addCraftingToCrafters(par1iCrafting);
+    public void onCraftGuiOpened(ICrafting par1iCrafting) {
+        super.onCraftGuiOpened(par1iCrafting);
         par1iCrafting.sendProgressBarUpdate(this, 0, ((TileSimpleGenerator) tileEntity).progress);
         par1iCrafting.sendProgressBarUpdate(this, 1, (int) ((TileSimpleGenerator) tileEntity).outputVoltage);
         par1iCrafting.sendProgressBarUpdate(this, 2, (int) ((TileSimpleGenerator) tileEntity).outputResistance);

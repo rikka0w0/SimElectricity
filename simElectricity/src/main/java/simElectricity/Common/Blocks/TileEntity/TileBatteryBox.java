@@ -74,4 +74,9 @@ public class TileBatteryBox extends TileSidedGenerator {
         // FunctionalSide Facing
         return true;
     }
+
+    @Override
+    public String getCommandSenderName() {
+        return null;
+    }
 }

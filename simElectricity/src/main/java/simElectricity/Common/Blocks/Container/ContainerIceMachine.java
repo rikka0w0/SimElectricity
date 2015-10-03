@@ -67,8 +67,8 @@ public class ContainerIceMachine extends ContainerBase {
     }
 
     @Override
-    public void addCraftingToCrafters(ICrafting par1iCrafting) {
-        super.addCraftingToCrafters(par1iCrafting);
+    public void onCraftGuiOpened(ICrafting par1iCrafting) {
+        super.onCraftGuiOpened(par1iCrafting);
         par1iCrafting.sendProgressBarUpdate(this, 0, ((TileIceMachine) tileEntity).progress);
         par1iCrafting.sendProgressBarUpdate(this, 1, ((TileIceMachine) tileEntity).fluidID);
         par1iCrafting.sendProgressBarUpdate(this, 2, ((TileIceMachine) tileEntity).amountP);

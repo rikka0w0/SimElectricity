@@ -2,24 +2,24 @@
 itemGroup.SimElectricity=SimElectricity
 
 # Blocks
-tile.sime:QuantumGenerator.name=量子发电机
-tile.sime:VoltageMeter.name=电压表(1MOhm)
-tile.sime:ElectricFurnace.name=小型电路
-tile.sime:SolarPanel.name=太阳能电池板
-tile.sime:Wire.CopperCable_Thin.name=细绝缘铜线
-tile.sime:Wire.CopperCable_Medium.name=普通绝缘铜线
-tile.sime:Wire.CopperCable_Thick.name=粗绝缘铜线
-tile.sime:AdjustableResistor.name=可调电阻
-tile.sime:SimpleGenerator.name=简易燃料发电机
-tile.sime:AdjustableTransformer.name=可调变压器
-tile.sime:WindMillTop.name=风力发电机
-tile.sime:BatteryBox.name=电池箱
-tile.sime:IncandescentLamp.name=节能灯 (5w)
-tile.sime:Switch.name=空气开关
-tile.sime:SolarInverter.name=太阳能专用稳压逆变器
-tile.sime:IC2Consumer.name=IC2->SE能源转换器
-tile.sime:IC2Generator.name=SE->IC2能源转换器
-tile.sime:IceMachine.name=⑨牌制冰机
+tile.sime:quantum_generator.name=量子发电机
+tile.sime:voltage_meter.name=电压表(1MOhm)
+tile.sime:electric_furnace.name=小型电路
+tile.sime:solar_panel.name=太阳能电池板
+tile.sime:wire.thin.name=细绝缘铜线
+tile.sime:wire.medium.name=普通绝缘铜线
+tile.sime:wire.thick.name=粗绝缘铜线
+tile.sime:adjustable_resistor.name=可调电阻
+tile.sime:simple_generator.name=简易燃料发电机
+tile.sime:adjustable_transformer.name=可调变压器
+tile.sime:windmill_top.name=风力发电机
+tile.sime:battery_box.name=电池箱
+tile.sime:incandescent_lamp.name=节能灯 (5w)
+tile.sime:switch.name=空气开关
+tile.sime:solar_inverter.name=太阳能专用稳压逆变器
+tile.sime:ic2consumer.name=IC2->SE能源转换器
+tile.sime:ic2generator.name=SE->IC2能源转换器
+tile.sime:icemachine.name=⑨牌制冰机
 
 # Items
 item.sime:ultimate_multimeter.name=高级万用表
