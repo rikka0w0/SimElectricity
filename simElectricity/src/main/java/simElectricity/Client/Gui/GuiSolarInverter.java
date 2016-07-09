@@ -60,70 +60,70 @@ public class GuiSolarInverter extends GuiContainer {
         switch (button.id) {
             case 0:
                 if (GuiScreen.isCtrlKeyDown())
-                    te.outputResistance -= 1;
+                    te.Ro -= 1;
                 else
-                    te.outputResistance -= 0.1;
+                    te.Ro -= 0.1;
                 break;
             case 1:
                 if (GuiScreen.isCtrlKeyDown())
-                    te.outputResistance -= 0.001;
+                    te.Ro -= 0.001;
                 else
-                    te.outputResistance -= 0.01;
+                    te.Ro -= 0.01;
                 break;
             case 2:
                 if (GuiScreen.isCtrlKeyDown())
-                    te.outputResistance += 0.001;
+                    te.Ro += 0.001;
                 else
-                    te.outputResistance += 0.01;
+                    te.Ro += 0.01;
                 break;
             case 3:
                 if (GuiScreen.isCtrlKeyDown())
-                    te.outputResistance += 1;
+                    te.Ro += 1;
                 else
-                    te.outputResistance += 0.1;
+                    te.Ro += 0.1;
                 break;
 
             case 4:
                 if (GuiScreen.isCtrlKeyDown())
-                    te.outputVoltage -= 100;
+                    te.Vreg -= 100;
                 else
-                    te.outputVoltage -= 10;
+                    te.Vreg -= 10;
                 break;
             case 5:
                 if (GuiScreen.isCtrlKeyDown())
-                    te.outputVoltage -= 0.1;
+                    te.Vreg -= 0.1;
                 else
-                    te.outputVoltage -= 1;
+                    te.Vreg -= 1;
                 break;
             case 6:
                 if (GuiScreen.isCtrlKeyDown())
-                    te.outputVoltage += 0.1;
+                    te.Vreg += 0.1;
                 else
-                    te.outputVoltage += 1;
+                    te.Vreg += 1;
                 break;
             case 7:
                 if (GuiScreen.isCtrlKeyDown())
-                    te.outputVoltage += 100;
+                    te.Vreg += 100;
                 else
-                    te.outputVoltage += 10;
+                    te.Vreg += 10;
                 break;
 
             default:
         }
 
-        if (te.outputResistance < 0.001)
-            te.outputResistance = 0.001F;
-        if (te.outputResistance > 100)
-            te.outputResistance = 100;
+        if (te.Ro < 0.001)
+            te.Ro = 0.001F;
+        if (te.Ro > 100)
+            te.Ro = 100;
         if (button.id < 4)
-            Network.updateTileEntityFieldsToServer(te, "outputResistance");
+            Network.updateTileEntityFieldsToServer(te, "Ro");
 
-        if (te.outputVoltage < 200)
-            te.outputVoltage = 200;
-        if (te.outputVoltage > 240)
-            te.outputVoltage = 240;
+        if (te.Vreg < 200)
+            te.Vreg = 200;
+        if (te.Vreg > 240)
+            te.Vreg = 240;
         if (button.id < 8 && button.id > 3)
-            Network.updateTileEntityFieldsToServer(te, "outputVoltage");
+            Network.updateTileEntityFieldsToServer(te, "Vreg");
 
     }
 
@@ -181,9 +181,9 @@ public class GuiSolarInverter extends GuiContainer {
 
         fontRendererObj.drawString(StatCollector.translateToLocal("tile.sime:SolarInverter.name"), 8, 6, 4210752);
 
-        fontRendererObj.drawString("Vo: " + String.format("%.1f", te.outputVoltage) + "V", 32, 26, 4210752);
+        fontRendererObj.drawString("Vo: " + String.format("%.1f", te.Vreg) + "V", 32, 26, 4210752);
 
-        fontRendererObj.drawString("Ro: " + String.format("%.3f", te.outputResistance) + " \u03a9", 32, 42, 4210752);
+        fontRendererObj.drawString("Ro: " + String.format("%.3f", te.Ro) + " \u03a9", 32, 42, 4210752);
 
         //draws "Inventory" or your regional equivalent
         fontRendererObj.drawString(StatCollector.translateToLocal("container.inventory"), 8, ySize - 96, 4210752);

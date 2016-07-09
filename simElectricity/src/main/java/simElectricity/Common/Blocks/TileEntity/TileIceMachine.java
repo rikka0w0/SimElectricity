@@ -93,7 +93,7 @@ public class TileIceMachine extends TileStandardSEMachine implements IFluidHandl
         tank.setFluid(fluid);
         
         if (fluid!=null){
-        	fluidID=fluid.fluidID;
+        	fluidID=fluid.getFluidID();
         	amountP=fluid.amount*1000/maxCapacity;
         }
         else

@@ -49,12 +49,13 @@ public class TileIncandescentLamp extends TileStandardSEMachine implements IEner
 
     @Override
 	public void onOverVoltage(){
-    	worldObj.createExplosion(null, xCoord, yCoord, zCoord, (float) (4F + Energy.getVoltage(this) / 265), true);
+    	//worldObj.createExplosion(null, xCoord, yCoord, zCoord, (float) (4F + Energy.getVoltage(this) / 265), true);
     }
     
     @Override
     public void onEnergyNetUpdate() {
-        lightLevel = (int) (Energy.getPower(this) / 0.3F);
+    	double voltage = Energy.getVoltage(this);
+        lightLevel = (int) (voltage*voltage/getResistance() / 0.3F);
         if (lightLevel > 15)
             lightLevel = 15;
         

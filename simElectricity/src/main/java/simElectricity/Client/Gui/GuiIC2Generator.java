@@ -46,6 +46,7 @@ public class GuiIC2Generator extends GuiContainer {
         buttonList.add(new GuiButton(3, guiLeft + 148, guiTop + 18, 20, 20, "++"));
     }
 
+    /*
     @Override
     public void actionPerformed(GuiButton button) {
         if (button.id < 4) {
@@ -84,6 +85,7 @@ public class GuiIC2Generator extends GuiContainer {
             Network.updateTileEntityFieldsToServer(tileentity, "outputVoltage");
         }
     }
+    */
 
     public GuiIC2Generator(InventoryPlayer inventoryPlayer, TileEntity tileEntity) {
         super(new ContainerIC2Generator(inventoryPlayer, tileEntity));
@@ -98,8 +100,9 @@ public class GuiIC2Generator extends GuiContainer {
 
         fontRendererObj.drawString(StatCollector.translateToLocal("tile.sime:IC2Generator.name"), 8, 6, 4210752);
 
-        fontRendererObj.drawString("Vo = " + String.format("%.1f", tileentity.outputVoltage) + "Eu/P", 8, 24, 4210752);
-        fontRendererObj.drawString("Output Rate = " +  String.format("%.1f", tileentity.powerRate) + "Eu/Tick", 8, 43, 4210752);
+        fontRendererObj.drawString("Pi = " + String.format("%.1f", tileentity.inputPower) + "Eu/P", 8, 23, 4210752);      
+        fontRendererObj.drawString("Vo = " + String.format("%.1f", tileentity.outputVoltage) + "Eu/P", 8, 34, 4210752);
+        fontRendererObj.drawString("Output Rate = " +  String.format("%.1f", tileentity.powerRate) + "Eu/Tick", 8, 45, 4210752);
         fontRendererObj.drawString("Buffered = " +  String.format("%.1f", tileentity.bufferedEnergy) + "Eu", 8, 56, 4210752);
         
         //draws "Inventory" or your regional equivalent

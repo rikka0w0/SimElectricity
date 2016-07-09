@@ -25,12 +25,54 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.Energy;
 import simElectricity.API.Common.TileEntitySE;
-import simElectricity.API.EnergyTile.ITransformer;
+import simElectricity.API.EnergyTile.ISESubComponent;
+import simElectricity.API.EnergyTile.ISETile;
+import simElectricity.API.EnergyTile.ISETransformerPrimary;
+import simElectricity.API.EnergyTile.ISETransformerSecondary;
 import simElectricity.API.INetworkEventHandler;
 
-public class TileAdjustableTransformer extends TileEntitySE implements ITransformer, INetworkEventHandler {
-    public Primary primary = new ITransformer.Primary(this);
-    public Secondary secondary = new ITransformer.Secondary(this);
+public class TileAdjustableTransformer extends TileEntitySE implements ISETile, INetworkEventHandler {
+	public class TPrimary implements ISETransformerPrimary{
+		private ISETransformerSecondary _sec;
+		private TileAdjustableTransformer _par;
+		
+		public TPrimary(TileAdjustableTransformer parent){
+			_sec = new TSecondary(this);
+			_par = parent;
+		}
+		
+		@Override
+		public ISETransformerSecondary getSecondary() {
+			return _sec;
+		}
+
+		@Override
+		public double getRatio() {
+			return _par.ratio;
+		}
+
+		@Override
+		public double getResistance() {
+			return _par.outputResistance;
+		}
+		
+	}
+	
+	public class TSecondary implements ISETransformerSecondary{
+		private ISETransformerPrimary _pri;
+		
+		public TSecondary(ISETransformerPrimary primary){
+			_pri = primary;
+		}
+		
+		@Override
+		public ISETransformerPrimary getPrimary() {
+			return _pri;
+		}
+		
+	}
+	
+    public TPrimary primary = new TPrimary(this);
     
     public ForgeDirection primarySide = ForgeDirection.NORTH, secondarySide = ForgeDirection.SOUTH;
     public float ratio = 10, outputResistance = 1;
@@ -60,36 +102,6 @@ public class TileAdjustableTransformer extends TileEntitySE implements ITransfor
         tagCompound.setByte("secondarySide", (byte) secondarySide.ordinal());
     }
 
-    @Override
-    public double getResistance() {
-        return outputResistance;
-    }
-
-    @Override
-    public double getRatio() {
-        return ratio;
-    }
-
-    @Override
-    public ForgeDirection getPrimarySide() {
-        return primarySide;
-    }
-
-    @Override
-    public ForgeDirection getSecondarySide() {
-        return secondarySide;
-    }
-
-    @Override
-    public ITransformerWinding getPrimary() {
-        return primary;
-    }
-
-    @Override
-    public ITransformerWinding getSecondary() {
-        return secondary;
-    }
-
 	@Override
 	public void onFieldUpdate(String[] fields, Object[] values) {
 		//Handling on server side
@@ -110,5 +122,32 @@ public class TileAdjustableTransformer extends TileEntitySE implements ITransfor
 	@Override
 	public void addNetworkFields(List fields) {
 
+	}
+
+	@Override
+	public int getNumberOfComponents() {
+		return 2;
+	}
+
+	@Override
+	public ForgeDirection[] getValidDirections() {
+		return new ForgeDirection[]{primarySide, secondarySide};
+	}
+
+	@Override
+	public ISESubComponent getComponent(ForgeDirection side) {
+		if (side == primarySide)
+			return primary;
+		if (side == secondarySide)
+			return primary.getSecondary();
+		return null;
+	}
+	
+	public ForgeDirection getPrimarySide(){
+		return primarySide;
+	}
+	
+	public ForgeDirection getSecondarySide(){
+		return secondarySide;
 	}
 }

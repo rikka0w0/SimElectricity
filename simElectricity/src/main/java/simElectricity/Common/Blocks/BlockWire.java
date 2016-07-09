@@ -40,7 +40,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.Common.Blocks.BlockContainerSE;
 import simElectricity.API.Energy;
-import simElectricity.API.EnergyTile.IConductor;
+import simElectricity.API.EnergyTile.ISEConductor;
 import simElectricity.API.Network;
 import simElectricity.Common.Blocks.TileEntity.TileWire;
 import simElectricity.Common.Items.ItemBlocks.ItemBlockWire;
@@ -114,7 +114,7 @@ public class BlockWire extends BlockContainerSE {
     }
 
     void updateRenderSides(TileEntity te) {
-        if (te instanceof IConductor) {
+        if (te instanceof ISEConductor) {
             Network.updateNetworkFields(te);
         }
     }

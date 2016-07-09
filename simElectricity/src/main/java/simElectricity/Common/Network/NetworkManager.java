@@ -26,7 +26,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.ChunkWatchEvent;
-import simElectricity.API.EnergyTile.IEnergyTile;
+import simElectricity.API.EnergyTile.ISESimpleTile;
 import simElectricity.API.INetworkEventHandler;
 import simElectricity.API.ISidedFacing;
 import simElectricity.SimElectricity;
@@ -77,11 +77,11 @@ public class NetworkManager {
      * Update a tileEntity's functional side
      */
     public static void updateFunctionalSide(TileEntity tileEntity){
-    	if (!(tileEntity instanceof IEnergyTile))
+    	if (!(tileEntity instanceof ISESimpleTile))
     		return;
 
     	SimElectricity.instance.networkChannel.sendToDimension(
-    			new MessageTileEntityUpdate(tileEntity, ((IEnergyTile)tileEntity).getFunctionalSide(), false),
+    			new MessageTileEntityUpdate(tileEntity, ((ISESimpleTile)tileEntity).getFunctionalSide(), false),
     			tileEntity.getWorldObj().provider.dimensionId);
     }
 

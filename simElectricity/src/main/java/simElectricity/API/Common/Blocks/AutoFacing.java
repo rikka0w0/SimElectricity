@@ -21,7 +21,7 @@ package simElectricity.API.Common.Blocks;
 
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
-import simElectricity.API.EnergyTile.IConductor;
+import simElectricity.API.EnergyTile.ISEConductor;
 
 import java.util.Arrays;
 
@@ -65,7 +65,7 @@ public class AutoFacing {
         for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
             if (tileEntity.getWorldObj().getTileEntity(tileEntity.xCoord + direction.offsetX,
                     tileEntity.yCoord + direction.offsetY,
-                    tileEntity.zCoord + direction.offsetZ) instanceof IConductor
+                    tileEntity.zCoord + direction.offsetZ) instanceof ISEConductor
                     && !Arrays.asList(exceptions).contains(direction))
                 return direction;
         }

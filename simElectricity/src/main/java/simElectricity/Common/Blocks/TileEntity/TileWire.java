@@ -29,11 +29,11 @@ import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.INetworkEventHandler;
 import simElectricity.API.Network;
 import simElectricity.API.Common.TileEntitySE;
-import simElectricity.API.EnergyTile.IConductor;
+import simElectricity.API.EnergyTile.ISEConductor;
 import simElectricity.API.Util;
 import simElectricity.Common.Blocks.BlockWire;
 
-public class TileWire extends TileEntitySE implements IConductor, INetworkEventHandler {
+public class TileWire extends TileEntitySE implements ISEConductor, INetworkEventHandler {
     protected boolean isAddedToEnergyNet = false;
     public boolean[] renderSides = new boolean[6];
 

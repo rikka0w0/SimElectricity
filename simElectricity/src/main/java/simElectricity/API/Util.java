@@ -29,10 +29,10 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.MathHelper;
 import net.minecraftforge.common.util.ForgeDirection;
-import simElectricity.API.EnergyTile.IConductor;
+import simElectricity.API.EnergyTile.ISEConductor;
 import simElectricity.API.EnergyTile.IConnectable;
-import simElectricity.API.EnergyTile.IEnergyTile;
-import simElectricity.API.EnergyTile.ITransformer;
+import simElectricity.API.EnergyTile.ISESimpleTile;
+import simElectricity.API.EnergyTile.ISETile;
 
 public class Util {
     public static final String MODID = "SimElectricity";
@@ -69,19 +69,19 @@ public class Util {
     public static boolean possibleConnection(TileEntity tileEntity, ForgeDirection direction) {
         TileEntity ent = getTileEntityonDirection(tileEntity, direction);
 
-        if (ent instanceof IConductor) {
-            if (tileEntity instanceof IConductor) {
-                if (((IConductor) ent).getColor() == 0 ||
-                        ((IConductor) tileEntity).getColor() == 0 ||
-                        ((IConductor) ent).getColor() == ((IConductor) tileEntity).getColor()) {
+        if (ent instanceof ISEConductor) {
+            if (tileEntity instanceof ISEConductor) {
+                if (((ISEConductor) ent).getColor() == 0 ||
+                        ((ISEConductor) tileEntity).getColor() == 0 ||
+                        ((ISEConductor) ent).getColor() == ((ISEConductor) tileEntity).getColor()) {
                     return true;
                 }
             } else {
                 return true;
             }
 
-        } else if (ent instanceof IEnergyTile) {
-            ForgeDirection functionalSide = ((IEnergyTile) ent).getFunctionalSide();
+        } else if (ent instanceof ISESimpleTile) {
+            ForgeDirection functionalSide = ((ISESimpleTile) ent).getFunctionalSide();
 
             if (direction == functionalSide.getOpposite())
                 return true;
@@ -89,10 +89,9 @@ public class Util {
         } else if (ent instanceof IConnectable) {
             if (((IConnectable) ent).canConnectOnSide(direction.getOpposite()))
                 return true;
-        } else if (ent instanceof ITransformer) {
-            if (((ITransformer) ent).getPrimarySide() == direction.getOpposite() ||
-                    ((ITransformer) ent).getSecondarySide() == direction.getOpposite())
-                return true;
+        } else if (ent instanceof ISETile){
+            if (((ISETile) ent).getComponent(direction.getOpposite()) != null)
+                return true;	
         }
 
         return false;

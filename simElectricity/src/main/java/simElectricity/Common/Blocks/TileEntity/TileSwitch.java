@@ -28,12 +28,63 @@ import simElectricity.API.EnergyTile.IBaseComponent;
 import simElectricity.API.EnergyTile.IConductor;
 import simElectricity.API.EnergyTile.IConnectable;
 import simElectricity.API.EnergyTile.IManualJunction;
+import simElectricity.API.EnergyTile.ISEConductor;
+import simElectricity.API.EnergyTile.ISEJunction;
+import simElectricity.API.EnergyTile.ISESimulatable;
+import simElectricity.API.EnergyTile.ISESubComponent;
+import simElectricity.API.EnergyTile.ISETile;
 
+import java.util.LinkedList;
 import java.util.List;
 
-public class TileSwitch extends TileEntitySE implements IManualJunction, IConnectable, ISidedFacing, IEnergyNetUpdateHandler, INetworkEventHandler {
-    public double current=0F;
+public class TileSwitch extends TileEntitySE implements ISETile, IConnectable, ISidedFacing, IEnergyNetUpdateHandler, INetworkEventHandler {
+    public class Switch implements ISEJunction{
+    	private TileSwitch _te;
+    	
+    	public Switch(TileSwitch te){
+    		_te = te;
+    	}
+    	
+    	
+		@Override
+		public void getNeighbors(List<ISESimulatable> list) {
+	        if (_te.isOn) {
+	            TileEntity neighbor = Util.getTileEntityonDirection(_te, _te.inputSide);
+
+	            if (neighbor instanceof ISEConductor)
+	                list.add((ISEConductor) neighbor);
+
+	            neighbor = Util.getTileEntityonDirection(_te, _te.outputSide);
+
+	            if (neighbor instanceof ISEConductor)
+	                list.add((ISEConductor) neighbor);
+	        }
+		}
+
+		@Override
+		public double getResistance(ISESimulatable neighbor) {
+			return _te.resistance / 2;
+		}
+    	
+	    public double getCurrent() {
+	        if (!_te.isOn)
+	            return 0;
+
+	        TileEntity neighbor;
+	        for (ForgeDirection dir : new ForgeDirection[] {_te.inputSide, _te.outputSide}) {
+	            neighbor = Util.getTileEntityonDirection(_te, dir);
+	            if (neighbor instanceof ISEConductor) {
+	                return Math.abs((Energy.getVoltage(neighbor) - (Energy.getVoltage(this, _te.getWorldObj()))) /
+	                        (((ISEConductor) neighbor).getResistance() + getResistance((ISEConductor)neighbor)));
+	            }
+	        }
+	        return 0;
+	    }
+    }
+	
+	public double current=0F;
     
+	public Switch sw = new Switch(this);
     public ForgeDirection inputSide = ForgeDirection.NORTH, outputSide = ForgeDirection.SOUTH, facing = ForgeDirection.WEST;
     public float resistance = 0.005F;
     public float maxCurrent = 1F;
@@ -91,30 +142,10 @@ public class TileSwitch extends TileEntitySE implements IManualJunction, IConnec
 			}
 		}
 	}
-    
-    @Override
-    public double getResistance() {
-        return resistance / 2;
-    }
 
     @Override
     public boolean canConnectOnSide(ForgeDirection side) {
         return side == inputSide || side == outputSide;
-    }
-
-    @Override
-    public void addNeighbors(List<IBaseComponent> list) {
-        if (isOn) {
-            TileEntity neighbor = Util.getTileEntityonDirection(this, inputSide);
-
-            if (neighbor instanceof IConductor)
-                list.add((IConductor) neighbor);
-
-            neighbor = Util.getTileEntityonDirection(this, outputSide);
-
-            if (neighbor instanceof IConductor)
-                list.add((IConductor) neighbor);
-        }
     }
 
     @Override
@@ -134,7 +165,7 @@ public class TileSwitch extends TileEntitySE implements IManualJunction, IConnec
 	
     @Override
     public void onEnergyNetUpdate() {
-    	current = getCurrent();
+    	current = sw.getCurrent();
         if (current > maxCurrent) {
             isOn = false;
             Energy.postTileRejoinEvent(this);
@@ -142,23 +173,20 @@ public class TileSwitch extends TileEntitySE implements IManualJunction, IConnec
         }
     }
 
-    private double getCurrent() {
-        if (!isOn)
-            return 0;
 
-        TileEntity neighbor;
-        for (ForgeDirection dir : new ForgeDirection[] { inputSide, outputSide }) {
-            neighbor = Util.getTileEntityonDirection(this, dir);
-            if (neighbor instanceof IConductor) {
-                return Math.abs((Energy.getVoltage((IConductor) neighbor) - (Energy.getVoltage(this))) /
-                        (((IConductor) neighbor).getResistance() + this.getResistance()));
-            }
-        }
-        return 0;
-    }
 
 	@Override
-	public double getResistance(IBaseComponent neighbor) {
-		return 0;
+	public int getNumberOfComponents() {
+		return 1;
+	}
+
+	@Override
+	public ForgeDirection[] getValidDirections() {
+		return new ForgeDirection[]{inputSide, outputSide};
+	}
+
+	@Override
+	public ISESubComponent getComponent(ForgeDirection side) {
+		return (side == inputSide || side == outputSide) ? sw : null;
 	}
 }

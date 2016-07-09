@@ -42,12 +42,12 @@ public class TileBatteryBox extends TileSidedGenerator {
 
         if ((Energy.getVoltage(this) >= chargingVoltage) && (wattTickStore < wattTickStoreMax)) {
             checkAndSendChange(0, 100F);
-            wattTickStore += (Energy.getPower(this) * 0.05);
+            //wattTickStore += (Energy.getPower(this) * 0.05);
 
             SEUtils.logInfo("charging, wattTickStore: " + wattTickStore);
         } else if ((Energy.getVoltage(this) <= (dischargeVoltage + 0.1F)) && (wattTickStore > 0)) {
             checkAndSendChange(dischargeVoltage, 0.8F);
-            wattTickStore -= Energy.getWorkDonePerTick(this);
+            //wattTickStore -= Energy.getWorkDonePerTick(this);
 
             SEUtils.logInfo("discharge, wattTickStore: " + wattTickStore);
         } else {

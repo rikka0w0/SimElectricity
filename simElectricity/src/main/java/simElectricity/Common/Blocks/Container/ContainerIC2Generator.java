@@ -55,7 +55,7 @@ public class ContainerIC2Generator extends ContainerBase {
         super.addCraftingToCrafters(par1iCrafting);
         
         if (!tileEntity.getWorldObj().isRemote) {
-        	Network.updateTileEntityFields(tileEntity, new String[]{"bufferedEnergy","powerRate","outputVoltage"});
+        	Network.updateTileEntityFields(tileEntity, new String[]{"inputPower","bufferedEnergy","powerRate","outputVoltage"});
         }
     }
 

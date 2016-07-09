@@ -19,9 +19,9 @@
 
 package simElectricity.Common.EnergyNet;
 
-import simElectricity.API.EnergyTile.IBaseComponent;
-
 import java.util.*;
+
+import simElectricity.API.EnergyTile.ISESimulatable;
 
 /**
  * A baka replacement of JGraph
@@ -29,10 +29,10 @@ import java.util.*;
  * @author <rikka0w0>
  */
 public class BakaGraph {
-    private Map<IBaseComponent, ArrayList<IBaseComponent>> graph;
+    private Map<ISESimulatable, ArrayList<ISESimulatable>> graph;
 
     public BakaGraph() {
-        graph = new HashMap<IBaseComponent, ArrayList<IBaseComponent>>();
+        graph = new HashMap<ISESimulatable, ArrayList<ISESimulatable>>();
     }
 
     /**
@@ -48,31 +48,31 @@ public class BakaGraph {
     /**
      * Return existing nodes in the graph
      */
-    public Set<IBaseComponent> vertexSet() {
+    public Set<ISESimulatable> vertexSet() {
         return graph.keySet();
     }
 
     /**
      * Return a list neighbors of a node
      */
-    public List<IBaseComponent> neighborListOf(IBaseComponent node) {
+    public List<ISESimulatable> neighborListOf(ISESimulatable node) {
         return graph.get(node);
     }
 
     /**
      * Add a vertex into the graph
      */
-    public void addVertex(IBaseComponent node) {
+    public void addVertex(ISESimulatable node) {
         if (graph.containsKey(node))
             return;
 
-        graph.put(node, new ArrayList<IBaseComponent>());
+        graph.put(node, new ArrayList<ISESimulatable>());
     }
 
     /**
      * Add a neighbor to a vertex
      */
-    public void addEdge(IBaseComponent node, IBaseComponent neighbor) {
+    public void addEdge(ISESimulatable node, ISESimulatable neighbor) {
         if (!graph.containsKey(node))
             return;
 
@@ -86,12 +86,12 @@ public class BakaGraph {
     /**
      * Remove a vertex
      */
-    public void removeVertex(IBaseComponent node) {
+    public void removeVertex(ISESimulatable node) {
         if (!graph.containsKey(node))
             return;
 
         //Remove this node from its neighbors' list
-        for (IBaseComponent thisNode : neighborListOf(node)) {
+        for (ISESimulatable thisNode : neighborListOf(node)) {
             if (neighborListOf(thisNode).contains(node))
                 neighborListOf(thisNode).remove(node);
         }

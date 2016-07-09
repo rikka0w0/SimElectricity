@@ -26,6 +26,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.Common.Items.ItemSE;
 import simElectricity.API.Energy;
 import simElectricity.API.EnergyTile.*;
@@ -48,91 +49,30 @@ public class ItemUltimateMultimeter extends ItemSE {
 
     @Override
     public boolean onItemUse(ItemStack itemStack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
-        TileEntity tile = world.getTileEntity(x, y, z);
+        TileEntity te = world.getTileEntity(x, y, z);
 
-        if (tile instanceof ITransformer && (!(world.isRemote))) {
-            ITransformer transformer = (ITransformer) tile;
-            ITransformer.ITransformerWinding primary = transformer.getPrimary();
-            ITransformer.ITransformerWinding secondary = transformer.getSecondary();
-
-            Util.chat(player, "-----------------------");
-            Util.chat(player, "Transformer");
-            Util.chat(player, "Primary Voltage: " + String.valueOf(Energy.getVoltage(primary)) + "V");
-            Util.chat(player, "Secondary Voltage: " + String.valueOf(Energy.getVoltage(secondary)) + "V");
-            Util.chat(player, "PS ratio: 1:" + String.valueOf(transformer.getRatio()));
-            
-            double secondaryResistance = transformer.getResistance();
-            double secondaryCurrent = (transformer.getRatio() * Energy.getVoltage(primary) - Energy.getVoltage(secondary)) / secondaryResistance;
-            Util.chat(player, "Internal Resistance: " + secondaryResistance + "\u03a9");
-            Util.chat(player, "Secondary current: " + String.valueOf(secondaryCurrent)+"A");
-            Util.chat(player, "Power loss: " + String.valueOf(secondaryCurrent * secondaryCurrent * secondaryResistance)+"A");
+        if (world.isRemote)
+        	return false;
+       
+        Util.chat(player, "Voltages: ");
+        
+        if ((te instanceof ISESimulatable) && (!(world.isRemote))) {
+        	String[] temp = te.toString().split("[.]");
+        	Util.chat(player,  temp[temp.length-1].split("@")[0] + ": " + String.valueOf(Energy.getVoltage(te)));
         }
-
-        if ((tile instanceof IBaseComponent || tile instanceof IComplexTile) && (!(world.isRemote))) {
-            IBaseComponent te = null;
-            if (tile instanceof IBaseComponent) {
-                te = (IBaseComponent) tile;
-            } else if (tile instanceof IComplexTile) {
-                te = ((IComplexTile) tile).getCircuitComponent(Util.getPlayerSight(player, false).getOpposite());
-            }
-
-            if (te == null)
-                return false;
-
-            String tileType = "Unknown";
-            double outputVoltage = 0;
-
-
-            Util.chat(player, "-----------------------");
-            if (te instanceof ICircuitComponent) {
-                if (((ICircuitComponent) te).getOutputVoltage() == 0)
-                    tileType = "Energy Sink";
-                else {
-                    tileType = "Energy Source";
-                    outputVoltage = ((ICircuitComponent) te).getOutputVoltage();
-                }
-
-                if (!(te instanceof IEnergyTile))
-                    tileType += "(SubComponent)";
-            }
-
-            if (te instanceof IConductor) {
-                tileType = "Energy Conductor";
-            }
-
-            if (te instanceof IManualJunction) {
-                tileType = "Manual Junction";
-            }
-
-            //Print out information here
-            Util.chat(player, "Type: " + tileType);
-            if (te instanceof IEnergyTile)
-                Util.chat(player, "FunctionalSide: " + ((IEnergyTile) te).getFunctionalSide().toString());
-
-            if (te instanceof ICircuitComponent && outputVoltage > 0)
-                Util.chat(player, "Internal resistance: " + String.valueOf(te.getResistance()) + "\u03a9");
-            else if (te instanceof IConductor ||
-            		(te instanceof IManualJunction && ((IManualJunction)te).getResistance() != 0))
-                Util.chat(player, "Resistance (Per Block) : " + String.valueOf(te.getResistance()*2) + "\u03a9");
-            else if (te instanceof ICircuitComponent)
-            	Util.chat(player, "Resistance : " + String.valueOf(te.getResistance()) + "\u03a9");
-            
-            if (te instanceof ICircuitComponent) {
-                Util.chat(player, "Current: " + String.valueOf(Energy.getCurrent((ICircuitComponent) te, tile.getWorldObj())) + "A");
-                Util.chat(player, "Power rate: " + String.valueOf(Energy.getPower((ICircuitComponent) te, tile.getWorldObj())) + "W");
-            }
-            Util.chat(player, "Voltage: " + String.valueOf(Energy.getVoltage(te, tile.getWorldObj())) + "V");
-            if (outputVoltage > 0) { //Energy Source
-                Util.chat(player, "Internal voltage: " + String.valueOf(outputVoltage) + "V");
-                Util.chat(player, "Output rate: " + String.valueOf(outputVoltage * Energy.getCurrent((ICircuitComponent) te, tile.getWorldObj())) + "W");
-            }
-            if (te instanceof IConductor) {
-                Util.chat(player, "Color: " + String.valueOf(((IConductor) te).getColor()));
-            }
-
-            return true;
-        } else {
-            return false;
+        else if (te instanceof ISETile){
+        	ISETile tile = (ISETile)te;
+        	for (ForgeDirection dir : tile.getValidDirections()){
+        		ISESubComponent comp = tile.getComponent(dir);
+        		String[] temp = comp.toString().split("[.]");
+        		Util.chat(player, temp[temp.length-1].split("@")[0] + ": " + String.valueOf(Energy.getVoltage(comp, te.getWorldObj())));
+        	}
         }
+        else if (te instanceof ISEConductor) {
+            Util.chat(player, "Color: " + String.valueOf(((ISEConductor) te).getColor()));
+        }
+        
+        return true;
+        
     }
 }

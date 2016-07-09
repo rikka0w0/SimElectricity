@@ -62,8 +62,11 @@ public class TileElectricFurnace extends TileStandardSEMachine implements IEnerg
         if (worldObj.isRemote)
             return;
         //TODO inv[1] == null | (inv[1] != null && inv[1].isItemEqual(result))
-        if (Energy.getPower(this) > 0 && result != null && (inv[1] == null || (inv[1] != null && inv[1].stackSize < 64 && inv[1].isItemEqual(result)))) {
-            energyStored += Energy.getPower(this) * 0.02;
+        double voltage = Energy.getVoltage(this);
+        double power = voltage * voltage / this.getResistance();
+        
+        if (power > 0 && result != null && (inv[1] == null || (inv[1] != null && inv[1].stackSize < 64 && inv[1].isItemEqual(result)))) {
+            energyStored += power * 0.02;
             progress = ((int) (energyStored * 100 / energyPerItem));
 
             if (resistance > onResistance) {

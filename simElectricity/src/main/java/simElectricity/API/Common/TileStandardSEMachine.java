@@ -21,12 +21,12 @@ package simElectricity.API.Common;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.ForgeDirection;
-import simElectricity.API.EnergyTile.IEnergyTile;
+import simElectricity.API.EnergyTile.ISESimpleTile;
 
 /**
  * A standard SE machine can inherits this class, make things easier and less confusion
  */
-public abstract class TileStandardSEMachine extends TileSidedFacingMachine implements IEnergyTile {
+public abstract class TileStandardSEMachine extends TileSidedFacingMachine implements ISESimpleTile {
     public ForgeDirection functionalSide = ForgeDirection.NORTH;
     
     @Override

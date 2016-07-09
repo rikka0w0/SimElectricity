@@ -55,7 +55,9 @@ public class TileSimpleGenerator extends TileSidedGenerator implements INetworkE
                 Energy.postTileChangeEvent(this);
             }
 
-            double workDone = Energy.getWorkDonePerTick(this);
+            double voltage = Energy.getVoltage(this);
+            double power = voltage * voltage / this.getResistance();
+            double workDone = power*0.05;
             if (workDone < 0)
                 return;
 

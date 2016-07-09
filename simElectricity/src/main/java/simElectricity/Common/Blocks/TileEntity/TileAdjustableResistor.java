@@ -38,7 +38,8 @@ public class TileAdjustableResistor extends TileStandardSEMachine implements INe
         if (worldObj.isRemote)
             return;
 
-        power = (float) Energy.getPower(this);
+        double voltage = Energy.getVoltage(this);
+        power = (float) (voltage*voltage/resistance);
         powerConsumed += power / 20F;
     }
 

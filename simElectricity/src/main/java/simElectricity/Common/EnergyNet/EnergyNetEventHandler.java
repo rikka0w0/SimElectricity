@@ -27,9 +27,7 @@ import cpw.mods.fml.relauncher.Side;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.WorldEvent;
-import simElectricity.API.EnergyTile.IBaseComponent;
-import simElectricity.API.EnergyTile.IComplexTile;
-import simElectricity.API.EnergyTile.ITransformer;
+import simElectricity.API.EnergyTile.ISEPlaceable;
 import simElectricity.API.Events.TileAttachEvent;
 import simElectricity.API.Events.TileChangeEvent;
 import simElectricity.API.Events.TileDetachEvent;
@@ -72,7 +70,7 @@ public class EnergyNetEventHandler {
             return;
         }
 
-        if (!(te instanceof IBaseComponent) && !(te instanceof IComplexTile) && !(te instanceof ITransformer)) {
+        if (!(te instanceof ISEPlaceable)) {
             SEUtils.logInfo("Unacceptable tileentity " + te + " is trying to attach to the energy network, aborting");
             return;
         }

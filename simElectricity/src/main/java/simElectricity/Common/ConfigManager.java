@@ -38,6 +38,8 @@ public class ConfigManager {
     @SideOnly(Side.CLIENT)
     public static int parabolaRenderSteps;
     public static String matrixSolver;
+    public static int precision;
+    public static int maxIteration;
 
     public static void init(FMLPreInitializationEvent event) {
         if (config == null) {
@@ -51,7 +53,9 @@ public class ConfigManager {
         parabolaRenderSteps = config.get(Configuration.CATEGORY_GENERAL, "ParabolaRenderSteps", 12, "Decides how smooth the parabola cable is(must be a even number!Client ONLY!)").getInt(12);
         // matrixSolver = config.get(Configuration.CATEGORY_GENERAL, "MatrixSolver", "QR", "Which algorithms is used for solving matrix(QR is much more effective than Gaussian, options: QR, Gaussian)").getString();
         matrixSolver = config.getString("MatrixSolver", Configuration.CATEGORY_GENERAL, "QR", "Which algorithms is used for solving matrix(QR is much more effective than Gaussian.).Options: QR, Gaussian", new String[] { "QR", "Gaussian" });
-
+        precision = config.get(Configuration.CATEGORY_GENERAL, "Precision", 10, "The maximum allowed error from simulation").getInt(10);
+        maxIteration = config.get(Configuration.CATEGORY_GENERAL, "Max iteration", 50, "The Maximum number of iteration per tick").getInt(50);
+        
         if (config.hasChanged())
             config.save();
     }

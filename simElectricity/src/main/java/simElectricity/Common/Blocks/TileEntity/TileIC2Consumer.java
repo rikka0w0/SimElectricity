@@ -5,6 +5,7 @@ import java.util.List;
 import ic2.api.energy.event.EnergyTileLoadEvent;
 import ic2.api.energy.event.EnergyTileUnloadEvent;
 import ic2.api.energy.tile.IEnergySink;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -30,7 +31,7 @@ public class TileIC2Consumer extends TileSidedGenerator implements IEnergySink, 
         double KP = 1, KI = 0.1;
         double Vo = Energy.getVoltage(this);
         double Po = Vo * (outputVoltage - Vo) / outputResistance;	//In SE unit
-        double Pin = powerRate * Energy.ic2ConvertRatio;			//In SE unit
+        double Pin = powerRate;			//In SE unit
         double newR = outputResistance;
         
         double RSet = Vo * (outputVoltage - Vo) / Pin;
@@ -46,7 +47,7 @@ public class TileIC2Consumer extends TileSidedGenerator implements IEnergySink, 
 	    if (newR > 10E5)
 	    	newR = 10E5;
         
-        bufferedEnergy -= Math.min(powerRate,Po / Energy.ic2ConvertRatio);
+        bufferedEnergy -= Math.min(powerRate,Po);
         
         //Buffer runs out
         if (bufferedEnergy < 0){
@@ -59,6 +60,20 @@ public class TileIC2Consumer extends TileSidedGenerator implements IEnergySink, 
         	Energy.postTileChangeEvent(this);
         }
 	}
+	
+    @Override
+    public void readFromNBT(NBTTagCompound tagCompound) {
+        super.readFromNBT(tagCompound);
+
+        bufferedEnergy = tagCompound.getDouble("bufferedEnergy");
+    }
+
+    @Override
+    public void writeToNBT(NBTTagCompound tagCompound) {
+        super.writeToNBT(tagCompound);
+
+        tagCompound.setDouble("bufferedEnergy", bufferedEnergy);
+    }
 	
     @Override
 	public void onLoad() {

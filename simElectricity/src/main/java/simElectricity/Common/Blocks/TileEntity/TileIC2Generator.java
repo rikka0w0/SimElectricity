@@ -3,20 +3,35 @@ package simElectricity.Common.Blocks.TileEntity;
 import ic2.api.energy.event.EnergyTileLoadEvent;
 import ic2.api.energy.event.EnergyTileUnloadEvent;
 import ic2.api.energy.tile.IEnergySource;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.Energy;
-import simElectricity.API.Common.TileStandardSEMachine;
+import simElectricity.API.IEnergyNetUpdateHandler;
+import simElectricity.API.IWrenchable;
+import simElectricity.API.Common.TileSidedFacingMachine;
+import simElectricity.API.EnergyTile.ISEConstantPowerLoad;
+import simElectricity.API.EnergyTile.ISESubComponent;
+import simElectricity.API.EnergyTile.ISETile;
 
-public class TileIC2Generator extends TileStandardSEMachine implements IEnergySource{
+public class TileIC2Generator extends TileSidedFacingMachine implements IEnergySource, ISETile, ISEConstantPowerLoad, IWrenchable, IEnergyNetUpdateHandler{
+	public ForgeDirection functionalSide = ForgeDirection.NORTH;
+	
+	public double inputPower = 0;	//Input rate
+	
 	public double bufferedEnergy = 0;
 	public double maxBufferedEnergy = 10000;
-	public double powerRate = 0;
-	public double lastErr = 0;
+	public double powerRate = 0;	//Output rate
+
+	public double outputVoltage = 32;	//IC2 voltage!
 	
-	public double resistance = Double.MAX_VALUE;
-	public double outputVoltage = 1;	//IC2 voltage!
+	public boolean enabled = true;
+	
+	@Override
+	public boolean isEnabled() {
+		return enabled;
+	}
 	
 	@Override
     public void updateEntity() {
@@ -25,44 +40,61 @@ public class TileIC2Generator extends TileStandardSEMachine implements IEnergySo
         //No client side operation
         if (worldObj.isRemote)
         	return;
+
         
-        double KP = 1, KI = 0.1;
-        double Vi = Energy.getVoltage(this);
-        double Pin = Vi * Vi / resistance;				//Power injected in SE unit
-        double Pin_IC2 = Pin / Energy.ic2ConvertRatio;	//Power injected in Eu unit
-        double newR = resistance;
-        double Pout =  powerRate * Energy.ic2ConvertRatio;
         
-        double RSet = Pout > 10E-14 ? Vi * Vi / Pout : 10E5; //Avoid NaH
-        double Rerr = RSet - newR;
+        bufferedEnergy += inputPower;
         
-	    newR += KP*Rerr + KI*lastErr;
-	    lastErr = Rerr;
-	        
-	    if (newR <0.1)
-	    	newR = 0.1;
-	    if (newR > 10E5)
-	    	newR = 10E5;
-        
-	    bufferedEnergy += Pin_IC2;
-	    
-        //Buffer is full
         if (bufferedEnergy > maxBufferedEnergy){
-        	newR = Float.MAX_VALUE;
+        	bufferedEnergy = maxBufferedEnergy;
+        	if (enabled){
+        		Energy.postTileChangeEvent(this);
+        		enabled = false;
+        	}
+        		
+        	inputPower = 0;
         }
         
-        //Large enough resistance error
-        if (Math.abs(newR - resistance) > 10E-3){
-        	resistance = newR;
-        	Energy.postTileChangeEvent(this);
+        if (bufferedEnergy < maxBufferedEnergy / 2){
+        	if (!enabled){
+        		Energy.postTileChangeEvent(this);
+        		enabled = true;
+        	}
+        		
         }
+        	
 	}
         
-	//TileStandardSEMachine------------------------------------------------------------------------
 	@Override
-	public double getResistance() {
-		return resistance;
+	public void onEnergyNetUpdate() {
+		double V = Energy.getVoltage(this);
+		double Rcal = V*V/getRatedPower();
+		
+		if (Rcal > getMaximumResistance())
+			Rcal = getMaximumResistance();
+		if (Rcal < getMinimumResistance())
+			Rcal = getMinimumResistance();
+        
+		inputPower = Energy.convertSE2IC(V*V/Rcal);
 	}
+	
+	
+    @Override
+    public void readFromNBT(NBTTagCompound tagCompound) {
+        super.readFromNBT(tagCompound);
+
+        outputVoltage = tagCompound.getDouble("outputVoltage");
+        bufferedEnergy = tagCompound.getDouble("bufferedEnergy");
+    }
+
+    @Override
+    public void writeToNBT(NBTTagCompound tagCompound) {
+        super.writeToNBT(tagCompound);
+
+        tagCompound.setDouble("bufferedEnergy", bufferedEnergy);
+        tagCompound.setDouble("outputVoltage", outputVoltage);
+    }
+	
 	
     @Override
 	public void onLoad() {
@@ -74,11 +106,6 @@ public class TileIC2Generator extends TileStandardSEMachine implements IEnergySo
     	MinecraftForge.EVENT_BUS.post(new EnergyTileUnloadEvent(this));
     }
     
-	@Override
-    public boolean canSetFunctionalSide(ForgeDirection newFunctionalSide) {
-        return true;
-    }
-
 	//IC2------------------------------------------------------------------------------------------
 	@Override
 	public boolean emitsEnergyTo(TileEntity paramTileEntity, ForgeDirection paramForgeDirection) {
@@ -95,7 +122,7 @@ public class TileIC2Generator extends TileStandardSEMachine implements IEnergySo
 	 */
 	@Override
 	public double getOfferedEnergy() {
-		return bufferedEnergy > 0 ? outputVoltage : 0;
+		return bufferedEnergy > 0 ? Math.min(bufferedEnergy , outputVoltage) : 0;
 	}
 
 	/**
@@ -121,7 +148,65 @@ public class TileIC2Generator extends TileStandardSEMachine implements IEnergySo
 	 */
 	@Override
 	public int getSourceTier() {
-		// TODO Auto-generated method stub
-		return 0;
+		return 1;
 	}
+
+
+	@Override
+	public double getRatedPower() {
+		return Energy.convertIC2SE(outputVoltage);
+	}
+
+
+	@Override
+	public double getMinimumResistance() {
+		return 100;
+	}
+
+
+	@Override
+	public double getMaximumResistance() {
+		return 100000;
+	}
+
+
+	@Override
+	public int getNumberOfComponents() {
+		return 1;
+	}
+
+
+	@Override
+	public ForgeDirection[] getValidDirections() {
+		return new ForgeDirection[]{functionalSide};
+	}
+
+
+	@Override
+	public ISESubComponent getComponent(ForgeDirection side) {
+		return side == functionalSide ? this : null;
+	}
+
+
+	@Override
+	public boolean attachToEnergyNet() {
+		return true;
+	}
+
+
+	@Override
+	public ForgeDirection getFunctionalSide() {
+		return this.functionalSide;
+	}
+
+
+	@Override
+	public void setFunctionalSide(ForgeDirection newFunctionalSide) {
+		functionalSide = newFunctionalSide;
+	}
+	
+	@Override
+    public boolean canSetFunctionalSide(ForgeDirection newFunctionalSide) {
+        return true;
+    }
 }
