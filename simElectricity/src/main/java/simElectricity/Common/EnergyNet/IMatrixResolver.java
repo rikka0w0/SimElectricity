@@ -3,7 +3,7 @@ package simElectricity.Common.EnergyNet;
 import simElectricity.Common.SEUtils;
 
 //Ax = b
-public interface MatrixResolver {
+public interface IMatrixResolver {
     /**
      * Initialize to a size*size square matrix
      *
@@ -49,9 +49,9 @@ public interface MatrixResolver {
     int getTotalNonZeros();
 
     public static class MatrixHelper {
-        public static MatrixResolver newResolver(String name) {
+        public static IMatrixResolver newResolver(String name) {
             try {
-                return (MatrixResolver) Class.forName("simElectricity.Common.EnergyNet." + name).newInstance();
+                return (IMatrixResolver) Class.forName("simElectricity.Common.EnergyNet." + name).newInstance();
             } catch (Exception e) {
                 SEUtils.logFatal("Invalid Matrix Solver! Please check your config settings!");
                 e.printStackTrace();

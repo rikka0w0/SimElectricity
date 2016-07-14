@@ -27,13 +27,12 @@ import cpw.mods.fml.relauncher.Side;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.WorldEvent;
+
 import simElectricity.API.EnergyTile.ISEPlaceable;
-import simElectricity.API.Events.TileAttachEvent;
-import simElectricity.API.Events.TileChangeEvent;
-import simElectricity.API.Events.TileDetachEvent;
-import simElectricity.API.Events.TileRejoinEvent;
+import simElectricity.API.Events.*;
 import simElectricity.Common.ConfigManager;
 import simElectricity.Common.SEUtils;
+import simElectricity.Common.EnergyNet.Grid.GridDataProvider;
 
 public class EnergyNetEventHandler {
     public EnergyNetEventHandler() {
@@ -58,7 +57,7 @@ public class EnergyNetEventHandler {
 
     //Energy net --------------------------------------------------------------------------------------------------------------
     @SubscribeEvent
-    public void onAttachEvent(TileAttachEvent event) {
+    public void onTileAttach(TileAttachEvent event) {
         TileEntity te = event.energyTile;
         if (!te.getWorldObj().blockExists(te.xCoord, te.yCoord, te.zCoord)) {
             SEUtils.logInfo(te + " is added to the energy net too early!, abort!");
@@ -130,5 +129,18 @@ public class EnergyNetEventHandler {
 
         if (ConfigManager.showEnergyNetInfo)
             SEUtils.logInfo("Tileentity " + te + " causes the energy network to update!");
+    }
+    
+    @SubscribeEvent
+    public void onGridObjectAttach(GridObjectAttachEvent event) {    
+    	GridDataProvider grid = GridDataProvider.get(event.world);
+    	grid.addGridObject(event.x, event.y, event.z, event.type);
+    }
+    
+    
+    @SubscribeEvent
+    public void onGridObjectDetach(GridObjectDetachEvent event) {    
+    	GridDataProvider grid = GridDataProvider.get(event.world);
+    	grid.removeGridObject(grid.getGridObjectAtCoord(event.x, event.y, event.z));
     }
 }

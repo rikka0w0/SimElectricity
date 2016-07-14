@@ -37,56 +37,6 @@ import simElectricity.Common.Blocks.TileEntity.TileIC2Generator;
 public class GuiIC2Generator extends GuiContainer {
     protected TileIC2Generator tileentity;
 
-    @Override
-    public void initGui() {
-        super.initGui();
-        buttonList.add(new GuiButton(0, guiLeft + 96, guiTop + 18, 20, 20, "--"));
-        buttonList.add(new GuiButton(1, guiLeft + 116, guiTop + 18, 16, 20, "-"));
-        buttonList.add(new GuiButton(2, guiLeft + 132, guiTop + 18, 16, 20, "+"));
-        buttonList.add(new GuiButton(3, guiLeft + 148, guiTop + 18, 20, 20, "++"));
-    }
-
-    /*
-    @Override
-    public void actionPerformed(GuiButton button) {
-        if (button.id < 4) {
-            switch (button.id) {
-                case 0:
-                    if (GuiScreen.isCtrlKeyDown())
-                        tileentity.outputVoltage -= 512;
-                    else
-                        tileentity.outputVoltage -= 32;
-                    break;
-                case 1:
-                    if (GuiScreen.isCtrlKeyDown())
-                        tileentity.outputVoltage -= 1;
-                    else
-                        tileentity.outputVoltage -= 8;
-                    break;
-                case 2:
-                    if (GuiScreen.isCtrlKeyDown())
-                        tileentity.outputVoltage += 1;
-                    else
-                        tileentity.outputVoltage += 8;
-                    break;
-                case 3:
-                    if (GuiScreen.isCtrlKeyDown())
-                        tileentity.outputVoltage += 512;
-                    else
-                        tileentity.outputVoltage += 32;
-                    break;
-                default:
-            }
-
-            if (tileentity.outputVoltage < 1)
-                tileentity.outputVoltage = 1;
-            if (tileentity.outputVoltage > 8192)
-                tileentity.outputVoltage = 8192;
-            Network.updateTileEntityFieldsToServer(tileentity, "outputVoltage");
-        }
-    }
-    */
-
     public GuiIC2Generator(InventoryPlayer inventoryPlayer, TileEntity tileEntity) {
         super(new ContainerIC2Generator(inventoryPlayer, tileEntity));
         tileentity = (TileIC2Generator) tileEntity;

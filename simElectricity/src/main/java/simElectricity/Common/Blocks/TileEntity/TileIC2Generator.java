@@ -9,13 +9,13 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.Energy;
 import simElectricity.API.IEnergyNetUpdateHandler;
-import simElectricity.API.IWrenchable;
+import simElectricity.API.ISEWrenchable;
 import simElectricity.API.Common.TileSidedFacingMachine;
 import simElectricity.API.EnergyTile.ISEConstantPowerLoad;
 import simElectricity.API.EnergyTile.ISESubComponent;
 import simElectricity.API.EnergyTile.ISETile;
 
-public class TileIC2Generator extends TileSidedFacingMachine implements IEnergySource, ISETile, ISEConstantPowerLoad, IWrenchable, IEnergyNetUpdateHandler{
+public class TileIC2Generator extends TileSidedFacingMachine implements IEnergySource, ISETile, ISEConstantPowerLoad, ISEWrenchable, IEnergyNetUpdateHandler{
 	public ForgeDirection functionalSide = ForgeDirection.NORTH;
 	
 	public double inputPower = 0;	//Input rate

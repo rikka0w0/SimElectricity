@@ -24,10 +24,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.*;
 import simElectricity.API.Common.TileEntitySE;
-import simElectricity.API.EnergyTile.IBaseComponent;
-import simElectricity.API.EnergyTile.IConductor;
-import simElectricity.API.EnergyTile.IConnectable;
-import simElectricity.API.EnergyTile.IManualJunction;
+import simElectricity.API.EnergyTile.ISEConnectable;
 import simElectricity.API.EnergyTile.ISEConductor;
 import simElectricity.API.EnergyTile.ISEJunction;
 import simElectricity.API.EnergyTile.ISESimulatable;
@@ -37,7 +34,7 @@ import simElectricity.API.EnergyTile.ISETile;
 import java.util.LinkedList;
 import java.util.List;
 
-public class TileSwitch extends TileEntitySE implements ISETile, IConnectable, ISidedFacing, IEnergyNetUpdateHandler, INetworkEventHandler {
+public class TileSwitch extends TileEntitySE implements ISETile, ISEConnectable, ISidedFacing, IEnergyNetUpdateHandler, INetworkEventHandler {
     public class Switch implements ISEJunction{
     	private TileSwitch _te;
     	
@@ -166,11 +163,11 @@ public class TileSwitch extends TileEntitySE implements ISETile, IConnectable, I
     @Override
     public void onEnergyNetUpdate() {
     	current = sw.getCurrent();
-        if (current > maxCurrent) {
-            isOn = false;
-            Energy.postTileRejoinEvent(this);
-            Network.updateTileEntityFields(this, "isOn");
-        }
+        //if (current > maxCurrent) {
+         //   isOn = false;
+        //    Energy.postTileRejoinEvent(this);
+        //    Network.updateTileEntityFields(this, "isOn");
+        //}
     }
 
 

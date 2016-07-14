@@ -19,20 +19,22 @@
 
 package simElectricity.Common.EnergyNet;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.Set;
 
-import simElectricity.API.EnergyTile.ISESimulatable;
 
 /**
  * A baka replacement of JGraph
  *
  * @author <rikka0w0>
  */
-public class BakaGraph {
-    private Map<ISESimulatable, ArrayList<ISESimulatable>> graph;
+public class BakaGraph<T> {
+    private Map<T, LinkedList<T>> graph;
 
     public BakaGraph() {
-        graph = new HashMap<ISESimulatable, ArrayList<ISESimulatable>>();
+        graph = new HashMap<T, LinkedList<T>>();
     }
 
     /**
@@ -44,36 +46,46 @@ public class BakaGraph {
         result.graph.putAll(graph);
         return result;
     }
+    
+    /**
+     * Delete every vertex and edges within this graph
+     */
+    public void clear(){
+    	graph.clear();
+    }
 
     /**
      * Return existing nodes in the graph
      */
-    public Set<ISESimulatable> vertexSet() {
+    public Set<T> vertexSet() {
         return graph.keySet();
     }
 
     /**
      * Return a list neighbors of a node
      */
-    public List<ISESimulatable> neighborListOf(ISESimulatable node) {
+    public LinkedList<T> neighborListOf(T node) {
         return graph.get(node);
     }
 
     /**
      * Add a vertex into the graph
      */
-    public void addVertex(ISESimulatable node) {
+    public void addVertex(T node) {
         if (graph.containsKey(node))
             return;
 
-        graph.put(node, new ArrayList<ISESimulatable>());
+        graph.put(node, new LinkedList<T>());
     }
 
     /**
      * Add a neighbor to a vertex
      */
-    public void addEdge(ISESimulatable node, ISESimulatable neighbor) {
+    public void addEdge(T node, T neighbor) {
         if (!graph.containsKey(node))
+            return;
+        
+        if (!graph.containsKey(neighbor))
             return;
 
         if (!neighborListOf(node).contains(neighbor))
@@ -86,17 +98,36 @@ public class BakaGraph {
     /**
      * Remove a vertex
      */
-    public void removeVertex(ISESimulatable node) {
+    public void removeVertex(T node) {
         if (!graph.containsKey(node))
             return;
 
         //Remove this node from its neighbors' list
-        for (ISESimulatable thisNode : neighborListOf(node)) {
+        for (T thisNode : neighborListOf(node)) {
             if (neighborListOf(thisNode).contains(node))
                 neighborListOf(thisNode).remove(node);
         }
 
         graph.remove(node);
+    }
+    
+    /**
+     * Remove an edge
+     */
+    public void removeEdge(T node, T neighbor) {
+        if (!graph.containsKey(node))
+            return;
+        
+        if (!graph.containsKey(neighbor))
+            return;
+
+        
+        
+        if (neighborListOf(node).contains(neighbor))
+            neighborListOf(node).remove(neighbor);
+
+        if (neighborListOf(neighbor).contains(node))
+            neighborListOf(neighbor).remove(node);
     }
     
     /**

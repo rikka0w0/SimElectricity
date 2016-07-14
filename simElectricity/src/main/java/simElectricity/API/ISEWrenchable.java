@@ -2,7 +2,7 @@ package simElectricity.API;
 
 import net.minecraftforge.common.util.ForgeDirection;
 
-public interface IWrenchable {
+public interface ISEWrenchable {
     /**
      * Return a side that is designed to interact with energyNet
      */

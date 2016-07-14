@@ -1,8 +1,8 @@
 package simElectricity.API.EnergyTile;
 
-import simElectricity.API.IWrenchable;
+import simElectricity.API.ISEWrenchable;
 import net.minecraftforge.common.util.ForgeDirection;
 
-public interface ISESimpleTile extends ISEPlaceable, ISEVoltageSource, IWrenchable{
+public interface ISESimpleTile extends ISEPlaceable, ISEVoltageSource, ISEWrenchable{
 
 }

@@ -9,12 +9,9 @@ import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.IHVTower;
 import simElectricity.API.Util;
 import simElectricity.API.Common.TileEntitySE;
-import simElectricity.API.EnergyTile.IBaseComponent;
-import simElectricity.API.EnergyTile.IConductor;
-import simElectricity.API.EnergyTile.IConnectable;
-import simElectricity.API.EnergyTile.IManualJunction;
+import simElectricity.API.EnergyTile.ISEConnectable;
 
-public class TileCableClamp extends TileEntitySE implements IManualJunction, IConnectable, IHVTower{
+public class TileCableClamp extends TileEntitySE implements ISEConnectable, IHVTower{
 	public int facing = 0;
 	
     @Override
@@ -36,11 +33,8 @@ public class TileCableClamp extends TileEntitySE implements IManualJunction, ICo
 		return true;
 	}
 	
-	@Override
-	public double getResistance() {
-		return 0.1;
-	}
 
+	/*
 	@Override
 	public void addNeighbors(List<IBaseComponent> list) {
 		TileEntity te = worldObj.getTileEntity(xCoord,yCoord + 2,zCoord);
@@ -51,11 +45,7 @@ public class TileCableClamp extends TileEntitySE implements IManualJunction, ICo
 		if (te instanceof IConductor)
 			list.add((IConductor) te);
 	}
-
-	@Override
-	public double getResistance(IBaseComponent neighbor) {
-		return 0;
-	}
+	*/
 
 	@Override
 	public boolean canConnectOnSide(ForgeDirection side) {

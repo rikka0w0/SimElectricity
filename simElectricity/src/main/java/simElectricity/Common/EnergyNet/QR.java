@@ -6,7 +6,7 @@ import edu.emory.mathcs.csparsej.tdouble.Dcs_util;
 
 import java.util.LinkedList;
 
-public class QR implements MatrixResolver{
+public class QR implements IMatrixResolver{
 	public static final double EPSILON = (double) 1e-10;
 
 	//Left hand side generation

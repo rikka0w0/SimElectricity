@@ -22,11 +22,9 @@ package simElectricity.API;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
+
 import simElectricity.API.EnergyTile.ISESimulatable;
-import simElectricity.API.Events.TileAttachEvent;
-import simElectricity.API.Events.TileChangeEvent;
-import simElectricity.API.Events.TileDetachEvent;
-import simElectricity.API.Events.TileRejoinEvent;
+import simElectricity.API.Events.*;
 import simElectricity.Common.EnergyNet.EnergyNet;
 
 /**
@@ -86,5 +84,13 @@ public class Energy {
     
     public static double getVoltage(ISESimulatable Tile, World world) {
         return EnergyNet.getVoltage(Tile, world);
+    }
+    
+    public static void postGridObjectAttachEvent(World world, int x, int y, int z, byte type) {
+        MinecraftForge.EVENT_BUS.post(new GridObjectAttachEvent(world,x,y,z,type));
+    }
+    
+    public static void postGridObjectDetachEvent(World world, int x, int y, int z) {
+        MinecraftForge.EVENT_BUS.post(new GridObjectDetachEvent(world,x,y,z));
     }
 }

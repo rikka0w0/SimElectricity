@@ -30,7 +30,7 @@ import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.MathHelper;
 import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.EnergyTile.ISEConductor;
-import simElectricity.API.EnergyTile.IConnectable;
+import simElectricity.API.EnergyTile.ISEConnectable;
 import simElectricity.API.EnergyTile.ISESimpleTile;
 import simElectricity.API.EnergyTile.ISETile;
 
@@ -86,8 +86,8 @@ public class Util {
             if (direction == functionalSide.getOpposite())
                 return true;
 
-        } else if (ent instanceof IConnectable) {
-            if (((IConnectable) ent).canConnectOnSide(direction.getOpposite()))
+        } else if (ent instanceof ISEConnectable) {
+            if (((ISEConnectable) ent).canConnectOnSide(direction.getOpposite()))
                 return true;
         } else if (ent instanceof ISETile){
             if (((ISETile) ent).getComponent(direction.getOpposite()) != null)

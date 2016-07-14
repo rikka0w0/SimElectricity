@@ -28,19 +28,20 @@ import simElectricity.API.IEnergyNetUpdateHandler;
 import simElectricity.API.Util;
 import simElectricity.Common.ConfigManager;
 import simElectricity.Common.SEUtils;
+import simElectricity.Common.EnergyNet.Grid.GridDataProvider;
 import sun.security.ssl.Debug;
 
 import java.util.*;
 
-public final class EnergyNet {
-	public Grid grid;
-	
+public final class EnergyNet {	
+	//Contains information about the grid
+	private GridDataProvider grid;
     //Records the connection between components
-    private BakaGraph tileEntityGraph = new BakaGraph();
+    private BakaGraph<ISESimulatable> tileEntityGraph = new BakaGraph<ISESimulatable>();
     //Stores result, the voltage of every nodes
     private Map<ISESimulatable, Double> voltageCache = new HashMap<ISESimulatable, Double>();
     //Matrix solving algorithm used to solve the problem
-    private MatrixResolver matrix = MatrixResolver.MatrixHelper.newResolver(ConfigManager.matrixSolver);
+    private IMatrixResolver matrix = IMatrixResolver.MatrixHelper.newResolver(ConfigManager.matrixSolver);
     //Records the number of iterations during last iterating process
     private int iterations;
     //The allowed mismatch
@@ -56,21 +57,28 @@ public final class EnergyNet {
 
     public String[] info(){
     	String[] temp = matrix.toString().split("[.]");
+    	String sparseRate;
 
-    	if (tileEntityGraph.size() == 0){
+    	if (tileEntityGraph.size() == 0 && grid.getGridObjectCount() == 0){
     		return new String[]{
     				"EnergyNet is empty and idle",
     				"Matrix solving algorithsm: " + temp[temp.length-1].split("@")[0]
     		};
     	}
 
+    	if (tileEntityGraph.size() == 0){
+    		sparseRate = "Undefined";
+    	}else{
+    		sparseRate = String.valueOf(matrix.getTotalNonZeros() * 100 / (tileEntityGraph.size() * tileEntityGraph.size())) + "%";
+    	}
+    	
     	return new String[]{
     	"Loaded entities: " + String.valueOf(tileEntityGraph.size()),
+    	"Grid Objects: " + String.valueOf(grid.getGridObjectCount()),
     	"Non-zero elements: " + String.valueOf(matrix.getTotalNonZeros()),
-    	"Sparse rate: " + String.valueOf(matrix.getTotalNonZeros() * 100 / (tileEntityGraph.size() * tileEntityGraph.size())) + "%",
+    	"Sparse rate: " + sparseRate,
     	"Matrix solving algorithsm: " + temp[temp.length-1].split("@")[0],
-    	"Iterations:" + iterations,
-    	"Grid Nodes: " + String.valueOf(grid.gridData.gridObjects.size())
+    	"Iterations:" + String.valueOf(iterations)
     	};
     }
 
@@ -589,9 +597,15 @@ public final class EnergyNet {
         if (calc) {
             runSimulator();
 
-            for (IEnergyNetUpdateHandler u : energyNetUpdateAgents)
-            	u.onEnergyNetUpdate();
-            
+            try {   
+	            for (Iterator<IEnergyNetUpdateHandler> iterator = energyNetUpdateAgents.iterator(); iterator.hasNext(); ) {
+	            	IEnergyNetUpdateHandler u = iterator.next();
+	            	u.onEnergyNetUpdate();
+	            }
+            } catch (Exception ignored) {
+            }
+
+
             calc = false;
         }
     }
@@ -643,19 +657,20 @@ public final class EnergyNet {
      * Add a TileEntity to the energynet
      */
     public void addTileEntity(TileEntity te) {
-        Map<ISESimulatable, ISESimulatable> neighborMap = new HashMap<ISESimulatable, ISESimulatable>();
+        //Map<ISESimulatable, ISESimulatable> neighborMap = new HashMap<ISESimulatable, ISESimulatable>();
 
 
         if (te instanceof ISEConductor){
         	tileEntityGraph.addVertex((ISEConductor)te);
         	List<ISESimulatable> neighborList = neighborListOfConductor(te);
             for (ISESimulatable neighbor : neighborList)
-                neighborMap.put(neighbor, (ISESimulatable) te);
+            	tileEntityGraph.addEdge(neighbor, (ISESimulatable) te);
         }
         else if (te instanceof ISETile){
         	ISETile tile = (ISETile)te;
         	for (ForgeDirection direction : tile.getValidDirections()) {
         		ISESubComponent subComponent = tile.getComponent(direction);
+        		tileEntityGraph.addVertex(subComponent);
         		
         		if (subComponent instanceof ISEJunction){
         			ISEJunction junction = (ISEJunction) subComponent;
@@ -663,14 +678,12 @@ public final class EnergyNet {
         			junction.getNeighbors(neighborList);
         			
         			for (ISESimulatable neighbor : neighborList)
-        				neighborMap.put(neighbor, subComponent);
+        				tileEntityGraph.addEdge(neighbor, subComponent);
         		}else{
                     TileEntity neighbor = Util.getTileEntityonDirection(te, direction);
-                    
-                    tileEntityGraph.addVertex(subComponent);
                         
                     if (neighbor instanceof ISEConductor)  // Connected properly
-                    	neighborMap.put((ISEConductor) neighbor, subComponent);        			
+                    	tileEntityGraph.addEdge((ISEConductor)neighbor, subComponent);
         		}
         	}
         }
@@ -681,17 +694,12 @@ public final class EnergyNet {
         	TileEntity neighbor = Util.getTileEntityonDirection(te, tile.getFunctionalSide());
         	
             if (neighbor instanceof ISEConductor)  // Connected properly
-            	neighborMap.put((ISEConductor) neighbor, tile);    
+            	tileEntityGraph.addEdge((ISEConductor) neighbor, tile);    
         }
         else{
         	//Error
         }
         
-
-        for (ISESimulatable neighbor : neighborMap.keySet()) {
-            tileEntityGraph.addVertex(neighborMap.get(neighbor));
-            tileEntityGraph.addEdge(neighbor, neighborMap.get(neighbor));
-        }
         
         if (te instanceof IEnergyNetUpdateHandler)
         	energyNetUpdateAgents.add((IEnergyNetUpdateHandler)te);
@@ -735,23 +743,23 @@ public final class EnergyNet {
     public void markForUpdate(TileEntity te) {
         calc = true;
     }
-
+    
+    
     /**
      * Creation of the energy network
      */
-    public EnergyNet(World world) {
-    	grid = new Grid(world);
-    	
-    	
+    public EnergyNet(World world) {   	
     	this.maxIteration = ConfigManager.maxIteration;
     	this.epsilon = Math.pow(10, -ConfigManager.precision);
+    	this.grid = GridDataProvider.get(world);
         SEUtils.logInfo("EnergyNet has been created for DIM" + String.valueOf(world.provider.dimensionId));
     }
 
     public double getVoltage(ISESimulatable Tile){
          if (voltageCache.containsKey(Tile)){
         	double voltage = voltageCache.get(Tile);
-        	if (!Double.isNaN(voltage))	return voltage;
+        	if (!Double.isNaN(voltage))	
+        		return voltage;
          }
          return 0;
     }
@@ -760,6 +768,14 @@ public final class EnergyNet {
      * Calculate the voltage of a given EnergyTile RELATIVE TO GROUND!
      */
     public static double getVoltage(ISESimulatable Tile, World world) {
-        return WorldData.getEnergyNetForWorld(world).getVoltage(Tile);
+        return getEnergyNet(world).getVoltage(Tile);
+    }
+    
+    public static EnergyNet getEnergyNet(World world){
+    	return WorldData.getEnergyNetForWorld(world);
+    }
+    
+    public static GridDataProvider getGridDataProvider(World world){
+    	return getEnergyNet(world).grid;
     }
 }

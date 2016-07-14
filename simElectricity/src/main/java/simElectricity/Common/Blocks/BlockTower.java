@@ -31,9 +31,12 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import simElectricity.API.Common.Blocks.BlockContainerSE;
+import simElectricity.API.Energy;
 import simElectricity.API.Util;
 import simElectricity.Common.Blocks.TileEntity.TileTower;
 import simElectricity.Common.Items.ItemBlocks.ItemBlockTower;
+
+import simElectricity.Common.EnergyNet.EnergyNet;
 
 import java.util.List;
 
@@ -72,6 +75,8 @@ public class BlockTower extends BlockContainerSE {
 
         TileTower tower = (TileTower) world.getTileEntity(x, y, z);
         tower.facing = Util.getPlayerSight(player, true).ordinal();
+        
+        Energy.postGridObjectAttachEvent(world, x, y, z, (byte)1);
     }
 
     @Override
@@ -82,6 +87,8 @@ public class BlockTower extends BlockContainerSE {
                 if (world.getTileEntity(tower.neighborsInfo[i], tower.neighborsInfo[i + 1], tower.neighborsInfo[i + 2]) instanceof TileTower)
                     ((TileTower) world.getTileEntity(tower.neighborsInfo[i], tower.neighborsInfo[i + 1], tower.neighborsInfo[i + 2])).delNeighbor(tower);
         }
+        
+        Energy.postGridObjectDetachEvent(world, x, y, z);
         super.breakBlock(world, x, y, z, block, meta);
     }
 

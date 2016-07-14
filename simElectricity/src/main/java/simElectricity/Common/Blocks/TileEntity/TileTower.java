@@ -27,12 +27,10 @@ import net.minecraft.util.AxisAlignedBB;
 import simElectricity.API.Energy;
 import simElectricity.API.IHVTower;
 import simElectricity.API.Common.TileEntitySE;
-import simElectricity.API.EnergyTile.IBaseComponent;
-import simElectricity.API.EnergyTile.IManualJunction;
 
 import java.util.List;
 
-public class TileTower extends TileEntitySE implements IManualJunction, IHVTower {
+public class TileTower extends TileEntitySE implements IHVTower {
     public int facing;
     public int neighborsInfo[] = new int[] { 0, -1, 0, 0, -1, 0 };
 	
@@ -86,7 +84,7 @@ public class TileTower extends TileEntitySE implements IManualJunction, IHVTower
 
 	@Override
 	public boolean attachToEnergyNet() {
-		return true;
+		return false;
 	}
     
 	//@Override
@@ -123,12 +121,7 @@ public class TileTower extends TileEntitySE implements IManualJunction, IHVTower
         tagCompound.setIntArray("neighborsInfo", this.neighborsInfo);
     }
     
-    @Override
-    public double getResistance() {
-        return 0;
-    }
-
-
+    /*
     @Override
     public void addNeighbors(List<IBaseComponent> list) {
         TileEntity te;
@@ -171,7 +164,8 @@ public class TileTower extends TileEntitySE implements IManualJunction, IHVTower
 
         return Float.MAX_VALUE;
     }
-
+	*/
+    
 	@Override
 	public float[] offsetArray() {
 		switch (getBlockMetadata()){

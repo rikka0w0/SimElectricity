@@ -29,7 +29,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.Common.Items.ItemSE;
 import simElectricity.API.Energy;
-import simElectricity.API.IWrenchable;
+import simElectricity.API.ISEWrenchable;
 import simElectricity.API.Network;
 
 public class ItemWrench extends ItemSE {
@@ -49,8 +49,8 @@ public class ItemWrench extends ItemSE {
 
     @Override
     public boolean onItemUse(ItemStack itemStack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
-        if ((world.getTileEntity(x, y, z) instanceof IWrenchable) & (!world.isRemote)) {
-            IWrenchable te = (IWrenchable) world.getTileEntity(x, y, z);
+        if ((world.getTileEntity(x, y, z) instanceof ISEWrenchable) & (!world.isRemote)) {
+        	ISEWrenchable te = (ISEWrenchable) world.getTileEntity(x, y, z);
             ForgeDirection newFacing = ForgeDirection.getOrientation(side);
 
             if (te.canSetFunctionalSide(newFacing)) {
