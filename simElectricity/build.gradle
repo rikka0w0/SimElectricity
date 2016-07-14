@@ -22,7 +22,7 @@ group= "com.Rikka0_0.SimElectricity" // http://maven.apache.org/guides/mini/guid
 archivesBaseName = "SimElectricity"
 
 minecraft {
-    version = "1.7.10-10.13.2.1230"
+    version = "1.7.10-10.13.4.1614-1.7.10"
 }
 processResources
 {
