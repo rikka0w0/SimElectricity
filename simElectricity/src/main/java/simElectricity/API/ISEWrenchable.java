@@ -2,9 +2,12 @@ package simElectricity.API;
 
 import net.minecraftforge.common.util.ForgeDirection;
 
+/**
+ * Implement this interface in a tileEntity to allow the wrench to change its functional side
+ */
 public interface ISEWrenchable {
     /**
-     * Return a side that is designed to interact with energyNet
+     * Return a side that is designed to interact with the energyNet
      */
     ForgeDirection getFunctionalSide();
 
@@ -13,8 +16,5 @@ public interface ISEWrenchable {
      */
     void setFunctionalSide(ForgeDirection newFunctionalSide);
 
-    /**
-     * Usually called by the wrench, to determine set or not
-     */
     boolean canSetFunctionalSide(ForgeDirection newFunctionalSide);
 }

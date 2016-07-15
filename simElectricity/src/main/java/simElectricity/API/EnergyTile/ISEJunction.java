@@ -2,20 +2,22 @@ package simElectricity.API.EnergyTile;
 
 import java.util.List;
 
+/**
+ * Represents a circuit node, more advanced, more flexible
+ */
 public interface ISEJunction extends ISESubComponent{
     /**
-     * Return the neighbors of this junction
+     * Add all neighbors of this junction to the list in this function
+     * </p>
      * Do not have to be geographically next to this tileEntity!
+     * </p>
+     * Use list.add()
      */
 	void getNeighbors(List<ISESimulatable> list);
 
 
     /**
-     * A advanced version of {@link simElectricity.API.EnergyTile.IBaseComponent#getResistance() getResistance()} in {@link simElectricity.API.EnergyTile.IBaseComponent}
-     * <p/>
-     * Return 0 in {@link simElectricity.API.EnergyTile.IBaseComponent#getResistance() getResistance()} in {@link simElectricity.API.EnergyTile.IBaseComponent} to make this function valid
-     * <p/>
-     * Should return the resistance between this tileEntity and the neighbor
+     * Should return the resistance between this node and the neighbor node
      */
     double getResistance(ISESimulatable neighbor);
 }

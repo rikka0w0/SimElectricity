@@ -22,7 +22,9 @@ package simElectricity.API.EnergyTile;
 import net.minecraftforge.common.util.ForgeDirection;
 
 /**
- * This interface allows wires to connect to this block (Just VISUALLY connected, do NOT impact the energyNet simulation!)
+ * This interface allows cables to VISUALLY connect to this block
+ * <p/>
+ * This interface WON'T affect simulation results!
  */
 public interface ISEConnectable {
     boolean canConnectOnSide(ForgeDirection side);

@@ -5,5 +5,10 @@ public interface ISETransformerPrimary extends ISESubComponent{
 	
 	public double getRatio();
 	
+	/**
+	 * The winding resistance of the transformer
+	 * <p/>
+	 * REFER TO SECONDARY!!!
+	 */
 	public double getResistance();
 }

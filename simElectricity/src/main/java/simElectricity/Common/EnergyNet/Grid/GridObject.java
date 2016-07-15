@@ -9,9 +9,8 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.Constants;
 
 import simElectricity.API.EnergyTile.ISEGridObject;
-import simElectricity.API.EnergyTile.ISESimulatable;
 
-public abstract class GridObject implements ISESimulatable, ISEGridObject{
+public abstract class GridObject implements ISEGridObject{
 	public GridDataProvider gridDataProvider;
 	
 	public byte type;

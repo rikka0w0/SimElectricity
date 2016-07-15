@@ -1,14 +1,20 @@
 package simElectricity.API.EnergyTile;
 
+/**
+ * Represents a conductor block, should be implemented by cable blocks
+ */
 public interface ISEConductor extends ISEPlaceable,ISESimulatable{
     /**
-     * Return the color of the wire
+     * Returns the color of the cable
      * <p/>
-     * 0 will allow any other wires connect to this wire
-     * <p/>
-     * Any other values will only connect to the certain value or 0
+     * Color 0 is considered as universal, that means cables with any color can connect to a cable with universal color 0
      */
     int getColor();
     
+    /**
+     * Returns the resistance between neighbor nodes
+     * <p/>
+     * See SimElectricity wikipedia for circuit models and more informations
+     */
     public double getResistance();
 }
