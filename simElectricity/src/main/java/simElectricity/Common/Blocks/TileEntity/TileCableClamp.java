@@ -32,20 +32,6 @@ public class TileCableClamp extends TileEntitySE implements ISEConnectable, IHVT
 	public boolean attachToEnergyNet() {
 		return true;
 	}
-	
-
-	/*
-	@Override
-	public void addNeighbors(List<IBaseComponent> list) {
-		TileEntity te = worldObj.getTileEntity(xCoord,yCoord + 2,zCoord);
-		if (te instanceof TileTower && te.getBlockMetadata() == 1)
-    		list.add((IManualJunction) te);
-		
-		te = Util.getTileEntityonDirection(this, ForgeDirection.getOrientation(facing));
-		if (te instanceof IConductor)
-			list.add((IConductor) te);
-	}
-	*/
 
 	@Override
 	public boolean canConnectOnSide(ForgeDirection side) {
@@ -68,15 +54,6 @@ public class TileCableClamp extends TileEntitySE implements ISEConnectable, IHVT
 	@Override
 	public int getFacing() {
 		return facing;
-	}
-
-	@Override
-	public void addNeighbor(TileEntity te) {
-	}
-
-	@Override
-	public boolean hasVacant() {
-		return false;
 	}
 
 	@Override

@@ -81,13 +81,6 @@ public class BlockTower extends BlockContainerSE {
 
     @Override
     public void breakBlock(World world, int x, int y, int z, Block block, int meta) {
-        if (world.getTileEntity(x, y, z) instanceof TileTower) {
-            TileTower tower = (TileTower) world.getTileEntity(x, y, z);
-            for (int i = 0; i < tower.neighborsInfo.length; i += 3)
-                if (world.getTileEntity(tower.neighborsInfo[i], tower.neighborsInfo[i + 1], tower.neighborsInfo[i + 2]) instanceof TileTower)
-                    ((TileTower) world.getTileEntity(tower.neighborsInfo[i], tower.neighborsInfo[i + 1], tower.neighborsInfo[i + 2])).delNeighbor(tower);
-        }
-        
         Energy.postGridObjectDetachEvent(world, x, y, z);
         super.breakBlock(world, x, y, z, block, meta);
     }

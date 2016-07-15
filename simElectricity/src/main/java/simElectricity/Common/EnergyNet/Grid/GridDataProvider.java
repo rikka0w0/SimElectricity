@@ -10,10 +10,13 @@ import java.util.LinkedList;
 import java.util.List;
 
 import simElectricity.API.Util;
+import simElectricity.API.EnergyTile.ISEGridObject;
+import simElectricity.API.EnergyTile.ISEGridTile;
 import simElectricity.Common.EnergyNet.BakaGraph;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSavedData;
 import net.minecraft.world.storage.MapStorage;
@@ -21,11 +24,38 @@ import net.minecraftforge.common.util.Constants;
 
 public class GridDataProvider extends WorldSavedData{
 	private static final String DATA_NAME = Util.MODID + "_GridData";
-
+	
 	private HashMap<String, GridObject> gridObjectMap = new HashMap<String, GridObject>();
 	
 	private BakaGraph<GridObject> gridObjects = new BakaGraph<GridObject>();
 
+	private List<TileEntity> loadedGridTiles = new LinkedList<TileEntity>();
+	
+	public void onGridTilePresent(TileEntity te){
+		ISEGridTile gridTile = (ISEGridTile)te;
+		GridObject gridObject = gridObjectMap.get(GridObject.getIDStringFromTileEntity(te));
+		loadedGridTiles.add(te);
+		gridObject.associatedTE = te;
+		gridTile.setGridObject(gridObject);
+		gridTile.onGridNeighborUpdated();
+	}
+	
+	public void onGridTileInvalidate(TileEntity te){
+		loadedGridTiles.remove(te);
+		
+		ISEGridTile gridTile = (ISEGridTile)te;
+		GridObject gridObject = gridObjectMap.get(GridObject.getIDStringFromTileEntity(te));
+		
+		//gridObject can be null if the GridObject is just removed
+		if (gridObject != null)
+			gridObject.associatedTE = null;
+	}
+	
+	
+	public LinkedList<GridObject> getNeighborsOf(GridObject obj){
+		return gridObjects.neighborListOf(obj);
+	}
+	
 	public int getGridObjectCount(){
 		return gridObjectMap.size();
 	}
@@ -39,6 +69,10 @@ public class GridDataProvider extends WorldSavedData{
 		if (type == 1){
 			obj = new GridNode(this);
 		}
+		
+		if (obj == null)
+			return null;
+		
 		obj.x = x;
 		obj.y = y;
 		obj.z = z;
@@ -52,8 +86,13 @@ public class GridDataProvider extends WorldSavedData{
 	}
 	
 	public void removeGridObject(GridObject gridObject){
-		for (GridObject neighbor : gridObjects.neighborListOf(gridObject)){
+		LinkedList<GridObject> neighbors = gridObjects.removeAllEdges(gridObject);
+		
+		for (GridObject neighbor : neighbors){
 			neighbor.resistances.remove(gridObject);
+			TileEntity te = neighbor.associatedTE;
+			if (te instanceof ISEGridTile)
+				((ISEGridTile)te).onGridNeighborUpdated();
 		}
 		
 		gridObjects.removeVertex(gridObject);
@@ -65,6 +104,15 @@ public class GridDataProvider extends WorldSavedData{
 		gridObjects.addEdge(node1, node2);
 		node1.resistances.put(node2, resistance);
 		node2.resistances.put(node1, resistance);
+		
+		TileEntity te1 = node1.associatedTE;
+		TileEntity te2 = node2.associatedTE;
+		
+		if (te1 instanceof ISEGridTile)
+			((ISEGridTile)te1).onGridNeighborUpdated();
+		if (te2 instanceof ISEGridTile)
+			((ISEGridTile)te2).onGridNeighborUpdated();
+		
 		this.markDirty();
 	}
 	
@@ -72,6 +120,15 @@ public class GridDataProvider extends WorldSavedData{
 		node1.resistances.remove(node2);
 		node2.resistances.remove(node1);
 		gridObjects.removeEdge(node1, node2);
+		
+		TileEntity te1 = node1.associatedTE;
+		TileEntity te2 = node2.associatedTE;
+		
+		if (te1 instanceof ISEGridTile)
+			((ISEGridTile)te1).onGridNeighborUpdated();
+		if (te2 instanceof ISEGridTile)
+			((ISEGridTile)te2).onGridNeighborUpdated();
+		
 		this.markDirty();
 	}
 
@@ -136,7 +193,6 @@ public class GridDataProvider extends WorldSavedData{
 		for (GridObject gridObject : gridObjects.vertexSet()){
 			gridObject.buildNeighborConnection(gridObjectMap);
 		}
-		
 	}
 
 	

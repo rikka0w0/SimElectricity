@@ -103,9 +103,10 @@ public class BakaGraph<T> {
             return;
 
         //Remove this node from its neighbors' list
-        for (T thisNode : neighborListOf(node)) {
-            if (neighborListOf(thisNode).contains(node))
-                neighborListOf(thisNode).remove(node);
+        for (T neighbor: graph.get(node)){
+        	LinkedList<T> list = graph.get(neighbor);
+        	if (list.contains(node))
+        		list.remove(node);
         }
 
         graph.remove(node);
@@ -128,6 +129,29 @@ public class BakaGraph<T> {
 
         if (neighborListOf(neighbor).contains(node))
             neighborListOf(neighbor).remove(node);
+    }
+    
+    /**
+     * Remove all edges of a node, returns a list of previous neighbors
+     */
+    public LinkedList<T> removeAllEdges(T node){
+        if (!graph.containsKey(node))
+            return null;
+        
+        LinkedList<T> neighbors = graph.get(node);
+        LinkedList<T> ret = (LinkedList<T>) neighbors.clone();
+        
+        //Delete all record on the selected node
+        neighbors.clear();
+        
+        //Delete this node from its neighbors' list
+        for (T neighbor: ret){
+        	LinkedList<T> list = graph.get(neighbor);
+        	if (list.contains(node))
+        		list.remove(node);
+        }
+        
+        return ret;
     }
     
     /**

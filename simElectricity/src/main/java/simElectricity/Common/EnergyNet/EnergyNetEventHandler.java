@@ -33,6 +33,7 @@ import simElectricity.API.Events.*;
 import simElectricity.Common.ConfigManager;
 import simElectricity.Common.SEUtils;
 import simElectricity.Common.EnergyNet.Grid.GridDataProvider;
+import simElectricity.Common.EnergyNet.Grid.GridObject;
 
 public class EnergyNetEventHandler {
     public EnergyNetEventHandler() {
@@ -129,18 +130,5 @@ public class EnergyNetEventHandler {
 
         if (ConfigManager.showEnergyNetInfo)
             SEUtils.logInfo("Tileentity " + te + " causes the energy network to update!");
-    }
-    
-    @SubscribeEvent
-    public void onGridObjectAttach(GridObjectAttachEvent event) {    
-    	GridDataProvider grid = GridDataProvider.get(event.world);
-    	grid.addGridObject(event.x, event.y, event.z, event.type);
-    }
-    
-    
-    @SubscribeEvent
-    public void onGridObjectDetach(GridObjectDetachEvent event) {    
-    	GridDataProvider grid = GridDataProvider.get(event.world);
-    	grid.removeGridObject(grid.getGridObjectAtCoord(event.x, event.y, event.z));
-    }
+    }    
 }

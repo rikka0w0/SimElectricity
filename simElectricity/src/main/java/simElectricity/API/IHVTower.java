@@ -10,8 +10,4 @@ public interface IHVTower {
 	int[] getNeighborInfo();
 
 	int getFacing();
-	
-	void addNeighbor(TileEntity te);
-	
-	boolean hasVacant();
 }

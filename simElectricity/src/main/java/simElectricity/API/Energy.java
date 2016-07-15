@@ -93,4 +93,20 @@ public class Energy {
     public static void postGridObjectDetachEvent(World world, int x, int y, int z) {
         MinecraftForge.EVENT_BUS.post(new GridObjectDetachEvent(world,x,y,z));
     }
+    
+    public static void postGridConnectionEvent(World world, int x1, int y1, int z1, int x2, int y2, int z2, double resistance) {
+        MinecraftForge.EVENT_BUS.post(new GridConnectionEvent(world,x1,y1,z1,x2,y2,z2,resistance));
+    }   
+    
+    public static void postGridDisconnectionEvent(World world, int x1, int y1, int z1, int x2, int y2, int z2) {
+        MinecraftForge.EVENT_BUS.post(new GridDisconnectionEvent(world,x1,y1,z1,x2,y2,z2));
+    }
+    
+    public static void postGridTilePresentEvent(TileEntity te) {
+        MinecraftForge.EVENT_BUS.post(new GridTilePresentEvent(te));
+    }   
+    
+    public static void postGridTileInvalidateEvent(TileEntity te) {
+        MinecraftForge.EVENT_BUS.post(new GridTileInvalidateEvent(te));
+    }    
 }
