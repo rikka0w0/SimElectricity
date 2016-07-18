@@ -72,9 +72,7 @@ public class Energy {
      * For {@link simElectricity.API.EnergyTile.IEnergyTile} and {@link simElectricity.API.EnergyTile.IConductor} Only!
      */
     public static double getVoltage(TileEntity Tile) {
-    	TileEntity te = (TileEntity)Tile;
-    	
-        return getVoltage((ISESimulatable)Tile, te.getWorldObj());
+        return getVoltage((ISESimulatable)Tile, Tile.getWorldObj());
     }
     
     
@@ -101,12 +99,4 @@ public class Energy {
     public static void postGridDisconnectionEvent(World world, int x1, int y1, int z1, int x2, int y2, int z2) {
         MinecraftForge.EVENT_BUS.post(new GridDisconnectionEvent(world,x1,y1,z1,x2,y2,z2));
     }
-    
-    public static void postGridTilePresentEvent(TileEntity te) {
-        MinecraftForge.EVENT_BUS.post(new GridTilePresentEvent(te));
-    }   
-    
-    public static void postGridTileInvalidateEvent(TileEntity te) {
-        MinecraftForge.EVENT_BUS.post(new GridTileInvalidateEvent(te));
-    }    
 }

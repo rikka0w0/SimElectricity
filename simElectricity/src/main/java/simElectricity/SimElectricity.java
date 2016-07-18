@@ -41,7 +41,6 @@ import simElectricity.Common.ConfigManager;
 import simElectricity.Common.Core.SEBlocks;
 import simElectricity.Common.Core.SEItems;
 import simElectricity.Common.EnergyNet.EnergyNetEventHandler;
-import simElectricity.Common.EnergyNet.Grid.GridEventHandler;
 import simElectricity.Common.Network.MessageTileEntityUpdate;
 import simElectricity.Common.Network.NetworkManager;
 
@@ -74,7 +73,6 @@ public class SimElectricity {
         //Add to event bus
         new NetworkManager();
         new EnergyNetEventHandler();
-        new GridEventHandler();
 
         //CreativeTab
         Util.SETab = new CreativeTabs(Util.MODID) {

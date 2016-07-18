@@ -6,6 +6,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 import simElectricity.API.Client.RenderHVTowerBase;
+import simElectricity.Common.Blocks.TileEntity.TileCableClamp;
 import simElectricity.Common.Blocks.TileEntity.TileTower;
 @SideOnly(Side.CLIENT)
 public class RenderCableClamp extends RenderHVTowerBase {
@@ -63,12 +64,5 @@ public class RenderCableClamp extends RenderHVTowerBase {
 		GL11.glRotated(-45, 1, 0, 0);
 		renderInsulator(4, 0.8);
 		GL11.glPopMatrix();
-	}	
-	
-	@Override
-	public void renderCable(TileEntity tileEntity, double x, double y, double z){
-		TileEntity neighbor = tileEntity.getWorldObj().getTileEntity(tileEntity.xCoord,tileEntity.yCoord + 2,tileEntity.zCoord);
-    	if (neighbor instanceof TileTower && neighbor.getBlockMetadata() == 1)
-    		renderCableTo(tileEntity, neighbor, x, y, z, 0.4);
 	}
 }

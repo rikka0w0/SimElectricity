@@ -27,9 +27,9 @@ import net.minecraft.tileentity.TileEntity;
  * use {@link simElectricity.API.Energy#postTileAttachEvent(net.minecraft.tileentity.TileEntity) Energy.postTileAttachEvent()}
  */
 public class TileAttachEvent extends Event {
-    public TileEntity energyTile;
+    public TileEntity te;
 
-    public TileAttachEvent(TileEntity energyTile) {
-        this.energyTile = energyTile;
+    public TileAttachEvent(TileEntity te) {
+        this.te = te;
     }
 }

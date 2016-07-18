@@ -1,43 +1,72 @@
 package simElectricity.Common.Blocks.TileEntity;
 
+import java.util.LinkedList;
 import java.util.List;
+
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraftforge.common.util.ForgeDirection;
 
+import simElectricity.API.Energy;
 import simElectricity.API.IHVTower;
+import simElectricity.API.INetworkEventHandler;
+import simElectricity.API.Network;
 import simElectricity.API.Util;
 import simElectricity.API.Common.TileEntitySE;
-import simElectricity.API.EnergyTile.ISEConnectable;
+import simElectricity.API.EnergyTile.ISEConductor;
+import simElectricity.API.EnergyTile.ISEGridObject;
+import simElectricity.API.EnergyTile.ISEGridTile;
+import simElectricity.API.EnergyTile.ISEJunction;
+import simElectricity.API.EnergyTile.ISESimulatable;
+import simElectricity.API.EnergyTile.ISESubComponent;
+import simElectricity.API.EnergyTile.ISETile;
 
-public class TileCableClamp extends TileEntitySE implements ISEConnectable, IHVTower{
+public class TileCableClamp extends TileEntitySE implements ISETile,ISEJunction,ISEGridTile,INetworkEventHandler, IHVTower{
 	public int facing = 0;
 	
+    private boolean registered = false;
+    private ISEGridObject gridObj = null;
+	
+    public int[] neighbor =  new int[]{0,-1,0};
+    
+    @Override
+    public boolean attachToEnergyNet(){
+    	return true;
+    }
+
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
 
         facing = tagCompound.getInteger("facing");
     }
-    
+
     @Override
     public void writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
 
         tagCompound.setInteger("facing", facing);
     }
+    
+	@SideOnly(Side.CLIENT)
+    @Override
+    public double getMaxRenderDistanceSquared()
+    {
+        return 100000;
+    }
 	
+	@SideOnly(Side.CLIENT)
 	@Override
-	public boolean attachToEnergyNet() {
-		return true;
-	}
+    public AxisAlignedBB getRenderBoundingBox(){
+    	return INFINITE_EXTENT_AABB;
+    }
 
-	@Override
-	public boolean canConnectOnSide(ForgeDirection side) {
-		return side.ordinal() == facing;
-	}
-
+	
+	//IHVTower ---------------------------------------------------------------------
 	@Override
 	public float[] offsetArray() {
 		return new float[]{
@@ -48,7 +77,7 @@ public class TileCableClamp extends TileEntitySE implements ISEConnectable, IHVT
 
 	@Override
 	public int[] getNeighborInfo() {
-		return new int[]{};
+		return neighbor;
 	}
 
 	@Override
@@ -59,5 +88,82 @@ public class TileCableClamp extends TileEntitySE implements ISEConnectable, IHVT
 	@Override
 	public float getWireTension() {
 		return 0.06F;
+	}
+	
+	
+
+	//ISETile ----------------------------------------------------------------------
+	@Override
+	public int getNumberOfComponents() {
+		return 1;
+	}
+
+	@Override
+	public ForgeDirection[] getValidDirections() {
+		return new ForgeDirection[]{ForgeDirection.getOrientation(facing)};
+	}
+
+	@Override
+	public ISESubComponent getComponent(ForgeDirection side) {
+		if (side == ForgeDirection.getOrientation(facing))
+			return this;
+		return null;
+	}
+
+	//ISEJunction ------------------------------------------------------------------
+	@Override
+	public void getNeighbors(List<ISESimulatable> list) {
+		TileEntity neighbor = Util.getTileEntityonDirection(this, ForgeDirection.getOrientation(facing));
+		
+        if (neighbor instanceof ISEConductor)
+            list.add((ISEConductor) neighbor);
+        
+        if (gridObj != null)
+        	list.add(gridObj);
+	}
+
+	@Override
+	public double getResistance(ISESimulatable neighbor) {
+		return 0.1;
+	}
+
+	
+	//ISEGridTile-----------------------------------------------------------------------------------------
+	@Override
+	public void setGridObject(ISEGridObject gridObj) {
+		this.gridObj = gridObj;
+	}
+
+	@Override
+	public void onGridNeighborUpdated() {
+		this.neighbor =  new int[]{0,-1,0};
+		for (ISESimulatable neighbor : gridObj.getNeighborList()){
+			if (neighbor instanceof ISEGridObject){
+				ISEGridObject gridNode = (ISEGridObject) neighbor;
+				this.neighbor =  new int[]{gridNode.getXCoord(), gridNode.getYCoord(), gridNode.getZCoord()};
+				break;
+			}
+		}
+		
+		
+		Network.updateNetworkFields(this);
+	}
+
+	@Override
+	public boolean canConnect() {
+		return neighbor[1] == -1;
+	}
+
+	
+	
+	//INetworkEventHandler ----------------------------------------------------------------------------------------
+	@Override
+	public void onFieldUpdate(String[] fields, Object[] values) {
+		
+	}
+
+	@Override
+	public void addNetworkFields(List fields) {
+		fields.add("neighbor");
 	}
 }

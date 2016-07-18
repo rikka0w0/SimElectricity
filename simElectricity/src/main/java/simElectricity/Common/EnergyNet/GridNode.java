@@ -1,4 +1,4 @@
-package simElectricity.Common.EnergyNet.Grid;
+package simElectricity.Common.EnergyNet;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -9,16 +9,18 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.Constants;
 
 import simElectricity.API.EnergyTile.ISEGridObject;
+import simElectricity.API.EnergyTile.ISESimulatable;
 
-public abstract class GridObject implements ISEGridObject{
-	public GridDataProvider gridDataProvider;
+public class GridNode implements ISEGridObject{
+	public EnergyNetDataProvider gridDataProvider;
 	
+	//0 - terminal 1 - node 2 - transformer primary 3 - transformer secondary
 	public byte type;
 	public int x;
 	public int y;
 	public int z;
 	
-	public HashMap<GridObject, Double> resistances = new HashMap<GridObject, Double>();
+	public HashMap<GridNode, Double> resistances = new HashMap<GridNode, Double>();
 	
 	public TileEntity associatedTE;
 	
@@ -28,17 +30,18 @@ public abstract class GridObject implements ISEGridObject{
 	protected int neighborZ[];
 	private double[] resistancesBuf;
 		
-	public GridObject(GridDataProvider dataProvider){
+	public GridNode(EnergyNetDataProvider dataProvider){
 		gridDataProvider = dataProvider;
 	}
 	
-	public int buildNeighborConnection(HashMap<String, GridObject> gridObjectMap){
+	public int buildNeighborConnection(HashMap<String, GridNode> gridNodeMap){
 		int numOfNeighbors = neighborX.length;
 		
 		for (int i = 0; i<numOfNeighbors ; i++){
 			String neighborID = getIDString(neighborX[i], neighborY[i], neighborZ[i]);
-			GridObject neighbor = gridObjectMap.get(neighborID);
-			gridDataProvider.addConnection(this, neighbor, resistancesBuf[i]);
+			GridNode neighbor = gridNodeMap.get(neighborID);
+			
+			gridDataProvider.addEdge(this, neighbor, resistancesBuf[i]);
 		}
 		
 		return numOfNeighbors;
@@ -61,23 +64,31 @@ public abstract class GridObject implements ISEGridObject{
 		}
 	}
 	
-	public void writeToNBT(NBTTagCompound nbt, LinkedList<GridObject> neighbors) {	
+	public void writeToNBT(NBTTagCompound nbt, LinkedList<ISESimulatable> neighbors) {	
 		nbt.setByte("type", type);
 		nbt.setInteger("x", x);
 		nbt.setInteger("y", y);
 		nbt.setInteger("z", z);
 		
+		int length = 0;
+		for (ISESimulatable neighbor : neighbors){
+			if (neighbor instanceof GridNode)
+				length++;
+		}
 		
-		neighborX = new int[neighbors.size()];
-		neighborY = new int[neighbors.size()];
-		neighborZ = new int[neighbors.size()];
+		neighborX = new int[length];
+		neighborY = new int[length];
+		neighborZ = new int[length];
 		int i = 0;
-		for (GridObject neighbor : neighbors){
-			neighborX[i] = neighbor.x;
-			neighborY[i] = neighbor.y;
-			neighborZ[i] = neighbor.z;
-			nbt.setDouble("R"+String.valueOf(i), resistances.get(neighbor));
-			i++;
+		for (ISESimulatable neighbor : neighbors){
+			if (neighbor instanceof GridNode){
+				GridNode gridNode = (GridNode)neighbor;
+				neighborX[i] = gridNode.x;
+				neighborY[i] = gridNode.y;
+				neighborZ[i] = gridNode.z;
+				nbt.setDouble("R"+String.valueOf(i), resistances.get(neighbor));
+				i++;
+			}
 		}
 		nbt.setIntArray("neigborX", neighborX);
 		nbt.setIntArray("neigborY", neighborY);
@@ -99,9 +110,9 @@ public abstract class GridObject implements ISEGridObject{
 	
 	//ISEGridObject -----------------------------
 	@Override
-	public LinkedList<ISEGridObject> getNeighborList(){
-		LinkedList<ISEGridObject> ret = new LinkedList<ISEGridObject>();
-		for (GridObject obj : gridDataProvider.getNeighborsOf(this)){
+	public LinkedList<ISESimulatable> getNeighborList(){
+		LinkedList<ISESimulatable> ret = new LinkedList<ISESimulatable>();
+		for (ISESimulatable obj : gridDataProvider.getNeighborsOf(this)){
 			ret.add(obj);
 		}
 		return ret;

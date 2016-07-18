@@ -36,6 +36,7 @@ import simElectricity.API.INetworkEventHandler;
 import simElectricity.API.Network;
 import simElectricity.API.EnergyTile.ISEGridObject;
 import simElectricity.API.EnergyTile.ISEGridTile;
+import simElectricity.API.EnergyTile.ISESimulatable;
 import simElectricity.API.Events.*;
 
 import java.util.LinkedList;
@@ -57,19 +58,32 @@ public class TileTower extends TileEntity implements ISEGridTile,INetworkEventHa
     
     @Override
     public void onGridNeighborUpdated(){
-    	LinkedList<ISEGridObject> neighbors = gridObj.getNeighborList();
-    	if (neighbors.size() == 0)
-    		neighborsInfo = new int[] { 0, -1, 0, 0, -1, 0 };
-    	else if (neighbors.size() == 1){
-    		ISEGridObject neighbor1 = neighbors.get(0);
-    		neighborsInfo = new int[] {neighbor1.getXCoord(),neighbor1.getYCoord(),neighbor1.getZCoord(), 
-    								   0, -1, 0 };
-    	}else if (neighbors.size() == 2){
-    		ISEGridObject neighbor1 = neighbors.get(0);
-    		ISEGridObject neighbor2 = neighbors.get(1);
-    		neighborsInfo = new int[] {neighbor1.getXCoord(),neighbor1.getYCoord(),neighbor1.getZCoord(), 
-    								   neighbor2.getXCoord(),neighbor2.getYCoord(),neighbor2.getZCoord() };
+    	neighborsInfo = new int[] { 0, -1, 0, 0, -1, 0 };
+    	
+    	
+    	int i=0;
+    	f:for (ISESimulatable neighbor : gridObj.getNeighborList()){
+    		if (neighbor instanceof ISEGridObject){
+    			if (i==0){
+    				ISEGridObject neighbor1 = (ISEGridObject)neighbor;
+    				neighborsInfo[0] = neighbor1.getXCoord();
+    				neighborsInfo[1] = neighbor1.getYCoord();
+    				neighborsInfo[2] = neighbor1.getZCoord();
+    			}
+    			
+    			if (i==1){
+    				ISEGridObject neighbor1 = (ISEGridObject)neighbor;
+    				neighborsInfo[3] = neighbor1.getXCoord();
+    				neighborsInfo[4] = neighbor1.getYCoord();
+    				neighborsInfo[5] = neighbor1.getZCoord();
+    			}
+    			i++;
+    			if (i>1)
+    				break f;
+    		}
     	}
+    	
+
     	Network.updateNetworkFields(this);
     }
     
@@ -86,17 +100,7 @@ public class TileTower extends TileEntity implements ISEGridTile,INetworkEventHa
     //INetworkEventHandler --------------------------------------------------------------------------------
 	@Override
 	public void onFieldUpdate(String[] fields, Object[] values) {
-		//Handling on client side
-		if (worldObj.isRemote){
-			int i = 0;
-			for (String s:fields){
-		        if (s.contentEquals("neighborsInfo"))
-		        	neighborsInfo = (int[]) values[i];
-		        if (s.contentEquals("facing"))
-		        	facing = (Integer) values[i];
-		        i++;
-			}
-		}
+
 	}
 
 	@Override
@@ -117,7 +121,7 @@ public class TileTower extends TileEntity implements ISEGridTile,INetworkEventHa
         	return;
         
         if (!registered){
-        	Energy.postGridTilePresentEvent(this);
+        	Energy.postTileAttachEvent(this);
             registered = true;
         }
         	
@@ -132,7 +136,7 @@ public class TileTower extends TileEntity implements ISEGridTile,INetworkEventHa
         	return;
         
         if (registered){
-        	Energy.postGridTileInvalidateEvent(this);
+        	Energy.postTileDetachEvent(this);
             registered = false;        	
         }
     }
