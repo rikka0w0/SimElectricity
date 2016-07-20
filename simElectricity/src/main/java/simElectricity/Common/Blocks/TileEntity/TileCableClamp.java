@@ -18,7 +18,7 @@ import simElectricity.API.Network;
 import simElectricity.API.Util;
 import simElectricity.API.Common.TileEntitySE;
 import simElectricity.API.EnergyTile.ISEConductor;
-import simElectricity.API.EnergyTile.ISEGridObject;
+import simElectricity.API.EnergyTile.ISEGridNode;
 import simElectricity.API.EnergyTile.ISEGridTile;
 import simElectricity.API.EnergyTile.ISEJunction;
 import simElectricity.API.EnergyTile.ISESimulatable;
@@ -29,7 +29,7 @@ public class TileCableClamp extends TileEntitySE implements ISETile,ISEJunction,
 	public int facing = 0;
 	
     private boolean registered = false;
-    private ISEGridObject gridObj = null;
+    private ISEGridNode gridNode = null;
 	
     public int[] neighbor =  new int[]{0,-1,0};
     
@@ -118,8 +118,8 @@ public class TileCableClamp extends TileEntitySE implements ISETile,ISEJunction,
         if (neighbor instanceof ISEConductor)
             list.add((ISEConductor) neighbor);
         
-        if (gridObj != null)
-        	list.add(gridObj);
+        if (gridNode != null)
+        	list.add(gridNode);
 	}
 
 	@Override
@@ -130,16 +130,16 @@ public class TileCableClamp extends TileEntitySE implements ISETile,ISEJunction,
 	
 	//ISEGridTile-----------------------------------------------------------------------------------------
 	@Override
-	public void setGridObject(ISEGridObject gridObj) {
-		this.gridObj = gridObj;
+	public void setGridNode(ISEGridNode gridNode) {
+		this.gridNode = gridNode;
 	}
 
 	@Override
 	public void onGridNeighborUpdated() {
 		this.neighbor =  new int[]{0,-1,0};
-		for (ISESimulatable neighbor : gridObj.getNeighborList()){
-			if (neighbor instanceof ISEGridObject){
-				ISEGridObject gridNode = (ISEGridObject) neighbor;
+		for (ISESimulatable neighbor : gridNode.getNeighborList()){
+			if (neighbor instanceof ISEGridNode){
+				ISEGridNode gridNode = (ISEGridNode) neighbor;
 				this.neighbor =  new int[]{gridNode.getXCoord(), gridNode.getYCoord(), gridNode.getZCoord()};
 				break;
 			}

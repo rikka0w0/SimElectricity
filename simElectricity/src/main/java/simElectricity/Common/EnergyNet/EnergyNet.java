@@ -37,8 +37,6 @@ public final class EnergyNet {
 	
 	//Contains information about the grid
 	private EnergyNetDataProvider dataProvider;
-    
-    //private BakaGraph<ISESimulatable> tileEntityGraph;
 
     private String matrixSolverName;
     
@@ -89,8 +87,9 @@ public final class EnergyNet {
     public void onTick() {
         //energyNet.calc = true;
         if (calc) {
-            //simulator.run(this.tileEntityGraph);
         	BakaGraph<ISESimulatable> tileEntityGraph = dataProvider.getTEGraph();
+            simulator.run(tileEntityGraph);
+        	
             try {   
 	            for (Iterator<IEnergyNetUpdateHandler> iterator = energyNetUpdateAgents.iterator(); iterator.hasNext(); ) {
 	            	IEnergyNetUpdateHandler u = iterator.next();

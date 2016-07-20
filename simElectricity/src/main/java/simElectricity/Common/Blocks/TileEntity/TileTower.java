@@ -34,7 +34,7 @@ import simElectricity.API.Energy;
 import simElectricity.API.IHVTower;
 import simElectricity.API.INetworkEventHandler;
 import simElectricity.API.Network;
-import simElectricity.API.EnergyTile.ISEGridObject;
+import simElectricity.API.EnergyTile.ISEGridNode;
 import simElectricity.API.EnergyTile.ISEGridTile;
 import simElectricity.API.EnergyTile.ISESimulatable;
 import simElectricity.API.Events.*;
@@ -47,13 +47,13 @@ public class TileTower extends TileEntity implements ISEGridTile,INetworkEventHa
     public int neighborsInfo[] = new int[] { 0, -1, 0, 0, -1, 0 };
 	
     private boolean registered = false;
-    private ISEGridObject gridObj = null;
+    private ISEGridNode gridNode = null;
     
     
     //ISEGridTile-----------------------------------------------------------------------------------------
     @Override
-    public void setGridObject(ISEGridObject gridObj){
-    	this.gridObj = gridObj;
+    public void setGridNode(ISEGridNode gridNode){
+    	this.gridNode = gridNode;
     }
     
     @Override
@@ -62,17 +62,17 @@ public class TileTower extends TileEntity implements ISEGridTile,INetworkEventHa
     	
     	
     	int i=0;
-    	f:for (ISESimulatable neighbor : gridObj.getNeighborList()){
-    		if (neighbor instanceof ISEGridObject){
+    	f:for (ISESimulatable neighbor : gridNode.getNeighborList()){
+    		if (neighbor instanceof ISEGridNode){
     			if (i==0){
-    				ISEGridObject neighbor1 = (ISEGridObject)neighbor;
+    				ISEGridNode neighbor1 = (ISEGridNode)neighbor;
     				neighborsInfo[0] = neighbor1.getXCoord();
     				neighborsInfo[1] = neighbor1.getYCoord();
     				neighborsInfo[2] = neighbor1.getZCoord();
     			}
     			
     			if (i==1){
-    				ISEGridObject neighbor1 = (ISEGridObject)neighbor;
+    				ISEGridNode neighbor1 = (ISEGridNode)neighbor;
     				neighborsInfo[3] = neighbor1.getXCoord();
     				neighborsInfo[4] = neighbor1.getYCoord();
     				neighborsInfo[5] = neighbor1.getZCoord();

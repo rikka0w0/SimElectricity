@@ -8,10 +8,10 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.Constants;
 
-import simElectricity.API.EnergyTile.ISEGridObject;
+import simElectricity.API.EnergyTile.ISEGridNode;
 import simElectricity.API.EnergyTile.ISESimulatable;
 
-public class GridNode implements ISEGridObject{
+public class GridNode implements ISEGridNode{
 	public EnergyNetDataProvider gridDataProvider;
 	
 	//0 - terminal 1 - node 2 - transformer primary 3 - transformer secondary
@@ -119,7 +119,7 @@ public class GridNode implements ISEGridObject{
 	}
 	
 	@Override
-	public double getResistance(ISEGridObject neighbor){
+	public double getResistance(ISEGridNode neighbor){
 		if (resistances.containsKey(neighbor))
 			return resistances.get(neighbor);
 		else

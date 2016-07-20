@@ -26,34 +26,36 @@ public class Gaussian implements IMatrixResolver{
     int currentRow;
     int currentColumn;
     int nZ;
+    int size;
     
 	@Override
 	public void newMatrix(int size) {
+		this.size = size;
 		matrix = new double[size][size];
 		currentRow = 0;
 		currentColumn = 0;
 		nZ = 0;
 	}
-
+	
 	@Override
-	public void pushCoefficient(double value) {
-		if (Math.abs(value) >= EPSILON)
-			nZ++;
-			
-		matrix[currentColumn][currentRow] = value;
-		currentRow++;
+	public void setElementValue(int column, int row, double value) {
+		matrix[column][row] = value;
 	}
 
 	@Override
-	public void pushColumn() {
-		currentColumn++;
-		currentRow = 0;
+	public void finishEditing() {
+		
 	}
 
-	@Override	
-	public void finalizeLHS(){
-	    currentColumn = -1;
-	    currentRow = -1;
+	@Override
+	public void print() {
+		for (int r = 0; r<size; r++){
+			for (int c = 0; c<size; c++){
+				System.out.print(matrix[c][r]);
+				System.out.print(" ");
+			}
+			System.out.println();
+		}
 	}
 	
 	@Override
@@ -121,18 +123,6 @@ public class Gaussian implements IMatrixResolver{
             }
         }
         return x;
-    }
-    
-    @Override
-    public void selectColumn(int column){
-    	currentColumn = column;
-    	currentRow = 0;
-    }
-    
-    @Override
-	public void setCell(double value){
-		matrix[currentColumn][currentRow] = value;
-		currentRow++;
     }
     
 	@Override

@@ -9,7 +9,7 @@ import java.util.LinkedList;
  * <p/>
  * The tileEntity must implements ISEGridTile interface
  */
-public interface ISEGridObject extends ISESimulatable{
+public interface ISEGridNode extends ISESimulatable{
 	int getXCoord();
 	int getYCoord();
 	int getZCoord();
@@ -22,5 +22,5 @@ public interface ISEGridObject extends ISESimulatable{
     /**
      * Returns the resistance between this node and the neighbor node
      */
-	double getResistance(ISEGridObject neighbor);
+	double getResistance(ISEGridNode neighbor);
 }

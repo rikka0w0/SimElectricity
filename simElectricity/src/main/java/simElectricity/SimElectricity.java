@@ -64,6 +64,8 @@ public class SimElectricity {
      */
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
+    	new MatrixTest();
+    	
     	Util.isSELoaded = true;
 
         //Load Configs

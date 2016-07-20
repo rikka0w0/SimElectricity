@@ -2,47 +2,41 @@ package simElectricity.Common.EnergyNet;
 
 import simElectricity.Common.SEUtils;
 
-//Ax = b
+/**
+ * A class that is designed to solve problem Ax=b
+ * */
 public interface IMatrixResolver {
     /**
-     * Initialize to a size*size square matrix
+     * Initialize and create a size*size square matrix
      *
      * @param size Matrix size
      */
     void newMatrix(int size);
 
     /**
-     * Push a coefficient into the matrix(current location)
+     * Set the value of an element within the matrix, must be called after newMatrix(size)
      */
-    void pushCoefficient(double value);
+    void setElementValue(int column, int row, double value);
 
     /**
-     * Shift to the next column
+     * Must be called before solving or printing
      */
-    void pushColumn();
+    void finishEditing();
 
     /**
-     * Finish generate the left hand side
-     */
-    void finalizeLHS();
-
-    /**
-     * Solve the matrix, results will be located in array b
-     *
-     * @param b the array of right hand side values
+     * Solve the matrix, results will be stored in array b
+     * <p/>
+     * This function solves: Ax = b, A is the matrix that has been generated and stored within this class, b is the right hand side of the matrix, a vector, x is a vector containing the result
+     * @param b is acting as both input and output, as an input parameter, b is the right hand side vector, after this function is executed, b will have the same content as x
+     * @return Return true if no error occurs during solving 
      */
     boolean solve(double[] b);
 
-    /**
-     * Select a column that is going to be updated, this method MUST NOT be invoked before finalizeLHS()
-     */
-    void selectColumn(int column);
-
-    /**
-     * Update the value of an EXISTING cell, this method MUST NOT be invoked before selectColumn()
-     */
-    void setCell(double value);
-
+	/**
+	 * Print the matrix, must be called after finishEditing()
+	 * */
+    public void print();
+    
     /**
      * Return the number of non-zero elements with in the matrix
      */

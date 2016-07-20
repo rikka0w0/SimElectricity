@@ -10,7 +10,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import simElectricity.API.Util;
-import simElectricity.API.EnergyTile.ISEGridObject;
+import simElectricity.API.EnergyTile.ISEGridNode;
 import simElectricity.API.EnergyTile.ISEGridTile;
 import simElectricity.API.EnergyTile.ISESimulatable;
 
@@ -127,7 +127,7 @@ public class EnergyNetDataProvider extends WorldSavedData{
 		GridNode gridObject = gridNodeMap.get(GridNode.getIDStringFromTileEntity(te));
 		loadedGridTiles.add(te);
 		gridObject.associatedTE = te;
-		gridTile.setGridObject(gridObject);
+		gridTile.setGridNode(gridObject);
 		gridTile.onGridNeighborUpdated();
 	}
 	

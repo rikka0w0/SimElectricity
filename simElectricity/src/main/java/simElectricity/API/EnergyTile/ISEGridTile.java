@@ -14,7 +14,7 @@ public interface ISEGridTile {
      * <p/>
      * Make sure you store the instance of ISEGridObject in this function
      */
-	void setGridObject(ISEGridObject gridObj);
+	void setGridNode(ISEGridNode gridObj);
 	
     /**
      * This function will be called every time when the neighbor list of its ISEGridObject has changed

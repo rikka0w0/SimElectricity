@@ -60,8 +60,8 @@ public class BlockDiode extends BlockContainerSE {
 
         ForgeDirection facing = Util.getPlayerSight(player, false).getOpposite();
 
-        te.inputSide = AutoFacing.autoConnect(te, ForgeDirection.UP, facing);
-        te.outputSide = AutoFacing.autoConnect(te, te.inputSide.getOpposite(), new ForgeDirection[] { facing, te.inputSide });
+        te.outputSide = Util.getPlayerSight(player, false);
+        te.inputSide = te.outputSide.getOpposite();
 
         if (te.outputSide == facing)
             te.outputSide = te.outputSide.getRotation(ForgeDirection.UP);
