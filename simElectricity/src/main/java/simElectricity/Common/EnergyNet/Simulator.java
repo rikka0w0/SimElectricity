@@ -110,39 +110,15 @@ public class Simulator {
         unknownVoltageNodes.clear();
         unknownVoltageNodes.addAll(tileEntityGraph.vertexSet());
     	int matrixSize = unknownVoltageNodes.size();
-    	double[] Isch = new double[matrixSize]; 
+
     	double[] voltages = new double[matrixSize];
     	double[] currents = new double[matrixSize];   
-    	double[] b = new double[matrixSize];
+
 
     	double[] lastV = new double[matrixSize];
     	double[] lastI = new double[matrixSize]; 
     	
 
-    	//Determine Isch and voltage for the first iteration
-        for (int nodeIndex = 0; nodeIndex < matrixSize; nodeIndex++) {
-        	ISESimulatable curNode = unknownVoltageNodes.get(nodeIndex);
-        	//Use flag start to initiate each calculation
-        	voltages[nodeIndex] = 0;
-        	
-        	/*
-        	if (voltageCache.containsKey(curNode)){
-        		voltages[nodeIndex] = voltageCache.get(curNode); //Use values from previous calculations if possible
-        	}else{
-        		voltages[nodeIndex] = 0; //Default initial value
-        	}
-        	*/
-        	
-        	//Find static current sources on each node
-        	if (curNode instanceof ISEVoltageSource){
-        		ISEVoltageSource vs = (ISEVoltageSource)curNode;
-        		Isch[nodeIndex] = vs.getOutputVoltage() / vs.getResistance();
-        	}else{
-        		Isch[nodeIndex] = 0;
-        	}
-        }
-    	
-        
         iterations = 0;
         while(true) {       	
         	//Calculate the current flow into each node using their voltage
@@ -150,13 +126,13 @@ public class Simulator {
             	ISESimulatable curNode = unknownVoltageNodes.get(nodeIndex);
              	
             	currents[nodeIndex] = 0;
-                 	
+                
             	//Node - Node
     			if (curNode instanceof ISEConductor || curNode instanceof ISEJunction || curNode instanceof ISEGridNode){
     	        	for (ISESimulatable neighbor : tileEntityGraph.neighborListOf(curNode)){
     	        		int iNeighbor = unknownVoltageNodes.indexOf(neighbor);
     	        		
-    	        		currents[nodeIndex] += (voltages[nodeIndex] - voltages[iNeighbor])/calcR(curNode, neighbor);
+    	        		currents[nodeIndex] -= (voltages[nodeIndex] - voltages[iNeighbor])/calcR(curNode, neighbor);
     	        	}			
     			}
     			else{
@@ -166,7 +142,7 @@ public class Simulator {
     				
     				if (conductor != null){
     					int iConductor = unknownVoltageNodes.indexOf(conductor);
-    					currents[nodeIndex] += (voltages[nodeIndex] - voltages[iConductor])/conductor.getResistance();		
+    					currents[nodeIndex] -= (voltages[nodeIndex] - voltages[iConductor])/conductor.getResistance();		
     				}
     			}
     			
@@ -174,7 +150,7 @@ public class Simulator {
     			//Node - shunt and two port networks
     			if (curNode instanceof ISEVoltageSource){
         			ISEVoltageSource vs = (ISEVoltageSource) curNode;
-        			currents[nodeIndex] += (voltages[nodeIndex]) / vs.getResistance();
+        			currents[nodeIndex] -= (voltages[nodeIndex] - vs.getOutputVoltage()) / vs.getResistance();
         		}else if (curNode instanceof ISEConstantPowerLoad){
         			ISEConstantPowerLoad load = (ISEConstantPowerLoad)curNode;
         			
@@ -187,21 +163,21 @@ public class Simulator {
         				Rcal = load.getMinimumResistance();
         			
         			if (load.isEnabled())
-        				currents[nodeIndex] += V/Rcal;
+        				currents[nodeIndex] -= V/Rcal;
         		}else if (curNode instanceof ISETransformerPrimary){
         			ISETransformerPrimary pri = (ISETransformerPrimary) curNode;
         			ISETransformerSecondary sec = pri.getSecondary();
         			double ratio = pri.getRatio();
         			double res = pri.getResistance();
         			int iSec = unknownVoltageNodes.indexOf(sec);
-        			currents[nodeIndex] += (voltages[nodeIndex]*ratio*ratio/res) - (voltages[iSec]*ratio/res);
+        			currents[nodeIndex] -= (voltages[nodeIndex]*ratio*ratio/res) - (voltages[iSec]*ratio/res);
         		}else if (curNode instanceof ISETransformerSecondary){
         			ISETransformerSecondary sec = (ISETransformerSecondary) curNode;
         			ISETransformerPrimary pri = sec.getPrimary();
         			double ratio = pri.getRatio();
         			double res = pri.getResistance();
         			int iPri = unknownVoltageNodes.indexOf(pri);
-        			currents[nodeIndex] += -(voltages[iPri]*ratio/res) + (voltages[nodeIndex]/res);
+        			currents[nodeIndex] -= -(voltages[iPri]*ratio/res) + (voltages[nodeIndex]/res);
         		}else if (curNode instanceof ISERegulatorInput){
         			ISERegulatorInput pri = (ISERegulatorInput) curNode;
         			ISERegulatorOutput sec = pri.getOutput();
@@ -226,7 +202,7 @@ public class Simulator {
         			}
         			
     				
-    				currents[nodeIndex] += I;
+    				currents[nodeIndex] -= I;
         		}else if (curNode instanceof ISERegulatorOutput){
         			ISERegulatorOutput sec = (ISERegulatorOutput) curNode;
         			ISERegulatorInput pri = sec.getInput();
@@ -251,7 +227,7 @@ public class Simulator {
         			}
     				
     			
-    				currents[nodeIndex] += I;
+    				currents[nodeIndex] -= I;
         		}else if (curNode instanceof ISEDiodeInput){
         			ISEDiodeInput input = (ISEDiodeInput) curNode;
         			ISEDiodeOutput output = input.getOutput();
@@ -268,7 +244,7 @@ public class Simulator {
         				Id = (Vd-Vj)/input.getReverseResistance();
         			}
         			
-        			currents[nodeIndex] += Id;
+        			currents[nodeIndex] -= Id;
         		}else if (curNode instanceof ISEDiodeOutput){
         			ISEDiodeOutput output = (ISEDiodeOutput) curNode;
         			ISEDiodeInput input = output.getInput();
@@ -285,11 +261,8 @@ public class Simulator {
         				Id = (Vd-Vj)/input.getReverseResistance();
         			}
         			
-        			currents[nodeIndex] -= Id;
+        			currents[nodeIndex] += Id;
         		}
-        		
-    			
-    			b[nodeIndex] = Isch[nodeIndex] - currents[nodeIndex]; //Current mismatch
             }
 
             
@@ -538,14 +511,14 @@ public class Simulator {
 
             matrix.finishEditing();
             matrix.print();
-            attemptSolving(b); //b is now deltaV
-            
+            attemptSolving(currents); 
+            //currents is now deltaV
             
             Debug.println("Iteration:", String.valueOf(iterations));
             for (int i = 0; i < matrixSize; i++) {
-            	if (!Double.isNaN(b[i])){
+            	if (!Double.isNaN(currents[i])){
             		lastV[i] = voltages[i];
-            		voltages[i] += b[i];
+            		voltages[i] += currents[i];
             	}
             	String[] temp = unknownVoltageNodes.get(i).toString().split("[.]");
             	Debug.println(temp[temp.length-1].split("@")[0], String.valueOf(voltages[i]));

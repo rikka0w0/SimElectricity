@@ -91,11 +91,6 @@ public class EnergyNetEventHandler {
 	        if (ConfigManager.showEnergyNetInfo)
 	            SEUtils.logInfo("Tileentity " + te + " has attached to the energy network!");        
         }
-        
-
-
-
-        //SEUtils.logInfo("Unacceptable tileentity " + te + " is trying to attach to the energy network, aborting");
     }
 
     @SubscribeEvent
@@ -156,32 +151,28 @@ public class EnergyNetEventHandler {
     
     @SubscribeEvent
     public void onGridObjectAttach(GridObjectAttachEvent event) {    
-    	EnergyNetDataProvider grid = EnergyNetDataProvider.get(event.world);
-    	GridNode obj = grid.addGridObject(event.x, event.y, event.z, event.type);
+    	EnergyNet energyNet = WorldData.getEnergyNetForWorld(event.world);
     	
-    	if (!ConfigManager.showEnergyNetInfo)
-    		return;
-    	
-    	if (obj == null){
-    		SEUtils.logInfo("Fail to attach gridObject at " +String.valueOf(event.x)+","+String.valueOf(event.y)+","+String.valueOf(event.z));
+    	if (energyNet.addGridNode(event.x, event.y, event.z, event.type)){
+    		if (ConfigManager.showEnergyNetInfo)
+    			SEUtils.logInfo("Fail to attach gridObject at " +String.valueOf(event.x)+":"+String.valueOf(event.y)+":"+String.valueOf(event.z));
     	}else{
-    		SEUtils.logInfo("GridObject attached at " +obj.getIDString()+", type " + obj.type);
+    		if (ConfigManager.showEnergyNetInfo)
+    			SEUtils.logInfo("GridObject attached at " +String.valueOf(event.x)+":"+String.valueOf(event.y)+":"+String.valueOf(event.z));
     	}
     }
     
     
     @SubscribeEvent
     public void onGridObjectDetach(GridObjectDetachEvent event) {    
-    	EnergyNetDataProvider grid = EnergyNetDataProvider.get(event.world);
-    	GridNode obj = grid.getGridObjectAtCoord(event.x, event.y, event.z);
-    	
-    	if (obj == null){
+    	EnergyNet energyNet = WorldData.getEnergyNetForWorld(event.world);
+
+    	if (energyNet.removeGridNode(event.x, event.y, event.z)){
     		if (ConfigManager.showEnergyNetInfo)
-    			SEUtils.logInfo("Fail to detach gridObject at " +String.valueOf(event.x)+","+String.valueOf(event.y)+","+String.valueOf(event.z));
+    			SEUtils.logInfo("Fail to detach gridObject at " +String.valueOf(event.x)+":"+String.valueOf(event.y)+":"+String.valueOf(event.z));
     	}else{
     		if (ConfigManager.showEnergyNetInfo)
-    			SEUtils.logInfo("GridObject detached at " +obj.getIDString()+", type " + obj.type);
-    		grid.removeGridObject(obj);
+    			SEUtils.logInfo("GridObject detached at "+String.valueOf(event.x)+":"+String.valueOf(event.y)+":"+String.valueOf(event.z));
     	}
     	
     	
@@ -189,45 +180,31 @@ public class EnergyNetEventHandler {
     
     @SubscribeEvent
     public void onGridConnection(GridConnectionEvent event) {    
-    	EnergyNetDataProvider grid = EnergyNetDataProvider.get(event.world);
-    	GridNode obj1 = grid.getGridObjectAtCoord(event.x1, event.y1, event.z1);
-    	GridNode obj2 = grid.getGridObjectAtCoord(event.x2, event.y2, event.z2);
-    	
-
-    	
-    	if (ConfigManager.showEnergyNetInfo){
-        	if (obj1 == null || obj2 == null){
-        		SEUtils.logInfo("Fail to build grid connection between " +String.valueOf(event.x1)+","+String.valueOf(event.y1)+","+String.valueOf(event.z1)+" and "
-						+String.valueOf(event.x2)+","+String.valueOf(event.y2)+","+String.valueOf(event.z2));
-        	}else{
-        		SEUtils.logInfo("Grid connection built between " +String.valueOf(event.x1)+","+String.valueOf(event.y1)+","+String.valueOf(event.z1)+" and "
-						+String.valueOf(event.x2)+","+String.valueOf(event.y2)+","+String.valueOf(event.z2));
-        	}
+    	EnergyNet energyNet = WorldData.getEnergyNetForWorld(event.world);
+   	
+    	if (energyNet.addGridConnection(event.x1, event.y1, event.z1, event.x2, event.y2, event.z2, event.resistance)){
+    		if (ConfigManager.showEnergyNetInfo)
+    			SEUtils.logInfo("Fail to build grid connection between " +String.valueOf(event.x1)+":"+String.valueOf(event.y1)+":"+String.valueOf(event.z1)+" and "
+					+String.valueOf(event.x2)+":"+String.valueOf(event.y2)+":"+String.valueOf(event.z2));
+    	}else{
+    		if (ConfigManager.showEnergyNetInfo)
+    			SEUtils.logInfo("Grid connection built between " +String.valueOf(event.x1)+":"+String.valueOf(event.y1)+":"+String.valueOf(event.z1)+" and "
+					+String.valueOf(event.x2)+":"+String.valueOf(event.y2)+":"+String.valueOf(event.z2));
     	}
-    	
-    	if (obj1 != null && obj2 != null)
-    		grid.addConnection(obj1, obj2, event.resistance);
     }
     
     @SubscribeEvent
     public void onGridDisconnectionEvent(GridDisconnectionEvent event) {    
-    	EnergyNetDataProvider grid = EnergyNetDataProvider.get(event.world);
-    	GridNode obj1 = grid.getGridObjectAtCoord(event.x1, event.y1, event.z1);
-    	GridNode obj2 = grid.getGridObjectAtCoord(event.x2, event.y2, event.z2);
+    	EnergyNet energyNet = WorldData.getEnergyNetForWorld(event.world);
     	
-
-    	
-    	if (ConfigManager.showEnergyNetInfo){
-        	if (obj1 == null || obj2 == null){
-        		SEUtils.logInfo("Fail to remove grid connection between " +String.valueOf(event.x1)+","+String.valueOf(event.y1)+","+String.valueOf(event.z1)+" and "
-						+String.valueOf(event.x2)+","+String.valueOf(event.y2)+","+String.valueOf(event.z2));
-        	}else{
-        		SEUtils.logInfo("Grid connection removed between " +String.valueOf(event.x1)+","+String.valueOf(event.y1)+","+String.valueOf(event.z1)+" and "
-						+String.valueOf(event.x2)+","+String.valueOf(event.y2)+","+String.valueOf(event.z2));
-        	}
+    	if (energyNet.removeGridConnection(event.x1, event.y1, event.z1, event.x2, event.y2, event.z2)){
+    		if (ConfigManager.showEnergyNetInfo)
+    			SEUtils.logInfo("Fail to remove grid connection between " +String.valueOf(event.x1)+","+String.valueOf(event.y1)+","+String.valueOf(event.z1)+" and "
+				+String.valueOf(event.x2)+","+String.valueOf(event.y2)+","+String.valueOf(event.z2));
+    	}else{
+    		if (ConfigManager.showEnergyNetInfo)
+    			SEUtils.logInfo("Grid connection removed between " +String.valueOf(event.x1)+","+String.valueOf(event.y1)+","+String.valueOf(event.z1)+" and "
+				+String.valueOf(event.x2)+","+String.valueOf(event.y2)+","+String.valueOf(event.z2));
     	}
-    	
-    	if (obj1 != null && obj2 != null)
-    		grid.removeConnection(obj1, obj2);
     }   
 }

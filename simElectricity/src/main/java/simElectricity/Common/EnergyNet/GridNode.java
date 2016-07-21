@@ -14,7 +14,7 @@ import simElectricity.API.EnergyTile.ISESimulatable;
 public class GridNode implements ISEGridNode{
 	public EnergyNetDataProvider gridDataProvider;
 	
-	//0 - terminal 1 - node 2 - transformer primary 3 - transformer secondary
+	//0 - node 1 - transformer primary 2 - transformer secondary
 	public byte type;
 	public int x;
 	public int y;
@@ -24,7 +24,7 @@ public class GridNode implements ISEGridNode{
 	
 	public TileEntity associatedTE;
 	
-	//Only used during loading
+	//Only used for loading
 	protected int neighborX[];
 	protected int neighborY[];
 	protected int neighborZ[];

@@ -57,7 +57,7 @@ public class EnergyNetDataProvider extends WorldSavedData{
 	
 	
 	//Grid Event handling ----------------------------------------------------------------------------
-	public GridNode addGridObject(int x, int y, int z, byte type){
+	public GridNode addGridNode(int x, int y, int z, byte type){
 		GridNode obj = new GridNode(this);
 		
 		obj.x = x;
@@ -72,7 +72,7 @@ public class EnergyNetDataProvider extends WorldSavedData{
 		return obj;
 	}
 	
-	public void removeGridObject(GridNode gridObject){
+	public void removeGridNode(GridNode gridObject){
 		LinkedList<ISESimulatable> neighbors = tileEntityGraph.removeAllEdges(gridObject);
 		
 		
@@ -92,7 +92,7 @@ public class EnergyNetDataProvider extends WorldSavedData{
 		this.markDirty();
 	}
 	
-	public void addConnection(GridNode node1, GridNode node2, double resistance){
+	public void addGridConnection(GridNode node1, GridNode node2, double resistance){
 		addEdge(node1, node2, resistance);
 		
 		TileEntity te1 = node1.associatedTE;
@@ -106,7 +106,7 @@ public class EnergyNetDataProvider extends WorldSavedData{
 		this.markDirty();
 	}
 	
-	public void removeConnection(GridNode node1, GridNode node2){
+	public void removeGridConnection(GridNode node1, GridNode node2){
 		node1.resistances.remove(node2);
 		node2.resistances.remove(node1);
 		tileEntityGraph.removeEdge(node1, node2);

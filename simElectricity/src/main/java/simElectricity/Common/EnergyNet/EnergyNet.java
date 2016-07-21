@@ -239,6 +239,42 @@ public final class EnergyNet {
         calc = true;
     }
     
+    public boolean addGridNode(int x, int y, int z, byte type){
+    	return dataProvider.addGridNode(x, y, z, type) != null;
+    }
+    
+    public boolean removeGridNode(int x, int y, int z){
+    	GridNode node = dataProvider.getGridObjectAtCoord(x, y, z);
+    	if (node == null)
+    		return false;
+    	dataProvider.removeGridNode(node);
+    	calc = true;
+    	return true;
+    }
+    
+    public boolean addGridConnection(int x1, int y1, int z1, int x2, int y2, int z2, double resistance){
+    	GridNode node1 = dataProvider.getGridObjectAtCoord(x1,y1,z1);
+    	GridNode node2 = dataProvider.getGridObjectAtCoord(x2,y2,z2);
+    	
+    	if (node1 != null && node2 != null){
+    		dataProvider.addGridConnection(node1, node2, resistance);
+    		calc = true;
+    		return true;
+    	}
+    	return false;	
+    }
+    
+    public boolean removeGridConnection(int x1, int y1, int z1, int x2, int y2, int z2){
+    	GridNode node1 = dataProvider.getGridObjectAtCoord(x1,y1,z1);
+    	GridNode node2 = dataProvider.getGridObjectAtCoord(x2,y2,z2);
+    	
+    	if (node1 != null && node2 != null){
+    		dataProvider.removeGridConnection(node1, node2);
+    		calc = true;
+    		return true;
+    	}
+    	return false;	
+    }
     
     /**
      * Creation of the energy network
@@ -248,8 +284,6 @@ public final class EnergyNet {
     	matrixSolverName = ConfigManager.matrixSolver;
     	//Create simulator
     	simulator = new Simulator(matrixSolverName, ConfigManager.maxIteration, Math.pow(10, -ConfigManager.precision));
-    	
-    	//tileEntityGraph = new BakaGraph<ISESimulatable>();
     	
     	//Init. data provider
     	dataProvider = EnergyNetDataProvider.get(world);
@@ -268,8 +302,4 @@ public final class EnergyNet {
     public static EnergyNet getEnergyNet(World world){
     	return WorldData.getEnergyNetForWorld(world);
     }
-    
-    //public static GridDataProvider getGridDataProvider(World world){
-    //	return getEnergyNet(world).grid;
-    //}
 }

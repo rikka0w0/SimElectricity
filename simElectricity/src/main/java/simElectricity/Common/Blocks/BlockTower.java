@@ -76,7 +76,7 @@ public class BlockTower extends BlockContainerSE {
         TileTower tower = (TileTower) world.getTileEntity(x, y, z);
         tower.facing = Util.getPlayerSight(player, true).ordinal();
         
-        Energy.postGridObjectAttachEvent(world, x, y, z, (byte)1);
+        Energy.postGridObjectAttachEvent(world, x, y, z, (byte)0);
     }
 
     @Override
