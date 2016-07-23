@@ -1,20 +1,20 @@
-package simElectricity.API;
+package simElectricity.Common;
+
+import simElectricity.API.Internal.IFluidUtil;
 
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 
-public class FluidUtil {
-	/**Get the empty container for the filled container*/
-	public static ItemStack getEmptyContainer(ItemStack filled){
+public class FluidUtil implements IFluidUtil{
+	public ItemStack getEmptyContainer(ItemStack filled){
 		for (FluidContainerRegistry.FluidContainerData dat:FluidContainerRegistry.getRegisteredFluidContainerData())
 			if (dat.filledContainer.isItemEqual(filled))
 				return dat.emptyContainer;
     	return null;
     }
 	
-	/**Return the fluid drain from a filled container if it's allowed*/
-	public static FluidStack drainContainer(int maxVolume,FluidStack currentLiquid,ItemStack[] slots,int filledSlotID,int emptySlotID){
+	public FluidStack drainContainer(int maxVolume,FluidStack currentLiquid,ItemStack[] slots,int filledSlotID,int emptySlotID){
 		FluidStack fluidInItem = FluidContainerRegistry.getFluidForFilledItem(slots[filledSlotID]);
 		
 		if(fluidInItem == null)

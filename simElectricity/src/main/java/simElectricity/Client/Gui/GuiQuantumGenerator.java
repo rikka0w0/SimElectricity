@@ -28,7 +28,8 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
 import org.lwjgl.opengl.GL11;
-import simElectricity.API.Network;
+
+import simElectricity.API.Util;
 import simElectricity.Common.Blocks.Container.ContainerQuantumGenerator;
 import simElectricity.Common.Blocks.TileEntity.TileQuantumGenerator;
 
@@ -85,7 +86,7 @@ public class GuiQuantumGenerator extends GuiContainer {
                 tileentity.outputVoltage = 0.1F;
             if (tileentity.outputVoltage > 10000)
                 tileentity.outputVoltage = 10000;
-            Network.updateTileEntityFieldsToServer(tileentity, "outputVoltage");
+            Util.networkManager.updateTileEntityFieldsToServer(tileentity, "outputVoltage");
         } else if (button.id <= 8) {
             switch (button.id) {
                 case 4:
@@ -119,7 +120,7 @@ public class GuiQuantumGenerator extends GuiContainer {
                 tileentity.outputResistance = 0.001F;
             if (tileentity.outputResistance > 100)
                 tileentity.outputResistance = 100;
-            Network.updateTileEntityFieldsToServer(tileentity, "outputResistance");
+            Util.networkManager.updateTileEntityFieldsToServer(tileentity, "outputResistance");
         }
     }
 

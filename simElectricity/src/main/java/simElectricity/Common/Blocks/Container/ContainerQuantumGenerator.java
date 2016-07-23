@@ -22,7 +22,7 @@ package simElectricity.Common.Blocks.Container;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.tileentity.TileEntity;
 import simElectricity.API.Common.ContainerBase;
-import simElectricity.API.Network;
+import simElectricity.API.Util;
 
 public class ContainerQuantumGenerator extends ContainerBase {
     public ContainerQuantumGenerator(InventoryPlayer inventoryPlayer, TileEntity te) {
@@ -52,7 +52,7 @@ public class ContainerQuantumGenerator extends ContainerBase {
     @Override
     public void init() {
         if (!tileEntity.getWorldObj().isRemote) {
-        	Network.updateTileEntityFields(tileEntity, "outputVoltage", "outputResistance");
+        	Util.networkManager.updateTileEntityFields(tileEntity, "outputVoltage", "outputResistance");
         }
     }
 }

@@ -30,7 +30,8 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
 import net.minecraftforge.common.util.ForgeDirection;
 import org.lwjgl.opengl.GL11;
-import simElectricity.API.Network;
+
+import simElectricity.API.Util;
 import simElectricity.Common.Blocks.Container.ContainerSolarInverter;
 import simElectricity.Common.Blocks.TileEntity.TileSolarInverter;
 
@@ -116,14 +117,14 @@ public class GuiSolarInverter extends GuiContainer {
         if (te.Ro > 100)
             te.Ro = 100;
         if (button.id < 4)
-            Network.updateTileEntityFieldsToServer(te, "Ro");
+        	Util.networkManager.updateTileEntityFieldsToServer(te, "Ro");
 
         if (te.Vreg < 200)
             te.Vreg = 200;
         if (te.Vreg > 240)
             te.Vreg = 240;
         if (button.id < 8 && button.id > 3)
-            Network.updateTileEntityFieldsToServer(te, "Vreg");
+        	Util.networkManager.updateTileEntityFieldsToServer(te, "Vreg");
 
     }
 
@@ -165,7 +166,7 @@ public class GuiSolarInverter extends GuiContainer {
             te.outputSide = selectedDirection;
         }
 
-        Network.updateTileEntityFieldsToServer(te, "inputSide", "outputSide");
+        Util.networkManager.updateTileEntityFieldsToServer(te, "inputSide", "outputSide");
         te.getWorldObj().markBlockForUpdate(te.xCoord, te.yCoord, te.zCoord);
     }
 

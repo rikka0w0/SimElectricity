@@ -2,7 +2,7 @@ package simElectricity.Common;
 
 import simElectricity.SimElectricity;
 import simElectricity.Common.EnergyNet.EnergyNet;
-import simElectricity.Common.EnergyNet.WorldData;
+import simElectricity.Common.EnergyNet.EnergyNetAgent;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.util.ChatComponentText;
@@ -23,7 +23,7 @@ public class CommandSimE extends CommandBase{
 
 	private void info(ICommandSender sender, int dim){
 		World world = DimensionManager.getWorld(dim);
-		EnergyNet energyNet = WorldData.getEnergyNetForWorld(world);
+		EnergyNet energyNet = EnergyNetAgent.getEnergyNetForWorld(world);
 		sender.addChatMessage(new ChatComponentText("-----------------------------------"));
 		sender.addChatMessage(new ChatComponentText("EnergyNet for dimension " + dim + ":"));
 		for(String s: energyNet.info())
@@ -31,7 +31,7 @@ public class CommandSimE extends CommandBase{
 	}
 	
 	private void refresh(ICommandSender sender, int dim){
-		EnergyNet energyNet = WorldData.getEnergyNetForWorld(
+		EnergyNet energyNet = EnergyNetAgent.getEnergyNetForWorld(
 				DimensionManager.getWorld(dim));
 		energyNet.reFresh();
 		sender.addChatMessage(new ChatComponentText("EnergyNet for dimension " + dim + " has been refreshed!"));		

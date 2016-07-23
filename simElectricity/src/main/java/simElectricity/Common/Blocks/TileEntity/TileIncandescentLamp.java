@@ -24,7 +24,7 @@ import simElectricity.API.Common.TileStandardSEMachine;
 import simElectricity.API.Energy;
 import simElectricity.API.IEnergyNetUpdateHandler;
 import simElectricity.API.INetworkEventHandler;
-import simElectricity.API.Network;
+import simElectricity.API.Util;
 
 import java.util.List;
 
@@ -59,7 +59,7 @@ public class TileIncandescentLamp extends TileStandardSEMachine implements IEner
         if (lightLevel > 15)
             lightLevel = 15;
         
-        Network.updateNetworkFields(this);
+        Util.networkManager.updateNetworkFields(this);
 
         checkVoltage(Energy.getVoltage(this), 265);
     }

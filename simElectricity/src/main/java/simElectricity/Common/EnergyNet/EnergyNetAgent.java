@@ -24,11 +24,12 @@ import net.minecraft.world.World;
 import java.util.Map;
 import java.util.WeakHashMap;
 
-public class WorldData {
-    @SuppressWarnings("unchecked")
-    public static Map<World, WorldData> mapping = new WeakHashMap();
+import simElectricity.API.EnergyTile.ISESimulatable;
+import simElectricity.API.Internal.IEnergyNetAgent;
 
-    public EnergyNet energyNet;
+public class EnergyNetAgent implements IEnergyNetAgent{
+    @SuppressWarnings("unchecked")
+    public static Map<World, EnergyNet> mapping = new WeakHashMap();
 
     /**
      * Return the instance of energyNet for a specific world
@@ -39,18 +40,26 @@ public class WorldData {
         if (world == null)
             throw new IllegalArgumentException("world is null");
 
-        WorldData ret = mapping.get(world);
+        EnergyNet ret = mapping.get(world);
 
         if (ret == null) {
-            ret = new WorldData();
-            ret.energyNet = new EnergyNet(world);
+        	ret = new EnergyNet(world);
             mapping.put(world, ret);
         }
 
-        return ret.energyNet;
+        return ret;
     }
 
     public static void onWorldUnload(World world) {
         mapping.remove(world);
+    }
+    
+    
+    
+    
+    
+    @Override
+    public double getVoltage(ISESimulatable Tile, World world) {
+        return EnergyNetAgent.getEnergyNetForWorld(world).simulator.getVoltage(Tile);
     }
 }

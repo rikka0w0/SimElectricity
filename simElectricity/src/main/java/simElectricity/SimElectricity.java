@@ -34,12 +34,16 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
+import simElectricity.API.Energy;
 import simElectricity.API.Util;
+import simElectricity.Common.CableRenderHelper;
 import simElectricity.Common.CommandSimE;
 import simElectricity.Common.CommonProxy;
 import simElectricity.Common.ConfigManager;
+import simElectricity.Common.FluidUtil;
 import simElectricity.Common.Core.SEBlocks;
 import simElectricity.Common.Core.SEItems;
+import simElectricity.Common.EnergyNet.EnergyNetAgent;
 import simElectricity.Common.EnergyNet.EnergyNetEventHandler;
 import simElectricity.Common.Network.MessageTileEntityUpdate;
 import simElectricity.Common.Network.NetworkManager;
@@ -63,20 +67,22 @@ public class SimElectricity {
      * PreInitialize
      */
     @EventHandler
-    public void preInit(FMLPreInitializationEvent event) {
-    	new MatrixTest();
-    	
+    public void preInit(FMLPreInitializationEvent event) {    	
+    	//Initialize utility functions
     	Util.isSELoaded = true;
+    	Util.fluid = new FluidUtil();
+    	Util.cableRenderHelper = new CableRenderHelper();
+    	Energy.energyNetAgent = new EnergyNetAgent();
 
-        //Load Configs
+        //Load configurations
         FMLCommonHandler.instance().bus().register(new ConfigManager());
         ConfigManager.init(event);
 
-        //Add to event bus
-        new NetworkManager();
+        //Register event buses
+        Util.networkManager = new NetworkManager();
         new EnergyNetEventHandler();
 
-        //CreativeTab
+        //Register creative tabs
         Util.SETab = new CreativeTabs(Util.MODID) {
             @Override
             @SideOnly(Side.CLIENT)

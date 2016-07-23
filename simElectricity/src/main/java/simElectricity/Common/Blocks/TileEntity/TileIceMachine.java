@@ -11,9 +11,9 @@ import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 import simElectricity.API.Energy;
-import simElectricity.API.FluidUtil;
 import simElectricity.API.IEnergyNetUpdateHandler;
 import simElectricity.API.INetworkEventHandler;
+import simElectricity.API.Util;
 import simElectricity.API.Common.TileStandardSEMachine;
 import simElectricity.Common.Core.SEItems;
 
@@ -82,7 +82,7 @@ public class TileIceMachine extends TileStandardSEMachine implements IFluidHandl
         	else
         		dowork(fluid);
         	
-        FluidStack l=FluidUtil.drainContainer(maxCapacity, fluid, inv, 0, 1);
+        FluidStack l= Util.fluid.drainContainer(maxCapacity, fluid, inv, 0, 1);
         if (l!=null){
         	if (fluid==null)
         		fluid=l;

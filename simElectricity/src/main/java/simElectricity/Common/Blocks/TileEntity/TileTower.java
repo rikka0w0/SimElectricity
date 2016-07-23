@@ -33,7 +33,7 @@ import net.minecraftforge.common.MinecraftForge;
 import simElectricity.API.Energy;
 import simElectricity.API.IHVTower;
 import simElectricity.API.INetworkEventHandler;
-import simElectricity.API.Network;
+import simElectricity.API.Util;
 import simElectricity.API.EnergyTile.ISEGridNode;
 import simElectricity.API.EnergyTile.ISEGridTile;
 import simElectricity.API.EnergyTile.ISESimulatable;
@@ -84,7 +84,7 @@ public class TileTower extends TileEntity implements ISEGridTile,INetworkEventHa
     	}
     	
 
-    	Network.updateNetworkFields(this);
+    	Util.networkManager.updateNetworkFields(this);
     }
     
 	@Override

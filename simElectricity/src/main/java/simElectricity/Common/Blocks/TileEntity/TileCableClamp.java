@@ -14,7 +14,6 @@ import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.Energy;
 import simElectricity.API.IHVTower;
 import simElectricity.API.INetworkEventHandler;
-import simElectricity.API.Network;
 import simElectricity.API.Util;
 import simElectricity.API.Common.TileEntitySE;
 import simElectricity.API.EnergyTile.ISEConductor;
@@ -146,7 +145,7 @@ public class TileCableClamp extends TileEntitySE implements ISETile,ISEJunction,
 		}
 		
 		
-		Network.updateNetworkFields(this);
+		Util.networkManager.updateNetworkFields(this);
 	}
 
 	@Override

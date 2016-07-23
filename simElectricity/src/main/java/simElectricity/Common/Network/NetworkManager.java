@@ -27,38 +27,33 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.ChunkWatchEvent;
 import simElectricity.API.EnergyTile.ISESimpleTile;
+import simElectricity.API.Internal.INetworkManager;
 import simElectricity.API.INetworkEventHandler;
 import simElectricity.API.ISidedFacing;
 import simElectricity.SimElectricity;
 
 import java.util.ArrayList;
 
-public class NetworkManager {
+public class NetworkManager implements INetworkManager{
     public NetworkManager() {
         MinecraftForge.EVENT_BUS.register(this);
     }
 
-    /**
-     * Update a client tileEntity field from the server
-     */
-    public static void updateTileEntityFields(TileEntity tileEntity, String[] fields) {
+    @Override
+    public void updateTileEntityFields(TileEntity tileEntity, String... fields) {
     	SimElectricity.instance.networkChannel.sendToDimension(
     			new MessageTileEntityUpdate(tileEntity, fields),
     			tileEntity.getWorldObj().provider.dimensionId);
     }
 
-    /**
-     * Update a client tileEntity field from the server
-     */
-    public static void updateTileEntityFieldsToServer(TileEntity tileEntity, String[] fields) {
+    @Override
+    public void updateTileEntityFieldsToServer(TileEntity tileEntity, String... fields) {
     	SimElectricity.instance.networkChannel.sendToServer(
     			new MessageTileEntityUpdate(tileEntity, fields));
     }
 
-    /**
-     * Attempt to update a tileEntity's network fields
-     */
-    public static void updateNetworkFields(TileEntity tileEntity){
+    @Override
+    public void updateNetworkFields(TileEntity tileEntity){
     	if (!(tileEntity instanceof INetworkEventHandler))
     		return;
 
@@ -73,10 +68,8 @@ public class NetworkManager {
     	updateTileEntityFields(tileEntity, fields.toArray(new String[0]));
     }
 
-    /**
-     * Update a tileEntity's functional side
-     */
-    public static void updateFunctionalSide(TileEntity tileEntity){
+    @Override
+    public void updateFunctionalSide(TileEntity tileEntity){
     	if (!(tileEntity instanceof ISESimpleTile))
     		return;
 
@@ -85,10 +78,8 @@ public class NetworkManager {
     			tileEntity.getWorldObj().provider.dimensionId);
     }
 
-    /**
-     * Update a tileEntity's functional side
-     */
-    public static void updateFacing(TileEntity tileEntity){
+    @Override
+    public void updateFacing(TileEntity tileEntity){
     	if (!(tileEntity instanceof ISidedFacing))
     		return;
 
@@ -100,7 +91,8 @@ public class NetworkManager {
     /**
      * Send the NBT of a tileEntity from the server to the client
      */
-    public static void updateTileEntityNBT(TileEntity tileEntity){
+    @Override
+    public void updateTileEntityNBT(TileEntity tileEntity){
     	Packet packet = tileEntity.getDescriptionPacket();
     	if (packet != null)
     		MinecraftServer.getServer().getConfigurationManager().sendPacketToAllPlayersInDimension(packet, tileEntity.getWorldObj().provider.dimensionId);

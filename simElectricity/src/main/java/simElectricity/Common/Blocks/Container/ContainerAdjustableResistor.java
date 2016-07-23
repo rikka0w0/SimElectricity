@@ -22,7 +22,7 @@ package simElectricity.Common.Blocks.Container;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.tileentity.TileEntity;
 import simElectricity.API.Common.ContainerBase;
-import simElectricity.API.Network;
+import simElectricity.API.Util;
 
 public class ContainerAdjustableResistor extends ContainerBase {
     public ContainerAdjustableResistor(InventoryPlayer inventoryPlayer, TileEntity te) {
@@ -52,13 +52,13 @@ public class ContainerAdjustableResistor extends ContainerBase {
     @Override
     public void init() {
         if (!tileEntity.getWorldObj().isRemote) {
-        	Network.updateTileEntityFields(tileEntity, "resistance");
+        	Util.networkManager.updateTileEntityFields(tileEntity, "resistance");
         }
     }
 
     @Override
     public void detectAndSendChanges() {
         super.detectAndSendChanges();
-        Network.updateTileEntityFields(tileEntity, "powerConsumed", "power");
+        Util.networkManager.updateTileEntityFields(tileEntity, "powerConsumed", "power");
     }
 }

@@ -32,7 +32,7 @@ import sun.security.ssl.Debug;
 
 import java.util.*;
 
-public final class EnergyNet {	
+public final class EnergyNet{	
 	Simulator simulator;
 	
 	//Contains information about the grid
@@ -285,21 +285,9 @@ public final class EnergyNet {
     	//Create simulator
     	simulator = new Simulator(matrixSolverName, ConfigManager.maxIteration, Math.pow(10, -ConfigManager.precision));
     	
-    	//Init. data provider
+    	//Initialize data provider
     	dataProvider = EnergyNetDataProvider.get(world);
     	
         SEUtils.logInfo("EnergyNet has been created for DIM" + String.valueOf(world.provider.dimensionId));
-    }
-
-
-    /**
-     * Calculate the voltage of a given EnergyTile RELATIVE TO GROUND!
-     */
-    public static double getVoltage(ISESimulatable Tile, World world) {
-        return getEnergyNet(world).simulator.getVoltage(Tile);
-    }
-    
-    public static EnergyNet getEnergyNet(World world){
-    	return WorldData.getEnergyNetForWorld(world);
     }
 }

@@ -33,7 +33,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.Common.Blocks.BlockContainerSE;
 import simElectricity.API.ISidedFacing;
-import simElectricity.API.Network;
 import simElectricity.API.Util;
 import simElectricity.Common.Core.SEItems;
 
@@ -57,7 +56,7 @@ public class BlockWindMillTop extends BlockContainerSE {
 
             te.settled = false;
             if (!world.isRemote)
-                Network.updateTileEntityFields(te, "settled");
+            	Util.networkManager.updateTileEntityFields(te, "settled");
         } else {
             if (playerItem == null)
                 return false;
@@ -67,7 +66,7 @@ public class BlockWindMillTop extends BlockContainerSE {
 
             te.settled = true;
             if (!world.isRemote)
-                Network.updateTileEntityFields(te, "settled");
+            	Util.networkManager.updateTileEntityFields(te, "settled");
         }
 
         return true;

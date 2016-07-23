@@ -33,7 +33,6 @@ import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.Common.Blocks.AutoFacing;
 import simElectricity.API.Common.Blocks.BlockContainerSE;
 import simElectricity.API.Energy;
-import simElectricity.API.Network;
 import simElectricity.API.Util;
 import simElectricity.Common.Blocks.TileEntity.TileSwitch;
 import simElectricity.SimElectricity;
@@ -53,7 +52,7 @@ public class BlockSwitch extends BlockContainerSE {
         } else {
             if (!world.isRemote) {
                 te.isOn = !te.isOn;
-                Network.updateTileEntityFields(te, "isOn");
+                Util.networkManager.updateTileEntityFields(te, "isOn");
                 Energy.postTileRejoinEvent(te);
             }
         }

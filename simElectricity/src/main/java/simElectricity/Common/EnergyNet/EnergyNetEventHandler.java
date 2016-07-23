@@ -43,7 +43,7 @@ public class EnergyNetEventHandler {
 
     @SubscribeEvent
     public void onWorldUnload(WorldEvent.Unload event) {
-        WorldData.onWorldUnload(event.world);
+    	EnergyNetAgent.onWorldUnload(event.world);
     }
 
     @SubscribeEvent
@@ -53,7 +53,7 @@ public class EnergyNetEventHandler {
         if (event.side != Side.SERVER)
             return;
 
-        WorldData.getEnergyNetForWorld(event.world).onTick();
+        EnergyNetAgent.getEnergyNetForWorld(event.world).onTick();
     }
 
     //Energy net --------------------------------------------------------------------------------------------------------------
@@ -85,7 +85,7 @@ public class EnergyNetEventHandler {
         }
         
         if (te instanceof ISEPlaceable) {
-	        EnergyNet energyNet = WorldData.getEnergyNetForWorld(world);
+	        EnergyNet energyNet = EnergyNetAgent.getEnergyNetForWorld(world);
 	        energyNet.addTileEntity(te);
 	
 	        if (ConfigManager.showEnergyNetInfo)
@@ -112,7 +112,7 @@ public class EnergyNetEventHandler {
         }
         
         if (te instanceof ISEPlaceable) {
-	        EnergyNet energyNet = WorldData.getEnergyNetForWorld(world);
+	        EnergyNet energyNet = EnergyNetAgent.getEnergyNetForWorld(world);
 	        energyNet.removeTileEntity(te);        	
 	        if (ConfigManager.showEnergyNetInfo)
 	            SEUtils.logInfo("Tileentity " + te + " has detached from the energy network!");
@@ -128,7 +128,7 @@ public class EnergyNetEventHandler {
             return;
         }
 
-        WorldData.getEnergyNetForWorld(te.getWorldObj()).rejoinTileEntity(te);
+        EnergyNetAgent.getEnergyNetForWorld(te.getWorldObj()).rejoinTileEntity(te);
 
         if (ConfigManager.showEnergyNetInfo)
             SEUtils.logInfo("Tileentity " + te + " has rejoined the energy network!");
@@ -143,7 +143,7 @@ public class EnergyNetEventHandler {
             return;
         }
 
-        WorldData.getEnergyNetForWorld(te.getWorldObj()).markForUpdate(te);
+        EnergyNetAgent.getEnergyNetForWorld(te.getWorldObj()).markForUpdate(te);
 
         if (ConfigManager.showEnergyNetInfo)
             SEUtils.logInfo("Tileentity " + te + " causes the energy network to update!");
@@ -151,7 +151,7 @@ public class EnergyNetEventHandler {
     
     @SubscribeEvent
     public void onGridObjectAttach(GridObjectAttachEvent event) {    
-    	EnergyNet energyNet = WorldData.getEnergyNetForWorld(event.world);
+    	EnergyNet energyNet = EnergyNetAgent.getEnergyNetForWorld(event.world);
     	
     	if (energyNet.addGridNode(event.x, event.y, event.z, event.type)){
     		if (ConfigManager.showEnergyNetInfo)
@@ -165,7 +165,7 @@ public class EnergyNetEventHandler {
     
     @SubscribeEvent
     public void onGridObjectDetach(GridObjectDetachEvent event) {    
-    	EnergyNet energyNet = WorldData.getEnergyNetForWorld(event.world);
+    	EnergyNet energyNet = EnergyNetAgent.getEnergyNetForWorld(event.world);
 
     	if (energyNet.removeGridNode(event.x, event.y, event.z)){
     		if (ConfigManager.showEnergyNetInfo)
@@ -180,7 +180,7 @@ public class EnergyNetEventHandler {
     
     @SubscribeEvent
     public void onGridConnection(GridConnectionEvent event) {    
-    	EnergyNet energyNet = WorldData.getEnergyNetForWorld(event.world);
+    	EnergyNet energyNet = EnergyNetAgent.getEnergyNetForWorld(event.world);
    	
     	if (energyNet.addGridConnection(event.x1, event.y1, event.z1, event.x2, event.y2, event.z2, event.resistance)){
     		if (ConfigManager.showEnergyNetInfo)
@@ -195,7 +195,7 @@ public class EnergyNetEventHandler {
     
     @SubscribeEvent
     public void onGridDisconnectionEvent(GridDisconnectionEvent event) {    
-    	EnergyNet energyNet = WorldData.getEnergyNetForWorld(event.world);
+    	EnergyNet energyNet = EnergyNetAgent.getEnergyNetForWorld(event.world);
     	
     	if (energyNet.removeGridConnection(event.x1, event.y1, event.z1, event.x2, event.y2, event.z2)){
     		if (ConfigManager.showEnergyNetInfo)

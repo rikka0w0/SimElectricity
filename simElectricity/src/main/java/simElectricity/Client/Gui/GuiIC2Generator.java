@@ -29,7 +29,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
 import org.lwjgl.opengl.GL11;
-import simElectricity.API.Network;
 import simElectricity.Common.Blocks.Container.ContainerIC2Generator;
 import simElectricity.Common.Blocks.TileEntity.TileIC2Generator;
 

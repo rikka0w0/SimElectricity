@@ -27,7 +27,6 @@ import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 import simElectricity.API.Common.Items.ItemSE;
 import simElectricity.API.Energy;
-import simElectricity.API.Network;
 import simElectricity.API.Util;
 import simElectricity.API.EnergyTile.ISEGridTile;
 

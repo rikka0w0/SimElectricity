@@ -25,12 +25,14 @@ import net.minecraftforge.common.MinecraftForge;
 
 import simElectricity.API.EnergyTile.ISESimulatable;
 import simElectricity.API.Events.*;
-import simElectricity.Common.EnergyNet.EnergyNet;
+import simElectricity.API.Internal.IEnergyNetAgent;
 
 /**
  * Energy net
  */
-public class Energy {
+public class Energy {		
+	public static IEnergyNetAgent energyNetAgent;
+	
 	public static double convertSE2IC(double SEPower){
 		return SEPower/10;
 	}
@@ -66,23 +68,6 @@ public class Energy {
     public static void postTileRejoinEvent(TileEntity te) {
         MinecraftForge.EVENT_BUS.post(new TileRejoinEvent(te));
     }
-
-    /**
-     * Calculate the voltage of a given EnergyTile RELATIVE TO GROUND!
-     * For {@link simElectricity.API.EnergyTile.IEnergyTile} and {@link simElectricity.API.EnergyTile.IConductor} Only!
-     */
-    public static double getVoltage(TileEntity Tile) {
-        return getVoltage((ISESimulatable)Tile, Tile.getWorldObj());
-    }
-    
-    
-    /**
-     * Calculate the voltage of a given EnergyTile RELATIVE TO GROUND!
-     */
-    
-    public static double getVoltage(ISESimulatable Tile, World world) {
-        return EnergyNet.getVoltage(Tile, world);
-    }
     
     public static void postGridObjectAttachEvent(World world, int x, int y, int z, byte type) {
         MinecraftForge.EVENT_BUS.post(new GridObjectAttachEvent(world,x,y,z,type));
@@ -98,5 +83,25 @@ public class Energy {
     
     public static void postGridDisconnectionEvent(World world, int x1, int y1, int z1, int x2, int y2, int z2) {
         MinecraftForge.EVENT_BUS.post(new GridDisconnectionEvent(world,x1,y1,z1,x2,y2,z2));
+    }
+    
+    /**
+     * Calculate the voltage of a given EnergyTile RELATIVE TO GROUND!
+     * For {@link simElectricity.API.EnergyTile.ISESimpleTile} and {@link simElectricity.API.EnergyTile.ISEConductor} Only!
+     */
+    public static double getVoltage(TileEntity Tile) {
+        return getVoltage((ISESimulatable)Tile, Tile.getWorldObj());
+    }
+    
+    
+    /**
+     * Return the voltage of a ISESimulatable instance, RELATIVE TO GROUND!
+     * 
+     * @param node The ISESimulatable instance
+     * @param world The world that the ISESimulatable instance is in
+     * @return the voltage of the node, in volts
+     */
+    public static double getVoltage(ISESimulatable Tile, World world) {
+        return energyNetAgent.getVoltage(Tile, world);
     }
 }

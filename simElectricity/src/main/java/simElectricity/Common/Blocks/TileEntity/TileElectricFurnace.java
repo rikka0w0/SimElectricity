@@ -28,7 +28,7 @@ import simElectricity.API.Common.TileStandardSEMachine;
 import simElectricity.API.Energy;
 import simElectricity.API.IEnergyNetUpdateHandler;
 import simElectricity.API.INetworkEventHandler;
-import simElectricity.API.Network;
+import simElectricity.API.Util;
 
 import java.util.List;
 
@@ -75,7 +75,7 @@ public class TileElectricFurnace extends TileStandardSEMachine implements IEnerg
             }
 
             isWorking = true;
-            Network.updateNetworkFields(this);
+            Util.networkManager.updateNetworkFields(this);
 
             if (energyStored > energyPerItem) {
                 ItemStack newResult = result.copy();
@@ -111,7 +111,7 @@ public class TileElectricFurnace extends TileStandardSEMachine implements IEnerg
             Energy.postTileChangeEvent(this);
         }
         isWorking = false;
-        Network.updateNetworkFields(this);
+        Util.networkManager.updateNetworkFields(this);
     }
 
     public ItemStack getResult(ItemStack i) {
@@ -165,7 +165,7 @@ public class TileElectricFurnace extends TileStandardSEMachine implements IEnerg
 
         if (Energy.getVoltage(this) == 0) {
             isWorking = false;
-            Network.updateNetworkFields(this);
+            Util.networkManager.updateNetworkFields(this);
         }
     }
 

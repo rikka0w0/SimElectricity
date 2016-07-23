@@ -29,8 +29,8 @@ import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.tileentity.TileEntity;
-import simElectricity.API.ProductSlot;
 import simElectricity.API.Common.ContainerBase;
+import simElectricity.API.Common.ProductSlot;
 import simElectricity.Common.Blocks.TileEntity.TileIceMachine;
 
 public class ContainerIceMachine extends ContainerBase{
