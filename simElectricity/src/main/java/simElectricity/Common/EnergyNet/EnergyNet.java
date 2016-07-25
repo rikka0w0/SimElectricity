@@ -283,7 +283,11 @@ public final class EnergyNet{
     	//Load configuration
     	matrixSolverName = ConfigManager.matrixSolver;
     	//Create simulator
-    	simulator = new Simulator(matrixSolverName, ConfigManager.maxIteration, Math.pow(10, -ConfigManager.precision));
+    	simulator = new Simulator(matrixSolverName, 
+    			ConfigManager.maxIteration,
+    			ConfigManager.convergenceAssistantTiggerLevel,
+    			Math.pow(10, -ConfigManager.precision),
+    			1.0D/ConfigManager.shuntResistance);
     	
     	//Initialize data provider
     	dataProvider = EnergyNetDataProvider.get(world);

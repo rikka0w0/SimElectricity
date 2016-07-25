@@ -40,6 +40,8 @@ public class ConfigManager {
     public static String matrixSolver;
     public static int precision;
     public static int maxIteration;
+    public static int shuntResistance;
+    public static int convergenceAssistantTiggerLevel;
 
     public static void init(FMLPreInitializationEvent event) {
         if (config == null) {
@@ -50,11 +52,13 @@ public class ConfigManager {
 
     private static void syncConfig() {
         showEnergyNetInfo = config.get(Configuration.CATEGORY_GENERAL, "ShowEnergyNetInfo", false, "Display energy net information, such as joining/leaving/changing").getBoolean();
-        parabolaRenderSteps = config.get(Configuration.CATEGORY_GENERAL, "ParabolaRenderSteps", 12, "Decides how smooth the parabola cable is(must be a even number!Client ONLY!)").getInt(12);
+        parabolaRenderSteps = config.get(Configuration.CATEGORY_GENERAL, "ParabolaRenderSteps", 12, "Decides how smooth the parabola cable is(must be a even number!Client ONLY!)").getInt();
         // matrixSolver = config.get(Configuration.CATEGORY_GENERAL, "MatrixSolver", "QR", "Which algorithms is used for solving matrix(QR is much more effective than Gaussian, options: QR, Gaussian)").getString();
         matrixSolver = config.getString("MatrixSolver", Configuration.CATEGORY_GENERAL, "QR", "Which algorithms is used for solving matrix(QR is much more effective than Gaussian.).Options: QR, Gaussian", new String[] { "QR", "Gaussian" });
-        precision = config.get(Configuration.CATEGORY_GENERAL, "Precision", 10, "The maximum allowed error from simulation").getInt(10);
-        maxIteration = config.get(Configuration.CATEGORY_GENERAL, "Max iteration", 50, "The Maximum number of iteration per tick").getInt(50);
+        precision = config.get(Configuration.CATEGORY_GENERAL, "Precision", 10, "The maximum allowed error from simulation").getInt();
+        maxIteration = config.get(Configuration.CATEGORY_GENERAL, "Max iteration", 50, "The Maximum number of iteration per tick").getInt();
+        shuntResistance = config.get(Configuration.CATEGORY_GENERAL, "Shunt resistance per node", 1000000000, "The resistance connected between every node and the ground").getInt();
+        convergenceAssistantTiggerLevel = config.get(Configuration.CATEGORY_GENERAL, "Convergence Assistant Tigger Level", 10, "").getInt();
         
         if (config.hasChanged())
             config.save();
