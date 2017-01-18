@@ -155,10 +155,10 @@ public class EnergyNetEventHandler {
     	
     	if (energyNet.addGridNode(event.x, event.y, event.z, event.type)){
     		if (ConfigManager.showEnergyNetInfo)
-    			SEUtils.logInfo("Fail to attach gridObject at " +String.valueOf(event.x)+":"+String.valueOf(event.y)+":"+String.valueOf(event.z));
+    			SEUtils.logInfo("GridObject attached at " +String.valueOf(event.x)+":"+String.valueOf(event.y)+":"+String.valueOf(event.z));
     	}else{
     		if (ConfigManager.showEnergyNetInfo)
-    			SEUtils.logInfo("GridObject attached at " +String.valueOf(event.x)+":"+String.valueOf(event.y)+":"+String.valueOf(event.z));
+    			SEUtils.logInfo("Fail to attach gridObject at " +String.valueOf(event.x)+":"+String.valueOf(event.y)+":"+String.valueOf(event.z));
     	}
     }
     
@@ -169,10 +169,10 @@ public class EnergyNetEventHandler {
 
     	if (energyNet.removeGridNode(event.x, event.y, event.z)){
     		if (ConfigManager.showEnergyNetInfo)
-    			SEUtils.logInfo("Fail to detach gridObject at " +String.valueOf(event.x)+":"+String.valueOf(event.y)+":"+String.valueOf(event.z));
+    			SEUtils.logInfo("GridObject detached at "+String.valueOf(event.x)+":"+String.valueOf(event.y)+":"+String.valueOf(event.z));
     	}else{
     		if (ConfigManager.showEnergyNetInfo)
-    			SEUtils.logInfo("GridObject detached at "+String.valueOf(event.x)+":"+String.valueOf(event.y)+":"+String.valueOf(event.z));
+    			SEUtils.logInfo("Fail to detach gridObject at " +String.valueOf(event.x)+":"+String.valueOf(event.y)+":"+String.valueOf(event.z));
     	}
     	
     	
@@ -184,11 +184,11 @@ public class EnergyNetEventHandler {
    	
     	if (energyNet.addGridConnection(event.x1, event.y1, event.z1, event.x2, event.y2, event.z2, event.resistance)){
     		if (ConfigManager.showEnergyNetInfo)
-    			SEUtils.logInfo("Fail to build grid connection between " +String.valueOf(event.x1)+":"+String.valueOf(event.y1)+":"+String.valueOf(event.z1)+" and "
+    			SEUtils.logInfo("Grid connection built between " +String.valueOf(event.x1)+":"+String.valueOf(event.y1)+":"+String.valueOf(event.z1)+" and "
 					+String.valueOf(event.x2)+":"+String.valueOf(event.y2)+":"+String.valueOf(event.z2));
     	}else{
     		if (ConfigManager.showEnergyNetInfo)
-    			SEUtils.logInfo("Grid connection built between " +String.valueOf(event.x1)+":"+String.valueOf(event.y1)+":"+String.valueOf(event.z1)+" and "
+    			SEUtils.logInfo("Fail to build grid connection between " +String.valueOf(event.x1)+":"+String.valueOf(event.y1)+":"+String.valueOf(event.z1)+" and "
 					+String.valueOf(event.x2)+":"+String.valueOf(event.y2)+":"+String.valueOf(event.z2));
     	}
     }
@@ -199,11 +199,11 @@ public class EnergyNetEventHandler {
     	
     	if (energyNet.removeGridConnection(event.x1, event.y1, event.z1, event.x2, event.y2, event.z2)){
     		if (ConfigManager.showEnergyNetInfo)
-    			SEUtils.logInfo("Fail to remove grid connection between " +String.valueOf(event.x1)+","+String.valueOf(event.y1)+","+String.valueOf(event.z1)+" and "
+    			SEUtils.logInfo("Grid connection removed between " +String.valueOf(event.x1)+","+String.valueOf(event.y1)+","+String.valueOf(event.z1)+" and "
 				+String.valueOf(event.x2)+","+String.valueOf(event.y2)+","+String.valueOf(event.z2));
     	}else{
     		if (ConfigManager.showEnergyNetInfo)
-    			SEUtils.logInfo("Grid connection removed between " +String.valueOf(event.x1)+","+String.valueOf(event.y1)+","+String.valueOf(event.z1)+" and "
+    			SEUtils.logInfo("Fail to remove grid connection between " +String.valueOf(event.x1)+","+String.valueOf(event.y1)+","+String.valueOf(event.z1)+" and "
 				+String.valueOf(event.x2)+","+String.valueOf(event.y2)+","+String.valueOf(event.z2));
     	}
     }   

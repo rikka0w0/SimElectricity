@@ -19,25 +19,14 @@ public class TileDiode extends TileEntitySE implements ISETile{
 		}
 		
 		@Override
-		public double getVoltageDrop() {
-			return 0.5;
-		}
-
-		@Override
 		public double getForwardResistance() {
-			return 1e-4;
+			return 0.1;
 		}
 
 		@Override
 		public ISEDiodeOutput getOutput() {
 			return _sec;
-		}
-
-		@Override
-		public double getReverseResistance() {
-			return 1e10;
-		}
-		
+		}		
 	}
 	
 	public class DiodeOutput implements ISEDiodeOutput{

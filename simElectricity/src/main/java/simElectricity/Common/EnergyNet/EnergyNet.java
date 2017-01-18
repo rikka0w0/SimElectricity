@@ -177,6 +177,11 @@ public final class EnergyNet{
                         
                     if (neighbor instanceof ISEConductor)  // Connected properly
                     	tileEntityGraph.addEdge((ISEConductor)neighbor, subComponent);
+                    
+                    
+                    //Also don`t forget to attach the regulator controller to the energyNet!
+                    if (subComponent instanceof ISERegulatorInput)
+                    	tileEntityGraph.addVertex(((ISERegulatorInput)subComponent).getController());
         		}
         	}
         }
@@ -214,6 +219,9 @@ public final class EnergyNet{
         	for (ForgeDirection direction : tile.getValidDirections()) {
         		ISESubComponent subComponent = tile.getComponent(direction);
         		tileEntityGraph.removeVertex(subComponent);
+        		
+        		if (subComponent instanceof ISERegulatorInput)
+                	tileEntityGraph.removeVertex(((ISERegulatorInput)subComponent).getController());
         	}
 	    }else if (te instanceof ISESimpleTile){
 	    	tileEntityGraph.removeVertex((ISESimpleTile) te);
@@ -287,7 +295,8 @@ public final class EnergyNet{
     			ConfigManager.maxIteration,
     			ConfigManager.convergenceAssistantTiggerLevel,
     			Math.pow(10, -ConfigManager.precision),
-    			1.0D/ConfigManager.shuntResistance);
+    			1.0D/ConfigManager.shuntResistance,
+    			1.0D/ConfigManager.shuntPN);
     	
     	//Initialize data provider
     	dataProvider = EnergyNetDataProvider.get(world);

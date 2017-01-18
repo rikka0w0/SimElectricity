@@ -65,7 +65,7 @@ public class ItemHVWire extends ItemSE {
                 if (!(lastCoordinate[0] == x && lastCoordinate[1] == y && lastCoordinate[2] == z) &&
                         world.getTileEntity(lastCoordinate[0], lastCoordinate[1], lastCoordinate[2]) instanceof ISEGridTile) {
 
-                    if (Math.pow(x - lastCoordinate[0], 2) + Math.pow(z - lastCoordinate[2], 2) < 64) {
+                    if (Math.pow(x - lastCoordinate[0], 2) + Math.pow(z - lastCoordinate[2], 2) < 16) {
                         Util.chat(player, EnumChatFormatting.RED + StatCollector.translateToLocal("sime.TwClose") + EnumChatFormatting.RESET);
                         return true;
                     }

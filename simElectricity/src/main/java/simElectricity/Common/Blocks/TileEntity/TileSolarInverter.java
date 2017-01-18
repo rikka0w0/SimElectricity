@@ -4,6 +4,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.Common.TileEntitySE;
 import simElectricity.API.Energy;
+import simElectricity.API.EnergyTile.ISERegulatorController;
 import simElectricity.API.EnergyTile.ISERegulatorInput;
 import simElectricity.API.EnergyTile.ISERegulatorOutput;
 import simElectricity.API.EnergyTile.ISESubComponent;
@@ -16,65 +17,73 @@ import simElectricity.Common.Blocks.TileEntity.TileAdjustableTransformer.TSecond
 import java.util.List;
 
 public class TileSolarInverter extends TileEntitySE implements ISETile, INetworkEventHandler{
-	public class RPrimary implements ISERegulatorInput{
+	public class RInput implements ISERegulatorInput{
 		private ISERegulatorOutput _sec;
+		private ISERegulatorController _con;
 		private TileSolarInverter _par;
 		
-		public RPrimary(TileSolarInverter parent){
-			_sec = new RSecondary(this);
+		public RInput(TileSolarInverter parent){
+			_sec = new ROutput(this);
+			_con = new RController(this);
 			_par = parent;
 		}
 		
 		@Override
-		public ISERegulatorOutput getOutput() {
-			return _sec;
-		}
+		public ISERegulatorOutput getOutput() {return _sec;}
 
 		@Override
-		public double getMinimumInputVoltage() {
-			return 8;
-		}
+		public ISERegulatorController getController() {return _con;}
+		
+		@Override
+		public double getRegulatedVoltage() {return _par.Vreg;}
 
 		@Override
-		public double getRegulatedVoltage() {
-			return _par.Vreg;
-		}
-
-		@Override
-		public double getOutputResistance() {
-			return _par.Ro;
-		}
-
-		@Override
-		public double getMaximumInputVoltage() {
-			return 30;
-		}
-
-		@Override
-		public double getOutputRipple() {
-			return 1;
-		}
+		public double getOutputResistance() {return _par.Ro;}
 	}
 	
-	public class RSecondary implements ISERegulatorOutput{
-		private ISERegulatorInput _pri;
+	public class ROutput implements ISERegulatorOutput{
+		private ISERegulatorInput _Input;
 		
-		public RSecondary(ISERegulatorInput primary){
-			_pri = primary;
+		public ROutput(ISERegulatorInput Input){
+			_Input = Input;
 		}
 		
 		@Override
 		public ISERegulatorInput getInput() {
-			return _pri;
+			return _Input;
 		}
+		
+	}
+	
+	public class RController implements ISERegulatorController{
+		private ISERegulatorInput _Input;
+		
+		public RController(ISERegulatorInput Input){
+			_Input = Input;
+		}
+		
+		@Override
+		public ISERegulatorInput getInput() {return _Input;}
+
+		@Override
+		public double getDMax() {return 1;}
+
+		@Override
+		public double getRc() {return 1;}
+
+		@Override
+		public double getGain() {return 1e5;}
+
+		@Override
+		public double getRs() {return 1e6;}
 		
 	}
 	
 	public ForgeDirection inputSide = ForgeDirection.NORTH, outputSide = ForgeDirection.SOUTH;
 
-    public ISERegulatorInput input = new RPrimary(this);
+    public ISERegulatorInput input = new RInput(this);
 
-    public float Vreg = 230;
+    public float Vreg = 24;
     public float Ro = 0.001F;
 
     @Override

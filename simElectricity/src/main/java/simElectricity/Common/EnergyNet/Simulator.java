@@ -11,6 +11,7 @@ import simElectricity.API.EnergyTile.ISEDiodeInput;
 import simElectricity.API.EnergyTile.ISEDiodeOutput;
 import simElectricity.API.EnergyTile.ISEGridNode;
 import simElectricity.API.EnergyTile.ISEJunction;
+import simElectricity.API.EnergyTile.ISERegulatorController;
 import simElectricity.API.EnergyTile.ISERegulatorInput;
 import simElectricity.API.EnergyTile.ISERegulatorOutput;
 import simElectricity.API.EnergyTile.ISESimulatable;
@@ -36,14 +37,21 @@ public class Simulator {
     //The conductance placed between every node and the ground
     private double Gnode;
     
+    private double Gpn;
+    
     private int convergenceAssistantTiggerLevel;
     
     
-    public Simulator(String matrixSolverName, int maxIteration, int convergenceAssistantTiggerLevel, double epsilon, double Gnode){
+	double Is = 1e-6;
+	double Vt = 26e-6;
+    
+    
+    public Simulator(String matrixSolverName, int maxIteration, int convergenceAssistantTiggerLevel, double epsilon, double Gnode, double Gpn){
     	this.maxIteration = maxIteration;
     	this.convergenceAssistantTiggerLevel = convergenceAssistantTiggerLevel;
     	this.epsilon = epsilon;
     	this.Gnode = Gnode;
+    	this.Gpn = Gpn;
     	matrix = IMatrixResolver.MatrixHelper.newResolver(matrixSolverName);
     }
     
@@ -158,7 +166,10 @@ public class Simulator {
     			
     			if (load.isEnabled())
     				currents[nodeIndex] -= V/Rcal;
-    		}else if (curNode instanceof ISETransformerPrimary){
+    		}
+    		
+    		//Transformer
+    		else if (curNode instanceof ISETransformerPrimary){
     			ISETransformerPrimary pri = (ISETransformerPrimary) curNode;
     			ISETransformerSecondary sec = pri.getSecondary();
     			double ratio = pri.getRatio();
@@ -172,70 +183,76 @@ public class Simulator {
     			double res = pri.getResistance();
     			int iPri = unknownVoltageNodes.indexOf(pri);
     			currents[nodeIndex] -= -(voltages[iPri]*ratio/res) + (voltages[nodeIndex]/res);
-    		}else if (curNode instanceof ISERegulatorInput){
-    			ISERegulatorInput pri = (ISERegulatorInput) curNode;
-    			ISERegulatorOutput sec = pri.getOutput();
-    			double Vmin = pri.getMinimumInputVoltage();
-    			double Vreg = pri.getRegulatedVoltage();
-    			double Vmax = pri.getMaximumInputVoltage();
-    			double deltaV = pri.getOutputRipple();
-    			double res = pri.getOutputResistance();
-    			int iPri = nodeIndex;
-    			int iSec = unknownVoltageNodes.indexOf(sec);
-
-    			double ratio = 0;
-    			double I;
+    		}
+    		
+			//Regulator
+    		else if (curNode instanceof ISERegulatorInput){
+    			ISERegulatorInput input = (ISERegulatorInput) curNode;
+    			ISERegulatorOutput output = input.getOutput();
+    			ISERegulatorController controller = input.getController();
     			
-				if (voltages[iPri] > Vmin){
-					ratio = deltaV/(Vmax-Vmin);
-					double c = Vreg - (Vmax+Vmin)*deltaV/(Vmax-Vmin)/2;
-					I = (ratio*ratio*voltages[iPri] - ratio*voltages[iSec] + 2*ratio*c + c*c/voltages[iPri] - c*voltages[iSec]/voltages[iPri]) / res;
-				}else{
-					ratio = (Vreg-0.5*deltaV)/Vmin;
-					I = (voltages[iPri]*ratio*ratio/res) - (voltages[iSec]*ratio/res);
-    			}
+    			double Vi = voltages[nodeIndex];
+    			double Vo = voltages[unknownVoltageNodes.indexOf(output)];	
+    			double Vc = voltages[unknownVoltageNodes.indexOf(controller)];
+    			double Ro = input.getOutputResistance();
+    			double Dmax = controller.getDMax();
     			
+    			double Ii = Vi*(Vc+Dmax)*(Vc+Dmax)/Ro - Vo*(Vc+Dmax)/Ro;
 				
-				currents[nodeIndex] -= I;
+				currents[nodeIndex] -= Ii;
     		}else if (curNode instanceof ISERegulatorOutput){
-    			ISERegulatorOutput sec = (ISERegulatorOutput) curNode;
-    			ISERegulatorInput pri = sec.getInput();
-    			double Vmin = pri.getMinimumInputVoltage();
-    			double Vreg = pri.getRegulatedVoltage();
-    			double Vmax = pri.getMaximumInputVoltage();
-    			double deltaV = pri.getOutputRipple();
-    			double res = pri.getOutputResistance();
-    			int iPri = unknownVoltageNodes.indexOf(pri);
-    			int iSec = nodeIndex;
+    			ISERegulatorOutput output = (ISERegulatorOutput) curNode;
+    			ISERegulatorInput input = output.getInput();
+    			ISERegulatorController controller = input.getController();
     			
-    			double ratio = 0;
-    			double I;
+    			double Vi = voltages[unknownVoltageNodes.indexOf(input)];
+    			double Vo = voltages[nodeIndex];	
+    			double Vc = voltages[unknownVoltageNodes.indexOf(controller)];
+    			double Ro = input.getOutputResistance();
+    			double Dmax = controller.getDMax();
     			
-				if (voltages[iPri] > Vmin){
-					ratio = deltaV/(Vmax-Vmin);
-					double c = Vreg - (Vmax+Vmin)*deltaV/(Vmax-Vmin)/2;
-					I = -ratio*voltages[iPri]/res + voltages[iSec]/res - c/res;
-				}else{
-					ratio = (Vreg-0.5*deltaV)/Vmin;
-					I = -(voltages[iPri]*ratio/res) + (voltages[iSec]/res);
-    			}
+    			double Io = -Vi*(Vc+Dmax)/Ro + Vo/Ro;
 				
-			
-				currents[nodeIndex] -= I;
-    		}else if (curNode instanceof ISEDiodeInput){
+				currents[nodeIndex] -= Io;
+    		}else if (curNode instanceof ISERegulatorController){
+    			ISERegulatorController controller = (ISERegulatorController) curNode;
+    			ISERegulatorInput input = controller.getInput();
+    			ISERegulatorOutput output = input.getOutput();
+    			
+    			double Vo = voltages[unknownVoltageNodes.indexOf(output)];	
+    			double Vc = voltages[nodeIndex];
+    			double A = controller.getGain();
+    			double Rs = controller.getRs();
+    			double Rc = controller.getRc();
+    			double Dmax = controller.getDMax();
+    			
+    			double Io = Vo*A/Rs + Vc/Rs + Dmax/Rs - input.getRegulatedVoltage()*A/Rs;
+				
+    			if (Vc > Vt*Math.log(Vt/Is/Rc))
+    				Io += Vc/Rc;
+    			else
+    				Io += Is*Math.exp(Vc/Vt);
+    			
+				currents[nodeIndex] -= Io;
+    		}
+    		
+    		
+			//Diode
+    		else if (curNode instanceof ISEDiodeInput){
     			ISEDiodeInput input = (ISEDiodeInput) curNode;
     			ISEDiodeOutput output = input.getOutput();
     			int iPri = nodeIndex;
     			int iSec = unknownVoltageNodes.indexOf(output);	
     			
-    			double Vj = input.getVoltageDrop();
     			double Vd = voltages[iPri]-voltages[iSec];
     			double Id;
     			
-    			if (Vd>Vj){
-    				Id = Vd/input.getForwardResistance() - Vj/input.getForwardResistance() + Vj/input.getReverseResistance();
+
+    			double Rmin = input.getForwardResistance();
+    			if (Vd>Vt*Math.log(Vt/Is/Rmin)){
+    				Id = Vd/Rmin + Vd*Gpn;
     			}else{
-    				Id = Vd/input.getReverseResistance();
+    				Id = Is*Math.exp(Vd/Vt) + Vd*Gpn;
     			}
     			
     			currents[nodeIndex] -= Id;
@@ -245,15 +262,16 @@ public class Simulator {
     			int iPri = unknownVoltageNodes.indexOf(input);
     			int iSec = nodeIndex;
     			
-    			double Vj = input.getVoltageDrop();
     			double Vd = voltages[iPri]-voltages[iSec];
     			double Id;
     			
-    			if (Vd>Vj){
-    				Id = Vd/input.getForwardResistance() - Vj/input.getForwardResistance() + Vj/input.getReverseResistance();
+    			double Rmin = input.getForwardResistance();
+    			if (Vd>Vt*Math.log(Vt/Is/Rmin)){
+    				Id = Vd/Rmin + Vd*Gpn;
     			}else{
-    				Id = Vd/input.getReverseResistance();
+    				Id = Is*Math.exp(Vd/Vt) + Vd*Gpn;
     			}
+
     			
     			currents[nodeIndex] += Id;
     		}
@@ -283,110 +301,14 @@ public class Simulator {
         		matrix.setElementValue(columnIndex, rowIndex, -G);
         	}
         	
-        	if (columnNode instanceof ISETransformerPrimary){
-       			ISETransformerPrimary pri = (ISETransformerPrimary) columnNode;
-       			ISETransformerSecondary sec = pri.getSecondary();
-       			int iSec = unknownVoltageNodes.indexOf(sec);
-       			
-       			double coef = -pri.getRatio() / pri.getResistance();
-       			matrix.setElementValue(columnIndex, iSec, coef);
-       			
-			}
-			else if (columnNode instanceof ISETransformerSecondary){
-				ISETransformerSecondary sec = (ISETransformerSecondary) columnNode;
-				ISETransformerPrimary pri = sec.getPrimary();
-				int iPri = unknownVoltageNodes.indexOf(pri);
-				
-				double coef = -pri.getRatio() / pri.getResistance();
-				matrix.setElementValue(columnIndex, iPri, coef);
-			}
-			else if (columnNode instanceof ISERegulatorInput){
-				ISERegulatorInput pri = (ISERegulatorInput) columnNode;
-				ISERegulatorOutput sec = pri.getOutput();
-    			double Vmin = pri.getMinimumInputVoltage();
-    			double Vreg = pri.getRegulatedVoltage();
-    			double Vmax = pri.getMaximumInputVoltage();
-    			double deltaV = pri.getOutputRipple();
-    			double res = pri.getOutputResistance();
-    			int iPri = columnIndex;
-    			int iSec = unknownVoltageNodes.indexOf(sec);
-    			
-    			double coef;
-    			if (voltages[iPri] > Vmin){
-    				double ratio = deltaV/(Vmax-Vmin);
-    				double c = Vreg - (Vmax+Vmin)*deltaV/(Vmax-Vmin)/2;
-    				coef = -ratio / res;
-    			}else{
-    				double ratio = (Vreg-0.5*deltaV)/Vmin;
-    				coef = -ratio / res;
-    			}
-    			
-    			matrix.setElementValue(columnIndex, iSec, coef);	//columnIndex = iPri
-			}
-			else if (columnNode instanceof ISERegulatorOutput){
-				ISERegulatorOutput sec = (ISERegulatorOutput) columnNode;
-    			ISERegulatorInput pri = sec.getInput();
-    			double Vmin = pri.getMinimumInputVoltage();
-    			double Vreg = pri.getRegulatedVoltage();
-    			double Vmax = pri.getMaximumInputVoltage();
-    			double deltaV = pri.getOutputRipple();
-    			double res = pri.getOutputResistance();
-    			int iPri = unknownVoltageNodes.indexOf(pri);
-    			int iSec = columnIndex;
-    			
-    			double coef;
-    			if (voltages[iPri] > Vmin){
-    					double ratio = deltaV/(Vmax-Vmin);
-    					double c = Vreg - (Vmax+Vmin)*deltaV/(Vmax-Vmin)/2;
-    					coef = -ratio/res-c/res/voltages[iPri];
-    			}else{
-    					double ratio = (Vreg-0.5*deltaV)/Vmin;
-            			coef = -ratio / res;
-        		}     	
-    			
-    			matrix.setElementValue(columnIndex, iPri, coef);	//columnIndex = iSec
-			}
-			else if (columnNode instanceof ISEDiodeInput){
-    			ISEDiodeInput input = (ISEDiodeInput) columnNode;
-    			ISEDiodeOutput output = input.getOutput();
-    			double Vd = input.getVoltageDrop();
-    			int iPri = columnIndex;
-    			int iSec = unknownVoltageNodes.indexOf(output);	
-    			double V = voltages[iPri]-voltages[iSec];
-    			
-    			double coef;
-    			if (V>Vd)
-    				coef = -1.0D / input.getForwardResistance();                    			
-    			else
-            		coef = -1.0D / input.getReverseResistance();
-    			
-    			matrix.setElementValue(columnIndex, iSec, coef);	//columnIndex = iPri
-			}
-			else if (columnNode instanceof ISEDiodeOutput){
-    			ISEDiodeOutput output = (ISEDiodeOutput) columnNode;
-    			ISEDiodeInput input = output.getInput();
-    			double Vd = input.getVoltageDrop();
-    			int iPri = unknownVoltageNodes.indexOf(input);
-    			int iSec = columnIndex;
-    			double V = voltages[iPri]-voltages[iSec];
-
-    			double coef;
-    			if (V>Vd)
-    				coef = -1.0D / input.getForwardResistance();                    			
-    			else
-            		coef = -1.0D / input.getReverseResistance();
-    			
-    			matrix.setElementValue(columnIndex, iPri, coef);	//columnIndex = iSec
-			}
-        	
-        	
-        	
-        	//Add shunt parameters
+        	//Process voltage sources and normal loads
         	if (columnNode instanceof ISEVoltageSource){
 				ISEVoltageSource r = (ISEVoltageSource) columnNode;
 				diagonalElement += 1.0D / r.getResistance();   						
 			}
-			else if (columnNode instanceof ISEConstantPowerLoad){
+        	
+        	//Constant power load
+			if (columnNode instanceof ISEConstantPowerLoad){
 				ISEConstantPowerLoad load = (ISEConstantPowerLoad)columnNode;
 				double V = voltages[unknownVoltageNodes.indexOf(columnNode)];
 				
@@ -400,77 +322,112 @@ public class Simulator {
     			if (load.isEnabled())
     				diagonalElement += 1.0D / Rcal;
 			}
-			else if (columnNode instanceof ISETransformerPrimary){
+        	
+			//Two port networks
+        	//Transformer
+        	else if (columnNode instanceof ISETransformerPrimary){
        			ISETransformerPrimary pri = (ISETransformerPrimary) columnNode;
-       			ISETransformerSecondary sec = pri.getSecondary();
+       			int iPri = columnIndex;
+       			int iSec = unknownVoltageNodes.indexOf(pri.getSecondary());
+       			
        			double ratio = pri.getRatio();
        			double res = pri.getResistance();
-       			
+       			//Primary diagonal element
        			diagonalElement += ratio*ratio/res;
+       			
+       			//Off-diagonal elements
+       			matrix.setElementValue(iPri, iSec, -ratio / res);
+       			matrix.setElementValue(iSec, iPri, -ratio / res);
 			}
 			else if (columnNode instanceof ISETransformerSecondary){
-				ISETransformerSecondary sec = (ISETransformerSecondary) columnNode;
-				ISETransformerPrimary pri = sec.getPrimary();
-       			double ratio = pri.getRatio();
-       			double res = pri.getResistance(); 
-       			
-       			diagonalElement += 1.0D / res;
+				//Secondary diagonal element
+       			diagonalElement += 1.0D / ((ISETransformerSecondary) columnNode).getPrimary().getResistance();
 			}
-			else if (columnNode instanceof ISERegulatorInput){
-				ISERegulatorInput pri = (ISERegulatorInput) columnNode;
-				ISERegulatorOutput sec = pri.getOutput();
-    			double Vmin = pri.getMinimumInputVoltage();
-    			double Vreg = pri.getRegulatedVoltage();
-    			double Vmax = pri.getMaximumInputVoltage();
-    			double deltaV = pri.getOutputRipple();
-    			double res = pri.getOutputResistance();
-    			int iPri = columnIndex;
-    			int iSec = unknownVoltageNodes.indexOf(sec);
-				
-    			
-				if (voltages[iPri] > Vmin){
-					double ratio = deltaV/(Vmax-Vmin);
-					double c = Vreg - (Vmax+Vmin)*deltaV/(Vmax-Vmin)/2;
-					diagonalElement += ratio*ratio/res + (c*voltages[iSec]-c*c)/res/voltages[iPri]/voltages[iPri];
-				}else{
-					double ratio = (Vreg-0.5*deltaV)/Vmin;
-					diagonalElement += ratio*ratio/res;
-    			} 
-			}
-			else if (columnNode instanceof ISERegulatorOutput){
-				ISERegulatorOutput sec = (ISERegulatorOutput) columnNode;
-    			ISERegulatorInput pri = sec.getInput();
-    			double res = pri.getOutputResistance();
-
-    			diagonalElement += 1.0D / res;
-			}
+        	
+        	//Diode
 			else if (columnNode instanceof ISEDiodeInput){
     			ISEDiodeInput input = (ISEDiodeInput) columnNode;
-    			ISEDiodeOutput output = input.getOutput();
-    			double Vd = input.getVoltageDrop();
-    			int iPri = columnIndex;
-    			int iSec = unknownVoltageNodes.indexOf(output);	
-    			double V = voltages[iPri]-voltages[iSec];
     			
-    			if (V>Vd)
-    				diagonalElement += 1.0D / input.getForwardResistance();
-    			else
-    				diagonalElement += 1.0D / input.getReverseResistance();
+    			int iPri = columnIndex;
+    			int iSec = unknownVoltageNodes.indexOf(input.getOutput());	
+    			double Vd = voltages[iPri]-voltages[iSec];
+    			
+    			double Rmin = input.getForwardResistance();
+    			
+    			double Gd;
+    			
+    			if (Vd>Vt*Math.log(Vt/Is/Rmin)){
+    				Gd = 1.0D/Rmin + Gpn;
+    				diagonalElement += 1.0D/Rmin + Gpn;
+    			}else{
+    				Gd = Is/Vt*Math.exp(Vd/Vt) + Gpn;
+    				diagonalElement += Is/Vt*Math.exp(Vd/Vt) + Gpn;
+    			}
+    			
+    			matrix.setElementValue(iPri, iSec, -Gd);
+    			matrix.setElementValue(iSec, iPri, -Gd);
 			}
 			else if (columnNode instanceof ISEDiodeOutput){
-    			ISEDiodeOutput output = (ISEDiodeOutput) columnNode;
-    			ISEDiodeInput input = output.getInput();
-    			double Vd = input.getVoltageDrop();
+    			ISEDiodeInput input = ((ISEDiodeOutput) columnNode).getInput();
+
     			int iPri = unknownVoltageNodes.indexOf(input);
     			int iSec = columnIndex;
-    			double V = voltages[iPri]-voltages[iSec];
+    			double Vd = voltages[iPri]-voltages[iSec];
 
-    			if (V>Vd)
-    				diagonalElement += 1.0D / input.getForwardResistance();
+    			double Rmin = input.getForwardResistance();
+
+    			if (Vd>Vt*Math.log(Vt/Is/Rmin)){
+    				diagonalElement += 1.0D/Rmin + Gpn;
+    			}else{
+    				diagonalElement += Is/Vt*Math.exp(Vd/Vt) + Gpn;
+    			}
+			}
+        	
+        	
+        	//Regulator
+			else if (columnNode instanceof ISERegulatorInput){
+				ISERegulatorInput input = (ISERegulatorInput) columnNode;
+    			ISERegulatorController controller = input.getController();
+				
+    			int iIn = columnIndex;
+    			int iOut = unknownVoltageNodes.indexOf(input.getOutput());
+    			int iCon = unknownVoltageNodes.indexOf(controller);
+    			
+    			double Vi = voltages[iIn];
+    			double Vo = voltages[iOut];
+    			double Vc = voltages[iCon];
+    			double Ro = input.getOutputResistance();
+    			double Dmax = controller.getDMax();
+    			
+    			diagonalElement += (Vc+Dmax)*(Vc+Dmax)/Ro;
+
+    			matrix.setElementValue(iIn, iOut, -(Vc+Dmax)/Ro);
+    			matrix.setElementValue(iOut, iIn, -(Vc+Dmax)/Ro);
+    			matrix.setElementValue(iCon, iOut, -Vi/Ro);
+    			matrix.setElementValue(iOut, iCon, controller.getGain()/controller.getRs());
+    			matrix.setElementValue(iCon, iIn, (2*Vi*(Vc+Dmax) - Vo)/Ro);
+			}
+			else if (columnNode instanceof ISERegulatorOutput){
+    			diagonalElement += 1.0D / ((ISERegulatorOutput) columnNode).getInput().getOutputResistance();
+			}else if (columnNode instanceof ISERegulatorController){
+				ISERegulatorController controller = (ISERegulatorController) columnNode;
+				ISERegulatorInput input = controller.getInput();
+    			
+    			int iIn = unknownVoltageNodes.indexOf(input);
+    			int iOut = unknownVoltageNodes.indexOf(input.getOutput());
+    			int iCon = columnIndex;
+    			
+    			double Vi = voltages[iIn];
+    			double Vo = voltages[iOut];
+    			double Vc = voltages[iCon];
+    			double Rs = controller.getRs();
+    			double Rmin = controller.getRc();
+    			
+    			if (Vc>Vt*Math.log(Vt/Is/Rmin))
+    				diagonalElement += 1.0D/Rs + 1.0D/Rmin;
     			else
-    				diagonalElement += 1.0D / input.getReverseResistance();
-			} 
-
+    				diagonalElement += 1.0D/Rs + Is/Vt*Math.exp(Vc/Vt);
+			}
         	
         	matrix.setElementValue(columnIndex, columnIndex, diagonalElement);
         }
@@ -478,27 +435,6 @@ public class Simulator {
         matrix.finishEditing();
     }
     
-    double norm_inf(double[] A)
-    {
-    	int i;
-    	double t = A[0];
-    	double ret = t;
-
-    	if ( t < 0 )
-    	{
-    		ret = -t;
-    	}
-
-    	for ( i = 1; i < A.length; ++i )
-    	{
-    		t = A[i];
-    		if ( t < 0 ) t = -t;
-    		if ( ret < t ) ret = t;
-    	}
-
-    	return ret;
-    }
-
     public void run(BakaGraph<ISESimulatable> tileEntityGraph) {
         List<ISESimulatable> unknownVoltageNodes = new ArrayList<ISESimulatable>();
         unknownVoltageNodes.clear();
@@ -507,53 +443,51 @@ public class Simulator {
 
     	double[] voltages = new double[matrixSize];
     	double[] currents;   
-    	
-
-    	int scaler = 1;
-
-    	currents = calcCurrents(voltages, unknownVoltageNodes, tileEntityGraph);
-    	
-        for (iterations = 0; iterations <= maxIteration; iterations ++) {
-        	double max_f = norm_inf(currents);
+    	   		
+        iterations = 0;
+        while(true) {
+        	//Calculate the current flow into each node using their voltage
+        	currents = calcCurrents(voltages, unknownVoltageNodes, tileEntityGraph);	//Current mismatch
         	
-            formJacobian(voltages, unknownVoltageNodes, tileEntityGraph);
+        	boolean keepGoing = false;
+            
+            for (int i = 0; i < matrixSize; i++) {
+                if (Math.abs(currents[i]) > epsilon)
+                	keepGoing = true;
+            }      		
 
+            
+            if (keepGoing){
+            	if (iterations > maxIteration){
+            		SEUtils.logInfo("Maximum number of iteration has reached, something must go wrong!");
+            		break;
+            	}
+            }else{
+            	break;
+            }
+        	
+        	formJacobian(voltages, unknownVoltageNodes, tileEntityGraph);
+        	//matrix.print();
             attemptSolving(currents); 
             //currents is now deltaV
             
-            double norm_inf_dx = norm_inf(currents);
-
-            for (int i = 0; i < matrixSize; i++) 
-            	voltages[i] += currents[i]/((double)scaler);
-        	
-            currents = calcCurrents(voltages, unknownVoltageNodes, tileEntityGraph);
-            
-            double max_f1 = norm_inf(currents);
-            
-            if (max_f1<max_f){
-            	if (norm_inf_dx<epsilon)
-            		break;
-            	else
-            		continue;
-            }else{
-            	if (max_f1<epsilon)
-            		break;
-            	else if (iterations>convergenceAssistantTiggerLevel)
-            		scaler*=2;
+            //Debug.println("Iteration:", String.valueOf(iterations));
+            for (int i = 0; i < matrixSize; i++) {
+            	if (!Double.isNaN(currents[i]))
+            		voltages[i] += currents[i];
+            	//String[] temp = unknownVoltageNodes.get(i).toString().split("[.]");
+            	//Debug.println(temp[temp.length-1].split("@")[0], String.valueOf(voltages[i]));
             }
-        };
-        
-    	if (iterations > maxIteration)
-    		SEUtils.logInfo("Maximum number of iteration has reached, something must go wrong!");
-    	else
-    		SEUtils.logInfo("Run!" + String.valueOf(iterations));
-
+      
+            iterations++;
+        }
 
         voltageCache.clear();
         for (int i = 0; i < matrixSize; i++) {
             voltageCache.put(unknownVoltageNodes.get(i), voltages[i]);
         }
         
+        System.out.println("Run!" + String.valueOf(iterations));        
     }
 
     /*End of Simulator*/

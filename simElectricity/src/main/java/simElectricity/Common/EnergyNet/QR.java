@@ -48,7 +48,7 @@ public class QR implements IMatrixResolver{
 			int rowEntry = Ai.next(); 			//rowEntry = Ai[i];
 			Ax.next(); 	//Ax[i];
 			
-			//The element doesn't exist int the matrix
+			//The element doesn't exist in the matrix
 			if (rowEntry > row){
 				Ai.previous();
 				Ax.previous();

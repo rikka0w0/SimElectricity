@@ -41,6 +41,7 @@ public class ConfigManager {
     public static int precision;
     public static int maxIteration;
     public static int shuntResistance;
+    public static int shuntPN; 
     public static int convergenceAssistantTiggerLevel;
 
     public static void init(FMLPreInitializationEvent event) {
@@ -58,6 +59,7 @@ public class ConfigManager {
         precision = config.get(Configuration.CATEGORY_GENERAL, "Precision", 10, "The maximum allowed error from simulation").getInt();
         maxIteration = config.get(Configuration.CATEGORY_GENERAL, "Max iteration", 50, "The Maximum number of iteration per tick").getInt();
         shuntResistance = config.get(Configuration.CATEGORY_GENERAL, "Shunt resistance per node", 1000000000, "The resistance connected between every node and the ground").getInt();
+        shuntPN = config.get(Configuration.CATEGORY_GENERAL, "Shunt resistance per PN", 1000000000, "The conductance connected between every PN junction").getInt();
         convergenceAssistantTiggerLevel = config.get(Configuration.CATEGORY_GENERAL, "Convergence Assistant Tigger Level", 10, "").getInt();
         
         if (config.hasChanged())
