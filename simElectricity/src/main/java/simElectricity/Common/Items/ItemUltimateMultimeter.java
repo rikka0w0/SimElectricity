@@ -54,9 +54,19 @@ public class ItemUltimateMultimeter extends ItemSE {
         if (world.isRemote)
         	return false;
        
-        Util.chat(player, "Voltages: ");
-        
-        if ((te instanceof ISESimulatable) && (!(world.isRemote))) {
+        Util.chat(player, "------------------");       
+        if (te instanceof ISEConductor) {
+            Util.chat(player, "Color: " + String.valueOf(((ISEConductor) te).getColor()) + ", " +
+            				"Voltage: " + String.valueOf(Energy.getVoltage(te)));
+        }else if (te instanceof ISESimpleTile){
+        	double voltage = Energy.getVoltage(te);
+        	double current = (voltage-((ISESimpleTile) te).getOutputVoltage())/((ISESimpleTile) te).getResistance();
+            Util.chat(player, "Internal Voltage: " + String.valueOf(((ISESimpleTile) te).getOutputVoltage()) + ", " +
+    				"Voltage: " + String.valueOf(voltage)); 
+            Util.chat(player, "Resistance: " + String.valueOf(((ISESimpleTile) te).getResistance()) + ", " +
+    				"Input current: " + String.valueOf(current));
+            Util.chat(player, "Input power: " + String.valueOf(current*voltage));
+        }else if ((te instanceof ISESimulatable) && (!(world.isRemote))) {
         	String[] temp = te.toString().split("[.]");
         	Util.chat(player,  temp[temp.length-1].split("@")[0] + ": " + String.valueOf(Energy.getVoltage(te)));
         }
@@ -67,9 +77,13 @@ public class ItemUltimateMultimeter extends ItemSE {
         		String[] temp = comp.toString().split("[.]");
         		Util.chat(player, temp[temp.length-1].split("@")[0] + ": " + String.valueOf(Energy.getVoltage(comp, te.getWorldObj())));
         	}
-        }
-        else if (te instanceof ISEConductor) {
-            Util.chat(player, "Color: " + String.valueOf(((ISEConductor) te).getColor()));
+        }else if (te instanceof ISEGridTile){
+        	ISEGridNode gridNode = ((ISEGridTile)te).getGridNode();
+        	if (gridNode == null){
+        		Util.chat(player, "This gridTile has no corresponding gridNode! (BUG!)");
+        	}else{
+        		Util.chat(player, "voltage: " + String.valueOf(Energy.getVoltage(gridNode, te.getWorldObj())));
+        	}
         }
         
         return true;

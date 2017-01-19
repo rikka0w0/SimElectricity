@@ -12,6 +12,7 @@ import simElectricity.API.Common.Blocks.BlockContainerSE;
 import simElectricity.API.Energy;
 import simElectricity.API.Util;
 import simElectricity.Common.Blocks.TileEntity.TileCableClamp;
+import simElectricity.Common.Blocks.TileEntity.TileTower;
 
 public class BlockCableClamp extends BlockContainerSE{
     public BlockCableClamp() {
@@ -28,6 +29,11 @@ public class BlockCableClamp extends BlockContainerSE{
         tower.facing = Util.getPlayerSight(player, true).ordinal();
         
         Energy.postGridObjectAttachEvent(world, x, y, z, (byte)0);
+        
+        TileEntity possibleNeighbor = world.getTileEntity(x, y+2, z);
+        if (possibleNeighbor instanceof TileTower && world.getBlockMetadata(x, y+2, z) == 1){
+        	Energy.postGridConnectionEvent(world, x, y, z, x, y+2, z, 0.1);
+        }
     }
 
     @Override

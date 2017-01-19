@@ -25,8 +25,6 @@ import simElectricity.API.EnergyTile.ISESubComponent;
 import simElectricity.API.EnergyTile.ISETile;
 
 public class TileCableClamp extends TileEntitySE implements ISETile,ISEJunction,ISEGridTile,INetworkEventHandler, IHVTower{
-	public int facing = 0;
-	
     private boolean registered = false;
     private ISEGridNode gridNode = null;
 	
@@ -66,6 +64,8 @@ public class TileCableClamp extends TileEntitySE implements ISETile,ISEJunction,
 
 	
 	//IHVTower ---------------------------------------------------------------------
+	public int facing = 0;
+	
 	@Override
 	public float[] offsetArray() {
 		return new float[]{
@@ -134,13 +134,24 @@ public class TileCableClamp extends TileEntitySE implements ISETile,ISEJunction,
 	}
 
 	@Override
+	public ISEGridNode getGridNode() {
+		return this.gridNode;
+	}
+	
+	@Override
 	public void onGridNeighborUpdated() {
 		this.neighbor =  new int[]{0,-1,0};
-		for (ISESimulatable neighbor : gridNode.getNeighborList()){
+		f:for (ISESimulatable neighbor : gridNode.getNeighborList()){
 			if (neighbor instanceof ISEGridNode){
+    			int neighborMeta = worldObj.getBlockMetadata(((ISEGridNode) neighbor).getXCoord(), ((ISEGridNode) neighbor).getYCoord(), ((ISEGridNode) neighbor).getZCoord());
+    			TileEntity neighborTile = worldObj.getTileEntity(((ISEGridNode) neighbor).getXCoord(), ((ISEGridNode) neighbor).getYCoord(), ((ISEGridNode) neighbor).getZCoord());
+    				
+				if (neighborTile instanceof TileTower && neighborMeta == 1 && ((ISEGridNode) neighbor).getYCoord() == this.yCoord + 2){
+					break f;
+				}
+				
 				ISEGridNode gridNode = (ISEGridNode) neighbor;
 				this.neighbor =  new int[]{gridNode.getXCoord(), gridNode.getYCoord(), gridNode.getZCoord()};
-				break;
 			}
 		}
 		

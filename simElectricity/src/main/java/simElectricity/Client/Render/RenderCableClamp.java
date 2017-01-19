@@ -31,6 +31,15 @@ public class RenderCableClamp extends RenderHVTowerBase {
         }
 	}
 
+    @Override
+    public void renderCable(TileEntity tileEntity, double x, double y, double z){
+    	super.renderCable(tileEntity,x,y,z);
+        
+    	TileEntity neighbor = tileEntity.getWorldObj().getTileEntity(tileEntity.xCoord,tileEntity.yCoord + 2,tileEntity.zCoord);
+        if (neighbor instanceof TileTower && neighbor.getBlockMetadata() == 1)
+        	renderCableTo(tileEntity, neighbor, x, y, z, 0.4);  	
+    }
+	
 	@Override
 	public void renderTower(TileEntity tower, double x, double y, double z) {
     	GL11.glPushMatrix();

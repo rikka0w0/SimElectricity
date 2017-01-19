@@ -16,6 +16,10 @@ public interface ISEGridTile {
      */
 	void setGridNode(ISEGridNode gridObj);
 	
+	/**
+	 * @return the GridNode instance from setGridNode()
+	 */
+	ISEGridNode getGridNode();
     /**
      * This function will be called every time when the neighbor list of its ISEGridObject has changed
      * <p/>
