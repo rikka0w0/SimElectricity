@@ -29,10 +29,9 @@ import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
-import simElectricity.API.Common.Blocks.AutoFacing;
+import simElectricity.API.SEAPI;
 import simElectricity.API.Common.Blocks.BlockStandardGenerator;
 import simElectricity.API.Common.TileSidedGenerator;
-import simElectricity.API.Util;
 import simElectricity.Common.Blocks.TileEntity.TileSolarPanel;
 
 public class BlockSolarPanel extends BlockStandardGenerator {
@@ -58,7 +57,7 @@ public class BlockSolarPanel extends BlockStandardGenerator {
         if (!(te instanceof TileSidedGenerator))
             return;
 
-        ForgeDirection functionalSide = AutoFacing.autoConnect(te, Util.getPlayerSight(player, false).getOpposite(), ForgeDirection.UP);
+        ForgeDirection functionalSide = SEAPI.utils.autoConnect(te, SEAPI.utils.getPlayerSight(player, false).getOpposite(), ForgeDirection.UP);
         if (functionalSide == ForgeDirection.UP)
             functionalSide = ForgeDirection.DOWN;
 

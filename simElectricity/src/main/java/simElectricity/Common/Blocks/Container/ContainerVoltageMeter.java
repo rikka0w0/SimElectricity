@@ -22,8 +22,8 @@ package simElectricity.Common.Blocks.Container;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.tileentity.TileEntity;
 import simElectricity.API.Common.ContainerBase;
-import simElectricity.API.Energy;
-import simElectricity.API.Util;
+import simElectricity.API.SEEnergy;
+import simElectricity.API.SEAPI;
 import simElectricity.Common.Blocks.TileEntity.TileVoltageMeter;
 
 public class ContainerVoltageMeter extends ContainerBase {
@@ -34,8 +34,8 @@ public class ContainerVoltageMeter extends ContainerBase {
     @Override
     public void detectAndSendChanges() {
         super.detectAndSendChanges();
-        ((TileVoltageMeter) tileEntity).voltage = Energy.getVoltage(((TileVoltageMeter) tileEntity));
-        Util.networkManager.updateTileEntityFields(tileEntity, "voltage");
+        ((TileVoltageMeter) tileEntity).voltage = SEEnergy.getVoltage(((TileVoltageMeter) tileEntity));
+        SEAPI.networkManager.updateTileEntityFields(tileEntity, "voltage");
     }
 
     @Override

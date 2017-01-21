@@ -30,15 +30,16 @@ import simElectricity.API.Internal.IEnergyNetAgent;
 /**
  * Energy net
  */
-public class Energy {		
+public class SEEnergy {		
 	public static IEnergyNetAgent energyNetAgent;
+    public static int ratioSE2IC;
 	
 	public static double convertSE2IC(double SEPower){
-		return SEPower/10;
+		return SEPower/ratioSE2IC;
 	}
 
 	public static double convertIC2SE(double ICPower){
-		return ICPower*10;
+		return ICPower*ratioSE2IC;
 	}
 	
     /**

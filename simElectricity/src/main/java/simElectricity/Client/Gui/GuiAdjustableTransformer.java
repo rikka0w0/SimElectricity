@@ -28,7 +28,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
 import net.minecraftforge.common.util.ForgeDirection;
 import org.lwjgl.opengl.GL11;
-import simElectricity.API.Util;
+import simElectricity.API.SEAPI;
 import simElectricity.Common.Blocks.Container.ContainerAdjustableTransformer;
 import simElectricity.Common.Blocks.TileEntity.TileAdjustableTransformer;
 
@@ -113,14 +113,14 @@ public class GuiAdjustableTransformer extends GuiContainer {
         if (te.outputResistance > 100)
             te.outputResistance = 100;
         if (button.id < 4)
-        	Util.networkManager.updateTileEntityFieldsToServer(te, "outputResistance");
+        	SEAPI.networkManager.updateTileEntityFieldsToServer(te, "outputResistance");
 
         if (te.ratio < 0.1)
             te.ratio = 0.1F;
         if (te.ratio > 1000)
             te.ratio = 1000;
         if (button.id < 8 && button.id > 3)
-        	Util.networkManager.updateTileEntityFieldsToServer(te, "ratio");
+        	SEAPI.networkManager.updateTileEntityFieldsToServer(te, "ratio");
 
     }
 
@@ -162,7 +162,7 @@ public class GuiAdjustableTransformer extends GuiContainer {
             te.secondarySide = selectedDirection;
         }
 
-        Util.networkManager.updateTileEntityFieldsToServer(te, "primarySide", "secondarySide");
+        SEAPI.networkManager.updateTileEntityFieldsToServer(te, "primarySide", "secondarySide");
         te.getWorldObj().markBlockForUpdate(te.xCoord, te.yCoord, te.zCoord);
     }
 

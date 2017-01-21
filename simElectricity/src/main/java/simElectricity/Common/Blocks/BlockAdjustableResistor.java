@@ -30,7 +30,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.Common.Blocks.BlockStandardSEMachine;
 import simElectricity.API.ISidedFacing;
-import simElectricity.API.Util;
+import simElectricity.API.SEAPI;
 import simElectricity.Common.Blocks.TileEntity.TileAdjustableResistor;
 import simElectricity.SimElectricity;
 
@@ -71,13 +71,13 @@ public class BlockAdjustableResistor extends BlockStandardSEMachine {
         if (!(te instanceof ISidedFacing))
             return iconBuffer[0];
 
-        return iconBuffer[Util.getTextureOnSide(side, ((ISidedFacing) te).getFacing())];
+        return iconBuffer[SEAPI.utils.getTextureOnSide(side, ((ISidedFacing) te).getFacing())];
     }
 
     @SideOnly(Side.CLIENT)
     @Override
     public IIcon getIcon(int side, int meta) {
-        return iconBuffer[Util.getTextureOnSide(side, ForgeDirection.WEST)];
+        return iconBuffer[SEAPI.utils.getTextureOnSide(side, ForgeDirection.WEST)];
     }
 
     @Override

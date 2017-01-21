@@ -28,9 +28,9 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.Common.Items.ItemSE;
-import simElectricity.API.Energy;
+import simElectricity.API.SEEnergy;
 import simElectricity.API.EnergyTile.*;
-import simElectricity.API.Util;
+import simElectricity.API.SEAPI;
 
 public class ItemUltimateMultimeter extends ItemSE {
     public ItemUltimateMultimeter() {
@@ -54,35 +54,35 @@ public class ItemUltimateMultimeter extends ItemSE {
         if (world.isRemote)
         	return false;
        
-        Util.chat(player, "------------------");       
+        SEAPI.utils.chat(player, "------------------");       
         if (te instanceof ISEConductor) {
-            Util.chat(player, "Color: " + String.valueOf(((ISEConductor) te).getColor()) + ", " +
-            				"Voltage: " + String.valueOf(Energy.getVoltage(te)));
+        	SEAPI.utils.chat(player, "Color: " + String.valueOf(((ISEConductor) te).getColor()) + ", " +
+            				"Voltage: " + String.valueOf(SEEnergy.getVoltage(te)));
         }else if (te instanceof ISESimpleTile){
-        	double voltage = Energy.getVoltage(te);
+        	double voltage = SEEnergy.getVoltage(te);
         	double current = (voltage-((ISESimpleTile) te).getOutputVoltage())/((ISESimpleTile) te).getResistance();
-            Util.chat(player, "Internal Voltage: " + String.valueOf(((ISESimpleTile) te).getOutputVoltage()) + ", " +
+        	SEAPI.utils.chat(player, "Internal Voltage: " + String.valueOf(((ISESimpleTile) te).getOutputVoltage()) + ", " +
     				"Voltage: " + String.valueOf(voltage)); 
-            Util.chat(player, "Resistance: " + String.valueOf(((ISESimpleTile) te).getResistance()) + ", " +
+        	SEAPI.utils.chat(player, "Resistance: " + String.valueOf(((ISESimpleTile) te).getResistance()) + ", " +
     				"Input current: " + String.valueOf(current));
-            Util.chat(player, "Input power: " + String.valueOf(current*voltage));
+        	SEAPI.utils.chat(player, "Input power: " + String.valueOf(current*voltage));
         }else if ((te instanceof ISESimulatable) && (!(world.isRemote))) {
         	String[] temp = te.toString().split("[.]");
-        	Util.chat(player,  temp[temp.length-1].split("@")[0] + ": " + String.valueOf(Energy.getVoltage(te)));
+        	SEAPI.utils.chat(player,  temp[temp.length-1].split("@")[0] + ": " + String.valueOf(SEEnergy.getVoltage(te)));
         }
         else if (te instanceof ISETile){
         	ISETile tile = (ISETile)te;
         	for (ForgeDirection dir : tile.getValidDirections()){
         		ISESubComponent comp = tile.getComponent(dir);
         		String[] temp = comp.toString().split("[.]");
-        		Util.chat(player, temp[temp.length-1].split("@")[0] + ": " + String.valueOf(Energy.getVoltage(comp, te.getWorldObj())));
+        		SEAPI.utils.chat(player, temp[temp.length-1].split("@")[0] + ": " + String.valueOf(SEEnergy.getVoltage(comp, te.getWorldObj())));
         	}
         }else if (te instanceof ISEGridTile){
         	ISEGridNode gridNode = ((ISEGridTile)te).getGridNode();
         	if (gridNode == null){
-        		Util.chat(player, "This gridTile has no corresponding gridNode! (BUG!)");
+        		SEAPI.utils.chat(player, "This gridTile has no corresponding gridNode! (BUG!)");
         	}else{
-        		Util.chat(player, "voltage: " + String.valueOf(Energy.getVoltage(gridNode, te.getWorldObj())));
+        		SEAPI.utils.chat(player, "voltage: " + String.valueOf(SEEnergy.getVoltage(gridNode, te.getWorldObj())));
         	}
         }
         

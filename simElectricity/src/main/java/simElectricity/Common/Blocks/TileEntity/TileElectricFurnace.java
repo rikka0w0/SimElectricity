@@ -25,10 +25,10 @@ import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.Common.TileStandardSEMachine;
-import simElectricity.API.Energy;
+import simElectricity.API.SEEnergy;
 import simElectricity.API.IEnergyNetUpdateHandler;
 import simElectricity.API.INetworkEventHandler;
-import simElectricity.API.Util;
+import simElectricity.API.SEAPI;
 
 import java.util.List;
 
@@ -62,7 +62,7 @@ public class TileElectricFurnace extends TileStandardSEMachine implements IEnerg
         if (worldObj.isRemote)
             return;
         //TODO inv[1] == null | (inv[1] != null && inv[1].isItemEqual(result))
-        double voltage = Energy.getVoltage(this);
+        double voltage = SEEnergy.getVoltage(this);
         double power = voltage * voltage / this.getResistance();
         
         if (power > 0 && result != null && (inv[1] == null || (inv[1] != null && inv[1].stackSize < 64 && inv[1].isItemEqual(result)))) {
@@ -71,11 +71,11 @@ public class TileElectricFurnace extends TileStandardSEMachine implements IEnerg
 
             if (resistance > onResistance) {
                 resistance = onResistance;
-                Energy.postTileChangeEvent(this);
+                SEEnergy.postTileChangeEvent(this);
             }
 
             isWorking = true;
-            Util.networkManager.updateNetworkFields(this);
+            SEAPI.networkManager.updateNetworkFields(this);
 
             if (energyStored > energyPerItem) {
                 ItemStack newResult = result.copy();
@@ -108,10 +108,10 @@ public class TileElectricFurnace extends TileStandardSEMachine implements IEnerg
         energyStored = 0;
         if (resistance <= onResistance) {
             resistance = Float.MAX_VALUE;
-            Energy.postTileChangeEvent(this);
+            SEEnergy.postTileChangeEvent(this);
         }
         isWorking = false;
-        Util.networkManager.updateNetworkFields(this);
+        SEAPI.networkManager.updateNetworkFields(this);
     }
 
     public ItemStack getResult(ItemStack i) {
@@ -160,12 +160,12 @@ public class TileElectricFurnace extends TileStandardSEMachine implements IEnerg
 
     @Override
     public void onEnergyNetUpdate() {
-        if (Energy.getVoltage(this) > 265)
-            worldObj.createExplosion(null, xCoord, yCoord, zCoord, (float) (4F + Energy.getVoltage(this) / 265), true);
+        if (SEEnergy.getVoltage(this) > 265)
+            worldObj.createExplosion(null, xCoord, yCoord, zCoord, (float) (4F + SEEnergy.getVoltage(this) / 265), true);
 
-        if (Energy.getVoltage(this) == 0) {
+        if (SEEnergy.getVoltage(this) == 0) {
             isWorking = false;
-            Util.networkManager.updateNetworkFields(this);
+            SEAPI.networkManager.updateNetworkFields(this);
         }
     }
 

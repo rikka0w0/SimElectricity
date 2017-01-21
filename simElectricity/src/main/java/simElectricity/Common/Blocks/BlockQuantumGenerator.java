@@ -30,7 +30,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.Common.Blocks.BlockStandardGenerator;
 import simElectricity.API.EnergyTile.ISESimpleTile;
-import simElectricity.API.Util;
+import simElectricity.API.SEAPI;
 import simElectricity.Common.Blocks.TileEntity.TileQuantumGenerator;
 import simElectricity.SimElectricity;
 
@@ -71,13 +71,13 @@ public class BlockQuantumGenerator extends BlockStandardGenerator {
         if (!(te instanceof ISESimpleTile))
             return iconBuffer[0];
 
-        return iconBuffer[Util.getTextureOnSide(side, ((ISESimpleTile) te).getFunctionalSide())];
+        return iconBuffer[SEAPI.utils.getTextureOnSide(side, ((ISESimpleTile) te).getFunctionalSide())];
     }
 
     @SideOnly(Side.CLIENT)
     @Override
     public IIcon getIcon(int side, int meta) {
-        return iconBuffer[Util.getTextureOnSide(side, ForgeDirection.WEST)];
+        return iconBuffer[SEAPI.utils.getTextureOnSide(side, ForgeDirection.WEST)];
     }
 
     @Override

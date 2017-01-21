@@ -39,16 +39,14 @@ public class Simulator {
     
     private double Gpn;
     
-    private int convergenceAssistantTiggerLevel;
     
     
 	double Is = 1e-6;
 	double Vt = 26e-6;
     
     
-    public Simulator(String matrixSolverName, int maxIteration, int convergenceAssistantTiggerLevel, double epsilon, double Gnode, double Gpn){
+    public Simulator(String matrixSolverName, int maxIteration, double epsilon, double Gnode, double Gpn){
     	this.maxIteration = maxIteration;
-    	this.convergenceAssistantTiggerLevel = convergenceAssistantTiggerLevel;
     	this.epsilon = epsilon;
     	this.Gnode = Gnode;
     	this.Gpn = Gpn;

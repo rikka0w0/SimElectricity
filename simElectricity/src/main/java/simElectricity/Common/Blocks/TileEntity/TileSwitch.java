@@ -46,12 +46,12 @@ public class TileSwitch extends TileEntitySE implements ISETile, ISEConnectable,
 		@Override
 		public void getNeighbors(List<ISESimulatable> list) {
 	        if (_te.isOn) {
-	            TileEntity neighbor = Util.getTileEntityonDirection(_te, _te.inputSide);
+	            TileEntity neighbor = SEAPI.utils.getTileEntityonDirection(_te, _te.inputSide);
 
 	            if (neighbor instanceof ISEConductor)
 	                list.add((ISEConductor) neighbor);
 
-	            neighbor = Util.getTileEntityonDirection(_te, _te.outputSide);
+	            neighbor = SEAPI.utils.getTileEntityonDirection(_te, _te.outputSide);
 
 	            if (neighbor instanceof ISEConductor)
 	                list.add((ISEConductor) neighbor);
@@ -69,9 +69,9 @@ public class TileSwitch extends TileEntitySE implements ISETile, ISEConnectable,
 
 	        TileEntity neighbor;
 	        for (ForgeDirection dir : new ForgeDirection[] {_te.inputSide, _te.outputSide}) {
-	            neighbor = Util.getTileEntityonDirection(_te, dir);
+	            neighbor = SEAPI.utils.getTileEntityonDirection(_te, dir);
 	            if (neighbor instanceof ISEConductor) {
-	                return Math.abs((Energy.getVoltage(neighbor) - (Energy.getVoltage(this, _te.getWorldObj()))) /
+	                return Math.abs((SEEnergy.getVoltage(neighbor) - (SEEnergy.getVoltage(this, _te.getWorldObj()))) /
 	                        (((ISEConductor) neighbor).getResistance() + getResistance((ISEConductor)neighbor)));
 	            }
 	        }
@@ -128,11 +128,11 @@ public class TileSwitch extends TileEntitySE implements ISETile, ISEConnectable,
 		}else{//Handling on server side
 			for (String s:fields){
 		        if (s.contains("inputSide") || s.contains("outputSide") || s.contains("isOn")) {
-		            Energy.postTileRejoinEvent(this);
+		            SEEnergy.postTileRejoinEvent(this);
 		            worldObj.notifyBlockChange(xCoord, yCoord, zCoord, 
 		               		worldObj.getBlock(xCoord, yCoord, zCoord));
 		        } else if (s.contains("resistance")) {
-		            Energy.postTileChangeEvent(this);
+		            SEEnergy.postTileChangeEvent(this);
 		        } else if (s.contains("maxCurrent")) {
 		            onEnergyNetUpdate();
 		        }
@@ -163,11 +163,11 @@ public class TileSwitch extends TileEntitySE implements ISETile, ISEConnectable,
     @Override
     public void onEnergyNetUpdate() {
     	current = sw.getCurrent();
-        //if (current > maxCurrent) {
-         //   isOn = false;
-        //    Energy.postTileRejoinEvent(this);
-        //    Network.updateTileEntityFields(this, "isOn");
-        //}
+        if (current > maxCurrent) {
+            isOn = false;
+            SEEnergy.postTileRejoinEvent(this);
+            SEAPI.networkManager.updateTileEntityFields(this, "isOn");
+        }
     }
 
 

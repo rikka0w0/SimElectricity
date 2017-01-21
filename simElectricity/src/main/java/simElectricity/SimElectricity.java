@@ -34,8 +34,9 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
-import simElectricity.API.Energy;
-import simElectricity.API.Util;
+import simElectricity.API.SEEnergy;
+import simElectricity.API.SEAPI;
+import simElectricity.Common.SEUtils;
 import simElectricity.Common.CableRenderHelper;
 import simElectricity.Common.CommandSimE;
 import simElectricity.Common.CommonProxy;
@@ -48,7 +49,7 @@ import simElectricity.Common.EnergyNet.EnergyNetEventHandler;
 import simElectricity.Common.Network.MessageTileEntityUpdate;
 import simElectricity.Common.Network.NetworkManager;
 
-@Mod(modid = Util.MODID, name = Util.NAME, version = SimElectricity.version, guiFactory = "simElectricity.Client.SimEGuiFactory", dependencies = "required-after:Forge@[10.12.2.1147,)")
+@Mod(modid = SEUtils.MODID, name = SEUtils.NAME, version = SimElectricity.version, guiFactory = "simElectricity.Client.SimEGuiFactory", dependencies = "required-after:Forge@[10.12.2.1147,)")
 public class SimElectricity {
 	public static final String version = "1.0.0";
 
@@ -58,7 +59,7 @@ public class SimElectricity {
     @SidedProxy(clientSide = "simElectricity.Client.ClientProxy", serverSide = "simElectricity.Common.CommonProxy")
     public static CommonProxy proxy;
 
-    @Instance(Util.MODID)
+    @Instance(SEUtils.MODID)
     public static SimElectricity instance;
 
     public SimpleNetworkWrapper networkChannel;
@@ -69,21 +70,22 @@ public class SimElectricity {
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {    	
     	//Initialize utility functions
-    	Util.isSELoaded = true;
-    	Util.fluid = new FluidUtil();
-    	Util.cableRenderHelper = new CableRenderHelper();
-    	Energy.energyNetAgent = new EnergyNetAgent();
+    	SEAPI.isSELoaded = true;
+    	SEAPI.fluid = new FluidUtil();
+    	SEAPI.cableRenderHelper = new CableRenderHelper();
+    	SEAPI.utils = new SEUtils();
+    	SEEnergy.energyNetAgent = new EnergyNetAgent();
 
         //Load configurations
         FMLCommonHandler.instance().bus().register(new ConfigManager());
         ConfigManager.init(event);
 
         //Register event buses
-        Util.networkManager = new NetworkManager();
+        SEAPI.networkManager = new NetworkManager();
         new EnergyNetEventHandler();
 
         //Register creative tabs
-        Util.SETab = new CreativeTabs(Util.MODID) {
+        SEAPI.SETab = new CreativeTabs(SEUtils.MODID) {
             @Override
             @SideOnly(Side.CLIENT)
             public Item getTabIconItem() {
@@ -98,7 +100,7 @@ public class SimElectricity {
         SEItems.init();
 
         //Register network channel
-        networkChannel = NetworkRegistry.INSTANCE.newSimpleChannel(Util.MODID);
+        networkChannel = NetworkRegistry.INSTANCE.newSimpleChannel(SEUtils.MODID);
         networkChannel.registerMessage(MessageTileEntityUpdate.Handler.class, MessageTileEntityUpdate.class, 0, Side.CLIENT);
         networkChannel.registerMessage(MessageTileEntityUpdate.Handler.class, MessageTileEntityUpdate.class, 1, Side.SERVER);
     }

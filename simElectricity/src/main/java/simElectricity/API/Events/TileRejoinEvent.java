@@ -24,7 +24,7 @@ import net.minecraft.tileentity.TileEntity;
 
 /**
  * Should be posted when a tileEntity is rejoined to the energy net,
- * use {@link simElectricity.API.Energy#postTileRejoinEvent(net.minecraft.tileentity.TileEntity) Energy.postTileRejoinEvent()}
+ * use {@link simElectricity.API.Energy#postTileRejoinEvent(net.minecraft.tileentity.TileEntity) SEEnergy.postTileRejoinEvent()}
  */
 public class TileRejoinEvent extends Event {
     public TileEntity energyTile;

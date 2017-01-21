@@ -3,7 +3,7 @@ package simElectricity.Common.Blocks.TileEntity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.Common.TileEntitySE;
-import simElectricity.API.Energy;
+import simElectricity.API.SEEnergy;
 import simElectricity.API.EnergyTile.ISERegulatorController;
 import simElectricity.API.EnergyTile.ISERegulatorInput;
 import simElectricity.API.EnergyTile.ISERegulatorOutput;
@@ -118,11 +118,11 @@ public class TileSolarInverter extends TileEntitySE implements ISETile, INetwork
 		if (!worldObj.isRemote){
 			for (String s:fields){
 		        if (s.contains("inputSide") || s.contains("outputSide")) {
-		            Energy.postTileRejoinEvent(this);
+		            SEEnergy.postTileRejoinEvent(this);
 		            worldObj.notifyBlockChange(xCoord, yCoord, zCoord,
 		            		worldObj.getBlock(xCoord, yCoord, zCoord));
 		        } else if (s.contains("Ro") || s.contains("Vreg")) {
-		            Energy.postTileChangeEvent(this);
+		            SEEnergy.postTileChangeEvent(this);
 		        }
 			}
 

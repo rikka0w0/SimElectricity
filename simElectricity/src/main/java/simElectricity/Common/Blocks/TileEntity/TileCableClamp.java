@@ -11,10 +11,10 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraftforge.common.util.ForgeDirection;
 
-import simElectricity.API.Energy;
+import simElectricity.API.SEEnergy;
 import simElectricity.API.IHVTower;
 import simElectricity.API.INetworkEventHandler;
-import simElectricity.API.Util;
+import simElectricity.API.SEAPI;
 import simElectricity.API.Common.TileEntitySE;
 import simElectricity.API.EnergyTile.ISEConductor;
 import simElectricity.API.EnergyTile.ISEGridNode;
@@ -112,7 +112,7 @@ public class TileCableClamp extends TileEntitySE implements ISETile,ISEJunction,
 	//ISEJunction ------------------------------------------------------------------
 	@Override
 	public void getNeighbors(List<ISESimulatable> list) {
-		TileEntity neighbor = Util.getTileEntityonDirection(this, ForgeDirection.getOrientation(facing));
+		TileEntity neighbor = SEAPI.utils.getTileEntityonDirection(this, ForgeDirection.getOrientation(facing));
 		
         if (neighbor instanceof ISEConductor)
             list.add((ISEConductor) neighbor);
@@ -156,7 +156,7 @@ public class TileCableClamp extends TileEntitySE implements ISETile,ISEJunction,
 		}
 		
 		
-		Util.networkManager.updateNetworkFields(this);
+		SEAPI.networkManager.updateNetworkFields(this);
 	}
 
 	@Override

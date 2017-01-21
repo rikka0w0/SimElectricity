@@ -3,7 +3,7 @@ package simElectricity.Common;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 
-import simElectricity.API.Util;
+import simElectricity.API.SEAPI;
 import simElectricity.API.EnergyTile.ISEConductor;
 import simElectricity.API.EnergyTile.ISEConnectable;
 import simElectricity.API.EnergyTile.ISESimpleTile;
@@ -13,7 +13,7 @@ import simElectricity.API.Internal.ICableRenderHelper;
 public class CableRenderHelper implements ICableRenderHelper {
 	@Override
 	public boolean canConnect(TileEntity tileEntity, ForgeDirection direction) {
-        TileEntity ent = Util.getTileEntityonDirection(tileEntity, direction);
+        TileEntity ent = SEAPI.utils.getTileEntityonDirection(tileEntity, direction);
 
         if (ent instanceof ISEConductor) {
             if (tileEntity instanceof ISEConductor) {

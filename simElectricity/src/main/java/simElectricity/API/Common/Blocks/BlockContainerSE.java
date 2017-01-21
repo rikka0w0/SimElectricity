@@ -30,7 +30,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import simElectricity.API.Common.Items.ItemBlockSE;
-import simElectricity.API.Util;
+import simElectricity.API.SEAPI;
 
 import java.util.Random;
 
@@ -43,7 +43,7 @@ public abstract class BlockContainerSE extends BlockContainer {
     public BlockContainerSE(Material material) {
         super(material);
         if (registerInCreativeTab())
-            setCreativeTab(Util.SETab);
+            setCreativeTab(SEAPI.SETab);
         setHardness(2.0F);
         setResistance(5.0F);
     }

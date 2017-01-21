@@ -9,7 +9,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.ForgeDirection;
-import simElectricity.API.Energy;
+import simElectricity.API.SEEnergy;
 import simElectricity.API.INetworkEventHandler;
 import simElectricity.API.Common.TileSidedGenerator;
 
@@ -29,7 +29,7 @@ public class TileIC2Consumer extends TileSidedGenerator implements IEnergySink, 
         	return;
         
         double KP = 1, KI = 0.1;
-        double Vo = Energy.getVoltage(this);
+        double Vo = SEEnergy.getVoltage(this);
         double Po = Vo * (outputVoltage - Vo) / outputResistance;	//In SE unit
         double Pin = powerRate;			//In SE unit
         double newR = outputResistance;
@@ -57,7 +57,7 @@ public class TileIC2Consumer extends TileSidedGenerator implements IEnergySink, 
         //Large enough resistance error
         if (Math.abs(newR - outputResistance) > 10E-3){
         	outputResistance = newR;
-        	Energy.postTileChangeEvent(this);
+        	SEEnergy.postTileChangeEvent(this);
         }
 	}
 	
@@ -122,7 +122,7 @@ public class TileIC2Consumer extends TileSidedGenerator implements IEnergySink, 
 		if (!worldObj.isRemote){
 			for (String s:fields){
 		        if (s.contentEquals("outputVoltage"))
-		            Energy.postTileChangeEvent(this);
+		            SEEnergy.postTileChangeEvent(this);
 			}
 		}
 	}

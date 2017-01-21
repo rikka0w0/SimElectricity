@@ -21,7 +21,7 @@ package simElectricity.Common.Blocks.TileEntity;
 
 import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.Common.TileSidedGenerator;
-import simElectricity.API.Energy;
+import simElectricity.API.SEEnergy;
 import simElectricity.API.INetworkEventHandler;
 
 import java.util.List;
@@ -42,7 +42,7 @@ public class TileQuantumGenerator extends TileSidedGenerator implements INetwork
         if (!worldObj.isRemote) {
             for (String s : fields) {
                 if (s.contains("outputVoltage") || s.contains("outputResistance")) {
-                    Energy.postTileChangeEvent(this);
+                    SEEnergy.postTileChangeEvent(this);
                 }
             }
         }

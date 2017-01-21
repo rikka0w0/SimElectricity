@@ -29,8 +29,8 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import simElectricity.API.SEAPI;
 import simElectricity.API.Common.Blocks.BlockContainerSE;
-import simElectricity.API.Util;
 import simElectricity.Common.Blocks.TileEntity.TileAdjustableTransformer;
 import simElectricity.SimElectricity;
 
@@ -88,7 +88,7 @@ public class BlockAdjustableTransformer extends BlockContainerSE {
         if (!(te instanceof TileAdjustableTransformer))
             return;
 
-        ((TileAdjustableTransformer) te).secondarySide = Util.getPlayerSight(player, false);
+        ((TileAdjustableTransformer) te).secondarySide = SEAPI.utils.getPlayerSight(player, false);
         ((TileAdjustableTransformer) te).primarySide = ((TileAdjustableTransformer) te).secondarySide.getOpposite();
     }
 

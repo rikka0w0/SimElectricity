@@ -30,7 +30,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.Common.Blocks.BlockStandardSEMachine;
 import simElectricity.API.ISidedFacing;
-import simElectricity.API.Util;
+import simElectricity.API.SEAPI;
 import simElectricity.Common.Blocks.TileEntity.TileSimpleGenerator;
 import simElectricity.SimElectricity;
 
@@ -125,7 +125,7 @@ public class BlockSimpleGenerator extends BlockStandardSEMachine {
         if (!(te instanceof ISidedFacing))
             return iconBuffer[0];
 
-        int iconIndex = Util.getTextureOnSide(side, ((ISidedFacing) te).getFacing());
+        int iconIndex = SEAPI.utils.getTextureOnSide(side, ((ISidedFacing) te).getFacing());
         if (((TileSimpleGenerator) te).isWorking && iconIndex == 2)
             iconIndex = 6;
 
@@ -135,7 +135,7 @@ public class BlockSimpleGenerator extends BlockStandardSEMachine {
     @SideOnly(Side.CLIENT)
     @Override
     public IIcon getIcon(int side, int meta) {
-        return iconBuffer[Util.getTextureOnSide(side, ForgeDirection.WEST)];
+        return iconBuffer[SEAPI.utils.getTextureOnSide(side, ForgeDirection.WEST)];
     }
 
     @Override

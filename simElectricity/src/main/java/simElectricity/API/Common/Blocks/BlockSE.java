@@ -23,7 +23,7 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import simElectricity.API.Common.Items.ItemBlockSE;
-import simElectricity.API.Util;
+import simElectricity.API.SEAPI;
 
 /**
  * Basic SimElectricity Block
@@ -34,7 +34,7 @@ public abstract class BlockSE extends Block {
     public BlockSE(Material material) {
         super(material);
         if (registerInCreativeTab())
-            setCreativeTab(Util.SETab);
+            setCreativeTab(SEAPI.SETab);
     }
 
     /**

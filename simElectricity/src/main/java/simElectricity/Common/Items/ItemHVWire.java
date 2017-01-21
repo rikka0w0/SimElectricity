@@ -26,9 +26,9 @@ import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 import simElectricity.API.Common.Items.ItemSE;
-import simElectricity.API.Energy;
-import simElectricity.API.Util;
+import simElectricity.API.SEEnergy;
 import simElectricity.API.EnergyTile.ISEGridTile;
+import simElectricity.API.SEAPI;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -46,7 +46,7 @@ public class ItemHVWire extends ItemSE {
         if (!world.isRemote) {
 
             if (!(world.getTileEntity(x, y, z) instanceof ISEGridTile)) {
-                Util.chat(player, EnumChatFormatting.RED + StatCollector.translateToLocal("sime.TgtNotTw") + EnumChatFormatting.RESET);
+            	SEAPI.utils.chat(player, EnumChatFormatting.RED + StatCollector.translateToLocal("sime.TgtNotTw") + EnumChatFormatting.RESET);
                 return true;
             }
 
@@ -60,13 +60,13 @@ public class ItemHVWire extends ItemSE {
                 lastCoordinate[1] = y;
                 lastCoordinate[2] = z;
 
-                Util.chat(player, StatCollector.translateToLocal("sime.TwSelect"));
+                SEAPI.utils.chat(player, StatCollector.translateToLocal("sime.TwSelect"));
             } else {
                 if (!(lastCoordinate[0] == x && lastCoordinate[1] == y && lastCoordinate[2] == z) &&
                         world.getTileEntity(lastCoordinate[0], lastCoordinate[1], lastCoordinate[2]) instanceof ISEGridTile) {
 
                     if (Math.pow(x - lastCoordinate[0], 2) + Math.pow(z - lastCoordinate[2], 2) < 16) {
-                        Util.chat(player, EnumChatFormatting.RED + StatCollector.translateToLocal("sime.TwClose") + EnumChatFormatting.RESET);
+                    	SEAPI.utils.chat(player, EnumChatFormatting.RED + StatCollector.translateToLocal("sime.TwClose") + EnumChatFormatting.RESET);
                         return true;
                     }
 
@@ -75,12 +75,12 @@ public class ItemHVWire extends ItemSE {
 
                     if (((ISEGridTile)te1).canConnect() && ((ISEGridTile)te2).canConnect()) {
                     	double resistance = (0.2 * Math.sqrt(te1.getDistanceFrom(x, y, z)));
-                    	Energy.postGridConnectionEvent(world, x, y, z, lastCoordinate[0], lastCoordinate[1], lastCoordinate[2], resistance);
-                        Util.chat(player, StatCollector.translateToLocal("sime.TwConnect"));
+                    	SEEnergy.postGridConnectionEvent(world, x, y, z, lastCoordinate[0], lastCoordinate[1], lastCoordinate[2], resistance);
+                    	SEAPI.utils.chat(player, StatCollector.translateToLocal("sime.TwConnect"));
                     } else
-                        Util.chat(player, StatCollector.translateToLocal("sime.ActionCancel"));
+                    	SEAPI.utils.chat(player, StatCollector.translateToLocal("sime.ActionCancel"));
                 } else
-                    Util.chat(player, StatCollector.translateToLocal("sime.ActionCancel"));
+                	SEAPI.utils.chat(player, StatCollector.translateToLocal("sime.ActionCancel"));
 
                 lastCoordinate[0] = 0;
                 lastCoordinate[1] = -1;

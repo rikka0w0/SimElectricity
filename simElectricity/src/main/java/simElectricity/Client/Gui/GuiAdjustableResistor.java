@@ -29,7 +29,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
 import org.lwjgl.opengl.GL11;
-import simElectricity.API.Util;
+import simElectricity.API.SEAPI;
 import simElectricity.Common.Blocks.Container.ContainerQuantumGenerator;
 import simElectricity.Common.Blocks.TileEntity.TileAdjustableResistor;
 
@@ -77,7 +77,7 @@ public class GuiAdjustableResistor extends GuiContainer {
                 break;
             default:
                 te.powerConsumed = 0;
-                Util.networkManager.updateTileEntityFieldsToServer(te, "powerConsumed");
+                SEAPI.networkManager.updateTileEntityFieldsToServer(te, "powerConsumed");
         }
 
         if (te.resistance < 0.1)
@@ -85,7 +85,7 @@ public class GuiAdjustableResistor extends GuiContainer {
         if (te.resistance > 10000)
             te.resistance = 10000;
         if (button.id < 4)
-        	Util.networkManager.updateTileEntityFieldsToServer(te, "resistance");
+        	SEAPI.networkManager.updateTileEntityFieldsToServer(te, "resistance");
     }
 
     public GuiAdjustableResistor(InventoryPlayer inventoryPlayer, TileEntity tileEntity) {

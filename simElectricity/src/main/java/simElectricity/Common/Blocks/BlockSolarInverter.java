@@ -29,8 +29,8 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import simElectricity.API.SEAPI;
 import simElectricity.API.Common.Blocks.BlockContainerSE;
-import simElectricity.API.Util;
 import simElectricity.Common.Blocks.TileEntity.TileSolarInverter;
 import simElectricity.SimElectricity;
 
@@ -86,7 +86,7 @@ public class BlockSolarInverter extends BlockContainerSE {
     public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase player, ItemStack itemStack) {
         TileEntity te = world.getTileEntity(x, y, z);
 
-        ((TileSolarInverter) te).outputSide = Util.getPlayerSight(player, false);
+        ((TileSolarInverter) te).outputSide = SEAPI.utils.getPlayerSight(player, false);
         ((TileSolarInverter) te).inputSide = ((TileSolarInverter) te).outputSide.getOpposite();
     }
 

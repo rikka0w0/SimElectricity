@@ -29,7 +29,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.Common.Blocks.BlockStandardSEMachine;
-import simElectricity.API.Util;
+import simElectricity.API.SEAPI;
 import simElectricity.Common.Blocks.TileEntity.TileElectricFurnace;
 import simElectricity.SimElectricity;
 
@@ -78,7 +78,7 @@ public class BlockElectricFurnace extends BlockStandardSEMachine {
         if (!(te instanceof TileElectricFurnace))
             return iconBuffer[0];
 
-        int iconIndex = Util.getTextureOnSide(side, ((TileElectricFurnace) te).getFacing());
+        int iconIndex = SEAPI.utils.getTextureOnSide(side, ((TileElectricFurnace) te).getFacing());
         if (((TileElectricFurnace) te).isWorking && iconIndex == 2)
             iconIndex = 6;
 
@@ -88,7 +88,7 @@ public class BlockElectricFurnace extends BlockStandardSEMachine {
     @SideOnly(Side.CLIENT)
     @Override
     public IIcon getIcon(int side, int meta) {
-        return iconBuffer[Util.getTextureOnSide(side, ForgeDirection.WEST)];
+        return iconBuffer[SEAPI.utils.getTextureOnSide(side, ForgeDirection.WEST)];
     }
 
     @SideOnly(Side.CLIENT)

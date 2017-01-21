@@ -19,7 +19,7 @@
 
 package simElectricity.Common.Blocks.Container;
 
-import simElectricity.API.Util;
+import simElectricity.API.SEAPI;
 import simElectricity.API.Common.ContainerBase;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.ICrafting;
@@ -55,13 +55,13 @@ public class ContainerIC2Consumer extends ContainerBase {
         super.addCraftingToCrafters(par1iCrafting);
         
         if (!tileEntity.getWorldObj().isRemote) {
-        	Util.networkManager.updateTileEntityFields(tileEntity, new String[]{"bufferedEnergy","powerRate","outputVoltage"});
+        	SEAPI.networkManager.updateTileEntityFields(tileEntity, new String[]{"bufferedEnergy","powerRate","outputVoltage"});
         }
     }
 
     @Override
     public void detectAndSendChanges() {
         super.detectAndSendChanges();
-        Util.networkManager.updateTileEntityFields(tileEntity, new String[]{"bufferedEnergy","powerRate"});
+        SEAPI.networkManager.updateTileEntityFields(tileEntity, new String[]{"bufferedEnergy","powerRate"});
     }
 }

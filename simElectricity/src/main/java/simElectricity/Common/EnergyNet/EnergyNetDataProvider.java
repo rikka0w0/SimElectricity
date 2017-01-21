@@ -9,10 +9,10 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import simElectricity.API.Util;
 import simElectricity.API.EnergyTile.ISEGridNode;
 import simElectricity.API.EnergyTile.ISEGridTile;
 import simElectricity.API.EnergyTile.ISESimulatable;
+import simElectricity.Common.SEUtils;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -23,7 +23,7 @@ import net.minecraft.world.storage.MapStorage;
 import net.minecraftforge.common.util.Constants;
 
 public class EnergyNetDataProvider extends WorldSavedData{
-	private static final String DATA_NAME = Util.MODID + "_GridData";
+	private static final String DATA_NAME = SEUtils.MODID + "_GridData";
 	
 	//Stores a list of grid nodes
 	private HashMap<String, GridNode> gridNodeMap = new HashMap<String, GridNode>();

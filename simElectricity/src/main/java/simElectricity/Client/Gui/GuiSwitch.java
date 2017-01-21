@@ -31,7 +31,7 @@ import net.minecraft.util.StatCollector;
 import net.minecraftforge.common.util.ForgeDirection;
 import org.lwjgl.opengl.GL11;
 
-import simElectricity.API.Util;
+import simElectricity.API.SEAPI;
 import simElectricity.Common.Blocks.Container.ContainerSwitch;
 import simElectricity.Common.Blocks.TileEntity.TileSwitch;
 
@@ -116,14 +116,14 @@ public class GuiSwitch extends GuiContainer {
         if (te.resistance > 100)
             te.resistance = 100;
         if (button.id < 4)
-        	Util.networkManager.updateTileEntityFieldsToServer(te, "resistance");
+        	SEAPI.networkManager.updateTileEntityFieldsToServer(te, "resistance");
 
         if (te.maxCurrent < 0.1)
             te.maxCurrent = 0.1F;
         if (te.maxCurrent > 1000)
             te.maxCurrent = 1000;
         if (button.id < 8 && button.id > 3)
-        	Util.networkManager.updateTileEntityFieldsToServer(te, "maxCurrent");
+        	SEAPI.networkManager.updateTileEntityFieldsToServer(te, "maxCurrent");
 
     }
 
@@ -153,7 +153,7 @@ public class GuiSwitch extends GuiContainer {
         if (selectedDirection == ForgeDirection.UNKNOWN) {
             if (tx > 80 && tx < 110 && ty > 66 && ty < 72) {
                 te.isOn = !te.isOn;
-                Util.networkManager.updateTileEntityFieldsToServer(te, "isOn");
+                SEAPI.networkManager.updateTileEntityFieldsToServer(te, "isOn");
             }
             return;
         }
@@ -171,7 +171,7 @@ public class GuiSwitch extends GuiContainer {
             te.outputSide = selectedDirection;
         }
 
-        Util.networkManager.updateTileEntityFieldsToServer(te, "inputSide", "outputSide");
+        SEAPI.networkManager.updateTileEntityFieldsToServer(te, "inputSide", "outputSide");
         te.getWorldObj().markBlockForUpdate(te.xCoord, te.yCoord, te.zCoord);
     }
 

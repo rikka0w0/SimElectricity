@@ -24,7 +24,7 @@ import net.minecraft.tileentity.TileEntity;
 
 /**
  * Should be posted when a tileEntity is leaving from the energy net,
- * use {@link simElectricity.API.Energy#postTileDetachEvent(net.minecraft.tileentity.TileEntity) Energy.postTileDetachEvent()}
+ * use {@link simElectricity.API.Energy#postTileDetachEvent(net.minecraft.tileentity.TileEntity) SEEnergy.postTileDetachEvent()}
  */
 public class TileDetachEvent extends Event {
     public TileEntity te;

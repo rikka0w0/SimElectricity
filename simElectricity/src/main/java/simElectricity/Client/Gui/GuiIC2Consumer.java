@@ -29,7 +29,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
 import org.lwjgl.opengl.GL11;
-import simElectricity.API.Util;
+import simElectricity.API.SEAPI;
 import simElectricity.Common.Blocks.Container.ContainerIC2Consumer;
 import simElectricity.Common.Blocks.TileEntity.TileIC2Consumer;
 
@@ -81,7 +81,7 @@ public class GuiIC2Consumer extends GuiContainer {
                 tileentity.outputVoltage = 0.1F;
             if (tileentity.outputVoltage > 1000)
                 tileentity.outputVoltage = 1000;
-            Util.networkManager.updateTileEntityFieldsToServer(tileentity, "outputVoltage");
+            SEAPI.networkManager.updateTileEntityFieldsToServer(tileentity, "outputVoltage");
         }
     }
 

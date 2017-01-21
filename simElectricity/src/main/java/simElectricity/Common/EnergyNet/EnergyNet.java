@@ -23,11 +23,11 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.EnergyTile.*;
-import simElectricity.API.Energy;
+import simElectricity.API.SEEnergy;
 import simElectricity.API.IEnergyNetUpdateHandler;
-import simElectricity.API.Util;
 import simElectricity.Common.ConfigManager;
 import simElectricity.Common.SEUtils;
+import simElectricity.API.SEAPI;
 import sun.security.ssl.Debug;
 
 import java.util.*;
@@ -87,6 +87,8 @@ public final class EnergyNet{
     public void onTick() {
         //energyNet.calc = true;
         if (calc) {
+        	calc = false;
+        	
         	BakaGraph<ISESimulatable> tileEntityGraph = dataProvider.getTEGraph();
             simulator.run(tileEntityGraph);
         	
@@ -97,9 +99,6 @@ public final class EnergyNet{
 	            }
             } catch (Exception ignored) {
             }
-            
-
-            calc = false;
         }
     }
 
@@ -115,7 +114,7 @@ public final class EnergyNet{
         if (te instanceof ISEConductor) {
         	ISEConductor wire = (ISEConductor) te;
             for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
-            	neighborTE = Util.getTileEntityonDirection(te, direction);
+            	neighborTE = SEAPI.utils.getTileEntityonDirection(te, direction);
                 if (neighborTE instanceof ISEConductor) {  //Conductor
                 	ISEConductor neighbor = (ISEConductor) neighborTE;
 
@@ -173,7 +172,7 @@ public final class EnergyNet{
         			for (ISESimulatable neighbor : neighborList)
         				tileEntityGraph.addEdge(neighbor, subComponent);
         		}else{
-                    TileEntity neighbor = Util.getTileEntityonDirection(te, direction);
+                    TileEntity neighbor = SEAPI.utils.getTileEntityonDirection(te, direction);
                         
                     if (neighbor instanceof ISEConductor)  // Connected properly
                     	tileEntityGraph.addEdge((ISEConductor)neighbor, subComponent);
@@ -189,7 +188,7 @@ public final class EnergyNet{
         	ISESimpleTile tile = (ISESimpleTile)te;
         	tileEntityGraph.addVertex(tile);
         	
-        	TileEntity neighbor = Util.getTileEntityonDirection(te, tile.getFunctionalSide());
+        	TileEntity neighbor = SEAPI.utils.getTileEntityonDirection(te, tile.getFunctionalSide());
         	
             if (neighbor instanceof ISEConductor)  // Connected properly
             	tileEntityGraph.addEdge((ISEConductor) neighbor, tile);    
@@ -293,7 +292,6 @@ public final class EnergyNet{
     	//Create simulator
     	simulator = new Simulator(matrixSolverName, 
     			ConfigManager.maxIteration,
-    			ConfigManager.convergenceAssistantTiggerLevel,
     			Math.pow(10, -ConfigManager.precision),
     			1.0D/ConfigManager.shuntResistance,
     			1.0D/ConfigManager.shuntPN);

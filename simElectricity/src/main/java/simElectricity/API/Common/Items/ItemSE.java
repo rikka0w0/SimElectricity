@@ -22,7 +22,7 @@ package simElectricity.API.Common.Items;
 import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import simElectricity.API.Util;
+import simElectricity.API.SEAPI;
 
 /**
  * Basic SimElectricity Item
@@ -33,7 +33,7 @@ public class ItemSE extends Item {
     public ItemSE() {
         super();
         if (registerInCreativeTab())
-            setCreativeTab(Util.SETab);
+            setCreativeTab(SEAPI.SETab);
     }
 
     /**

@@ -25,8 +25,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
+import simElectricity.API.SEAPI;
 import simElectricity.API.Common.TileStandardSEMachine;
-import simElectricity.API.Util;
 
 /**
  * Standard SE machine block
@@ -61,10 +61,10 @@ public abstract class BlockStandardSEMachine extends BlockContainerSE {
         if (!(te instanceof TileStandardSEMachine))
             return;
 
-        ForgeDirection functionalSide = Util.getPlayerSight(player, ignoreVerticalFacing());
+        ForgeDirection functionalSide = SEAPI.utils.getPlayerSight(player, ignoreVerticalFacing());
         ((TileStandardSEMachine) te).setFacing(functionalSide.getOpposite());
 
-        functionalSide = AutoFacing.autoConnect(te, functionalSide);
+        functionalSide = SEAPI.utils.autoConnect(te, functionalSide);
         ((TileStandardSEMachine) te).setFunctionalSide(functionalSide);
     }
 }

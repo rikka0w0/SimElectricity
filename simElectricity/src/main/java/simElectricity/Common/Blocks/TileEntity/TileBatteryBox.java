@@ -21,7 +21,7 @@ package simElectricity.Common.Blocks.TileEntity;
 
 import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.Common.TileSidedGenerator;
-import simElectricity.API.Energy;
+import simElectricity.API.SEEnergy;
 import simElectricity.Common.SEUtils;
 
 public class TileBatteryBox extends TileSidedGenerator {
@@ -40,14 +40,14 @@ public class TileBatteryBox extends TileSidedGenerator {
         if (worldObj.isRemote)
             return;
 
-        if ((Energy.getVoltage(this) >= chargingVoltage) && (wattTickStore < wattTickStoreMax)) {
+        if ((SEEnergy.getVoltage(this) >= chargingVoltage) && (wattTickStore < wattTickStoreMax)) {
             checkAndSendChange(0, 100F);
-            //wattTickStore += (Energy.getPower(this) * 0.05);
+            //wattTickStore += (SEEnergy.getPower(this) * 0.05);
 
             SEUtils.logInfo("charging, wattTickStore: " + wattTickStore);
-        } else if ((Energy.getVoltage(this) <= (dischargeVoltage + 0.1F)) && (wattTickStore > 0)) {
+        } else if ((SEEnergy.getVoltage(this) <= (dischargeVoltage + 0.1F)) && (wattTickStore > 0)) {
             checkAndSendChange(dischargeVoltage, 0.8F);
-            //wattTickStore -= Energy.getWorkDonePerTick(this);
+            //wattTickStore -= SEEnergy.getWorkDonePerTick(this);
 
             SEUtils.logInfo("discharge, wattTickStore: " + wattTickStore);
         } else {
@@ -60,7 +60,7 @@ public class TileBatteryBox extends TileSidedGenerator {
         if (voltage != outputVoltage | resistance != outputResistance) {
             outputVoltage = voltage;
             outputResistance = resistance;
-            Energy.postTileChangeEvent(this);
+            SEEnergy.postTileChangeEvent(this);
         }
     }
 

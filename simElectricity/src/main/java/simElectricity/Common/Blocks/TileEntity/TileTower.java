@@ -30,10 +30,10 @@ import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraftforge.common.MinecraftForge;
-import simElectricity.API.Energy;
+import simElectricity.API.SEEnergy;
 import simElectricity.API.IHVTower;
 import simElectricity.API.INetworkEventHandler;
-import simElectricity.API.Util;
+import simElectricity.API.SEAPI;
 import simElectricity.API.EnergyTile.ISEGridNode;
 import simElectricity.API.EnergyTile.ISEGridTile;
 import simElectricity.API.EnergyTile.ISESimulatable;
@@ -100,7 +100,7 @@ public class TileTower extends TileEntity implements ISEGridTile,INetworkEventHa
     	}
     	
 
-    	Util.networkManager.updateNetworkFields(this);
+    	SEAPI.networkManager.updateNetworkFields(this);
     }
     
 	@Override
@@ -137,7 +137,7 @@ public class TileTower extends TileEntity implements ISEGridTile,INetworkEventHa
         	return;
         
         if (!registered){
-        	Energy.postTileAttachEvent(this);
+        	SEEnergy.postTileAttachEvent(this);
             registered = true;
         }
         	
@@ -152,7 +152,7 @@ public class TileTower extends TileEntity implements ISEGridTile,INetworkEventHa
         	return;
         
         if (registered){
-        	Energy.postTileDetachEvent(this);
+        	SEEnergy.postTileDetachEvent(this);
             registered = false;        	
         }
     }
@@ -217,11 +217,11 @@ public class TileTower extends TileEntity implements ISEGridTile,INetworkEventHa
 	public float getWireTension() {
 		switch (getBlockMetadata()){
 		case 1:
-			return 0.03f;
+			return 0.015f;
 		case 2:
-			return 0.03f;
+			return 0.015f;
 		}
-		return 0.06F;
+		return 0.04F;
 	}
 
 

@@ -28,9 +28,9 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.Common.Items.ItemSE;
-import simElectricity.API.Energy;
+import simElectricity.API.SEEnergy;
 import simElectricity.API.ISEWrenchable;
-import simElectricity.API.Util;
+import simElectricity.API.SEAPI;
 
 public class ItemWrench extends ItemSE {
     public ItemWrench() {
@@ -55,8 +55,8 @@ public class ItemWrench extends ItemSE {
 
             if (te.canSetFunctionalSide(newFacing)) {
                 te.setFunctionalSide(newFacing);
-                Energy.postTileRejoinEvent((TileEntity) te);
-                Util.networkManager.updateFunctionalSide((TileEntity) te);
+                SEEnergy.postTileRejoinEvent((TileEntity) te);
+                SEAPI.networkManager.updateFunctionalSide((TileEntity) te);
                 world.notifyBlocksOfNeighborChange(x, y, z, null);
                 itemStack.damageItem(1, player);
             }

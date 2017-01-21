@@ -5,7 +5,7 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
-import simElectricity.API.Energy;
+import simElectricity.API.SEEnergy;
 
 public abstract class TileEntitySE extends TileEntity{
     protected boolean isAddedToEnergyNet;
@@ -63,7 +63,7 @@ public abstract class TileEntitySE extends TileEntity{
         	
         if (!isAddedToEnergyNet && attachToEnergyNet()) {
             onLoad();
-            Energy.postTileAttachEvent(this);
+            SEEnergy.postTileAttachEvent(this);
             this.isAddedToEnergyNet = true;
         }
         
@@ -83,7 +83,7 @@ public abstract class TileEntitySE extends TileEntity{
     	
         if (!worldObj.isRemote && isAddedToEnergyNet && attachToEnergyNet()) {
             onUnload();
-            Energy.postTileDetachEvent(this);
+            SEEnergy.postTileDetachEvent(this);
             this.isAddedToEnergyNet = false;
         }
     }

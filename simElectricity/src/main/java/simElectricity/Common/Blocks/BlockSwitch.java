@@ -30,10 +30,9 @@ import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
-import simElectricity.API.Common.Blocks.AutoFacing;
 import simElectricity.API.Common.Blocks.BlockContainerSE;
-import simElectricity.API.Energy;
-import simElectricity.API.Util;
+import simElectricity.API.SEEnergy;
+import simElectricity.API.SEAPI;
 import simElectricity.Common.Blocks.TileEntity.TileSwitch;
 import simElectricity.SimElectricity;
 
@@ -52,8 +51,8 @@ public class BlockSwitch extends BlockContainerSE {
         } else {
             if (!world.isRemote) {
                 te.isOn = !te.isOn;
-                Util.networkManager.updateTileEntityFields(te, "isOn");
-                Energy.postTileRejoinEvent(te);
+                SEAPI.networkManager.updateTileEntityFields(te, "isOn");
+                SEEnergy.postTileRejoinEvent(te);
             }
         }
         return true;
@@ -106,10 +105,10 @@ public class BlockSwitch extends BlockContainerSE {
     public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase player, ItemStack itemStack) {
         TileSwitch te = (TileSwitch) world.getTileEntity(x, y, z);
 
-        te.setFacing(Util.getPlayerSight(player, false).getOpposite());
+        te.setFacing(SEAPI.utils.getPlayerSight(player, false).getOpposite());
 
-        te.inputSide = AutoFacing.autoConnect(te, ForgeDirection.UP, te.getFacing());
-        te.outputSide = AutoFacing.autoConnect(te, te.inputSide.getOpposite(), new ForgeDirection[] { te.getFacing(), te.inputSide });
+        te.inputSide = SEAPI.utils.autoConnect(te, ForgeDirection.UP, te.getFacing());
+        te.outputSide = SEAPI.utils.autoConnect(te, te.inputSide.getOpposite(), new ForgeDirection[] { te.getFacing(), te.inputSide });
 
         if (te.outputSide == te.getFacing())
             te.outputSide = te.outputSide.getRotation(ForgeDirection.UP);

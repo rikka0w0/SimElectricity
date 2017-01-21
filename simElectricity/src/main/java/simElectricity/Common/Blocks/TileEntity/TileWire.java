@@ -29,7 +29,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.INetworkEventHandler;
 import simElectricity.API.Common.TileEntitySE;
 import simElectricity.API.EnergyTile.ISEConductor;
-import simElectricity.API.Util;
+import simElectricity.API.SEAPI;
 import simElectricity.Common.Blocks.BlockWire;
 
 public class TileWire extends TileEntitySE implements ISEConductor, INetworkEventHandler {
@@ -57,7 +57,7 @@ public class TileWire extends TileEntitySE implements ISEConductor, INetworkEven
     public void updateSides() {
         ForgeDirection[] dirs = ForgeDirection.values();
         for (int i = 0; i < 6; i++) {
-            renderSides[i] = Util.cableRenderHelper.canConnect(this, dirs[i]);
+            renderSides[i] = SEAPI.cableRenderHelper.canConnect(this, dirs[i]);
         }
     }
 
@@ -79,7 +79,7 @@ public class TileWire extends TileEntitySE implements ISEConductor, INetworkEven
         		needsUpdate = false;
         		tick = 0;
         		
-        		Util.networkManager.updateNetworkFields(this);
+        		SEAPI.networkManager.updateNetworkFields(this);
         	}
         }
     }

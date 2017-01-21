@@ -25,7 +25,8 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.common.config.Configuration;
-import simElectricity.API.Util;
+import simElectricity.API.SEEnergy;
+import simElectricity.Common.SEUtils;
 
 public class ConfigManager {
 
@@ -34,16 +35,16 @@ public class ConfigManager {
     /**
      * Enable Optimized Nodes
      */
-    public static boolean showEnergyNetInfo;
-    @SideOnly(Side.CLIENT)
-    public static int parabolaRenderSteps;
+    public static boolean showEnergyNetInfo;   
     public static String matrixSolver;
     public static int precision;
     public static int maxIteration;
     public static int shuntResistance;
-    public static int shuntPN; 
-    public static int convergenceAssistantTiggerLevel;
+    public static int shuntPN;
 
+    @SideOnly(Side.CLIENT)
+    public static int parabolaRenderSteps;
+    
     public static void init(FMLPreInitializationEvent event) {
         if (config == null) {
             config = new Configuration(event.getSuggestedConfigurationFile());
@@ -60,15 +61,16 @@ public class ConfigManager {
         maxIteration = config.get(Configuration.CATEGORY_GENERAL, "Max iteration", 50, "The Maximum number of iteration per tick").getInt();
         shuntResistance = config.get(Configuration.CATEGORY_GENERAL, "Shunt resistance per node", 1000000000, "The resistance connected between every node and the ground").getInt();
         shuntPN = config.get(Configuration.CATEGORY_GENERAL, "Shunt resistance per PN", 1000000000, "The conductance connected between every PN junction").getInt();
-        convergenceAssistantTiggerLevel = config.get(Configuration.CATEGORY_GENERAL, "Convergence Assistant Tigger Level", 10, "").getInt();
-        
+        SEEnergy.ratioSE2IC = config.get(Configuration.CATEGORY_GENERAL, "Convertion ratio between SE and IC", 10, "SE Power / this ratio = IC Power").getInt();
         if (config.hasChanged())
             config.save();
+        
+        
     }
 
     @SubscribeEvent
     public void onConfigChanged(ConfigChangedEvent.OnConfigChangedEvent event) {
-        if (event.modID.equalsIgnoreCase(Util.MODID))
+        if (event.modID.equalsIgnoreCase(SEUtils.MODID))
             syncConfig();
     }
 }

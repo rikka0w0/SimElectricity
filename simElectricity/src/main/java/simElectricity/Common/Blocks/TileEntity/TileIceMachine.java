@@ -10,10 +10,10 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
-import simElectricity.API.Energy;
+import simElectricity.API.SEEnergy;
 import simElectricity.API.IEnergyNetUpdateHandler;
 import simElectricity.API.INetworkEventHandler;
-import simElectricity.API.Util;
+import simElectricity.API.SEAPI;
 import simElectricity.API.Common.TileStandardSEMachine;
 import simElectricity.Common.Core.SEItems;
 
@@ -38,20 +38,20 @@ public class TileIceMachine extends TileStandardSEMachine implements IFluidHandl
 				(inv[2] != null ? inv[2].stackSize < inv[2].getMaxStackSize() : true)){	//Enough space
 			if (resistance != onResistance){
 				resistance = onResistance;
-				Energy.postTileChangeEvent(this);
+				SEEnergy.postTileChangeEvent(this);
 			}
 			
 			isWorking = true;
 		}else{
 			if (resistance != Float.MAX_VALUE){
 				resistance = Float.MAX_VALUE;
-				Energy.postTileChangeEvent(this);
+				SEEnergy.postTileChangeEvent(this);
 			}
 			
 			isWorking = false;
 		}
 		
-		energyStored += Math.pow(Energy.getVoltage(this),2) / resistance;
+		energyStored += Math.pow(SEEnergy.getVoltage(this),2) / resistance;
 			
 		if (energyStored >= energyPerItem){
 			energyStored -= energyPerItem;
@@ -82,7 +82,7 @@ public class TileIceMachine extends TileStandardSEMachine implements IFluidHandl
         	else
         		dowork(fluid);
         	
-        FluidStack l= Util.fluid.drainContainer(maxCapacity, fluid, inv, 0, 1);
+        FluidStack l= SEAPI.fluid.drainContainer(maxCapacity, fluid, inv, 0, 1);
         if (l!=null){
         	if (fluid==null)
         		fluid=l;
@@ -139,7 +139,7 @@ public class TileIceMachine extends TileStandardSEMachine implements IFluidHandl
     
 	@Override
 	public void onEnergyNetUpdate() {
-		operationalVoltage = Energy.getVoltage(this) >= 200;
+		operationalVoltage = SEEnergy.getVoltage(this) >= 200;
 		isPowered = operationalVoltage ? 1 : 0;
 	}
     

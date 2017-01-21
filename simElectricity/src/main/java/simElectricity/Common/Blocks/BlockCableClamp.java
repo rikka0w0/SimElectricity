@@ -9,8 +9,8 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import simElectricity.API.Common.Blocks.BlockContainerSE;
-import simElectricity.API.Energy;
-import simElectricity.API.Util;
+import simElectricity.API.SEAPI;
+import simElectricity.API.SEEnergy;
 import simElectricity.Common.Blocks.TileEntity.TileCableClamp;
 import simElectricity.Common.Blocks.TileEntity.TileTower;
 
@@ -26,19 +26,19 @@ public class BlockCableClamp extends BlockContainerSE{
             return;
 
         TileCableClamp tower = (TileCableClamp) world.getTileEntity(x, y, z);
-        tower.facing = Util.getPlayerSight(player, true).ordinal();
+        tower.facing = SEAPI.utils.getPlayerSight(player, true).ordinal();
         
-        Energy.postGridObjectAttachEvent(world, x, y, z, (byte)0);
+        SEEnergy.postGridObjectAttachEvent(world, x, y, z, (byte)0);
         
         TileEntity possibleNeighbor = world.getTileEntity(x, y+2, z);
         if (possibleNeighbor instanceof TileTower && world.getBlockMetadata(x, y+2, z) == 1){
-        	Energy.postGridConnectionEvent(world, x, y, z, x, y+2, z, 0.1);
+        	SEEnergy.postGridConnectionEvent(world, x, y, z, x, y+2, z, 0.1);
         }
     }
 
     @Override
     public void breakBlock(World world, int x, int y, int z, Block block, int meta) {
-        Energy.postGridObjectDetachEvent(world, x, y, z);
+        SEEnergy.postGridObjectDetachEvent(world, x, y, z);
         super.breakBlock(world, x, y, z, block, meta);
     }
     

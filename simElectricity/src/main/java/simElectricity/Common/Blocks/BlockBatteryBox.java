@@ -28,7 +28,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.Common.Blocks.BlockStandardGenerator;
-import simElectricity.API.Util;
+import simElectricity.API.SEAPI;
 import simElectricity.Common.Blocks.TileEntity.TileBatteryBox;
 
 public class BlockBatteryBox extends BlockStandardGenerator {
@@ -58,7 +58,7 @@ public class BlockBatteryBox extends BlockStandardGenerator {
         if (!(te instanceof TileBatteryBox))
             return iconBuffer[0];
 
-        int iconIndex = Util.getTextureOnSide(side, ((TileBatteryBox) te).getFunctionalSide());
+        int iconIndex = SEAPI.utils.getTextureOnSide(side, ((TileBatteryBox) te).getFunctionalSide());
 
         if (((TileBatteryBox) te).getFunctionalSide() == ForgeDirection.DOWN) {
             if (iconIndex == 3) {
@@ -74,7 +74,7 @@ public class BlockBatteryBox extends BlockStandardGenerator {
     @SideOnly(Side.CLIENT)
     @Override
     public IIcon getIcon(int side, int meta) {
-        return iconBuffer[Util.getTextureOnSide(side, ForgeDirection.WEST)];
+        return iconBuffer[SEAPI.utils.getTextureOnSide(side, ForgeDirection.WEST)];
     }
 
     @Override

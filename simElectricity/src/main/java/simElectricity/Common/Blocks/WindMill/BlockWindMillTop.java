@@ -33,7 +33,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.Common.Blocks.BlockContainerSE;
 import simElectricity.API.ISidedFacing;
-import simElectricity.API.Util;
+import simElectricity.API.SEAPI;
 import simElectricity.Common.Core.SEItems;
 
 public class BlockWindMillTop extends BlockContainerSE {
@@ -56,7 +56,7 @@ public class BlockWindMillTop extends BlockContainerSE {
 
             te.settled = false;
             if (!world.isRemote)
-            	Util.networkManager.updateTileEntityFields(te, "settled");
+            	SEAPI.networkManager.updateTileEntityFields(te, "settled");
         } else {
             if (playerItem == null)
                 return false;
@@ -66,7 +66,7 @@ public class BlockWindMillTop extends BlockContainerSE {
 
             te.settled = true;
             if (!world.isRemote)
-            	Util.networkManager.updateTileEntityFields(te, "settled");
+            	SEAPI.networkManager.updateTileEntityFields(te, "settled");
         }
 
         return true;
@@ -106,20 +106,20 @@ public class BlockWindMillTop extends BlockContainerSE {
     public IIcon getIcon(IBlockAccess world, int x, int y, int z, int side) {
         TileEntity te = world.getTileEntity(x, y, z);
 
-        return iconBuffer[Util.getTextureOnSide(side, ((ISidedFacing) te).getFacing())];
+        return iconBuffer[SEAPI.utils.getTextureOnSide(side, ((ISidedFacing) te).getFacing())];
     }
 
     @SideOnly(Side.CLIENT)
     @Override
     public IIcon getIcon(int side, int meta) {
-        return iconBuffer[Util.getTextureOnSide(side, ForgeDirection.WEST)];
+        return iconBuffer[SEAPI.utils.getTextureOnSide(side, ForgeDirection.WEST)];
     }
 
     @Override
     public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase player, ItemStack itemStack) {
         TileEntity te = world.getTileEntity(x, y, z);
 
-        ((ISidedFacing) te).setFacing(Util.getPlayerSight(player, true).getOpposite());
+        ((ISidedFacing) te).setFacing(SEAPI.utils.getPlayerSight(player, true).getOpposite());
     }
 
     @Override

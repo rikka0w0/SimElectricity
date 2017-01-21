@@ -10,8 +10,7 @@ import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
-import simElectricity.API.Util;
-import simElectricity.API.Common.Blocks.AutoFacing;
+import simElectricity.API.SEAPI;
 import simElectricity.API.Common.Blocks.BlockContainerSE;
 import simElectricity.Common.Blocks.TileEntity.TileDiode;
 
@@ -58,9 +57,9 @@ public class BlockDiode extends BlockContainerSE {
     public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase player, ItemStack itemStack) {
     	TileDiode te = (TileDiode) world.getTileEntity(x, y, z);
 
-        ForgeDirection facing = Util.getPlayerSight(player, false).getOpposite();
+        ForgeDirection facing = SEAPI.utils.getPlayerSight(player, false).getOpposite();
 
-        te.outputSide = Util.getPlayerSight(player, false);
+        te.outputSide = SEAPI.utils.getPlayerSight(player, false);
         te.inputSide = te.outputSide.getOpposite();
 
         if (te.outputSide == facing)

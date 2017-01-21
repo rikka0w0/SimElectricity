@@ -22,7 +22,7 @@ package simElectricity.Common.Blocks.Container;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.tileentity.TileEntity;
 import simElectricity.API.Common.ContainerBase;
-import simElectricity.API.Util;
+import simElectricity.API.SEAPI;
 
 public class ContainerSwitch extends ContainerBase {
     public ContainerSwitch(InventoryPlayer inventoryPlayer, TileEntity te) {
@@ -52,13 +52,13 @@ public class ContainerSwitch extends ContainerBase {
     @Override
     public void init() {
         if (!tileEntity.getWorldObj().isRemote) {
-        	Util.networkManager.updateTileEntityFields(tileEntity, "resistance", "maxCurrent", "isOn", "inputSide", "outputSide");
+        	SEAPI.networkManager.updateTileEntityFields(tileEntity, "resistance", "maxCurrent", "isOn", "inputSide", "outputSide");
         }
     }
 
     @Override
     public void detectAndSendChanges() {
         super.detectAndSendChanges();
-        Util.networkManager.updateTileEntityFields(tileEntity, "current");
+        SEAPI.networkManager.updateTileEntityFields(tileEntity, "current");
     }
 }

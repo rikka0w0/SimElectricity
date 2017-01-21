@@ -21,10 +21,10 @@ package simElectricity.Common.Blocks.TileEntity;
 
 import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.Common.TileStandardSEMachine;
-import simElectricity.API.Energy;
+import simElectricity.API.SEEnergy;
 import simElectricity.API.IEnergyNetUpdateHandler;
 import simElectricity.API.INetworkEventHandler;
-import simElectricity.API.Util;
+import simElectricity.API.SEAPI;
 
 import java.util.List;
 
@@ -49,19 +49,19 @@ public class TileIncandescentLamp extends TileStandardSEMachine implements IEner
 
     @Override
 	public void onOverVoltage(){
-    	//worldObj.createExplosion(null, xCoord, yCoord, zCoord, (float) (4F + Energy.getVoltage(this) / 265), true);
+    	//worldObj.createExplosion(null, xCoord, yCoord, zCoord, (float) (4F + SEEnergy.getVoltage(this) / 265), true);
     }
     
     @Override
     public void onEnergyNetUpdate() {
-    	double voltage = Energy.getVoltage(this);
+    	double voltage = SEEnergy.getVoltage(this);
         lightLevel = (int) (voltage*voltage/getResistance() / 0.3F);
         if (lightLevel > 15)
             lightLevel = 15;
         
-        Util.networkManager.updateNetworkFields(this);
+        SEAPI.networkManager.updateNetworkFields(this);
 
-        checkVoltage(Energy.getVoltage(this), 265);
+        checkVoltage(SEEnergy.getVoltage(this), 265);
     }
 
     @Override
