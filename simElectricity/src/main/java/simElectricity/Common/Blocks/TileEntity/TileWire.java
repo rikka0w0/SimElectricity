@@ -27,12 +27,15 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.INetworkEventHandler;
+import simElectricity.API.SEEnergy;
 import simElectricity.API.Common.TileEntitySE;
-import simElectricity.API.EnergyTile.ISEConductor;
+import simElectricity.API.EnergyTile.ISESimulatable;
+import simElectricity.API.Tile.ISECableTile;
 import simElectricity.API.SEAPI;
 import simElectricity.Common.Blocks.BlockWire;
 
-public class TileWire extends TileEntitySE implements ISEConductor, INetworkEventHandler {
+public class TileWire extends TileEntitySE implements ISECableTile, INetworkEventHandler {
+	public ISESimulatable node = SEAPI.energyNetAgent.newCable(this);
     protected boolean isAddedToEnergyNet = false;
     public boolean[] renderSides = new boolean[6];
 
@@ -128,5 +131,10 @@ public class TileWire extends TileEntitySE implements ISEConductor, INetworkEven
 	@Override
 	public void onFieldUpdate(String[] fields, Object[] values) {
 
+	}
+
+	@Override
+	public ISESimulatable getNode() {
+		return node;
 	}
 }

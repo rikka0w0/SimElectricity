@@ -51,7 +51,7 @@ public class TileIceMachine extends TileStandardSEMachine implements IFluidHandl
 			isWorking = false;
 		}
 		
-		energyStored += Math.pow(SEEnergy.getVoltage(this),2) / resistance;
+		energyStored += Math.pow(SEAPI.energyNetAgent.getVoltage(tile),2) / resistance;
 			
 		if (energyStored >= energyPerItem){
 			energyStored -= energyPerItem;
@@ -139,7 +139,7 @@ public class TileIceMachine extends TileStandardSEMachine implements IFluidHandl
     
 	@Override
 	public void onEnergyNetUpdate() {
-		operationalVoltage = SEEnergy.getVoltage(this) >= 200;
+		operationalVoltage = SEAPI.energyNetAgent.getVoltage(tile) >= 200;
 		isPowered = operationalVoltage ? 1 : 0;
 	}
     

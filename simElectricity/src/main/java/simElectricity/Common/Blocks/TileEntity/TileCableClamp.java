@@ -16,17 +16,18 @@ import simElectricity.API.IHVTower;
 import simElectricity.API.INetworkEventHandler;
 import simElectricity.API.SEAPI;
 import simElectricity.API.Common.TileEntitySE;
-import simElectricity.API.EnergyTile.ISEConductor;
+import simElectricity.API.DataProvider.ISEJunctionData;
 import simElectricity.API.EnergyTile.ISEGridNode;
-import simElectricity.API.EnergyTile.ISEGridTile;
-import simElectricity.API.EnergyTile.ISEJunction;
 import simElectricity.API.EnergyTile.ISESimulatable;
 import simElectricity.API.EnergyTile.ISESubComponent;
-import simElectricity.API.EnergyTile.ISETile;
+import simElectricity.API.Tile.ISECableTile;
+import simElectricity.API.Tile.ISEGridTile;
+import simElectricity.API.Tile.ISETile;
 
-public class TileCableClamp extends TileEntitySE implements ISETile,ISEJunction,ISEGridTile,INetworkEventHandler, IHVTower{
+public class TileCableClamp extends TileEntitySE implements ISETile,ISEJunctionData,ISEGridTile,INetworkEventHandler, IHVTower{
     private boolean registered = false;
     private ISEGridNode gridNode = null;
+    private ISESubComponent junction = (ISESubComponent) SEAPI.energyNetAgent.newComponent(this);
 	
     public int[] neighbor =  new int[]{0,-1,0};
     
@@ -105,7 +106,7 @@ public class TileCableClamp extends TileEntitySE implements ISETile,ISEJunction,
 	@Override
 	public ISESubComponent getComponent(ForgeDirection side) {
 		if (side == ForgeDirection.getOrientation(facing))
-			return this;
+			return this.junction;
 		return null;
 	}
 
@@ -114,8 +115,8 @@ public class TileCableClamp extends TileEntitySE implements ISETile,ISEJunction,
 	public void getNeighbors(List<ISESimulatable> list) {
 		TileEntity neighbor = SEAPI.utils.getTileEntityonDirection(this, ForgeDirection.getOrientation(facing));
 		
-        if (neighbor instanceof ISEConductor)
-            list.add((ISEConductor) neighbor);
+        if (neighbor instanceof ISECableTile)
+            list.add(((ISECableTile) neighbor).getNode());
         
         if (gridNode != null)
         	list.add(gridNode);

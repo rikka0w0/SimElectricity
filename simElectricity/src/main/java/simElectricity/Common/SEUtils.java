@@ -31,8 +31,8 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 import org.apache.logging.log4j.Level;
 import simElectricity.API.SEAPI;
-import simElectricity.API.EnergyTile.ISEConductor;
 import simElectricity.API.Internal.ISEUtils;
+import simElectricity.API.Tile.ISECableTile;
 
 /**
  * Created by <Meow J> on 8/6/2014.
@@ -158,7 +158,7 @@ public class SEUtils implements ISEUtils{
         for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
             if (tileEntity.getWorldObj().getTileEntity(tileEntity.xCoord + direction.offsetX,
                     tileEntity.yCoord + direction.offsetY,
-                    tileEntity.zCoord + direction.offsetZ) instanceof ISEConductor
+                    tileEntity.zCoord + direction.offsetZ) instanceof ISECableTile
                     && !Arrays.asList(exceptions).contains(direction))
                 return direction;
         }

@@ -1,4 +1,4 @@
-package simElectricity.Common.EnergyNet;
+package simElectricity.Common.EnergyNet.Components;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -8,10 +8,13 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.Constants;
 
+import simElectricity.API.DataProvider.ISEComponentDataProvider;
 import simElectricity.API.EnergyTile.ISEGridNode;
 import simElectricity.API.EnergyTile.ISESimulatable;
+import simElectricity.API.EnergyTile.ISESubComponent;
+import simElectricity.Common.EnergyNet.EnergyNetDataProvider;
 
-public class GridNode implements ISEGridNode{
+public class GridNode extends SEComponent implements ISEGridNode{
 	public EnergyNetDataProvider gridDataProvider;
 	
 	//0 - node 1 - transformer primary 2 - transformer secondary
@@ -21,8 +24,6 @@ public class GridNode implements ISEGridNode{
 	public int z;
 	
 	public HashMap<GridNode, Double> resistances = new HashMap<GridNode, Double>();
-	
-	public TileEntity associatedTE;
 	
 	//Only used for loading
 	protected int neighborX[];
@@ -64,14 +65,14 @@ public class GridNode implements ISEGridNode{
 		}
 	}
 	
-	public void writeToNBT(NBTTagCompound nbt, LinkedList<ISESimulatable> neighbors) {	
+	public void writeToNBT(NBTTagCompound nbt, LinkedList<SEComponent> neighbors) {	
 		nbt.setByte("type", type);
 		nbt.setInteger("x", x);
 		nbt.setInteger("y", y);
 		nbt.setInteger("z", z);
 		
 		int length = 0;
-		for (ISESimulatable neighbor : neighbors){
+		for (SEComponent neighbor : neighbors){
 			if (neighbor instanceof GridNode)
 				length++;
 		}
@@ -80,7 +81,7 @@ public class GridNode implements ISEGridNode{
 		neighborY = new int[length];
 		neighborZ = new int[length];
 		int i = 0;
-		for (ISESimulatable neighbor : neighbors){
+		for (SEComponent neighbor : neighbors){
 			if (neighbor instanceof GridNode){
 				GridNode gridNode = (GridNode)neighbor;
 				neighborX[i] = gridNode.x;
@@ -112,7 +113,7 @@ public class GridNode implements ISEGridNode{
 	@Override
 	public LinkedList<ISESimulatable> getNeighborList(){
 		LinkedList<ISESimulatable> ret = new LinkedList<ISESimulatable>();
-		for (ISESimulatable obj : gridDataProvider.getNeighborsOf(this)){
+		for (ISESimulatable obj : this.neighbors){
 			ret.add(obj);
 		}
 		return ret;
@@ -139,5 +140,22 @@ public class GridNode implements ISEGridNode{
 	@Override
 	public int getZCoord(){
 		return this.z;
+	}
+
+	@Override
+	public int getType() {
+		return this.type;
+	}
+
+	@Override
+	public ISEComponentDataProvider getDataProvider() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+
+	@Override
+	public ISESubComponent getComplement() {
+		return null;
 	}
 }

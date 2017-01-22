@@ -22,11 +22,18 @@ package simElectricity.Common.EnergyNet;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
-import simElectricity.API.EnergyTile.*;
+import simElectricity.API.EnergyTile.ISESimulatable;
+import simElectricity.API.EnergyTile.ISESubComponent;
+import simElectricity.API.Tile.ISECableTile;
+import simElectricity.API.Tile.ISETile;
 import simElectricity.API.SEEnergy;
 import simElectricity.API.IEnergyNetUpdateHandler;
 import simElectricity.Common.ConfigManager;
 import simElectricity.Common.SEUtils;
+import simElectricity.Common.EnergyNet.Components.GridNode;
+import simElectricity.Common.EnergyNet.Components.Junction;
+import simElectricity.Common.EnergyNet.Components.RegulatorInput;
+import simElectricity.Common.EnergyNet.Components.SEComponent;
 import simElectricity.API.SEAPI;
 import sun.security.ssl.Debug;
 
@@ -47,7 +54,7 @@ public final class EnergyNet{
 
 
     public String[] info(){
-    	BakaGraph<ISESimulatable> tileEntityGraph = dataProvider.getTEGraph();
+    	BakaGraph tileEntityGraph = dataProvider.getTEGraph();
     	String sparseRate;
 
     	if (tileEntityGraph.size() == 0 && dataProvider.getGridObjectCount() == 0){
@@ -89,7 +96,7 @@ public final class EnergyNet{
         if (calc) {
         	calc = false;
         	
-        	BakaGraph<ISESimulatable> tileEntityGraph = dataProvider.getTEGraph();
+        	BakaGraph tileEntityGraph = dataProvider.getTEGraph();
             simulator.run(tileEntityGraph);
         	
             try {   
@@ -111,17 +118,17 @@ public final class EnergyNet{
         List<ISESimulatable> result = new ArrayList<ISESimulatable>();
         TileEntity neighborTE;
         
-        if (te instanceof ISEConductor) {
-        	ISEConductor wire = (ISEConductor) te;
+        if (te instanceof ISECableTile) {
+        	ISECableTile cableTile = (ISECableTile) te;
             for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
             	neighborTE = SEAPI.utils.getTileEntityonDirection(te, direction);
-                if (neighborTE instanceof ISEConductor) {  //Conductor
-                	ISEConductor neighbor = (ISEConductor) neighborTE;
+                if (neighborTE instanceof ISECableTile) {  //Conductor
+                	ISECableTile neighbor = (ISECableTile) neighborTE;
 
-                    if (wire.getColor() == 0 ||
+                    if (cableTile.getColor() == 0 ||
                             neighbor.getColor() == 0 ||
-                            wire.getColor() == neighbor.getColor()) {
-                        result.add(neighbor);
+                            cableTile.getColor() == neighbor.getColor()) {
+                        result.add(neighbor.getNode());
                     }
                 }
                 else if (neighborTE instanceof ISETile) {
@@ -130,13 +137,6 @@ public final class EnergyNet{
                 	
                 	if (component != null){
                 		result.add(component);
-                	}
-                }
-                else if (neighborTE instanceof ISESimpleTile) {
-                	ISESimpleTile tile = (ISESimpleTile)neighborTE;
-                	
-                	if (tile.getFunctionalSide() == direction.getOpposite()){
-                		result.add(tile);
                 	}
                 }
             }
@@ -150,48 +150,41 @@ public final class EnergyNet{
      */
     public void addTileEntity(TileEntity te) {
         //Map<ISESimulatable, ISESimulatable> neighborMap = new HashMap<ISESimulatable, ISESimulatable>();
-    	BakaGraph<ISESimulatable> tileEntityGraph = dataProvider.getTEGraph();
+    	BakaGraph tileEntityGraph = dataProvider.getTEGraph();
 
-        if (te instanceof ISEConductor){
-        	tileEntityGraph.addVertex((ISEConductor)te);
+    	
+    	
+        if (te instanceof ISECableTile){
+        	tileEntityGraph.addVertex((SEComponent) ((ISECableTile)te).getNode());
         	List<ISESimulatable> neighborList = neighborListOfConductor(te);
             for (ISESimulatable neighbor : neighborList)
-            	tileEntityGraph.addEdge(neighbor, (ISESimulatable) te);
+            	tileEntityGraph.addEdge((SEComponent) neighbor, (SEComponent) ((ISECableTile)te).getNode());
         }
         else if (te instanceof ISETile){
         	ISETile tile = (ISETile)te;
         	for (ForgeDirection direction : tile.getValidDirections()) {
         		ISESubComponent subComponent = tile.getComponent(direction);
-        		tileEntityGraph.addVertex(subComponent);
+        		tileEntityGraph.addVertex((SEComponent) subComponent);
         		
-        		if (subComponent instanceof ISEJunction){
-        			ISEJunction junction = (ISEJunction) subComponent;
+        		if (subComponent instanceof Junction){
+        			Junction junction = (Junction) subComponent;
         			List<ISESimulatable> neighborList = new LinkedList<ISESimulatable>();
-        			junction.getNeighbors(neighborList);
+        			junction.data.getNeighbors(neighborList);
         			
         			for (ISESimulatable neighbor : neighborList)
-        				tileEntityGraph.addEdge(neighbor, subComponent);
+        				tileEntityGraph.addEdge((SEComponent) neighbor,(SEComponent)  subComponent);
         		}else{
                     TileEntity neighbor = SEAPI.utils.getTileEntityonDirection(te, direction);
-                        
-                    if (neighbor instanceof ISEConductor)  // Connected properly
-                    	tileEntityGraph.addEdge((ISEConductor)neighbor, subComponent);
+                    
+                    if (neighbor instanceof ISECableTile)  // Connected properly
+                    	tileEntityGraph.addEdge((SEComponent) ((ISECableTile)neighbor).getNode(),(SEComponent)  subComponent);
                     
                     
                     //Also don`t forget to attach the regulator controller to the energyNet!
-                    if (subComponent instanceof ISERegulatorInput)
-                    	tileEntityGraph.addVertex(((ISERegulatorInput)subComponent).getController());
+                    if (subComponent instanceof RegulatorInput)
+                    	tileEntityGraph.addVertex((SEComponent) ((RegulatorInput)subComponent).controller);
         		}
         	}
-        }
-        else if (te instanceof ISESimpleTile){
-        	ISESimpleTile tile = (ISESimpleTile)te;
-        	tileEntityGraph.addVertex(tile);
-        	
-        	TileEntity neighbor = SEAPI.utils.getTileEntityonDirection(te, tile.getFunctionalSide());
-        	
-            if (neighbor instanceof ISEConductor)  // Connected properly
-            	tileEntityGraph.addEdge((ISEConductor) neighbor, tile);    
         }
         else{
         	//Error
@@ -208,22 +201,20 @@ public final class EnergyNet{
      * Remove a TileEntity from the energy net
      */
     public void removeTileEntity(TileEntity te) {
-    	BakaGraph<ISESimulatable> tileEntityGraph = dataProvider.getTEGraph();
+    	BakaGraph tileEntityGraph = dataProvider.getTEGraph();
     	
-        if (te instanceof ISEConductor) {
-        	tileEntityGraph.removeVertex((ISEConductor) te);
+        if (te instanceof ISECableTile) {
+        	tileEntityGraph.removeVertex((SEComponent) ((ISECableTile) te).getNode());
         }
 	    else if (te instanceof ISETile){
         	ISETile tile = (ISETile)te;
         	for (ForgeDirection direction : tile.getValidDirections()) {
         		ISESubComponent subComponent = tile.getComponent(direction);
-        		tileEntityGraph.removeVertex(subComponent);
+        		tileEntityGraph.removeVertex((SEComponent) subComponent);
         		
-        		if (subComponent instanceof ISERegulatorInput)
-                	tileEntityGraph.removeVertex(((ISERegulatorInput)subComponent).getController());
+        		if (subComponent instanceof RegulatorInput)
+                	tileEntityGraph.removeVertex((SEComponent) ((RegulatorInput)subComponent).controller);
         	}
-	    }else if (te instanceof ISESimpleTile){
-	    	tileEntityGraph.removeVertex((ISESimpleTile) te);
 	    }
         
         if (te instanceof IEnergyNetUpdateHandler)

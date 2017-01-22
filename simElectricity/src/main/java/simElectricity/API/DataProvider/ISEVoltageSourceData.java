@@ -1,9 +1,9 @@
-package simElectricity.API.EnergyTile;
+package simElectricity.API.DataProvider;
 
 /**
  * A simple electrical model for machines or generators
  */
-public interface ISEVoltageSource extends ISESubComponent{
+public interface ISEVoltageSourceData extends ISEComponentDataProvider{
 	/**
 	 * Returns the voltage of the internal voltage source
 	 * <p/>

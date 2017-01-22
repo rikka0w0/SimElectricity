@@ -22,6 +22,7 @@ package simElectricity.API;
 import net.minecraft.creativetab.CreativeTabs;
 
 import simElectricity.API.Internal.ICableRenderHelper;
+import simElectricity.API.Internal.IEnergyNetAgent;
 import simElectricity.API.Internal.IFluidUtil;
 import simElectricity.API.Internal.INetworkManager;
 import simElectricity.API.Internal.ISEUtils;
@@ -33,6 +34,7 @@ public class SEAPI {
     public static INetworkManager networkManager;
     public static ICableRenderHelper cableRenderHelper;
     public static ISEUtils utils;
+	public static IEnergyNetAgent energyNetAgent;
     
     /**
      * Creative Tab for SimElectricity project

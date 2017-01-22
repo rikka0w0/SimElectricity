@@ -9,8 +9,9 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
-import simElectricity.API.EnergyTile.ISESimpleTile;
+import simElectricity.API.ISEWrenchable;
 import simElectricity.API.INetworkEventHandler;
+import simElectricity.API.ISEWrenchable;
 import simElectricity.API.ISidedFacing;
 import simElectricity.Common.SEUtils;
 import simElectricity.SimElectricity;
@@ -244,7 +245,7 @@ public class MessageTileEntityUpdate implements IMessage{
         		((ISidedFacing)te).setFacing((ForgeDirection) message.values[0]);
         		world.markBlockForUpdate(message.xCoord, message.yCoord, message.zCoord);
         	}else if (message.fieldsCount == -2){
-        		((ISESimpleTile)te).setFunctionalSide((ForgeDirection) message.values[0]);
+        		((ISEWrenchable)te).setFunctionalSide((ForgeDirection) message.values[0]);
         		world.markBlockForUpdate(message.xCoord, message.yCoord, message.zCoord);
         	}
 

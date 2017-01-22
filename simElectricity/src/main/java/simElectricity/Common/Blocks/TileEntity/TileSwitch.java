@@ -24,64 +24,19 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.*;
 import simElectricity.API.Common.TileEntitySE;
-import simElectricity.API.EnergyTile.ISEConnectable;
-import simElectricity.API.EnergyTile.ISEConductor;
-import simElectricity.API.EnergyTile.ISEJunction;
+import simElectricity.API.DataProvider.ISEJunctionData;
 import simElectricity.API.EnergyTile.ISESimulatable;
 import simElectricity.API.EnergyTile.ISESubComponent;
-import simElectricity.API.EnergyTile.ISETile;
+import simElectricity.API.Tile.ISECableTile;
+import simElectricity.API.Tile.ISETile;
 
 import java.util.LinkedList;
 import java.util.List;
 
-public class TileSwitch extends TileEntitySE implements ISETile, ISEConnectable, ISidedFacing, IEnergyNetUpdateHandler, INetworkEventHandler {
-    public class Switch implements ISEJunction{
-    	private TileSwitch _te;
-    	
-    	public Switch(TileSwitch te){
-    		_te = te;
-    	}
-    	
-    	
-		@Override
-		public void getNeighbors(List<ISESimulatable> list) {
-	        if (_te.isOn) {
-	            TileEntity neighbor = SEAPI.utils.getTileEntityonDirection(_te, _te.inputSide);
-
-	            if (neighbor instanceof ISEConductor)
-	                list.add((ISEConductor) neighbor);
-
-	            neighbor = SEAPI.utils.getTileEntityonDirection(_te, _te.outputSide);
-
-	            if (neighbor instanceof ISEConductor)
-	                list.add((ISEConductor) neighbor);
-	        }
-		}
-
-		@Override
-		public double getResistance(ISESimulatable neighbor) {
-			return _te.resistance / 2;
-		}
-    	
-	    public double getCurrent() {
-	        if (!_te.isOn)
-	            return 0;
-
-	        TileEntity neighbor;
-	        for (ForgeDirection dir : new ForgeDirection[] {_te.inputSide, _te.outputSide}) {
-	            neighbor = SEAPI.utils.getTileEntityonDirection(_te, dir);
-	            if (neighbor instanceof ISEConductor) {
-	                return Math.abs((SEEnergy.getVoltage(neighbor) - (SEEnergy.getVoltage(this, _te.getWorldObj()))) /
-	                        (((ISEConductor) neighbor).getResistance() + getResistance((ISEConductor)neighbor)));
-	            }
-	        }
-	        return 0;
-	    }
-    }
-	
+public class TileSwitch extends TileEntitySE implements ISETile, ISEJunctionData, ISEConnectable, ISidedFacing, IEnergyNetUpdateHandler, INetworkEventHandler {	
+	ISESubComponent junction = (ISESubComponent) SEAPI.energyNetAgent.newComponent(this);
 	public double current=0F;
     
-	public Switch sw = new Switch(this);
     public ForgeDirection inputSide = ForgeDirection.NORTH, outputSide = ForgeDirection.SOUTH, facing = ForgeDirection.WEST;
     public float resistance = 0.005F;
     public float maxCurrent = 1F;
@@ -162,7 +117,7 @@ public class TileSwitch extends TileEntitySE implements ISETile, ISEConnectable,
 	
     @Override
     public void onEnergyNetUpdate() {
-    	current = sw.getCurrent();
+    	current = getCurrent();
         if (current > maxCurrent) {
             isOn = false;
             SEEnergy.postTileRejoinEvent(this);
@@ -184,6 +139,47 @@ public class TileSwitch extends TileEntitySE implements ISETile, ISEConnectable,
 
 	@Override
 	public ISESubComponent getComponent(ForgeDirection side) {
-		return (side == inputSide || side == outputSide) ? sw : null;
+		return (side == inputSide || side == outputSide) ? junction : null;
 	}
+
+	
+	//Junction Data
+	@Override
+	public void getNeighbors(List<ISESimulatable> list) {
+        if (isOn) {
+            TileEntity neighbor = SEAPI.utils.getTileEntityonDirection(this, inputSide);
+
+            if (neighbor instanceof ISECableTile)
+                list.add(((ISECableTile) neighbor).getNode());
+
+            neighbor = SEAPI.utils.getTileEntityonDirection(this, outputSide);
+
+            if (neighbor instanceof ISECableTile)
+            	list.add(((ISECableTile) neighbor).getNode());
+        }
+	}
+
+	@Override
+	public double getResistance(ISESimulatable neighbor) {
+		return resistance / 2;
+	}
+	
+    public double getCurrent() {
+        if (!isOn)
+            return 0;
+
+        TileEntity neighbor;
+        for (ForgeDirection dir : new ForgeDirection[] {inputSide, outputSide}) {
+            neighbor = SEAPI.utils.getTileEntityonDirection(this, dir);
+            if (neighbor instanceof ISECableTile) {
+            	ISESimulatable node = ((ISECableTile)neighbor).getNode();
+                // TODO QAQ!!!    
+            	
+                return Math.abs((SEAPI.energyNetAgent.getVoltage(node) - (SEAPI.energyNetAgent.getVoltage(junction))) /
+                        (((ISECableTile) neighbor).getResistance() + getResistance(node)));
+            	
+            }
+        }
+        return 0;
+    }
 }

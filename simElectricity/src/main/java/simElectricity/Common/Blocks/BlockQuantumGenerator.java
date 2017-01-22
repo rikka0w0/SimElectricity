@@ -29,7 +29,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.Common.Blocks.BlockStandardGenerator;
-import simElectricity.API.EnergyTile.ISESimpleTile;
+import simElectricity.API.ISEWrenchable;
 import simElectricity.API.SEAPI;
 import simElectricity.Common.Blocks.TileEntity.TileQuantumGenerator;
 import simElectricity.SimElectricity;
@@ -68,10 +68,10 @@ public class BlockQuantumGenerator extends BlockStandardGenerator {
     public IIcon getIcon(IBlockAccess world, int x, int y, int z, int side) {
         TileEntity te = world.getTileEntity(x, y, z);
 
-        if (!(te instanceof ISESimpleTile))
+        if (!(te instanceof ISEWrenchable))
             return iconBuffer[0];
 
-        return iconBuffer[SEAPI.utils.getTextureOnSide(side, ((ISESimpleTile) te).getFunctionalSide())];
+        return iconBuffer[SEAPI.utils.getTextureOnSide(side, ((ISEWrenchable) te).getFunctionalSide())];
     }
 
     @SideOnly(Side.CLIENT)

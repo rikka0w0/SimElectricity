@@ -1,9 +1,10 @@
-package simElectricity.API.EnergyTile;
+package simElectricity.API.Tile;
 
-/**
- * Represents a conductor block, should be implemented by cable blocks
- */
-public interface ISEConductor extends ISEPlaceable,ISESimulatable{
+import simElectricity.API.ISEPlaceable;
+import simElectricity.API.DataProvider.ISEComponentDataProvider;
+import simElectricity.API.EnergyTile.ISESimulatable;
+
+public interface ISECableTile extends ISEComponentDataProvider, ISEPlaceable{
     /**
      * Returns the color of the cable
      * <p/>
@@ -17,4 +18,6 @@ public interface ISEConductor extends ISEPlaceable,ISESimulatable{
      * See SimElectricity wikipedia for circuit models and more informations
      */
     public double getResistance();
+    
+    public ISESimulatable getNode();
 }

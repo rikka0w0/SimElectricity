@@ -1,7 +1,10 @@
 package simElectricity.API.Internal;
 
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import simElectricity.API.DataProvider.ISEComponentDataProvider;
 import simElectricity.API.EnergyTile.ISESimulatable;
+import simElectricity.API.EnergyTile.ISESubComponent;
 
 public interface IEnergyNetAgent {
     /**
@@ -11,5 +14,11 @@ public interface IEnergyNetAgent {
      * @param world The world that the ISESimulatable instance is in
      * @return the voltage of the node, in volts
      */
-	double getVoltage(ISESimulatable node, World world);
+	public double getVoltage(ISESimulatable node);
+	
+	public ISESubComponent newComponent(TileEntity dataProviderTileEntity);
+	
+	public ISESubComponent newComponent(ISEComponentDataProvider dataProvider, TileEntity parent);
+	
+	public ISESimulatable newCable(TileEntity dataProviderTileEntity);
 }

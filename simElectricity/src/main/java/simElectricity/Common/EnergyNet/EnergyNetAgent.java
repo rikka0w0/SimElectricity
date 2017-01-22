@@ -19,13 +19,31 @@
 
 package simElectricity.Common.EnergyNet;
 
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
 import java.util.Map;
 import java.util.WeakHashMap;
 
+import simElectricity.API.DataProvider.ISEComponentDataProvider;
+import simElectricity.API.DataProvider.ISEConstantPowerLoadData;
+import simElectricity.API.DataProvider.ISEDiodeData;
+import simElectricity.API.DataProvider.ISEJunctionData;
+import simElectricity.API.DataProvider.ISERegulatorData;
+import simElectricity.API.DataProvider.ISETransformerData;
+import simElectricity.API.DataProvider.ISEVoltageSourceData;
 import simElectricity.API.EnergyTile.ISESimulatable;
+import simElectricity.API.EnergyTile.ISESubComponent;
 import simElectricity.API.Internal.IEnergyNetAgent;
+import simElectricity.API.Tile.ISECableTile;
+import simElectricity.Common.EnergyNet.Components.Cable;
+import simElectricity.Common.EnergyNet.Components.ConstantPowerLoad;
+import simElectricity.Common.EnergyNet.Components.DiodeInput;
+import simElectricity.Common.EnergyNet.Components.Junction;
+import simElectricity.Common.EnergyNet.Components.RegulatorInput;
+import simElectricity.Common.EnergyNet.Components.SEComponent;
+import simElectricity.Common.EnergyNet.Components.TransformerPrimary;
+import simElectricity.Common.EnergyNet.Components.VoltageSource;
 
 public class EnergyNetAgent implements IEnergyNetAgent{
     @SuppressWarnings("unchecked")
@@ -54,12 +72,41 @@ public class EnergyNetAgent implements IEnergyNetAgent{
         mapping.remove(world);
     }
     
-    
-    
-    
-    
     @Override
-    public double getVoltage(ISESimulatable Tile, World world) {
-        return EnergyNetAgent.getEnergyNetForWorld(world).simulator.getVoltage(Tile);
+    public double getVoltage(ISESimulatable Tile) {
+    	SEComponent obj = (SEComponent) Tile;
+        return EnergyNetAgent.getEnergyNetForWorld(obj.te.getWorldObj()).simulator.getVoltage(Tile);
     }
+
+	@Override
+	public ISESubComponent newComponent(TileEntity dataProviderTileEntity) {
+		return newComponent((ISEComponentDataProvider)dataProviderTileEntity, dataProviderTileEntity);
+	}
+	
+    
+	@Override
+	public ISESubComponent newComponent(ISEComponentDataProvider dataProvider, TileEntity parent) {
+		if (dataProvider instanceof ISEDiodeData)
+			//Create a DiodeInput and DiodeOutput at the same time
+			return new DiodeInput((ISEDiodeData) dataProvider, parent);
+		else if (dataProvider instanceof ISETransformerData)
+			return new TransformerPrimary((ISETransformerData) dataProvider, parent);
+		else if (dataProvider instanceof ISERegulatorData)
+			return new RegulatorInput((ISERegulatorData) dataProvider, parent);
+		else if (dataProvider instanceof ISEConstantPowerLoadData)
+			return new ConstantPowerLoad((ISEConstantPowerLoadData) dataProvider, parent);
+		else if (dataProvider instanceof ISEJunctionData)
+			return new Junction((ISEJunctionData) dataProvider, parent);
+		else if (dataProvider instanceof ISEVoltageSourceData)
+			return new VoltageSource((ISEVoltageSourceData) dataProvider, parent);
+		
+		return null;
+	}
+	
+	@Override
+	public ISESimulatable newCable(TileEntity dataProviderTileEntity){
+		if (dataProviderTileEntity instanceof ISECableTile)
+			return new Cable((ISECableTile) dataProviderTileEntity, dataProviderTileEntity);
+		return null;
+	}
 }

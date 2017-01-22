@@ -54,14 +54,14 @@ public class TileIncandescentLamp extends TileStandardSEMachine implements IEner
     
     @Override
     public void onEnergyNetUpdate() {
-    	double voltage = SEEnergy.getVoltage(this);
+    	double voltage = SEAPI.energyNetAgent.getVoltage(tile);
         lightLevel = (int) (voltage*voltage/getResistance() / 0.3F);
         if (lightLevel > 15)
             lightLevel = 15;
         
         SEAPI.networkManager.updateNetworkFields(this);
 
-        checkVoltage(SEEnergy.getVoltage(this), 265);
+        checkVoltage(SEAPI.energyNetAgent.getVoltage(tile), 265);
     }
 
     @Override

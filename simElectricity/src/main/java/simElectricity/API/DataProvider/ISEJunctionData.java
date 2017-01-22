@@ -1,11 +1,13 @@
-package simElectricity.API.EnergyTile;
+package simElectricity.API.DataProvider;
 
 import java.util.List;
+
+import simElectricity.API.EnergyTile.ISESimulatable;
 
 /**
  * Represents a circuit node, more advanced, more flexible
  */
-public interface ISEJunction extends ISESubComponent{
+public interface ISEJunctionData extends ISEComponentDataProvider{
     /**
      * Add all neighbors of this junction to the list in this function
      * </p>

@@ -19,10 +19,10 @@
 
 package simElectricity.Common.EnergyNet;
 
-import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.Map;
 import java.util.Set;
+
+import simElectricity.Common.EnergyNet.Components.SEComponent;
 
 
 /**
@@ -30,125 +30,125 @@ import java.util.Set;
  *
  * @author <rikka0w0>
  */
-public class BakaGraph<T> {
-    private Map<T, LinkedList<T>> graph;
-
+public class BakaGraph {
+    private LinkedList<SEComponent> nodes;
+    
     public BakaGraph() {
-        graph = new HashMap<T, LinkedList<T>>();
+    	nodes = new LinkedList<SEComponent>();
     }
-
+    
     /**
      * Return a exact copy of this node graph
-     */
+     
     @Override
     public Object clone(){
         BakaGraph result = new BakaGraph();
         result.graph.putAll(graph);
         return result;
     }
+    */
     
     /**
      * Delete every vertex and edges within this graph
-     */
+    
     public void clear(){
     	graph.clear();
     }
-
+     */
+    
     /**
      * Return existing nodes in the graph
      */
-    public Set<T> vertexSet() {
-        return graph.keySet();
+    public LinkedList<SEComponent> getNodes() {
+        return nodes;
     }
 
     /**
      * Return a list neighbors of a node
      */
-    public LinkedList<T> neighborListOf(T node) {
-        return graph.get(node);
+    public LinkedList<SEComponent> neighborListOf(SEComponent node) {
+        return node.neighbors;
     }
 
     /**
      * Add a vertex into the graph
      */
-    public void addVertex(T node) {
-        if (graph.containsKey(node))
+    public void addVertex(SEComponent node) {
+        if (nodes.contains(node))
             return;
 
-        graph.put(node, new LinkedList<T>());
+        nodes.add(node);
     }
 
     /**
      * Add a neighbor to a vertex
      */
-    public void addEdge(T node, T neighbor) {
-        if (!graph.containsKey(node))
+    public void addEdge(SEComponent node, SEComponent neighbor) {
+        if (!nodes.contains(node))
             return;
         
-        if (!graph.containsKey(neighbor))
+        if (!nodes.contains(neighbor))
             return;
 
-        if (!neighborListOf(node).contains(neighbor))
-            neighborListOf(node).add(neighbor);
+        if (!node.neighbors.contains(neighbor))
+        	node.neighbors.add(neighbor);
 
-        if (!neighborListOf(neighbor).contains(node))
-            neighborListOf(neighbor).add(node);
+        if (!neighbor.neighbors.contains(node))
+            neighbor.neighbors.add(node);
     }
 
     /**
      * Remove a vertex
      */
-    public void removeVertex(T node) {
-        if (!graph.containsKey(node))
+    public void removeVertex(SEComponent node) {
+        if (!nodes.contains(node))
             return;
 
         //Remove this node from its neighbors' list
-        for (T neighbor: graph.get(node)){
-        	LinkedList<T> list = graph.get(neighbor);
-        	if (list.contains(node))
-        		list.remove(node);
+        for (SEComponent neighbor: node.neighbors){
+        	if (neighbor.neighbors.contains(node))
+        		neighbor.neighbors.remove(node);
         }
 
-        graph.remove(node);
+        node.neighbors.clear();
+        nodes.remove(node);
     }
     
     /**
      * Remove an edge
      */
-    public void removeEdge(T node, T neighbor) {
-        if (!graph.containsKey(node))
+    public void removeEdge(SEComponent node, SEComponent neighbor) {
+        if (!nodes.contains(node))
             return;
         
-        if (!graph.containsKey(neighbor))
+        if (!nodes.contains(neighbor))
             return;
 
         
         
-        if (neighborListOf(node).contains(neighbor))
-            neighborListOf(node).remove(neighbor);
+        if (neighbor.neighbors.contains(neighbor))
+        	neighbor.neighbors.remove(neighbor);
 
-        if (neighborListOf(neighbor).contains(node))
-            neighborListOf(neighbor).remove(node);
+        if (neighbor.neighbors.contains(node))
+        	neighbor.neighbors.remove(node);
     }
     
     /**
      * Remove all edges of a node, returns a list of previous neighbors
      */
-    public LinkedList<T> removeAllEdges(T node){
-        if (!graph.containsKey(node))
+    public LinkedList<SEComponent> removeAllEdges(SEComponent node){
+        if (!nodes.contains(node))
             return null;
         
-        LinkedList<T> neighbors = graph.get(node);
-        LinkedList<T> ret = (LinkedList<T>) neighbors.clone();
+        LinkedList<SEComponent> ret = (LinkedList<SEComponent>) node.neighbors.clone();
         
         //Delete all record on the selected node
-        neighbors.clear();
+        node.neighbors.clear();
         
         //Delete this node from its neighbors' list
-        for (T neighbor: ret){
-        	LinkedList<T> list = graph.get(neighbor);
-        	if (list.contains(node))
-        		list.remove(node);
+        for (SEComponent neighbor: ret){
+        	if (neighbor.neighbors.contains(node))
+        		neighbor.neighbors.remove(node);
         }
         
         return ret;
@@ -158,6 +158,6 @@ public class BakaGraph<T> {
      * @return the number of vertexes within the graph
      */
     public int size(){
-    	return graph.size();
+    	return nodes.size();
     }
 }

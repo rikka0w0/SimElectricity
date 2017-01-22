@@ -1,4 +1,4 @@
-package simElectricity.API.EnergyTile;
+package simElectricity.API.DataProvider;
 
 /**
  * Represents a constant power load
@@ -9,7 +9,7 @@ package simElectricity.API.EnergyTile;
  * <p/>
  * See SimElectricity wikipedia for circuit models and more informations
  */
-public interface ISEConstantPowerLoad extends ISESubComponent{
+public interface ISEConstantPowerLoadData extends ISEComponentDataProvider{
 	/**
 	 * Returns the desired power that is consumed by this component
 	 */

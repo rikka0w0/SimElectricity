@@ -1,6 +1,8 @@
-package simElectricity.API.EnergyTile;
+package simElectricity.API.Tile;
 
 import java.util.List;
+
+import simElectricity.API.EnergyTile.ISEGridNode;
 
 import net.minecraft.tileentity.TileEntity;
 

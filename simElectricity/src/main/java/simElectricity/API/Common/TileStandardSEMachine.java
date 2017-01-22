@@ -21,13 +21,18 @@ package simElectricity.API.Common;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.ForgeDirection;
-import simElectricity.API.EnergyTile.ISESimpleTile;
+import simElectricity.API.ISEWrenchable;
+import simElectricity.API.SEAPI;
+import simElectricity.API.DataProvider.ISEVoltageSourceData;
+import simElectricity.API.EnergyTile.ISESubComponent;
+import simElectricity.API.Tile.ISETile;
 
 /**
  * A standard SE machine can inherits this class, make things easier and less confusion
  */
-public abstract class TileStandardSEMachine extends TileSidedFacingMachine implements ISESimpleTile {
+public abstract class TileStandardSEMachine extends TileSidedFacingMachine implements ISEWrenchable, ISETile, ISEVoltageSourceData {
     public ForgeDirection functionalSide = ForgeDirection.NORTH;
+    public ISESubComponent tile = (ISESubComponent) SEAPI.energyNetAgent.newComponent(this);
     
     @Override
 	public boolean attachToEnergyNet(){
@@ -73,4 +78,21 @@ public abstract class TileStandardSEMachine extends TileSidedFacingMachine imple
 
         tagCompound.setByte("functionalSide", (byte) functionalSide.ordinal());
     }
+
+    
+    //ISETile
+	@Override
+	public int getNumberOfComponents() {
+		return 1;
+	}
+
+	@Override
+	public ForgeDirection[] getValidDirections() {
+		return new ForgeDirection[]{functionalSide};
+	}
+
+	@Override
+	public ISESubComponent getComponent(ForgeDirection side) {
+		return side == functionalSide ? tile : null;
+	}
 }

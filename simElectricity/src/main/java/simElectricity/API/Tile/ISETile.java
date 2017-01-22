@@ -1,5 +1,7 @@
-package simElectricity.API.EnergyTile;
+package simElectricity.API.Tile;
 
+import simElectricity.API.ISEPlaceable;
+import simElectricity.API.EnergyTile.ISESubComponent;
 import net.minecraftforge.common.util.ForgeDirection;
 
 /**

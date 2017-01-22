@@ -21,6 +21,7 @@ package simElectricity.Common.Blocks.TileEntity;
 
 import net.minecraft.nbt.NBTTagCompound;
 import simElectricity.API.Common.TileStandardSEMachine;
+import simElectricity.API.SEAPI;
 import simElectricity.API.SEEnergy;
 import simElectricity.API.INetworkEventHandler;
 
@@ -38,7 +39,7 @@ public class TileAdjustableResistor extends TileStandardSEMachine implements INe
         if (worldObj.isRemote)
             return;
 
-        double voltage = SEEnergy.getVoltage(this);
+        double voltage = SEAPI.energyNetAgent.getVoltage(tile);
         power = (float) (voltage*voltage/resistance);
         powerConsumed += power / 20F;
     }

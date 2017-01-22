@@ -28,8 +28,10 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.Common.Items.ItemSE;
+import simElectricity.API.DataProvider.ISEVoltageSourceData;
 import simElectricity.API.SEEnergy;
 import simElectricity.API.EnergyTile.*;
+import simElectricity.API.Tile.*;
 import simElectricity.API.SEAPI;
 
 public class ItemUltimateMultimeter extends ItemSE {
@@ -53,37 +55,37 @@ public class ItemUltimateMultimeter extends ItemSE {
 
         if (world.isRemote)
         	return false;
-       
-        SEAPI.utils.chat(player, "------------------");       
-        if (te instanceof ISEConductor) {
-        	SEAPI.utils.chat(player, "Color: " + String.valueOf(((ISEConductor) te).getColor()) + ", " +
-            				"Voltage: " + String.valueOf(SEEnergy.getVoltage(te)));
-        }else if (te instanceof ISESimpleTile){
-        	double voltage = SEEnergy.getVoltage(te);
-        	double current = (voltage-((ISESimpleTile) te).getOutputVoltage())/((ISESimpleTile) te).getResistance();
-        	SEAPI.utils.chat(player, "Internal Voltage: " + String.valueOf(((ISESimpleTile) te).getOutputVoltage()) + ", " +
-    				"Voltage: " + String.valueOf(voltage)); 
-        	SEAPI.utils.chat(player, "Resistance: " + String.valueOf(((ISESimpleTile) te).getResistance()) + ", " +
-    				"Input current: " + String.valueOf(current));
-        	SEAPI.utils.chat(player, "Input power: " + String.valueOf(current*voltage));
-        }else if ((te instanceof ISESimulatable) && (!(world.isRemote))) {
-        	String[] temp = te.toString().split("[.]");
-        	SEAPI.utils.chat(player,  temp[temp.length-1].split("@")[0] + ": " + String.valueOf(SEEnergy.getVoltage(te)));
+        
+        SEAPI.utils.chat(player, "------------------");    
+        if (te instanceof ISECableTile) {
+        	ISESimulatable node = ((ISECableTile) te).getNode();
+        	int color = ((ISECableTile) te).getColor();
+        	SEAPI.utils.chat(player, "Color: " + String.valueOf(color) + ", " +
+            				"Voltage: " + String.valueOf(SEAPI.energyNetAgent.getVoltage(node)));
         }
         else if (te instanceof ISETile){
         	ISETile tile = (ISETile)te;
-        	for (ForgeDirection dir : tile.getValidDirections()){
+        	ForgeDirection[] dirs = tile.getValidDirections();
+        	if (dirs.length == 1 && tile.getComponent(dirs[0]).getDataProvider() instanceof ISEVoltageSourceData){
+        		ISESubComponent vs = tile.getComponent(dirs[0]);
+        		ISEVoltageSourceData data = (ISEVoltageSourceData) tile.getComponent(dirs[0]).getDataProvider();
+                double voltage = SEAPI.energyNetAgent.getVoltage(vs);
+                double current = (voltage-data.getOutputVoltage())/data.getResistance();
+                SEAPI.utils.chat(player, "Internal Voltage: " + String.valueOf(data.getOutputVoltage()) + ", " +
+            				"Voltage: " + String.valueOf(voltage)); 
+                SEAPI.utils.chat(player, "Resistance: " + String.valueOf(data.getResistance()) + ", " +
+            				"Input current: " + String.valueOf(current));
+                SEAPI.utils.chat(player, "Input power: " + String.valueOf(current*voltage));
+        	}
+        	else for (ForgeDirection dir : tile.getValidDirections()){
         		ISESubComponent comp = tile.getComponent(dir);
         		String[] temp = comp.toString().split("[.]");
-        		SEAPI.utils.chat(player, temp[temp.length-1].split("@")[0] + ": " + String.valueOf(SEEnergy.getVoltage(comp, te.getWorldObj())));
+        		SEAPI.utils.chat(player, temp[temp.length-1].split("@")[0] + ": " + String.valueOf(SEAPI.energyNetAgent.getVoltage(comp)));
         	}
         }else if (te instanceof ISEGridTile){
-        	ISEGridNode gridNode = ((ISEGridTile)te).getGridNode();
-        	if (gridNode == null){
-        		SEAPI.utils.chat(player, "This gridTile has no corresponding gridNode! (BUG!)");
-        	}else{
-        		SEAPI.utils.chat(player, "voltage: " + String.valueOf(SEEnergy.getVoltage(gridNode, te.getWorldObj())));
-        	}
+    		ISEGridNode comp = ((ISEGridTile) te).getGridNode();
+    		String[] temp = comp.toString().split("[.]");
+    		SEAPI.utils.chat(player, temp[temp.length-1].split("@")[0] + ": " + String.valueOf(SEAPI.energyNetAgent.getVoltage(comp)));
         }
         
         return true;

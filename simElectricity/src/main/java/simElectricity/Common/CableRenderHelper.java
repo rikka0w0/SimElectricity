@@ -3,31 +3,31 @@ package simElectricity.Common;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 
+import simElectricity.API.ISEConnectable;
 import simElectricity.API.SEAPI;
-import simElectricity.API.EnergyTile.ISEConductor;
-import simElectricity.API.EnergyTile.ISEConnectable;
-import simElectricity.API.EnergyTile.ISESimpleTile;
-import simElectricity.API.EnergyTile.ISETile;
+import simElectricity.API.Tile.ISECableTile;
+import simElectricity.API.ISEWrenchable;
 import simElectricity.API.Internal.ICableRenderHelper;
+import simElectricity.API.Tile.ISETile;
 
 public class CableRenderHelper implements ICableRenderHelper {
 	@Override
 	public boolean canConnect(TileEntity tileEntity, ForgeDirection direction) {
         TileEntity ent = SEAPI.utils.getTileEntityonDirection(tileEntity, direction);
 
-        if (ent instanceof ISEConductor) {
-            if (tileEntity instanceof ISEConductor) {
-                if (((ISEConductor) ent).getColor() == 0 ||
-                        ((ISEConductor) tileEntity).getColor() == 0 ||
-                        ((ISEConductor) ent).getColor() == ((ISEConductor) tileEntity).getColor()) {
+        if (ent instanceof ISECableTile) {
+            if (tileEntity instanceof ISECableTile) {
+                if (((ISECableTile) ent).getColor() == 0 ||
+                        ((ISECableTile) tileEntity).getColor() == 0 ||
+                        ((ISECableTile) ent).getColor() == ((ISECableTile) tileEntity).getColor()) {
                     return true;
                 }
             } else {
                 return true;
             }
 
-        } else if (ent instanceof ISESimpleTile) {
-            ForgeDirection functionalSide = ((ISESimpleTile) ent).getFunctionalSide();
+        } else if (ent instanceof ISEWrenchable) {
+            ForgeDirection functionalSide = ((ISEWrenchable) ent).getFunctionalSide();
 
             if (direction == functionalSide.getOpposite())
                 return true;

@@ -3,85 +3,18 @@ package simElectricity.Common.Blocks.TileEntity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.Common.TileEntitySE;
+import simElectricity.API.DataProvider.ISERegulatorData;
+import simElectricity.API.SEAPI;
 import simElectricity.API.SEEnergy;
-import simElectricity.API.EnergyTile.ISERegulatorController;
-import simElectricity.API.EnergyTile.ISERegulatorInput;
-import simElectricity.API.EnergyTile.ISERegulatorOutput;
 import simElectricity.API.EnergyTile.ISESubComponent;
-import simElectricity.API.EnergyTile.ISETile;
-import simElectricity.API.EnergyTile.ISETransformerPrimary;
-import simElectricity.API.EnergyTile.ISETransformerSecondary;
+import simElectricity.API.Tile.ISETile;
 import simElectricity.API.INetworkEventHandler;
-import simElectricity.Common.Blocks.TileEntity.TileAdjustableTransformer.TSecondary;
 
 import java.util.List;
 
-public class TileSolarInverter extends TileEntitySE implements ISETile, INetworkEventHandler{
-	public class RInput implements ISERegulatorInput{
-		private ISERegulatorOutput _sec;
-		private ISERegulatorController _con;
-		private TileSolarInverter _par;
-		
-		public RInput(TileSolarInverter parent){
-			_sec = new ROutput(this);
-			_con = new RController(this);
-			_par = parent;
-		}
-		
-		@Override
-		public ISERegulatorOutput getOutput() {return _sec;}
-
-		@Override
-		public ISERegulatorController getController() {return _con;}
-		
-		@Override
-		public double getRegulatedVoltage() {return _par.Vreg;}
-
-		@Override
-		public double getOutputResistance() {return _par.Ro;}
-	}
-	
-	public class ROutput implements ISERegulatorOutput{
-		private ISERegulatorInput _Input;
-		
-		public ROutput(ISERegulatorInput Input){
-			_Input = Input;
-		}
-		
-		@Override
-		public ISERegulatorInput getInput() {
-			return _Input;
-		}
-		
-	}
-	
-	public class RController implements ISERegulatorController{
-		private ISERegulatorInput _Input;
-		
-		public RController(ISERegulatorInput Input){
-			_Input = Input;
-		}
-		
-		@Override
-		public ISERegulatorInput getInput() {return _Input;}
-
-		@Override
-		public double getDMax() {return 1;}
-
-		@Override
-		public double getRc() {return 1;}
-
-		@Override
-		public double getGain() {return 1e5;}
-
-		@Override
-		public double getRs() {return 1e6;}
-		
-	}
-	
+public class TileSolarInverter extends TileEntitySE implements ISETile, ISERegulatorData, INetworkEventHandler{
 	public ForgeDirection inputSide = ForgeDirection.NORTH, outputSide = ForgeDirection.SOUTH;
-
-    public ISERegulatorInput input = new RInput(this);
+    public ISESubComponent input = (ISESubComponent) SEAPI.energyNetAgent.newComponent(this);
 
     public float Vreg = 24;
     public float Ro = 0.001F;
@@ -148,7 +81,7 @@ public class TileSolarInverter extends TileEntitySE implements ISETile, INetwork
 		if (side == inputSide)
 			return input;
 		if (side == outputSide)
-			return input.getOutput();
+			return input.getComplement();
 		return null;
 	}
 	
@@ -159,4 +92,23 @@ public class TileSolarInverter extends TileEntitySE implements ISETile, INetwork
 	public ForgeDirection getSecondarySide(){
 		return outputSide;
 	}
+	
+	//Regulator
+	@Override
+	public double getRegulatedVoltage() {return Vreg;}
+
+	@Override
+	public double getOutputResistance() {return Ro;}
+	
+	@Override
+	public double getDMax() {return 1;}
+
+	@Override
+	public double getRc() {return 1;}
+
+	@Override
+	public double getGain() {return 1e5;}
+
+	@Override
+	public double getRs() {return 1e6;}
 }

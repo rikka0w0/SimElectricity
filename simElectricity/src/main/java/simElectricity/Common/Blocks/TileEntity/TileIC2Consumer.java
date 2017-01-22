@@ -9,6 +9,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.ForgeDirection;
+import simElectricity.API.SEAPI;
 import simElectricity.API.SEEnergy;
 import simElectricity.API.INetworkEventHandler;
 import simElectricity.API.Common.TileSidedGenerator;
@@ -29,7 +30,7 @@ public class TileIC2Consumer extends TileSidedGenerator implements IEnergySink, 
         	return;
         
         double KP = 1, KI = 0.1;
-        double Vo = SEEnergy.getVoltage(this);
+        double Vo = SEAPI.energyNetAgent.getVoltage(tile);
         double Po = Vo * (outputVoltage - Vo) / outputResistance;	//In SE unit
         double Pin = powerRate;			//In SE unit
         double newR = outputResistance;

@@ -10,9 +10,11 @@ import java.util.LinkedList;
 import java.util.List;
 
 import simElectricity.API.EnergyTile.ISEGridNode;
-import simElectricity.API.EnergyTile.ISEGridTile;
 import simElectricity.API.EnergyTile.ISESimulatable;
+import simElectricity.API.Tile.ISEGridTile;
 import simElectricity.Common.SEUtils;
+import simElectricity.Common.EnergyNet.Components.GridNode;
+import simElectricity.Common.EnergyNet.Components.SEComponent;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -32,13 +34,11 @@ public class EnergyNetDataProvider extends WorldSavedData{
 	private List<TileEntity> loadedGridTiles = new LinkedList<TileEntity>();
 	
 	//Records the connection between components
-	private BakaGraph<ISESimulatable> tileEntityGraph = new BakaGraph<ISESimulatable>();
+	private BakaGraph tileEntityGraph = new BakaGraph();
 
 
 	//Utils ------------------------------------------------------------------------------
-	public LinkedList<ISESimulatable> getNeighborsOf(GridNode obj){
-		return tileEntityGraph.neighborListOf(obj);
-	}
+
 	
 	public int getGridObjectCount(){
 		return gridNodeMap.size();
@@ -73,15 +73,15 @@ public class EnergyNetDataProvider extends WorldSavedData{
 	}
 	
 	public void removeGridNode(GridNode gridObject){
-		LinkedList<ISESimulatable> neighbors = tileEntityGraph.removeAllEdges(gridObject);
+		LinkedList<SEComponent> neighbors = tileEntityGraph.removeAllEdges(gridObject);
 		
 		
 		//Delete resistance properties of GridNodes
-		for (ISESimulatable neighbor : neighbors){
+		for (SEComponent neighbor : neighbors){
 			if (neighbor instanceof GridNode){
 				GridNode gridNode = (GridNode) neighbor;
 				gridNode.resistances.remove(gridObject);
-				TileEntity te = gridNode.associatedTE;
+				TileEntity te = gridNode.te;
 				if (te instanceof ISEGridTile)
 					((ISEGridTile)te).onGridNeighborUpdated();
 			}
@@ -95,8 +95,8 @@ public class EnergyNetDataProvider extends WorldSavedData{
 	public void addGridConnection(GridNode node1, GridNode node2, double resistance){
 		addEdge(node1, node2, resistance);
 		
-		TileEntity te1 = node1.associatedTE;
-		TileEntity te2 = node2.associatedTE;
+		TileEntity te1 = node1.te;
+		TileEntity te2 = node2.te;
 		
 		if (te1 instanceof ISEGridTile)
 			((ISEGridTile)te1).onGridNeighborUpdated();
@@ -111,8 +111,8 @@ public class EnergyNetDataProvider extends WorldSavedData{
 		node2.resistances.remove(node1);
 		tileEntityGraph.removeEdge(node1, node2);
 		
-		TileEntity te1 = node1.associatedTE;
-		TileEntity te2 = node2.associatedTE;
+		TileEntity te1 = node1.te;
+		TileEntity te2 = node2.te;
 		
 		if (te1 instanceof ISEGridTile)
 			((ISEGridTile)te1).onGridNeighborUpdated();
@@ -126,7 +126,7 @@ public class EnergyNetDataProvider extends WorldSavedData{
 		ISEGridTile gridTile = (ISEGridTile)te;
 		GridNode gridObject = gridNodeMap.get(GridNode.getIDStringFromTileEntity(te));
 		loadedGridTiles.add(te);
-		gridObject.associatedTE = te;
+		gridObject.te = te;
 		gridTile.setGridNode(gridObject);
 		gridTile.onGridNeighborUpdated();
 	}
@@ -139,7 +139,7 @@ public class EnergyNetDataProvider extends WorldSavedData{
 		
 		//gridObject can be null if the GridObject is just removed
 		if (gridObject != null)
-			gridObject.associatedTE = null;
+			gridObject.te = null;
 	}
 	
 	
@@ -174,7 +174,7 @@ public class EnergyNetDataProvider extends WorldSavedData{
 		return instance;
 	}
 	
-	public BakaGraph<ISESimulatable> getTEGraph(){
+	public BakaGraph getTEGraph(){
 		return tileEntityGraph;
 	}
 			
@@ -209,10 +209,9 @@ public class EnergyNetDataProvider extends WorldSavedData{
 	@Override
 	public void writeToNBT(NBTTagCompound nbt) {	
 		NBTTagList NBTNodes = new NBTTagList();
-		for (GridNode gridObj : gridNodeMap.values()){
+		for (GridNode gridNode : gridNodeMap.values()){
 			NBTTagCompound tag = new NBTTagCompound();
-			LinkedList<ISESimulatable> neighbors = getNeighborsOf(gridObj);
-			gridObj.writeToNBT(tag, neighbors);
+			gridNode.writeToNBT(tag, gridNode.neighbors);
 			NBTNodes.appendTag(tag);
 		}
 		nbt.setTag("Objects", NBTNodes);

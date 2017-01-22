@@ -17,7 +17,7 @@
  * USA
  */
 
-package simElectricity.API.EnergyTile;
+package simElectricity.API;
 
 import net.minecraftforge.common.util.ForgeDirection;
 

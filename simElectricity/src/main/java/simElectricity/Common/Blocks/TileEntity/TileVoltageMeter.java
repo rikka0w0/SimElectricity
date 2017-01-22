@@ -19,11 +19,12 @@
 
 package simElectricity.Common.Blocks.TileEntity;
 
+import simElectricity.API.SEEnergy;
 import simElectricity.API.Common.TileStandardSEMachine;
 
 public class TileVoltageMeter extends TileStandardSEMachine {
     public double voltage = 0;
-
+    
     @Override
     public double getResistance() {
         return 1e6F;

@@ -27,7 +27,7 @@ import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 import simElectricity.API.Common.Items.ItemSE;
 import simElectricity.API.SEEnergy;
-import simElectricity.API.EnergyTile.ISEGridTile;
+import simElectricity.API.Tile.ISEGridTile;
 import simElectricity.API.SEAPI;
 
 import java.util.HashMap;

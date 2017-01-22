@@ -35,9 +35,9 @@ import simElectricity.API.IHVTower;
 import simElectricity.API.INetworkEventHandler;
 import simElectricity.API.SEAPI;
 import simElectricity.API.EnergyTile.ISEGridNode;
-import simElectricity.API.EnergyTile.ISEGridTile;
 import simElectricity.API.EnergyTile.ISESimulatable;
 import simElectricity.API.Events.*;
+import simElectricity.API.Tile.ISEGridTile;
 import simElectricity.Common.Blocks.BlockCableClamp;
 
 import java.util.LinkedList;

@@ -62,7 +62,7 @@ public class TileElectricFurnace extends TileStandardSEMachine implements IEnerg
         if (worldObj.isRemote)
             return;
         //TODO inv[1] == null | (inv[1] != null && inv[1].isItemEqual(result))
-        double voltage = SEEnergy.getVoltage(this);
+        double voltage = SEAPI.energyNetAgent.getVoltage(tile);
         double power = voltage * voltage / this.getResistance();
         
         if (power > 0 && result != null && (inv[1] == null || (inv[1] != null && inv[1].stackSize < 64 && inv[1].isItemEqual(result)))) {
@@ -160,10 +160,10 @@ public class TileElectricFurnace extends TileStandardSEMachine implements IEnerg
 
     @Override
     public void onEnergyNetUpdate() {
-        if (SEEnergy.getVoltage(this) > 265)
-            worldObj.createExplosion(null, xCoord, yCoord, zCoord, (float) (4F + SEEnergy.getVoltage(this) / 265), true);
+        if (SEAPI.energyNetAgent.getVoltage(tile) > 265)
+            worldObj.createExplosion(null, xCoord, yCoord, zCoord, (float) (4F + SEAPI.energyNetAgent.getVoltage(tile) / 265), true);
 
-        if (SEEnergy.getVoltage(this) == 0) {
+        if (SEAPI.energyNetAgent.getVoltage(tile) == 0) {
             isWorking = false;
             SEAPI.networkManager.updateNetworkFields(this);
         }

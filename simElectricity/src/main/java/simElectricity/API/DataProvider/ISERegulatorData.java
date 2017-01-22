@@ -1,7 +1,10 @@
-package simElectricity.API.EnergyTile;
+package simElectricity.API.DataProvider;
 
-public interface ISERegulatorController extends ISESimulatable{
-	ISERegulatorInput getInput();
+
+public interface ISERegulatorData extends ISEComponentDataProvider{
+	public double getRegulatedVoltage();
+	
+	public double getOutputResistance();
 	
 	/***
 	 * @return Maximum allowed duty cycle </p>

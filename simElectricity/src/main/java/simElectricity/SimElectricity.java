@@ -74,7 +74,7 @@ public class SimElectricity {
     	SEAPI.fluid = new FluidUtil();
     	SEAPI.cableRenderHelper = new CableRenderHelper();
     	SEAPI.utils = new SEUtils();
-    	SEEnergy.energyNetAgent = new EnergyNetAgent();
+    	SEAPI.energyNetAgent = new EnergyNetAgent();
 
         //Load configurations
         FMLCommonHandler.instance().bus().register(new ConfigManager());

@@ -23,56 +23,16 @@ import java.util.List;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.ForgeDirection;
+import simElectricity.API.SEAPI;
 import simElectricity.API.SEEnergy;
 import simElectricity.API.Common.TileEntitySE;
+import simElectricity.API.DataProvider.ISETransformerData;
 import simElectricity.API.EnergyTile.ISESubComponent;
-import simElectricity.API.EnergyTile.ISETile;
-import simElectricity.API.EnergyTile.ISETransformerPrimary;
-import simElectricity.API.EnergyTile.ISETransformerSecondary;
+import simElectricity.API.Tile.ISETile;
 import simElectricity.API.INetworkEventHandler;
 
-public class TileAdjustableTransformer extends TileEntitySE implements ISETile, INetworkEventHandler {
-	public class TPrimary implements ISETransformerPrimary{
-		private ISETransformerSecondary _sec;
-		private TileAdjustableTransformer _par;
-		
-		public TPrimary(TileAdjustableTransformer parent){
-			_sec = new TSecondary(this);
-			_par = parent;
-		}
-		
-		@Override
-		public ISETransformerSecondary getSecondary() {
-			return _sec;
-		}
-
-		@Override
-		public double getRatio() {
-			return _par.ratio;
-		}
-
-		@Override
-		public double getResistance() {
-			return _par.outputResistance;
-		}
-		
-	}
-	
-	public class TSecondary implements ISETransformerSecondary{
-		private ISETransformerPrimary _pri;
-		
-		public TSecondary(ISETransformerPrimary primary){
-			_pri = primary;
-		}
-		
-		@Override
-		public ISETransformerPrimary getPrimary() {
-			return _pri;
-		}
-		
-	}
-	
-    public TPrimary primary = new TPrimary(this);
+public class TileAdjustableTransformer extends TileEntitySE implements ISETile, ISETransformerData, INetworkEventHandler {
+    public ISESubComponent primary = (ISESubComponent) SEAPI.energyNetAgent.newComponent(this);
     
     public ForgeDirection primarySide = ForgeDirection.NORTH, secondarySide = ForgeDirection.SOUTH;
     public float ratio = 10, outputResistance = 1;
@@ -139,7 +99,7 @@ public class TileAdjustableTransformer extends TileEntitySE implements ISETile, 
 		if (side == primarySide)
 			return primary;
 		if (side == secondarySide)
-			return primary.getSecondary();
+			return primary.getComplement();
 		return null;
 	}
 	
@@ -149,5 +109,16 @@ public class TileAdjustableTransformer extends TileEntitySE implements ISETile, 
 	
 	public ForgeDirection getSecondarySide(){
 		return secondarySide;
+	}
+
+	//Transformer data
+	@Override
+	public double getRatio() {
+		return ratio;
+	}
+
+	@Override
+	public double getInternalResistance() {
+		return outputResistance;
 	}
 }

@@ -10,9 +10,14 @@ import java.util.LinkedList;
  * The tileEntity must implements ISEGridTile interface
  */
 public interface ISEGridNode extends ISESimulatable{
+	public static final int ISEGridNode_Wire = 0;
+	public static final int ISEGridNode_TransformerPrimary = 1;
+	public static final int ISEGridNode_TransformerSecondary = 2;
+	
 	int getXCoord();
 	int getYCoord();
 	int getZCoord();
+	int getType();
 	
     /**
      * Returns a list of neighbors

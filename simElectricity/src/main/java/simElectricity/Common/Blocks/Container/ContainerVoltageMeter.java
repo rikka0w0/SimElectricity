@@ -34,7 +34,7 @@ public class ContainerVoltageMeter extends ContainerBase {
     @Override
     public void detectAndSendChanges() {
         super.detectAndSendChanges();
-        ((TileVoltageMeter) tileEntity).voltage = SEEnergy.getVoltage(((TileVoltageMeter) tileEntity));
+        ((TileVoltageMeter) tileEntity).voltage = SEAPI.energyNetAgent.getVoltage(((TileVoltageMeter) tileEntity).tile);
         SEAPI.networkManager.updateTileEntityFields(tileEntity, "voltage");
     }
 

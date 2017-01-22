@@ -29,9 +29,9 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.WorldEvent;
 
-import simElectricity.API.EnergyTile.ISEGridTile;
-import simElectricity.API.EnergyTile.ISEPlaceable;
+import simElectricity.API.ISEPlaceable;
 import simElectricity.API.Events.*;
+import simElectricity.API.Tile.ISEGridTile;
 import simElectricity.Common.ConfigManager;
 import simElectricity.Common.SEUtils;
 

@@ -7,16 +7,18 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.ForgeDirection;
+import simElectricity.API.SEAPI;
 import simElectricity.API.SEEnergy;
 import simElectricity.API.IEnergyNetUpdateHandler;
 import simElectricity.API.ISEWrenchable;
 import simElectricity.API.Common.TileSidedFacingMachine;
-import simElectricity.API.EnergyTile.ISEConstantPowerLoad;
+import simElectricity.API.DataProvider.ISEConstantPowerLoadData;
 import simElectricity.API.EnergyTile.ISESubComponent;
-import simElectricity.API.EnergyTile.ISETile;
+import simElectricity.API.Tile.ISETile;
 
-public class TileIC2Generator extends TileSidedFacingMachine implements IEnergySource, ISETile, ISEConstantPowerLoad, ISEWrenchable, IEnergyNetUpdateHandler{
+public class TileIC2Generator extends TileSidedFacingMachine implements IEnergySource, ISETile, ISEConstantPowerLoadData, ISEWrenchable, IEnergyNetUpdateHandler{
 	public ForgeDirection functionalSide = ForgeDirection.NORTH;
+	ISESubComponent tile = (ISESubComponent) SEAPI.energyNetAgent.newComponent(this);
 	
 	public double inputPower = 0;	//Input rate
 	
@@ -67,7 +69,7 @@ public class TileIC2Generator extends TileSidedFacingMachine implements IEnergyS
         
 	@Override
 	public void onEnergyNetUpdate() {
-		double V = SEEnergy.getVoltage(this);
+		double V = SEAPI.energyNetAgent.getVoltage(tile);
 		double Rcal = V*V/getRatedPower();
 		
 		if (Rcal > getMaximumResistance())
@@ -184,7 +186,7 @@ public class TileIC2Generator extends TileSidedFacingMachine implements IEnergyS
 
 	@Override
 	public ISESubComponent getComponent(ForgeDirection side) {
-		return side == functionalSide ? this : null;
+		return side == functionalSide ? this.tile : null;
 	}
 
 
