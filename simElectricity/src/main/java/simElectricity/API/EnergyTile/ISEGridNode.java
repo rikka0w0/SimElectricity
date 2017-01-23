@@ -23,9 +23,4 @@ public interface ISEGridNode extends ISESimulatable{
      * Returns a list of neighbors
      */
 	LinkedList<ISESimulatable> getNeighborList();
-	
-    /**
-     * Returns the resistance between this node and the neighbor node
-     */
-	double getResistance(ISEGridNode neighbor);
 }

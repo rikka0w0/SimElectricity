@@ -54,7 +54,7 @@ public final class EnergyNet{
 
 
     public String[] info(){
-    	BakaGraph tileEntityGraph = dataProvider.getTEGraph();
+    	SEGraph tileEntityGraph = dataProvider.getTEGraph();
     	String sparseRate;
 
     	if (tileEntityGraph.size() == 0 && dataProvider.getGridObjectCount() == 0){
@@ -96,8 +96,9 @@ public final class EnergyNet{
         if (calc) {
         	calc = false;
         	
-        	BakaGraph tileEntityGraph = dataProvider.getTEGraph();
-            simulator.run(tileEntityGraph);
+        	SEGraph tileEntityGraph = dataProvider.getTEGraph();
+        	tileEntityGraph.getTerminalNodes();
+            //simulator.run(tileEntityGraph);
         	
             try {   
 	            for (Iterator<IEnergyNetUpdateHandler> iterator = energyNetUpdateAgents.iterator(); iterator.hasNext(); ) {
@@ -150,7 +151,7 @@ public final class EnergyNet{
      */
     public void addTileEntity(TileEntity te) {
         //Map<ISESimulatable, ISESimulatable> neighborMap = new HashMap<ISESimulatable, ISESimulatable>();
-    	BakaGraph tileEntityGraph = dataProvider.getTEGraph();
+    	SEGraph tileEntityGraph = dataProvider.getTEGraph();
 
     	
     	
@@ -201,7 +202,7 @@ public final class EnergyNet{
      * Remove a TileEntity from the energy net
      */
     public void removeTileEntity(TileEntity te) {
-    	BakaGraph tileEntityGraph = dataProvider.getTEGraph();
+    	SEGraph tileEntityGraph = dataProvider.getTEGraph();
     	
         if (te instanceof ISECableTile) {
         	tileEntityGraph.removeVertex((SEComponent) ((ISECableTile) te).getNode());
@@ -238,6 +239,7 @@ public final class EnergyNet{
     }
     
     public boolean addGridNode(int x, int y, int z, byte type){
+    	calc = true;
     	return dataProvider.addGridNode(x, y, z, type) != null;
     }
     

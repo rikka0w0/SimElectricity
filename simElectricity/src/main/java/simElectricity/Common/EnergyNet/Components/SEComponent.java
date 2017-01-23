@@ -9,4 +9,7 @@ import simElectricity.API.EnergyTile.ISESimulatable;
 public abstract class SEComponent implements ISESimulatable{
 	public LinkedList<SEComponent> neighbors = new LinkedList<SEComponent>();
 	public TileEntity te;
+	public boolean visited;
+	public LinkedList<SEComponent> optimizedNeighbors = new LinkedList<SEComponent>();
+	public LinkedList<Double> optimizedResistance = new LinkedList<Double>();
 }

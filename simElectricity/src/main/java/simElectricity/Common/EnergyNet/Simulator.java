@@ -92,7 +92,7 @@ public class Simulator {
     		if (neighbor instanceof Junction){
     			return ((Junction) neighbor).data.getResistance(curGridNode);
     		}else if (neighbor instanceof GridNode){
-    			return curGridNode.getResistance((GridNode)neighbor);
+    			return curGridNode.resistances.get((GridNode)neighbor);
     		}else {
     			throw new RuntimeException("Unaccptable conntection");
     		}
@@ -105,7 +105,7 @@ public class Simulator {
     	throw new RuntimeException("Unaccptable conntection");
     }
 
-    double[] calcCurrents(double[] voltages, List<SEComponent> unknownVoltageNodes, BakaGraph tileEntityGraph){
+    double[] calcCurrents(double[] voltages, List<SEComponent> unknownVoltageNodes, SEGraph tileEntityGraph){
     	int matrixSize = unknownVoltageNodes.size();
     	
     	double[] currents = new double[matrixSize];   
@@ -266,7 +266,7 @@ public class Simulator {
     	return currents;
     }
 
-    void formJacobian(double[] voltages, List<SEComponent> unknownVoltageNodes, BakaGraph tileEntityGraph){
+    void formJacobian(double[] voltages, List<SEComponent> unknownVoltageNodes, SEGraph tileEntityGraph){
     	int matrixSize = unknownVoltageNodes.size();
     	
     	matrix.newMatrix(matrixSize);
@@ -420,8 +420,8 @@ public class Simulator {
         matrix.finishEditing();
     }
     
-    public void run(BakaGraph tileEntityGraph) {
-        List<SEComponent> unknownVoltageNodes = tileEntityGraph.getNodes();
+    public void run(SEGraph tileEntityGraph) {
+        List<SEComponent> unknownVoltageNodes = tileEntityGraph.getTerminalNodes();
     	int matrixSize = unknownVoltageNodes.size();
 
     	double[] voltages = new double[matrixSize];

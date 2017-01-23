@@ -34,7 +34,7 @@ public class EnergyNetDataProvider extends WorldSavedData{
 	private List<TileEntity> loadedGridTiles = new LinkedList<TileEntity>();
 	
 	//Records the connection between components
-	private BakaGraph tileEntityGraph = new BakaGraph();
+	private SEGraph tileEntityGraph = new SEGraph();
 
 
 	//Utils ------------------------------------------------------------------------------
@@ -174,7 +174,7 @@ public class EnergyNetDataProvider extends WorldSavedData{
 		return instance;
 	}
 	
-	public BakaGraph getTEGraph(){
+	public SEGraph getTEGraph(){
 		return tileEntityGraph;
 	}
 			

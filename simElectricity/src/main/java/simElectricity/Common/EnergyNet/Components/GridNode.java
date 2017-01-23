@@ -120,14 +120,6 @@ public class GridNode extends SEComponent implements ISEGridNode{
 	}
 	
 	@Override
-	public double getResistance(ISEGridNode neighbor){
-		if (resistances.containsKey(neighbor))
-			return resistances.get(neighbor);
-		else
-			return Double.NaN;
-	}
-	
-	@Override
 	public int getXCoord(){
 		return this.x;
 	}
