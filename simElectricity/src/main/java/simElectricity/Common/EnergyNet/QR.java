@@ -158,4 +158,9 @@ public class QR implements IMatrixResolver{
 			return 0;
 		return matrix.nzmax;
 	}
+
+	@Override
+	public int getMatrixSize() {
+		return size;
+	}
 }

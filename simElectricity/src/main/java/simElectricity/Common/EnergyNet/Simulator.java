@@ -2,6 +2,7 @@ package simElectricity.Common.EnergyNet;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -50,6 +51,10 @@ public class Simulator {
     	return matrix.getTotalNonZeros();
     }
     
+    public int getMatrixSize(){
+    	return matrix.getMatrixSize();
+    }
+    
     public double getVoltage(ISESimulatable Tile){
         if (voltageCache.containsKey(Tile)){
        	double voltage = voltageCache.get(Tile);
@@ -66,45 +71,6 @@ public class Simulator {
         }
     }
     
-    private double calcR(SEComponent cur, SEComponent neighbor){
-    	if (cur instanceof Cable){
-    		Cable curConductor = (Cable) cur;
-    		if (neighbor instanceof Cable){
-    			return curConductor.data.getResistance() + ((Cable) neighbor).data.getResistance();
-    		}else if (neighbor instanceof Junction){
-    			return curConductor.data.getResistance() + ((Junction) neighbor).data.getResistance(curConductor);
-    		}else{
-    			return curConductor.data.getResistance();
-    		}
-    	} else if (cur instanceof Junction){
-    		Junction curJunction = (Junction) cur;
-    		if (neighbor instanceof Cable){
-    			return ((Cable) neighbor).data.getResistance() + curJunction.data.getResistance(neighbor);
-    		}else if (neighbor instanceof Junction){
-    			return curJunction.data.getResistance(neighbor) + ((Junction) neighbor).data.getResistance(curJunction);
-    		}else if (neighbor instanceof GridNode){
-    			return curJunction.data.getResistance(neighbor);
-    		}else{
-    			throw new RuntimeException("Unaccptable conntection");
-    		}
-    	} else if (cur instanceof GridNode){
-    		GridNode curGridNode = (GridNode)cur;
-    		if (neighbor instanceof Junction){
-    			return ((Junction) neighbor).data.getResistance(curGridNode);
-    		}else if (neighbor instanceof GridNode){
-    			return curGridNode.resistances.get((GridNode)neighbor);
-    		}else {
-    			throw new RuntimeException("Unaccptable conntection");
-    		}
-    	} else {
-    		if (neighbor instanceof Cable){
-    			return ((Cable)neighbor).data.getResistance();
-    		}
-    	}
-    	
-    	throw new RuntimeException("Unaccptable conntection");
-    }
-
     double[] calcCurrents(double[] voltages, List<SEComponent> unknownVoltageNodes, SEGraph tileEntityGraph){
     	int matrixSize = unknownVoltageNodes.size();
     	
@@ -117,23 +83,14 @@ public class Simulator {
         	currents[nodeIndex] = -voltages[nodeIndex]*Gnode;
             
         	//Node - Node
-			if (curNode instanceof Cable || curNode instanceof Junction || curNode instanceof GridNode){
-	        	for (SEComponent neighbor : curNode.neighbors){
-	        		int iNeighbor = unknownVoltageNodes.indexOf(neighbor);
-	        		
-	        		currents[nodeIndex] -= (voltages[nodeIndex] - voltages[iNeighbor])/calcR(curNode, neighbor);
-	        	}			
-			}
-			else{
-				//For other components, its neighbor must be a Cable
-				Cable conductor = (Cable) (curNode.neighbors.isEmpty() ? null : curNode.neighbors.get(0));
-				
-				if (conductor != null){
-					int iConductor = unknownVoltageNodes.indexOf(conductor);
-					currents[nodeIndex] -= (voltages[nodeIndex] - voltages[iConductor])/conductor.data.getResistance();		
-				}
-			}
-			
+			Iterator<SEComponent> iteratorON = curNode.optimizedNeighbors.iterator();
+			Iterator<Double> iteratorR = curNode.optimizedResistance.iterator();
+			while (iteratorON.hasNext()){
+				SEComponent neighbor = iteratorON.next();
+        		int iNeighbor = unknownVoltageNodes.indexOf(neighbor);
+        		double R = iteratorR.next();
+        		currents[nodeIndex] -= (voltages[nodeIndex] - voltages[iNeighbor])/R;					
+			}			
 			
 			//Node - shunt and two port networks
 			if (curNode instanceof VoltageSource){
@@ -277,14 +234,17 @@ public class Simulator {
         	double diagonalElement = Gnode;
         	
         	//Add conductance between nodes
-        	for (SEComponent neighbor : columnNode.neighbors){
-        		int rowIndex = unknownVoltageNodes.indexOf(neighbor);
-        		double G = 1.0D / calcR(columnNode, neighbor);
+			Iterator<SEComponent> iteratorON = columnNode.optimizedNeighbors.iterator();
+			Iterator<Double> iteratorR = columnNode.optimizedResistance.iterator();
+			while (iteratorON.hasNext()){
+				SEComponent neighbor = iteratorON.next();
+				int rowIndex = unknownVoltageNodes.indexOf(neighbor);
+        		double R = iteratorR.next();	
         		
-        		diagonalElement += G;
+        		diagonalElement += 1.0D / R;
         		
-        		matrix.setElementValue(columnIndex, rowIndex, -G);
-        	}
+        		matrix.setElementValue(columnIndex, rowIndex, -1.0D / R);
+			}
         	
         	//Process voltage sources and normal loads
         	if (columnNode instanceof VoltageSource){

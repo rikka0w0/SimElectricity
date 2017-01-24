@@ -129,4 +129,9 @@ public class Gaussian implements IMatrixResolver{
 	public int getTotalNonZeros(){
 		return nZ;
 	}
+	
+	@Override
+	public int getMatrixSize() {
+		return size;
+	}
 }

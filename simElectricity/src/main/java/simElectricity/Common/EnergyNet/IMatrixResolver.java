@@ -42,6 +42,11 @@ public interface IMatrixResolver {
      */
     int getTotalNonZeros();
 
+    /**
+     * Return the number of rows/columns of the matrix
+     */
+    int getMatrixSize();
+    
     public static class MatrixHelper {
         public static IMatrixResolver newResolver(String name) {
             try {

@@ -55,7 +55,7 @@ public final class EnergyNet{
 
     public String[] info(){
     	SEGraph tileEntityGraph = dataProvider.getTEGraph();
-    	String sparseRate;
+    	String density;
 
     	if (tileEntityGraph.size() == 0 && dataProvider.getGridObjectCount() == 0){
     		return new String[]{
@@ -65,16 +65,17 @@ public final class EnergyNet{
     	}
 
     	if (tileEntityGraph.size() == 0){
-    		sparseRate = "Undefined";
+    		density = "Undefined";
     	}else{
-    		sparseRate = String.valueOf(simulator.getTotalNonZeros() * 100 / (tileEntityGraph.size() * tileEntityGraph.size())) + "%";
+    		density = String.valueOf(simulator.getTotalNonZeros() * 100 / simulator.getMatrixSize()/ simulator.getMatrixSize()) + "%";
     	}
     	
     	return new String[]{
     	"Loaded entities: " + String.valueOf(tileEntityGraph.size()),
     	"Grid Objects: " + String.valueOf(dataProvider.getGridObjectCount()),
+    	"Matrix size: " + String.valueOf(simulator.getMatrixSize()),
     	"Non-zero elements: " + String.valueOf(simulator.getTotalNonZeros()),
-    	"Sparse rate: " + sparseRate,
+    	"Density: " + density,
     	"Matrix solving algorithsm: " + matrixSolverName,
     	"Iterations:" + String.valueOf(simulator.getLastIteration())
     	};
@@ -97,8 +98,8 @@ public final class EnergyNet{
         	calc = false;
         	
         	SEGraph tileEntityGraph = dataProvider.getTEGraph();
-        	tileEntityGraph.getTerminalNodes();
-            //simulator.run(tileEntityGraph);
+        	//tileEntityGraph.getTerminalNodes();
+            simulator.run(tileEntityGraph);
         	
             try {   
 	            for (Iterator<IEnergyNetUpdateHandler> iterator = energyNetUpdateAgents.iterator(); iterator.hasNext(); ) {

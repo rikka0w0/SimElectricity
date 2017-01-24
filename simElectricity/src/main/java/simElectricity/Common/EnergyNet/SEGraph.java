@@ -1,6 +1,7 @@
 package simElectricity.Common.EnergyNet;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Set;
 
@@ -9,7 +10,7 @@ import simElectricity.Common.EnergyNet.Components.*;
 
 public class SEGraph {
 	private LinkedList<SEComponent> components;
-	private LinkedList<SEComponent> wires;
+	private LinkedList<SEComponent> wires;	
 	
     public SEGraph() {
     	components = new LinkedList<SEComponent>();
@@ -184,7 +185,7 @@ public class SEGraph {
        
     public LinkedList<SEComponent> getTerminalNodes(){
     	LinkedList<SEComponent> terminalNodes = (LinkedList<SEComponent>) components.clone();
-    	
+
     	for (SEComponent node : terminalNodes){
     		node.visited = false;
     		node.optimizedNeighbors.clear();
@@ -250,18 +251,45 @@ public class SEGraph {
         			}while (true);	
         			
         			if (reach != null){
-            			node.optimizedNeighbors.add(reach);
-            			node.optimizedResistance.add(resistance);      
-            			
-            			reach.optimizedNeighbors.add(node);
-            			reach.optimizedResistance.add(resistance); 
+        				Iterator<SEComponent> iteratorON = node.optimizedNeighbors.iterator();
+        				Iterator<Double> iteratorR = node.optimizedResistance.iterator();
+        				
+        				checkDupe: while (iteratorON.hasNext()){
+        					double prevR = iteratorR.next();
+        					if (iteratorON.next() == reach){
+        						//Delete previous edge
+                				Iterator<SEComponent> iteratorON2 = reach.optimizedNeighbors.iterator();
+                				Iterator<Double> iteratorR2 = reach.optimizedResistance.iterator();
+                				delete: while (iteratorON2.hasNext()){
+                					iteratorR2.next();
+                					if (iteratorON2.next() == node){
+                						iteratorR2.remove();
+                						iteratorON2.remove();
+                						break delete;
+                					}
+                				}
+
+        						iteratorR.remove();
+        						iteratorON.remove();
+        						
+        						resistance = resistance * prevR / (resistance + prevR);
+        						break checkDupe;
+        					}
+        				}
+        				
+
+                		node.optimizedNeighbors.add(reach);
+                		node.optimizedResistance.add(resistance);      
+                			
+                		reach.optimizedNeighbors.add(node);
+                		reach.optimizedResistance.add(resistance);        					
         			}
         		}
     		}
 
     	}
     	
-    	
     	return terminalNodes;
     }
+
 }
