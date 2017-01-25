@@ -1,7 +1,7 @@
 package simElectricity.Common.Blocks.TileEntity;
 
 import simElectricity.API.SEAPI;
-import simElectricity.API.SEEnergy;
+
 import simElectricity.API.Common.TileEntitySE;
 import simElectricity.API.DataProvider.ISEDiodeData;
 import simElectricity.API.EnergyTile.ISESubComponent;

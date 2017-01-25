@@ -22,7 +22,7 @@ package simElectricity.Common.Blocks.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.Common.TileSidedGenerator;
 import simElectricity.API.SEAPI;
-import simElectricity.API.SEEnergy;
+
 import simElectricity.Common.SEUtils;
 
 public class TileBatteryBox extends TileSidedGenerator {
@@ -61,7 +61,7 @@ public class TileBatteryBox extends TileSidedGenerator {
         if (voltage != outputVoltage | resistance != outputResistance) {
             outputVoltage = voltage;
             outputResistance = resistance;
-            SEEnergy.postTileChangeEvent(this);
+            SEAPI.energyNetAgent.markTileForUpdate(this);
         }
     }
 

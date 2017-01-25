@@ -17,19 +17,19 @@
  * USA
  */
 
-package simElectricity.API.Events;
+package simElectricity.Common.EnergyNet.Events;
 
 import cpw.mods.fml.common.eventhandler.Event;
 import net.minecraft.tileentity.TileEntity;
 
 /**
- * Should be posted when a tileEntity is leaving from the energy net,
- * use {@link simElectricity.API.Energy#postTileDetachEvent(net.minecraft.tileentity.TileEntity) SEEnergy.postTileDetachEvent()}
+ * Should be posted when a tileEntity has something changed, ie. output voltage, resistance...,
+ * use {@link simElectricity.API.Energy#postTileChangeEvent(net.minecraft.tileentity.TileEntity)  SEEnergy.postTileChangeEvent()}
  */
-public class TileDetachEvent extends Event {
-    public TileEntity te;
+public class TileChangeEvent extends Event {
+    public TileEntity energyTile;
 
-    public TileDetachEvent(TileEntity te) {
-        this.te = te;
+    public TileChangeEvent(TileEntity energyTile) {
+        this.energyTile = energyTile;
     }
 }

@@ -21,6 +21,7 @@ package simElectricity.Common.EnergyNet;
 
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import net.minecraftforge.common.MinecraftForge;
 
 import java.util.Map;
 import java.util.WeakHashMap;
@@ -34,6 +35,14 @@ import simElectricity.API.DataProvider.ISETransformerData;
 import simElectricity.API.DataProvider.ISEVoltageSourceData;
 import simElectricity.API.EnergyTile.ISESimulatable;
 import simElectricity.API.EnergyTile.ISESubComponent;
+import simElectricity.Common.EnergyNet.Events.GridConnectionEvent;
+import simElectricity.Common.EnergyNet.Events.GridDisconnectionEvent;
+import simElectricity.Common.EnergyNet.Events.GridObjectAttachEvent;
+import simElectricity.Common.EnergyNet.Events.GridObjectDetachEvent;
+import simElectricity.Common.EnergyNet.Events.TileAttachEvent;
+import simElectricity.Common.EnergyNet.Events.TileChangeEvent;
+import simElectricity.Common.EnergyNet.Events.TileDetachEvent;
+import simElectricity.Common.EnergyNet.Events.TileRejoinEvent;
 import simElectricity.API.Internal.IEnergyNetAgent;
 import simElectricity.API.Tile.ISECableTile;
 import simElectricity.Common.EnergyNet.Components.Cable;
@@ -109,4 +118,43 @@ public class EnergyNetAgent implements IEnergyNetAgent{
 			return new Cable((ISECableTile) dataProviderTileEntity, dataProviderTileEntity);
 		return null;
 	}
+
+	@Override
+    public void attachTile(TileEntity te) {
+        MinecraftForge.EVENT_BUS.post(new TileAttachEvent(te));
+    }
+
+	@Override
+    public void markTileForUpdate(TileEntity te) {
+        MinecraftForge.EVENT_BUS.post(new TileChangeEvent(te));
+    }
+	
+	@Override
+    public void detachTile(TileEntity te) {
+        MinecraftForge.EVENT_BUS.post(new TileDetachEvent(te));
+    }
+
+	@Override
+    public void reattachTile(TileEntity te) {
+        MinecraftForge.EVENT_BUS.post(new TileRejoinEvent(te));
+    }
+    
+	@Override
+    public void attachGridObject(World world, int x, int y, int z, byte type) {
+        MinecraftForge.EVENT_BUS.post(new GridObjectAttachEvent(world,x,y,z,type));
+    }
+    
+	@Override
+    public void detachGridObject(World world, int x, int y, int z) {
+        MinecraftForge.EVENT_BUS.post(new GridObjectDetachEvent(world,x,y,z));
+    }
+    
+	@Override
+    public void connectGridNode(World world, int x1, int y1, int z1, int x2, int y2, int z2, double resistance) {
+        MinecraftForge.EVENT_BUS.post(new GridConnectionEvent(world,x1,y1,z1,x2,y2,z2,resistance));
+    }   
+    
+    public void breakGridConnection(World world, int x1, int y1, int z1, int x2, int y2, int z2) {
+        MinecraftForge.EVENT_BUS.post(new GridDisconnectionEvent(world,x1,y1,z1,x2,y2,z2));
+    }
 }

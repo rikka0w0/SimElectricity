@@ -5,7 +5,6 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
-import simElectricity.API.Client.RenderHVTowerBase;
 import simElectricity.Common.Blocks.TileEntity.TileCableClamp;
 import simElectricity.Common.Blocks.TileEntity.TileTower;
 @SideOnly(Side.CLIENT)

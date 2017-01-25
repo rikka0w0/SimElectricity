@@ -83,11 +83,11 @@ public class TileSwitch extends TileEntitySE implements ISETile, ISEJunctionData
 		}else{//Handling on server side
 			for (String s:fields){
 		        if (s.contains("inputSide") || s.contains("outputSide") || s.contains("isOn")) {
-		            SEEnergy.postTileRejoinEvent(this);
+		        	SEAPI.energyNetAgent.reattachTile(this);
 		            worldObj.notifyBlockChange(xCoord, yCoord, zCoord, 
 		               		worldObj.getBlock(xCoord, yCoord, zCoord));
 		        } else if (s.contains("resistance")) {
-		            SEEnergy.postTileChangeEvent(this);
+		        	SEAPI.energyNetAgent.markTileForUpdate(this);
 		        } else if (s.contains("maxCurrent")) {
 		            onEnergyNetUpdate();
 		        }
@@ -120,7 +120,7 @@ public class TileSwitch extends TileEntitySE implements ISETile, ISEJunctionData
     	current = getCurrent();
         if (current > maxCurrent) {
             isOn = false;
-            SEEnergy.postTileRejoinEvent(this);
+            SEAPI.energyNetAgent.reattachTile(this);
             SEAPI.networkManager.updateTileEntityFields(this, "isOn");
         }
     }

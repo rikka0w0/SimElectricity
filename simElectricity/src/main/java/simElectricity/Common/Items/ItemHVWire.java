@@ -26,7 +26,6 @@ import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 import simElectricity.API.Common.Items.ItemSE;
-import simElectricity.API.SEEnergy;
 import simElectricity.API.Tile.ISEGridTile;
 import simElectricity.API.SEAPI;
 
@@ -75,7 +74,7 @@ public class ItemHVWire extends ItemSE {
 
                     if (((ISEGridTile)te1).canConnect() && ((ISEGridTile)te2).canConnect()) {
                     	double resistance = (0.2 * Math.sqrt(te1.getDistanceFrom(x, y, z)));
-                    	SEEnergy.postGridConnectionEvent(world, x, y, z, lastCoordinate[0], lastCoordinate[1], lastCoordinate[2], resistance);
+                    	SEAPI.energyNetAgent.connectGridNode(world, x, y, z, lastCoordinate[0], lastCoordinate[1], lastCoordinate[2], resistance);
                     	SEAPI.utils.chat(player, StatCollector.translateToLocal("sime.TwConnect"));
                     } else
                     	SEAPI.utils.chat(player, StatCollector.translateToLocal("sime.ActionCancel"));

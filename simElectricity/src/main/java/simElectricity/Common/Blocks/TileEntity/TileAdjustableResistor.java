@@ -22,7 +22,7 @@ package simElectricity.Common.Blocks.TileEntity;
 import net.minecraft.nbt.NBTTagCompound;
 import simElectricity.API.Common.TileStandardSEMachine;
 import simElectricity.API.SEAPI;
-import simElectricity.API.SEEnergy;
+
 import simElectricity.API.INetworkEventHandler;
 
 import java.util.List;
@@ -64,7 +64,7 @@ public class TileAdjustableResistor extends TileStandardSEMachine implements INe
         if (!worldObj.isRemote) {
             for (String s : fields)
                 if (s.contains("resistance"))
-                    SEEnergy.postTileChangeEvent(this);
+                    SEAPI.energyNetAgent.markTileForUpdate(this);
         }
     }
 

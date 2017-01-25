@@ -27,7 +27,6 @@ import org.lwjgl.opengl.GL11;
 
 import simElectricity.Common.Blocks.TileEntity.TileCableClamp;
 import simElectricity.Common.Blocks.TileEntity.TileTower;
-import simElectricity.API.Client.RenderHVTowerBase;
 
 @SideOnly(Side.CLIENT)
 public class RenderTower extends RenderHVTowerBase{

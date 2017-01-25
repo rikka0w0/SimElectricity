@@ -26,7 +26,6 @@ import simElectricity.API.EnergyTile.ISESimulatable;
 import simElectricity.API.EnergyTile.ISESubComponent;
 import simElectricity.API.Tile.ISECableTile;
 import simElectricity.API.Tile.ISETile;
-import simElectricity.API.SEEnergy;
 import simElectricity.API.IEnergyNetUpdateHandler;
 import simElectricity.Common.ConfigManager;
 import simElectricity.Common.SEUtils;

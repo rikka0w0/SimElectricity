@@ -1,9 +1,12 @@
-package simElectricity.API.Client;
+package simElectricity.Client.Render;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.renderer.Tessellator;
 import org.lwjgl.opengl.GL11;
+
+import simElectricity.API.Client.ITextureProvider;
+
 
 /**
  * Provides a easy way of rendering cubes and other shapes made of cubes

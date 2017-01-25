@@ -30,10 +30,10 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.WorldEvent;
 
 import simElectricity.API.ISEPlaceable;
-import simElectricity.API.Events.*;
 import simElectricity.API.Tile.ISEGridTile;
 import simElectricity.Common.ConfigManager;
 import simElectricity.Common.SEUtils;
+import simElectricity.Common.EnergyNet.Events.*;
 
 public class EnergyNetEventHandler {
     public EnergyNetEventHandler() {

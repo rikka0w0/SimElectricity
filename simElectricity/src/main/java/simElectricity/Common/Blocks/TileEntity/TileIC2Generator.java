@@ -8,7 +8,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.SEAPI;
-import simElectricity.API.SEEnergy;
+
 import simElectricity.API.IEnergyNetUpdateHandler;
 import simElectricity.API.ISEWrenchable;
 import simElectricity.API.Common.TileSidedFacingMachine;
@@ -50,7 +50,7 @@ public class TileIC2Generator extends TileSidedFacingMachine implements IEnergyS
         if (bufferedEnergy > maxBufferedEnergy){
         	bufferedEnergy = maxBufferedEnergy;
         	if (enabled){
-        		SEEnergy.postTileChangeEvent(this);
+        		SEAPI.energyNetAgent.markTileForUpdate(this);
         		enabled = false;
         	}
         		
@@ -59,7 +59,7 @@ public class TileIC2Generator extends TileSidedFacingMachine implements IEnergyS
         
         if (bufferedEnergy < maxBufferedEnergy / 2){
         	if (!enabled){
-        		SEEnergy.postTileChangeEvent(this);
+        		SEAPI.energyNetAgent.markTileForUpdate(this);
         		enabled = true;
         	}
         		
@@ -77,7 +77,7 @@ public class TileIC2Generator extends TileSidedFacingMachine implements IEnergyS
 		if (Rcal < getMinimumResistance())
 			Rcal = getMinimumResistance();
         
-		inputPower = SEEnergy.convertSE2IC(V*V/Rcal);
+		inputPower = V*V/Rcal/SEAPI.ratioSE2IC;
 	}
 	
 	
@@ -156,7 +156,7 @@ public class TileIC2Generator extends TileSidedFacingMachine implements IEnergyS
 
 	@Override
 	public double getRatedPower() {
-		return SEEnergy.convertIC2SE(outputVoltage);
+		return outputVoltage * SEAPI.ratioSE2IC;
 	}
 
 

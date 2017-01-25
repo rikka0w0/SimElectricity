@@ -26,7 +26,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.Common.TileSidedGenerator;
-import simElectricity.API.SEEnergy;
+
 import simElectricity.API.INetworkEventHandler;
 import simElectricity.API.SEAPI;
 
@@ -52,7 +52,7 @@ public class TileSimpleGenerator extends TileSidedGenerator implements INetworkE
                 isWorking = true;
                 outputVoltage = normalOutputV;
                 outputResistance = normalOutputR;
-                SEEnergy.postTileChangeEvent(this);
+                SEAPI.energyNetAgent.markTileForUpdate(this);
             }
 
             double voltage = SEAPI.energyNetAgent.getVoltage(tile);
@@ -91,7 +91,7 @@ public class TileSimpleGenerator extends TileSidedGenerator implements INetworkE
             if (outputVoltage != 0) {
                 outputVoltage = 0;
                 outputResistance = Float.MAX_VALUE;
-                SEEnergy.postTileChangeEvent(this);
+                SEAPI.energyNetAgent.markTileForUpdate(this);
             }
 
             burnTime = 0;
@@ -102,7 +102,7 @@ public class TileSimpleGenerator extends TileSidedGenerator implements INetworkE
             if (outputVoltage != normalOutputV) {
                 outputVoltage = normalOutputV;
                 outputResistance = normalOutputR;
-                SEEnergy.postTileChangeEvent(this);
+                SEAPI.energyNetAgent.markTileForUpdate(this);
             }
 
             burnTime = bt;

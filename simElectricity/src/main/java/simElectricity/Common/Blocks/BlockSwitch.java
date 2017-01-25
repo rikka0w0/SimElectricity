@@ -31,7 +31,6 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.Common.Blocks.BlockContainerSE;
-import simElectricity.API.SEEnergy;
 import simElectricity.API.SEAPI;
 import simElectricity.Common.Blocks.TileEntity.TileSwitch;
 import simElectricity.SimElectricity;
@@ -52,7 +51,7 @@ public class BlockSwitch extends BlockContainerSE {
             if (!world.isRemote) {
                 te.isOn = !te.isOn;
                 SEAPI.networkManager.updateTileEntityFields(te, "isOn");
-                SEEnergy.postTileRejoinEvent(te);
+                SEAPI.energyNetAgent.reattachTile(te);
             }
         }
         return true;

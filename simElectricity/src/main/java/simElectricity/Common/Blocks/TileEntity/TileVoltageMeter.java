@@ -19,7 +19,6 @@
 
 package simElectricity.Common.Blocks.TileEntity;
 
-import simElectricity.API.SEEnergy;
 import simElectricity.API.Common.TileStandardSEMachine;
 
 public class TileVoltageMeter extends TileStandardSEMachine {

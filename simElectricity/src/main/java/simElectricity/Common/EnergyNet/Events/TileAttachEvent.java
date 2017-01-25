@@ -17,7 +17,7 @@
  * USA
  */
 
-package simElectricity.API.Events;
+package simElectricity.Common.EnergyNet.Events;
 
 import cpw.mods.fml.common.eventhandler.Event;
 import net.minecraft.tileentity.TileEntity;

@@ -21,7 +21,7 @@ package simElectricity.Common.Blocks.TileEntity;
 
 import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.Common.TileStandardSEMachine;
-import simElectricity.API.SEEnergy;
+
 import simElectricity.API.IEnergyNetUpdateHandler;
 import simElectricity.API.INetworkEventHandler;
 import simElectricity.API.SEAPI;

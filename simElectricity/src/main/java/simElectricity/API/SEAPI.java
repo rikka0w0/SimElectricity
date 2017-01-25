@@ -29,6 +29,7 @@ import simElectricity.API.Internal.ISEUtils;
 
 public class SEAPI {   
     public static boolean isSELoaded = false;
+    public static int ratioSE2IC; //SE Power = IC Power times this ratio
     
     public static IFluidUtil fluid;
     public static INetworkManager networkManager;
@@ -40,24 +41,4 @@ public class SEAPI {
      * Creative Tab for SimElectricity project
      */
     public static CreativeTabs SETab;
-
-    // Block/Item
-
-    /**
-     * @param name The name of the block.
-     *
-     * @return The block or null if not found
-     */
-    //public static Block getBlock(String name) {
-    //    return GameRegistry.findBlock(MODID, name);
-    //}
-
-    /**
-     * @param name The name of the item.
-     *
-     * @return The item or null if not found
-     */
-    //public static Item getItem(String name) {
-    //    return GameRegistry.findItem(MODID, name);
-    //}
 }

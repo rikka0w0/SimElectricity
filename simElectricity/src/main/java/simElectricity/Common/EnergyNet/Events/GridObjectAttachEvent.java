@@ -1,4 +1,4 @@
-package simElectricity.API.Events;
+package simElectricity.Common.EnergyNet.Events;
 
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;

@@ -30,14 +30,12 @@ import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraftforge.common.MinecraftForge;
-import simElectricity.API.SEEnergy;
-import simElectricity.API.IHVTower;
 import simElectricity.API.INetworkEventHandler;
 import simElectricity.API.SEAPI;
 import simElectricity.API.EnergyTile.ISEGridNode;
 import simElectricity.API.EnergyTile.ISESimulatable;
-import simElectricity.API.Events.*;
 import simElectricity.API.Tile.ISEGridTile;
+import simElectricity.Client.Render.IHVTower;
 import simElectricity.Common.Blocks.BlockCableClamp;
 
 import java.util.LinkedList;
@@ -137,7 +135,7 @@ public class TileTower extends TileEntity implements ISEGridTile,INetworkEventHa
         	return;
         
         if (!registered){
-        	SEEnergy.postTileAttachEvent(this);
+        	SEAPI.energyNetAgent.attachTile(this);
             registered = true;
         }
         	
@@ -152,7 +150,7 @@ public class TileTower extends TileEntity implements ISEGridTile,INetworkEventHa
         	return;
         
         if (registered){
-        	SEEnergy.postTileDetachEvent(this);
+        	SEAPI.energyNetAgent.detachTile(this);
             registered = false;        	
         }
     }

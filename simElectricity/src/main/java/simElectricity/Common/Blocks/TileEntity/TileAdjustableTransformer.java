@@ -24,7 +24,6 @@ import java.util.List;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.SEAPI;
-import simElectricity.API.SEEnergy;
 import simElectricity.API.Common.TileEntitySE;
 import simElectricity.API.DataProvider.ISETransformerData;
 import simElectricity.API.EnergyTile.ISESubComponent;
@@ -68,11 +67,11 @@ public class TileAdjustableTransformer extends TileEntitySE implements ISETile, 
 		if (!worldObj.isRemote){
 			for (String s:fields){
 		        if (s.contains("primarySide") || s.contains("secondarySide")) {
-		            SEEnergy.postTileRejoinEvent(this);
+		            SEAPI.energyNetAgent.reattachTile(this);
 		            worldObj.notifyBlockChange(xCoord, yCoord, zCoord, 
 		            		worldObj.getBlock(xCoord, yCoord, zCoord));
 		        } else if (s.contains("outputResistance") || s.contains("ratio")) {
-		            SEEnergy.postTileChangeEvent(this);
+		        	SEAPI.energyNetAgent.markTileForUpdate(this);
 		        }				
 			}
 

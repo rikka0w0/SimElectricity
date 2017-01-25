@@ -21,7 +21,8 @@ package simElectricity.Common.Blocks.TileEntity;
 
 import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.Common.TileSidedGenerator;
-import simElectricity.API.SEEnergy;
+import simElectricity.API.SEAPI;
+
 
 public class TileSolarPanel extends TileSidedGenerator {
     @Override
@@ -52,7 +53,7 @@ public class TileSolarPanel extends TileSidedGenerator {
         if (voltage != outputVoltage | resistance != outputResistance) {
             outputVoltage = voltage;
             outputResistance = resistance;
-            SEEnergy.postTileChangeEvent(this);
+            SEAPI.energyNetAgent.markTileForUpdate(this);
         }
     }
 

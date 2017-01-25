@@ -1,4 +1,4 @@
-package simElectricity.API;
+package simElectricity.Client.Render;
 
 import net.minecraft.tileentity.TileEntity;
 

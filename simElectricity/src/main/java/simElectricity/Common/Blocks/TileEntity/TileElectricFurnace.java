@@ -25,7 +25,7 @@ import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.Common.TileStandardSEMachine;
-import simElectricity.API.SEEnergy;
+
 import simElectricity.API.IEnergyNetUpdateHandler;
 import simElectricity.API.INetworkEventHandler;
 import simElectricity.API.SEAPI;
@@ -71,7 +71,7 @@ public class TileElectricFurnace extends TileStandardSEMachine implements IEnerg
 
             if (resistance > onResistance) {
                 resistance = onResistance;
-                SEEnergy.postTileChangeEvent(this);
+                SEAPI.energyNetAgent.markTileForUpdate(this);
             }
 
             isWorking = true;
@@ -108,7 +108,7 @@ public class TileElectricFurnace extends TileStandardSEMachine implements IEnerg
         energyStored = 0;
         if (resistance <= onResistance) {
             resistance = Float.MAX_VALUE;
-            SEEnergy.postTileChangeEvent(this);
+            SEAPI.energyNetAgent.markTileForUpdate(this);
         }
         isWorking = false;
         SEAPI.networkManager.updateNetworkFields(this);

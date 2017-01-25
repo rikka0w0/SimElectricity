@@ -25,7 +25,7 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.common.config.Configuration;
-import simElectricity.API.SEEnergy;
+import simElectricity.API.SEAPI;
 import simElectricity.Common.SEUtils;
 
 public class ConfigManager {
@@ -61,7 +61,7 @@ public class ConfigManager {
         maxIteration = config.get(Configuration.CATEGORY_GENERAL, "Max iteration", 50, "The Maximum number of iteration per tick").getInt();
         shuntResistance = config.get(Configuration.CATEGORY_GENERAL, "Shunt resistance per node", 1000000000, "The resistance connected between every node and the ground").getInt();
         shuntPN = config.get(Configuration.CATEGORY_GENERAL, "Shunt resistance per PN", 1000000000, "The conductance connected between every PN junction").getInt();
-        SEEnergy.ratioSE2IC = config.get(Configuration.CATEGORY_GENERAL, "Convertion ratio between SE and IC", 10, "SE Power / this ratio = IC Power").getInt();
+        SEAPI.ratioSE2IC = config.get(Configuration.CATEGORY_GENERAL, "Convertion ratio between SE and IC", 10, "SE Power / this ratio = IC Power").getInt();
         if (config.hasChanged())
             config.save();
         

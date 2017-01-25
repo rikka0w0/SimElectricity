@@ -17,19 +17,19 @@
  * USA
  */
 
-package simElectricity.API.Events;
+package simElectricity.Common.EnergyNet.Events;
 
 import cpw.mods.fml.common.eventhandler.Event;
 import net.minecraft.tileentity.TileEntity;
 
 /**
- * Should be posted when a tileEntity is rejoined to the energy net,
- * use {@link simElectricity.API.Energy#postTileRejoinEvent(net.minecraft.tileentity.TileEntity) SEEnergy.postTileRejoinEvent()}
+ * Should be posted when a tileEntity is leaving from the energy net,
+ * use {@link simElectricity.API.Energy#postTileDetachEvent(net.minecraft.tileentity.TileEntity) SEEnergy.postTileDetachEvent()}
  */
-public class TileRejoinEvent extends Event {
-    public TileEntity energyTile;
+public class TileDetachEvent extends Event {
+    public TileEntity te;
 
-    public TileRejoinEvent(TileEntity energyTile) {
-        this.energyTile = energyTile;
+    public TileDetachEvent(TileEntity te) {
+        this.te = te;
     }
 }

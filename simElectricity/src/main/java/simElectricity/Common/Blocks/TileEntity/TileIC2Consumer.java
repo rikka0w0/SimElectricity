@@ -10,7 +10,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.SEAPI;
-import simElectricity.API.SEEnergy;
+
 import simElectricity.API.INetworkEventHandler;
 import simElectricity.API.Common.TileSidedGenerator;
 
@@ -58,7 +58,7 @@ public class TileIC2Consumer extends TileSidedGenerator implements IEnergySink, 
         //Large enough resistance error
         if (Math.abs(newR - outputResistance) > 10E-3){
         	outputResistance = newR;
-        	SEEnergy.postTileChangeEvent(this);
+        	SEAPI.energyNetAgent.markTileForUpdate(this);
         }
 	}
 	
@@ -123,7 +123,7 @@ public class TileIC2Consumer extends TileSidedGenerator implements IEnergySink, 
 		if (!worldObj.isRemote){
 			for (String s:fields){
 		        if (s.contentEquals("outputVoltage"))
-		            SEEnergy.postTileChangeEvent(this);
+		        	SEAPI.energyNetAgent.markTileForUpdate(this);
 			}
 		}
 	}

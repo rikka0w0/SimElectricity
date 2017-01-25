@@ -27,7 +27,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.INetworkEventHandler;
-import simElectricity.API.SEEnergy;
+
 import simElectricity.API.Common.TileEntitySE;
 import simElectricity.API.EnergyTile.ISESimulatable;
 import simElectricity.API.Tile.ISECableTile;

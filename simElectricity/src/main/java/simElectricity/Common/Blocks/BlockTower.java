@@ -32,7 +32,6 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import simElectricity.API.Common.Blocks.BlockContainerSE;
 import simElectricity.API.SEAPI;
-import simElectricity.API.SEEnergy;
 import simElectricity.Common.Blocks.TileEntity.TileCableClamp;
 import simElectricity.Common.Blocks.TileEntity.TileTower;
 import simElectricity.Common.Items.ItemBlocks.ItemBlockTower;
@@ -77,24 +76,24 @@ public class BlockTower extends BlockContainerSE {
         TileTower tower = (TileTower) world.getTileEntity(x, y, z);
         tower.facing = SEAPI.utils.getPlayerSight(player, true).ordinal();
         
-        SEEnergy.postGridObjectAttachEvent(world, x, y, z, (byte)0);
+        SEAPI.energyNetAgent.attachGridObject(world, x, y, z, (byte)0);
         
         int blockMeta = world.getBlockMetadata(x, y, z);
         Block possibleNeighbor = world.getBlock(x, y-2, z);
         if (possibleNeighbor instanceof BlockTower && blockMeta == 1 && world.getBlockMetadata(x, y-2, z) == 2)
-        	SEEnergy.postGridConnectionEvent(world, x, y, z, x, y-2, z, 0.1);
+        	SEAPI.energyNetAgent.connectGridNode(world, x, y, z, x, y-2, z, 0.1);
         else if (possibleNeighbor instanceof BlockCableClamp && blockMeta == 1)
-            SEEnergy.postGridConnectionEvent(world, x, y, z, x, y-2, z, 0.1);
+        	SEAPI.energyNetAgent.connectGridNode(world, x, y, z, x, y-2, z, 0.1);
         else {
         	possibleNeighbor = world.getBlock(x, y+2, z);
             if (possibleNeighbor instanceof BlockTower && blockMeta == 2 && world.getBlockMetadata(x, y+2, z) == 1)
-            	SEEnergy.postGridConnectionEvent(world, x, y, z, x, y+2, z, 0.1);        	
+            	SEAPI.energyNetAgent.connectGridNode(world, x, y, z, x, y+2, z, 0.1);        	
         }
     }
 
     @Override
     public void breakBlock(World world, int x, int y, int z, Block block, int meta) {
-        SEEnergy.postGridObjectDetachEvent(world, x, y, z);
+    	SEAPI.energyNetAgent.detachGridObject(world, x, y, z);
         super.breakBlock(world, x, y, z, block, meta);
     }
 

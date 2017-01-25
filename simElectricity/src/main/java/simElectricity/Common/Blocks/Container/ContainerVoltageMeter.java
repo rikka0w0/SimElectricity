@@ -22,7 +22,6 @@ package simElectricity.Common.Blocks.Container;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.tileentity.TileEntity;
 import simElectricity.API.Common.ContainerBase;
-import simElectricity.API.SEEnergy;
 import simElectricity.API.SEAPI;
 import simElectricity.Common.Blocks.TileEntity.TileVoltageMeter;
 

@@ -10,7 +10,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
-import simElectricity.API.SEEnergy;
+
 import simElectricity.API.IEnergyNetUpdateHandler;
 import simElectricity.API.INetworkEventHandler;
 import simElectricity.API.SEAPI;
@@ -38,14 +38,14 @@ public class TileIceMachine extends TileStandardSEMachine implements IFluidHandl
 				(inv[2] != null ? inv[2].stackSize < inv[2].getMaxStackSize() : true)){	//Enough space
 			if (resistance != onResistance){
 				resistance = onResistance;
-				SEEnergy.postTileChangeEvent(this);
+				SEAPI.energyNetAgent.markTileForUpdate(this);
 			}
 			
 			isWorking = true;
 		}else{
 			if (resistance != Float.MAX_VALUE){
 				resistance = Float.MAX_VALUE;
-				SEEnergy.postTileChangeEvent(this);
+				SEAPI.energyNetAgent.markTileForUpdate(this);
 			}
 			
 			isWorking = false;

@@ -39,7 +39,6 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.Common.Blocks.BlockContainerSE;
-import simElectricity.API.SEEnergy;
 import simElectricity.API.SEAPI;
 import simElectricity.API.Tile.ISECableTile;
 import simElectricity.Common.Blocks.TileEntity.TileWire;
@@ -80,7 +79,7 @@ public class BlockWire extends BlockContainerSE {
             if (stack.getItem() == Items.dye) {
                 if (!world.isRemote) {
                     wire.color = stack.getItemDamage() + 1;           //Set the color
-                    SEEnergy.postTileRejoinEvent(tileEntity);           //Reconnect the wire to the energy network
+                    SEAPI.energyNetAgent.reattachTile(tileEntity);           //Reconnect the wire to the energy network
                     SEAPI.networkManager.updateTileEntityFields(tileEntity, "color");  //Update the field color to every client within the dimension
                     onBlockPlacedBy(world, x, y, z, player, null);    //Update rests to clients
                 }

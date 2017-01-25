@@ -11,8 +11,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraftforge.common.util.ForgeDirection;
 
-import simElectricity.API.SEEnergy;
-import simElectricity.API.IHVTower;
+
 import simElectricity.API.INetworkEventHandler;
 import simElectricity.API.SEAPI;
 import simElectricity.API.Common.TileEntitySE;
@@ -23,6 +22,7 @@ import simElectricity.API.EnergyTile.ISESubComponent;
 import simElectricity.API.Tile.ISECableTile;
 import simElectricity.API.Tile.ISEGridTile;
 import simElectricity.API.Tile.ISETile;
+import simElectricity.Client.Render.IHVTower;
 
 public class TileCableClamp extends TileEntitySE implements ISETile,ISEJunctionData,ISEGridTile,INetworkEventHandler, IHVTower{
     private boolean registered = false;
