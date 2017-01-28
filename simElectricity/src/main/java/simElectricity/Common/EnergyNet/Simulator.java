@@ -14,7 +14,8 @@ import sun.security.ssl.Debug;
 
 public class Simulator {
 	
-    //Stores result, the voltage of every nodes
+	private SEGraph tileEntityGraph;
+    //Stores result, the voltage of nodes
     private Map<ISESimulatable, Double> voltageCache = new HashMap<ISESimulatable, Double>();
     //Matrix solving algorithm used to solve the problem
     private IMatrixResolver matrix;
@@ -24,9 +25,9 @@ public class Simulator {
     private double epsilon;
     //The maximum allowed number of iterations
     private int maxIteration;
-    //The conductance placed between every node and the ground
+    //The conductance placed between each node and the ground
     private double Gnode;
-    
+    //The conductance placed between each PN junction(to alleviate convergence problem)
     private double Gpn;
     
     
@@ -57,9 +58,20 @@ public class Simulator {
     
     public double getVoltage(ISESimulatable Tile){
         if (voltageCache.containsKey(Tile)){
-       	double voltage = voltageCache.get(Tile);
-       	if (!Double.isNaN(voltage))	
-       		return voltage;
+	       	double voltage = voltageCache.get(Tile);
+	       	if (!Double.isNaN(voltage))	
+	       		return voltage;
+        }else{
+        	SEComponent[] terminals = tileEntityGraph.getTerminalsOfWire((SEComponent) Tile);
+        	if (terminals.length == 0)
+        		return 0;
+        	else if (terminals.length == 1)
+        		return getVoltage(terminals[0]);
+        	else{
+        		double Va = getVoltage(terminals[0]);
+        		double Vb = getVoltage(terminals[1]);
+        		return Va - (Va-Vb)*tileEntityGraph.R0/(tileEntityGraph.R0+tileEntityGraph.R1);
+        	}
         }
         return 0;
    }
@@ -381,6 +393,7 @@ public class Simulator {
     }
     
     public void run(SEGraph tileEntityGraph) {
+    	this.tileEntityGraph = tileEntityGraph;
         List<SEComponent> unknownVoltageNodes = tileEntityGraph.getTerminalNodes();
     	int matrixSize = unknownVoltageNodes.size();
 

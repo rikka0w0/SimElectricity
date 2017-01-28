@@ -57,14 +57,13 @@ public class ConfigManager {
         parabolaRenderSteps = config.get(Configuration.CATEGORY_GENERAL, "ParabolaRenderSteps", 12, "Decides how smooth the parabola cable is(must be a even number!Client ONLY!)").getInt();
         // matrixSolver = config.get(Configuration.CATEGORY_GENERAL, "MatrixSolver", "QR", "Which algorithms is used for solving matrix(QR is much more effective than Gaussian, options: QR, Gaussian)").getString();
         matrixSolver = config.getString("MatrixSolver", Configuration.CATEGORY_GENERAL, "QR", "Which algorithms is used for solving matrix(QR is much more effective than Gaussian.).Options: QR, Gaussian", new String[] { "QR", "Gaussian" });
-        precision = config.get(Configuration.CATEGORY_GENERAL, "Precision", 10, "The maximum allowed error from simulation").getInt();
+        precision = config.get(Configuration.CATEGORY_GENERAL, "Precision", 3, "The maximum allowed error from simulation, 3 means 3 decimal places").getInt();
         maxIteration = config.get(Configuration.CATEGORY_GENERAL, "Max iteration", 50, "The Maximum number of iteration per tick").getInt();
         shuntResistance = config.get(Configuration.CATEGORY_GENERAL, "Shunt resistance per node", 1000000000, "The resistance connected between every node and the ground").getInt();
-        shuntPN = config.get(Configuration.CATEGORY_GENERAL, "Shunt resistance per PN", 1000000000, "The conductance connected between every PN junction").getInt();
+        shuntPN = config.get(Configuration.CATEGORY_GENERAL, "Shunt resistance per PN", 1000000000, "The resistance connected between every PN junction").getInt();
         SEAPI.ratioSE2IC = config.get(Configuration.CATEGORY_GENERAL, "Convertion ratio between SE and IC", 10, "SE Power / this ratio = IC Power").getInt();
         if (config.hasChanged())
             config.save();
-        
         
     }
 

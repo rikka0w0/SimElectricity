@@ -31,13 +31,6 @@ public class SEGraph {
 		return false;
 	}
 	
-	private boolean isGridCable(SEComponent node){
-		if (node instanceof GridNode && ((GridNode)node).type == 0)
-			return true;
-		else
-			return false;
-	}
-	
 	public boolean containsNode(SEComponent node){
 		if (components.contains(node))
 			return true;
@@ -292,4 +285,106 @@ public class SEGraph {
     	return terminalNodes;
     }
 
+    public double R0,R1;
+    public SEComponent[] getTerminalsOfWire(SEComponent wire){
+    	R0 = 0;
+    	R1 = 0;
+    	
+    	if (!isWire(wire))
+    		return null;
+    	
+    	if (wire.neighbors.size() > 2)
+    		return null;	//Not an node
+    	
+    	if (wire.neighbors.size() == 0)
+    		return new SEComponent[]{}; 	//No connection, 0V!
+    	
+    	SEComponent prev = wire;
+    	SEComponent head = wire.neighbors.getFirst();
+    	
+    	search1: do{
+    		if (head == wire)
+    			return new SEComponent[]{};	//Avoid circulation, 0V
+    		
+    		R0 += calcR(prev, head);
+    		
+			if (head instanceof Junction)
+				break search1;	//We have to calculate the voltage of the junction
+    		
+	    	if (head.neighbors.size() == 1){	//Single end
+	    		if (isWire(head))
+	    			head = null;
+	    		break search1;	//Dead end!
+	    	}
+	    	else if (head.neighbors.size() == 2){	//Always moveforward!
+	    		if (head.neighbors.getFirst() == prev){
+	    			prev = head;
+	    			head = head.neighbors.getLast();
+	    		}
+	    		else if (head.neighbors.getLast() == prev){
+	    			prev = head;
+	    			head = head.neighbors.getFirst();
+	    		}
+	    	}
+	    	else if (head.neighbors.size() > 2){
+	    		break search1;	//We have a cable node that has more than 2 connection
+	    	}
+    	}while(true);
+    	
+    	//head == null -> single end
+    	//head != null -> something
+    	// A--^--A
+    	// A--^--
+    	// A--^
+    	// ---^
+    	if (wire.neighbors.size() == 1){
+    		if (head == null)
+    			return new SEComponent[]{};		//No connection to other nodes, 0V
+    		else
+    			return new SEComponent[]{head};	//Equal to the voltage of "head"
+    	}
+    		
+    	//wire.neighbors.size() == 2
+    	SEComponent terminal1 = head;
+    	prev = wire;
+    	head = wire.neighbors.getLast();
+
+    	search1: do{
+    		R1 += calcR(prev, head);
+    		
+			if (head instanceof Junction)
+				break search1;	//We have to stop at the junction
+    		
+	    	if (head.neighbors.size() == 1){	//Single end
+	    		if (isWire(head))
+	    			head = null;
+	    		break search1;	//Dead end!
+	    	}
+	    	else if (head.neighbors.size() == 2){	//Always moveforward!
+	    		if (head.neighbors.getFirst() == prev){
+	    			prev = head;
+	    			head = head.neighbors.getLast();
+	    		}
+	    		else if (head.neighbors.getLast() == prev){
+	    			prev = head;
+	    			head = head.neighbors.getFirst();
+	    		}
+	    	}
+	    	else if (head.neighbors.size() > 2){
+	    		break search1;	//We have a cable node that has more than 2 connection
+	    	}
+    	}while(true);
+    	
+    	if (terminal1 == null){
+    		if (head == null)
+    			return new SEComponent[]{};		//No connection to other nodes, 0V
+    		else
+    			return new SEComponent[]{head};	//Equal to the voltage of "head"
+    	}else{
+    		if (head == null)
+    			return new SEComponent[]{terminal1};	//Equal to the voltage of "head"
+    		else
+    			return new SEComponent[]{terminal1, head};
+    	}
+    }
 }
