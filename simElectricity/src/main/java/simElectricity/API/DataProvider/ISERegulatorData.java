@@ -33,4 +33,10 @@ public interface ISERegulatorData extends ISEComponentDataProvider{
 	 * recommended value: 1e6
 	 */
 	double getRs();
+
+	/***
+	 * @return The load resistor connected between the output and ground</p>
+	 * recommended value: 1e6
+	 */
+	double getRDummyLoad();
 }

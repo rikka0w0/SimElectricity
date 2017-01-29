@@ -117,7 +117,7 @@ public class TileSwitch extends TileEntitySE implements ISETile, ISEJunctionData
 	
     @Override
     public void onEnergyNetUpdate() {
-    	current = getCurrent();
+    	current = SEAPI.energyNetAgent.getCurrentMagnitude(this.junction);
         if (current > maxCurrent) {
             isOn = false;
             SEAPI.energyNetAgent.reattachTile(this);
@@ -164,6 +164,7 @@ public class TileSwitch extends TileEntitySE implements ISETile, ISEJunctionData
 		return resistance / 2;
 	}
 	
+	/*
     public double getCurrent() {
         if (!isOn)
             return 0;
@@ -182,4 +183,5 @@ public class TileSwitch extends TileEntitySE implements ISETile, ISEJunctionData
         }
         return 0;
     }
+    */
 }

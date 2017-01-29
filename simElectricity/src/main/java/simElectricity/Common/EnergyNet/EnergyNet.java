@@ -286,7 +286,6 @@ public final class EnergyNet{
     	simulator = new Simulator(matrixSolverName, 
     			ConfigManager.maxIteration,
     			Math.pow(10, -ConfigManager.precision),
-    			1.0D/ConfigManager.shuntResistance,
     			1.0D/ConfigManager.shuntPN);
     	
     	//Initialize data provider

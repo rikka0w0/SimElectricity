@@ -25,21 +25,16 @@ public class Simulator {
     private double epsilon;
     //The maximum allowed number of iterations
     private int maxIteration;
-    //The conductance placed between each node and the ground
-    private double Gnode;
     //The conductance placed between each PN junction(to alleviate convergence problem)
     private double Gpn;
     
+    //Diode parameter for regulator controllers
+    private double Vt = 26e-6;
+    private double Is = 1e-6;
     
-    
-	double Is = 1e-6;
-	double Vt = 26e-6;
-    
-    
-    public Simulator(String matrixSolverName, int maxIteration, double epsilon, double Gnode, double Gpn){
+    public Simulator(String matrixSolverName, int maxIteration, double epsilon, double Gpn){
     	this.maxIteration = maxIteration;
     	this.epsilon = epsilon;
-    	this.Gnode = Gnode;
     	this.Gpn = Gpn;
     	matrix = IMatrixResolver.MatrixHelper.newResolver(matrixSolverName);
     }
@@ -62,7 +57,7 @@ public class Simulator {
 	       	if (!Double.isNaN(voltage))	
 	       		return voltage;
         }else{
-        	SEComponent[] terminals = tileEntityGraph.getTerminalsOfWire((SEComponent) Tile);
+        	SEComponent[] terminals = tileEntityGraph.getTerminals((SEComponent) Tile);
         	if (terminals.length == 0)
         		return 0;
         	else if (terminals.length == 1)
@@ -75,6 +70,23 @@ public class Simulator {
         }
         return 0;
    }
+    
+    public double getCurrentMagnitude(ISESimulatable Tile){
+    	SEComponent seTile = (SEComponent) Tile;
+    	if (seTile.neighbors.size() < 2)
+    		return 0;
+    	else if (seTile.neighbors.size() > 2)
+    		return Double.NaN;
+    	
+    	SEComponent[] terminals = tileEntityGraph.getTerminals((SEComponent) Tile);
+    	if (terminals.length < 2)
+    		return 0;
+    	else{
+    		double Va = getVoltage(terminals[0]);
+    		double Vb = getVoltage(terminals[1]);
+    		return Math.abs((Va-Vb)/(tileEntityGraph.R0+tileEntityGraph.R1));
+    	}
+    }
     
     //Simulator------------------------------------------------------------------------
     private void attemptSolving(double[] b){
@@ -92,7 +104,7 @@ public class Simulator {
         for (int nodeIndex = 0; nodeIndex < matrixSize; nodeIndex++) {
         	SEComponent curNode = unknownVoltageNodes.get(nodeIndex);
          	
-        	currents[nodeIndex] = -voltages[nodeIndex]*Gnode;
+        	//currents[nodeIndex] = -voltages[nodeIndex]*Gnode;
             
         	//Node - Node
 			Iterator<SEComponent> iteratorON = curNode.optimizedNeighbors.iterator();
@@ -164,9 +176,10 @@ public class Simulator {
     			double Vo = voltages[nodeIndex];	
     			double Vc = voltages[unknownVoltageNodes.indexOf(controller)];
     			double Ro = input.data.getOutputResistance();
-    			double Dmax = controller.input.data.getDMax();
+    			double Dmax = input.data.getDMax();
+    			double Rdummy = input.data.getRDummyLoad();
     			
-    			double Io = -Vi*(Vc+Dmax)/Ro + Vo/Ro;
+    			double Io = -Vi*(Vc+Dmax)/Ro + Vo/Ro + Vo/Rdummy;
 				
 				currents[nodeIndex] -= Io;
     		}else if (curNode instanceof RegulatorController){
@@ -176,10 +189,11 @@ public class Simulator {
     			
     			double Vo = voltages[unknownVoltageNodes.indexOf(output)];	
     			double Vc = voltages[nodeIndex];
-    			double A = controller.input.data.getGain();
-    			double Rs = controller.input.data.getRs();
-    			double Rc = controller.input.data.getRc();
-    			double Dmax = controller.input.data.getDMax();
+    			double A = input.data.getGain();
+    			double Rs = input.data.getRs();
+    			double Rc = input.data.getRc();
+    			double Dmax = input.data.getDMax();
+    			
     			
     			double Io = Vo*A/Rs + Vc/Rs + Dmax/Rs - input.data.getRegulatedVoltage()*A/Rs;
 				
@@ -200,6 +214,8 @@ public class Simulator {
     			int iSec = unknownVoltageNodes.indexOf(output);	
     			
     			double Vd = voltages[iPri]-voltages[iSec];
+    			double Vt = input.data.getThermalVoltage();
+    			double Is = input.data.getSaturationCurrent();
     			double Id;
     			
 
@@ -218,6 +234,8 @@ public class Simulator {
     			int iSec = nodeIndex;
     			
     			double Vd = voltages[iPri]-voltages[iSec];
+    			double Vt = input.data.getThermalVoltage();
+    			double Is = input.data.getSaturationCurrent();
     			double Id;
     			
     			double Rmin = input.data.getForwardResistance();
@@ -243,7 +261,7 @@ public class Simulator {
         for (int columnIndex = 0; columnIndex < matrixSize; columnIndex++) {
         	SEComponent columnNode = unknownVoltageNodes.get(columnIndex);
         
-        	double diagonalElement = Gnode;
+        	double diagonalElement = 0;
         	
         	//Add conductance between nodes
 			Iterator<SEComponent> iteratorON = columnNode.optimizedNeighbors.iterator();
@@ -309,6 +327,8 @@ public class Simulator {
     			int iSec = unknownVoltageNodes.indexOf(input.output);	
     			double Vd = voltages[iPri]-voltages[iSec];
     			
+    			double Vt = input.data.getThermalVoltage();
+    			double Is = input.data.getSaturationCurrent();
     			double Rmin = input.data.getForwardResistance();
     			
     			double Gd;
@@ -330,7 +350,9 @@ public class Simulator {
     			int iPri = unknownVoltageNodes.indexOf(input);
     			int iSec = columnIndex;
     			double Vd = voltages[iPri]-voltages[iSec];
-
+    			
+    			double Vt = input.data.getThermalVoltage();
+    			double Is = input.data.getSaturationCurrent();
     			double Rmin = input.data.getForwardResistance();
 
     			if (Vd>Vt*Math.log(Vt/Is/Rmin)){
@@ -366,6 +388,7 @@ public class Simulator {
 			}
 			else if (columnNode instanceof RegulatorOutput){
     			diagonalElement += 1.0D / ((RegulatorOutput) columnNode).input.data.getOutputResistance();
+    			diagonalElement += 1.0D / ((RegulatorOutput) columnNode).input.data.getRDummyLoad();
 			}else if (columnNode instanceof RegulatorController){
 				RegulatorController controller = (RegulatorController) columnNode;
 				RegulatorInput input = controller.input;

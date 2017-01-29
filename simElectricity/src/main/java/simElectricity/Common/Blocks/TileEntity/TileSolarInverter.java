@@ -110,4 +110,7 @@ public class TileSolarInverter extends TileEntitySE implements ISETile, ISERegul
 
 	@Override
 	public double getRs() {return 1e6;}
+
+	@Override
+	public double getRDummyLoad() {return 1e6;}
 }

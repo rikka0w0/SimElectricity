@@ -55,7 +55,11 @@ public class TileDiode extends TileEntitySE implements ISETile, ISEDiodeData{
 
 	//Diode data
 	@Override
-	public double getForwardResistance() {
-		return 0.1;
-	}
+	public double getForwardResistance() {return 0.1;}
+
+	@Override
+	public double getSaturationCurrent() {return 1e-6;}
+
+	@Override
+	public double getThermalVoltage() {return 26e-6;}
 }

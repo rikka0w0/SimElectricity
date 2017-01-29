@@ -286,13 +286,10 @@ public class SEGraph {
     }
 
     public double R0,R1;
-    public SEComponent[] getTerminalsOfWire(SEComponent wire){
+    public SEComponent[] getTerminals(SEComponent wire){
     	R0 = 0;
     	R1 = 0;
-    	
-    	if (!isWire(wire))
-    		return null;
-    	
+    	    	
     	if (wire.neighbors.size() > 2)
     		return null;	//Not an node
     	

@@ -20,10 +20,17 @@ public interface IEnergyNetAgent {
      * Return the voltage of a ISESimulatable instance, RELATIVE TO GROUND!
      * 
      * @param node The ISESimulatable instance
-     * @param world The world that the ISESimulatable instance is in
      * @return the voltage of the node, in volts
      */
 	public double getVoltage(ISESimulatable node);
+	
+    /**
+     * Calculate the current flow through a node (with less than 2 connection, cable and junction only!)
+     * 
+     * @param node The ISESimulatable instance
+     * @return the magnitude of the current, in amps
+     */
+	public double getCurrentMagnitude(ISESimulatable Tile);
 	
 	public ISESubComponent newComponent(TileEntity dataProviderTileEntity);
 	

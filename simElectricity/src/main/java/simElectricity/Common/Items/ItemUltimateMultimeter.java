@@ -61,6 +61,9 @@ public class ItemUltimateMultimeter extends ItemSE {
         	int color = ((ISECableTile) te).getColor();
         	SEAPI.utils.chat(player, "Color: " + String.valueOf(color) + ", " +
             				"Voltage: " + String.valueOf(SEAPI.energyNetAgent.getVoltage(node)));
+        	double currentMagnitude = SEAPI.energyNetAgent.getCurrentMagnitude(node);
+        	if (!Double.isNaN(currentMagnitude))
+        		SEAPI.utils.chat(player, "Current: " + String.valueOf(currentMagnitude));
         }
         else if (te instanceof ISETile){
         	ISETile tile = (ISETile)te;
@@ -85,6 +88,9 @@ public class ItemUltimateMultimeter extends ItemSE {
     		ISEGridNode comp = ((ISEGridTile) te).getGridNode();
     		String[] temp = comp.toString().split("[.]");
     		SEAPI.utils.chat(player, temp[temp.length-1].split("@")[0] + ": " + String.valueOf(SEAPI.energyNetAgent.getVoltage(comp)));
+        	double currentMagnitude = SEAPI.energyNetAgent.getCurrentMagnitude(comp);
+        	if (!Double.isNaN(currentMagnitude))
+        		SEAPI.utils.chat(player, "Current: " + String.valueOf(currentMagnitude));
         }
         
         return true;
