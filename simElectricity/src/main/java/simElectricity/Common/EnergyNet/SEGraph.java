@@ -189,14 +189,17 @@ public class SEGraph {
     		wire.visited = false;
 			wire.optimizedNeighbors.clear();
 			wire.optimizedResistance.clear();
+			wire.eliminated = true;
     		if (wire.neighbors.size()>2){
     			terminalNodes.add(wire);
     		}
     	}
     	
-    	//terminalNodes, including 
+    	//terminalNodes, including juction
     	
     	for (SEComponent node : terminalNodes){
+    		node.eliminated = false;
+    		
     		if (!node.visited){
     			node.visited = true;
     			

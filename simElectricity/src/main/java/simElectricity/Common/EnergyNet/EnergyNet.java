@@ -163,7 +163,6 @@ public final class EnergyNet{
 
     //EnergyNet event handlers
     public void addTileEntity(TileEntity te) {
-        //Map<ISESimulatable, ISESimulatable> neighborMap = new HashMap<ISESimulatable, ISESimulatable>();
     	SEGraph tileEntityGraph = dataProvider.getTEGraph();
 
     	
@@ -289,8 +288,6 @@ public final class EnergyNet{
 
 
     //Beginning of simulator
-    //Stores result, the voltage of nodes
-    private Map<ISESimulatable, Double> voltageCache = new HashMap<ISESimulatable, Double>();
     //Matrix solving algorithm used to solve the problem
     private IMatrixResolver matrix;
     //Records the number of iterations during last iterating process
@@ -309,11 +306,8 @@ public final class EnergyNet{
     private double Is = 1e-6;
 
     public double getVoltage(ISESimulatable Tile){   	
-        if (voltageCache.containsKey(Tile)){
-	       	double voltage = voltageCache.get(Tile);
-	       	if (!Double.isNaN(voltage))	
-	       		return voltage;
-        }else{
+    	SEComponent node = (SEComponent) Tile;
+    	if (node.eliminated){
         	SEGraph graph = dataProvider.getTEGraph();
         	//Only apply to cable and transmission lines which have been optimized by the energyNet
         	SEComponent[] terminals = graph.getTerminals((SEComponent) Tile);
@@ -329,8 +323,9 @@ public final class EnergyNet{
         		double Vb = getVoltage(terminals[1]);
         		return Va - (Va-Vb)*graph.R0/(graph.R0+graph.R1);
         	}
-        }
-        return 0;
+    	}else{
+    		return node.voltageCache;
+    	}
    }
     
     public double getCurrentMagnitude(ISESimulatable Tile){
@@ -732,9 +727,10 @@ public final class EnergyNet{
             iterations++;
         }
 
-        voltageCache.clear();
-        for (int i = 0; i < matrixSize; i++) {
-            voltageCache.put(unknownVoltageNodes.get(i), voltages[i]);
+        int i = 0;
+        for (SEComponent node: unknownVoltageNodes){
+        	node.voltageCache = voltages[i];
+        	i++;
         }
         
         System.out.println("Run!" + String.valueOf(iterations));        
