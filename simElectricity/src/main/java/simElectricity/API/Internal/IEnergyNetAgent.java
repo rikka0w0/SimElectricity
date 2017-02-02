@@ -38,6 +38,9 @@ public interface IEnergyNetAgent {
 	
 	public ISESimulatable newCable(TileEntity dataProviderTileEntity);
 	
+    /**
+     * Add a TileEntity to the energyNet
+     */
     public void attachTile(TileEntity te);
 
     public void markTileForUpdate(TileEntity te);

@@ -287,6 +287,9 @@ public class SEGraph {
 
     public double R0,R1;
     public SEComponent[] getTerminals(SEComponent wire){
+    	if (!isWire(wire))
+    		return null;	//Not applicable
+    	
     	R0 = 0;
     	R1 = 0;
     	    	

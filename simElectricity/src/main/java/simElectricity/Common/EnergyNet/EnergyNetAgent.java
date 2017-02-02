@@ -84,13 +84,13 @@ public class EnergyNetAgent implements IEnergyNetAgent{
     @Override
     public double getVoltage(ISESimulatable Tile) {
     	SEComponent obj = (SEComponent) Tile;
-        return EnergyNetAgent.getEnergyNetForWorld(obj.te.getWorldObj()).simulator.getVoltage(Tile);
+        return EnergyNetAgent.getEnergyNetForWorld(obj.te.getWorldObj()).getVoltage(Tile);
     }
 
     @Override
     public double getCurrentMagnitude(ISESimulatable Tile){
     	SEComponent obj = (SEComponent) Tile;
-        return EnergyNetAgent.getEnergyNetForWorld(obj.te.getWorldObj()).simulator.getCurrentMagnitude(Tile);  	
+        return EnergyNetAgent.getEnergyNetForWorld(obj.te.getWorldObj()).getCurrentMagnitude(Tile);  	
     }
     
 	@Override
