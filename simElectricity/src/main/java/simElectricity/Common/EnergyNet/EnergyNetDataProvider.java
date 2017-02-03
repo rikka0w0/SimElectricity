@@ -184,8 +184,8 @@ public class EnergyNetDataProvider extends WorldSavedData{
 		
 
 		//Build node connections
-		for (GridNode gridObject : gridNodeMap.values()){
-			gridObject.buildNeighborConnection(gridNodeMap);
+		for (GridNode gridNode : gridNodeMap.values()){
+			gridNode.buildNeighborConnection(gridNodeMap);
 		}
 	}
 
