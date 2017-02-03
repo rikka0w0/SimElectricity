@@ -1,6 +1,6 @@
 package simElectricity.Common.EnergyNet.Components;
 
-import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 
 import net.minecraft.nbt.NBTTagCompound;
@@ -23,7 +23,7 @@ public class GridNode extends SEComponent implements ISEGridNode{
 	public int y;
 	public int z;
 	
-	public HashMap<GridNode, Double> resistances = new HashMap<GridNode, Double>();
+	public LinkedList<Double> neighborR = new LinkedList<Double>();
 	
 	//Only used for loading
 	protected int neighborX[];
@@ -35,6 +35,17 @@ public class GridNode extends SEComponent implements ISEGridNode{
 		gridDataProvider = dataProvider;
 	}
 	
+	public double getResistance(GridNode neighbor) {
+		Iterator<SEComponent> iterator1 = neighbors.iterator();
+		Iterator<Double> iterator2 = neighborR.iterator();
+		while(iterator1.hasNext()){
+			double res = iterator2.next();
+			if (iterator1.next() == neighbor)
+				return res;
+		}
+		return Double.NaN;
+	}
+	
 	public int buildNeighborConnection(HashMap<String, GridNode> gridNodeMap){
 		int numOfNeighbors = neighborX.length;
 		
@@ -42,7 +53,7 @@ public class GridNode extends SEComponent implements ISEGridNode{
 			String neighborID = getIDString(neighborX[i], neighborY[i], neighborZ[i]);
 			GridNode neighbor = gridNodeMap.get(neighborID);
 			
-			gridDataProvider.addEdge(this, neighbor, resistancesBuf[i]);
+			gridDataProvider.getTEGraph().addGridEdge(this, neighbor, resistancesBuf[i]);
 		}
 		
 		return numOfNeighbors;
@@ -65,7 +76,7 @@ public class GridNode extends SEComponent implements ISEGridNode{
 		}
 	}
 	
-	public void writeToNBT(NBTTagCompound nbt, LinkedList<SEComponent> neighbors) {	
+	public void writeToNBT(NBTTagCompound nbt) {	
 		nbt.setByte("type", type);
 		nbt.setInteger("x", x);
 		nbt.setInteger("y", y);
@@ -81,13 +92,14 @@ public class GridNode extends SEComponent implements ISEGridNode{
 		neighborY = new int[length];
 		neighborZ = new int[length];
 		int i = 0;
+		Iterator<Double> iterator = neighborR.iterator();
 		for (SEComponent neighbor : neighbors){
 			if (neighbor instanceof GridNode){
 				GridNode gridNode = (GridNode)neighbor;
 				neighborX[i] = gridNode.x;
 				neighborY[i] = gridNode.y;
 				neighborZ[i] = gridNode.z;
-				nbt.setDouble("R"+String.valueOf(i), resistances.get(neighbor));
+				nbt.setDouble("R"+String.valueOf(i), iterator.next());
 				i++;
 			}
 		}
