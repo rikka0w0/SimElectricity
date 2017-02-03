@@ -48,13 +48,6 @@ public class EnergyNetDataProvider extends WorldSavedData{
 		return gridNodeMap.get(GridNode.getIDString(x, y, z));
 	}
 	
-	public void addEdge(GridNode node1, GridNode node2, double resistance){
-		tileEntityGraph.addEdge(node1, node2);
-		node1.resistances.put(node2, resistance);
-		node2.resistances.put(node1, resistance);
-	}
-	
-	
 	
 	//Grid Event handling ----------------------------------------------------------------------------
 	public GridNode addGridNode(int x, int y, int z, byte type){
@@ -72,28 +65,19 @@ public class EnergyNetDataProvider extends WorldSavedData{
 		return obj;
 	}
 	
-	public void removeGridNode(GridNode gridObject){
-		LinkedList<SEComponent> neighbors = tileEntityGraph.removeAllEdges(gridObject);
-		
-		
-		//Delete resistance properties of GridNodes
-		for (SEComponent neighbor : neighbors){
-			if (neighbor instanceof GridNode){
-				GridNode gridNode = (GridNode) neighbor;
-				gridNode.resistances.remove(gridObject);
-				TileEntity te = gridNode.te;
-				if (te instanceof ISEGridTile)
-					((ISEGridTile)te).onGridNeighborUpdated();
-			}
+	public void removeGridNode(GridNode gridNode){
+		for (GridNode affectedNeighbors: tileEntityGraph.removeGridVertex(gridNode)){
+			TileEntity te = affectedNeighbors.te;
+			if (te instanceof ISEGridTile)
+				((ISEGridTile)te).onGridNeighborUpdated();
 		}
 		
-		tileEntityGraph.removeVertex(gridObject);
-		gridNodeMap.remove(gridObject.getIDString());
+		gridNodeMap.remove(gridNode.getIDString());
 		this.markDirty();
 	}
 	
 	public void addGridConnection(GridNode node1, GridNode node2, double resistance){
-		addEdge(node1, node2, resistance);
+		tileEntityGraph.addGridEdge(node1, node2, resistance);
 		
 		TileEntity te1 = node1.te;
 		TileEntity te2 = node2.te;
@@ -107,9 +91,7 @@ public class EnergyNetDataProvider extends WorldSavedData{
 	}
 	
 	public void removeGridConnection(GridNode node1, GridNode node2){
-		node1.resistances.remove(node2);
-		node2.resistances.remove(node1);
-		tileEntityGraph.removeEdge(node1, node2);
+		tileEntityGraph.removeGridEdge(node1, node2);
 		
 		TileEntity te1 = node1.te;
 		TileEntity te2 = node2.te;
@@ -125,6 +107,8 @@ public class EnergyNetDataProvider extends WorldSavedData{
 	public void onGridTilePresent(TileEntity te){
 		ISEGridTile gridTile = (ISEGridTile)te;
 		GridNode gridObject = gridNodeMap.get(GridNode.getIDStringFromTileEntity(te));
+		if (gridObject == null)
+			return;
 		loadedGridTiles.add(te);
 		gridObject.te = te;
 		gridTile.setGridNode(gridObject);
@@ -211,7 +195,7 @@ public class EnergyNetDataProvider extends WorldSavedData{
 		NBTTagList NBTNodes = new NBTTagList();
 		for (GridNode gridNode : gridNodeMap.values()){
 			NBTTagCompound tag = new NBTTagCompound();
-			gridNode.writeToNBT(tag, gridNode.neighbors);
+			gridNode.writeToNBT(tag);
 			NBTNodes.appendTag(tag);
 		}
 		nbt.setTag("Objects", NBTNodes);

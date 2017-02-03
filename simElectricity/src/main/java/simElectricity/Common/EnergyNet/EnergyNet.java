@@ -57,7 +57,6 @@ public final class EnergyNet{
 
     public EnergyNet(World world) { 
     	//Initialize simulator
-    	maxIteration = ConfigManager.maxIteration;
     	epsilon = Math.pow(10, -ConfigManager.precision);
     	Gpn = 1.0D/ConfigManager.shuntPN;
     	matrix = IMatrixResolver.MatrixHelper.newResolver(ConfigManager.matrixSolver);
@@ -79,7 +78,7 @@ public final class EnergyNet{
     		};
     	}
 
-    	if (tileEntityGraph.size() == 0){
+    	if (matrix.getMatrixSize() == 0){
     		density = "Undefined";
     	}else{
     		density = String.valueOf(matrix.getTotalNonZeros() * 100 / matrix.getMatrixSize()/ matrix.getMatrixSize()) + "%";
@@ -294,9 +293,6 @@ public final class EnergyNet{
     private int iterations;
     //The allowed mismatch
     private double epsilon;
-    //The maximum allowed number of iterations
-    private int maxIteration;
-    
     
     
     //The conductance placed between each PN junction(to alleviate convergence problem)
@@ -701,7 +697,7 @@ public final class EnergyNet{
 
             
             if (keepGoing){
-            	if (iterations > maxIteration){
+            	if (iterations > ConfigManager.maxIteration){
             		SEUtils.logInfo("Maximum number of iteration has reached, something must go wrong!");
             		break;
             	}

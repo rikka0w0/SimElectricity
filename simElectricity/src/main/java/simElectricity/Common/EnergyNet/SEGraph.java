@@ -1,11 +1,13 @@
 package simElectricity.Common.EnergyNet;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Set;
 
+import net.minecraft.tileentity.TileEntity;
+
 import simElectricity.API.Tile.ISECableTile;
+import simElectricity.API.Tile.ISEGridTile;
 import simElectricity.Common.EnergyNet.Components.*;
 
 public class SEGraph {
@@ -40,12 +42,6 @@ public class SEGraph {
 			return false;
 	}
 	
-    /**
-     * Return a list neighbors of a node
-     */
-    public LinkedList<SEComponent> neighborListOf(SEComponent node) {
-        return node.neighbors;
-    }
 	
     /**
      * Add a vertex into the graph
@@ -55,11 +51,11 @@ public class SEGraph {
             return;
 
         if (isWire(node))
-        	wires.add(node);
+        	wires.addLast(node);
         else
-        	components.add(node);
+        	components.addLast(node);
     }
-    
+       
     /**
      * Add a neighbor to a vertex
      */
@@ -70,12 +66,31 @@ public class SEGraph {
         if (!containsNode(neighbor))
             return;
 
-        if (!neighborListOf(node).contains(neighbor))
-            neighborListOf(node).add(neighbor);
+        if (!node.neighbors.contains(neighbor))
+        	node.neighbors.addLast(neighbor);
 
-        if (!neighborListOf(neighbor).contains(node))
-            neighborListOf(neighbor).add(node);
+        if (!neighbor.neighbors.contains(node))
+        	neighbor.neighbors.addLast(node);
     }
+    
+	public void addGridEdge(GridNode node1, GridNode node2, double resistance){
+        if (!containsNode(node1))
+            return;
+        
+        if (!containsNode(node2))
+            return;
+
+        if (!node1.neighbors.contains(node2)){
+        	node1.neighbors.addLast(node2);
+        	node1.neighborR.addLast(resistance);
+        }
+        
+
+        if (!node2.neighbors.contains(node1)){
+            node2.neighbors.addLast(node1);
+    		node2.neighborR.addLast(resistance);        	
+        }
+	}
     
     /**
      * Remove a vertex
@@ -83,8 +98,6 @@ public class SEGraph {
     public void removeVertex(SEComponent node) {
         if (!containsNode(node))
             return;
-
-        //Map<ISESimulatable, LinkedList<ISESimulatable>> graph = isWire(node) ? wires : components;
         
         //Remove this node from its neighbors' list
         for (SEComponent neighbor: node.neighbors){
@@ -97,6 +110,37 @@ public class SEGraph {
         (isWire(node) ? wires : components).remove(node);
     }
     
+    public LinkedList<GridNode> removeGridVertex(GridNode gridNode){
+        if (!containsNode(gridNode))
+            return null;
+    	
+        LinkedList<GridNode> ret = new LinkedList<GridNode>();
+        
+		//Delete resistance properties of GridNodes
+		for (SEComponent neighbor : gridNode.neighbors){
+			if (neighbor instanceof GridNode){
+				Iterator<SEComponent> iterator1 = neighbor.neighbors.iterator();
+				Iterator<Double> iterator2 = ((GridNode)neighbor).neighborR.iterator();
+				deleteInfoFromNeighbor: while(iterator1.hasNext()){
+					iterator2.next();
+					if (iterator1.next() == gridNode){
+						iterator2.remove();
+						iterator1.remove();
+						break deleteInfoFromNeighbor;
+					}
+				}
+				
+				ret.add((GridNode) neighbor);
+			}
+		}
+		
+		gridNode.neighbors.clear();
+		gridNode.neighborR.clear();
+        (isWire(gridNode) ? wires : components).remove(gridNode);
+        
+        return ret;
+    }
+    
     /**
      * Remove an edge
      */
@@ -107,36 +151,40 @@ public class SEGraph {
         if (!containsNode(neighbor))
             return;
 
-        if (neighborListOf(node).contains(neighbor))
-            neighborListOf(node).remove(neighbor);
+        if (neighbor.neighbors.contains(neighbor))
+        	neighbor.neighbors.remove(neighbor);
 
-        if (neighborListOf(neighbor).contains(node))
-            neighborListOf(neighbor).remove(node);
+        if (neighbor.neighbors.contains(node))
+        	neighbor.neighbors.remove(node);
     }
     
-    /**
-     * Remove all edges of a node, returns a list of previous neighbors
-     */
-    public LinkedList<SEComponent> removeAllEdges(SEComponent node){
-        if (!containsNode(node))
-            return null;
-        
-        LinkedList<SEComponent> neighbors = node.neighbors;
-        LinkedList<SEComponent> ret = (LinkedList<SEComponent>) neighbors.clone();
-        
-        //Delete all record on the selected node
-        neighbors.clear();
-        
-        //Delete this node from its neighbors' list
-        for (SEComponent neighbor: ret){
-        	LinkedList<SEComponent> list = neighbor.neighbors;
-        	if (list.contains(node))
-        		list.remove(node);
-        }
-        
-        return ret;
+    public void removeGridEdge(GridNode node1, GridNode node2){
+		Iterator<SEComponent> iterator1 = node1.neighbors.iterator();
+		Iterator<Double> iterator2 = node1.neighborR.iterator();
+		deleteInfoFromNeighbor: while(iterator1.hasNext()){
+			iterator2.next();
+			if (iterator1.next() == node2){
+				iterator2.remove();
+				iterator1.remove();
+				break deleteInfoFromNeighbor;
+			}
+		}
+		
+		iterator1 = node2.neighbors.iterator();
+		iterator2 = node2.neighborR.iterator();
+		deleteInfoFromNeighbor: while(iterator1.hasNext()){
+			iterator2.next();
+			if (iterator1.next() == node1){
+				iterator2.remove();
+				iterator1.remove();
+				break deleteInfoFromNeighbor;
+			}
+		}		
     }
-       
+           
+    
+    
+    
     public static double calcR(SEComponent cur, SEComponent neighbor){
     	if (cur instanceof Cable){
     		Cable curConductor = (Cable) cur;
@@ -163,7 +211,7 @@ public class SEGraph {
     		if (neighbor instanceof Junction){
     			return ((Junction) neighbor).data.getResistance(curGridNode);
     		}else if (neighbor instanceof GridNode){
-    			return curGridNode.resistances.get((GridNode)neighbor);
+    			return curGridNode.getResistance((GridNode)neighbor);
     		}else {
     			throw new RuntimeException("Unaccptable conntection");
     		}
@@ -274,11 +322,11 @@ public class SEGraph {
         				}
         				
 
-                		node.optimizedNeighbors.add(reach);
-                		node.optimizedResistance.add(resistance);      
+                		node.optimizedNeighbors.addLast(reach);
+                		node.optimizedResistance.addLast(resistance);      
                 			
-                		reach.optimizedNeighbors.add(node);
-                		reach.optimizedResistance.add(resistance);        					
+                		reach.optimizedNeighbors.addLast(node);
+                		reach.optimizedResistance.addLast(resistance);        					
         			}
         		}
     		}
