@@ -41,7 +41,7 @@ processResources {
 
     dependencies {
         compile fileTree(dir: 'lib', includes: ['*.jar'])
-		compile project(':SimElectricity')
+        compile project(':SimElectricity')
     }
 }
 
@@ -61,3 +61,9 @@ task deobfJar(type: Jar) {
 build.dependsOn sourceJar, deobfJar
 
 compileJava.options.encoding = 'UTF-8'
+
+idea {
+    module {
+        inheritOutputDirs = true
+    }
+}
