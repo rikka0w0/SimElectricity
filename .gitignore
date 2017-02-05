@@ -1,0 +1,60 @@
+*.class
+hs_err_pid*
+.mtj.tmp/
+
+# Package Files #
+*.war
+*.ear
+
+# IDEA module file #
+*.iml
+*.ipr
+*.iws
+atlassian-ide-plugin.xml
+
+# IDEA project file #
+.idea
+/.idea_modules
+out
+run
+
+# Gradle #
+.gradle
+build
+
+# Eclipse #
+.classpath
+.project
+.metadata
+.settings
+/.settings
+/bin
+
+# MacOS #
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.Spotlight-V100
+.Trashes
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+# Windows #
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# GNU/Linux #
+*~
+.directory
+
+# Vim #
+~*
+*.swp
+.*.swp
