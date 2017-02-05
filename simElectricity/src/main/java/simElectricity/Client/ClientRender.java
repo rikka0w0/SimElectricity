@@ -1,14 +1,33 @@
 package simElectricity.Client;
 
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.world.World;
 
 import org.lwjgl.opengl.GL11;
 
+import cpw.mods.fml.client.FMLClientHandler;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
+import simElectricity.DummyClientRender;
+import simElectricity.SimElectricity;
+import simElectricity.API.SEAPI;
 import simElectricity.API.Client.ITextureProvider;
 import simElectricity.API.Internal.IClientRender;
 import simElectricity.Common.ConfigManager;
 
-public class ClientRender implements IClientRender{
+@SideOnly(Side.CLIENT)
+public class ClientRender extends DummyClientRender implements IClientRender{
+	public static void initClientAPI(){
+		ClientRender instance = new ClientRender();
+		SEAPI.clientRender = instance;
+		SimElectricity.clientWorldHandler = instance;
+	}
+	
+	public World getClientWorld(){
+		return FMLClientHandler.instance().getClient().theWorld;
+	}
+	
     public void renderParabolicCable(double xStart, double yStart, double zStart, double xEnd, double yEnd, double zEnd, double thickness, double tension, ITextureProvider textureProvider, int textureIndex) {
         double distance = distanceOf(xStart, yStart, zStart, xEnd, yEnd, zEnd);
         p2pRotation(xStart, yStart, zStart, xEnd, yEnd, zEnd);

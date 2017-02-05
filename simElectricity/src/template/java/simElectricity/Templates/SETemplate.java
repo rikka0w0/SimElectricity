@@ -1,5 +1,6 @@
 package simElectricity.Templates;
 
+import simElectricity.API.SEAPI;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.Mod.EventHandler;
@@ -11,7 +12,7 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 
 
 
-@Mod(modid = SETemplate.MODID, name = SETemplate.NAME, version = SETemplate.VER, dependencies = "required-after:Forge@[10.12.2.1147,)")
+@Mod(modid = SETemplate.MODID, name = SETemplate.NAME, version = SETemplate.VER, dependencies = "required-after:Forge@[10.12.2.1147,); required-after:SimElectricity")
 public class SETemplate {
 	public static final String MODID = "SETemplate";
 	public static final String NAME = "SETemplate";
@@ -32,6 +33,9 @@ public class SETemplate {
      */
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
+    	if (SEAPI.SETab == null)
+    		throw new RuntimeException("SETab is null!");
+    	
         //Register Blocks
         SEBlocks.preInit();
 

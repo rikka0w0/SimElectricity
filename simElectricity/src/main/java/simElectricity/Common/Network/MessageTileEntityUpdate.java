@@ -1,6 +1,5 @@
 package simElectricity.Common.Network;
 
-import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.network.ByteBufUtils;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
@@ -216,7 +215,7 @@ public class MessageTileEntityUpdate implements IMessage{
         	World world;
 
         	if (ctx.side == Side.CLIENT){
-        		world = FMLClientHandler.instance().getClient().theWorld;
+        		world = SimElectricity.clientWorldHandler.getClientWorld();
         	}else{
         		world = ctx.getServerHandler().playerEntity.worldObj;
         	}

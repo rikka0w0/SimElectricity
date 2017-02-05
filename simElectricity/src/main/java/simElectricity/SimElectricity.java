@@ -19,6 +19,9 @@
 
 package simElectricity;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
@@ -37,7 +40,6 @@ import net.minecraft.item.Item;
 
 import simElectricity.API.SEAPI;
 
-import simElectricity.Client.ClientRender;
 import simElectricity.Common.SEUtils;
 import simElectricity.Common.CableRenderHelper;
 import simElectricity.Common.CommandSimE;
@@ -56,8 +58,11 @@ public class SimElectricity {
     @Instance(SEUtils.MODID)
     public static SimElectricity instance;
 
+    //Used by networkChannels
+    public static DummyClientRender clientWorldHandler;
     public SimpleNetworkWrapper networkChannel;
 
+    //Instances of items
     public static ItemUltimateMultimeter ultimateMultimeter;
     public static ItemGlove itemGlove;
     public static ItemWrench itemWrench;
@@ -75,7 +80,15 @@ public class SimElectricity {
     	SEAPI.energyNetAgent = new EnergyNetAgent();
     	
     	if (event.getSide().isClient()){
-    		SEAPI.clientRender = new ClientRender();
+    		try {
+    			Class<?> clsClientRender = Class.forName("simElectricity.Client.ClientRender");
+    			Method  mtdInitAPI = clsClientRender.getMethod("initClientAPI", new Class[0]);
+    			mtdInitAPI.invoke(null, new Object[0]);
+			} catch (Exception e) {
+				SEUtils.logError("Failed to initialize client API");
+			}
+    	}else{
+    		clientWorldHandler = new DummyClientRender();
     	}
 
         //Load configurations

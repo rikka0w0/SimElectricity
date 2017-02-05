@@ -19,6 +19,8 @@
 
 package simElectricity.API;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.creativetab.CreativeTabs;
 
 import simElectricity.API.Internal.ICableRenderHelper;
@@ -38,6 +40,7 @@ public class SEAPI {
     public static ISEUtils utils;
 	public static IEnergyNetAgent energyNetAgent;
     
+	@SideOnly(Side.CLIENT)
 	public static IClientRender clientRender;
 	
     /**
