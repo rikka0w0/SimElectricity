@@ -13,10 +13,12 @@ import simElectricity.Common.EnergyNet.Components.*;
 public class SEGraph {
 	private LinkedList<SEComponent> components;
 	private LinkedList<SEComponent> wires;	
+	private LinkedList<SEComponent> terminalNodes;
 	
     public SEGraph() {
     	components = new LinkedList<SEComponent>();
     	wires = new LinkedList<SEComponent>();
+    	terminalNodes = new LinkedList<SEComponent>();
     }
 	
     public int size(){
@@ -224,8 +226,9 @@ public class SEGraph {
     	throw new RuntimeException("Unaccptable conntection");
     }
        
-    public LinkedList<SEComponent> getTerminalNodes(){
-    	LinkedList<SEComponent> terminalNodes = (LinkedList<SEComponent>) components.clone();
+    public void optimizGraph(){
+    	terminalNodes.clear();
+    	terminalNodes.addAll(components);
 
     	for (SEComponent node : terminalNodes){
     		node.visited = false;
@@ -332,7 +335,10 @@ public class SEGraph {
     		}
 
     	}
-    	
+    		
+    }
+    
+    public LinkedList<SEComponent> getTerminalNodes(){
     	return terminalNodes;
     }
 

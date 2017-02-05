@@ -40,9 +40,12 @@ public class GridNode extends SEComponent implements ISEGridNode{
 		Iterator<SEComponent> iterator1 = neighbors.iterator();
 		Iterator<Double> iterator2 = neighborR.iterator();
 		while(iterator1.hasNext()){
-			double res = iterator2.next();
-			if (iterator1.next() == neighbor)
-				return res;
+			SEComponent cur = iterator1.next();
+			if (cur instanceof GridNode){
+				double res = iterator2.next();
+				if (cur == neighbor)
+					return res;
+			}
 		}
 		return Double.NaN;
 	}

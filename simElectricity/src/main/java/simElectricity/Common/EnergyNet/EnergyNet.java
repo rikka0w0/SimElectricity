@@ -51,6 +51,7 @@ public final class EnergyNet{
 	private EnergyNetDataProvider dataProvider;
     
     private boolean calc = false;
+    private boolean structureChanged = false;
     
     //These tileEntities are called after the energyNet is updated 
     private List<IEnergyNetUpdateHandler> energyNetUpdateAgents = new LinkedList<IEnergyNetUpdateHandler>();
@@ -104,6 +105,11 @@ public final class EnergyNet{
         //energyNet.calc = true;
         if (calc) {
         	calc = false;
+        	
+        	if (structureChanged){
+        		structureChanged = false;
+        		dataProvider.getTEGraph().optimizGraph();
+        	}
         	
             runSimulator();
         	
@@ -207,6 +213,7 @@ public final class EnergyNet{
         	energyNetUpdateAgents.add((IEnergyNetUpdateHandler)te);
 
         calc = true;
+        structureChanged = true;
     }
 
     public void removeTileEntity(TileEntity te) {
@@ -228,7 +235,9 @@ public final class EnergyNet{
         
         if (te instanceof IEnergyNetUpdateHandler)
         	energyNetUpdateAgents.remove((IEnergyNetUpdateHandler)te);
+        
         calc = true;
+        structureChanged = true;
     }
 
     public void rejoinTileEntity(TileEntity te) {
@@ -242,6 +251,7 @@ public final class EnergyNet{
     
     public boolean addGridNode(int x, int y, int z, byte type){
     	calc = true;
+    	structureChanged = true;
     	return dataProvider.addGridNode(x, y, z, type) != null;
     }
     
@@ -251,6 +261,7 @@ public final class EnergyNet{
     		return false;
     	dataProvider.removeGridNode(node);
     	calc = true;
+    	structureChanged = true;
     	return true;
     }
     
@@ -261,6 +272,7 @@ public final class EnergyNet{
     	if (node1 != null && node2 != null){
     		dataProvider.addGridConnection(node1, node2, resistance);
     		calc = true;
+    		structureChanged = true;
     		return true;
     	}
     	return false;	
@@ -273,6 +285,7 @@ public final class EnergyNet{
     	if (node1 != null && node2 != null){
     		dataProvider.removeGridConnection(node1, node2);
     		calc = true;
+    		structureChanged = true;
     		return true;
     	}
     	return false;	
