@@ -11,7 +11,7 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 
 
 
-@Mod(modid = SETemplate.MODID, name = SETemplate.NAME, version = SETemplate.VER, dependencies = "required-after:Forge@[10.12.2.1147,)")
+@Mod(modid = SETemplate.MODID, name = SETemplate.NAME, version = SETemplate.VER, dependencies = "required-after:Forge@[10.12.2.1147,);required-after:SimElectricity")
 public class SETemplate {
 	public static final String MODID = "SETemplate";
 	public static final String NAME = "SETemplate";
