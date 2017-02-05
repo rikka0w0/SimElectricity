@@ -36,34 +36,32 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 
 import simElectricity.API.SEAPI;
+
+import simElectricity.Client.ClientRender;
 import simElectricity.Common.SEUtils;
 import simElectricity.Common.CableRenderHelper;
 import simElectricity.Common.CommandSimE;
-import simElectricity.Common.CommonProxy;
 import simElectricity.Common.ConfigManager;
 import simElectricity.Common.FluidUtil;
-import simElectricity.Common.Core.SEBlocks;
-import simElectricity.Common.Core.SEItems;
 import simElectricity.Common.EnergyNet.EnergyNetAgent;
 import simElectricity.Common.EnergyNet.EnergyNetEventHandler;
 import simElectricity.Common.Network.MessageTileEntityUpdate;
 import simElectricity.Common.Network.NetworkManager;
+import simElectricity.Items.*;
 
 @Mod(modid = SEUtils.MODID, name = SEUtils.NAME, version = SimElectricity.version, guiFactory = "simElectricity.Client.SimEGuiFactory", dependencies = "required-after:Forge@[10.12.2.1147,)")
 public class SimElectricity {
 	public static final String version = "1.0.0";
-
-    /**
-     * Server and Client Proxy
-     */
-    @SidedProxy(clientSide = "simElectricity.Client.ClientProxy", serverSide = "simElectricity.Common.CommonProxy")
-    public static CommonProxy proxy;
 
     @Instance(SEUtils.MODID)
     public static SimElectricity instance;
 
     public SimpleNetworkWrapper networkChannel;
 
+    public static ItemUltimateMultimeter ultimateMultimeter;
+    public static ItemGlove itemGlove;
+    public static ItemWrench itemWrench;
+    
     /**
      * PreInitialize
      */
@@ -75,6 +73,10 @@ public class SimElectricity {
     	SEAPI.cableRenderHelper = new CableRenderHelper();
     	SEAPI.utils = new SEUtils();
     	SEAPI.energyNetAgent = new EnergyNetAgent();
+    	
+    	if (event.getSide().isClient()){
+    		SEAPI.clientRender = new ClientRender();
+    	}
 
         //Load configurations
         FMLCommonHandler.instance().bus().register(new ConfigManager());
@@ -89,15 +91,15 @@ public class SimElectricity {
             @Override
             @SideOnly(Side.CLIENT)
             public Item getTabIconItem() {
-                return Item.getItemFromBlock(SEBlocks.quantumGenerator);
+                return ultimateMultimeter;
             }
         };
-
-        //Register Blocks
-        SEBlocks.preInit();
-
-        //Register Items
-        SEItems.init();
+        
+        
+        //Register items
+    	ultimateMultimeter = new ItemUltimateMultimeter();
+    	itemGlove = new ItemGlove();
+    	itemWrench = new ItemWrench();
 
         //Register network channel
         networkChannel = NetworkRegistry.INSTANCE.newSimpleChannel(SEUtils.MODID);
@@ -109,23 +111,13 @@ public class SimElectricity {
      * Initialize
      */
     @EventHandler
-    public void init(FMLInitializationEvent event) {
-        //Register GUI handler
-        NetworkRegistry.INSTANCE.registerGuiHandler(instance, proxy);
-
-        //Initialize network proxy
-        proxy.registerTileEntitySpecialRenderer();
-
-        //Register TileEntities
-        SEBlocks.init();
-    }
+    public void init(FMLInitializationEvent event) {}
 
     /**
      * PostInitialize
      */
     @EventHandler
-    public void postInit(FMLPostInitializationEvent event) {
-    }
+    public void postInit(FMLPostInitializationEvent event) {}
     
     @EventHandler
     public void serverStart(FMLServerStartingEvent event){

@@ -3,17 +3,10 @@ package simElectricity.API.Internal;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
+
 import simElectricity.API.DataProvider.ISEComponentDataProvider;
 import simElectricity.API.EnergyTile.ISESimulatable;
 import simElectricity.API.EnergyTile.ISESubComponent;
-import simElectricity.Common.EnergyNet.Events.GridConnectionEvent;
-import simElectricity.Common.EnergyNet.Events.GridDisconnectionEvent;
-import simElectricity.Common.EnergyNet.Events.GridObjectAttachEvent;
-import simElectricity.Common.EnergyNet.Events.GridObjectDetachEvent;
-import simElectricity.Common.EnergyNet.Events.TileAttachEvent;
-import simElectricity.Common.EnergyNet.Events.TileChangeEvent;
-import simElectricity.Common.EnergyNet.Events.TileDetachEvent;
-import simElectricity.Common.EnergyNet.Events.TileRejoinEvent;
 
 public interface IEnergyNetAgent {
     /**

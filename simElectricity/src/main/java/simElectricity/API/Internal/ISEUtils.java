@@ -50,7 +50,7 @@ public interface ISEUtils {
      *
      * @return valid conductor direction. If there is no conductor nearby, return default direction
      *
-     * @see simElectricity.Common.Blocks.BlockSwitch
+     * @see simElectricity.Templates.Blocks.BlockSwitch
      */
     public ForgeDirection autoConnect(TileEntity tileEntity, ForgeDirection defaultDirection, ForgeDirection exception);
     
