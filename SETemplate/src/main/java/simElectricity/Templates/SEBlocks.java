@@ -39,6 +39,7 @@ public class SEBlocks {
     public static BlockWindMillTop windMillTop;
     public static BlockWire wire;
     public static BlockTower tower;
+    public static BlockTransmissionTower transmissionTower;
     public static BlockSolarInverter solarInverter;
     public static BlockIC2Consumer ic2Consumer;
     public static BlockCableClamp cableClamp;
@@ -60,6 +61,7 @@ public class SEBlocks {
         windMillTop = new BlockWindMillTop();
         wire = new BlockWire();
         tower = new BlockTower();
+        transmissionTower = new BlockTransmissionTower();
         solarInverter = new BlockSolarInverter();
         ic2Consumer = new BlockIC2Consumer();
         cableClamp = new BlockCableClamp();
@@ -82,6 +84,7 @@ public class SEBlocks {
         GameRegistry.registerTileEntity(TileIncandescentLamp.class, "TileIncandescentLamp");
         GameRegistry.registerTileEntity(TileSwitch.class, "TileSwitch");
         GameRegistry.registerTileEntity(TileTower.class, "TileTower");
+        GameRegistry.registerTileEntity(TileTransmissionTower.class, "TileTransmissionTower");
         GameRegistry.registerTileEntity(TileSolarInverter.class, "TileSolarInverter");
         GameRegistry.registerTileEntity(TileIC2Consumer.class, "TileIC2Consumer");
         GameRegistry.registerTileEntity(TileCableClamp.class, "TileCableClamp");
