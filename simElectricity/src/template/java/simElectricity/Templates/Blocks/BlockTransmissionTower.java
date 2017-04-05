@@ -75,14 +75,15 @@ public class BlockTransmissionTower extends BlockContainerSE {
 
         TileTransmissionTower tower = (TileTransmissionTower) world.getTileEntity(x, y, z);
         tower.facing = 8 - MathHelper.floor_double((player.rotationYaw) * 8.0F / 360.0F + 0.5D) & 7;
-        SEAPI.utils.chat((EntityPlayer)player, String.valueOf(tower.facing));
+
+        SEAPI.energyNetAgent.attachGridObject(world, x, y, z, (byte)0);
         
-        SEAPI.networkManager.updateNetworkFields(tower);
+        //SEAPI.networkManager.updateNetworkFields(tower);
     }
 
     @Override
     public void breakBlock(World world, int x, int y, int z, Block block, int meta) {
-    	//SEAPI.energyNetAgent.detachGridObject(world, x, y, z);
+    	SEAPI.energyNetAgent.detachGridObject(world, x, y, z);
         super.breakBlock(world, x, y, z, block, meta);
     }
 
