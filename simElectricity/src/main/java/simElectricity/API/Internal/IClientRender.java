@@ -1,10 +1,13 @@
 package simElectricity.API.Internal;
 
+import net.minecraft.tileentity.TileEntity;
+
 import org.lwjgl.opengl.GL11;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import simElectricity.API.Client.ITextureProvider;
+import simElectricity.API.Client.ITransmissionTowerRenderHelper;
 
 /**
  * Provides a easy way of rendering cubes and wires
@@ -92,6 +95,9 @@ public interface IClientRender {
 	public void renderCube(double maxX, double maxY, double maxZ,
 			ITextureProvider textureProvider, int textureIndex);
 	
+	/**
+	 * NESW -> 0123
+	 */
     public int getDirection(int facing);
 	
     /**
@@ -131,4 +137,6 @@ public interface IClientRender {
      * @param zEnd   End Z coordinate
      */
     public double distanceOf(double xStart, double zStart, double xEnd, double zEnd);
+    
+    public ITransmissionTowerRenderHelper newTransmissionTowerRenderHelper (TileEntity te);
 }

@@ -1,6 +1,7 @@
 package simElectricity.Client;
 
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
 import org.lwjgl.opengl.GL11;
@@ -13,6 +14,7 @@ import simElectricity.DummyClientRender;
 import simElectricity.SimElectricity;
 import simElectricity.API.SEAPI;
 import simElectricity.API.Client.ITextureProvider;
+import simElectricity.API.Client.ITransmissionTowerRenderHelper;
 import simElectricity.API.Internal.IClientRender;
 import simElectricity.Common.ConfigManager;
 
@@ -24,34 +26,40 @@ public class ClientRender extends DummyClientRender implements IClientRender{
 		SimElectricity.clientWorldHandler = instance;
 	}
 	
+	@Override
 	public World getClientWorld(){
 		return FMLClientHandler.instance().getClient().theWorld;
 	}
 	
+	@Override
     public void renderParabolicCable(double xStart, double yStart, double zStart, double xEnd, double yEnd, double zEnd, double thickness, double tension, ITextureProvider textureProvider, int textureIndex) {
         double distance = distanceOf(xStart, yStart, zStart, xEnd, yEnd, zEnd);
         p2pRotation(xStart, yStart, zStart, xEnd, yEnd, zEnd);
         render_parabola(distance, false, tension, ConfigManager.parabolaRenderSteps, thickness, textureProvider, textureIndex);
     }
 
+    @Override
     public void renderHalfParabolicCable(double xStart, double yStart, double zStart, double xEnd, double yEnd, double zEnd, double thickness, double tension, ITextureProvider textureProvider, int textureIndex) {
         double distance = distanceOf(xStart, yStart, zStart, xEnd, yEnd, zEnd);
         p2pRotation(xStart, yStart, zStart, xEnd, yEnd, zEnd);
         render_parabola(distance, true, tension, ConfigManager.parabolaRenderSteps, thickness, textureProvider, textureIndex);
     }
 
+    @Override
     public void renderCable(double xStart, double yStart, double zStart, double xEnd, double yEnd, double zEnd, double thickness, ITextureProvider textureProvider, int textureIndex) {
         double distance = distanceOf(xStart, yStart, zStart, xEnd, yEnd, zEnd);
         p2pRotation(xStart, yStart, zStart, xEnd, yEnd, zEnd);
         renderCube(thickness, distance, thickness, textureProvider, textureIndex);
     }
 
+    @Override
     public void renderHalfCable(double xStart, double yStart, double zStart, double xEnd, double yEnd, double zEnd, double thickness, ITextureProvider textureProvider, int textureIndex) {
         double distance = distanceOf(xStart, yStart, zStart, xEnd, yEnd, zEnd);
         p2pRotation(xStart, yStart, zStart, xEnd, yEnd, zEnd);
         renderCube(thickness, distance / 2, thickness, textureProvider, textureIndex);
     }
     
+    @Override
     public void renderCube(double maxX, double maxY, double maxZ, ITextureProvider textureProvider, int textureIndex) {
         Tessellator t = Tessellator.instance;
 
@@ -140,11 +148,12 @@ public class ClientRender extends DummyClientRender implements IClientRender{
             GL11.glPushMatrix();
             GL11.glTranslated(y0, i * unitLength, 0);
             GL11.glRotated(Math.toDegrees(Math.atan2(y0 - y1, unitLength)), 0, 0, 1);
-            renderCube(thickness, Math.sqrt(unitLength * unitLength + Math.pow(y1 - y0, 2)), thickness,textureProvider,  textureIndex);
+            renderCube(thickness, Math.sqrt(unitLength * unitLength + Math.pow(y1 - y0, 2)), thickness, textureProvider, textureIndex);
             GL11.glPopMatrix();
         }
     }
     
+    @Override
     public int getDirection(int facing) {
         switch (facing) {
             case 2: //N
@@ -168,6 +177,7 @@ public class ClientRender extends DummyClientRender implements IClientRender{
      * @param yEnd   End Y coordinate
      * @param zEnd   End Z coordinate
      */
+    @Override
     public void p2pRotation(double xStart, double yStart, double zStart, double xEnd, double yEnd, double zEnd) {
         double distance = distanceOf(xStart, yStart, zStart, xEnd, yEnd, zEnd);
         GL11.glRotated(Math.acos((yEnd - yStart) / distance) * 180 / Math.PI, (zEnd - zStart) / distance, 0, (xStart - xEnd) / distance);
@@ -184,6 +194,7 @@ public class ClientRender extends DummyClientRender implements IClientRender{
      * @param yEnd   End Y coordinate
      * @param zEnd   End Z coordinate
      */
+    @Override
     public double distanceOf(double xStart, double yStart, double zStart, double xEnd, double yEnd, double zEnd) {
         return Math.sqrt(Math.pow(xStart - xEnd, 2) +
                 Math.pow(yStart - yEnd, 2) +
@@ -198,8 +209,14 @@ public class ClientRender extends DummyClientRender implements IClientRender{
      * @param xEnd   End X coordinate
      * @param zEnd   End Z coordinate
      */
+    @Override
     public double distanceOf(double xStart, double zStart, double xEnd, double zEnd) {
         return Math.sqrt(Math.pow(xStart - xEnd, 2) +
                 Math.pow(zStart - zEnd, 2));
     }
+
+	@Override
+	public ITransmissionTowerRenderHelper newTransmissionTowerRenderHelper(TileEntity te) {
+		return new TransmissionTowerRenderHelper(te);
+	}
 }

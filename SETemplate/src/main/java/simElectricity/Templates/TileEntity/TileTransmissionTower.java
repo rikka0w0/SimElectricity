@@ -2,82 +2,32 @@ package simElectricity.Templates.TileEntity;
 
 import java.util.List;
 
-import simElectricity.API.INetworkEventHandler;
-import simElectricity.API.SEAPI;
-import simElectricity.API.EnergyTile.ISEGridNode;
-import simElectricity.API.EnergyTile.ISESimulatable;
-import simElectricity.API.Tile.ISEGridTile;
-import simElectricity.Templates.Client.Render.ITransmissionTower;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
+import simElectricity.API.INetworkEventHandler;
+import simElectricity.API.SEAPI;
+import simElectricity.API.Client.ITransmissionTower;
+import simElectricity.API.Client.ITransmissionTowerRenderHelper;
+import simElectricity.API.EnergyTile.ISEGridNode;
+import simElectricity.API.EnergyTile.ISESimulatable;
+import simElectricity.API.Tile.ISEGridTile;
+
+
 
 public class TileTransmissionTower extends TileEntity implements ISEGridTile, INetworkEventHandler, ITransmissionTower{
 	public int facing;
-	public int neighborList[] = new int[] { 0, -1, 0, 0, -1, 0 };
+	public int neighborCoords[] = new int[] { 0, -1, 0, 0, -1, 0 };
+	private ITransmissionTowerRenderHelper renderHelper;
+
+	@Override
+	public ITransmissionTowerRenderHelper getRenderHelper() {return renderHelper;}
 	
-	//ISEGridTile
-    private boolean registered = false;
-    private ISEGridNode gridNode = null;
-	@Override
-	public void setGridNode(ISEGridNode gridObj) {this.gridNode = gridObj;}
-
-	@Override
-	public ISEGridNode getGridNode() {return gridNode;}
-
-	@Override
-	public void onGridNeighborUpdated() {
-		neighborList = new int[] { 0, -1, 0, 0, -1, 0 };
-		
-		int i=0;
-    	loop: for (ISESimulatable neighbor : gridNode.getNeighborList()){
-    		if (neighbor instanceof ISEGridNode){
-				ISEGridNode neighbor1 = (ISEGridNode)neighbor;
-				neighborList[i] = neighbor1.getXCoord();
-				neighborList[i+1] = neighbor1.getYCoord();
-				neighborList[i+2] = neighbor1.getZCoord();
-				
-				i+=3;
-				if (i>4)
-					break loop;
-    		}
-    	}
-		SEAPI.networkManager.updateNetworkFields(this);
-	}
-
-	@Override
-	public boolean canConnect() {
-		for (int i=0; i<neighborList.length; i+=3){
-			if (neighborList[i+1] == -1)
-				return true;
-		}
-		return false;
-	}
-	
-    //INetworkEventHandler --------------------------------------------------------------------------------
-	@Override
-	public void onFieldUpdate(String[] fields, Object[] values) {
-
-	}
-
-	@Override
-	public void addNetworkFields(List fields) {
-		fields.add("neighborList");
-		fields.add("facing");
-		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-	}
-	
-	//ITransmissionTower
-	@Override
-	public int[] getNeighborCoordArray() {return neighborList;}
-
 	@Override
 	public double getInsulatorLength() {return 2;}
-	
-	@Override
-	public double getWireTension() {return 3;}
 	
 	@Override
 	public double[] getInsulatorPositionArray() {
@@ -90,8 +40,71 @@ public class TileTransmissionTower extends TileEntity implements ISEGridTile, IN
 
 	}
 
-	@Override
 	public int getRotation() {return facing;}
+	
+	//ISEGridTile
+    private boolean registered = false;
+    private ISEGridNode gridNode = null;
+	@Override
+	public void setGridNode(ISEGridNode gridObj) {this.gridNode = gridObj;}
+
+	@Override
+	public ISEGridNode getGridNode() {return gridNode;}
+
+	@Override
+	public void onGridNeighborUpdated() {
+		neighborCoords = new int[] { 0, -1, 0, 0, -1, 0 };
+		
+		int i=0;
+    	loop: for (ISESimulatable neighbor : gridNode.getNeighborList()){
+    		if (neighbor instanceof ISEGridNode){
+				ISEGridNode neighbor1 = (ISEGridNode)neighbor;
+				neighborCoords[i] = neighbor1.getXCoord();
+				neighborCoords[i+1] = neighbor1.getYCoord();
+				neighborCoords[i+2] = neighbor1.getZCoord();
+				
+				i+=3;
+				if (i>4)
+					break loop;
+    		}
+    	}
+		SEAPI.networkManager.updateNetworkFields(this);
+		
+		TileEntity neighbor1 = worldObj.getTileEntity(neighborCoords[0], neighborCoords[1], neighborCoords[2]);
+		TileEntity neighbor2 = worldObj.getTileEntity(neighborCoords[3], neighborCoords[4], neighborCoords[5]);
+		if (neighbor1!=null)
+			SEAPI.networkManager.updateNetworkFields(neighbor1);
+		if (neighbor2!=null)
+			SEAPI.networkManager.updateNetworkFields(neighbor2);
+	}
+
+	@Override
+	public boolean canConnect() {
+		for (int i=0; i<neighborCoords.length; i+=3){
+			if (neighborCoords[i+1] == -1)
+				return true;
+		}
+		return false;
+	}
+	
+    //INetworkEventHandler --------------------------------------------------------------------------------
+	@Override
+	public void onFieldUpdate(String[] fields, Object[] values) {
+		if (worldObj.isRemote){
+			if (renderHelper == null)
+				renderHelper = SEAPI.clientRender.newTransmissionTowerRenderHelper(this);
+			renderHelper.updateRenderData(neighborCoords);
+
+		}
+	}
+
+	@Override
+	public void addNetworkFields(List fields) {
+		fields.add("neighborCoords");
+		fields.add("facing");
+		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+	}
+	
 	
 	
 	//TileEntity
@@ -100,8 +113,13 @@ public class TileTransmissionTower extends TileEntity implements ISEGridTile, IN
         super.updateEntity();
         
         //No client side operation
-        if (worldObj.isRemote)
+        if (worldObj.isRemote){
+			if (renderHelper == null)
+				renderHelper = SEAPI.clientRender.newTransmissionTowerRenderHelper(this);
+			renderHelper.updateRenderData(neighborCoords);
         	return;
+        }
+        	
         
         if (!registered){
         	SEAPI.energyNetAgent.attachTile(this);
@@ -155,8 +173,4 @@ public class TileTransmissionTower extends TileEntity implements ISEGridTile, IN
     public AxisAlignedBB getRenderBoundingBox(){
     	return INFINITE_EXTENT_AABB;
     }
-
-
-
-
 }
