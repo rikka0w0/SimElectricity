@@ -84,7 +84,7 @@ public class TileTransmissionTower extends TileEntity implements ISEGridTile, IN
 		switch (getBlockMetadata()){
 		case 0: return new double[]{-1, 18, -4.5, -0.7, 23, 0, -1, 18, 4.5,
 				   					1, 18, -4.5, 0.7, 23, 0, 1, 18, 4.5};
-		case 1:	return new double[]{0, 16, -4.5, 0, 23, 4, 0, 16, 4.5};
+		case 1:	return new double[]{0, 16, -4.9, 0, 23, 3.95, 0, 16, 4.9};
 		default: return null;
 		}
 

@@ -189,42 +189,27 @@ public class RenderTransmissionTower extends TileEntitySpecialRenderer implement
     
     //I: from I: to O: fixed, angle
     private void fixConnectionPoints(double[] from, double[] to, double[] angles, double[] fixedfrom, double insulatorLength, double tension){
-        angles[0] = calcInitSlope(from[0], from[1], from[2], to[0], to[1], to[2], tension)*1.3;
+        angles[0] = calcInitSlope(from[0], from[1], from[2], to[0], to[1], to[2], tension);
         double lcos = insulatorLength * Math.cos(angles[0]);
         double atan = Math.atan2(to[0] - from[0], from[2] - to[2]);        
         fixedfrom[0] = from[0] + lcos * Math.sin(atan);
         fixedfrom[1] = from[1] + insulatorLength * Math.sin(angles[0]);
         fixedfrom[2] = from[2] - lcos * Math.cos(atan);
         
-        angles[1] = calcInitSlope(from[3], from[4], from[5], to[3], to[4], to[5], tension)*1.3;
+        angles[1] = calcInitSlope(from[3], from[4], from[5], to[3], to[4], to[5], tension);
         lcos = insulatorLength * Math.cos(angles[1]);
         atan = Math.atan2(to[3] - from[3], from[5] - to[5]);
         fixedfrom[3] = from[3] + lcos * Math.sin(atan);
         fixedfrom[4] = from[4] + insulatorLength * Math.sin(angles[1]);
         fixedfrom[5] = from[5] - lcos * Math.cos(atan);
         
-        angles[2] = calcInitSlope(from[6], from[7], from[8], to[6], to[7], to[8], tension)*1.3;
+        angles[2] = calcInitSlope(from[6], from[7], from[8], to[6], to[7], to[8], tension);
         lcos = insulatorLength * Math.cos(angles[2]);
         atan = Math.atan2(to[6] - from[6], from[8] - to[8]);
         fixedfrom[6] = from[6] + lcos * Math.sin(atan);
         fixedfrom[7] = from[7] + insulatorLength * Math.sin(angles[2]);
         fixedfrom[8] = from[8] - lcos * Math.cos(atan);
     }
-    
-  
-    
-    /*{initSlopeAngle, newCoords}
-    private double[] fixConnectionPoint(double xStart, double yStart, double zStart, double xEnd, double yEnd, double zEnd, double insulatorLength, double tension){
-        double initSlopeAngle = calcInitSlope(xStart, yStart, zStart, xEnd, yEnd, zEnd, tension)*1.3;
-        double lcos = insulatorLength * Math.cos(initSlopeAngle);
-        double atan = Math.atan2(xEnd - xStart, zStart - zEnd);
-        double mx = lcos * Math.sin(atan);
-        double my = insulatorLength * Math.sin(initSlopeAngle);
-        double mz = -lcos * Math.cos(atan);
-        
-        return new double[] {initSlopeAngle, xStart+mx, yStart+my, zStart+mz};
-    }
-    */
     
 	double[] from1 = new double[9], to1 = new double[9];
 	double[] fixedfrom1 = new double[9], fixedto1 = new double[9];
@@ -250,14 +235,14 @@ public class RenderTransmissionTower extends TileEntitySpecialRenderer implement
 			findConnection(tileEntity, neighbor1, from1, to1);
 			
 			if (tw.getInsulatorPositionArray().length > 9){
-				fixConnectionPoints(from1, to1, angle1, fixedfrom1, 2, 3);
+				fixConnectionPoints(from1, to1, angle1, fixedfrom1, tw.getInsulatorLength(), 3);
 			}else{
 				for (int i=0; i<9; i++)
 					fixedfrom1[i] = from1[i];
 			}
 			
 			if (((ITransmissionTower) neighbor1).getInsulatorPositionArray().length > 9)
-				fixConnectionPoints(to1, from1, dummyangle, fixedto1, 2, 3);
+				fixConnectionPoints(to1, from1, dummyangle, fixedto1, ((ITransmissionTower) neighbor1).getInsulatorLength(), 3);
 			else{
 				for (int i=0; i<9; i++)
 					fixedto1[i] = to1[i];
@@ -270,14 +255,14 @@ public class RenderTransmissionTower extends TileEntitySpecialRenderer implement
 			findConnection(tileEntity, neighbor2, from2, to2);
 			
 			if (tw.getInsulatorPositionArray().length > 9){
-				fixConnectionPoints(from2, to2, angle2, fixedfrom2, 2, 3);
+				fixConnectionPoints(from2, to2, angle2, fixedfrom2, tw.getInsulatorLength(), 3);
 			}else{
 				for (int i=0; i<9; i++)
 					fixedfrom2[i] = from2[i];
 			}
 			
 			if (((ITransmissionTower) neighbor2).getInsulatorPositionArray().length > 9)
-				fixConnectionPoints(to2, from2, dummyangle, fixedto2, 2, 3);
+				fixConnectionPoints(to2, from2, dummyangle, fixedto2, ((ITransmissionTower) neighbor2).getInsulatorLength(), 3);
 			else{
 				for (int i=0; i<9; i++)
 					fixedto2[i] = to2[i];				
@@ -293,9 +278,9 @@ public class RenderTransmissionTower extends TileEntitySpecialRenderer implement
         GL11.glRotatef(tw.getRotation()*45 - 90, 0F, 1F, 0F);
 
         //Debugging purpose, indicates the direction
-        GL11.glPushMatrix();
-        SEAPI.clientRender.renderCable(0, 0, 0, 1, 0, 0, 0.1, this, 2);
-        GL11.glPopMatrix();
+        //GL11.glPushMatrix();
+        //SEAPI.clientRender.renderCable(0, 0, 0, 1, 0, 0, 0.1, this, 2);
+        //GL11.glPopMatrix();
         
         GL11.glPushMatrix();
         renderTower(tileEntity.getBlockMetadata()); 
@@ -312,51 +297,34 @@ public class RenderTransmissionTower extends TileEntitySpecialRenderer implement
         GL11.glPushMatrix();
         GL11.glTranslated(x-tileEntity.xCoord, y-tileEntity.yCoord, z-tileEntity.zCoord);
         if (neighbor1 != null){
-            double insulatorLength = 2;
-
-            for (int i=0; i<3; i++){
-                GL11.glPushMatrix();
-                GL11.glTranslated(from1[3*i], from1[3*i+1],from1[3*i+2]);
-                SEAPI.clientRender.p2pRotation(from1[3*i],from1[3*i+1],from1[3*i+2], to1[3*i],from1[3*i+1],to1[3*i+2]);
-                GL11.glRotated(angle1[1]/Math.PI*180, 0, 0, 1);
-                renderInsulator(tileEntity.getBlockMetadata(), (float) insulatorLength);
-                GL11.glPopMatrix();
-                
-                GL11.glPushMatrix();
-                GL11.glTranslated(fixedfrom1[3*i], fixedfrom1[3*i+1],fixedfrom1[3*i+2]);
-                SEAPI.clientRender.renderHalfParabolicCable(fixedfrom1[3*i], fixedfrom1[3*i+1],fixedfrom1[3*i+2], fixedto1[3*i], fixedto1[3*i+1],fixedto1[3*i+2], 0.15, 3, this, 1);
-                GL11.glPopMatrix();
-                
-            }
+        	renderCableAndInsulator(from1, to1, fixedfrom1, fixedto1, angle1, tileEntity.getBlockMetadata());
         }
         if (neighbor2 != null){
-            double insulatorLength = 2;
-
-             for (int i=0; i<3; i++){
-                GL11.glPushMatrix();
-                GL11.glTranslated(from2[3*i], from2[3*i+1],from2[3*i+2]);
-                SEAPI.clientRender.p2pRotation(from2[3*i],from2[3*i+1],from2[3*i+2], to2[3*i],from2[3*i+1],to2[3*i+2]);
-                GL11.glRotated(angle2[1]/Math.PI*180, 0, 0, 1);
-                renderInsulator(tileEntity.getBlockMetadata(), (float) insulatorLength);
-                GL11.glPopMatrix();
-                
-                GL11.glPushMatrix();
-                GL11.glTranslated(fixedfrom2[3*i], fixedfrom2[3*i+1],fixedfrom2[3*i+2]);
-                SEAPI.clientRender.renderHalfParabolicCable(fixedfrom2[3*i], fixedfrom2[3*i+1],fixedfrom2[3*i+2], fixedto2[3*i], fixedto2[3*i+1],fixedto2[3*i+2], 0.15, 3, this, 1);
-                GL11.glPopMatrix();
-                
-            }
-            
-            
-            
+        	renderCableAndInsulator(from2, to2, fixedfrom2, fixedto2, angle2, tileEntity.getBlockMetadata());
         }
         GL11.glPopMatrix();
 	}
-    
-	public void renderInsulator(int meta, float length){
+	
+	private void renderCableAndInsulator(double[] from, double[] to, double[] fixedfrom, double[] fixedto, double[] angle, int meta){
+		for (int i=0; i<3; i++){
+	        GL11.glPushMatrix();
+	        GL11.glTranslated(from[3*i], from[3*i+1],from[3*i+2]);
+	        SEAPI.clientRender.p2pRotation(from[3*i],from[3*i+1],from[3*i+2], to[3*i],from[3*i+1],to[3*i+2]);
+	        GL11.glRotated(angle[i]/Math.PI*180, 0, 0, 1);
+	        renderInsulator(meta);
+	        GL11.glPopMatrix();
+	        
+	        GL11.glPushMatrix();
+	        GL11.glTranslated(fixedfrom[3*i], fixedfrom[3*i+1],fixedfrom[3*i+2]);
+	        SEAPI.clientRender.renderHalfParabolicCable(fixedfrom[3*i], fixedfrom[3*i+1],fixedfrom[3*i+2], fixedto[3*i], fixedto[3*i+1],fixedto[3*i+2], 0.15, 3, this, 1);
+	        GL11.glPopMatrix();
+		}
+	}
+	
+	public void renderInsulator(int meta){
 		switch (meta){
 		case 0:
-			Models.renderInsulator(length, this, 0 ,2);
+			Models.renderInsulator(2, this, 0 ,2);
 			break;
 		case 1:
 			break;
@@ -373,19 +341,19 @@ public class RenderTransmissionTower extends TileEntitySpecialRenderer implement
 			break;
 		case 1:
 			GL11.glPushMatrix();
-			GL11.glTranslated(0,25,4);
+			GL11.glTranslated(0,25,3.95);
 			GL11.glRotated(180,0,0,1);
 			Models.renderInsulator(2, this, 0 ,2);
 			GL11.glPopMatrix();
 			
 			GL11.glPushMatrix();
-			GL11.glTranslated(0,18,4.5);
+			GL11.glTranslated(0,18,4.9);
 			GL11.glRotated(180,0,0,1);
 			Models.renderInsulator(2, this, 0 ,2);
 			GL11.glPopMatrix();
 			
 			GL11.glPushMatrix();
-			GL11.glTranslated(0,18,-4.5);
+			GL11.glTranslated(0,18,-4.9);
 			GL11.glRotated(180,0,0,1);
 			Models.renderInsulator(2, this, 0 ,2);
 			GL11.glPopMatrix();
