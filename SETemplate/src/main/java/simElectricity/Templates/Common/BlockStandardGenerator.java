@@ -26,6 +26,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.SEAPI;
+import simElectricity.Templates.Utils.Utils;
 
 /**
  * Standard generator block
@@ -58,7 +59,7 @@ public abstract class BlockStandardGenerator extends BlockContainerSE {
         if (!(te instanceof TileSidedGenerator))
             return;
 
-        ForgeDirection functionalSide = SEAPI.utils.autoConnect(te, SEAPI.utils.getPlayerSight(player, ignoreVerticalFacing()).getOpposite());
-        ((TileSidedGenerator) te).setFunctionalSide(functionalSide);
+        ForgeDirection functionalSide = Utils.autoConnect(te, Utils.getPlayerSight(player, ignoreVerticalFacing()).getOpposite());
+        ((TileSidedGenerator) te).functionalSide = functionalSide;
     }
 }

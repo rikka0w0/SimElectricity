@@ -19,12 +19,18 @@
 
 package simElectricity.Templates.Container;
 
+import java.util.Iterator;
+
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.inventory.ICrafting;
 import net.minecraft.tileentity.TileEntity;
 import simElectricity.API.SEAPI;
 import simElectricity.Templates.Common.ContainerBase;
+import simElectricity.Templates.TileEntity.TileSolarInverter;
+import simElectricity.Templates.Utils.MessageGui;
 
-public class ContainerSolarInverter extends ContainerBase {
+public class ContainerSolarInverter extends ContainerBase<TileSolarInverter> {
     public ContainerSolarInverter(InventoryPlayer inventoryPlayer, TileEntity te) {
         super(inventoryPlayer, te);
     }
@@ -51,13 +57,25 @@ public class ContainerSolarInverter extends ContainerBase {
 
     @Override
     public void init() {
-        if (!tileEntity.getWorldObj().isRemote) {
-        	SEAPI.networkManager.updateTileEntityFields(tileEntity, "Vreg", "Ro", "inputSide", "outputSide");
-        }
+        //if (!tileEntity.getWorldObj().isRemote) {
+        //	SEAPI.networkManager.updateTileEntityFields(tileEntity, "Vreg", "Ro", "inputSide", "outputSide");
+        //}
     }
 
     @Override
     public void detectAndSendChanges() {
         super.detectAndSendChanges();
+    	Iterator iterator = this.crafters.iterator();
+    	
+    	while (iterator.hasNext())
+    	{
+    		ICrafting crafting = (ICrafting)iterator.next();
+    		MessageGui.sendToGui((EntityPlayerMP)crafting, (byte)0
+    							, tileEntity.Vreg
+    							, tileEntity.Ro
+    							, tileEntity.inputSide
+    							, tileEntity.outputSide
+    							);
+    	}
     }
 }

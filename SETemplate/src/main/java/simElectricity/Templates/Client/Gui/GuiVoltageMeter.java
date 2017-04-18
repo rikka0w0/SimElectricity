@@ -23,19 +23,22 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
 import org.lwjgl.opengl.GL11;
 
 import simElectricity.Templates.Container.ContainerVoltageMeter;
-import simElectricity.Templates.TileEntity.TileVoltageMeter;
+import simElectricity.Templates.Utils.IGuiSyncHandler;
 
 @SideOnly(Side.CLIENT)
-public class GuiVoltageMeter extends GuiContainer {
-    protected TileVoltageMeter tileentity;
+public class GuiVoltageMeter extends GuiContainer implements IGuiSyncHandler{
+	private double voltage;
+	
+    protected TileEntity tileentity;
     int sqr = 0;
 
-    public GuiVoltageMeter(InventoryPlayer inventoryPlayer, TileVoltageMeter tileEntity) {
+    public GuiVoltageMeter(InventoryPlayer inventoryPlayer, TileEntity tileEntity) {
         super(new ContainerVoltageMeter(inventoryPlayer, tileEntity));
         tileentity = tileEntity;
     }
@@ -50,7 +53,7 @@ public class GuiVoltageMeter extends GuiContainer {
         //the parameters for drawString are: string, x, y, color
 
         fontRendererObj.drawString(StatCollector.translateToLocal("tile.sime:VoltageMeter.name"), 8, 6, 4210752);
-        fontRendererObj.drawString("Voltage: " + tileentity.voltage + "V", 18, 22, 4210752);
+        fontRendererObj.drawString("Voltage: " + voltage + "V", 18, 22, 4210752);
 
         //draws "Inventory" or your regional equivalent
         fontRendererObj.drawString(StatCollector.translateToLocal("container.inventory"), 8, ySize - 96, 4210752);
@@ -66,7 +69,7 @@ public class GuiVoltageMeter extends GuiContainer {
         int y = (height - ySize) / 2;
         this.drawTexturedModalRect(x, y, 0, 0, xSize, ySize);
 
-        float v = (float) tileentity.voltage;
+        float v = (float) voltage;
         if (v == 0)
             sqr = 0;
         else
@@ -92,4 +95,9 @@ public class GuiVoltageMeter extends GuiContainer {
         //Draw the pointer
         this.drawTexturedModalRect(x + 88, y + 56, 0, 190, 1, 4);
     }
+
+	@Override
+	public void onGuiEvent(byte eventID, Object[] data) {
+		voltage = (Double)data[0];
+	}
 }

@@ -19,19 +19,27 @@
 
 package simElectricity.Templates.Common;
 
+import java.nio.ByteBuffer;
+
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
+import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 
-public abstract class ContainerBase extends Container {
-    protected TileEntity tileEntity;
+public abstract class ContainerBase<TYPE extends TileEntity> extends Container {
+    protected TYPE tileEntity;
 
-    public void init() {
-    }
-
+    public void init(){}
+    
+    ///**
+    // * Use for Server->Client sync, see MessageGui.sendToGui
+    // */
+    //public void prepareGui(EntityPlayerMP player){}
+        
     public abstract int getPlayerInventoryStartIndex();
 
     public abstract int getPlayerInventoryEndIndex();
@@ -41,9 +49,11 @@ public abstract class ContainerBase extends Container {
     public abstract int getTileInventoryEndIndex();
 
     public ContainerBase(InventoryPlayer inventoryPlayer, TileEntity te) {
-        tileEntity = te;
+        tileEntity = (TYPE) te;
 
-        init();
+        init();        
+        //if (!tileEntity.getWorldObj().isRemote)	//Server
+        //	prepareGui((EntityPlayerMP) inventoryPlayer.player);
 
         bindPlayerInventory(inventoryPlayer);
     }

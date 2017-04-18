@@ -27,6 +27,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ChatComponentText;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
@@ -64,6 +65,16 @@ public class ItemUltimateMultimeter extends Item {
         return super.getUnlocalizedNameInefficiently(itemStack).replaceAll("item.", "item.sime:");
     }
     
+    /**
+     * Post some text in a player's chat window
+     * 
+     * @param player
+     * @param text
+     */
+    public void chat(EntityPlayer player, String text) {
+        player.addChatMessage(new ChatComponentText(text));
+    }
+    
     @Override
     public boolean onItemUse(ItemStack itemStack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
         TileEntity te = world.getTileEntity(x, y, z);
@@ -71,15 +82,15 @@ public class ItemUltimateMultimeter extends Item {
         if (world.isRemote)
         	return false;
         
-        SEAPI.utils.chat(player, "------------------");    
+        chat(player, "------------------");    
         if (te instanceof ISECableTile) {
         	ISESimulatable node = ((ISECableTile) te).getNode();
         	int color = ((ISECableTile) te).getColor();
-        	SEAPI.utils.chat(player, "Color: " + String.valueOf(color) + ", " +
+        	chat(player, "Color: " + String.valueOf(color) + ", " +
             				"Voltage: " + String.valueOf(SEAPI.energyNetAgent.getVoltage(node)));
         	double currentMagnitude = SEAPI.energyNetAgent.getCurrentMagnitude(node);
         	if (!Double.isNaN(currentMagnitude))
-        		SEAPI.utils.chat(player, "Current: " + String.valueOf(currentMagnitude));
+        		chat(player, "Current: " + String.valueOf(currentMagnitude));
         }
         else if (te instanceof ISETile){
         	ISETile tile = (ISETile)te;
@@ -89,24 +100,24 @@ public class ItemUltimateMultimeter extends Item {
         		ISEVoltageSourceData data = (ISEVoltageSourceData) tile.getComponent(dirs[0]).getDataProvider();
                 double voltage = SEAPI.energyNetAgent.getVoltage(vs);
                 double current = (voltage-data.getOutputVoltage())/data.getResistance();
-                SEAPI.utils.chat(player, "Internal Voltage: " + String.valueOf(data.getOutputVoltage()) + ", " +
+                chat(player, "Internal Voltage: " + String.valueOf(data.getOutputVoltage()) + ", " +
             				"Voltage: " + String.valueOf(voltage)); 
-                SEAPI.utils.chat(player, "Resistance: " + String.valueOf(data.getResistance()) + ", " +
+                chat(player, "Resistance: " + String.valueOf(data.getResistance()) + ", " +
             				"Input current: " + String.valueOf(current));
-                SEAPI.utils.chat(player, "Input power: " + String.valueOf(current*voltage));
+                chat(player, "Input power: " + String.valueOf(current*voltage));
         	}
         	else for (ForgeDirection dir : tile.getValidDirections()){
         		ISESubComponent comp = tile.getComponent(dir);
         		String[] temp = comp.toString().split("[.]");
-        		SEAPI.utils.chat(player, temp[temp.length-1].split("@")[0] + ": " + String.valueOf(SEAPI.energyNetAgent.getVoltage(comp)));
+        		chat(player, temp[temp.length-1].split("@")[0] + ": " + String.valueOf(SEAPI.energyNetAgent.getVoltage(comp)));
         	}
         }else if (te instanceof ISEGridTile){
     		ISEGridNode comp = ((ISEGridTile) te).getGridNode();
     		String[] temp = comp.toString().split("[.]");
-    		SEAPI.utils.chat(player, temp[temp.length-1].split("@")[0] + ": " + String.valueOf(SEAPI.energyNetAgent.getVoltage(comp)));
+    		chat(player, temp[temp.length-1].split("@")[0] + ": " + String.valueOf(SEAPI.energyNetAgent.getVoltage(comp)));
         	double currentMagnitude = SEAPI.energyNetAgent.getCurrentMagnitude(comp);
         	if (!Double.isNaN(currentMagnitude))
-        		SEAPI.utils.chat(player, "Current: " + String.valueOf(currentMagnitude));
+        		chat(player, "Current: " + String.valueOf(currentMagnitude));
         }
         
         return true;

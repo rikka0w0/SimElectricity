@@ -2,6 +2,7 @@ package simElectricity.API;
 
 import java.util.List;
 
+@Deprecated
 public interface INetworkEventHandler {
     /**
      * When the updating packet is processed on the target side, this function is fired

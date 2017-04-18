@@ -30,6 +30,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.ISidedFacing;
+import simElectricity.API.ITileRenderingInfoSyncHandler;
 import simElectricity.API.SEAPI;
 
 public class ItemGlove extends Item {
@@ -60,14 +61,12 @@ public class ItemGlove extends Item {
     
     @Override
     public boolean onItemUse(ItemStack itemStack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
-        if ((world.getTileEntity(x, y, z) instanceof ISidedFacing) & (!world.isRemote)) {
+        if ((world.getTileEntity(x, y, z) instanceof ISidedFacing) & (!world.isRemote)) {	//Server side only!
             ISidedFacing te = (ISidedFacing) world.getTileEntity(x, y, z);
             ForgeDirection newFacing = ForgeDirection.getOrientation(side);
 
             if (te.canSetFacing(newFacing)) {
                 te.setFacing(newFacing);
-                SEAPI.networkManager.updateFacing((TileEntity) te);
-                itemStack.damageItem(1, player);
             }
             return true;
         } else {

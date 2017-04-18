@@ -19,13 +19,18 @@
 
 package simElectricity.Templates.Container;
 
+import java.util.Iterator;
+
 import simElectricity.API.SEAPI;
 import simElectricity.Templates.Common.ContainerBase;
+import simElectricity.Templates.TileEntity.TileIC2Generator;
+import simElectricity.Templates.Utils.MessageGui;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.ICrafting;
 import net.minecraft.tileentity.TileEntity;
 
-public class ContainerIC2Generator extends ContainerBase {
+public class ContainerIC2Generator extends ContainerBase<TileIC2Generator> {
     public ContainerIC2Generator(InventoryPlayer inventoryPlayer, TileEntity te) {
         super(inventoryPlayer, te);
     }
@@ -51,17 +56,20 @@ public class ContainerIC2Generator extends ContainerBase {
     }
 
     @Override
-    public void addCraftingToCrafters(ICrafting par1iCrafting) {
-        super.addCraftingToCrafters(par1iCrafting);
-        
-        if (!tileEntity.getWorldObj().isRemote) {
-        	SEAPI.networkManager.updateTileEntityFields(tileEntity, new String[]{"inputPower","bufferedEnergy","powerRate","outputVoltage"});
-        }
-    }
-
-    @Override
     public void detectAndSendChanges() {
         super.detectAndSendChanges();
-        SEAPI.networkManager.updateTileEntityFields(tileEntity, new String[]{"bufferedEnergy","powerRate"});
+        
+    	Iterator iterator = this.crafters.iterator();
+    	while (iterator.hasNext())
+    	{
+    		ICrafting crafting = (ICrafting)iterator.next();
+    		
+    		MessageGui.sendToGui((EntityPlayerMP)crafting, (byte)0
+    				, tileEntity.inputPower
+    				, tileEntity.bufferedEnergy
+    				, tileEntity.powerRate
+    				, tileEntity.outputVoltage
+    				);
+    	}
     }
 }

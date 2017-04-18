@@ -32,6 +32,7 @@ import simElectricity.API.ISEWrenchable;
 import simElectricity.API.SEAPI;
 import simElectricity.Templates.Common.BlockStandardGenerator;
 import simElectricity.Templates.TileEntity.TileQuantumGenerator;
+import simElectricity.Templates.Utils.ClientUtils;
 import simElectricity.Templates.SETemplate;
 
 public class BlockQuantumGenerator extends BlockStandardGenerator {
@@ -71,13 +72,13 @@ public class BlockQuantumGenerator extends BlockStandardGenerator {
         if (!(te instanceof ISEWrenchable))
             return iconBuffer[0];
 
-        return iconBuffer[SEAPI.utils.getTextureOnSide(side, ((ISEWrenchable) te).getFunctionalSide())];
+        return iconBuffer[ClientUtils.getTextureID(side, ((ISEWrenchable) te).getFunctionalSide())];
     }
 
     @SideOnly(Side.CLIENT)
     @Override
     public IIcon getIcon(int side, int meta) {
-        return iconBuffer[SEAPI.utils.getTextureOnSide(side, ForgeDirection.WEST)];
+        return iconBuffer[ClientUtils.getTextureID(side, ForgeDirection.WEST)];
     }
 
     @Override

@@ -25,12 +25,10 @@ import simElectricity.Templates.Items.*;
 @GameRegistry.ObjectHolder(SETemplate.MODID)
 public class SEItems {
 
-    public static ItemFan fan;
     public static ItemHVWire hvWire;
     public static ItemIceIngot iceIngot;
 
     public static void init() {
-        fan = new ItemFan();
         hvWire = new ItemHVWire();
         iceIngot = new ItemIceIngot();
     }

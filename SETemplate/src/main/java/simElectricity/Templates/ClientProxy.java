@@ -33,6 +33,11 @@ import simElectricity.Templates.TileEntity.*;
 
 @SideOnly(Side.CLIENT)
 public class ClientProxy extends CommonProxy {
+	@Override
+    public Object getCurrentGui(){
+    	return FMLClientHandler.instance().getClient().currentScreen;
+    }
+	
     @Override
     public World getClientWorld() {
         return FMLClientHandler.instance().getClient().theWorld;
@@ -41,10 +46,7 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void registerTileEntitySpecialRenderer() {
         ClientRegistry.bindTileEntitySpecialRenderer(TileWire.class, new RenderWire());
-        ClientRegistry.bindTileEntitySpecialRenderer(TileWindMillTop.class, new RenderWindMillTop());
-        ClientRegistry.bindTileEntitySpecialRenderer(TileTower.class, new RenderTower());
         ClientRegistry.bindTileEntitySpecialRenderer(TileTransmissionTower.class, new RenderTransmissionTower());
-        ClientRegistry.bindTileEntitySpecialRenderer(TileCableClamp.class, new RenderCableClamp());
     }
 
     @Override
@@ -55,10 +57,6 @@ public class ClientProxy extends CommonProxy {
             return new GuiQuantumGenerator(player.inventory, (TileQuantumGenerator) te);
         if (te instanceof TileVoltageMeter)
             return new GuiVoltageMeter(player.inventory, (TileVoltageMeter) te);
-        if (te instanceof TileElectricFurnace)
-            return new GuiElectricFurnace(player.inventory, (TileElectricFurnace) te);
-        if (te instanceof TileSimpleGenerator)
-            return new GuiSimpleGenerator(player.inventory, (TileSimpleGenerator) te);
         if (te instanceof TileAdjustableResistor)
             return new GuiAdjustableResistor(player.inventory, te);
         if (te instanceof TileAdjustableTransformer)
@@ -67,8 +65,6 @@ public class ClientProxy extends CommonProxy {
             return new GuiSwitch(player.inventory, te);
         if (te instanceof TileSolarInverter)
             return new GuiSolarInverter(player.inventory, te);
-        if (te instanceof TileIC2Consumer)
-            return new GuiIC2Consumer(player.inventory, te);
         if (te instanceof TileIC2Generator)
             return new GuiIC2Generator(player.inventory, te);
         if (te instanceof TileIceMachine)

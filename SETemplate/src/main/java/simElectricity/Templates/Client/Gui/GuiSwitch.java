@@ -33,11 +33,26 @@ import org.lwjgl.opengl.GL11;
 
 import simElectricity.API.SEAPI;
 import simElectricity.Templates.Container.ContainerSwitch;
-import simElectricity.Templates.TileEntity.TileSwitch;
+import simElectricity.Templates.Utils.IGuiSyncHandler;
+import simElectricity.Templates.Utils.MessageGui;
 
 @SideOnly(Side.CLIENT)
-public class GuiSwitch extends GuiContainer {
-    protected TileSwitch te;
+public class GuiSwitch extends GuiContainer implements IGuiSyncHandler{
+	
+    private ForgeDirection inputSide, outputSide;
+	private double resistance, maxCurrent, current;
+	private boolean isOn;
+	
+	@Override
+	public void onGuiEvent(byte eventID, Object[] data) {
+		current = (Double) data[0];
+		maxCurrent = (Double) data[1];
+		isOn = (Boolean) data[2];
+		inputSide = (ForgeDirection) data[3];
+		outputSide = (ForgeDirection) data[4];
+	}
+	
+    protected TileEntity te;
 
     @Override
     public void initGui() {
@@ -57,74 +72,7 @@ public class GuiSwitch extends GuiContainer {
 
     @Override
     public void actionPerformed(GuiButton button) {
-        switch (button.id) {
-            case 0:
-                if (GuiScreen.isCtrlKeyDown())
-                    te.resistance -= 1;
-                else
-                    te.resistance -= 0.1;
-                break;
-            case 1:
-                if (GuiScreen.isCtrlKeyDown())
-                    te.resistance -= 0.001;
-                else
-                    te.resistance -= 0.01;
-                break;
-            case 2:
-                if (GuiScreen.isCtrlKeyDown())
-                    te.resistance += 0.001;
-                else
-                    te.resistance += 0.01;
-                break;
-            case 3:
-                if (GuiScreen.isCtrlKeyDown())
-                    te.resistance += 1;
-                else
-                    te.resistance += 0.1;
-                break;
-
-            case 4:
-                if (GuiScreen.isCtrlKeyDown())
-                    te.maxCurrent -= 100;
-                else
-                    te.maxCurrent -= 10;
-                break;
-            case 5:
-                if (GuiScreen.isCtrlKeyDown())
-                    te.maxCurrent -= 0.1;
-                else
-                    te.maxCurrent -= 1;
-                break;
-            case 6:
-                if (GuiScreen.isCtrlKeyDown())
-                    te.maxCurrent += 0.1;
-                else
-                    te.maxCurrent += 1;
-                break;
-            case 7:
-                if (GuiScreen.isCtrlKeyDown())
-                    te.maxCurrent += 100;
-                else
-                    te.maxCurrent += 10;
-                break;
-
-            default:
-        }
-
-        if (te.resistance < 0.001)
-            te.resistance = 0.001F;
-        if (te.resistance > 100)
-            te.resistance = 100;
-        if (button.id < 4)
-        	SEAPI.networkManager.updateTileEntityFieldsToServer(te, "resistance");
-
-        if (te.maxCurrent < 0.1)
-            te.maxCurrent = 0.1F;
-        if (te.maxCurrent > 1000)
-            te.maxCurrent = 1000;
-        if (button.id < 8 && button.id > 3)
-        	SEAPI.networkManager.updateTileEntityFieldsToServer(te, "maxCurrent");
-
+    	MessageGui.sendToServer(te, IGuiSyncHandler.EVENT_BUTTON_CLICK, GuiScreen.isCtrlKeyDown(), (byte)button.id);
     }
 
     @Override
@@ -150,34 +98,21 @@ public class GuiSwitch extends GuiContainer {
             selectedDirection = ForgeDirection.DOWN;
         }
 
+        
+        //Switch in the Gui
         if (selectedDirection == ForgeDirection.UNKNOWN) {
             if (tx > 80 && tx < 110 && ty > 66 && ty < 72) {
-                te.isOn = !te.isOn;
-                SEAPI.networkManager.updateTileEntityFieldsToServer(te, "isOn");
+            	MessageGui.sendToServer(te, IGuiSyncHandler.EVENT_BUTTON_CLICK, GuiScreen.isCtrlKeyDown(), (byte)8);
             }
             return;
         }
 
-
-        if (button == 0) {        //Left key
-            if (te.outputSide == selectedDirection)
-                te.outputSide = te.inputSide;
-
-            te.inputSide = selectedDirection;
-        } else if (button == 1) { //Right key
-            if (te.inputSide == selectedDirection)
-                te.inputSide = te.outputSide;
-
-            te.outputSide = selectedDirection;
-        }
-
-        SEAPI.networkManager.updateTileEntityFieldsToServer(te, "inputSide", "outputSide");
-        te.getWorldObj().markBlockForUpdate(te.xCoord, te.yCoord, te.zCoord);
+        MessageGui.sendToServer(te, IGuiSyncHandler.EVENT_FACING_CHANGE, (byte)button, selectedDirection);
     }
 
     public GuiSwitch(InventoryPlayer inventoryPlayer, TileEntity tileEntity) {
         super(new ContainerSwitch(inventoryPlayer, tileEntity));
-        te = (TileSwitch) tileEntity;
+        te = tileEntity;
     }
 
     @Override
@@ -185,15 +120,15 @@ public class GuiSwitch extends GuiContainer {
         //draw text and stuff here
         //the parameters for drawString are: string, x, y, color
 
-        if (te.isOn)
-            fontRendererObj.drawString(StatCollector.translateToLocal("tile.sime:Switch.name") + "              (I=" + String.format("%.3f", te.current) + " A)", 8, 6, 4210752);
+        if (isOn)
+            fontRendererObj.drawString(StatCollector.translateToLocal("tile.sime:Switch.name") + "              (I=" + String.format("%.3f", current) + " A)", 8, 6, 4210752);
         else
             fontRendererObj.drawString(StatCollector.translateToLocal("tile.sime:Switch.name"), 8, 6, 4210752);
 
 
-        fontRendererObj.drawString("Imax = " + String.format("%.1f", te.maxCurrent) + " A", 8, 26, 4210752);
+        fontRendererObj.drawString("Imax = " + String.format("%.1f", maxCurrent) + " A", 8, 26, 4210752);
 
-        fontRendererObj.drawString("Ron = " + String.format("%.3f", te.resistance) + " \u03a9", 8, 42, 4210752);
+        fontRendererObj.drawString("Ron = " + String.format("%.3f", resistance) + " \u03a9", 8, 42, 4210752);
 
         //draws "Inventory" or your regional equivalent
         fontRendererObj.drawString(StatCollector.translateToLocal("container.inventory"), 8, ySize - 96, 4210752);
@@ -208,14 +143,19 @@ public class GuiSwitch extends GuiContainer {
         int y = (height - ySize) / 2;
         drawTexturedModalRect(x, y, 0, 0, xSize, ySize);
 
-        if (te.isOn) {
+        if (isOn) {
             drawTexturedModalRect(x + 91, y + 70, 3, 0, 9, 1);
         }
 
-        drawFacingBar(x + 130, y + 61, te.inputSide, te.outputSide);
+        drawFacingBar(x + 130, y + 61, inputSide, outputSide);
     }
 
     protected void drawFacingBar(int x, int y, ForgeDirection red, ForgeDirection blue) {
+    	if (red == null)
+    		return;
+    	if (blue == null)
+    		return;
+    	
         switch (red) {
             case WEST:
                 this.drawTexturedModalRect(x + 6, y + 2, 176, 0, 3, 14);

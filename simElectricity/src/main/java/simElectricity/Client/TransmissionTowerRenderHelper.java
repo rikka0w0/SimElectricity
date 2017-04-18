@@ -84,7 +84,11 @@ public class TransmissionTowerRenderHelper implements ITransmissionTowerRenderHe
     }
     
     private double distanceOf(double[] Start, double[] End) {
-        return Math.sqrt((Start[0] - End[0])*(Start[0] - End[0]) + (Start[1] - End[1])*(Start[1] - End[1]));
+    	double ret = 0;
+    	for (int i=0; i<Start.length; i++)
+    		ret += (Start[i] - End[i])*(Start[i] - End[i]);
+
+    	return Math.sqrt(ret);
     }
     
     private double distanceOf(double[] Start, double x, double z) {
@@ -284,21 +288,23 @@ public class TransmissionTowerRenderHelper implements ITransmissionTowerRenderHe
     
     //I: from I: to O: fixed, angle
     private void fixConnectionPoints(double[] from, double[] to, double[] angles, double[] fixedfrom, double insulatorLength, double tension){
-        angles[0] = calcInitSlope(from[0], from[1], from[2], to[0], to[1], to[2], tension);
+    	double distance = distanceOf(to,from);
+    	
+        angles[0] = calcInitSlope(from[0], from[1], from[2], to[0], to[1], to[2], tension) + Math.atan((to[1]-from[1])/distance);
         double lcos = insulatorLength * Math.cos(angles[0]);
         double atan = Math.atan2(to[0] - from[0], from[2] - to[2]);        
         fixedfrom[0] = from[0] + lcos * Math.sin(atan);
         fixedfrom[1] = from[1] + insulatorLength * Math.sin(angles[0]);
         fixedfrom[2] = from[2] - lcos * Math.cos(atan);
         
-        angles[1] = calcInitSlope(from[3], from[4], from[5], to[3], to[4], to[5], tension);
+        angles[1] = calcInitSlope(from[3], from[4], from[5], to[3], to[4], to[5], tension) + Math.atan((to[4]-from[4])/distance);
         lcos = insulatorLength * Math.cos(angles[1]);
         atan = Math.atan2(to[3] - from[3], from[5] - to[5]);
         fixedfrom[3] = from[3] + lcos * Math.sin(atan);
         fixedfrom[4] = from[4] + insulatorLength * Math.sin(angles[1]);
         fixedfrom[5] = from[5] - lcos * Math.cos(atan);
         
-        angles[2] = calcInitSlope(from[6], from[7], from[8], to[6], to[7], to[8], tension);
+        angles[2] = calcInitSlope(from[6], from[7], from[8], to[6], to[7], to[8], tension) + Math.atan((to[7]-from[7])/distance);
         lcos = insulatorLength * Math.cos(angles[2]);
         atan = Math.atan2(to[6] - from[6], from[8] - to[8]);
         fixedfrom[6] = from[6] + lcos * Math.sin(atan);

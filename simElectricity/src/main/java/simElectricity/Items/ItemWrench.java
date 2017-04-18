@@ -30,6 +30,7 @@ import net.minecraft.world.World;
 import net.minecraft.item.Item;
 import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.ISEWrenchable;
+import simElectricity.API.ITileRenderingInfoSyncHandler;
 import simElectricity.API.SEAPI;
 
 public class ItemWrench extends Item {
@@ -60,16 +61,12 @@ public class ItemWrench extends Item {
     
     @Override
     public boolean onItemUse(ItemStack itemStack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
-        if ((world.getTileEntity(x, y, z) instanceof ISEWrenchable) & (!world.isRemote)) {
+        if ((world.getTileEntity(x, y, z) instanceof ISEWrenchable) & (!world.isRemote)) {	//Server side only!
         	ISEWrenchable te = (ISEWrenchable) world.getTileEntity(x, y, z);
             ForgeDirection newFacing = ForgeDirection.getOrientation(side);
 
             if (te.canSetFunctionalSide(newFacing)) {
                 te.setFunctionalSide(newFacing);
-                SEAPI.energyNetAgent.reattachTile((TileEntity) te);
-                SEAPI.networkManager.updateFunctionalSide((TileEntity) te);
-                world.notifyBlocksOfNeighborChange(x, y, z, null);
-                itemStack.damageItem(1, player);
             }
 
             return true;

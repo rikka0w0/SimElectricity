@@ -18,7 +18,8 @@ import simElectricity.API.Client.ITransmissionTowerRenderHelper;
 @SideOnly(Side.CLIENT)
 public interface IClientRender {
     /**
-     * Render a parabolic wire between two points
+     * Render parabolic cable between two points
+     * </p> coordinates are MineCraft coordinates, the cable will start from current openGL reference point
      *
      * @param xStart       Start X coordinate
      * @param yStart       Start Y coordinate
@@ -35,7 +36,8 @@ public interface IClientRender {
 			double thickness, double tension, ITextureProvider textureProvider, int textureIndex);
 	
     /**
-     * Render half of a parabolic wire between two points
+     * Render parabolic cable between two points (Half)
+     * </p> coordinates are MineCraft coordinates, the cable will start from current openGL reference point
      *
      * @param xStart       Start X coordinate
      * @param yStart       Start Y coordinate
@@ -52,7 +54,8 @@ public interface IClientRender {
 			double thickness, double tension, ITextureProvider textureProvider, int textureIndex);
 	
     /**
-     * Render a straight piece of wire between two points
+     * Render straight wire between two points
+     * </p> coordinates are MineCraft coordinates, the cable will start from current openGL reference point
      *
      * @param xStart       Start X coordinate
      * @param yStart       Start Y coordinate
@@ -69,7 +72,8 @@ public interface IClientRender {
 			double thickness, ITextureProvider textureProvider, int textureIndex);
 	
     /**
-     * Render half of a straight piece of wire between two points
+     * Render straight wire between two points (Half)
+     * </p> coordinates are MineCraft coordinates, the cable will start from current openGL reference point
      *
      * @param xStart       Start X coordinate
      * @param yStart       Start Y coordinate
@@ -86,7 +90,7 @@ public interface IClientRender {
 			double thickness, ITextureProvider textureProvider, int textureIndex);
 	
     /**
-     * Render a cube, from current normal, with a given size and texture
+     * Render a cube with given size and texture
      *
      * @param maxX Size of x
      * @param maxY Size of y
@@ -95,13 +99,8 @@ public interface IClientRender {
 	public void renderCube(double maxX, double maxY, double maxZ,
 			ITextureProvider textureProvider, int textureIndex);
 	
-	/**
-	 * NESW -> 0123
-	 */
-    public int getDirection(int facing);
-	
     /**
-     * Rotate the coordinate system so that the object in it can lay between two points
+     * Rotate the coordinate system so that the (0, 1, 0) axis of the system is parallel with the line joined by two points
      *
      * @param xStart Start X coordinate
      * @param yStart Start Y coordinate
@@ -115,7 +114,7 @@ public interface IClientRender {
     		double xEnd, double yEnd, double zEnd);
 
     /**
-     * Calculate the distance between two points
+     * Calculate the distance between two points (3d)
      *
      * @param xStart Start X coordinate
      * @param yStart Start Y coordinate
@@ -129,7 +128,7 @@ public interface IClientRender {
     		double xEnd, double yEnd, double zEnd);
     
     /**
-     * Calculate the distance between two points
+     * Calculate the distance between two points (2d)
      *
      * @param xStart Start X coordinate
      * @param zStart Start Z coordinate

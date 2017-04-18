@@ -77,8 +77,6 @@ public class BlockTransmissionTower extends BlockContainerSE {
         tower.facing = 8 - MathHelper.floor_double((player.rotationYaw) * 8.0F / 360.0F + 0.5D) & 7;
 
         SEAPI.energyNetAgent.attachGridObject(world, x, y, z, (byte)0);
-        
-        //SEAPI.networkManager.updateNetworkFields(tower);
     }
 
     @Override

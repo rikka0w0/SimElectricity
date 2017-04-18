@@ -36,6 +36,10 @@ public class CommonProxy implements IGuiHandler {
     public void registerTileEntitySpecialRenderer() {
     }
 
+    public Object getCurrentGui(){
+    	return null;
+    }
+    
     public World getClientWorld() {
         return null;
     }
@@ -48,10 +52,6 @@ public class CommonProxy implements IGuiHandler {
             return new ContainerQuantumGenerator(player.inventory, te);
         if (te instanceof TileVoltageMeter)
             return new ContainerVoltageMeter(player.inventory, te);
-        if (te instanceof TileElectricFurnace)
-            return new ContainerElectricFurnace(player.inventory, te);
-        if (te instanceof TileSimpleGenerator)
-            return new ContainerSimpleGenerator(player.inventory, te);
         if (te instanceof TileAdjustableResistor)
             return new ContainerAdjustableResistor(player.inventory, te);
         if (te instanceof TileAdjustableTransformer)
@@ -60,8 +60,6 @@ public class CommonProxy implements IGuiHandler {
             return new ContainerSwitch(player.inventory, te);
         if (te instanceof TileSolarInverter)
         	return new ContainerSolarInverter(player.inventory, te);
-        if (te instanceof TileIC2Consumer)
-        	return new ContainerIC2Consumer(player.inventory, te);
         if (te instanceof TileIC2Generator)
         	return new ContainerIC2Generator(player.inventory, te);
         if (te instanceof TileIceMachine)

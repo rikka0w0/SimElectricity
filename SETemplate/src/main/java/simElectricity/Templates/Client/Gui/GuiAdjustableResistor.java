@@ -31,11 +31,25 @@ import net.minecraft.util.StatCollector;
 import org.lwjgl.opengl.GL11;
 import simElectricity.API.SEAPI;
 import simElectricity.Templates.Container.ContainerQuantumGenerator;
-import simElectricity.Templates.TileEntity.TileAdjustableResistor;
+import simElectricity.Templates.Utils.IGuiSyncHandler;
+import simElectricity.Templates.Utils.MessageGui;
 
 @SideOnly(Side.CLIENT)
-public class GuiAdjustableResistor extends GuiContainer {
-    protected TileAdjustableResistor te;
+public class GuiAdjustableResistor extends GuiContainer implements IGuiSyncHandler{
+	private double energyConsumed, power, resistance;
+
+	@Override
+	public void onGuiEvent(byte eventID, Object[] data) {
+		switch (eventID){
+		case 0:
+			energyConsumed = (Double)data[0];
+			power = (Double)data[1];
+			resistance = (Double) data[2];
+			break;
+		}
+	}
+	
+    protected TileEntity te;
 
     @Override
     public void initGui() {
@@ -50,47 +64,12 @@ public class GuiAdjustableResistor extends GuiContainer {
 
     @Override
     public void actionPerformed(GuiButton button) {
-        switch (button.id) {
-            case 0:
-                if (GuiScreen.isCtrlKeyDown())
-                    te.resistance -= 100;
-                else
-                    te.resistance -= 10;
-                break;
-            case 1:
-                if (GuiScreen.isCtrlKeyDown())
-                    te.resistance -= 0.1;
-                else
-                    te.resistance -= 1;
-                break;
-            case 2:
-                if (GuiScreen.isCtrlKeyDown())
-                    te.resistance += 0.1;
-                else
-                    te.resistance += 1;
-                break;
-            case 3:
-                if (GuiScreen.isCtrlKeyDown())
-                    te.resistance += 100;
-                else
-                    te.resistance += 10;
-                break;
-            default:
-                te.powerConsumed = 0;
-                SEAPI.networkManager.updateTileEntityFieldsToServer(te, "powerConsumed");
-        }
-
-        if (te.resistance < 0.1)
-            te.resistance = 0.1F;
-        if (te.resistance > 10000)
-            te.resistance = 10000;
-        if (button.id < 4)
-        	SEAPI.networkManager.updateTileEntityFieldsToServer(te, "resistance");
+    	MessageGui.sendToServer(te, IGuiSyncHandler.EVENT_BUTTON_CLICK, GuiScreen.isCtrlKeyDown(), (byte)button.id);
     }
 
     public GuiAdjustableResistor(InventoryPlayer inventoryPlayer, TileEntity tileEntity) {
         super(new ContainerQuantumGenerator(inventoryPlayer, tileEntity));
-        te = (TileAdjustableResistor) tileEntity;
+        te = tileEntity;
     }
 
     String float2Str(float f, int dig) {
@@ -104,9 +83,9 @@ public class GuiAdjustableResistor extends GuiContainer {
 
         fontRendererObj.drawString(StatCollector.translateToLocal("tile.sime:AdjustableResistor.name"), 8, 6, 4210752);
 
-        fontRendererObj.drawString(String.format("%.1f", te.resistance) + " \u03a9", 30, 24, 4210752);
-        fontRendererObj.drawString(String.format("%.1f", te.power) + " W", 30, 37, 4210752);
-        fontRendererObj.drawString(String.format("%.0f", te.powerConsumed) + " J", 30, 50, 4210752);
+        fontRendererObj.drawString(String.format("%.1f", resistance) + " \u03a9", 30, 24, 4210752);
+        fontRendererObj.drawString(String.format("%.1f", power) + " W", 30, 37, 4210752);
+        fontRendererObj.drawString(String.format("%.0f", energyConsumed) + " J", 30, 50, 4210752);
 
         //draws "Inventory" or your regional equivalent
         fontRendererObj.drawString(StatCollector.translateToLocal("container.inventory"), 8, ySize - 96, 4210752);

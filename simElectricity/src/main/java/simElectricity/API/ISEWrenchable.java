@@ -12,7 +12,9 @@ public interface ISEWrenchable {
     ForgeDirection getFunctionalSide();
 
     /**
-     * Called when the functional side is going to be set
+     * Called when the functional side is going to be set by the wrench, DONT use this when placing the block!
+     * </p>
+     * Note: SERVER ONLY! Initiate a server->client sync if needed
      */
     void setFunctionalSide(ForgeDirection newFunctionalSide);
 

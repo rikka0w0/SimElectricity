@@ -19,22 +19,21 @@
 
 package simElectricity.Templates.Container;
 
+import java.util.Iterator;
+
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.inventory.ICrafting;
 import net.minecraft.tileentity.TileEntity;
 import simElectricity.API.SEAPI;
+import simElectricity.API.EnergyTile.ISESimulatable;
 import simElectricity.Templates.Common.ContainerBase;
 import simElectricity.Templates.TileEntity.TileVoltageMeter;
+import simElectricity.Templates.Utils.MessageGui;
 
-public class ContainerVoltageMeter extends ContainerBase {
+public class ContainerVoltageMeter extends ContainerBase<TileVoltageMeter> {
     public ContainerVoltageMeter(InventoryPlayer inventoryPlayer, TileEntity te) {
         super(inventoryPlayer, te);
-    }
-
-    @Override
-    public void detectAndSendChanges() {
-        super.detectAndSendChanges();
-        ((TileVoltageMeter) tileEntity).voltage = SEAPI.energyNetAgent.getVoltage(((TileVoltageMeter) tileEntity).tile);
-        SEAPI.networkManager.updateTileEntityFields(tileEntity, "voltage");
     }
 
     @Override
@@ -55,5 +54,20 @@ public class ContainerVoltageMeter extends ContainerBase {
     @Override
     public int getTileInventoryEndIndex() {
         return 27;
+    }
+        
+    @Override
+    public void detectAndSendChanges() {
+        super.detectAndSendChanges();
+        
+    	Iterator iterator = this.crafters.iterator();
+    	
+    	while (iterator.hasNext())
+    	{
+    		ICrafting crafting = (ICrafting)iterator.next();
+    		MessageGui.sendToGui((EntityPlayerMP)crafting, (byte)0
+    							, SEAPI.energyNetAgent.getVoltage(tileEntity.tile)
+    							);
+    	}
     }
 }

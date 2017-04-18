@@ -19,16 +19,28 @@
 
 package simElectricity.Templates.Container;
 
+import java.util.Iterator;
+
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.inventory.ICrafting;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.Slot;
 import net.minecraft.tileentity.TileEntity;
 import simElectricity.API.SEAPI;
+import simElectricity.Templates.Client.Gui.GuiAdjustableResistor;
 import simElectricity.Templates.Common.ContainerBase;
+import simElectricity.Templates.TileEntity.TileAdjustableResistor;
+import simElectricity.Templates.Utils.MessageGui;
 
-public class ContainerAdjustableResistor extends ContainerBase {
+public class ContainerAdjustableResistor extends ContainerBase<TileAdjustableResistor> {	
     public ContainerAdjustableResistor(InventoryPlayer inventoryPlayer, TileEntity te) {
         super(inventoryPlayer, te);
     }
-
+   
     @Override
     public int getPlayerInventoryStartIndex() {
         return 27;
@@ -48,17 +60,20 @@ public class ContainerAdjustableResistor extends ContainerBase {
     public int getTileInventoryEndIndex() {
         return 27;
     }
-
-    @Override
-    public void init() {
-        if (!tileEntity.getWorldObj().isRemote) {
-        	SEAPI.networkManager.updateTileEntityFields(tileEntity, "resistance");
-        }
-    }
-
+    
     @Override
     public void detectAndSendChanges() {
         super.detectAndSendChanges();
-        SEAPI.networkManager.updateTileEntityFields(tileEntity, "powerConsumed", "power");
+                
+    	Iterator iterator = this.crafters.iterator();
+    	while (iterator.hasNext())
+    	{
+    		ICrafting crafting = (ICrafting)iterator.next();
+    		
+    		MessageGui.sendToGui((EntityPlayerMP)crafting, (byte)0
+    				,tileEntity.energyConsumed
+    				,tileEntity.power
+    				,tileEntity.resistance);
+    	}
     }
 }

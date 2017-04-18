@@ -19,12 +19,21 @@
 
 package simElectricity.Templates.Container;
 
+import java.nio.ByteBuffer;
+import java.util.Iterator;
+
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.inventory.ICrafting;
 import net.minecraft.tileentity.TileEntity;
 import simElectricity.API.SEAPI;
 import simElectricity.Templates.Common.ContainerBase;
+import simElectricity.Templates.TileEntity.TileSwitch;
+import simElectricity.Templates.Utils.MessageGui;
 
-public class ContainerSwitch extends ContainerBase {
+public class ContainerSwitch extends ContainerBase<TileSwitch> {
     public ContainerSwitch(InventoryPlayer inventoryPlayer, TileEntity te) {
         super(inventoryPlayer, te);
     }
@@ -50,15 +59,21 @@ public class ContainerSwitch extends ContainerBase {
     }
 
     @Override
-    public void init() {
-        if (!tileEntity.getWorldObj().isRemote) {
-        	SEAPI.networkManager.updateTileEntityFields(tileEntity, "resistance", "maxCurrent", "isOn", "inputSide", "outputSide");
-        }
-    }
-
-    @Override
     public void detectAndSendChanges() {
         super.detectAndSendChanges();
-        SEAPI.networkManager.updateTileEntityFields(tileEntity, "current");
+        
+    	Iterator iterator = this.crafters.iterator();
+    	
+    	while (iterator.hasNext())
+    	{
+    		ICrafting crafting = (ICrafting)iterator.next();
+    		MessageGui.sendToGui((EntityPlayerMP)crafting, (byte)0
+    							, tileEntity.current
+    							, tileEntity.maxCurrent
+    							, tileEntity.isOn
+    							, tileEntity.inputSide
+    							, tileEntity.outputSide
+    							);
+    	}
     }
 }

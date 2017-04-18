@@ -1,5 +1,7 @@
 package simElectricity.Templates.Common;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
@@ -10,32 +12,7 @@ import simElectricity.API.SEAPI;
 
 public abstract class TileEntitySE extends TileEntity{
     protected boolean isAddedToEnergyNet;
-    protected short overVoltageTick = -1;
-    
-    /**
-     * Continuous over voltage occurs! Oops! Do explosions here! Override this when necessary 0w0
-     */
-    public void onOverVoltage(){}
-    
-    /**
-     * The maximum allowed ticks for continuous over voltage
-     * @return
-     */
-    public int getMaxOverVoltageTick(){return 15;}
-    
-    /**
-     * Check the input voltage
-     * @param voltage The voltage supplied into this machine
-     */
-    public void checkVoltage(double voltage,double maxVoltage){
-        if (voltage > maxVoltage){
-        	if (overVoltageTick == -1)
-        		overVoltageTick = 0;
-        }else{
-        	overVoltageTick = -1;
-        }
-    }
-    
+       
     /**
      * Called just before joining the energyNet, do some initialization here
      */
@@ -67,15 +44,6 @@ public abstract class TileEntitySE extends TileEntity{
             SEAPI.energyNetAgent.attachTile(this);
             this.isAddedToEnergyNet = true;
         }
-        
-    	//Find out continuous over voltage
-    	if (overVoltageTick != -1){
-    		overVoltageTick++;
-    		if (overVoltageTick>getMaxOverVoltageTick()){
-    			overVoltageTick = -1;
-    			onOverVoltage();
-    		}
-    	} 	
     }
 
     @Override
@@ -94,21 +62,41 @@ public abstract class TileEntitySE extends TileEntity{
     	invalidate();
     }
     
+    
+    
+    
+    /////////////////////////////////////////////////////////////////////////////////////////////
+	public void markTileEntityForS2CSync(){
+		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+	}
+	
+	@SideOnly(value = Side.CLIENT)
+	protected void markForRenderUpdate(){
+		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+	}
+    
+    
+	//Sync
+	public void prepareS2CPacketData(NBTTagCompound nbt) {}
+	
+	@SideOnly(value = Side.CLIENT)
+	public void onSyncDataFromServerArrived(NBTTagCompound nbt) {
+		markForRenderUpdate();
+	}
+    
     @Override
-	public Packet getDescriptionPacket()
-    {
-		NBTTagCompound nbttagcompound = new NBTTagCompound();
-		writeToNBT(nbttagcompound);
-		return new S35PacketUpdateTileEntity(xCoord, yCoord, zCoord, -999, nbttagcompound);
+	public Packet getDescriptionPacket(){
+		//System.out.println("[DEBUG]:Server sent tile sync packet");
+		NBTTagCompound tagCompound = new NBTTagCompound();
+		prepareS2CPacketData(tagCompound);
+		return new S35PacketUpdateTileEntity(xCoord, yCoord, zCoord, 1, tagCompound);
     }
     
     @Override
 	public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity pkt)
     {
-		super.onDataPacket(net, pkt);
-		readFromNBT(pkt.func_148857_g());
-		
-		if(worldObj.isRemote)
-			worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+		//System.out.println("[DEBUG]:Client recived tile sync packet");
+		if (worldObj.isRemote)
+			onSyncDataFromServerArrived(pkt.func_148857_g());
     }
 }

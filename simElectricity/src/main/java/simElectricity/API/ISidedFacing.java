@@ -34,6 +34,8 @@ public interface ISidedFacing {
      * Usually contains a line of
      * <p/>
      * {@code facing = newFacing;}
+     * </p>
+     * Note: SERVER ONLY! Initiate a server->client sync if needed
      */
     void setFacing(ForgeDirection newFacing);
 

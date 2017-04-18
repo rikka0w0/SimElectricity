@@ -33,11 +33,27 @@ import org.lwjgl.opengl.GL11;
 
 import simElectricity.API.SEAPI;
 import simElectricity.Templates.Container.ContainerSolarInverter;
-import simElectricity.Templates.TileEntity.TileSolarInverter;
+import simElectricity.Templates.Utils.IGuiSyncHandler;
+import simElectricity.Templates.Utils.MessageGui;
 
 @SideOnly(Side.CLIENT)
-public class GuiSolarInverter extends GuiContainer {
-    protected TileSolarInverter te;
+public class GuiSolarInverter extends GuiContainer implements IGuiSyncHandler{
+    private ForgeDirection inputSide, outputSide;
+    private double Vreg, Ro;
+
+	@Override
+	public void onGuiEvent(byte eventID, Object[] data) {
+		switch (eventID){
+		case 0:
+			Vreg = (Double) data[0];
+			Ro = (Double) data[1];
+			inputSide = (ForgeDirection)data[2];
+			outputSide = (ForgeDirection)data[3];
+			break;
+		}
+	}
+	
+    protected TileEntity te;
 
     @Override
     public void initGui() {
@@ -58,74 +74,7 @@ public class GuiSolarInverter extends GuiContainer {
 
     @Override
     public void actionPerformed(GuiButton button) {
-        switch (button.id) {
-            case 0:
-                if (GuiScreen.isCtrlKeyDown())
-                    te.Ro -= 1;
-                else
-                    te.Ro -= 0.1;
-                break;
-            case 1:
-                if (GuiScreen.isCtrlKeyDown())
-                    te.Ro -= 0.001;
-                else
-                    te.Ro -= 0.01;
-                break;
-            case 2:
-                if (GuiScreen.isCtrlKeyDown())
-                    te.Ro += 0.001;
-                else
-                    te.Ro += 0.01;
-                break;
-            case 3:
-                if (GuiScreen.isCtrlKeyDown())
-                    te.Ro += 1;
-                else
-                    te.Ro += 0.1;
-                break;
-
-            case 4:
-                if (GuiScreen.isCtrlKeyDown())
-                    te.Vreg -= 100;
-                else
-                    te.Vreg -= 10;
-                break;
-            case 5:
-                if (GuiScreen.isCtrlKeyDown())
-                    te.Vreg -= 0.1;
-                else
-                    te.Vreg -= 1;
-                break;
-            case 6:
-                if (GuiScreen.isCtrlKeyDown())
-                    te.Vreg += 0.1;
-                else
-                    te.Vreg += 1;
-                break;
-            case 7:
-                if (GuiScreen.isCtrlKeyDown())
-                    te.Vreg += 100;
-                else
-                    te.Vreg += 10;
-                break;
-
-            default:
-        }
-
-        if (te.Ro < 0.001)
-            te.Ro = 0.001F;
-        if (te.Ro > 100)
-            te.Ro = 100;
-        if (button.id < 4)
-        	SEAPI.networkManager.updateTileEntityFieldsToServer(te, "Ro");
-
-        if (te.Vreg < 200)
-            te.Vreg = 200;
-        if (te.Vreg > 240)
-            te.Vreg = 240;
-        if (button.id < 8 && button.id > 3)
-        	SEAPI.networkManager.updateTileEntityFieldsToServer(te, "Vreg");
-
+    	MessageGui.sendToServer(te, IGuiSyncHandler.EVENT_BUTTON_CLICK, GuiScreen.isCtrlKeyDown(), (byte)button.id);
     }
 
     @Override
@@ -154,25 +103,12 @@ public class GuiSolarInverter extends GuiContainer {
         if (selectedDirection == ForgeDirection.UNKNOWN)
             return;
 
-        if (button == 0) {        //Left key
-            if (te.getSecondarySide() == selectedDirection)
-                te.outputSide = te.inputSide;
-
-            te.inputSide = selectedDirection;
-        } else if (button == 1) { //Right key
-            if (te.getPrimarySide() == selectedDirection)
-                te.inputSide = te.outputSide;
-
-            te.outputSide = selectedDirection;
-        }
-
-        SEAPI.networkManager.updateTileEntityFieldsToServer(te, "inputSide", "outputSide");
-        te.getWorldObj().markBlockForUpdate(te.xCoord, te.yCoord, te.zCoord);
+        MessageGui.sendToServer(te, IGuiSyncHandler.EVENT_FACING_CHANGE, (byte)button, selectedDirection);
     }
 
     public GuiSolarInverter(InventoryPlayer inventoryPlayer, TileEntity tileEntity) {
         super(new ContainerSolarInverter(inventoryPlayer, tileEntity));
-        te = (TileSolarInverter) tileEntity;
+        te = tileEntity;
     }
 
     @Override
@@ -182,9 +118,9 @@ public class GuiSolarInverter extends GuiContainer {
 
         fontRendererObj.drawString(StatCollector.translateToLocal("tile.sime:SolarInverter.name"), 8, 6, 4210752);
 
-        fontRendererObj.drawString("Vo: " + String.format("%.1f", te.Vreg) + "V", 32, 26, 4210752);
+        fontRendererObj.drawString("Vo: " + String.format("%.1f", Vreg) + "V", 32, 26, 4210752);
 
-        fontRendererObj.drawString("Ro: " + String.format("%.3f", te.Ro) + " \u03a9", 32, 42, 4210752);
+        fontRendererObj.drawString("Ro: " + String.format("%.3f", Ro) + " \u03a9", 32, 42, 4210752);
 
         //draws "Inventory" or your regional equivalent
         fontRendererObj.drawString(StatCollector.translateToLocal("container.inventory"), 8, ySize - 96, 4210752);
@@ -199,10 +135,15 @@ public class GuiSolarInverter extends GuiContainer {
         int y = (height - ySize) / 2;
         this.drawTexturedModalRect(x, y, 0, 0, xSize, ySize);
 
-        drawFacingBar(x + 130, y + 61, te.getPrimarySide(), te.getSecondarySide());
+        drawFacingBar(x + 130, y + 61, inputSide, outputSide);
     }
 
     protected void drawFacingBar(int x, int y, ForgeDirection red, ForgeDirection blue) {
+    	if (red == null)
+    		return;
+    	if (blue == null)
+    		return;
+    	
         switch (red) {
             case WEST:
                 this.drawTexturedModalRect(x + 6, y + 2, 176, 0, 3, 14);

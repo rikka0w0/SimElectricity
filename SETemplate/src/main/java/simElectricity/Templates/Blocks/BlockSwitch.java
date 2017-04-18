@@ -34,6 +34,7 @@ import simElectricity.API.SEAPI;
 import simElectricity.Templates.Common.BlockContainerSE;
 import simElectricity.Templates.TileEntity.TileSwitch;
 import simElectricity.Templates.SETemplate;
+import simElectricity.Templates.Utils.Utils;
 
 public class BlockSwitch extends BlockContainerSE {
     private IIcon[] iconBuffer = new IIcon[5];
@@ -50,7 +51,7 @@ public class BlockSwitch extends BlockContainerSE {
         } else {
             if (!world.isRemote) {
                 te.isOn = !te.isOn;
-                SEAPI.networkManager.updateTileEntityFields(te, "isOn");
+                te.markTileEntityForS2CSync();
                 SEAPI.energyNetAgent.reattachTile(te);
             }
         }
@@ -104,10 +105,10 @@ public class BlockSwitch extends BlockContainerSE {
     public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase player, ItemStack itemStack) {
         TileSwitch te = (TileSwitch) world.getTileEntity(x, y, z);
 
-        te.setFacing(SEAPI.utils.getPlayerSight(player, false).getOpposite());
+        te.setFacing(Utils.getPlayerSight(player, false).getOpposite());
 
-        te.inputSide = SEAPI.utils.autoConnect(te, ForgeDirection.UP, te.getFacing());
-        te.outputSide = SEAPI.utils.autoConnect(te, te.inputSide.getOpposite(), new ForgeDirection[] { te.getFacing(), te.inputSide });
+        te.inputSide = Utils.autoConnect(te, ForgeDirection.UP, te.getFacing());
+        te.outputSide = Utils.autoConnect(te, te.inputSide.getOpposite(), new ForgeDirection[] { te.getFacing(), te.inputSide });
 
         if (te.outputSide == te.getFacing())
             te.outputSide = te.outputSide.getRotation(ForgeDirection.UP);

@@ -19,18 +19,20 @@
 
 package simElectricity.Templates.TileEntity;
 
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.nbt.NBTTagCompound;
 import simElectricity.API.SEAPI;
 
-import simElectricity.API.INetworkEventHandler;
 import simElectricity.Templates.Common.TileStandardSEMachine;
+import simElectricity.Templates.Utils.IGuiSyncHandler;
+import simElectricity.Templates.Utils.MessageGui;
 
 import java.util.List;
 
-public class TileAdjustableResistor extends TileStandardSEMachine implements INetworkEventHandler {
-    public float resistance = 1000;
-    public float powerConsumed = 0;
-    public float power = 0;
+public class TileAdjustableResistor extends TileStandardSEMachine implements IGuiSyncHandler {
+    public double resistance = 1000;
+    public double energyConsumed = 0;
+    public double power = 0;
 
     @Override
     public void updateEntity() {
@@ -40,32 +42,22 @@ public class TileAdjustableResistor extends TileStandardSEMachine implements INe
             return;
 
         double voltage = SEAPI.energyNetAgent.getVoltage(tile);
-        power = (float) (voltage*voltage/resistance);
-        powerConsumed += power / 20F;
+        power = voltage*voltage/resistance;
+        energyConsumed += power / 20F;
     }
 
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
 
-        resistance = tagCompound.getFloat("resistance");
+        resistance = tagCompound.getDouble("resistance");
     }
 
     @Override
     public void writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
 
-        tagCompound.setFloat("resistance", resistance);
-    }
-
-    @Override
-    public void onFieldUpdate(String[] fields, Object[] values) {
-        //Handling on server side
-        if (!worldObj.isRemote) {
-            for (String s : fields)
-                if (s.contains("resistance"))
-                    SEAPI.energyNetAgent.markTileForUpdate(this);
-        }
+        tagCompound.setDouble("resistance", resistance);
     }
 
     @Override
@@ -73,8 +65,56 @@ public class TileAdjustableResistor extends TileStandardSEMachine implements INe
         return resistance;
     }
     
-    @Override
-    public void addNetworkFields(List fields) {
-
-    }
+	/////////////////////////////////////////////////////////
+	///IGuiSyncHandler
+	/////////////////////////////////////////////////////////
+	@Override
+	public void onGuiEvent(byte eventID, Object[] data) {
+		if (eventID != IGuiSyncHandler.EVENT_BUTTON_CLICK)
+			return;
+		
+		boolean isCtrlDown = (Boolean) data[0];
+		byte button = (Byte) data[1];
+		
+		double resistance = this.resistance;
+		
+        switch (button) {
+        case 0:
+            if (isCtrlDown)
+                resistance -= 100;
+            else
+                resistance -= 10;
+            break;
+        case 1:
+            if (isCtrlDown)
+                resistance -= 0.1;
+            else
+                resistance -= 1;
+            break;
+        case 2:
+            if (isCtrlDown)
+                resistance += 0.1;
+            else
+                resistance += 1;
+            break;
+        case 3:
+            if (isCtrlDown)
+                resistance += 100;
+            else
+                resistance += 10;
+            break;
+        default:
+            energyConsumed = 0;
+        }
+        
+        if (resistance < 0.1)
+            resistance = 0.1F;
+        if (resistance > 10000)
+            resistance = 10000;
+        
+        this.resistance = resistance;
+        
+        SEAPI.energyNetAgent.markTileForUpdate(this);
+        //No need to sync back, since the GUI is open and Container will do the job
+	}
 }

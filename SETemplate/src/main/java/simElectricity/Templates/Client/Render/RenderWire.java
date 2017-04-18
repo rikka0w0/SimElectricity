@@ -32,6 +32,7 @@ import org.lwjgl.opengl.GL12;
 import simElectricity.Templates.Blocks.BlockWire;
 import simElectricity.Templates.TileEntity.TileWire;
 
+@Deprecated
 @SideOnly(Side.CLIENT)
 public class RenderWire extends TileEntitySpecialRenderer {
     public float WIDTH = 0.2F;
@@ -46,10 +47,10 @@ public class RenderWire extends TileEntitySpecialRenderer {
         Tessellator t = Tessellator.instance;
         GL11.glPushMatrix();
         GL11.glTranslated(x + 0.5, y + 0.5, z + 0.5);
-        renderWireBox(t, -1, wire.renderSides);
+        renderWireBox(t, -1, wire.getConnections());
         for (int i = 0; i < 6; i++) {
-            if (wire.renderSides[i])
-                renderWireBox(t, i, wire.renderSides);
+            if (wire.getConnections()[i])
+                renderWireBox(t, i, wire.getConnections());
         }
         GL11.glPopMatrix();
     }

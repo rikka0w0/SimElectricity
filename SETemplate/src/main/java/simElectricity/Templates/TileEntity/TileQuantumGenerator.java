@@ -19,14 +19,16 @@
 
 package simElectricity.Templates.TileEntity;
 
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraftforge.common.util.ForgeDirection;
-import simElectricity.API.SEAPI;
 import simElectricity.API.INetworkEventHandler;
+import simElectricity.API.SEAPI;
 import simElectricity.Templates.Common.TileSidedGenerator;
+import simElectricity.Templates.Utils.IGuiSyncHandler;
 
 import java.util.List;
 
-public class TileQuantumGenerator extends TileSidedGenerator implements INetworkEventHandler {
+public class TileQuantumGenerator extends TileSidedGenerator implements IGuiSyncHandler {
 
     @Override
     public void onLoad() {
@@ -37,28 +39,95 @@ public class TileQuantumGenerator extends TileSidedGenerator implements INetwork
     }
 
     @Override
-    public void onFieldUpdate(String[] fields, Object[] values) {
-        //Handling on server side
-        if (!worldObj.isRemote) {
-            for (String s : fields) {
-                if (s.contains("outputVoltage") || s.contains("outputResistance")) {
-                	SEAPI.energyNetAgent.markTileForUpdate(this);
-                }
-            }
-        }
-    }
-
-    @Override
     public boolean canSetFunctionalSide(ForgeDirection newFunctionalSide) {
         return true;
     }
     
     @Override
-    public void addNetworkFields(List fields) {
-    }
-
-    @Override
     public boolean canSetFacing(ForgeDirection newFacing) {
         return newFacing != ForgeDirection.UP && newFacing != ForgeDirection.DOWN;
     }
+    
+	/////////////////////////////////////////////////////////
+	///IGuiSyncHandler
+	/////////////////////////////////////////////////////////
+	@Override
+	public void onGuiEvent(byte eventID, Object[] data) {
+		if (eventID != IGuiSyncHandler.EVENT_BUTTON_CLICK)
+			return;
+		
+		boolean isCtrlDown = (Boolean) data[0];
+		byte button = (Byte) data[1];
+		
+		double outputVoltage = this.outputVoltage;
+		double outputResistance = this.outputResistance;
+		
+        switch (button) {
+        case 0:
+            if (isCtrlDown)
+                outputVoltage -= 100;
+            else
+                outputVoltage -= 10;
+            break;
+        case 1:
+            if (isCtrlDown)
+                outputVoltage -= 0.1;
+            else
+                outputVoltage -= 1;
+            break;
+        case 2:
+            if (isCtrlDown)
+                outputVoltage += 0.1;
+            else
+                outputVoltage += 1;
+            break;
+        case 3:
+            if (isCtrlDown)
+                outputVoltage += 100;
+            else
+                outputVoltage += 10;
+            break;
+        case 4:
+            if (GuiScreen.isCtrlKeyDown())
+                outputResistance -= 1;
+            else
+                outputResistance -= 0.1;
+            break;
+        case 5:
+            if (GuiScreen.isCtrlKeyDown())
+                outputResistance -= 0.001;
+            else
+                outputResistance -= 0.01;
+            break;
+        case 6:
+            if (GuiScreen.isCtrlKeyDown())
+                outputResistance += 0.001;
+            else
+                outputResistance += 0.01;
+            break;
+        case 7:
+            if (GuiScreen.isCtrlKeyDown())
+                outputResistance += 1;
+            else
+                outputResistance += 0.1;
+            break;
+        default:
+	    }
+	
+	    if (outputVoltage < 0)
+	        outputVoltage = 0.1F;
+	    if (outputVoltage > 10000)
+	        outputVoltage = 10000;
+	    
+        if (outputResistance < 0)
+            outputResistance = 0.001F;
+        if (outputResistance > 100)
+            outputResistance = 100;
+        
+        this.outputVoltage = outputVoltage;
+        this.outputResistance = outputResistance;
+		
+        SEAPI.energyNetAgent.markTileForUpdate(this);
+        //No need to sync back, since the GUI is open and Container will do the job
+	}
 }

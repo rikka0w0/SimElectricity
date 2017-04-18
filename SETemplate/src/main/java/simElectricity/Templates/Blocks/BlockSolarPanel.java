@@ -33,6 +33,7 @@ import simElectricity.API.SEAPI;
 import simElectricity.Templates.Common.BlockStandardGenerator;
 import simElectricity.Templates.Common.TileSidedGenerator;
 import simElectricity.Templates.TileEntity.TileSolarPanel;
+import simElectricity.Templates.Utils.Utils;
 
 public class BlockSolarPanel extends BlockStandardGenerator {
     private IIcon[] iconBuffer = new IIcon[4];
@@ -57,11 +58,11 @@ public class BlockSolarPanel extends BlockStandardGenerator {
         if (!(te instanceof TileSidedGenerator))
             return;
 
-        ForgeDirection functionalSide = SEAPI.utils.autoConnect(te, SEAPI.utils.getPlayerSight(player, false).getOpposite(), ForgeDirection.UP);
+        ForgeDirection functionalSide = Utils.autoConnect(te, Utils.getPlayerSight(player, false).getOpposite(), ForgeDirection.UP);
         if (functionalSide == ForgeDirection.UP)
             functionalSide = ForgeDirection.DOWN;
 
-        ((TileSidedGenerator) te).setFunctionalSide(functionalSide);
+        ((TileSidedGenerator) te).functionalSide = functionalSide;
     }
 
     @Override

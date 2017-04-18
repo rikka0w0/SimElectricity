@@ -27,90 +27,49 @@ import simElectricity.API.SEAPI;
 import simElectricity.API.DataProvider.ISETransformerData;
 import simElectricity.API.EnergyTile.ISESubComponent;
 import simElectricity.API.Tile.ISETile;
-import simElectricity.API.INetworkEventHandler;
-import simElectricity.Templates.Common.TileEntitySE;
+import simElectricity.Templates.Common.TileEntityTwoPort;
+import simElectricity.Templates.Utils.IGuiSyncHandler;
 
-public class TileAdjustableTransformer extends TileEntitySE implements ISETile, ISETransformerData, INetworkEventHandler {
+public class TileAdjustableTransformer extends TileEntityTwoPort implements ISETransformerData, IGuiSyncHandler {
     public ISESubComponent primary = (ISESubComponent) SEAPI.energyNetAgent.newComponent(this);
     
-    public ForgeDirection primarySide = ForgeDirection.NORTH, secondarySide = ForgeDirection.SOUTH;
-    public float ratio = 10, outputResistance = 1;
+    //Input - primary, output - secondary
+    public double ratio = 10, outputResistance = 1;
 
-    @Override
-	public boolean attachToEnergyNet(){
-    	return true;
-    }
-
+	/////////////////////////////////////////////////////////
+	///TileEntity
+	/////////////////////////////////////////////////////////
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
 
-        ratio = tagCompound.getFloat("ratio");
-        outputResistance = tagCompound.getFloat("outputResistance");
-        primarySide = ForgeDirection.getOrientation(tagCompound.getByte("primarySide"));
-        secondarySide = ForgeDirection.getOrientation(tagCompound.getByte("secondarySide"));
+        ratio = tagCompound.getDouble("ratio");
+        outputResistance = tagCompound.getDouble("outputResistance");
     }
 
     @Override
     public void writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
 
-        tagCompound.setFloat("ratio", ratio);
-        tagCompound.setFloat("outputResistance", outputResistance);
-        tagCompound.setByte("primarySide", (byte) primarySide.ordinal());
-        tagCompound.setByte("secondarySide", (byte) secondarySide.ordinal());
+        tagCompound.setDouble("ratio", ratio);
+        tagCompound.setDouble("outputResistance", outputResistance);
     }
 
-	@Override
-	public void onFieldUpdate(String[] fields, Object[] values) {
-		//Handling on server side
-		if (!worldObj.isRemote){
-			for (String s:fields){
-		        if (s.contains("primarySide") || s.contains("secondarySide")) {
-		            SEAPI.energyNetAgent.reattachTile(this);
-		            worldObj.notifyBlockChange(xCoord, yCoord, zCoord, 
-		            		worldObj.getBlock(xCoord, yCoord, zCoord));
-		        } else if (s.contains("outputResistance") || s.contains("ratio")) {
-		        	SEAPI.energyNetAgent.markTileForUpdate(this);
-		        }				
-			}
-
-		}
-	}
-
-	@Override
-	public void addNetworkFields(List fields) {
-
-	}
-
-	@Override
-	public int getNumberOfComponents() {
-		return 2;
-	}
-
-	@Override
-	public ForgeDirection[] getValidDirections() {
-		return new ForgeDirection[]{primarySide, secondarySide};
-	}
-
+	/////////////////////////////////////////////////////////
+	///IEnergyNetUpdateHandler
+	/////////////////////////////////////////////////////////
 	@Override
 	public ISESubComponent getComponent(ForgeDirection side) {
-		if (side == primarySide)
+		if (side == inputSide)
 			return primary;
-		if (side == secondarySide)
+		if (side == outputSide)
 			return primary.getComplement();
 		return null;
 	}
 	
-	public ForgeDirection getPrimarySide(){
-		return primarySide;
-	}
-	
-	public ForgeDirection getSecondarySide(){
-		return secondarySide;
-	}
-
-	//Transformer data
+	/////////////////////////////////////////////////////////
+	///ISETransformerData
+	/////////////////////////////////////////////////////////
 	@Override
 	public double getRatio() {
 		return ratio;
@@ -119,5 +78,108 @@ public class TileAdjustableTransformer extends TileEntitySE implements ISETile, 
 	@Override
 	public double getInternalResistance() {
 		return outputResistance;
+	}
+
+	/////////////////////////////////////////////////////////
+	///IGuiSyncHandler
+	/////////////////////////////////////////////////////////
+	@Override
+	public void onGuiEvent(byte eventID, Object[] data) {
+		if (eventID == IGuiSyncHandler.EVENT_FACING_CHANGE){
+			byte button = (Byte) data[0];
+			ForgeDirection selectedDirection = (ForgeDirection) data[1];
+			
+		    if (button == 0) {        //Left key
+		        if (outputSide == selectedDirection)
+		            outputSide = inputSide;
+		        inputSide = selectedDirection;
+		    } else if (button == 1) { //Right key
+		        if (inputSide == selectedDirection)
+		            inputSide = outputSide;
+		        outputSide = selectedDirection;
+	        }
+
+            SEAPI.energyNetAgent.reattachTile(this);
+			this.markTileEntityForS2CSync();
+			this.worldObj.notifyBlockChange(xCoord, yCoord, zCoord, null);
+			return;
+		}
+		
+		//EVENT_BUTTON_CLICK
+		boolean isCtrlDown = (Boolean) data[0];
+		byte button = (Byte) data[1];
+		
+		double resistance = this.outputResistance;
+		double ratio = this.ratio;
+		
+        switch (button) {
+        case 0:
+            if (isCtrlDown)
+            	resistance -= 1;
+            else
+            	resistance -= 0.1;
+            break;
+        case 1:
+            if (isCtrlDown)
+            	resistance -= 0.001;
+            else
+            	resistance -= 0.01;
+            break;
+        case 2:
+            if (isCtrlDown)
+            	resistance += 0.001;
+            else
+            	resistance += 0.01;
+            break;
+        case 3:
+            if (isCtrlDown)
+            	resistance += 1;
+            else
+            	resistance += 0.1;
+            break;
+
+        case 4:
+            if (isCtrlDown)
+                ratio -= 100;
+            else
+                ratio -= 10;
+            break;
+        case 5:
+            if (isCtrlDown)
+                ratio -= 0.1;
+            else
+                ratio -= 1;
+            break;
+        case 6:
+            if (isCtrlDown)
+                ratio += 0.1;
+            else
+                ratio += 1;
+            break;
+        case 7:
+            if (isCtrlDown)
+                ratio += 100;
+            else
+                ratio += 10;
+            break;
+
+        default:
+        }
+        
+        if (resistance < 0.001)
+        	resistance = 0.001F;
+        if (resistance > 100)
+        	resistance = 100;
+
+
+        if (ratio < 0.1)
+            ratio = 0.1F;
+        if (ratio > 1000)
+            ratio = 1000;
+        
+        this.outputResistance = resistance;
+        this.ratio = ratio;
+        
+        SEAPI.energyNetAgent.markTileForUpdate(this);
 	}
 }

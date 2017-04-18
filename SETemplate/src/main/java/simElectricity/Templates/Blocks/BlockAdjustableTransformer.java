@@ -33,6 +33,7 @@ import simElectricity.API.SEAPI;
 import simElectricity.Templates.SETemplate;
 import simElectricity.Templates.Common.BlockContainerSE;
 import simElectricity.Templates.TileEntity.TileAdjustableTransformer;
+import simElectricity.Templates.Utils.Utils;
 
 public class BlockAdjustableTransformer extends BlockContainerSE {
     private IIcon[] iconBuffer = new IIcon[3];
@@ -65,9 +66,9 @@ public class BlockAdjustableTransformer extends BlockContainerSE {
         TileAdjustableTransformer te = (TileAdjustableTransformer) world.getTileEntity(x, y, z);
 
 
-        if (side == te.primarySide.ordinal())
+        if (side == te.inputSide.ordinal())
             return iconBuffer[2];
-        else if (side == te.secondarySide.ordinal())
+        else if (side == te.outputSide.ordinal())
             return iconBuffer[1];
         else
             return iconBuffer[0];
@@ -88,8 +89,8 @@ public class BlockAdjustableTransformer extends BlockContainerSE {
         if (!(te instanceof TileAdjustableTransformer))
             return;
 
-        ((TileAdjustableTransformer) te).secondarySide = SEAPI.utils.getPlayerSight(player, false);
-        ((TileAdjustableTransformer) te).primarySide = ((TileAdjustableTransformer) te).secondarySide.getOpposite();
+        ((TileAdjustableTransformer) te).outputSide = Utils.getPlayerSight(player);
+        ((TileAdjustableTransformer) te).inputSide = ((TileAdjustableTransformer) te).outputSide.getOpposite();
     }
 
     @Override

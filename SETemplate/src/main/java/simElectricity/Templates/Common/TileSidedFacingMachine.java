@@ -44,6 +44,8 @@ public abstract class TileSidedFacingMachine extends TileInventoryMachine implem
     @Override
     public void setFacing(ForgeDirection newFacing) {
         facing = newFacing;
+        
+        this.markTileEntityForS2CSync();
     }
 
     @Override
@@ -55,4 +57,21 @@ public abstract class TileSidedFacingMachine extends TileInventoryMachine implem
     public boolean canSetFacing(ForgeDirection newFacing) {
         return true;
     }
+    
+	/////////////////////////////////////////////////////////
+	///Sync
+	/////////////////////////////////////////////////////////
+    @Override
+	public void prepareS2CPacketData(NBTTagCompound nbt){	
+		super.prepareS2CPacketData(nbt);
+		
+		nbt.setByte("facing", (byte)facing.ordinal());
+	}
+	
+	@Override
+	public void onSyncDataFromServerArrived(NBTTagCompound nbt){		
+		facing = ForgeDirection.getOrientation(nbt.getByte("facing"));
+		
+		super.onSyncDataFromServerArrived(nbt);
+	}
 }

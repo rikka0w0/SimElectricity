@@ -19,17 +19,19 @@
 
 package simElectricity.Templates.TileEntity;
 
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.EnumSkyBlock;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import simElectricity.API.IEnergyNetUpdateHandler;
-import simElectricity.API.INetworkEventHandler;
+import simElectricity.API.ITileRenderingInfoSyncHandler;
 import simElectricity.API.SEAPI;
 import simElectricity.Templates.Common.TileStandardSEMachine;
 
 import java.util.List;
 
-public class TileIncandescentLamp extends TileStandardSEMachine implements IEnergyNetUpdateHandler, INetworkEventHandler {
-    public int lightLevel = 0;
+public class TileIncandescentLamp extends TileStandardSEMachine implements IEnergyNetUpdateHandler, ITileRenderingInfoSyncHandler {
+    public byte lightLevel = 0;
     
     @Override
     public boolean canSetFunctionalSide(ForgeDirection newFunctionalSide) {
@@ -46,31 +48,36 @@ public class TileIncandescentLamp extends TileStandardSEMachine implements IEner
     public double getResistance() {
         return 9900; // 5 watt at 220V
     }
-
-    @Override
-	public void onOverVoltage(){
-    	//worldObj.createExplosion(null, xCoord, yCoord, zCoord, (float) (4F + SEEnergy.getVoltage(this) / 265), true);
-    }
     
     @Override
     public void onEnergyNetUpdate() {
     	double voltage = SEAPI.energyNetAgent.getVoltage(tile);
-        lightLevel = (int) (voltage*voltage/getResistance() / 0.3F);
+        lightLevel = (byte) (voltage*voltage/getResistance() / 0.3F);
         if (lightLevel > 15)
             lightLevel = 15;
         
-        SEAPI.networkManager.updateNetworkFields(this);
-
-        checkVoltage(SEAPI.energyNetAgent.getVoltage(tile), 265);
+        //SEAPI.networkManager.updateNetworkFields(this);
+        sendRenderingInfoToClient();
     }
 
-    @Override
-    public void addNetworkFields(List fields) {
-        fields.add("lightLevel");
-        worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-    }
 
-    @Override
-    public void onFieldUpdate(String[] fields, Object[] values) {
-    }
+	@Override
+	public void sendRenderingInfoToClient() {
+		this.markTileEntityForS2CSync();
+	}
+	
+	@Override
+	public void prepareS2CPacketData(NBTTagCompound nbt){	
+		super.prepareS2CPacketData(nbt);
+		
+		nbt.setByte("lightLevel", lightLevel);
+	}
+	
+	@Override
+	public void onSyncDataFromServerArrived(NBTTagCompound nbt){
+		super.onSyncDataFromServerArrived(nbt);
+		lightLevel = nbt.getByte("lightLevel");
+		this.markForRenderUpdate();
+		worldObj.updateLightByType(EnumSkyBlock.Block, xCoord, yCoord, zCoord);	//checkLightFor
+	}
 }

@@ -141,7 +141,11 @@ public final class EnergyNet{
         if (te instanceof ISECableTile) {
         	ISECableTile cableTile = (ISECableTile) te;
             for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
-            	neighborTE = SEAPI.utils.getTileEntityonDirection(te, direction);
+            	neighborTE = te.getWorldObj().getTileEntity(
+                        te.xCoord + direction.offsetX,
+                        te.yCoord + direction.offsetY,
+                        te.zCoord + direction.offsetZ);
+            	
                 if (neighborTE instanceof ISECableTile) {  //Conductor
                 	ISECableTile neighbor = (ISECableTile) neighborTE;
 
@@ -192,7 +196,11 @@ public final class EnergyNet{
         			for (ISESimulatable neighbor : neighborList)
         				tileEntityGraph.addEdge((SEComponent) neighbor,(SEComponent)  subComponent);
         		}else{
-                    TileEntity neighbor = SEAPI.utils.getTileEntityonDirection(te, direction);
+        			
+                    TileEntity neighbor = te.getWorldObj().getTileEntity(
+                            te.xCoord + direction.offsetX,
+                            te.yCoord + direction.offsetY,
+                            te.zCoord + direction.offsetZ);
                     
                     if (neighbor instanceof ISECableTile)  // Connected properly
                     	tileEntityGraph.addEdge((SEComponent) ((ISECableTile)neighbor).getNode(),(SEComponent)  subComponent);

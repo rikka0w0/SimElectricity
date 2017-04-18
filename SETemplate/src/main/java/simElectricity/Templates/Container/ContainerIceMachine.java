@@ -33,7 +33,7 @@ import simElectricity.Templates.Common.ContainerBase;
 import simElectricity.Templates.Common.ProductSlot;
 import simElectricity.Templates.TileEntity.TileIceMachine;
 
-public class ContainerIceMachine extends ContainerBase{
+public class ContainerIceMachine extends ContainerBase<TileIceMachine>{
 	public int progress,fluidID,amountP, isPowered;
 	
     public ContainerIceMachine(InventoryPlayer inventoryPlayer, TileEntity te) {
@@ -70,10 +70,10 @@ public class ContainerIceMachine extends ContainerBase{
     @Override
     public void addCraftingToCrafters(ICrafting par1iCrafting) {
     	super.addCraftingToCrafters(par1iCrafting);
-    	par1iCrafting.sendProgressBarUpdate(this, 0, ((TileIceMachine)tileEntity).progress);
-    	par1iCrafting.sendProgressBarUpdate(this, 1, ((TileIceMachine)tileEntity).fluidID);
-    	par1iCrafting.sendProgressBarUpdate(this, 2, ((TileIceMachine)tileEntity).amountP);
-    	par1iCrafting.sendProgressBarUpdate(this, 3, ((TileIceMachine)tileEntity).isPowered);
+    	par1iCrafting.sendProgressBarUpdate(this, 0, tileEntity.progress);
+    	par1iCrafting.sendProgressBarUpdate(this, 1, tileEntity.fluidID);
+    	par1iCrafting.sendProgressBarUpdate(this, 2, tileEntity.amountP);
+    	par1iCrafting.sendProgressBarUpdate(this, 3, tileEntity.isPowered);
     }
     
     
@@ -82,10 +82,10 @@ public class ContainerIceMachine extends ContainerBase{
     public void updateProgressBar(int par1, int par2)
     {
     	switch(par1){
-    		case 0:{((TileIceMachine)tileEntity).progress = par2;return;}
-    		case 1:{((TileIceMachine)tileEntity).fluidID = par2;return;}    		
-    		case 2:{((TileIceMachine)tileEntity).amountP = par2;return;}   
-    		case 3:{((TileIceMachine)tileEntity).isPowered = par2;return;}       		
+    		case 0:{tileEntity.progress = par2;return;}
+    		case 1:{tileEntity.fluidID = par2;return;}    		
+    		case 2:{tileEntity.amountP = par2;return;}   
+    		case 3:{tileEntity.isPowered = par2;return;}       		
     	}
     	
    	}
@@ -104,9 +104,9 @@ public class ContainerIceMachine extends ContainerBase{
     		var2.sendProgressBarUpdate(this, 3, isPowered);
     	}
     	
-    	progress=((TileIceMachine)tileEntity).progress;
-    	fluidID=((TileIceMachine)tileEntity).fluidID;
-    	amountP=((TileIceMachine)tileEntity).amountP;
-    	isPowered = ((TileIceMachine)tileEntity).isPowered;
+    	progress = tileEntity.progress;
+    	fluidID = tileEntity.fluidID;
+    	amountP = tileEntity.amountP;
+    	isPowered = tileEntity.isPowered;
     }
 }

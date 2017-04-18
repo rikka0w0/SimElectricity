@@ -22,8 +22,6 @@ package simElectricity.Templates.TileEntity;
 import simElectricity.Templates.Common.TileStandardSEMachine;
 
 public class TileVoltageMeter extends TileStandardSEMachine {
-    public double voltage = 0;
-    
     @Override
     public double getResistance() {
         return 1e6F;

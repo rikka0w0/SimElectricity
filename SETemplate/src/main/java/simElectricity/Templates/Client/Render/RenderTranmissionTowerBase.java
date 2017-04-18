@@ -78,6 +78,7 @@ public abstract class RenderTranmissionTowerBase extends TileEntitySpecialRender
 	
 	private void renderCableAndInsulator(double[] from, double[] to, double[] fixedfrom, double[] fixedto, double[] angle, int meta){
 		for (int i=0; i<3; i++){
+			//Render insulators
 	        GL11.glPushMatrix();
 	        GL11.glTranslated(from[3*i], from[3*i+1],from[3*i+2]);
 	        SEAPI.clientRender.p2pRotation(from[3*i],from[3*i+1],from[3*i+2], to[3*i],from[3*i+1],to[3*i+2]);
@@ -85,6 +86,7 @@ public abstract class RenderTranmissionTowerBase extends TileEntitySpecialRender
 	        renderInsulator(meta);
 	        GL11.glPopMatrix();
 	        
+	        //Render cable
 	        GL11.glPushMatrix();
 	        GL11.glTranslated(fixedfrom[3*i], fixedfrom[3*i+1],fixedfrom[3*i+2]);
 	        SEAPI.clientRender.renderHalfParabolicCable(fixedfrom[3*i], fixedfrom[3*i+1],fixedfrom[3*i+2], fixedto[3*i], fixedto[3*i+1],fixedto[3*i+2], 0.15, 3, this, 1);

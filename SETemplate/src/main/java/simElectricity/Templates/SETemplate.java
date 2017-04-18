@@ -1,6 +1,8 @@
 package simElectricity.Templates;
 
+import simElectricity.API.ITileRenderingInfoSyncHandler;
 import simElectricity.API.SEAPI;
+import simElectricity.Templates.Utils.MessageGui;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.Mod.EventHandler;
@@ -8,6 +10,8 @@ import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
+import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
+import cpw.mods.fml.relauncher.Side;
 
 
 
@@ -20,6 +24,8 @@ public class SETemplate {
 	
     @Instance(SETemplate.MODID)
     public static SETemplate instance;
+    
+    public SimpleNetworkWrapper networkChannel;
     
     /**
      * Server and Client Proxy
@@ -41,6 +47,10 @@ public class SETemplate {
 
         //Register Items
         SEItems.init();
+        
+        networkChannel = NetworkRegistry.INSTANCE.newSimpleChannel(MODID);
+        networkChannel.registerMessage(MessageGui.Handler.class, MessageGui.class, 0, Side.CLIENT);
+        networkChannel.registerMessage(MessageGui.Handler.class, MessageGui.class, 1, Side.SERVER);
     }
     
     

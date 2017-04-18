@@ -25,17 +25,30 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
 import org.lwjgl.opengl.GL11;
 
 import simElectricity.API.SEAPI;
 import simElectricity.Templates.Container.ContainerQuantumGenerator;
-import simElectricity.Templates.TileEntity.TileQuantumGenerator;
+import simElectricity.Templates.Utils.IGuiSyncHandler;
+import simElectricity.Templates.Utils.MessageGui;
 
 @SideOnly(Side.CLIENT)
-public class GuiQuantumGenerator extends GuiContainer {
-    protected TileQuantumGenerator tileentity;
+public class GuiQuantumGenerator extends GuiContainer implements IGuiSyncHandler {
+	private double outputVoltage, outputResistance;
+	@Override
+	public void onGuiEvent(byte eventID, Object[] data) {
+		switch (eventID){
+		case 0:
+			outputVoltage = (Double)data[0];
+			outputResistance = (Double)data[1];
+			break;
+		}
+	}
+	
+    protected TileEntity te;
 
     @Override
     public void initGui() {
@@ -53,80 +66,12 @@ public class GuiQuantumGenerator extends GuiContainer {
 
     @Override
     public void actionPerformed(GuiButton button) {
-        if (button.id < 4) {
-            switch (button.id) {
-                case 0:
-                    if (GuiScreen.isCtrlKeyDown())
-                        tileentity.outputVoltage -= 100;
-                    else
-                        tileentity.outputVoltage -= 10;
-                    break;
-                case 1:
-                    if (GuiScreen.isCtrlKeyDown())
-                        tileentity.outputVoltage -= 0.1;
-                    else
-                        tileentity.outputVoltage -= 1;
-                    break;
-                case 2:
-                    if (GuiScreen.isCtrlKeyDown())
-                        tileentity.outputVoltage += 0.1;
-                    else
-                        tileentity.outputVoltage += 1;
-                    break;
-                case 3:
-                    if (GuiScreen.isCtrlKeyDown())
-                        tileentity.outputVoltage += 100;
-                    else
-                        tileentity.outputVoltage += 10;
-                    break;
-                default:
-            }
-
-            if (tileentity.outputVoltage < 0)
-                tileentity.outputVoltage = 0.1F;
-            if (tileentity.outputVoltage > 10000)
-                tileentity.outputVoltage = 10000;
-            SEAPI.networkManager.updateTileEntityFieldsToServer(tileentity, "outputVoltage");
-        } else if (button.id <= 8) {
-            switch (button.id) {
-                case 4:
-                    if (GuiScreen.isCtrlKeyDown())
-                        tileentity.outputResistance -= 1;
-                    else
-                        tileentity.outputResistance -= 0.1;
-                    break;
-                case 5:
-                    if (GuiScreen.isCtrlKeyDown())
-                        tileentity.outputResistance -= 0.001;
-                    else
-                        tileentity.outputResistance -= 0.01;
-                    break;
-                case 6:
-                    if (GuiScreen.isCtrlKeyDown())
-                        tileentity.outputResistance += 0.001;
-                    else
-                        tileentity.outputResistance += 0.01;
-                    break;
-                case 7:
-                    if (GuiScreen.isCtrlKeyDown())
-                        tileentity.outputResistance += 1;
-                    else
-                        tileentity.outputResistance += 0.1;
-                    break;
-                default:
-            }
-
-            if (tileentity.outputResistance < 0)
-                tileentity.outputResistance = 0.001F;
-            if (tileentity.outputResistance > 100)
-                tileentity.outputResistance = 100;
-            SEAPI.networkManager.updateTileEntityFieldsToServer(tileentity, "outputResistance");
-        }
+    	MessageGui.sendToServer(te, IGuiSyncHandler.EVENT_BUTTON_CLICK, GuiScreen.isCtrlKeyDown(), (byte)button.id);
     }
 
-    public GuiQuantumGenerator(InventoryPlayer inventoryPlayer, TileQuantumGenerator tileEntity) {
+    public GuiQuantumGenerator(InventoryPlayer inventoryPlayer, TileEntity tileEntity) {
         super(new ContainerQuantumGenerator(inventoryPlayer, tileEntity));
-        tileentity = tileEntity;
+        te = tileEntity;
     }
 
     String float2Str(float f, int dig) {
@@ -140,12 +85,11 @@ public class GuiQuantumGenerator extends GuiContainer {
 
         fontRendererObj.drawString(StatCollector.translateToLocal("tile.sime:QuantumGenerator.name"), 8, 6, 4210752);
 
-        fontRendererObj.drawString(String.format("%.1f", tileentity.outputVoltage) + " V", 30, 46, 4210752);
-        fontRendererObj.drawString(String.format("%.3f", tileentity.outputResistance) + " \u03a9", 30, 24, 4210752);
+        fontRendererObj.drawString(String.format("%.1f", outputVoltage) + " V", 30, 46, 4210752);
+        fontRendererObj.drawString(String.format("%.3f", outputResistance) + " \u03a9", 30, 24, 4210752);
 
         //draws "Inventory" or your regional equivalent
         fontRendererObj.drawString(StatCollector.translateToLocal("container.inventory"), 8, ySize - 96, 4210752);
-        fontRendererObj.drawString(tileentity.getFunctionalSide().toString(), xSize - 38, ySize - 96, 4210752);
     }
 
     @Override

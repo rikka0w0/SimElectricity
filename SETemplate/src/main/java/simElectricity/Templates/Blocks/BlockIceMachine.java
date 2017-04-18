@@ -32,6 +32,7 @@ import simElectricity.API.ISidedFacing;
 import simElectricity.API.SEAPI;
 import simElectricity.Templates.Common.BlockStandardSEMachine;
 import simElectricity.Templates.TileEntity.TileIceMachine;
+import simElectricity.Templates.Utils.ClientUtils;
 import simElectricity.Templates.SETemplate;
 
 public class BlockIceMachine extends BlockStandardSEMachine {
@@ -71,13 +72,13 @@ public class BlockIceMachine extends BlockStandardSEMachine {
         if (!(te instanceof ISidedFacing))
             return iconBuffer[0];
 
-        return iconBuffer[SEAPI.utils.getTextureOnSide(side, ((ISidedFacing) te).getFacing())];
+        return iconBuffer[ClientUtils.getTextureID(side, ((ISidedFacing) te).getFacing())];
     }
 
     @SideOnly(Side.CLIENT)
     @Override
     public IIcon getIcon(int side, int meta) {
-        return iconBuffer[SEAPI.utils.getTextureOnSide(side, ForgeDirection.WEST)];
+        return iconBuffer[ClientUtils.getTextureID(side, ForgeDirection.WEST)];
     }
 
     @Override

@@ -28,18 +28,35 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
+import net.minecraftforge.common.util.ForgeDirection;
+
 import org.lwjgl.opengl.GL11;
 
 import simElectricity.Templates.Container.ContainerIC2Generator;
 import simElectricity.Templates.TileEntity.TileIC2Generator;
+import simElectricity.Templates.Utils.IGuiSyncHandler;
 
 @SideOnly(Side.CLIENT)
-public class GuiIC2Generator extends GuiContainer {
-    protected TileIC2Generator tileentity;
+public class GuiIC2Generator extends GuiContainer implements IGuiSyncHandler{
+	double inputPower, bufferedEnergy, powerRate, outputVoltage;
+	
+	@Override
+	public void onGuiEvent(byte eventID, Object[] data) {
+		switch (eventID){
+		case 0:
+			inputPower = (Double) data[0];
+			bufferedEnergy = (Double) data[1];
+			powerRate = (Double)data[2];
+			outputVoltage = (Double)data[3];
+			break;
+		}
+	}
+	
+    protected TileEntity te;
 
     public GuiIC2Generator(InventoryPlayer inventoryPlayer, TileEntity tileEntity) {
         super(new ContainerIC2Generator(inventoryPlayer, tileEntity));
-        tileentity = (TileIC2Generator) tileEntity;
+        te = (TileIC2Generator) tileEntity;
     }
 
 
@@ -50,14 +67,13 @@ public class GuiIC2Generator extends GuiContainer {
 
         fontRendererObj.drawString(StatCollector.translateToLocal("tile.sime:IC2Generator.name"), 8, 6, 4210752);
 
-        fontRendererObj.drawString("Pi = " + String.format("%.1f", tileentity.inputPower) + "Eu/P", 8, 23, 4210752);      
-        fontRendererObj.drawString("Vo = " + String.format("%.1f", tileentity.outputVoltage) + "Eu/P", 8, 34, 4210752);
-        fontRendererObj.drawString("Output Rate = " +  String.format("%.1f", tileentity.powerRate) + "Eu/Tick", 8, 45, 4210752);
-        fontRendererObj.drawString("Buffered = " +  String.format("%.1f", tileentity.bufferedEnergy) + "Eu", 8, 56, 4210752);
+        fontRendererObj.drawString("Pi = " + String.format("%.1f", inputPower) + "Eu/P", 8, 23, 4210752);      
+        fontRendererObj.drawString("Vo = " + String.format("%.1f", outputVoltage) + "Eu/P", 8, 34, 4210752);
+        fontRendererObj.drawString("Output Rate = " +  String.format("%.1f", powerRate) + "Eu/Tick", 8, 45, 4210752);
+        fontRendererObj.drawString("Buffered = " +  String.format("%.1f", bufferedEnergy) + "Eu", 8, 56, 4210752);
         
         //draws "Inventory" or your regional equivalent
         fontRendererObj.drawString(StatCollector.translateToLocal("container.inventory"), 8, ySize - 96, 4210752);
-        fontRendererObj.drawString(tileentity.getFunctionalSide().toString(), xSize - 38, ySize - 96, 4210752);
     }
 
     @Override

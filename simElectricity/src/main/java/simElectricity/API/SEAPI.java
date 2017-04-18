@@ -23,21 +23,13 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.creativetab.CreativeTabs;
 
-import simElectricity.API.Internal.ICableRenderHelper;
 import simElectricity.API.Internal.IClientRender;
 import simElectricity.API.Internal.IEnergyNetAgent;
-import simElectricity.API.Internal.IFluidUtil;
-import simElectricity.API.Internal.INetworkManager;
-import simElectricity.API.Internal.ISEUtils;
 
 public class SEAPI {   
     public static boolean isSELoaded = false;
     public static int ratioSE2IC; //SE Power = IC Power times this ratio
     
-    public static IFluidUtil fluid;
-    public static INetworkManager networkManager;
-    public static ICableRenderHelper cableRenderHelper;
-    public static ISEUtils utils;
 	public static IEnergyNetAgent energyNetAgent;
     
 	@SideOnly(Side.CLIENT)

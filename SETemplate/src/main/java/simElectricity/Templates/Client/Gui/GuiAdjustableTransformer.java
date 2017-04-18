@@ -28,13 +28,33 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
 import net.minecraftforge.common.util.ForgeDirection;
 import org.lwjgl.opengl.GL11;
+
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import simElectricity.API.SEAPI;
 import simElectricity.Templates.Container.ContainerAdjustableTransformer;
-import simElectricity.Templates.TileEntity.TileAdjustableTransformer;
+import simElectricity.Templates.Utils.IGuiSyncHandler;
+import simElectricity.Templates.Utils.MessageGui;
 
-public class GuiAdjustableTransformer extends GuiContainer {
-    protected TileAdjustableTransformer te;
+@SideOnly(Side.CLIENT)
+public class GuiAdjustableTransformer extends GuiContainer implements IGuiSyncHandler{
+    protected TileEntity te;
+    
+    private ForgeDirection inputSide, outputSide;
+    private double outputResistance, ratio;
 
+	@Override
+	public void onGuiEvent(byte eventID, Object[] data) {
+		switch (eventID){
+		case 0:
+			ratio = (Double) data[0];
+			outputResistance = (Double) data[1];
+			inputSide = (ForgeDirection)data[2];
+			outputSide = (ForgeDirection)data[3];
+			break;
+		}
+	}
+    
     @Override
     public void initGui() {
         super.initGui();
@@ -54,80 +74,13 @@ public class GuiAdjustableTransformer extends GuiContainer {
 
     @Override
     public void actionPerformed(GuiButton button) {
-        switch (button.id) {
-            case 0:
-                if (GuiScreen.isCtrlKeyDown())
-                    te.outputResistance -= 1;
-                else
-                    te.outputResistance -= 0.1;
-                break;
-            case 1:
-                if (GuiScreen.isCtrlKeyDown())
-                    te.outputResistance -= 0.001;
-                else
-                    te.outputResistance -= 0.01;
-                break;
-            case 2:
-                if (GuiScreen.isCtrlKeyDown())
-                    te.outputResistance += 0.001;
-                else
-                    te.outputResistance += 0.01;
-                break;
-            case 3:
-                if (GuiScreen.isCtrlKeyDown())
-                    te.outputResistance += 1;
-                else
-                    te.outputResistance += 0.1;
-                break;
-
-            case 4:
-                if (GuiScreen.isCtrlKeyDown())
-                    te.ratio -= 100;
-                else
-                    te.ratio -= 10;
-                break;
-            case 5:
-                if (GuiScreen.isCtrlKeyDown())
-                    te.ratio -= 0.1;
-                else
-                    te.ratio -= 1;
-                break;
-            case 6:
-                if (GuiScreen.isCtrlKeyDown())
-                    te.ratio += 0.1;
-                else
-                    te.ratio += 1;
-                break;
-            case 7:
-                if (GuiScreen.isCtrlKeyDown())
-                    te.ratio += 100;
-                else
-                    te.ratio += 10;
-                break;
-
-            default:
-        }
-
-        if (te.outputResistance < 0.001)
-            te.outputResistance = 0.001F;
-        if (te.outputResistance > 100)
-            te.outputResistance = 100;
-        if (button.id < 4)
-        	SEAPI.networkManager.updateTileEntityFieldsToServer(te, "outputResistance");
-
-        if (te.ratio < 0.1)
-            te.ratio = 0.1F;
-        if (te.ratio > 1000)
-            te.ratio = 1000;
-        if (button.id < 8 && button.id > 3)
-        	SEAPI.networkManager.updateTileEntityFieldsToServer(te, "ratio");
-
+    	MessageGui.sendToServer(te, IGuiSyncHandler.EVENT_BUTTON_CLICK, GuiScreen.isCtrlKeyDown(), (byte)button.id);
     }
 
     @Override
     public void mouseClicked(int x, int y, int button) {
         super.mouseClicked(x, y, button);
-
+        
         int tx = x - guiLeft, ty = y - guiTop;
         ForgeDirection selectedDirection = ForgeDirection.UNKNOWN;
 
@@ -150,25 +103,12 @@ public class GuiAdjustableTransformer extends GuiContainer {
         if (selectedDirection == ForgeDirection.UNKNOWN)
             return;
 
-        if (button == 0) {        //Left key
-            if (te.getSecondarySide() == selectedDirection)
-                te.secondarySide = te.primarySide;
-
-            te.primarySide = selectedDirection;
-        } else if (button == 1) { //Right key
-            if (te.getPrimarySide() == selectedDirection)
-                te.primarySide = te.secondarySide;
-
-            te.secondarySide = selectedDirection;
-        }
-
-        SEAPI.networkManager.updateTileEntityFieldsToServer(te, "primarySide", "secondarySide");
-        te.getWorldObj().markBlockForUpdate(te.xCoord, te.yCoord, te.zCoord);
+        MessageGui.sendToServer(te, IGuiSyncHandler.EVENT_FACING_CHANGE, (byte)button, selectedDirection);
     }
 
     public GuiAdjustableTransformer(InventoryPlayer inventoryPlayer, TileEntity tileEntity) {
         super(new ContainerAdjustableTransformer(inventoryPlayer, tileEntity));
-        te = (TileAdjustableTransformer) tileEntity;
+        te = tileEntity;
     }
 
     @Override
@@ -178,9 +118,9 @@ public class GuiAdjustableTransformer extends GuiContainer {
 
         fontRendererObj.drawString(StatCollector.translateToLocal("tile.sime:AdjustableTransformer.name"), 8, 6, 4210752);
 
-        fontRendererObj.drawString("1:" + String.format("%.1f", te.ratio), 32, 26, 4210752);
+        fontRendererObj.drawString("1:" + String.format("%.1f", ratio), 32, 26, 4210752);
 
-        fontRendererObj.drawString(String.format("%.3f", te.outputResistance) + " \u03a9", 32, 42, 4210752);
+        fontRendererObj.drawString(String.format("%.3f", outputResistance) + " \u03a9", 32, 42, 4210752);
 
         //draws "Inventory" or your regional equivalent
         fontRendererObj.drawString(StatCollector.translateToLocal("container.inventory"), 8, ySize - 96, 4210752);
@@ -195,10 +135,15 @@ public class GuiAdjustableTransformer extends GuiContainer {
         int y = (height - ySize) / 2;
         this.drawTexturedModalRect(x, y, 0, 0, xSize, ySize);
 
-        drawFacingBar(x + 130, y + 61, te.getPrimarySide(), te.getSecondarySide());
+        drawFacingBar(x + 130, y + 61, inputSide, outputSide);
     }
 
     protected void drawFacingBar(int x, int y, ForgeDirection red, ForgeDirection blue) {
+    	if (red == null)
+    		return;
+    	if (blue == null)
+    		return;
+    	
         switch (red) {
             case WEST:
                 this.drawTexturedModalRect(x + 6, y + 2, 176, 0, 3, 14);

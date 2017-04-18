@@ -33,6 +33,7 @@ import simElectricity.API.SEAPI;
 import simElectricity.Templates.Common.BlockContainerSE;
 import simElectricity.Templates.TileEntity.TileSolarInverter;
 import simElectricity.Templates.SETemplate;
+import simElectricity.Templates.Utils.Utils;
 
 public class BlockSolarInverter extends BlockContainerSE {
     private IIcon[] iconBuffer = new IIcon[3];
@@ -86,7 +87,7 @@ public class BlockSolarInverter extends BlockContainerSE {
     public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase player, ItemStack itemStack) {
         TileEntity te = world.getTileEntity(x, y, z);
 
-        ((TileSolarInverter) te).outputSide = SEAPI.utils.getPlayerSight(player, false);
+        ((TileSolarInverter) te).outputSide = Utils.getPlayerSight(player, false);
         ((TileSolarInverter) te).inputSide = ((TileSolarInverter) te).outputSide.getOpposite();
     }
 

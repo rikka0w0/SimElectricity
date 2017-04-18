@@ -10,7 +10,6 @@ import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-import simElectricity.DummyClientRender;
 import simElectricity.SimElectricity;
 import simElectricity.API.SEAPI;
 import simElectricity.API.Client.ITextureProvider;
@@ -19,18 +18,12 @@ import simElectricity.API.Internal.IClientRender;
 import simElectricity.Common.ConfigManager;
 
 @SideOnly(Side.CLIENT)
-public class ClientRender extends DummyClientRender implements IClientRender{
+public class ClientRender implements IClientRender{
 	public static void initClientAPI(){
 		ClientRender instance = new ClientRender();
 		SEAPI.clientRender = instance;
-		SimElectricity.clientWorldHandler = instance;
 	}
-	
-	@Override
-	public World getClientWorld(){
-		return FMLClientHandler.instance().getClient().theWorld;
-	}
-	
+		
 	@Override
     public void renderParabolicCable(double xStart, double yStart, double zStart, double xEnd, double yEnd, double zEnd, double thickness, double tension, ITextureProvider textureProvider, int textureIndex) {
         double distance = distanceOf(xStart, yStart, zStart, xEnd, yEnd, zEnd);
@@ -152,21 +145,7 @@ public class ClientRender extends DummyClientRender implements IClientRender{
             GL11.glPopMatrix();
         }
     }
-    
-    @Override
-    public int getDirection(int facing) {
-        switch (facing) {
-            case 2: //N
-                return 0;
-            case 5: //E
-                return 1;
-            case 3: //S
-                return 2;
-            default://W
-                return 3;
-        }
-    }
-	
+  	
     /**
      * Rotate the coordinate system so that the object in it can lay between two points
      *

@@ -16,8 +16,9 @@ import simElectricity.API.INetworkEventHandler;
 import simElectricity.API.SEAPI;
 import simElectricity.Templates.SEItems;
 import simElectricity.Templates.Common.TileStandardSEMachine;
+import simElectricity.Templates.Utils.Utils;
 
-public class TileIceMachine extends TileStandardSEMachine implements IFluidHandler, IEnergyNetUpdateHandler, INetworkEventHandler{
+public class TileIceMachine extends TileStandardSEMachine implements IFluidHandler, IEnergyNetUpdateHandler{
 	public int maxCapacity = 10000;
 	public float onResistance = 1000F;
 	public float energyPerItem = 4000F;
@@ -82,7 +83,7 @@ public class TileIceMachine extends TileStandardSEMachine implements IFluidHandl
         	else
         		dowork(fluid);
         	
-        FluidStack l= SEAPI.fluid.drainContainer(maxCapacity, fluid, inv, 0, 1);
+        FluidStack l= Utils.drainContainer(maxCapacity, fluid, inv, 0, 1);
         if (l!=null){
         	if (fluid==null)
         		fluid=l;
@@ -119,22 +120,7 @@ public class TileIceMachine extends TileStandardSEMachine implements IFluidHandl
     	
         tank.writeToNBT(n);
     }
-	
-    
-    
-    @Override
-    public void addNetworkFields(List fields) {
-        fields.add("isWorking");
-        worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-    }
-
-    @Override
-    public void onFieldUpdate(String[] fields, Object[] values) {
-
-    }
-    
-    
-    
+	  
     
     
 	@Override

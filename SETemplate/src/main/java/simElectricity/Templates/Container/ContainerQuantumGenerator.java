@@ -19,12 +19,18 @@
 
 package simElectricity.Templates.Container;
 
+import java.util.Iterator;
+
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.inventory.ICrafting;
 import net.minecraft.tileentity.TileEntity;
 import simElectricity.API.SEAPI;
 import simElectricity.Templates.Common.ContainerBase;
+import simElectricity.Templates.TileEntity.TileQuantumGenerator;
+import simElectricity.Templates.Utils.MessageGui;
 
-public class ContainerQuantumGenerator extends ContainerBase {
+public class ContainerQuantumGenerator extends ContainerBase<TileQuantumGenerator> {
     public ContainerQuantumGenerator(InventoryPlayer inventoryPlayer, TileEntity te) {
         super(inventoryPlayer, te);
     }
@@ -50,9 +56,17 @@ public class ContainerQuantumGenerator extends ContainerBase {
     }
 
     @Override
-    public void init() {
-        if (!tileEntity.getWorldObj().isRemote) {
-        	SEAPI.networkManager.updateTileEntityFields(tileEntity, "outputVoltage", "outputResistance");
-        }
+    public void detectAndSendChanges() {
+        super.detectAndSendChanges();
+    	Iterator iterator = this.crafters.iterator();
+    	
+    	while (iterator.hasNext())
+    	{
+    		ICrafting crafting = (ICrafting)iterator.next();
+    		MessageGui.sendToGui((EntityPlayerMP)crafting, (byte)0
+    							, tileEntity.outputVoltage
+    							, tileEntity.outputResistance
+    							);
+    	}
     }
 }

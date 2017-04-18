@@ -5,6 +5,9 @@ import java.util.List;
 
 import org.lwjgl.opengl.GL11;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 import simElectricity.Templates.Container.ContainerIceMachine;
 import simElectricity.Templates.TileEntity.TileIceMachine;
 
@@ -19,6 +22,7 @@ import net.minecraft.util.StatCollector;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 
+@SideOnly(Side.CLIENT)
 public class GuiIceMachine extends GuiContainer{
 	TileIceMachine te;
 	
@@ -75,7 +79,8 @@ public class GuiIceMachine extends GuiContainer{
     	this.drawLiquidBar(35, 18, 16, 47, te.fluidID, te.amountP/10);
     	
         mc.renderEngine.bindTexture(new ResourceLocation("simElectricity:textures/gui/GUI_IceMachine.png"));
-        this.drawTexturedModalRect(35, 18, 176, 0, 16, 47);
+        //this.drawTexturedModalRect(35, 18, 176, 0, 16, 47);
+        
         
         if (te.isPowered == 1)
         	this.drawTexturedModalRect(152, 63, 176, 52, 14, 14);
@@ -97,6 +102,8 @@ public class GuiIceMachine extends GuiContainer{
         //draws "Inventory" or your regional equivalent
         fontRendererObj.drawString(StatCollector.translateToLocal("container.inventory"), 8, ySize - 96, 4210752);
         //fontRendererObj.drawString(String.valueOf(tileentity.progress) + "%", xSize - 36, ySize - 128, 4210752);
+        
+        
     }
 
     @Override

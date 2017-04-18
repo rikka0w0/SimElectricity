@@ -38,17 +38,14 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 
+import simElectricity.API.ITileRenderingInfoSyncHandler;
 import simElectricity.API.SEAPI;
 
 import simElectricity.Common.SEUtils;
-import simElectricity.Common.CableRenderHelper;
 import simElectricity.Common.CommandSimE;
 import simElectricity.Common.ConfigManager;
-import simElectricity.Common.FluidUtil;
 import simElectricity.Common.EnergyNet.EnergyNetAgent;
 import simElectricity.Common.EnergyNet.EnergyNetEventHandler;
-import simElectricity.Common.Network.MessageTileEntityUpdate;
-import simElectricity.Common.Network.NetworkManager;
 import simElectricity.Items.*;
 
 @Mod(modid = SEUtils.MODID, name = SEUtils.NAME, version = SimElectricity.version, guiFactory = "simElectricity.Client.SimEGuiFactory", dependencies = "required-after:Forge@[10.12.2.1147,)")
@@ -57,10 +54,6 @@ public class SimElectricity {
 
     @Instance(SEUtils.MODID)
     public static SimElectricity instance;
-
-    //Used by networkChannels
-    public static DummyClientRender clientWorldHandler;
-    public SimpleNetworkWrapper networkChannel;
 
     //Instances of items
     public static ItemUltimateMultimeter ultimateMultimeter;
@@ -74,9 +67,6 @@ public class SimElectricity {
     public void preInit(FMLPreInitializationEvent event) {    	
     	//Initialize utility functions
     	SEAPI.isSELoaded = true;
-    	SEAPI.fluid = new FluidUtil();
-    	SEAPI.cableRenderHelper = new CableRenderHelper();
-    	SEAPI.utils = new SEUtils();
     	SEAPI.energyNetAgent = new EnergyNetAgent();
     	
     	if (event.getSide().isClient()){
@@ -87,8 +77,6 @@ public class SimElectricity {
 			} catch (Exception e) {
 				SEUtils.logError("Failed to initialize client API");
 			}
-    	}else{
-    		clientWorldHandler = new DummyClientRender();
     	}
 
         //Load configurations
@@ -96,8 +84,8 @@ public class SimElectricity {
         ConfigManager.init(event);
 
         //Register event buses
-        SEAPI.networkManager = new NetworkManager();
         new EnergyNetEventHandler();
+        new ITileRenderingInfoSyncHandler.ForgeEventHandler();
 
         //Register creative tabs
         SEAPI.SETab = new CreativeTabs(SEUtils.MODID) {
@@ -113,11 +101,6 @@ public class SimElectricity {
     	ultimateMultimeter = new ItemUltimateMultimeter();
     	itemGlove = new ItemGlove();
     	itemWrench = new ItemWrench();
-
-        //Register network channel
-        networkChannel = NetworkRegistry.INSTANCE.newSimpleChannel(SEUtils.MODID);
-        networkChannel.registerMessage(MessageTileEntityUpdate.Handler.class, MessageTileEntityUpdate.class, 0, Side.CLIENT);
-        networkChannel.registerMessage(MessageTileEntityUpdate.Handler.class, MessageTileEntityUpdate.class, 1, Side.SERVER);
     }
 
     /**

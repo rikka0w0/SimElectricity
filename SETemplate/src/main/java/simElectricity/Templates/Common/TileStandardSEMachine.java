@@ -52,7 +52,12 @@ public abstract class TileStandardSEMachine extends TileSidedFacingMachine imple
 
     @Override
     public void setFunctionalSide(ForgeDirection newFunctionalSide) {
+    	boolean reJoinEnergyNet = (newFunctionalSide != functionalSide);
         functionalSide = newFunctionalSide;
+        
+        this.markTileEntityForS2CSync();
+        this.worldObj.notifyBlockChange(xCoord, yCoord, zCoord, null);
+        SEAPI.energyNetAgent.reattachTile(this);
     }
 
     @Override
@@ -94,5 +99,23 @@ public abstract class TileStandardSEMachine extends TileSidedFacingMachine imple
 	@Override
 	public ISESubComponent getComponent(ForgeDirection side) {
 		return side == functionalSide ? tile : null;
+	}
+	
+	
+	/////////////////////////////////////////////////////////
+	///Sync
+	/////////////////////////////////////////////////////////
+	@Override
+	public void prepareS2CPacketData(NBTTagCompound nbt){	
+		super.prepareS2CPacketData(nbt);
+		
+		nbt.setByte("functionalSide", (byte)functionalSide.ordinal());
+	}
+	
+	@Override
+	public void onSyncDataFromServerArrived(NBTTagCompound nbt){
+		functionalSide = ForgeDirection.getOrientation(nbt.getByte("functionalSide"));
+		
+		super.onSyncDataFromServerArrived(nbt);
 	}
 }
