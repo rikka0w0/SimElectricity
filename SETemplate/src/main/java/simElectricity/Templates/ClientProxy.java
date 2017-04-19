@@ -47,6 +47,7 @@ public class ClientProxy extends CommonProxy {
     public void registerTileEntitySpecialRenderer() {
         ClientRegistry.bindTileEntitySpecialRenderer(TileWire.class, new RenderWire());
         ClientRegistry.bindTileEntitySpecialRenderer(TileTransmissionTower.class, new RenderTransmissionTower());
+        ClientRegistry.bindTileEntitySpecialRenderer(TileCableClamp.class, new RenderCableClamp());
     }
 
     @Override

@@ -313,20 +313,20 @@ public class TransmissionTowerRenderHelper implements ITransmissionTowerRenderHe
     }
     
     @Override
-    public void updateRenderData(int[] neighborCoords){		
+    public void updateRenderData(int x1, int y1, int z1, int x2, int y2, int z2){		
     	ITransmissionTower tw = (ITransmissionTower)te;
     	
 		rotation = tw.getRotation()*45 - 90;
         
-		TileEntity neighbor1 = te.getWorldObj().getTileEntity(neighborCoords[0], neighborCoords[1], neighborCoords[2]);
-		TileEntity neighbor2 = te.getWorldObj().getTileEntity(neighborCoords[3], neighborCoords[4], neighborCoords[5]);
+		TileEntity neighbor1 = te.getWorldObj().getTileEntity(x1, y1, z1);
+		TileEntity neighbor2 = te.getWorldObj().getTileEntity(x2, y2, z2);
 		
-		if (neighborCoords[1] == -1){
+		if (y1 == -1){
 			render1 = false;
 		}else{
 			render1 = true;
 			if (neighbor1 == null){
-				findVirtualConnection(te, neighborCoords[0], neighborCoords[1], neighborCoords[2], from1, to1);
+				findVirtualConnection(te, x1, y1, z1, from1, to1);
 				for (int i=0; i<9; i++)
 					fixedto1[i] = to1[i];
 			}
@@ -349,12 +349,12 @@ public class TransmissionTowerRenderHelper implements ITransmissionTowerRenderHe
 			}
 		}
 			
-		if (neighborCoords[4] == -1){
+		if (y2 == -1){
 			render2 = false;
 		}else{
 			render2 = true;
 			if (neighbor2 == null){
-				findVirtualConnection(te, neighborCoords[3], neighborCoords[4], neighborCoords[5], from2, to2);
+				findVirtualConnection(te, x2, y2, z2, from2, to2);
 				for (int i=0; i<9; i++)
 					fixedto2[i] = to2[i];	
 			}

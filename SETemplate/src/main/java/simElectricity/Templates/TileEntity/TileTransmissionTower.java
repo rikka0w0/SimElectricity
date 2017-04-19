@@ -98,7 +98,7 @@ public class TileTransmissionTower extends TileEntitySE implements ISEGridTile,I
         if (worldObj.isRemote){
 			if (renderHelper == null)
 				renderHelper = SEAPI.clientRender.newTransmissionTowerRenderHelper(this);
-			renderHelper.updateRenderData(neighborCoords);
+			renderHelper.updateRenderData(neighborCoords[0],neighborCoords[1],neighborCoords[2],neighborCoords[3],neighborCoords[4],neighborCoords[5]);
         	return;
         }        	
 	}
@@ -142,11 +142,12 @@ public class TileTransmissionTower extends TileEntitySE implements ISEGridTile,I
 	public void onSyncDataFromServerArrived(NBTTagCompound nbt) {
 		facing = nbt.getInteger("facing");
 		neighborCoords = nbt.getIntArray("neighborCoords");
-		
-		this.markForRenderUpdate();
+			
 		if (renderHelper == null)
 				renderHelper = SEAPI.clientRender.newTransmissionTowerRenderHelper(this);
-			renderHelper.updateRenderData(neighborCoords);
+		renderHelper.updateRenderData(neighborCoords[0],neighborCoords[1],neighborCoords[2],neighborCoords[3],neighborCoords[4],neighborCoords[5]);
+			
+		super.onSyncDataFromServerArrived(nbt);
 	}
 	
 	@Override

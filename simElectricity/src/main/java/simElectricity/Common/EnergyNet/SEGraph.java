@@ -123,12 +123,16 @@ public class SEGraph {
 			if (neighbor instanceof GridNode){
 				Iterator<SEComponent> iterator1 = neighbor.neighbors.iterator();
 				Iterator<Double> iterator2 = ((GridNode)neighbor).neighborR.iterator();
+								
 				deleteInfoFromNeighbor: while(iterator1.hasNext()){
-					iterator2.next();
-					if (iterator1.next() == gridNode){
-						iterator2.remove();
-						iterator1.remove();
-						break deleteInfoFromNeighbor;
+					SEComponent seComponent = iterator1.next();
+					if (seComponent instanceof GridNode){
+						iterator2.next();
+						if (seComponent == gridNode){
+							iterator2.remove();
+							iterator1.remove();
+							break deleteInfoFromNeighbor;
+						}
 					}
 				}
 				

@@ -56,7 +56,7 @@ public class TileAdjustableTransformer extends TileEntityTwoPort implements ISET
     }
 
 	/////////////////////////////////////////////////////////
-	///IEnergyNetUpdateHandler
+	///ISETile
 	/////////////////////////////////////////////////////////
 	@Override
 	public ISESubComponent getComponent(ForgeDirection side) {

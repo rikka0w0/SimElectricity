@@ -17,5 +17,5 @@ public interface ITransmissionTowerRenderHelper {
 	double[] fixedto2();
 	double[] angle2();
 	
-	void updateRenderData(int[] neighborCoords);
+	void updateRenderData(int x1, int y1, int z1, int x2, int y2, int z2);
 }

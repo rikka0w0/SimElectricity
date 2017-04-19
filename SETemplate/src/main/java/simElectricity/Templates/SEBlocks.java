@@ -39,6 +39,7 @@ public class SEBlocks {
     public static BlockIceMachine iceMachine;
     public static BlockIC2Generator ic2Generator;
     public static BlockDiode blockDiode;
+    public static BlockCableClamp cableClamp;
 
     public static void preInit() {
         adjustableResistor = new BlockAdjustableResistor();
@@ -54,6 +55,7 @@ public class SEBlocks {
         iceMachine = new BlockIceMachine();
         ic2Generator = new BlockIC2Generator();
         blockDiode = new BlockDiode();
+        cableClamp = new BlockCableClamp();
     }
 
     public static void init() {
@@ -70,5 +72,6 @@ public class SEBlocks {
         GameRegistry.registerTileEntity(TileIceMachine.class, "TileIceMachine");
         GameRegistry.registerTileEntity(TileIC2Generator.class, "TileIC2Generator");
         GameRegistry.registerTileEntity(TileDiode.class, "TileDiode");
+        GameRegistry.registerTileEntity(TileCableClamp.class, "TileCableClamp");
     }
 }
