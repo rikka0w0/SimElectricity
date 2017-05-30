@@ -1,5 +1,6 @@
 package simElectricity.API.Tile;
 
+import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.ISEPlaceable;
 import simElectricity.API.DataProvider.ISEComponentDataProvider;
 import simElectricity.API.EnergyTile.ISESimulatable;
@@ -20,4 +21,8 @@ public interface ISECableTile extends ISEComponentDataProvider, ISEPlaceable{
     public double getResistance();
     
     public ISESimulatable getNode();
+    
+    boolean canConnectOnSide(ForgeDirection direction);
+    
+    boolean isGridLinkEnabled();
 }

@@ -1,4 +1,4 @@
-package simElectricity.Common.EnergyNet.Components;
+package simElectricity.EnergyNet.Components;
 
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
@@ -8,16 +8,10 @@ import simElectricity.API.EnergyTile.ISESubComponent;
 public class RegulatorOutput extends SEComponent implements ISESubComponent{
 	public RegulatorInput input;
 	
-	public RegulatorOutput(RegulatorInput _input, TileEntity _te){
-		input = _input;
-		te = _te;
+	public RegulatorOutput(RegulatorInput input, TileEntity te){
+		this.input = input;
+		this.te = te;
 	}
-
-	@Override
-	public ISEComponentDataProvider getDataProvider() {
-		return input.data;
-	}
-	
 
 	@Override
 	public ISESubComponent getComplement() {

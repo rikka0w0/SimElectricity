@@ -44,8 +44,8 @@ import simElectricity.API.SEAPI;
 import simElectricity.Common.SEUtils;
 import simElectricity.Common.CommandSimE;
 import simElectricity.Common.ConfigManager;
-import simElectricity.Common.EnergyNet.EnergyNetAgent;
-import simElectricity.Common.EnergyNet.EnergyNetEventHandler;
+import simElectricity.EnergyNet.EnergyNetAgent;
+import simElectricity.EnergyNet.EnergyNetEventHandler;
 import simElectricity.Items.*;
 
 @Mod(modid = SEUtils.MODID, name = SEUtils.NAME, version = SimElectricity.version, guiFactory = "simElectricity.Client.SimEGuiFactory", dependencies = "required-after:Forge@[10.12.2.1147,)")

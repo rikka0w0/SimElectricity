@@ -1,4 +1,4 @@
-package simElectricity.Common.EnergyNet.Components;
+package simElectricity.EnergyNet.Components;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -13,18 +13,22 @@ import simElectricity.API.DataProvider.ISEComponentDataProvider;
 import simElectricity.API.EnergyTile.ISEGridNode;
 import simElectricity.API.EnergyTile.ISESimulatable;
 import simElectricity.API.EnergyTile.ISESubComponent;
-import simElectricity.Common.EnergyNet.EnergyNetDataProvider;
+import simElectricity.EnergyNet.EnergyNetDataProvider;
 
 public class GridNode extends SEComponent implements ISEGridNode{
 	public EnergyNetDataProvider gridDataProvider;
 	
-	//0 - node 1 - transformer primary 2 - transformer secondary
+	//0 - transmission line 1 - transformer primary 2 - transformer secondary
 	public byte type;
 	public int x;
 	public int y;
 	public int z;
 	
+	//Only stores resistances between GridNodes!
 	public LinkedList<Double> neighborR = new LinkedList<Double>();
+	
+	//Simulation & Optimization
+	public Cable interConnection;
 	
 	//Only used for loading
 	protected int neighborX[];
@@ -34,6 +38,8 @@ public class GridNode extends SEComponent implements ISEGridNode{
 		
 	public GridNode(EnergyNetDataProvider dataProvider){
 		gridDataProvider = dataProvider;
+		
+		interConnection = null;
 	}
 	
 	public double getResistance(GridNode neighbor) {
@@ -153,17 +159,5 @@ public class GridNode extends SEComponent implements ISEGridNode{
 	@Override
 	public int getType() {
 		return this.type;
-	}
-
-	@Override
-	public ISEComponentDataProvider getDataProvider() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
-
-	@Override
-	public ISESubComponent getComplement() {
-		return null;
 	}
 }

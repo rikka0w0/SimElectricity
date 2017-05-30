@@ -17,7 +17,7 @@
  * USA
  */
 
-package simElectricity.Common.EnergyNet;
+package simElectricity.EnergyNet;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
@@ -42,11 +42,12 @@ public class EnergyNetEventHandler {
     //Pre -> Entities -> TileEntitis -> Post
     @SubscribeEvent
     public void tick(WorldTickEvent event) {
-        if (event.phase != Phase.START)
-            return;
         if (event.side != Side.SERVER)
             return;
+        if (event.phase != Phase.START)
+            return;
 
-        EnergyNetAgent.getEnergyNetForWorld(event.world).onTick();
+        EnergyNet energyNet = EnergyNetAgent.getEnergyNetForWorld(event.world);
+        energyNet.onPreTick();
     }
 }

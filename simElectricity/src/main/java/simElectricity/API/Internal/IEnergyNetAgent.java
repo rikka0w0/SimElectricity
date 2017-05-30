@@ -15,7 +15,7 @@ public interface IEnergyNetAgent {
      * @param node The ISESimulatable instance
      * @return the voltage of the node, in volts
      */
-	public double getVoltage(ISESimulatable node);
+	double getVoltage(ISESimulatable node);
 	
     /**
      * Calculate the current flow through a node (with less than 2 connection, cable and junction only!)
@@ -23,30 +23,30 @@ public interface IEnergyNetAgent {
      * @param node The ISESimulatable instance
      * @return the magnitude of the current, in amps
      */
-	public double getCurrentMagnitude(ISESimulatable Tile);
+	double getCurrentMagnitude(ISESimulatable Tile);
 	
-	public ISESubComponent newComponent(TileEntity dataProviderTileEntity);
+	ISESubComponent newComponent(TileEntity dataProviderTileEntity);
 	
-	public ISESubComponent newComponent(ISEComponentDataProvider dataProvider, TileEntity parent);
+	ISESubComponent newComponent(ISEComponentDataProvider dataProvider, TileEntity parent);
 	
-	public ISESimulatable newCable(TileEntity dataProviderTileEntity);
+	ISESimulatable newCable(TileEntity dataProviderTileEntity, boolean isGridInterConnectionPoint);
 	
     /**
      * Add a TileEntity to the energyNet
      */
-    public void attachTile(TileEntity te);
+    void attachTile(TileEntity te);
 
-    public void markTileForUpdate(TileEntity te);
+    void markTileForUpdate(TileEntity te);
 
-    public void detachTile(TileEntity te);
+    void detachTile(TileEntity te);
 
-    public void reattachTile(TileEntity te);
+    void reattachTile(TileEntity te);
     
-    public void attachGridObject(World world, int x, int y, int z, byte type);
+    void attachGridObject(World world, int x, int y, int z, byte type);
     
-    public void detachGridObject(World world, int x, int y, int z);
+    void detachGridObject(World world, int x, int y, int z);
     
-    public void connectGridNode(World world, int x1, int y1, int z1, int x2, int y2, int z2, double resistance);
+    void connectGridNode(World world, int x1, int y1, int z1, int x2, int y2, int z2, double resistance);
     
-    public void breakGridConnection(World world, int x1, int y1, int z1, int x2, int y2, int z2);
+    void breakGridConnection(World world, int x1, int y1, int z1, int x2, int y2, int z2);
 }

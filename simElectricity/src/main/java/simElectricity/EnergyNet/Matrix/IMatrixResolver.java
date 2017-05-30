@@ -1,4 +1,4 @@
-package simElectricity.Common.EnergyNet;
+package simElectricity.EnergyNet.Matrix;
 
 import simElectricity.Common.SEUtils;
 
@@ -50,7 +50,7 @@ public interface IMatrixResolver {
     public static class MatrixHelper {
         public static IMatrixResolver newResolver(String name) {
             try {
-                return (IMatrixResolver) Class.forName("simElectricity.Common.EnergyNet." + name).newInstance();
+                return (IMatrixResolver) Class.forName("simElectricity.EnergyNet.Matrix." + name).newInstance();
             } catch (Exception e) {
                 SEUtils.logFatal("Invalid Matrix Solver! Please check your config settings!");
                 e.printStackTrace();

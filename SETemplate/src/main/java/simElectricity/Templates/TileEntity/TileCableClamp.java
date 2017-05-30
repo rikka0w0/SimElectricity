@@ -11,7 +11,6 @@ import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.SEAPI;
 import simElectricity.API.Client.ITransmissionTower;
 import simElectricity.API.Client.ITransmissionTowerRenderHelper;
-import simElectricity.API.DataProvider.ISEJunctionData;
 import simElectricity.API.EnergyTile.ISEGridNode;
 import simElectricity.API.EnergyTile.ISESimulatable;
 import simElectricity.API.EnergyTile.ISESubComponent;
@@ -21,9 +20,9 @@ import simElectricity.API.Tile.ISETile;
 import simElectricity.Templates.Common.TileEntitySE;
 import simElectricity.Templates.Utils.Utils;
 
-public class TileCableClamp extends TileEntitySE implements ISETile,ISEJunctionData,ISEGridTile, ITransmissionTower{
-    private ISEGridNode gridNode = null;
-    private ISESubComponent junction = (ISESubComponent) SEAPI.energyNetAgent.newComponent(this);
+public class TileCableClamp extends TileEntitySE implements ISECableTile, ISEGridTile, ITransmissionTower{
+	private ISESimulatable cableNode = SEAPI.energyNetAgent.newCable(this, true);
+	private ISEGridNode gridNode = null;
     
     private ITransmissionTowerRenderHelper renderHelper;
     private int neighborX, neighborY = -1, neighborZ;
@@ -105,42 +104,33 @@ public class TileCableClamp extends TileEntitySE implements ISETile,ISEJunctionD
     public AxisAlignedBB getRenderBoundingBox(){
     	return INFINITE_EXTENT_AABB;
     }
-
-	/////////////////////////////////////////////////////////
-	///ISETile
-	/////////////////////////////////////////////////////////	
-	@Override
-	public int getNumberOfComponents() {
-		return 1;
-	}
-
-	@Override
-	public ForgeDirection[] getValidDirections() {
-		return new ForgeDirection[]{facing};
-	}
-
-	@Override
-	public ISESubComponent getComponent(ForgeDirection side) {
-		return side == facing ? this.junction : null;
-	}
 	
 	/////////////////////////////////////////////////////////
-	///ISEJunction
+	///ISECableTile
 	/////////////////////////////////////////////////////////
 	@Override
-	public void getNeighbors(List<ISESimulatable> list) {
-		TileEntity neighbor = Utils.getTileEntityonDirection(this, facing);
-		
-        if (neighbor instanceof ISECableTile)
-            list.add(((ISECableTile) neighbor).getNode());
-        
-        if (gridNode != null)
-        	list.add(gridNode);
+	public int getColor() {
+		return 0;
 	}
 
 	@Override
-	public double getResistance(ISESimulatable neighbor) {
+	public double getResistance() {
 		return 0.1;
+	}
+
+	@Override
+	public ISESimulatable getNode() {
+		return cableNode;
+	}
+
+	@Override
+	public boolean canConnectOnSide(ForgeDirection direction) {
+		return direction == facing;
+	}
+
+	@Override
+	public boolean isGridLinkEnabled() {
+		return true;
 	}
 	
 	/////////////////////////////////////////////////////////

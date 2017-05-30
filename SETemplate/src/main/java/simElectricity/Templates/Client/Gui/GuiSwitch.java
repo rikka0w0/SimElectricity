@@ -50,6 +50,7 @@ public class GuiSwitch extends GuiContainer implements IGuiSyncHandler{
 		isOn = (Boolean) data[2];
 		inputSide = (ForgeDirection) data[3];
 		outputSide = (ForgeDirection) data[4];
+		resistance = (Double) data[5];
 	}
 	
     protected TileEntity te;

@@ -164,10 +164,10 @@ public class TileSolarInverter extends TileEntityTwoPort implements ISETile, ISE
 	    if (Ro > 100)
 	        Ro = 100;
     
-        if (Vreg < 200)
-            Vreg = 200;
-        if (Vreg > 240)
-            Vreg = 240;
+        if (Vreg < 1)
+            Vreg = 1;
+        if (Vreg > 50)
+            Vreg = 50;
 	    
 	    this.Ro = Ro;
 	    this.Vreg = Vreg;

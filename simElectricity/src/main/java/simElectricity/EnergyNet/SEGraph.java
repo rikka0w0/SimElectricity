@@ -1,4 +1,4 @@
-package simElectricity.Common.EnergyNet;
+package simElectricity.EnergyNet;
 
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -8,8 +8,13 @@ import net.minecraft.tileentity.TileEntity;
 
 import simElectricity.API.Tile.ISECableTile;
 import simElectricity.API.Tile.ISEGridTile;
-import simElectricity.Common.EnergyNet.Components.*;
+import simElectricity.EnergyNet.Components.Cable;
+import simElectricity.EnergyNet.Components.GridNode;
+import simElectricity.EnergyNet.Components.SEComponent;
 
+/**
+ * Unweighed graph, using Adjacency lists (SEComponent.neighbors)
+ */
 public class SEGraph {
 	private LinkedList<SEComponent> components;
 	private LinkedList<SEComponent> wires;	
@@ -24,16 +29,7 @@ public class SEGraph {
     public int size(){
     	return components.size() + wires.size();
     }
-    
-	public boolean isWire(SEComponent node){
-		if (node instanceof Cable)
-			return true;
-		if (node instanceof GridNode){
-			if(((GridNode)node).getType() == GridNode.ISEGridNode_Wire)
-				return true;
-		}
-		return false;
-	}
+   
 	
 	public boolean containsNode(SEComponent node){
 		if (components.contains(node))
@@ -93,13 +89,36 @@ public class SEGraph {
     		node2.neighborR.addLast(resistance);        	
         }
 	}
+	
+	public void interconnection(Cable cable, GridNode gridNode){
+		gridNode.interConnection = cable;
+		cable.connectedGridNode = gridNode;
+	}
+	
+	public void breakInterconnection(Cable cable){
+    	if (cable.connectedGridNode != null){
+        	cable.connectedGridNode.interConnection = null;
+        	cable.connectedGridNode = null;			
+    	}
+	}
+	
+	public void breakInterconnection(GridNode gridNode){
+		if (gridNode.interConnection != null){
+			gridNode.interConnection.connectedGridNode = null;
+			gridNode.interConnection = null;
+		}
+	}
     
     /**
-     * Remove a vertex
+     * Remove a vertex, including its assosiated edges
      */
     public void removeVertex(SEComponent node) {
         if (!containsNode(node))
             return;
+        
+        //Cut possible interconnection
+        if (node instanceof Cable)
+        	breakInterconnection((Cable)node);
         
         //Remove this node from its neighbors' list
         for (SEComponent neighbor: node.neighbors){
@@ -115,7 +134,10 @@ public class SEGraph {
     public LinkedList<GridNode> removeGridVertex(GridNode gridNode){
         if (!containsNode(gridNode))
             return null;
-    	
+        
+        //Cut possible interconnection
+        breakInterconnection(gridNode);
+        
         LinkedList<GridNode> ret = new LinkedList<GridNode>();
         
 		//Delete resistance properties of GridNodes
@@ -188,42 +210,46 @@ public class SEGraph {
 		}		
     }
            
-    
-    
+    ////////////////////////////////////////////////
+    ///Optimizer
+    ////////////////////////////////////////////////    
+	private boolean isWire(SEComponent node){
+		if (node instanceof Cable)
+			return true;
+		if (node instanceof GridNode){
+			if(((GridNode)node).getType() == GridNode.ISEGridNode_Wire)
+				return true;
+		}
+		return false;
+	}
+	
+	private boolean isInterconnectionTerminal(SEComponent node){
+		if ((node instanceof Cable) && ((Cable)node).connectedGridNode != null)
+			return true;
+		else if ((node instanceof GridNode) && ((GridNode)node).interConnection != null)
+			return true;
+		else 
+			return false;
+	}
     
     public static double calcR(SEComponent cur, SEComponent neighbor){
     	if (cur instanceof Cable){
     		Cable curConductor = (Cable) cur;
     		if (neighbor instanceof Cable){
-    			return curConductor.data.getResistance() + ((Cable) neighbor).data.getResistance();
-    		}else if (neighbor instanceof Junction){
-    			return curConductor.data.getResistance() + ((Junction) neighbor).data.getResistance(curConductor);
+    			return curConductor.resistance + ((Cable) neighbor).resistance;
     		}else{
-    			return curConductor.data.getResistance();
-    		}
-    	} else if (cur instanceof Junction){
-    		Junction curJunction = (Junction) cur;
-    		if (neighbor instanceof Cable){
-    			return ((Cable) neighbor).data.getResistance() + curJunction.data.getResistance(neighbor);
-    		}else if (neighbor instanceof Junction){
-    			return curJunction.data.getResistance(neighbor) + ((Junction) neighbor).data.getResistance(curJunction);
-    		}else if (neighbor instanceof GridNode){
-    			return curJunction.data.getResistance(neighbor);
-    		}else{
-    			throw new RuntimeException("Unaccptable conntection");
+    			return curConductor.resistance;
     		}
     	} else if (cur instanceof GridNode){
     		GridNode curGridNode = (GridNode)cur;
-    		if (neighbor instanceof Junction){
-    			return ((Junction) neighbor).data.getResistance(curGridNode);
-    		}else if (neighbor instanceof GridNode){
+    		if (neighbor instanceof GridNode){
     			return curGridNode.getResistance((GridNode)neighbor);
     		}else {
     			throw new RuntimeException("Unaccptable conntection");
     		}
     	} else {
     		if (neighbor instanceof Cable){
-    			return ((Cable)neighbor).data.getResistance();
+    			return ((Cable)neighbor).resistance;
     		}
     	}
     	
@@ -244,14 +270,17 @@ public class SEGraph {
     		wire.visited = false;
 			wire.optimizedNeighbors.clear();
 			wire.optimizedResistance.clear();
+			
+			
 			wire.eliminated = true;
-    		if (wire.neighbors.size()>2){
+    		
+			if (wire.neighbors.size()>2				//A node has more than 2 connections
+    				||								//OR
+    			isInterconnectionTerminal(wire))	//A interconnection terminal
     			terminalNodes.add(wire);
-    		}
     	}
     	
-    	//terminalNodes, including juction
-    	
+    	//SubComponents, Cable/TransmissionLine with more than 2 connections, Interconnection terminals
     	for (SEComponent node : terminalNodes){
     		node.eliminated = false;
     		
@@ -275,8 +304,10 @@ public class SEGraph {
       				
         				resistance += calcR(prev, reach);
         				
-        				if (reach instanceof Junction)
-        					break search;	//We have to calculate the voltage of the junction
+        				if (reach.neighbors.size() > 2
+        						|| 
+        					isInterconnectionTerminal(reach))	//We have to calculate the voltage of the interconnection point
+        					break search;
         				
         		    	if (reach.neighbors.size() == 1){
         		    		if (isWire(reach))
@@ -295,16 +326,22 @@ public class SEGraph {
         		    			reach = reach.neighbors.getFirst();
         		    		}
         		    	}
-        		    	else if (reach.neighbors.size() > 2){
-        		    		//form an edge, so leave "reach" unchanged
-        		    		break search;	//We have a cable node that has more than 2 connection
-        		    	}        				
         			}while (true);	
         			
         			if (reach != null){
         				Iterator<SEComponent> iteratorON = node.optimizedNeighbors.iterator();
         				Iterator<Double> iteratorR = node.optimizedResistance.iterator();
         				
+        				/*
+        				 * Combine parallel path
+        				 * Example:
+        				 * 		x
+        				 * 		x
+        				 * 		xxxx
+        				 * 		x  x
+        				 * 		x  x
+        				 * 		xxxxxxxxxx
+        				 */
         				checkDupe: while (iteratorON.hasNext()){
         					double prevR = iteratorR.next();
         					if (iteratorON.next() == reach){
@@ -331,7 +368,7 @@ public class SEGraph {
 
                 		node.optimizedNeighbors.addLast(reach);
                 		node.optimizedResistance.addLast(resistance);      
-                			
+
                 		reach.optimizedNeighbors.addLast(node);
                 		reach.optimizedResistance.addLast(resistance);        					
         			}
@@ -369,8 +406,10 @@ public class SEGraph {
     		
     		R0 += calcR(prev, head);
     		
-			if (head instanceof Junction)
-				break search1;	//We have to calculate the voltage of the junction
+			if (head.neighbors.size() > 2
+					|| 
+				isInterconnectionTerminal(head))	//We have to calculate the voltage of the interconnection point
+				break search1;
     		
 	    	if (head.neighbors.size() == 1){	//Single end
 	    		if (isWire(head))
@@ -386,9 +425,6 @@ public class SEGraph {
 	    			prev = head;
 	    			head = head.neighbors.getFirst();
 	    		}
-	    	}
-	    	else if (head.neighbors.size() > 2){
-	    		break search1;	//We have a cable node that has more than 2 connection
 	    	}
     	}while(true);
     	
@@ -412,9 +448,6 @@ public class SEGraph {
 
     	search1: do{
     		R1 += calcR(prev, head);
-    		
-			if (head instanceof Junction)
-				break search1;	//We have to stop at the junction
     		
 	    	if (head.neighbors.size() == 1){	//Single end
 	    		if (isWire(head))

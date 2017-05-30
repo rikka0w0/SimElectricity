@@ -17,7 +17,7 @@
  * USA
  */
 
-package simElectricity.Common.EnergyNet;
+package simElectricity.EnergyNet.Matrix;
 
 public class Gaussian implements IMatrixResolver{
     public static final double EPSILON = (double) 1e-10;

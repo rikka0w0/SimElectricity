@@ -73,6 +73,7 @@ public class ContainerSwitch extends ContainerBase<TileSwitch> {
     							, tileEntity.isOn
     							, tileEntity.inputSide
     							, tileEntity.outputSide
+    							, tileEntity.resistance
     							);
     	}
     }

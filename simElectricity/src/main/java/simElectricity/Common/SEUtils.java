@@ -47,18 +47,18 @@ public class SEUtils{
     public static final String NAME = "SimElectricity";
     
     public static void logInfo(Object object) {
-        FMLLog.log(NAME, Level.INFO, "[SimElectricity] " + String.valueOf(object));
+        FMLLog.log(NAME, Level.INFO, "[SimE] " + String.valueOf(object));
     }
 
     public static void logWarn(Object object) {
-        FMLLog.log(NAME, Level.WARN, "[SimElectricity] " + String.valueOf(object));
+        FMLLog.log(NAME, Level.WARN, "[SimE] " + String.valueOf(object));
     }
 
     public static void logError(Object object) {
-        FMLLog.log(NAME, Level.ERROR, "[SimElectricity] " + String.valueOf(object));
+        FMLLog.log(NAME, Level.ERROR, "[SimE] " + String.valueOf(object));
     }
 
     public static void logFatal(Object object) {
-        FMLLog.log(NAME, Level.FATAL, "[SimElectricity] " + String.valueOf(object));
+        FMLLog.log(NAME, Level.FATAL, "[SimE] " + String.valueOf(object));
     }
 }

@@ -25,7 +25,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.IEnergyNetUpdateHandler;
 import simElectricity.API.ISEConnectable;
 import simElectricity.API.SEAPI;
-import simElectricity.API.DataProvider.ISEJunctionData;
+import simElectricity.API.DataProvider.ISESwitchData;
 import simElectricity.API.EnergyTile.ISESimulatable;
 import simElectricity.API.EnergyTile.ISESubComponent;
 import simElectricity.API.Tile.ISECableTile;
@@ -38,8 +38,8 @@ import simElectricity.Templates.Utils.Utils;
 import java.util.LinkedList;
 import java.util.List;
 
-public class TileSwitch extends TileEntityTwoPort implements ISEJunctionData, ISEConnectable, IEnergyNetUpdateHandler, IGuiSyncHandler {	
-	ISESubComponent junction = (ISESubComponent) SEAPI.energyNetAgent.newComponent(this);
+public class TileSwitch extends TileEntityTwoPort implements ISESwitchData, IEnergyNetUpdateHandler, IGuiSyncHandler {	
+	ISESubComponent switchComponent = (ISESubComponent) SEAPI.energyNetAgent.newComponent(this);
 	public double current=0F;
     
     public double resistance = 0.005F;
@@ -68,19 +68,18 @@ public class TileSwitch extends TileEntityTwoPort implements ISEJunctionData, IS
     }
 
 	/////////////////////////////////////////////////////////
-	///ISEConnectable
-	/////////////////////////////////////////////////////////
-    @Override
-    public boolean canConnectOnSide(ForgeDirection side) {
-        return side == inputSide || side == outputSide;
-    }
-
-	/////////////////////////////////////////////////////////
 	///IEnergyNetUpdateHandler
 	/////////////////////////////////////////////////////////
     @Override
     public void onEnergyNetUpdate() {
-    	current = SEAPI.energyNetAgent.getCurrentMagnitude(this.junction);
+    	if (isOn){
+        	double vA = SEAPI.energyNetAgent.getVoltage(this.switchComponent);
+        	double vB = SEAPI.energyNetAgent.getVoltage(this.switchComponent.getComplement());
+        	current = Math.abs(vA-vB)/resistance;
+    	}else{
+    		current = 0;
+    	}
+
         if (current > maxCurrent) {
             isOn = false;
             SEAPI.energyNetAgent.reattachTile(this);
@@ -99,31 +98,25 @@ public class TileSwitch extends TileEntityTwoPort implements ISEJunctionData, IS
 
 	@Override
 	public ISESubComponent getComponent(ForgeDirection side) {
-		return (side == inputSide || side == outputSide) ? junction : null;
+		if (side == inputSide)
+			return switchComponent;
+		else if (side == outputSide)
+			return switchComponent.getComplement();
+		else
+			return null;
 	}
 
-	
 	/////////////////////////////////////////////////////////
-	///ISEJunctionData
+	///ISESwitchData
 	/////////////////////////////////////////////////////////
 	@Override
-	public void getNeighbors(List<ISESimulatable> list) {
-        if (isOn) {
-            TileEntity neighbor = Utils.getTileEntityonDirection(this, inputSide);
-
-            if (neighbor instanceof ISECableTile)
-                list.add(((ISECableTile) neighbor).getNode());
-
-            neighbor = Utils.getTileEntityonDirection(this, outputSide);
-
-            if (neighbor instanceof ISECableTile)
-            	list.add(((ISECableTile) neighbor).getNode());
-        }
+	public boolean isOn(){
+		return isOn;
 	}
 
 	@Override
-	public double getResistance(ISESimulatable neighbor) {
-		return resistance / 2;
+	public double getResistance() {
+		return resistance;
 	}
 	
 	/////////////////////////////////////////////////////////
@@ -249,10 +242,8 @@ public class TileSwitch extends TileEntityTwoPort implements ISEJunctionData, IS
 	    this.isOn = isOn;
 	    
 	    
-	    if (reattch)
-	    	SEAPI.energyNetAgent.reattachTile(this);
-	    else
-	    	SEAPI.energyNetAgent.markTileForUpdate(this);
+	    SEAPI.energyNetAgent.reattachTile(this);
+
 	    //onEnergyNetUpdate();		//Check trip-off
 	    this.markTileEntityForS2CSync();
 	}

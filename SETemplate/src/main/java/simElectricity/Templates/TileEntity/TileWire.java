@@ -39,7 +39,7 @@ import simElectricity.Templates.Common.TileEntitySE;
 import simElectricity.Templates.Utils.Utils;
 
 public class TileWire extends TileEntitySE implements ISECableTile, ITileRenderingInfoSyncHandler {
-	public ISESimulatable node = SEAPI.energyNetAgent.newCable(this);
+	public ISESimulatable node = SEAPI.energyNetAgent.newCable(this, false);
     protected boolean isAddedToEnergyNet = false;
     private boolean[] connections = new boolean[6];
 
@@ -111,7 +111,15 @@ public class TileWire extends TileEntitySE implements ISECableTile, ITileRenderi
 		return node;
 	}
 	
+	@Override
+	public boolean canConnectOnSide (ForgeDirection direction){
+		return true;
+	}
 	
+	@Override
+	public boolean isGridLinkEnabled(){
+		return false;
+	}
 	
 	////////////////////////////////////////
 	//Server->Client sync

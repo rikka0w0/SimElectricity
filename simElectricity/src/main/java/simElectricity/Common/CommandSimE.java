@@ -1,8 +1,8 @@
 package simElectricity.Common;
 
 import simElectricity.SimElectricity;
-import simElectricity.Common.EnergyNet.EnergyNet;
-import simElectricity.Common.EnergyNet.EnergyNetAgent;
+import simElectricity.EnergyNet.EnergyNet;
+import simElectricity.EnergyNet.EnergyNetAgent;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.util.ChatComponentText;

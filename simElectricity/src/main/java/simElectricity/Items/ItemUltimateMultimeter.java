@@ -95,6 +95,7 @@ public class ItemUltimateMultimeter extends Item {
         else if (te instanceof ISETile){
         	ISETile tile = (ISETile)te;
         	ForgeDirection[] dirs = tile.getValidDirections();
+        	/*
         	if (dirs.length == 1 && tile.getComponent(dirs[0]).getDataProvider() instanceof ISEVoltageSourceData){
         		ISESubComponent vs = tile.getComponent(dirs[0]);
         		ISEVoltageSourceData data = (ISEVoltageSourceData) tile.getComponent(dirs[0]).getDataProvider();
@@ -106,7 +107,9 @@ public class ItemUltimateMultimeter extends Item {
             				"Input current: " + String.valueOf(current));
                 chat(player, "Input power: " + String.valueOf(current*voltage));
         	}
-        	else for (ForgeDirection dir : tile.getValidDirections()){
+        	else 
+        	*/
+        	for (ForgeDirection dir : tile.getValidDirections()){
         		ISESubComponent comp = tile.getComponent(dir);
         		String[] temp = comp.toString().split("[.]");
         		chat(player, temp[temp.length-1].split("@")[0] + ": " + String.valueOf(SEAPI.energyNetAgent.getVoltage(comp)));
