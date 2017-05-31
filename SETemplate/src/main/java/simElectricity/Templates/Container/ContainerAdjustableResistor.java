@@ -21,17 +21,10 @@ package simElectricity.Templates.Container;
 
 import java.util.Iterator;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.ICrafting;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.Slot;
 import net.minecraft.tileentity.TileEntity;
-import simElectricity.API.SEAPI;
-import simElectricity.Templates.Client.Gui.GuiAdjustableResistor;
 import simElectricity.Templates.Common.ContainerBase;
 import simElectricity.Templates.TileEntity.TileAdjustableResistor;
 import simElectricity.Templates.Utils.MessageGui;

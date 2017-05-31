@@ -29,7 +29,6 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.ISEWrenchable;
-import simElectricity.API.SEAPI;
 import simElectricity.Templates.Common.BlockStandardGenerator;
 import simElectricity.Templates.TileEntity.TileQuantumGenerator;
 import simElectricity.Templates.Utils.ClientUtils;

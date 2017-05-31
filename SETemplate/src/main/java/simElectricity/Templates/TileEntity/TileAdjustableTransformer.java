@@ -19,19 +19,16 @@
 
 package simElectricity.Templates.TileEntity;
 
-import java.util.List;
-
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.SEAPI;
 import simElectricity.API.DataProvider.ISETransformerData;
 import simElectricity.API.EnergyTile.ISESubComponent;
-import simElectricity.API.Tile.ISETile;
 import simElectricity.Templates.Common.TileEntityTwoPort;
 import simElectricity.Templates.Utils.IGuiSyncHandler;
 
 public class TileAdjustableTransformer extends TileEntityTwoPort implements ISETransformerData, IGuiSyncHandler {
-    public ISESubComponent primary = (ISESubComponent) SEAPI.energyNetAgent.newComponent(this);
+    public ISESubComponent primary = SEAPI.energyNetAgent.newComponent(this, this);
     
     //Input - primary, output - secondary
     public double ratio = 10, outputResistance = 1;

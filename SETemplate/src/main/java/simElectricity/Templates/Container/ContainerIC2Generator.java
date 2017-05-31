@@ -21,7 +21,6 @@ package simElectricity.Templates.Container;
 
 import java.util.Iterator;
 
-import simElectricity.API.SEAPI;
 import simElectricity.Templates.Common.ContainerBase;
 import simElectricity.Templates.TileEntity.TileIC2Generator;
 import simElectricity.Templates.Utils.MessageGui;

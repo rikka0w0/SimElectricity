@@ -2,7 +2,6 @@ package simElectricity.EnergyNet;
 
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
 
 import simElectricity.Common.ConfigManager;
 import simElectricity.Common.SEUtils;
@@ -42,51 +41,48 @@ public class EnergyNetSimulator{
 	protected double Vt = 26e-6;
 	protected double Is = 1e-6;
     
-    private double[] calcCurrents(double[] voltages, List<SEComponent> unknownVoltageNodes){
-    	int matrixSize = unknownVoltageNodes.size();
-    	
-    	double[] currents = new double[matrixSize];   
-    	
+	
+	/**
+	 * @param voltages input, node voltage array from last iteration
+	 * @param currents output, return the new current mismatch
+	 * @param iterator An iterator instance of the unknown voltage node linked list.
+	 */
+    private void calcCurrents(double[] voltages, double[] currents, Iterator<SEComponent> iterator){   	    	
     	//Calculate the current flow into each node using their voltage
-        for (int nodeIndex = 0; nodeIndex < matrixSize; nodeIndex++) {
-        	SEComponent curNode = unknownVoltageNodes.get(nodeIndex);
-         	
-        	//currents[nodeIndex] = -voltages[nodeIndex]*Gnode;
-            
-        	//Node - Node
-			Iterator<SEComponent> iteratorON = curNode.optimizedNeighbors.iterator();
-			Iterator<Double> iteratorR = curNode.optimizedResistance.iterator();
+    	while(iterator.hasNext()){
+    		SEComponent columnNode = iterator.next();
+    		
+    		//Node - Node
+			Iterator<SEComponent> iteratorON = columnNode.optimizedNeighbors.iterator();
+			Iterator<Double> iteratorR = columnNode.optimizedResistance.iterator();
 			while (iteratorON.hasNext()){
 				SEComponent neighbor = iteratorON.next();
-        		int iNeighbor = unknownVoltageNodes.indexOf(neighbor);
         		double R = iteratorR.next();
-        		currents[nodeIndex] -= (voltages[nodeIndex] - voltages[iNeighbor])/R;					
-			}			
-			
-			
+        		currents[columnNode.index] -= (voltages[columnNode.index] - voltages[neighbor.index])/R;					
+			}
 			
 			
 			//Cable - GridNode interconnection
-			if (curNode instanceof Cable){
-				Cable cable = (Cable) curNode;
+			if (columnNode instanceof Cable){
+				Cable cable = (Cable) columnNode;
 				
 				if (cable.connectedGridNode != null && cable.isGridLinkEnabled)
-					currents[nodeIndex] -= (voltages[nodeIndex]/cable.resistance) - (voltages[unknownVoltageNodes.indexOf(cable.connectedGridNode)]/cable.resistance);
-			}else if (curNode instanceof GridNode){
-				GridNode gridNode = (GridNode) curNode;
+					currents[columnNode.index] -= (voltages[columnNode.index] - voltages[cable.connectedGridNode.index])/cable.resistance;
+			}else if (columnNode instanceof GridNode){
+				GridNode gridNode = (GridNode) columnNode;
 				
 				if (gridNode.interConnection != null && gridNode.interConnection.isGridLinkEnabled)
-					currents[nodeIndex] -= (voltages[nodeIndex]/gridNode.interConnection.resistance) - (voltages[unknownVoltageNodes.indexOf(gridNode.interConnection)]/gridNode.interConnection.resistance);	
+					currents[columnNode.index] -= (voltages[columnNode.index] - voltages[gridNode.interConnection.index])/gridNode.interConnection.resistance;	
 			}
 			
 			//Node - shunt and two port networks
-			else if (curNode instanceof VoltageSource){
-    			VoltageSource vs = (VoltageSource) curNode;
-    			currents[nodeIndex] -= (voltages[nodeIndex] - vs.v) / vs.r;
-    		}else if (curNode instanceof ConstantPowerLoad){
-    			ConstantPowerLoad load = (ConstantPowerLoad)curNode;
+			else if (columnNode instanceof VoltageSource){
+    			VoltageSource vs = (VoltageSource) columnNode;
+    			currents[columnNode.index] -= (voltages[columnNode.index] - vs.v) / vs.r;
+    		}else if (columnNode instanceof ConstantPowerLoad){
+    			ConstantPowerLoad load = (ConstantPowerLoad)columnNode;
     			
-    			double V = voltages[unknownVoltageNodes.indexOf(curNode)];
+    			double V = voltages[columnNode.index];
     			double Rcal = V*V/ load.pRated;
     			
     			if (Rcal > load.rMax)
@@ -95,82 +91,76 @@ public class EnergyNetSimulator{
     				Rcal = load.rMin;
     			
     			if (load.enabled)
-    				currents[nodeIndex] -= V/Rcal;
+    				currents[columnNode.index] -= V/Rcal;
     		}
     		
 			//Switch
-    		else if (curNode instanceof SwitchA){
-    			SwitchA A = (SwitchA) curNode;
+    		else if (columnNode instanceof SwitchA){
+    			SwitchA A = (SwitchA) columnNode;
     			SwitchB B = A.B;
-    			double resistance = A.resistance;
-    			int iB = unknownVoltageNodes.indexOf(B);
     			
     			if (A.isOn)
-    				currents[nodeIndex] -= (voltages[nodeIndex]/resistance) - (voltages[iB]/resistance);
-    		}else if (curNode instanceof SwitchB){
-    			SwitchB B = (SwitchB) curNode;
+    				currents[columnNode.index] -= (voltages[columnNode.index]-voltages[B.index])/A.resistance;
+    		}else if (columnNode instanceof SwitchB){
+    			SwitchB B = (SwitchB) columnNode;
     			SwitchA A = B.A;
-    			double resistance = A.resistance;
-    			int iA = unknownVoltageNodes.indexOf(A);
     			
     			if (A.isOn)
-    				currents[nodeIndex] -= -(voltages[iA]/resistance) + (voltages[nodeIndex]/resistance);
+    				currents[columnNode.index] -= (voltages[columnNode.index]-voltages[A.index])/A.resistance;
     		}
 			
     		//Transformer
-    		else if (curNode instanceof TransformerPrimary){
-    			TransformerPrimary pri = (TransformerPrimary) curNode;
+    		else if (columnNode instanceof TransformerPrimary){
+    			TransformerPrimary pri = (TransformerPrimary) columnNode;
     			TransformerSecondary sec = pri.secondary;
     			double ratio = pri.ratio;
     			double res = pri.rsec;
-    			int iSec = unknownVoltageNodes.indexOf(sec);
-    			currents[nodeIndex] -= (voltages[nodeIndex]*ratio*ratio/res) - (voltages[iSec]*ratio/res);
-    		}else if (curNode instanceof TransformerSecondary){
-    			TransformerSecondary sec = (TransformerSecondary) curNode;
+    			currents[columnNode.index] -= (voltages[columnNode.index]*ratio*ratio/res) - (voltages[sec.index]*ratio/res);
+    		}else if (columnNode instanceof TransformerSecondary){
+    			TransformerSecondary sec = (TransformerSecondary) columnNode;
     			TransformerPrimary pri = sec.primary;
     			double ratio = pri.ratio;
     			double res = pri.rsec;
-    			int iPri = unknownVoltageNodes.indexOf(pri);
-    			currents[nodeIndex] -= -(voltages[iPri]*ratio/res) + (voltages[nodeIndex]/res);
+    			currents[columnNode.index] -= -(voltages[pri.index]*ratio/res) + (voltages[columnNode.index]/res);
     		}
     		
 			//Regulator
-    		else if (curNode instanceof RegulatorInput){
-    			RegulatorInput input = (RegulatorInput) curNode;
+    		else if (columnNode instanceof RegulatorInput){
+    			RegulatorInput input = (RegulatorInput) columnNode;
     			RegulatorOutput output = input.output;
     			RegulatorController controller = input.controller;
     			
-    			double Vi = voltages[nodeIndex];
-    			double Vo = voltages[unknownVoltageNodes.indexOf(output)];	
-    			double Vc = voltages[unknownVoltageNodes.indexOf(controller)];
+    			double Vi = voltages[columnNode.index];
+    			double Vo = voltages[output.index];	
+    			double Vc = voltages[controller.index];
     			double Ro = input.Ro;
     			double Dmax = input.Dmax;
     			
     			double Ii = Vi*(Vc+Dmax)*(Vc+Dmax)/Ro - Vo*(Vc+Dmax)/Ro;
 				
-				currents[nodeIndex] -= Ii;
-    		}else if (curNode instanceof RegulatorOutput){
-    			RegulatorOutput output = (RegulatorOutput) curNode;
+				currents[columnNode.index] -= Ii;
+    		}else if (columnNode instanceof RegulatorOutput){
+    			RegulatorOutput output = (RegulatorOutput) columnNode;
     			RegulatorInput input = output.input;
     			RegulatorController controller = input.controller;
     			
-    			double Vi = voltages[unknownVoltageNodes.indexOf(input)];
-    			double Vo = voltages[nodeIndex];	
-    			double Vc = voltages[unknownVoltageNodes.indexOf(controller)];
+    			double Vi = voltages[input.index];
+    			double Vo = voltages[columnNode.index];	
+    			double Vc = voltages[controller.index];
     			double Ro = input.Ro;
     			double Dmax = input.Dmax;
     			double Rdummy = input.Rdummy;
     			
     			double Io = -Vi*(Vc+Dmax)/Ro + Vo/Ro + Vo/Rdummy;
 				
-				currents[nodeIndex] -= Io;
-    		}else if (curNode instanceof RegulatorController){
-    			RegulatorController controller = (RegulatorController) curNode;
+				currents[columnNode.index] -= Io;
+    		}else if (columnNode instanceof RegulatorController){
+    			RegulatorController controller = (RegulatorController) columnNode;
     			RegulatorInput input = controller.input;
     			RegulatorOutput output = input.output;
     			
-    			double Vo = voltages[unknownVoltageNodes.indexOf(output)];	
-    			double Vc = voltages[nodeIndex];
+    			double Vo = voltages[output.index];	
+    			double Vc = voltages[columnNode.index];
     			double A = input.A;
     			double Rs = input.Rs;
     			double Rc = input.Rc;
@@ -184,18 +174,16 @@ public class EnergyNetSimulator{
     			else
     				Io += Is*Math.exp(Vc/Vt);
     			
-				currents[nodeIndex] -= Io;
+				currents[columnNode.index] -= Io;
     		}
     		
     		
 			//Diode
-    		else if (curNode instanceof DiodeInput){
-    			DiodeInput input = (DiodeInput) curNode;
+    		else if (columnNode instanceof DiodeInput){
+    			DiodeInput input = (DiodeInput) columnNode;
     			DiodeOutput output = input.output;
-    			int iPri = nodeIndex;
-    			int iSec = unknownVoltageNodes.indexOf(output);	
     			
-    			double Vd = voltages[iPri]-voltages[iSec];
+    			double Vd = voltages[columnNode.index]-voltages[output.index];
     			double Vt = input.Vt;
     			double Is = input.Is;
     			double Id;
@@ -208,14 +196,12 @@ public class EnergyNetSimulator{
     				Id = Is*Math.exp(Vd/Vt) + Vd*Gpn;
     			}
     			
-    			currents[nodeIndex] -= Id;
-    		}else if (curNode instanceof DiodeOutput){
-    			DiodeOutput output = (DiodeOutput) curNode;
+    			currents[columnNode.index] -= Id;
+    		}else if (columnNode instanceof DiodeOutput){
+    			DiodeOutput output = (DiodeOutput) columnNode;
     			DiodeInput input = output.input;
-    			int iPri = unknownVoltageNodes.indexOf(input);
-    			int iSec = nodeIndex;
     			
-    			double Vd = voltages[iPri]-voltages[iSec];
+    			double Vd = voltages[input.index]-voltages[columnNode.index];
     			double Vt = input.Vt;
     			double Is = input.Is;
     			double Id;
@@ -228,21 +214,18 @@ public class EnergyNetSimulator{
     			}
 
     			
-    			currents[nodeIndex] += Id;
+    			currents[columnNode.index] += Id;
     		}
-        }
-    	
-    	return currents;
+    	}
     }
 
-    private void formJacobian(double[] voltages, List<SEComponent> unknownVoltageNodes){
-    	int matrixSize = unknownVoltageNodes.size();
-    	
-    	matrix.newMatrix(matrixSize);
+    private void formJacobian(double[] voltages, Iterator<SEComponent> iterator){   	
+    	matrix.newMatrix(voltages.length);
 
-        for (int columnIndex = 0; columnIndex < matrixSize; columnIndex++) {
-        	SEComponent columnNode = unknownVoltageNodes.get(columnIndex);
-        
+    	while (iterator.hasNext()){
+    		SEComponent columnNode = iterator.next();
+    		int columnIndex = columnNode.index;
+    		
         	double diagonalElement = 0;
         	
         	//Add conductance between nodes
@@ -250,7 +233,7 @@ public class EnergyNetSimulator{
 			Iterator<Double> iteratorR = columnNode.optimizedResistance.iterator();
 			while (iteratorON.hasNext()){
 				SEComponent neighbor = iteratorON.next();
-				int rowIndex = unknownVoltageNodes.indexOf(neighbor);
+				int rowIndex = neighbor.index;
         		double R = iteratorR.next();	
         		
         		diagonalElement += 1.0D / R;
@@ -267,7 +250,7 @@ public class EnergyNetSimulator{
 				
 				if (cable.connectedGridNode != null && cable.isGridLinkEnabled){
 					int iCable = columnIndex;
-					int iGridNode = unknownVoltageNodes.indexOf(cable.connectedGridNode);
+					int iGridNode = cable.connectedGridNode.index;
 					
 					//Diagonal element
 					diagonalElement += 1.0D/cable.resistance;	
@@ -293,7 +276,7 @@ public class EnergyNetSimulator{
         	//Constant power load
 			else if (columnNode instanceof ConstantPowerLoad){
 				ConstantPowerLoad load = (ConstantPowerLoad)columnNode;
-				double V = voltages[unknownVoltageNodes.indexOf(columnNode)];
+				double V = voltages[columnNode.index];
 				
     			double Rcal = V*V/load.pRated;
     			
@@ -313,7 +296,7 @@ public class EnergyNetSimulator{
 				
 				if (A.isOn){
 					int iA = columnIndex;
-					int iB = unknownVoltageNodes.indexOf(A.B);
+					int iB = A.B.index;
 					
 					//Diagonal element
 					diagonalElement += 1.0D/A.resistance;	
@@ -333,7 +316,7 @@ public class EnergyNetSimulator{
         	else if (columnNode instanceof TransformerPrimary){
        			TransformerPrimary pri = (TransformerPrimary) columnNode;
        			int iPri = columnIndex;
-       			int iSec = unknownVoltageNodes.indexOf(pri.secondary);
+       			int iSec = pri.secondary.index;
        			
        			double ratio = pri.ratio;
        			double res = pri.rsec;
@@ -354,7 +337,7 @@ public class EnergyNetSimulator{
     			DiodeInput input = (DiodeInput) columnNode;
     			
     			int iPri = columnIndex;
-    			int iSec = unknownVoltageNodes.indexOf(input.output);	
+    			int iSec = input.output.index;	
     			double Vd = voltages[iPri]-voltages[iSec];
     			
     			double Vt = input.Vt;
@@ -377,7 +360,7 @@ public class EnergyNetSimulator{
 			else if (columnNode instanceof DiodeOutput){
     			DiodeInput input = ((DiodeOutput) columnNode).input;
 
-    			int iPri = unknownVoltageNodes.indexOf(input);
+    			int iPri = input.index;
     			int iSec = columnIndex;
     			double Vd = voltages[iPri]-voltages[iSec];
     			
@@ -399,8 +382,8 @@ public class EnergyNetSimulator{
     			RegulatorController controller = input.controller;
 				
     			int iIn = columnIndex;
-    			int iOut = unknownVoltageNodes.indexOf(input.output);
-    			int iCon = unknownVoltageNodes.indexOf(controller);
+    			int iOut = input.output.index;
+    			int iCon = controller.index;
     			
     			double Vi = voltages[iIn];
     			double Vo = voltages[iOut];
@@ -422,8 +405,8 @@ public class EnergyNetSimulator{
 				RegulatorController controller = (RegulatorController) columnNode;
 				RegulatorInput input = controller.input;
     			
-    			int iIn = unknownVoltageNodes.indexOf(input);
-    			int iOut = unknownVoltageNodes.indexOf(input.output);
+    			int iIn = input.index;
+    			int iOut = input.output.index;
     			int iCon = columnIndex;
     			
     			double Vi = voltages[iIn];
@@ -438,8 +421,8 @@ public class EnergyNetSimulator{
     				diagonalElement += 1.0D/Rs + Is/Vt*Math.exp(Vc/Vt);
 			}
         	
-        	matrix.setElementValue(columnIndex, columnIndex, diagonalElement);
-        }
+        	matrix.setElementValue(columnIndex, columnIndex, diagonalElement);	
+    	}
 
         matrix.finishEditing();
     }
@@ -457,12 +440,14 @@ public class EnergyNetSimulator{
     	}
     	
     	double[] voltages = new double[matrixSize];
-    	double[] currents;
+    	double[] currents = new double[matrixSize];;
     	   		
         iterations = 0;
         while(true) {
+        	for (int i = 0; i < matrixSize; i++)
+        		currents[i] = 0;
         	//Calculate the current flow into each node using their voltage
-        	currents = calcCurrents(voltages, unknownVoltageNodes);	//Current mismatch
+        	calcCurrents(voltages, currents, unknownVoltageNodes.iterator());	//Current mismatch
         	
         	boolean keepGoing = false;
             
@@ -474,14 +459,14 @@ public class EnergyNetSimulator{
             
             if (keepGoing){
             	if (iterations > ConfigManager.maxIteration){
-            		SEUtils.logInfo("Maximum number of iteration has reached, something must go wrong!");
+            		SEUtils.logError("Maximum number of iteration has reached, something must be wrong!", SEUtils.simulator);
             		break;
             	}
             }else{
             	break;
             }
         	
-        	formJacobian(voltages, unknownVoltageNodes);
+        	formJacobian(voltages, unknownVoltageNodes.iterator());
         	//matrix.print();
             if (!matrix.solve(currents)){
             	throw new RuntimeException("Due to incorrect value of components, the energy net has been shutdown!");
@@ -505,6 +490,6 @@ public class EnergyNetSimulator{
         	i++;
         }
         
-        SEUtils.logInfo("Run!" + String.valueOf(iterations));        
+        SEUtils.logInfo("Calculation converges in " + String.valueOf(iterations) + " iterations.", SEUtils.simulator);        
     }
 }

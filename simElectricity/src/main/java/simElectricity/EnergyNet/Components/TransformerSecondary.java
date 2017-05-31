@@ -1,7 +1,6 @@
 package simElectricity.EnergyNet.Components;
 
 import net.minecraft.tileentity.TileEntity;
-import simElectricity.API.DataProvider.ISEComponentDataProvider;
 import simElectricity.API.EnergyTile.ISESubComponent;
 
 public class TransformerSecondary extends SEComponent implements ISESubComponent{

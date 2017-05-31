@@ -19,46 +19,52 @@
 
 package simElectricity.Common;
 
-import java.util.Arrays;
-
 import cpw.mods.fml.common.FMLLog;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.MathHelper;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import org.apache.logging.log4j.Level;
-
-import simElectricity.API.ISEConnectable;
-import simElectricity.API.ISEWrenchable;
-import simElectricity.API.SEAPI;
-import simElectricity.API.Tile.ISECableTile;
-import simElectricity.API.Tile.ISETile;
 
 /**
  * Created by <Meow J> on 8/6/2014.
  *
  * @author Meow J
  */
-public class SEUtils{
+public enum SEUtils{
+	//Info Sources
+	loader("ModLoader"),
+	general("General"),
+	simulator("Simulator"),
+	energyTile("EnergyTile"),
+	grid("GridData");
+	
     public static final String MODID = "SimElectricity";
     public static final String NAME = "SimElectricity";
+
+	SEUtils(String text) {
+	}
+
+    public static void logInfo(Object object, SEUtils source) {
+        FMLLog.log(NAME, Level.INFO, source + "|" + String.valueOf(object));
+    }
+
+    public static void logWarn(Object object, SEUtils source) {
+        FMLLog.log(NAME, Level.WARN, source + "|" + String.valueOf(object));
+    }
+
+    public static void logError(Object object, SEUtils source) {
+        FMLLog.log(NAME, Level.ERROR, source + "|" + String.valueOf(object));
+    }
+
+    public static void logFatal(Object object, SEUtils source) {
+        FMLLog.log(NAME, Level.FATAL, source + "|" + String.valueOf(object));
+    }
     
-    public static void logInfo(Object object) {
-        FMLLog.log(NAME, Level.INFO, "[SimE] " + String.valueOf(object));
-    }
-
-    public static void logWarn(Object object) {
-        FMLLog.log(NAME, Level.WARN, "[SimE] " + String.valueOf(object));
-    }
-
-    public static void logError(Object object) {
-        FMLLog.log(NAME, Level.ERROR, "[SimE] " + String.valueOf(object));
-    }
-
-    public static void logFatal(Object object) {
-        FMLLog.log(NAME, Level.FATAL, "[SimE] " + String.valueOf(object));
-    }
+    
+	public static TileEntity getTileEntityOnDirection(TileEntity te, ForgeDirection direction){
+    	return te.getWorldObj().getTileEntity(
+                te.xCoord + direction.offsetX,
+                te.yCoord + direction.offsetY,
+                te.zCoord + direction.offsetZ);
+	}
 }

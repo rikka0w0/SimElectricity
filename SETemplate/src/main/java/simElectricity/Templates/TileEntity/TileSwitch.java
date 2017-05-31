@@ -20,26 +20,16 @@
 package simElectricity.Templates.TileEntity;
 
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.IEnergyNetUpdateHandler;
-import simElectricity.API.ISEConnectable;
 import simElectricity.API.SEAPI;
 import simElectricity.API.DataProvider.ISESwitchData;
-import simElectricity.API.EnergyTile.ISESimulatable;
 import simElectricity.API.EnergyTile.ISESubComponent;
-import simElectricity.API.Tile.ISECableTile;
-import simElectricity.API.Tile.ISETile;
-import simElectricity.Templates.Common.TileEntitySE;
 import simElectricity.Templates.Common.TileEntityTwoPort;
 import simElectricity.Templates.Utils.IGuiSyncHandler;
-import simElectricity.Templates.Utils.Utils;
-
-import java.util.LinkedList;
-import java.util.List;
 
 public class TileSwitch extends TileEntityTwoPort implements ISESwitchData, IEnergyNetUpdateHandler, IGuiSyncHandler {	
-	ISESubComponent switchComponent = (ISESubComponent) SEAPI.energyNetAgent.newComponent(this);
+	ISESubComponent switchComponent = SEAPI.energyNetAgent.newComponent(this, this);
 	public double current=0F;
     
     public double resistance = 0.005F;
@@ -91,11 +81,6 @@ public class TileSwitch extends TileEntityTwoPort implements ISESwitchData, IEne
 	/////////////////////////////////////////////////////////
 	///ISETile
 	/////////////////////////////////////////////////////////
-	@Override
-	public int getNumberOfComponents() {
-		return 1;
-	}
-
 	@Override
 	public ISESubComponent getComponent(ForgeDirection side) {
 		if (side == inputSide)

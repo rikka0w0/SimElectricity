@@ -5,14 +5,10 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.util.Constants;
 
-import simElectricity.API.DataProvider.ISEComponentDataProvider;
 import simElectricity.API.EnergyTile.ISEGridNode;
 import simElectricity.API.EnergyTile.ISESimulatable;
-import simElectricity.API.EnergyTile.ISESubComponent;
 import simElectricity.EnergyNet.EnergyNetDataProvider;
 
 public class GridNode extends SEComponent implements ISEGridNode{

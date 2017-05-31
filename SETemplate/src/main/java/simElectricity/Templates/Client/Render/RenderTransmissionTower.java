@@ -4,15 +4,13 @@ import org.lwjgl.opengl.GL11;
 
 import simElectricity.API.SEAPI;
 import simElectricity.API.Client.ITransmissionTower;
-import simElectricity.API.Client.ITransmissionTowerRenderHelper;
-import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 
 public class RenderTransmissionTower extends RenderTranmissionTowerBase{
 	double[] 	from = new double[9],
 				to = new double[9];
-    private void swapIfIntersect(double[] from, double[] to){
+    private static void swapIfIntersect(double[] from, double[] to){
 		double m1 = (from[0]-to[0])/(from[2]-to[2]);
 		double k1 = from[0] - from[2] * m1;
 		double m2 = (from[6]-to[6])/(from[8]-to[8]);

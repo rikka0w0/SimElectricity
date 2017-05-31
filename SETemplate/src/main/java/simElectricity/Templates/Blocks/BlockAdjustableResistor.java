@@ -29,7 +29,6 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.ISidedFacing;
-import simElectricity.API.SEAPI;
 import simElectricity.Templates.Common.BlockStandardSEMachine;
 import simElectricity.Templates.TileEntity.TileAdjustableResistor;
 import simElectricity.Templates.Utils.ClientUtils;

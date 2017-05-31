@@ -2,12 +2,7 @@ package simElectricity.EnergyNet;
 
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.Set;
 
-import net.minecraft.tileentity.TileEntity;
-
-import simElectricity.API.Tile.ISECableTile;
-import simElectricity.API.Tile.ISEGridTile;
 import simElectricity.EnergyNet.Components.Cable;
 import simElectricity.EnergyNet.Components.GridNode;
 import simElectricity.EnergyNet.Components.SEComponent;
@@ -213,7 +208,7 @@ public class SEGraph {
     ////////////////////////////////////////////////
     ///Optimizer
     ////////////////////////////////////////////////    
-	private boolean isWire(SEComponent node){
+	private static boolean isWire(SEComponent node){
 		if (node instanceof Cable)
 			return true;
 		if (node instanceof GridNode){
@@ -223,7 +218,7 @@ public class SEGraph {
 		return false;
 	}
 	
-	private boolean isInterconnectionTerminal(SEComponent node){
+	private static boolean isInterconnectionTerminal(SEComponent node){
 		if ((node instanceof Cable) && ((Cable)node).connectedGridNode != null)
 			return true;
 		else if ((node instanceof GridNode) && ((GridNode)node).interConnection != null)

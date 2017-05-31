@@ -1,7 +1,6 @@
 package simElectricity.Templates.Common;
 
 import simElectricity.API.ISidedFacing;
-import simElectricity.API.EnergyTile.ISESubComponent;
 import simElectricity.API.Tile.ISETile;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -35,10 +34,7 @@ public abstract class TileEntityTwoPort extends TileEntitySE implements ISidedFa
 	
 	/////////////////////////////////////////////////////////
 	///ISETile
-	/////////////////////////////////////////////////////////
-	@Override
-	public int getNumberOfComponents() {return 2;}
-    
+	/////////////////////////////////////////////////////////    
 	@Override
 	public ForgeDirection[] getValidDirections() {return new ForgeDirection[]{inputSide, outputSide};}
 

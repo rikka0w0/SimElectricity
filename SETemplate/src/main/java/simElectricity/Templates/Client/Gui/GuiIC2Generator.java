@@ -21,19 +21,15 @@ package simElectricity.Templates.Client.Gui;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
-import net.minecraftforge.common.util.ForgeDirection;
 
 import org.lwjgl.opengl.GL11;
 
 import simElectricity.Templates.Container.ContainerIC2Generator;
-import simElectricity.Templates.TileEntity.TileIC2Generator;
 import simElectricity.Templates.Utils.IGuiSyncHandler;
 
 @SideOnly(Side.CLIENT)
@@ -56,7 +52,7 @@ public class GuiIC2Generator extends GuiContainer implements IGuiSyncHandler{
 
     public GuiIC2Generator(InventoryPlayer inventoryPlayer, TileEntity tileEntity) {
         super(new ContainerIC2Generator(inventoryPlayer, tileEntity));
-        te = (TileIC2Generator) tileEntity;
+        te = tileEntity;
     }
 
 

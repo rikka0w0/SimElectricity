@@ -32,7 +32,7 @@ import simElectricity.API.Tile.ISETile;
  */
 public abstract class TileStandardSEMachine extends TileSidedFacingMachine implements ISEWrenchable, ISETile, ISEVoltageSourceData {
     public ForgeDirection functionalSide = ForgeDirection.NORTH;
-    public ISESubComponent tile = (ISESubComponent) SEAPI.energyNetAgent.newComponent(this);
+    public ISESubComponent tile = SEAPI.energyNetAgent.newComponent(this, this);
     
     @Override
 	public boolean attachToEnergyNet(){
@@ -86,11 +86,6 @@ public abstract class TileStandardSEMachine extends TileSidedFacingMachine imple
 
     
     //ISETile
-	@Override
-	public int getNumberOfComponents() {
-		return 1;
-	}
-
 	@Override
 	public ForgeDirection[] getValidDirections() {
 		return new ForgeDirection[]{functionalSide};

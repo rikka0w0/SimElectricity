@@ -26,7 +26,6 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.ICrafting;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.tileentity.TileEntity;
 import simElectricity.Templates.Common.ContainerBase;
@@ -42,9 +41,9 @@ public class ContainerIceMachine extends ContainerBase<TileIceMachine>{
     
     @Override
     public void init() {
-        addSlotToContainer(new Slot((IInventory) tileEntity, 0, 14, 18));
-        addSlotToContainer(new ProductSlot((IInventory) tileEntity, 1, 14, 49));
-        addSlotToContainer(new ProductSlot((IInventory) tileEntity, 2, 134, 34));
+        addSlotToContainer(new Slot(tileEntity, 0, 14, 18));
+        addSlotToContainer(new ProductSlot(tileEntity, 1, 14, 49));
+        addSlotToContainer(new ProductSlot(tileEntity, 2, 134, 34));
     }
     
     @Override

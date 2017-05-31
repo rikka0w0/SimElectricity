@@ -19,16 +19,12 @@
 
 package simElectricity.Templates.Container;
 
-import java.nio.ByteBuffer;
 import java.util.Iterator;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.ICrafting;
 import net.minecraft.tileentity.TileEntity;
-import simElectricity.API.SEAPI;
 import simElectricity.Templates.Common.ContainerBase;
 import simElectricity.Templates.TileEntity.TileSwitch;
 import simElectricity.Templates.Utils.MessageGui;

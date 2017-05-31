@@ -1,7 +1,5 @@
 package simElectricity.Templates.TileEntity;
 
-import java.util.List;
-
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -12,7 +10,6 @@ import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 
 import simElectricity.API.IEnergyNetUpdateHandler;
-import simElectricity.API.INetworkEventHandler;
 import simElectricity.API.SEAPI;
 import simElectricity.Templates.SEItems;
 import simElectricity.Templates.Common.TileStandardSEMachine;

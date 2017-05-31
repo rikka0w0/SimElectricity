@@ -2,15 +2,12 @@ package simElectricity.Client;
 
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
 
 import org.lwjgl.opengl.GL11;
 
-import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-import simElectricity.SimElectricity;
 import simElectricity.API.SEAPI;
 import simElectricity.API.Client.ITextureProvider;
 import simElectricity.API.Client.ITransmissionTowerRenderHelper;

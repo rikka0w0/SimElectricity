@@ -29,7 +29,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
 import org.lwjgl.opengl.GL11;
-import simElectricity.API.SEAPI;
 import simElectricity.Templates.Container.ContainerQuantumGenerator;
 import simElectricity.Templates.Utils.IGuiSyncHandler;
 import simElectricity.Templates.Utils.MessageGui;

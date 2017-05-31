@@ -31,7 +31,6 @@ import net.minecraft.util.ChatComponentText;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
-import simElectricity.API.DataProvider.ISEVoltageSourceData;
 import simElectricity.API.EnergyTile.*;
 import simElectricity.API.Tile.*;
 import simElectricity.API.SEAPI;

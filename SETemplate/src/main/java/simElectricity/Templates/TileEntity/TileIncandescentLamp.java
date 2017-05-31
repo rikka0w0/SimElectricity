@@ -24,11 +24,9 @@ import net.minecraft.world.EnumSkyBlock;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import simElectricity.API.IEnergyNetUpdateHandler;
-import simElectricity.API.ITileRenderingInfoSyncHandler;
 import simElectricity.API.SEAPI;
 import simElectricity.Templates.Common.TileStandardSEMachine;
-
-import java.util.List;
+import simElectricity.Templates.Utils.ITileRenderingInfoSyncHandler;
 
 public class TileIncandescentLamp extends TileStandardSEMachine implements IEnergyNetUpdateHandler, ITileRenderingInfoSyncHandler {
     public byte lightLevel = 0;

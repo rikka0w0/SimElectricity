@@ -1,7 +1,6 @@
 package simElectricity.EnergyNet.Components;
 
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
 import simElectricity.API.DataProvider.ISETransformerData;
 import simElectricity.API.EnergyTile.ISESubComponent;
 

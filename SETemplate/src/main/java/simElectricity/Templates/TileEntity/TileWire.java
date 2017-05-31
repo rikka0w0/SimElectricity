@@ -19,24 +19,18 @@
 
 package simElectricity.Templates.TileEntity;
 
-import java.util.List;
-
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.Packet;
-import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import simElectricity.API.EnergyTile.ISESimulatable;
 import simElectricity.API.Tile.ISECableTile;
-import simElectricity.API.ITileRenderingInfoSyncHandler;
 import simElectricity.API.SEAPI;
 import simElectricity.Templates.Blocks.BlockWire;
 import simElectricity.Templates.Common.TileEntitySE;
-import simElectricity.Templates.Utils.Utils;
+import simElectricity.Templates.Utils.ITileRenderingInfoSyncHandler;
 
 public class TileWire extends TileEntitySE implements ISECableTile, ITileRenderingInfoSyncHandler {
 	public ISESimulatable node = SEAPI.energyNetAgent.newCable(this, false);
@@ -129,7 +123,7 @@ public class TileWire extends TileEntitySE implements ISECableTile, ITileRenderi
 		//Update connection
         ForgeDirection[] dirs = ForgeDirection.values();
         for (int i = 0; i < 6; i++) {
-        	connections[i] = Utils.canCableConnectTo(this, dirs[i]);
+        	connections[i] = SEAPI.energyNetAgent.canConnectTo(this, dirs[i]);
         }
 		
 		//Initiate Server->Client synchronization

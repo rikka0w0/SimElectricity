@@ -26,7 +26,6 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.ICrafting;
 import net.minecraft.tileentity.TileEntity;
 import simElectricity.API.SEAPI;
-import simElectricity.API.EnergyTile.ISESimulatable;
 import simElectricity.Templates.Common.ContainerBase;
 import simElectricity.Templates.TileEntity.TileVoltageMeter;
 import simElectricity.Templates.Utils.MessageGui;

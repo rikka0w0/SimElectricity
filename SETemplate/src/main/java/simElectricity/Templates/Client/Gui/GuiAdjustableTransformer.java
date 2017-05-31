@@ -31,7 +31,6 @@ import org.lwjgl.opengl.GL11;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import simElectricity.API.SEAPI;
 import simElectricity.Templates.Container.ContainerAdjustableTransformer;
 import simElectricity.Templates.Utils.IGuiSyncHandler;
 import simElectricity.Templates.Utils.MessageGui;

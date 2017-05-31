@@ -101,7 +101,6 @@ public class RenderWire extends TileEntitySpecialRenderer {
             else if (WIDTH == BlockWire.renderingWidthList[2])
                 scale = 0.34F;
 
-            //noinspection ConstantConditions
             GL11.glScalef(Math.abs(dx == 0.0F ? 1 : dx * scale), Math.abs(dy == 0.0F ? 1 : dy * scale), Math.abs(dz == 0.0F ? 1 : dz * scale));
         }
 
@@ -190,7 +189,7 @@ public class RenderWire extends TileEntitySpecialRenderer {
         t.addVertexWithUV(vec3.xCoord, vec3.yCoord, vec3.zCoord, texU, texV);
     }
 
-    private boolean doesRenderSide(int blockSide, int subSide, boolean[] sideArr) {
+    private static boolean doesRenderSide(int blockSide, int subSide, boolean[] sideArr) {
         return blockSide != -1 || !sideArr[subSide];
     }
 }

@@ -1,7 +1,7 @@
 package simElectricity.Templates;
 
-import simElectricity.API.ITileRenderingInfoSyncHandler;
 import simElectricity.API.SEAPI;
+import simElectricity.Templates.Utils.ITileRenderingInfoSyncHandler;
 import simElectricity.Templates.Utils.MessageGui;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.SidedProxy;
@@ -47,6 +47,9 @@ public class SETemplate {
 
         //Register Items
         SEItems.init();
+        
+        //Register Forge Event Handlers
+        new ITileRenderingInfoSyncHandler.ForgeEventHandler();
         
         networkChannel = NetworkRegistry.INSTANCE.newSimpleChannel(MODID);
         networkChannel.registerMessage(MessageGui.Handler.class, MessageGui.class, 0, Side.CLIENT);

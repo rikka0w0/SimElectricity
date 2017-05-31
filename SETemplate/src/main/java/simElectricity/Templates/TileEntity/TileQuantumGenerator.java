@@ -19,14 +19,10 @@
 
 package simElectricity.Templates.TileEntity;
 
-import net.minecraft.client.gui.GuiScreen;
 import net.minecraftforge.common.util.ForgeDirection;
-import simElectricity.API.INetworkEventHandler;
 import simElectricity.API.SEAPI;
 import simElectricity.Templates.Common.TileSidedGenerator;
 import simElectricity.Templates.Utils.IGuiSyncHandler;
-
-import java.util.List;
 
 public class TileQuantumGenerator extends TileSidedGenerator implements IGuiSyncHandler {
 
@@ -88,25 +84,25 @@ public class TileQuantumGenerator extends TileSidedGenerator implements IGuiSync
                 outputVoltage += 10;
             break;
         case 4:
-            if (GuiScreen.isCtrlKeyDown())
+            if (isCtrlDown)
                 outputResistance -= 1;
             else
                 outputResistance -= 0.1;
             break;
         case 5:
-            if (GuiScreen.isCtrlKeyDown())
+            if (isCtrlDown)
                 outputResistance -= 0.001;
             else
                 outputResistance -= 0.01;
             break;
         case 6:
-            if (GuiScreen.isCtrlKeyDown())
+            if (isCtrlDown)
                 outputResistance += 0.001;
             else
                 outputResistance += 0.01;
             break;
         case 7:
-            if (GuiScreen.isCtrlKeyDown())
+            if (isCtrlDown)
                 outputResistance += 1;
             else
                 outputResistance += 0.1;

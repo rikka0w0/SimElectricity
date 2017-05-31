@@ -10,7 +10,6 @@ import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
-import simElectricity.API.SEAPI;
 import simElectricity.Templates.Common.BlockContainerSE;
 import simElectricity.Templates.TileEntity.TileDiode;
 import simElectricity.Templates.Utils.Utils;

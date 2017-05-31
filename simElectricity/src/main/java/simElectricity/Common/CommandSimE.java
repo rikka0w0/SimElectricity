@@ -21,7 +21,7 @@ public class CommandSimE extends CommandBase{
 		return "/sime (info | refresh) [dimensionID]";
 	}
 
-	private void info(ICommandSender sender, int dim){
+	private static void info(ICommandSender sender, int dim){
 		World world = DimensionManager.getWorld(dim);
 		EnergyNet energyNet = EnergyNetAgent.getEnergyNetForWorld(world);
 		sender.addChatMessage(new ChatComponentText("-----------------------------------"));
@@ -30,7 +30,7 @@ public class CommandSimE extends CommandBase{
 			sender.addChatMessage(new ChatComponentText(s));
 	}
 	
-	private void refresh(ICommandSender sender, int dim){
+	private static void refresh(ICommandSender sender, int dim){
 		EnergyNet energyNet = EnergyNetAgent.getEnergyNetForWorld(
 				DimensionManager.getWorld(dim));
 		energyNet.reFresh();

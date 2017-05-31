@@ -1,7 +1,6 @@
 package simElectricity.EnergyNet.Matrix;
 
 import edu.emory.mathcs.csparsej.tdouble.Dcs_common;
-import edu.emory.mathcs.csparsej.tdouble.Dcs_print;
 import edu.emory.mathcs.csparsej.tdouble.Dcs_qrsol;
 import edu.emory.mathcs.csparsej.tdouble.Dcs_util;
 
@@ -13,7 +12,7 @@ import java.util.ListIterator;
  * A bridging class between EnergyNet and CSprase lib
  * */
 public class QR implements IMatrixResolver{
-	public static final double EPSILON = (double) 1e-10;
+	public static final double EPSILON = 1e-10;
 
 	int size;					//Size of the square matrix
 	int[] Ap;

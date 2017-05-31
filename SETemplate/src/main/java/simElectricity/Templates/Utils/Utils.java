@@ -2,10 +2,7 @@ package simElectricity.Templates.Utils;
 
 import java.util.Arrays;
 
-import simElectricity.API.ISEConnectable;
-import simElectricity.API.ISEWrenchable;
 import simElectricity.API.Tile.ISECableTile;
-import simElectricity.API.Tile.ISETile;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -137,42 +134,7 @@ public class Utils {
     	return fluidInItem;
     }
     
-    //SimElectricity
-    /**
-     * 
-     * @param tileEntity the tileEntity must implement interface {@link ISECableTile}
-     * @param direction the direction respect to tileEntity
-     * @return true if should render cable connection to neighbor tileEntity, otherwise false
-     */
-	public static boolean canCableConnectTo(TileEntity tileEntity, ForgeDirection direction) {
-		if (!(tileEntity instanceof ISECableTile))
-			throw new RuntimeException("canCableConnectTo: input tileEntity doesn't implement interface ISECableTile");
-		
-        TileEntity neighbor = getTileEntityonDirection(tileEntity, direction);
-
-        if (neighbor instanceof ISECableTile) {
-			if (((ISECableTile) neighbor).getColor() == 0 ||
-			                        ((ISECableTile) tileEntity).getColor() == 0 ||
-			                        ((ISECableTile) neighbor).getColor() == ((ISECableTile) tileEntity).getColor()) {
-			                    return true;
-			}
-        } else if (neighbor instanceof ISEWrenchable) {
-            ForgeDirection functionalSide = ((ISEWrenchable) neighbor).getFunctionalSide();
-
-            if (direction == functionalSide.getOpposite())
-                return true;
-
-        } else if (neighbor instanceof ISEConnectable) {
-            if (((ISEConnectable) neighbor).canConnectOnSide(direction.getOpposite()))
-                return true;
-        } else if (neighbor instanceof ISETile){
-            if (((ISETile) neighbor).getComponent(direction.getOpposite()) != null)
-                return true;	
-        }
-
-        return false;
-    }
-	
+    //SimElectricity	
     /**
      * @param tileEntity       tileEntity
      * @param defaultDirection default direction

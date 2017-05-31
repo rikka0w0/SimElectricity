@@ -1,16 +1,18 @@
-package simElectricity.API;
+package simElectricity.Templates.Utils;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.ChunkWatchEvent;
 
+/**
+ *	This is not a part of the SimElectricity API, because some tileEntities need to work with/without SimElectricity
+ */
 public interface ITileRenderingInfoSyncHandler {
 	/**
 	 * Send a sync. packet to client immediately, to update client rendering
 	 * </p>
-	 * This method will be called when the chunk containing the tileEntity is seen by a player
+	 * This method will be called as soon as the chunk containing the tileEntity becomes visible to a player
 	 */
 	public void sendRenderingInfoToClient();
 	

@@ -39,7 +39,6 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.SEAPI;
-import simElectricity.API.Tile.ISECableTile;
 import simElectricity.Templates.Common.BlockContainerSE;
 import simElectricity.Templates.ItemBlocks.ItemBlockWire;
 import simElectricity.Templates.TileEntity.TileWire;
@@ -122,7 +121,7 @@ public class BlockWire extends BlockContainerSE {
         setBlockBounds(1F, 0.6F, 1F, 0.0F, 0.6F, 0.0F);
     }
 
-    private boolean isConnected(ForgeDirection direction, boolean[] connections) {
+    private static boolean isConnected(ForgeDirection direction, boolean[] connections) {
         return direction.ordinal() < 6 && direction.ordinal() >= 0 && connections[direction.ordinal()];
     }
 
@@ -243,8 +242,8 @@ public class BlockWire extends BlockContainerSE {
         if (isConnected(ForgeDirection.EAST, connections))
             maxX = 1;
 
-        return AxisAlignedBB.getBoundingBox((double) x + minX, (double) y + minY, (double) z + minZ,
-                (double) x + maxX, (double) y + maxY, (double) z + maxZ);
+        return AxisAlignedBB.getBoundingBox(x + minX, y + minY, z + minZ,
+                x + maxX, y + maxY, z + maxZ);
     }
 
     //This will tell minecraft not to render any side of our cube.

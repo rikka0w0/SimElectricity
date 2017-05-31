@@ -52,7 +52,7 @@ public interface IMatrixResolver {
             try {
                 return (IMatrixResolver) Class.forName("simElectricity.EnergyNet.Matrix." + name).newInstance();
             } catch (Exception e) {
-                SEUtils.logFatal("Invalid Matrix Solver! Please check your config settings!");
+                SEUtils.logFatal("Invalid Matrix Solver! Please check your config settings!", SEUtils.simulator);
                 e.printStackTrace();
                 return null;
             }

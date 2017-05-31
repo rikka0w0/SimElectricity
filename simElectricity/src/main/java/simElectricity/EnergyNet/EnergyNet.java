@@ -21,29 +21,13 @@ package simElectricity.EnergyNet;
 
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.EnergyTile.ISESimulatable;
-import simElectricity.API.EnergyTile.ISESubComponent;
-import simElectricity.API.Tile.ISECableTile;
-import simElectricity.API.Tile.ISETile;
 import simElectricity.API.IEnergyNetUpdateHandler;
 import simElectricity.Common.ConfigManager;
 import simElectricity.Common.SEUtils;
-import simElectricity.EnergyNet.TileEvent.Detach;
-import simElectricity.EnergyNet.Components.ConstantPowerLoad;
-import simElectricity.EnergyNet.Components.DiodeInput;
-import simElectricity.EnergyNet.Components.DiodeOutput;
 import simElectricity.EnergyNet.Components.GridNode;
-import simElectricity.EnergyNet.Components.RegulatorController;
-import simElectricity.EnergyNet.Components.RegulatorInput;
-import simElectricity.EnergyNet.Components.RegulatorOutput;
 import simElectricity.EnergyNet.Components.SEComponent;
-import simElectricity.EnergyNet.Components.TransformerPrimary;
-import simElectricity.EnergyNet.Components.TransformerSecondary;
-import simElectricity.EnergyNet.Components.VoltageSource;
 import simElectricity.EnergyNet.Matrix.IMatrixResolver;
-import simElectricity.API.SEAPI;
-import sun.security.ssl.Debug;
 
 import java.util.*;
 
@@ -76,9 +60,6 @@ public final class EnergyNet extends EnergyNetSimulator{
 		}
 
 		Iterator<IEnergyNetEvent> iterator = events.iterator();
-		
-		if (!iterator.hasNext())
-			return;				//Nothing changed
 		
 		//Process EventQueue
 		while (iterator.hasNext()){
@@ -187,7 +168,7 @@ public final class EnergyNet extends EnergyNetSimulator{
     	//Initialize thread
     	thread = EnergyNetThread.create(world.provider.dimensionId, this);
     	
-        SEUtils.logInfo("EnergyNet has been created for DIM" + String.valueOf(world.provider.dimensionId));
+        SEUtils.logInfo("EnergyNet has been created for DIM" + String.valueOf(world.provider.dimensionId), SEUtils.general);
     }
     
 	public void shutdown(){
@@ -233,8 +214,7 @@ public final class EnergyNet extends EnergyNetSimulator{
 
     
     public void reFresh(){
-    	//onPreTick();
-    	thread.wakeUp(true);
+    	onPreTick();
     }
 
     public double getVoltage(ISESimulatable Tile){   	
@@ -278,19 +258,5 @@ public final class EnergyNet extends EnergyNetSimulator{
     		double Vb = getVoltage(terminals[1]);
     		return Math.abs((Va-Vb)/(graph.R0+graph.R1));
     	}
-    	/*
-    	if (Tile instanceof Junction){
-    		Junction junction = (Junction)Tile;
-    		if (junction.neighbors.size() < 2)
-    			return 0;
-    		if (junction.neighbors.size() > 2)
-    			return Double.NaN;
-    		
-    		double Va = getVoltage(junction);
-    		double Vb = getVoltage(junction.optimizedNeighbors.getFirst());
-    		return Math.abs((Va-Vb)/(junction.optimizedResistance.getFirst()));
-    	}else{
-
-    	}*/
     }
 }

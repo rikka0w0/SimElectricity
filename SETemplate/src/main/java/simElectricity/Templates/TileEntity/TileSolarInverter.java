@@ -9,10 +9,8 @@ import simElectricity.API.Tile.ISETile;
 import simElectricity.Templates.Common.TileEntityTwoPort;
 import simElectricity.Templates.Utils.IGuiSyncHandler;
 
-import java.util.List;
-
 public class TileSolarInverter extends TileEntityTwoPort implements ISETile, ISERegulatorData, IGuiSyncHandler{
-    public ISESubComponent input = (ISESubComponent) SEAPI.energyNetAgent.newComponent(this);
+    public ISESubComponent input = SEAPI.energyNetAgent.newComponent(this, this);
 
     public double Vreg = 24;
     public double Ro = 0.001F;

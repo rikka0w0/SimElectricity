@@ -18,7 +18,7 @@ import simElectricity.Templates.Common.TileSidedFacingMachine;
 
 public class TileIC2Generator extends TileSidedFacingMachine implements IEnergySource, ISETile, ISEConstantPowerLoadData, ISEWrenchable, IEnergyNetUpdateHandler{
 	public ForgeDirection functionalSide = ForgeDirection.NORTH;
-	ISESubComponent tile = (ISESubComponent) SEAPI.energyNetAgent.newComponent(this);
+	ISESubComponent tile = SEAPI.energyNetAgent.newComponent(this, this);
 	
 	public double inputPower = 0;	//Input rate
 	
@@ -170,13 +170,6 @@ public class TileIC2Generator extends TileSidedFacingMachine implements IEnergyS
 	public double getMaximumResistance() {
 		return 100000;
 	}
-
-
-	@Override
-	public int getNumberOfComponents() {
-		return 1;
-	}
-
 
 	@Override
 	public ForgeDirection[] getValidDirections() {

@@ -4,13 +4,10 @@
 package simElectricity.EnergyNet;
 
 import java.util.HashMap;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import simElectricity.API.EnergyTile.ISEGridNode;
-import simElectricity.API.EnergyTile.ISESimulatable;
 import simElectricity.API.EnergyTile.ISESubComponent;
 import simElectricity.API.Tile.ISECableTile;
 import simElectricity.API.Tile.ISEGridTile;
@@ -62,20 +59,13 @@ public class EnergyNetDataProvider extends WorldSavedData{
 	}
 	
 	
-	//Tile Event handling ----------------------------------------------------------------------------
-	private TileEntity getTileEntityOnDirection(TileEntity te, ForgeDirection direction){
-    	return te.getWorldObj().getTileEntity(
-                te.xCoord + direction.offsetX,
-                te.yCoord + direction.offsetY,
-                te.zCoord + direction.offsetZ);
-	}
-	
+	//Tile Event handling ----------------------------------------------------------------------------	
 	/**
 	 * @param te must implements ISECableTile or ISETile
 	 */
 	public void registerTile(TileEntity te){
 		if (loadedTiles.contains(te)){
-			SEUtils.logWarn("Duplicated TileEntity:" + te.toString() +", this could be a bug!");
+			SEUtils.logWarn("Duplicated TileEntity:" + te.toString() +", this could be a bug!", SEUtils.energyTile);
 		}else{
             loadedTiles.add(te);
 		}
@@ -92,10 +82,10 @@ public class EnergyNetDataProvider extends WorldSavedData{
         	
         	//Build connection with neighbors
             for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
-            	TileEntity neighborTE = getTileEntityOnDirection(te, direction);
+            	TileEntity neighborTileEntity = SEUtils.getTileEntityOnDirection(te, direction);
             	
-                if (neighborTE instanceof ISECableTile) {  //Conductor
-                	ISECableTile neighbor = (ISECableTile) neighborTE;
+                if (neighborTileEntity instanceof ISECableTile) {  //Conductor
+                	ISECableTile neighborCableTile = (ISECableTile) neighborTileEntity;
 
                 	/*
                 	 * Two cable blocks can link together if and only if both of the following conditions are meet:
@@ -110,18 +100,18 @@ public class EnergyNetDataProvider extends WorldSavedData{
                 	 */
                     if (
                     	(	cableTile.getColor() == 0 ||
-                         	neighbor.getColor() == 0 ||
-                         	cableTile.getColor() == neighbor.getColor()
+                    			neighborCableTile.getColor() == 0 ||
+                         	cableTile.getColor() == neighborCableTile.getColor()
                     	)&&(
                     		cableTile.canConnectOnSide(direction) &&
-                    		neighbor.canConnectOnSide(direction.getOpposite())
+                    		neighborCableTile.canConnectOnSide(direction.getOpposite())
                     	)) {
                     	
-                        tileEntityGraph.addEdge((SEComponent) neighbor.getNode(), (SEComponent) cableTile.getNode());
+                        tileEntityGraph.addEdge((SEComponent) neighborCableTile.getNode(), (SEComponent) cableTile.getNode());
                     }
                 }
-                else if (neighborTE instanceof ISETile) {
-                	ISETile tile = (ISETile)neighborTE;
+                else if (neighborTileEntity instanceof ISETile) {
+                	ISETile tile = (ISETile)neighborTileEntity;
                 	ISESubComponent component = tile.getComponent(direction.getOpposite());
                 	
                 	if (component != null){
@@ -136,31 +126,18 @@ public class EnergyNetDataProvider extends WorldSavedData{
         		ISESubComponent subComponent = tile.getComponent(direction);
         		tileEntityGraph.addVertex((SEComponent) subComponent);
         		
-    			TileEntity neighbor = getTileEntityOnDirection(te, direction);
+    			TileEntity neighborTileEntity = SEUtils.getTileEntityOnDirection(te, direction);
                 
-                if (neighbor instanceof ISECableTile){
+                if (neighborTileEntity instanceof ISECableTile){
                 	// Connected properly
-                	if (((Cable)((ISECableTile)neighbor).getNode()).canConnectOnSide(direction.getOpposite()))
-                		tileEntityGraph.addEdge((SEComponent) ((ISECableTile)neighbor).getNode(),(SEComponent)  subComponent);
+                	if (((Cable)((ISECableTile)neighborTileEntity).getNode()).canConnectOnSide(direction.getOpposite()))
+                		tileEntityGraph.addEdge((SEComponent) ((ISECableTile)neighborTileEntity).getNode(),(SEComponent)  subComponent);
                 }
                 
                 
                 //Also don`t forget to attach the regulator controller to the energyNet!
                 if (subComponent instanceof RegulatorInput)
-                	tileEntityGraph.addVertex((SEComponent) ((RegulatorInput)subComponent).controller);
-        		//Build connection with neighbor
-        		/*
-        		if (subComponent instanceof Junction){
-        			Junction junction = (Junction) subComponent;
-        			junction.updateConnection();
-        			Iterator<ISESimulatable> iterator = junction.neighborListIterator();
-        			while (iterator.hasNext()){
-        				ISESimulatable neighbor = iterator.next();
-        				tileEntityGraph.addEdge((SEComponent) neighbor,(SEComponent)  subComponent);
-        			}        				
-        		}else{}*/
-
-        		
+                	tileEntityGraph.addVertex(((RegulatorInput)subComponent).controller);	
         	}
         }
         else{
@@ -172,7 +149,7 @@ public class EnergyNetDataProvider extends WorldSavedData{
 		if (loadedTiles.contains(te)){
 			loadedTiles.remove(te);
 		}else{
-			SEUtils.logWarn("Attempt to remove unregistered:" + te.toString() +", this could be a bug!");
+			SEUtils.logWarn("Attempt to remove unregistered:" + te.toString() +", this could be a bug!", SEUtils.energyTile);
 		}
 		
         if (te instanceof ISECableTile) {
@@ -187,7 +164,7 @@ public class EnergyNetDataProvider extends WorldSavedData{
         		tileEntityGraph.removeVertex((SEComponent) subComponent);
         		
         		if (subComponent instanceof RegulatorInput)
-                	tileEntityGraph.removeVertex((SEComponent) ((RegulatorInput)subComponent).controller);
+                	tileEntityGraph.removeVertex(((RegulatorInput)subComponent).controller);
         	}
 	    }else{
         	throw new RuntimeException("Unexpected TileEntity:" + te.toString());
@@ -356,7 +333,7 @@ public class EnergyNetDataProvider extends WorldSavedData{
 			gridNode.buildNeighborConnection(gridNodeMap);
 		}
 		
-		SEUtils.logInfo("Grid objectes has been loaded");
+		SEUtils.logInfo("Grid objectes has been loaded", SEUtils.grid);
 	}
 
 	

@@ -2,30 +2,30 @@ package simElectricity.API.Internal;
 
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.util.ForgeDirection;
 
 import simElectricity.API.DataProvider.ISEComponentDataProvider;
 import simElectricity.API.EnergyTile.ISESimulatable;
 import simElectricity.API.EnergyTile.ISESubComponent;
 
+/**
+ * Provides necessary functions which enable access to the SimElectricity EnergyNet
+ * @author rikka0w0
+ */
 public interface IEnergyNetAgent {
     /**
-     * Return the voltage of a ISESimulatable instance, RELATIVE TO GROUND!
-     * 
-     * @param node The ISESimulatable instance
-     * @return the voltage of the node, in volts
+     * @param circuit node
+     * @return the voltage of the node, in volts, ground referenced
      */
 	double getVoltage(ISESimulatable node);
 	
     /**
-     * Calculate the current flow through a node (with less than 2 connection, cable and junction only!)
-     * 
      * @param node The ISESimulatable instance
-     * @return the magnitude of the current, in amps
+     * @return the magnitude (Absolute value) of the current flow through the the cable or switch, in amps
      */
 	double getCurrentMagnitude(ISESimulatable Tile);
 	
-	ISESubComponent newComponent(TileEntity dataProviderTileEntity);
+	boolean canConnectTo(TileEntity tileEntity, ForgeDirection direction);
 	
 	ISESubComponent newComponent(ISEComponentDataProvider dataProvider, TileEntity parent);
 	

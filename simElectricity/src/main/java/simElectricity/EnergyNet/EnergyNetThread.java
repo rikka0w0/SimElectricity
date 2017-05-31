@@ -16,7 +16,7 @@ public class EnergyNetThread extends Thread{
 		energyNetThread.alive = true;
 		energyNetThread.start();
 		
-		SEUtils.logInfo("Energy thread for DIM " + String.valueOf(dimID) + " has been created!");
+		SEUtils.logInfo("EnergyNet thread for DIM " + String.valueOf(dimID) + " has been created!", SEUtils.simulator);
 		return energyNetThread;
 	}
 		
@@ -38,23 +38,23 @@ public class EnergyNetThread extends Thread{
 	public void run() {
 		while(alive){
 			try {			
-				SEUtils.logInfo(this.getName() + " Sleep");
+				SEUtils.logInfo(this.getName() + " Sleep", SEUtils.simulator);
 				this.join();	//Hangs the thread until interrupt
 			} catch (InterruptedException e) {
-				SEUtils.logInfo(this.getName() + " wake up");
+				SEUtils.logInfo(this.getName() + " wake up", SEUtils.simulator);
 				
 				if (!alive)
 					break;
 				
 				this.processing = true;
-				SEUtils.logInfo(this.getName() + " Started");
+				SEUtils.logInfo(this.getName() + " Started", SEUtils.simulator);
 				energyNet.runSimulator(needOptimize);
-				SEUtils.logInfo(this.getName() + " Done");
+				SEUtils.logInfo(this.getName() + " Done", SEUtils.simulator);
 				energyNet.executeHandlers();
 				this.processing = false;
 			}
 		}
-		SEUtils.logInfo(this.getName() + " is shutting down");
+		SEUtils.logInfo(this.getName() + " is shutting down", SEUtils.simulator);
 	}
 	
 }

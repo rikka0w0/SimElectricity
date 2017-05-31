@@ -4,14 +4,11 @@ import simElectricity.API.SEAPI;
 
 import simElectricity.API.DataProvider.ISEDiodeData;
 import simElectricity.API.EnergyTile.ISESubComponent;
-import simElectricity.API.Tile.ISETile;
-import simElectricity.Templates.Common.TileEntitySE;
 import simElectricity.Templates.Common.TileEntityTwoPort;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.ForgeDirection;
 
 public class TileDiode extends TileEntityTwoPort implements ISEDiodeData{
-	public ISESubComponent input = (ISESubComponent) SEAPI.energyNetAgent.newComponent(this);
+	public ISESubComponent input = SEAPI.energyNetAgent.newComponent(this, this);
 	
 	/////////////////////////////////////////////////////////
 	///ISETile

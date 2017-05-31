@@ -55,9 +55,9 @@ public class ClientProxy extends CommonProxy {
         TileEntity te = world.getTileEntity(x, y, z);
 
         if (te instanceof TileQuantumGenerator)
-            return new GuiQuantumGenerator(player.inventory, (TileQuantumGenerator) te);
+            return new GuiQuantumGenerator(player.inventory, te);
         if (te instanceof TileVoltageMeter)
-            return new GuiVoltageMeter(player.inventory, (TileVoltageMeter) te);
+            return new GuiVoltageMeter(player.inventory, te);
         if (te instanceof TileAdjustableResistor)
             return new GuiAdjustableResistor(player.inventory, te);
         if (te instanceof TileAdjustableTransformer)

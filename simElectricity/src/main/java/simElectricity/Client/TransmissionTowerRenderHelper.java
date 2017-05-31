@@ -66,14 +66,14 @@ public class TransmissionTowerRenderHelper implements ITransmissionTowerRenderHe
     	this.te = te;
     }
     
-    private void getRotatedXZ(double[] param, double rotation, int x, int z){	//ret: x,z, real MC coord
+    private static void getRotatedXZ(double[] param, double rotation, int x, int z){	//ret: x,z, real MC coord
     	double lrx = param[0];
     	double lrz = param[1];
 		param[0] = lrz * Math.sin(rotation/180*Math.PI) + lrx * Math.cos(rotation/180*Math.PI) + 0.5F + x;
 		param[1] = lrz * Math.cos(rotation/180*Math.PI) - lrx * Math.sin(rotation/180*Math.PI) + 0.5F + z;
     }
     
-    private void transformCoord(double[] param, double rotation, int x, int z){	//ret: x,z, real MC coord
+    private static void transformCoord(double[] param, double rotation, int x, int z){	//ret: x,z, real MC coord
     	for (int i=0; i<9; i+=3){
     		double lrx = param[i];
     		double lrz = param[i+2];
@@ -83,7 +83,7 @@ public class TransmissionTowerRenderHelper implements ITransmissionTowerRenderHe
 
     }
     
-    private double distanceOf(double[] Start, double[] End) {
+    private static double distanceOf(double[] Start, double[] End) {
     	double ret = 0;
     	for (int i=0; i<Start.length; i++)
     		ret += (Start[i] - End[i])*(Start[i] - End[i]);
@@ -91,11 +91,11 @@ public class TransmissionTowerRenderHelper implements ITransmissionTowerRenderHe
     	return Math.sqrt(ret);
     }
     
-    private double distanceOf(double[] Start, double x, double z) {
+    private static double distanceOf(double[] Start, double x, double z) {
         return Math.sqrt((Start[0] - x)*(Start[0] - x) + (Start[1] - z)*(Start[1] - z));
     }
     
-    private void findVirtualConnection(TileEntity tileEntity, int neighborX, int neighborY, int neighborZ, double[] from, double[] to){   
+    private static void findVirtualConnection(TileEntity tileEntity, int neighborX, int neighborY, int neighborZ, double[] from, double[] to){   
     	ITransmissionTower curTw = (ITransmissionTower) tileEntity;
     	double curRotation = curTw.getRotation()*45 - 90;
 		double[] curInsulatorPositionArray = curTw.getInsulatorPositionArray();	
@@ -140,7 +140,7 @@ public class TransmissionTowerRenderHelper implements ITransmissionTowerRenderHe
 		swapIfIntersect(from, to);
     }
     
-    private void findConnection(TileEntity tileEntity, TileEntity neighbor, double[] from, double[] to){    	
+    private static void findConnection(TileEntity tileEntity, TileEntity neighbor, double[] from, double[] to){    	
     	ITransmissionTower curTw = (ITransmissionTower) tileEntity;
     	ITransmissionTower neighborTw = (ITransmissionTower) neighbor;
     	
@@ -257,7 +257,7 @@ public class TransmissionTowerRenderHelper implements ITransmissionTowerRenderHe
 		swapIfIntersect(from, to);
     }
     
-    private void swapIfIntersect(double[] from, double[] to){
+    private static void swapIfIntersect(double[] from, double[] to){
 		double m1 = (from[0]-to[0])/(from[2]-to[2]);
 		double k1 = from[0] - from[2] * m1;
 		double m2 = (from[6]-to[6])/(from[8]-to[8]);
@@ -279,7 +279,7 @@ public class TransmissionTowerRenderHelper implements ITransmissionTowerRenderHe
 		}
     }
     
-    private double calcInitSlope(double xStart, double yStart, double zStart, double xEnd, double yEnd, double zEnd, double tension){
+    private static double calcInitSlope(double xStart, double yStart, double zStart, double xEnd, double yEnd, double zEnd, double tension){
     	double length = SEAPI.clientRender.distanceOf(xStart, yStart, zStart, xEnd, yEnd, zEnd);
     	double b = 4 * tension / length;
     	double a = -b / length;
@@ -287,7 +287,7 @@ public class TransmissionTowerRenderHelper implements ITransmissionTowerRenderHe
     }
     
     //I: from I: to O: fixed, angle
-    private void fixConnectionPoints(double[] from, double[] to, double[] angles, double[] fixedfrom, double insulatorLength, double tension){
+    private static void fixConnectionPoints(double[] from, double[] to, double[] angles, double[] fixedfrom, double insulatorLength, double tension){
     	double distance = distanceOf(to,from);
     	
         angles[0] = calcInitSlope(from[0], from[1], from[2], to[0], to[1], to[2], tension) + Math.atan((to[1]-from[1])/distance);

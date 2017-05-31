@@ -31,7 +31,6 @@ import net.minecraft.util.StatCollector;
 import net.minecraftforge.common.util.ForgeDirection;
 import org.lwjgl.opengl.GL11;
 
-import simElectricity.API.SEAPI;
 import simElectricity.Templates.Container.ContainerSolarInverter;
 import simElectricity.Templates.Utils.IGuiSyncHandler;
 import simElectricity.Templates.Utils.MessageGui;

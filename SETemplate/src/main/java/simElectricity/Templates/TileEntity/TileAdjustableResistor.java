@@ -19,15 +19,11 @@
 
 package simElectricity.Templates.TileEntity;
 
-import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.nbt.NBTTagCompound;
 import simElectricity.API.SEAPI;
 
 import simElectricity.Templates.Common.TileStandardSEMachine;
 import simElectricity.Templates.Utils.IGuiSyncHandler;
-import simElectricity.Templates.Utils.MessageGui;
-
-import java.util.List;
 
 public class TileAdjustableResistor extends TileStandardSEMachine implements IGuiSyncHandler {
     public double resistance = 1000;

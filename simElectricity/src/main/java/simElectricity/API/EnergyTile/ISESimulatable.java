@@ -1,9 +1,7 @@
 package simElectricity.API.EnergyTile;
 
-import simElectricity.API.DataProvider.ISEComponentDataProvider;
-
 /**
- * A object which is able to evolve in the circuit simulation
+ * An abstract interface which represents a circuit node
  */
 public interface ISESimulatable {
 	public ISESubComponent getComplement();
