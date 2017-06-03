@@ -53,7 +53,7 @@ public class TileSolarPanel extends TileSidedGenerator {
         if (voltage != outputVoltage | resistance != outputResistance) {
             outputVoltage = voltage;
             outputResistance = resistance;
-            SEAPI.energyNetAgent.markTileForUpdate(this);
+            SEAPI.energyNetAgent.updateTileParameter(this);
         }
     }
 

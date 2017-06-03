@@ -57,7 +57,7 @@ public abstract class TileStandardSEMachine extends TileSidedFacingMachine imple
         
         this.markTileEntityForS2CSync();
         this.worldObj.notifyBlockChange(xCoord, yCoord, zCoord, null);
-        SEAPI.energyNetAgent.reattachTile(this);
+        SEAPI.energyNetAgent.updateTileConnection(this);
     }
 
     @Override

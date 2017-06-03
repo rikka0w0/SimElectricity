@@ -17,14 +17,12 @@
  * USA
  */
 
-package simElectricity.Items;
+package simElectricity.Templates.Items;
 
-import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChatComponentText;
@@ -34,9 +32,11 @@ import net.minecraftforge.common.util.ForgeDirection;
 import simElectricity.API.EnergyTile.*;
 import simElectricity.API.Tile.*;
 import simElectricity.API.SEAPI;
+import simElectricity.Templates.Common.ItemSE;
 
-public class ItemUltimateMultimeter extends Item {
+public class ItemUltimateMultimeter extends ItemSE {
     public ItemUltimateMultimeter() {
+    	super();
     	setCreativeTab(SEAPI.SETab);
         maxStackSize = 1;
         setHasSubtypes(true);
@@ -50,20 +50,6 @@ public class ItemUltimateMultimeter extends Item {
         itemIcon = r.registerIcon("simElectricity:Item_UltimateMultimeter");
     }
 
-    /**
-     * @param name name of this item.
-     */
-    @Override
-    public Item setUnlocalizedName(String name) {
-        GameRegistry.registerItem(this, name);
-        return super.setUnlocalizedName(name);
-    }
-
-    @Override
-    public String getUnlocalizedNameInefficiently(ItemStack itemStack) {
-        return super.getUnlocalizedNameInefficiently(itemStack).replaceAll("item.", "item.sime:");
-    }
-    
     /**
      * Post some text in a player's chat window
      * 
@@ -87,9 +73,9 @@ public class ItemUltimateMultimeter extends Item {
         	int color = ((ISECableTile) te).getColor();
         	chat(player, "Color: " + String.valueOf(color) + ", " +
             				"Voltage: " + String.valueOf(SEAPI.energyNetAgent.getVoltage(node)));
-        	double currentMagnitude = SEAPI.energyNetAgent.getCurrentMagnitude(node);
-        	if (!Double.isNaN(currentMagnitude))
-        		chat(player, "Current: " + String.valueOf(currentMagnitude));
+        	//double currentMagnitude = SEAPI.energyNetAgent.getCurrentMagnitude(node);
+        	//if (!Double.isNaN(currentMagnitude))
+        	//	chat(player, "Current: " + String.valueOf(currentMagnitude));
         }
         else if (te instanceof ISETile){
         	ISETile tile = (ISETile)te;
@@ -118,9 +104,9 @@ public class ItemUltimateMultimeter extends Item {
     		ISEGridNode comp = ((ISEGridTile) te).getGridNode();
     		String[] temp = comp.toString().split("[.]");
     		chat(player, temp[temp.length-1].split("@")[0] + ": " + String.valueOf(SEAPI.energyNetAgent.getVoltage(comp)));
-        	double currentMagnitude = SEAPI.energyNetAgent.getCurrentMagnitude(comp);
-        	if (!Double.isNaN(currentMagnitude))
-        		chat(player, "Current: " + String.valueOf(currentMagnitude));
+        	//double currentMagnitude = SEAPI.energyNetAgent.getCurrentMagnitude(comp);
+        	//if (!Double.isNaN(currentMagnitude))
+        	//	chat(player, "Current: " + String.valueOf(currentMagnitude));
         }
         
         return true;

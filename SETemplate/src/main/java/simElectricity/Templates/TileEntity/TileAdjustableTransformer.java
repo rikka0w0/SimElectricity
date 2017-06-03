@@ -96,7 +96,7 @@ public class TileAdjustableTransformer extends TileEntityTwoPort implements ISET
 		        outputSide = selectedDirection;
 	        }
 
-            SEAPI.energyNetAgent.reattachTile(this);
+            SEAPI.energyNetAgent.updateTileConnection(this);
 			this.markTileEntityForS2CSync();
 			this.worldObj.notifyBlockChange(xCoord, yCoord, zCoord, null);
 			return;
@@ -177,6 +177,6 @@ public class TileAdjustableTransformer extends TileEntityTwoPort implements ISET
         this.outputResistance = resistance;
         this.ratio = ratio;
         
-        SEAPI.energyNetAgent.markTileForUpdate(this);
+        SEAPI.energyNetAgent.updateTileParameter(this);
 	}
 }

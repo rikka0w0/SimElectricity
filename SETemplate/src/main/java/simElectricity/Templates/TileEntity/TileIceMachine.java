@@ -36,14 +36,14 @@ public class TileIceMachine extends TileStandardSEMachine implements IFluidHandl
 				(inv[2] != null ? inv[2].stackSize < inv[2].getMaxStackSize() : true)){	//Enough space
 			if (resistance != onResistance){
 				resistance = onResistance;
-				SEAPI.energyNetAgent.markTileForUpdate(this);
+				SEAPI.energyNetAgent.updateTileParameter(this);
 			}
 			
 			isWorking = true;
 		}else{
 			if (resistance != Float.MAX_VALUE){
 				resistance = Float.MAX_VALUE;
-				SEAPI.energyNetAgent.markTileForUpdate(this);
+				SEAPI.energyNetAgent.updateTileParameter(this);
 			}
 			
 			isWorking = false;

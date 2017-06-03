@@ -24,11 +24,17 @@ import simElectricity.Templates.Items.*;
 
 @GameRegistry.ObjectHolder(SETemplate.MODID)
 public class SEItems {
-
+    //Instances of items
+    public static ItemUltimateMultimeter ultimateMultimeter;
+    public static ItemGlove itemGlove;
+    public static ItemWrench itemWrench;
     public static ItemHVWire hvWire;
     public static ItemIceIngot iceIngot;
 
     public static void init() {
+    	ultimateMultimeter = new ItemUltimateMultimeter();
+    	itemGlove = new ItemGlove();
+    	itemWrench = new ItemWrench();
         hvWire = new ItemHVWire();
         iceIngot = new ItemIceIngot();
     }

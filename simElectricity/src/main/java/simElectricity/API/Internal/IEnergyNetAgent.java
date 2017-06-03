@@ -14,16 +14,9 @@ import simElectricity.API.EnergyTile.ISESubComponent;
  */
 public interface IEnergyNetAgent {
     /**
-     * @param circuit node
      * @return the voltage of the node, in volts, ground referenced
      */
 	double getVoltage(ISESimulatable node);
-	
-    /**
-     * @param node The ISESimulatable instance
-     * @return the magnitude (Absolute value) of the current flow through the the cable or switch, in amps
-     */
-	double getCurrentMagnitude(ISESimulatable Tile);
 	
 	boolean canConnectTo(TileEntity tileEntity, ForgeDirection direction);
 	
@@ -36,11 +29,11 @@ public interface IEnergyNetAgent {
      */
     void attachTile(TileEntity te);
 
-    void markTileForUpdate(TileEntity te);
+    void updateTileParameter(TileEntity te);
 
     void detachTile(TileEntity te);
 
-    void reattachTile(TileEntity te);
+    void updateTileConnection(TileEntity te);
     
     void attachGridObject(World world, int x, int y, int z, byte type);
     

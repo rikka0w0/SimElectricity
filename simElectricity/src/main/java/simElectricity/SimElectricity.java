@@ -41,7 +41,6 @@ import simElectricity.Common.CommandSimE;
 import simElectricity.Common.ConfigManager;
 import simElectricity.EnergyNet.EnergyNetAgent;
 import simElectricity.EnergyNet.EnergyNetEventHandler;
-import simElectricity.Items.*;
 
 @Mod(modid = SEUtils.MODID, name = SEUtils.NAME, version = SimElectricity.version, guiFactory = "simElectricity.Client.SimEGuiFactory", dependencies = "required-after:Forge@[10.12.2.1147,)")
 public class SimElectricity {
@@ -49,12 +48,7 @@ public class SimElectricity {
 
     @Instance(SEUtils.MODID)
     public static SimElectricity instance;
-
-    //Instances of items
-    public static ItemUltimateMultimeter ultimateMultimeter;
-    public static ItemGlove itemGlove;
-    public static ItemWrench itemWrench;
-    
+   
     /**
      * PreInitialize
      */
@@ -86,15 +80,13 @@ public class SimElectricity {
             @Override
             @SideOnly(Side.CLIENT)
             public Item getTabIconItem() {
-                return ultimateMultimeter;
+                return SEAPI.managementToolItem;
             }
         };
         
         
         //Register items
-    	ultimateMultimeter = new ItemUltimateMultimeter();
-    	itemGlove = new ItemGlove();
-    	itemWrench = new ItemWrench();
+        SEAPI.managementToolItem = new ItemSEMgrTool();
     }
 
     /**

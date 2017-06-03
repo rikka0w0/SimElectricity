@@ -17,55 +17,44 @@
  * USA
  */
 
-package simElectricity.Items;
+package simElectricity.Templates.Items;
 
-import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
-import simElectricity.API.ISidedFacing;
+import simElectricity.API.ISEWrenchable;
 import simElectricity.API.SEAPI;
+import simElectricity.Templates.Common.ItemSE;
 
-public class ItemGlove extends Item {
-    public ItemGlove() {
+public class ItemWrench extends ItemSE {
+    public ItemWrench() {
     	setCreativeTab(SEAPI.SETab);
         maxStackSize = 1;
         setHasSubtypes(true);
-        setUnlocalizedName("Glove");
+        setUnlocalizedName("Wrench");
         setMaxDamage(256);
     }
 
     @Override
     @SideOnly(Side.CLIENT)
     public void registerIcons(IIconRegister r) {
-        itemIcon = r.registerIcon("simElectricity:Item_Glove");
-    }
-
-    @Override
-    public Item setUnlocalizedName(String name) {
-        GameRegistry.registerItem(this, name);
-        return super.setUnlocalizedName(name);
-    }
-
-    @Override
-    public String getUnlocalizedNameInefficiently(ItemStack itemStack) {
-        return super.getUnlocalizedNameInefficiently(itemStack).replaceAll("item.", "item.sime:");
+        itemIcon = r.registerIcon("simElectricity:Item_Wrench");
     }
     
     @Override
     public boolean onItemUse(ItemStack itemStack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
-        if ((world.getTileEntity(x, y, z) instanceof ISidedFacing) & (!world.isRemote)) {	//Server side only!
-            ISidedFacing te = (ISidedFacing) world.getTileEntity(x, y, z);
+        if ((world.getTileEntity(x, y, z) instanceof ISEWrenchable) & (!world.isRemote)) {	//Server side only!
+        	ISEWrenchable te = (ISEWrenchable) world.getTileEntity(x, y, z);
             ForgeDirection newFacing = ForgeDirection.getOrientation(side);
 
-            if (te.canSetFacing(newFacing)) {
-                te.setFacing(newFacing);
+            if (te.canSetFunctionalSide(newFacing)) {
+                te.setFunctionalSide(newFacing);
             }
+
             return true;
         } else {
             return false;

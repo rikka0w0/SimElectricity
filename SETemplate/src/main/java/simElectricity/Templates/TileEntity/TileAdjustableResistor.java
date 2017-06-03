@@ -110,7 +110,7 @@ public class TileAdjustableResistor extends TileStandardSEMachine implements IGu
         
         this.resistance = resistance;
         
-        SEAPI.energyNetAgent.markTileForUpdate(this);
+        SEAPI.energyNetAgent.updateTileParameter(this);
         //No need to sync back, since the GUI is open and Container will do the job
 	}
 }

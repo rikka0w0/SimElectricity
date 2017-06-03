@@ -22,21 +22,20 @@ package simElectricity.API;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.item.Item;
 
 import simElectricity.API.Internal.IClientRender;
 import simElectricity.API.Internal.IEnergyNetAgent;
 
 public class SEAPI {   
     public static boolean isSELoaded = false;
-    public static int ratioSE2IC; //SE Power = IC Power times this ratio
     
 	public static IEnergyNetAgent energyNetAgent;
+	
+    public static CreativeTabs SETab;
+    
+    public static Item managementToolItem;
     
 	@SideOnly(Side.CLIENT)
 	public static IClientRender clientRender;
-	
-    /**
-     * Creative Tab for SimElectricity project
-     */
-    public static CreativeTabs SETab;
 }

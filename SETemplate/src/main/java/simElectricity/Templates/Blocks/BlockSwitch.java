@@ -52,7 +52,7 @@ public class BlockSwitch extends BlockContainerSE {
             if (!world.isRemote) {
                 te.isOn = !te.isOn;
                 te.markTileEntityForS2CSync();
-                SEAPI.energyNetAgent.reattachTile(te);
+                SEAPI.energyNetAgent.updateTileConnection(te);
             }
         }
         return true;

@@ -21,12 +21,10 @@ package simElectricity.EnergyNet;
 
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-import simElectricity.API.EnergyTile.ISESimulatable;
 import simElectricity.API.IEnergyNetUpdateHandler;
 import simElectricity.Common.ConfigManager;
 import simElectricity.Common.SEUtils;
 import simElectricity.EnergyNet.Components.GridNode;
-import simElectricity.EnergyNet.Components.SEComponent;
 import simElectricity.EnergyNet.Matrix.IMatrixResolver;
 
 import java.util.*;
@@ -50,6 +48,10 @@ public final class EnergyNet extends EnergyNetSimulator{
 	 * Called at pre-tick stage
 	 */
 	public void onPreTick(){
+		if (thread.isWorking()){
+			SEUtils.logWarn("Simulation takes longer than usual!", SEUtils.simulator);
+		}
+		
 		boolean needOptimize = false;	//Due to connection changes
 		boolean calc = false;			//Perform simulation
 		
@@ -215,48 +217,5 @@ public final class EnergyNet extends EnergyNetSimulator{
     
     public void reFresh(){
     	onPreTick();
-    }
-
-    public double getVoltage(ISESimulatable Tile){   	
-    	SEComponent node = (SEComponent) Tile;
-    	if (node.eliminated){
-        	SEGraph graph = dataProvider.getTEGraph();
-        	//Only apply to cable and transmission lines which have been optimized by the energyNet
-        	SEComponent[] terminals = graph.getTerminals((SEComponent) Tile);
-        	if (terminals == null)
-        		return 0;
-        		
-        	if (terminals.length == 0)
-        		return 0;
-        	else if (terminals.length == 1)
-        		return getVoltage(terminals[0]);
-        	else{
-        		double Va = getVoltage(terminals[0]);
-        		double Vb = getVoltage(terminals[1]);
-        		return Va - (Va-Vb)*graph.R0/(graph.R0+graph.R1);
-        	}
-    	}else{
-    		return node.voltageCache;
-    	}
-   }
-    
-    
-    public double getCurrentMagnitude(ISESimulatable Tile){
-    	SEGraph graph = dataProvider.getTEGraph();
-		//Cable or transmission line
-    	SEComponent seTile = (SEComponent) Tile;
-    	if (seTile.neighbors.size() < 2)
-    		return 0;
-    	else if (seTile.neighbors.size() > 2)
-    		return Double.NaN;
-
-    	SEComponent[] terminals = graph.getTerminals((SEComponent) Tile);
-    	if (terminals.length < 2)
-    		return 0;
-    	else{
-    		double Va = getVoltage(terminals[0]);
-    		double Vb = getVoltage(terminals[1]);
-    		return Math.abs((Va-Vb)/(graph.R0+graph.R1));
-    	}
     }
 }

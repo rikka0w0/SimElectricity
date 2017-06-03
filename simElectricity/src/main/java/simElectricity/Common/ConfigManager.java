@@ -25,11 +25,9 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.common.config.Configuration;
-import simElectricity.API.SEAPI;
 import simElectricity.Common.SEUtils;
 
 public class ConfigManager {
-
     public static Configuration config;
 
     /**
@@ -53,13 +51,10 @@ public class ConfigManager {
 
     private static void syncConfig(boolean isClient) {
         showEnergyNetInfo = config.get(Configuration.CATEGORY_GENERAL, "ShowEnergyNetInfo", false, "Display energy net information, such as joining/leaving/changing").getBoolean();
-        // matrixSolver = config.get(Configuration.CATEGORY_GENERAL, "MatrixSolver", "QR", "Which algorithms is used for solving matrix(QR is much more effective than Gaussian, options: QR, Gaussian)").getString();
         matrixSolver = config.getString("MatrixSolver", Configuration.CATEGORY_GENERAL, "QR", "Which algorithms is used for solving matrix(QR is much more effective than Gaussian.).Options: QR, Gaussian", new String[] { "QR", "Gaussian" });
-        precision = config.get(Configuration.CATEGORY_GENERAL, "Precision", 3, "The maximum allowed error from simulation, 3 means 3 decimal places").getInt();
+        precision = config.get(Configuration.CATEGORY_GENERAL, "Precision", 3, "3 means the result is precise up to at least 3 decimal places").getInt();
         maxIteration = config.get(Configuration.CATEGORY_GENERAL, "Max iteration", 50, "The Maximum number of iteration per tick").getInt();
-        shuntPN = config.get(Configuration.CATEGORY_GENERAL, "Shunt resistance per PN", 1000000000, "The resistance connected between every PN junction").getInt();
-        SEAPI.ratioSE2IC = config.get(Configuration.CATEGORY_GENERAL, "Convertion ratio between SE and IC", 10, "SE Power / this ratio = IC Power").getInt();
-        
+        shuntPN = config.get(Configuration.CATEGORY_GENERAL, "Shunt resistance per PN", 1000000000, "The resistance connected between every PN junction").getInt();        
         
         //Client-only configurations
         if (isClient){
@@ -71,7 +66,7 @@ public class ConfigManager {
         
     }
 
-    //This function is supposed to be called by a client with GUI only!
+    //This function is supposed to be called by a client only!
     @SubscribeEvent
     public void onConfigChanged(ConfigChangedEvent.OnConfigChangedEvent event) {
         if (event.modID.equalsIgnoreCase(SEUtils.MODID))

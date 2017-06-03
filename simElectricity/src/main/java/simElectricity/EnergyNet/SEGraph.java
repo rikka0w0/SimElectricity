@@ -259,6 +259,8 @@ public class SEGraph {
     }
        
     public void optimizGraph(){
+    	LinkedList<SEComponent> path = new LinkedList<SEComponent>();
+    	
     	terminalNodes.clear();
     	terminalNodes.addAll(components);
 
@@ -289,13 +291,15 @@ public class SEGraph {
     		if (!node.visited){
     			node.visited = true;
     			
-    			rraverseNeighbors: for (SEComponent neighbor: node.neighbors){
+    			traverseNeighbors: for (SEComponent neighbor: node.neighbors){
     				if (neighbor.visited)
-    					continue rraverseNeighbors;
+    					continue traverseNeighbors;
     				
+    				//Start a new path, from "node" towards "neighbor"
+    				path.clear();   				
+    				SEComponent prev = node;		
         			SEComponent reach = neighbor;	//Far reach
-        			SEComponent prev = node;
-        			double resistance = 0.0D;
+        			double resistance = 0.0D;		//The total resistance from "node" to "reach"
         			
         			search: do{
         				if (reach == node){
@@ -303,7 +307,6 @@ public class SEGraph {
         					break search;	//Avoid circulation
         				}
         				
-      				
         				resistance += calcR(prev, reach);
         				
         				if (reach.neighbors.size() > 2
@@ -311,27 +314,42 @@ public class SEGraph {
         					isInterconnectionTerminal(reach))	//We have to calculate the voltage of the interconnection point
         					break search;
         				
-        		    	if (reach.neighbors.size() == 1){
-        		    		if (isWire(reach))
+        				else if (reach.neighbors.size() == 1){
+        		    		if (isWire(reach) )
         		    			reach = null;	//A single ended wire can not form an edge
-        		    		break search;	//Dead end!
+        		    		break search;	
         		    	}
         		    	else if (reach.neighbors.size() == 2){	//Always moveforward!
-        		    		
+        		    		reach.optimizedNeighbors.add(node);
+        		    		reach.optimizedResistance.add(resistance);
+            				path.add(reach);
         		    		
     		    			reach.visited = true;
-    		    			prev = reach;
         		    		if (reach.neighbors.getFirst() == prev){
+        		    			prev = reach;
         		    			reach = reach.neighbors.getLast();
         		    		}else if (reach.neighbors.getLast() == prev){
+        		    			prev = reach;
         		    			reach = reach.neighbors.getFirst();
         		    		}else{
-        		    			throw new RuntimeException("WTF mate! This can not happen!");
+        		    			throw new RuntimeException("WTF mate whats going on?!");
         		    		}
         		    	}
         			}while (true);	
         			
         			if (reach != null){	//node-node connection
+		    			//Reached another device node (i.e. transformer primary)
+		    			//resistance = total resistance from "node" to the end
+		    			Iterator<SEComponent> iterator = path.iterator();
+		    			while(iterator.hasNext()){
+		    				SEComponent nodeOnPath = iterator.next();
+		    				nodeOnPath.optimizedNeighbors.add(reach);
+		    				nodeOnPath.optimizedResistance.add(
+		    						resistance - nodeOnPath.optimizedResistance.getFirst()
+		    						);
+		    			}
+        				
+        				
         				Iterator<SEComponent> iteratorON = node.optimizedNeighbors.iterator();
         				Iterator<Double> iteratorR = node.optimizedResistance.iterator();
         				
@@ -379,111 +397,10 @@ public class SEGraph {
     		}
 
     	}
-    		
     }
     
     public LinkedList<SEComponent> getTerminalNodes(){
     	return terminalNodes;
     }
 
-    public double R0,R1;
-    public SEComponent[] getTerminals(SEComponent wire){
-    	if (!isWire(wire))
-    		return null;	//Not applicable
-    	
-    	R0 = 0;
-    	R1 = 0;
-    	    	
-    	if (wire.neighbors.size() > 2)
-    		return null;	//Not an node
-    	
-    	if (wire.neighbors.size() == 0)
-    		return new SEComponent[]{}; 	//No connection, 0V!
-    	
-    	SEComponent prev = wire;
-    	SEComponent head = wire.neighbors.getFirst();
-    	
-    	search1: do{
-    		if (head == wire)
-    			return new SEComponent[]{};	//Avoid circulation, 0V
-    		
-    		R0 += calcR(prev, head);
-    		
-			if (head.neighbors.size() > 2
-					|| 
-				isInterconnectionTerminal(head))	//We have to calculate the voltage of the interconnection point
-				break search1;
-    		
-	    	if (head.neighbors.size() == 1){	//Single end
-	    		if (isWire(head))
-	    			head = null;
-	    		break search1;	//Dead end!
-	    	}
-	    	else if (head.neighbors.size() == 2){	//Always moveforward!
-	    		if (head.neighbors.getFirst() == prev){
-	    			prev = head;
-	    			head = head.neighbors.getLast();
-	    		}
-	    		else if (head.neighbors.getLast() == prev){
-	    			prev = head;
-	    			head = head.neighbors.getFirst();
-	    		}
-	    	}
-    	}while(true);
-    	
-    	//head == null -> single end
-    	//head != null -> something
-    	// A--^--A
-    	// A--^--
-    	// A--^
-    	// ---^
-    	if (wire.neighbors.size() == 1){
-    		if (head == null)
-    			return new SEComponent[]{};		//No connection to other nodes, 0V
-    		else
-    			return new SEComponent[]{head};	//Equal to the voltage of "head"
-    	}
-    		
-    	//wire.neighbors.size() == 2
-    	SEComponent terminal1 = head;
-    	prev = wire;
-    	head = wire.neighbors.getLast();
-
-    	search1: do{
-    		R1 += calcR(prev, head);
-    		
-			if (head.neighbors.size() > 2
-					|| 
-				isInterconnectionTerminal(head))	//We have to calculate the voltage of the interconnection point
-				break search1;
-    		
-	    	if (head.neighbors.size() == 1){	//Single end
-	    		if (isWire(head))
-	    			head = null;
-	    		break search1;	//Dead end!
-	    	}
-	    	else if (head.neighbors.size() == 2){	//Always moveforward!
-	    		if (head.neighbors.getFirst() == prev){
-	    			prev = head;
-	    			head = head.neighbors.getLast();
-	    		}
-	    		else if (head.neighbors.getLast() == prev){
-	    			prev = head;
-	    			head = head.neighbors.getFirst();
-	    		}
-	    	}
-    	}while(true);
-    	
-    	if (terminal1 == null){
-    		if (head == null)
-    			return new SEComponent[]{};		//No connection to other nodes, 0V
-    		else
-    			return new SEComponent[]{head};	//Equal to the voltage of "head"
-    	}else{
-    		if (head == null)
-    			return new SEComponent[]{terminal1};	//Equal to the voltage of "head"
-    		else
-    			return new SEComponent[]{terminal1, head};
-    	}
-    }
 }

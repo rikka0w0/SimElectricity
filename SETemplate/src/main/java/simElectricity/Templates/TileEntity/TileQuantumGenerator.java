@@ -123,7 +123,7 @@ public class TileQuantumGenerator extends TileSidedGenerator implements IGuiSync
         this.outputVoltage = outputVoltage;
         this.outputResistance = outputResistance;
 		
-        SEAPI.energyNetAgent.markTileForUpdate(this);
+        SEAPI.energyNetAgent.updateTileParameter(this);
         //No need to sync back, since the GUI is open and Container will do the job
 	}
 }

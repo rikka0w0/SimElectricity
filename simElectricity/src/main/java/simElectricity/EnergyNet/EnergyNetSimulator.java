@@ -3,6 +3,7 @@ package simElectricity.EnergyNet;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+import simElectricity.API.EnergyTile.ISESimulatable;
 import simElectricity.Common.ConfigManager;
 import simElectricity.Common.SEUtils;
 import simElectricity.EnergyNet.Matrix.IMatrixResolver;
@@ -494,4 +495,27 @@ public class EnergyNetSimulator{
         
         SEUtils.logInfo("Calculation converges in " + String.valueOf(iterations) + " iterations.", SEUtils.simulator);        
     }
+    
+    public static double getVoltage(ISESimulatable Tile){   	
+    	SEComponent node = (SEComponent) Tile;
+    	if (node.eliminated){
+    		if (node.optimizedNeighbors.size() == 2){
+    			SEComponent A = node.optimizedNeighbors.getFirst();
+    			SEComponent B = node.optimizedNeighbors.getLast();
+    			double vA = A.voltageCache;
+    			double vB = B.voltageCache;
+    			double rA = node.optimizedResistance.getFirst();
+    			double rB = node.optimizedResistance.getLast();
+    			return vA - (vA-vB)*rA/(rA+rB);
+    		}else if (node.optimizedNeighbors.size() == 1){
+    			return node.optimizedNeighbors.getFirst().voltageCache;
+    		}else if (node.optimizedNeighbors.size() == 0){
+    			return 0;
+    		}else{
+    			throw new RuntimeException("WTF mate whats going on?!");
+    		}
+    	}else{
+    		return node.voltageCache;
+    	}
+   }
 }

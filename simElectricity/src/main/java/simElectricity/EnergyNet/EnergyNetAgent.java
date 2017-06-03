@@ -84,12 +84,6 @@ public class EnergyNetAgent implements IEnergyNetAgent{
     	SEComponent obj = (SEComponent) Tile;
         return EnergyNetAgent.getEnergyNetForWorld(obj.te.getWorldObj()).getVoltage(Tile);
     }
-
-    @Override
-    public double getCurrentMagnitude(ISESimulatable Tile){
-    	SEComponent obj = (SEComponent) Tile;
-        return EnergyNetAgent.getEnergyNetForWorld(obj.te.getWorldObj()).getCurrentMagnitude(Tile);  	
-    }
     
     @Override
 	public boolean canConnectTo(TileEntity tileEntity, ForgeDirection direction) {
@@ -183,7 +177,7 @@ public class EnergyNetAgent implements IEnergyNetAgent{
     }
 
 	@Override
-    public void markTileForUpdate(TileEntity te) {
+    public void updateTileParameter(TileEntity te) {
         if (te.getWorldObj().isRemote) {
             SEUtils.logInfo("Client tileentity " + te + " is requesting, aborting", SEUtils.energyTile);
             return;
@@ -219,10 +213,9 @@ public class EnergyNetAgent implements IEnergyNetAgent{
     }
 
 	@Override
-    public void reattachTile(TileEntity te) {
+    public void updateTileConnection(TileEntity te) {
         if (te.getWorldObj().isRemote) {
-            SEUtils.logInfo("Client tileentity " + te + " is requesting, abort!", SEUtils.energyTile);
-            return;
+        	throw new RuntimeException("Server-only API is called from client side!");
         }
 
         EnergyNetAgent.getEnergyNetForWorld(te.getWorldObj()).addEvent(new TileEvent.ConnectionChanged(te));

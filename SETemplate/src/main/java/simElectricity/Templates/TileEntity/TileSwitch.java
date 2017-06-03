@@ -72,7 +72,7 @@ public class TileSwitch extends TileEntityTwoPort implements ISESwitchData, IEne
 
         if (current > maxCurrent) {
             isOn = false;
-            SEAPI.energyNetAgent.reattachTile(this);
+            SEAPI.energyNetAgent.updateTileConnection(this);
             
             this.markTileEntityForS2CSync();
         }
@@ -140,7 +140,7 @@ public class TileSwitch extends TileEntityTwoPort implements ISESwitchData, IEne
 		        outputSide = selectedDirection;
 	        }
 
-            SEAPI.energyNetAgent.reattachTile(this);
+            SEAPI.energyNetAgent.updateTileConnection(this);
 			this.markTileEntityForS2CSync();
 			this.worldObj.notifyBlockChange(xCoord, yCoord, zCoord, null);
 			return;
@@ -227,7 +227,7 @@ public class TileSwitch extends TileEntityTwoPort implements ISESwitchData, IEne
 	    this.isOn = isOn;
 	    
 	    
-	    SEAPI.energyNetAgent.reattachTile(this);
+	    SEAPI.energyNetAgent.updateTileConnection(this);
 
 	    //onEnergyNetUpdate();		//Check trip-off
 	    this.markTileEntityForS2CSync();
