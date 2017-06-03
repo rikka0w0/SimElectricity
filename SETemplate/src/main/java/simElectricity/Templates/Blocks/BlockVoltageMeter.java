@@ -39,6 +39,7 @@ public class BlockVoltageMeter extends BlockStandardSEMachine {
         if (player.isSneaking())
             return false;
 
+        //if (world.isRemote)
         player.openGui(SETemplate.instance, 0, world, x, y, z);
         return true;
     }

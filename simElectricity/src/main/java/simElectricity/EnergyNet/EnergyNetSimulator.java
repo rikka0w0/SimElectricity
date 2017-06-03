@@ -428,6 +428,8 @@ public class EnergyNetSimulator{
     }
     
     public void runSimulator(boolean optimizeGraph) {
+    	dataProvider.getTEGraph().clearVoltageCache();
+    	
     	if (optimizeGraph)
     		dataProvider.getTEGraph().optimizGraph();
     	

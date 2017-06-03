@@ -113,7 +113,8 @@ public class ItemUltimateMultimeter extends Item {
         		String[] temp = comp.toString().split("[.]");
         		chat(player, temp[temp.length-1].split("@")[0] + ": " + String.valueOf(SEAPI.energyNetAgent.getVoltage(comp)));
         	}
-        }else if (te instanceof ISEGridTile){
+        }
+        if (te instanceof ISEGridTile){
     		ISEGridNode comp = ((ISEGridTile) te).getGridNode();
     		String[] temp = comp.toString().split("[.]");
     		chat(player, temp[temp.length-1].split("@")[0] + ": " + String.valueOf(SEAPI.energyNetAgent.getVoltage(comp)));

@@ -19,9 +19,12 @@
 
 package simElectricity.Templates.TileEntity;
 
+import simElectricity.API.IEnergyNetUpdateHandler;
+import simElectricity.API.SEAPI;
 import simElectricity.Templates.Common.TileStandardSEMachine;
+import simElectricity.Templates.Utils.IGuiSyncHandler;
 
-public class TileVoltageMeter extends TileStandardSEMachine {
+public class TileVoltageMeter extends TileStandardSEMachine implements IEnergyNetUpdateHandler, IGuiSyncHandler{
     @Override
     public double getResistance() {
         return 1e6F;
@@ -31,4 +34,14 @@ public class TileVoltageMeter extends TileStandardSEMachine {
     public double getOutputVoltage() {
         return 0;
     }
+
+	@Override
+	public void onEnergyNetUpdate() {
+		SEAPI.energyNetAgent.getVoltage(tile);
+	}
+
+	@Override
+	public void onGuiEvent(byte eventID, Object[] data) {
+		
+	}
 }

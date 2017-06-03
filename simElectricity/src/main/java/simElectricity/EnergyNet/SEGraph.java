@@ -205,6 +205,13 @@ public class SEGraph {
 		}		
     }
            
+    
+    public void clearVoltageCache(){
+    	for (SEComponent node : terminalNodes)
+    		node.voltageCache = 0;
+    	for (SEComponent wire : wires)
+    		wire.voltageCache = 0;
+    }
     ////////////////////////////////////////////////
     ///Optimizer
     ////////////////////////////////////////////////    
@@ -282,9 +289,9 @@ public class SEGraph {
     		if (!node.visited){
     			node.visited = true;
     			
-    			tryNeighbors: for (SEComponent neighbor: node.neighbors){
+    			rraverseNeighbors: for (SEComponent neighbor: node.neighbors){
     				if (neighbor.visited)
-    					continue tryNeighbors;
+    					continue rraverseNeighbors;
     				
         			SEComponent reach = neighbor;	//Far reach
         			SEComponent prev = node;
@@ -310,20 +317,21 @@ public class SEGraph {
         		    		break search;	//Dead end!
         		    	}
         		    	else if (reach.neighbors.size() == 2){	//Always moveforward!
+        		    		
+        		    		
+    		    			reach.visited = true;
+    		    			prev = reach;
         		    		if (reach.neighbors.getFirst() == prev){
-        		    			reach.visited = true;
-        		    			prev = reach;
         		    			reach = reach.neighbors.getLast();
-        		    		}
-        		    		else if (reach.neighbors.getLast() == prev){
-        		    			reach.visited = true;
-        		    			prev = reach;
+        		    		}else if (reach.neighbors.getLast() == prev){
         		    			reach = reach.neighbors.getFirst();
+        		    		}else{
+        		    			throw new RuntimeException("WTF mate! This can not happen!");
         		    		}
         		    	}
         			}while (true);	
         			
-        			if (reach != null){
+        			if (reach != null){	//node-node connection
         				Iterator<SEComponent> iteratorON = node.optimizedNeighbors.iterator();
         				Iterator<Double> iteratorR = node.optimizedResistance.iterator();
         				
@@ -337,7 +345,7 @@ public class SEGraph {
         				 * 		x  x
         				 * 		xxxxxxxxxx
         				 */
-        				checkDupe: while (iteratorON.hasNext()){
+        				checkParallel: while (iteratorON.hasNext()){
         					double prevR = iteratorR.next();
         					if (iteratorON.next() == reach){
         						//Delete previous edge
@@ -356,7 +364,7 @@ public class SEGraph {
         						iteratorON.remove();
         						
         						resistance = resistance * prevR / (resistance + prevR);
-        						break checkDupe;
+        						break checkParallel;
         					}
         				}
         				
@@ -444,6 +452,11 @@ public class SEGraph {
     	search1: do{
     		R1 += calcR(prev, head);
     		
+			if (head.neighbors.size() > 2
+					|| 
+				isInterconnectionTerminal(head))	//We have to calculate the voltage of the interconnection point
+				break search1;
+    		
 	    	if (head.neighbors.size() == 1){	//Single end
 	    		if (isWire(head))
 	    			head = null;
@@ -458,9 +471,6 @@ public class SEGraph {
 	    			prev = head;
 	    			head = head.neighbors.getFirst();
 	    		}
-	    	}
-	    	else if (head.neighbors.size() > 2){
-	    		break search1;	//We have a cable node that has more than 2 connection
 	    	}
     	}while(true);
     	

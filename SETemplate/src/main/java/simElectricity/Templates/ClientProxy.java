@@ -57,7 +57,8 @@ public class ClientProxy extends CommonProxy {
         if (te instanceof TileQuantumGenerator)
             return new GuiQuantumGenerator(player.inventory, te);
         if (te instanceof TileVoltageMeter)
-            return new GuiVoltageMeter(player.inventory, te);
+            //return new GuiVoltageMeter2();
+        	return new GuiVoltageMeter(player.inventory, te);
         if (te instanceof TileAdjustableResistor)
             return new GuiAdjustableResistor(player.inventory, te);
         if (te instanceof TileAdjustableTransformer)
@@ -66,8 +67,6 @@ public class ClientProxy extends CommonProxy {
             return new GuiSwitch(player.inventory, te);
         if (te instanceof TileSolarInverter)
             return new GuiSolarInverter(player.inventory, te);
-        if (te instanceof TileIC2Generator)
-            return new GuiIC2Generator(player.inventory, te);
         if (te instanceof TileIceMachine)
             return new GuiIceMachine(player.inventory, te); 
         

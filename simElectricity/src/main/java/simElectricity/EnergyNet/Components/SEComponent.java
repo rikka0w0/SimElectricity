@@ -26,6 +26,7 @@ public abstract class SEComponent implements ISESimulatable{
 	public LinkedList<Double> optimizedResistance = new LinkedList<Double>();
 	public int index;
 	
+	
 	/**
 	 * @param <TYPE> extends ISEComponentDataProvider
 	 */
