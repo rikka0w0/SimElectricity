@@ -428,9 +428,7 @@ public class EnergyNetSimulator{
         matrix.finishEditing();
     }
     
-    public void runSimulator(boolean optimizeGraph) {
-    	dataProvider.getTEGraph().clearVoltageCache();
-    	
+    public void runSimulator(boolean optimizeGraph) {   	
     	if (optimizeGraph)
     		dataProvider.getTEGraph().optimizGraph();
     	
@@ -487,10 +485,11 @@ public class EnergyNetSimulator{
             iterations++;
         }
 
-        int i = 0;
+        
+        //Update voltage cache
+    	dataProvider.getTEGraph().clearVoltageCache();
         for (SEComponent node: unknownVoltageNodes){
-        	node.voltageCache = voltages[i];
-        	i++;
+        	node.voltageCache = voltages[node.index];
         }
         
         SEUtils.logInfo("Calculation converges in " + String.valueOf(iterations) + " iterations.", SEUtils.simulator);        

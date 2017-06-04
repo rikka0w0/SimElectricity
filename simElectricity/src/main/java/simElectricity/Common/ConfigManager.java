@@ -50,15 +50,15 @@ public class ConfigManager {
     }
 
     private static void syncConfig(boolean isClient) {
-        showEnergyNetInfo = config.get(Configuration.CATEGORY_GENERAL, "ShowEnergyNetInfo", false, "Display energy net information, such as joining/leaving/changing").getBoolean();
-        matrixSolver = config.getString("MatrixSolver", Configuration.CATEGORY_GENERAL, "QR", "Which algorithms is used for solving matrix(QR is much more effective than Gaussian.).Options: QR, Gaussian", new String[] { "QR", "Gaussian" });
+        showEnergyNetInfo = config.get(Configuration.CATEGORY_GENERAL, "Show Energy Net Info", false, "Display energy net information, such as tile attached/deteched/changed").getBoolean();
+        matrixSolver = config.getString("Matrix Solver", Configuration.CATEGORY_GENERAL, "QR", "The algorithms used to perform matrix calculation(QR is much more effective than Gaussian.).Options: QR, Gaussian", new String[] { "QR", "Gaussian" });
         precision = config.get(Configuration.CATEGORY_GENERAL, "Precision", 3, "3 means the result is precise up to at least 3 decimal places").getInt();
-        maxIteration = config.get(Configuration.CATEGORY_GENERAL, "Max iteration", 50, "The Maximum number of iteration per tick").getInt();
-        shuntPN = config.get(Configuration.CATEGORY_GENERAL, "Shunt resistance per PN", 1000000000, "The resistance connected between every PN junction").getInt();        
+        maxIteration = config.get(Configuration.CATEGORY_GENERAL, "Max iteration", 50, "The maximum number of iteration before abort the simulation").getInt();
+        shuntPN = config.get(Configuration.CATEGORY_GENERAL, "RPN", 1000000000, "The resistance connected beside every PN junction").getInt();        
         
         //Client-only configurations
         if (isClient){
-            parabolaRenderSteps = config.get(Configuration.CATEGORY_GENERAL, "ParabolaRenderSteps", 12, "Decides how smooth the parabola cable is(must be a even number!Client ONLY!)").getInt();
+            parabolaRenderSteps = config.get(Configuration.CATEGORY_GENERAL, "Parabola Render Steps", 12, "Determines how smooth the parabola cable is(must be a even number!CLIENT ONLY!)").getInt();
         }
         
         if (config.hasChanged())

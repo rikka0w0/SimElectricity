@@ -20,11 +20,12 @@ public abstract class SEComponent implements ISESimulatable{
 	
 	//Optimization and simulation runtime
 	public boolean visited;
-	public double voltageCache = 0;
 	public boolean eliminated = false;
 	public LinkedList<SEComponent> optimizedNeighbors = new LinkedList<SEComponent>();
 	public LinkedList<Double> optimizedResistance = new LinkedList<Double>();
 	public int index;
+	
+	public volatile double voltageCache = 0;
 	
 	
 	/**

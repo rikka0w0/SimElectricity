@@ -31,6 +31,7 @@ import java.util.*;
 
 public final class EnergyNet extends EnergyNetSimulator{
 	private EnergyNetThread thread;
+	private boolean scheduledRefresh = false;
 	
 	///////////////////////////////////////////////////////
 	///Event Queue
@@ -50,10 +51,22 @@ public final class EnergyNet extends EnergyNetSimulator{
 	public void onPreTick(){
 		if (thread.isWorking()){
 			SEUtils.logWarn("Simulation takes longer than usual!", SEUtils.simulator);
+			while(thread.isWorking())
+				try {
+					Thread.sleep(1);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 		}
 		
 		boolean needOptimize = false;	//Due to connection changes
 		boolean calc = false;			//Perform simulation
+		
+		if (scheduledRefresh){
+			calc = true;
+			calc = false;
+		}
+			
 		
 		synchronized (this){
 			this.events.clear();
@@ -173,8 +186,8 @@ public final class EnergyNet extends EnergyNetSimulator{
         SEUtils.logInfo("EnergyNet has been created for DIM" + String.valueOf(world.provider.dimensionId), SEUtils.general);
     }
     
-	public void shutdown(){
-		thread.terminate();
+	public void notifyServerShuttingdown(){
+		thread.alive = false;
 	}
     
     public String[] info(){
@@ -197,13 +210,14 @@ public final class EnergyNet extends EnergyNetSimulator{
     	if (iterations == 0){
         	return new String[]{
         			"EnergyNet is idle",
-        	    	"Loaded entities: " + String.valueOf(tileEntityGraph.size()),
+        	    	"Tiles: " + String.valueOf(tileEntityGraph.size()),
         	    	"Grid Objects: " + String.valueOf(dataProvider.getGridObjectCount()),
         	    	"Matrix solving algorithsm: " + ConfigManager.matrixSolver,
         	    	};   		
     	}else{
         	return new String[]{
-        	    	"Loaded entities: " + String.valueOf(tileEntityGraph.size()),
+        			"Time consumption:" + String.valueOf(thread.lastDuration()),
+        	    	"Tiles: " + String.valueOf(tileEntityGraph.size()),
         	    	"Grid Objects: " + String.valueOf(dataProvider.getGridObjectCount()),
         	    	"Matrix size: " + String.valueOf(matrix.getMatrixSize()),
         	    	"Non-zero elements: " + String.valueOf(matrix.getTotalNonZeros()),
@@ -216,6 +230,6 @@ public final class EnergyNet extends EnergyNetSimulator{
 
     
     public void reFresh(){
-    	onPreTick();
+    	scheduledRefresh = true;
     }
 }

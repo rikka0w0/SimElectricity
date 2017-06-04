@@ -3,9 +3,12 @@ package simElectricity.EnergyNet;
 import simElectricity.Common.SEUtils;
 
 public class EnergyNetThread extends Thread{
-	private volatile boolean alive;
+	public volatile boolean alive;
 	private volatile boolean processing;
 	private volatile boolean needOptimize;
+	
+	private volatile long duration;
+	private long startAt;
 	
 	private EnergyNet energyNet;
 	
@@ -14,6 +17,7 @@ public class EnergyNetThread extends Thread{
 		energyNetThread.setName("SEEnergyNet_DIM" + String.valueOf(dimID));
 		energyNetThread.energyNet = energyNet;
 		energyNetThread.alive = true;
+		energyNetThread.processing = false;
 		energyNetThread.start();
 		
 		SEUtils.logInfo("EnergyNet thread for DIM " + String.valueOf(dimID) + " has been created!", SEUtils.simulator);
@@ -25,13 +29,16 @@ public class EnergyNetThread extends Thread{
 		this.interrupt();
 	}
 	
-	public void terminate(){
+	public void notifyServerShuttingDown(){
 		this.alive = false;
-		this.interrupt();
 	}
 	
 	public boolean isWorking(){
 		return processing;
+	}
+	
+	public long lastDuration(){
+		return duration;
 	}
 	
 	@Override
@@ -39,7 +46,9 @@ public class EnergyNetThread extends Thread{
 		while(alive){
 			try {			
 				SEUtils.logInfo(this.getName() + " Sleep", SEUtils.simulator);
-				this.join();	//Hangs the thread until interrupt
+				while (alive){
+					this.sleep(1);
+				}
 			} catch (InterruptedException e) {
 				SEUtils.logInfo(this.getName() + " wake up", SEUtils.simulator);
 				
@@ -48,13 +57,15 @@ public class EnergyNetThread extends Thread{
 				
 				this.processing = true;
 				SEUtils.logInfo(this.getName() + " Started", SEUtils.simulator);
+				startAt = System.currentTimeMillis();
 				energyNet.runSimulator(needOptimize);
 				SEUtils.logInfo(this.getName() + " Done", SEUtils.simulator);
+				duration = (System.currentTimeMillis() - startAt);
 				energyNet.executeHandlers();
 				this.processing = false;
 			}
 		}
-		SEUtils.logInfo(this.getName() + " is shutting down", SEUtils.simulator);
+		SEUtils.logInfo(this.getName() + " is shutting down", SEUtils.general);
 	}
 	
 }

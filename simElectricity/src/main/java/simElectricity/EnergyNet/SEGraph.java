@@ -315,8 +315,12 @@ public class SEGraph {
         					break search;
         				
         				else if (reach.neighbors.size() == 1){
-        		    		if (isWire(reach) )
+        		    		if (isWire(reach)){
+            		    		reach.optimizedNeighbors.add(node);
+            		    		reach.optimizedResistance.add(resistance);
+            		    		
         		    			reach = null;	//A single ended wire can not form an edge
+        		    		}
         		    		break search;	
         		    	}
         		    	else if (reach.neighbors.size() == 2){	//Always moveforward!

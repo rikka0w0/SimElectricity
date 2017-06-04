@@ -35,16 +35,26 @@ public enum SEUtils{
 	loader("ModLoader"),
 	general("General"),
 	simulator("Simulator"),
-	energyTile("EnergyTile"),
-	grid("GridData");
+	energyNet("EnergyNet");
 	
     public static final String MODID = "SimElectricity";
     public static final String NAME = "SimElectricity";
 
+    private String text;
+    
 	SEUtils(String text) {
+		this.text = text;
+	}
+	
+	@Override
+	public String toString(){
+		return text;
 	}
 
     public static void logInfo(Object object, SEUtils source) {
+    	if (!ConfigManager.showEnergyNetInfo && (source == energyNet || source == simulator))
+    		return;
+    	
         FMLLog.log(NAME, Level.INFO, source + "|" + String.valueOf(object));
     }
 

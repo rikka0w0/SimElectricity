@@ -65,7 +65,7 @@ public class EnergyNetDataProvider extends WorldSavedData{
 	 */
 	public void registerTile(TileEntity te){
 		if (loadedTiles.contains(te)){
-			SEUtils.logWarn("Duplicated TileEntity:" + te.toString() +", this could be a bug!", SEUtils.energyTile);
+			SEUtils.logWarn("Duplicated TileEntity:" + te.toString() +", this could be a bug!", SEUtils.energyNet);
 		}else{
             loadedTiles.add(te);
 		}
@@ -149,7 +149,7 @@ public class EnergyNetDataProvider extends WorldSavedData{
 		if (loadedTiles.contains(te)){
 			loadedTiles.remove(te);
 		}else{
-			SEUtils.logWarn("Attempt to remove unregistered:" + te.toString() +", this could be a bug!", SEUtils.energyTile);
+			SEUtils.logWarn("Attempt to remove unregistered:" + te.toString() +", this could be a bug!", SEUtils.energyNet);
 		}
 		
         if (te instanceof ISECableTile) {
@@ -333,7 +333,7 @@ public class EnergyNetDataProvider extends WorldSavedData{
 			gridNode.buildNeighborConnection(gridNodeMap);
 		}
 		
-		SEUtils.logInfo("Grid objectes has been loaded", SEUtils.grid);
+		SEUtils.logInfo("Grid objectes has been loaded", SEUtils.energyNet);
 	}
 
 	
