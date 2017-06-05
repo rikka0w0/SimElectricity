@@ -1,9 +1,9 @@
-package simElectricity.API.Tile;
+package simelectricity.api.tile;
 
 import net.minecraftforge.common.util.ForgeDirection;
-import simElectricity.API.ISEPlaceable;
-import simElectricity.API.DataProvider.ISEComponentDataProvider;
-import simElectricity.API.EnergyTile.ISESimulatable;
+import simelectricity.api.ISEPlaceable;
+import simelectricity.api.components.ISEComponentDataProvider;
+import simelectricity.api.node.ISESimulatable;
 
 public interface ISECableTile extends ISEComponentDataProvider, ISEPlaceable{
     /**

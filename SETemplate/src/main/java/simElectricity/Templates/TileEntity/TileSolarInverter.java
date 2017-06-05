@@ -1,13 +1,13 @@
-package simElectricity.Templates.TileEntity;
+package simelectricity.Templates.TileEntity;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.ForgeDirection;
-import simElectricity.API.DataProvider.ISERegulatorData;
-import simElectricity.API.SEAPI;
-import simElectricity.API.EnergyTile.ISESubComponent;
-import simElectricity.API.Tile.ISETile;
-import simElectricity.Templates.Common.TileEntityTwoPort;
-import simElectricity.Templates.Utils.IGuiSyncHandler;
+import simelectricity.api.components.ISERegulatorData;
+import simelectricity.api.SEAPI;
+import simelectricity.api.node.ISESubComponent;
+import simelectricity.api.tile.ISETile;
+import simelectricity.Templates.Common.TileEntityTwoPort;
+import simelectricity.Templates.Utils.IGuiSyncHandler;
 
 public class TileSolarInverter extends TileEntityTwoPort implements ISETile, ISERegulatorData, IGuiSyncHandler{
     public ISESubComponent input = SEAPI.energyNetAgent.newComponent(this, this);

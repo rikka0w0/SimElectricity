@@ -1,4 +1,4 @@
-package simElectricity.Templates.Utils;
+package simelectricity.Templates.Utils;
 
 public interface IGuiSyncHandler {
 	//C->S only

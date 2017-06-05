@@ -17,7 +17,7 @@
  * USA
  */
 
-package simElectricity.Templates.TileEntity;
+package simelectricity.Templates.TileEntity;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -25,16 +25,15 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraftforge.common.util.ForgeDirection;
 
-import simElectricity.API.EnergyTile.ISESimulatable;
-import simElectricity.API.Tile.ISECableTile;
-import simElectricity.API.SEAPI;
-import simElectricity.Templates.Blocks.BlockWire;
-import simElectricity.Templates.Common.TileEntitySE;
-import simElectricity.Templates.Utils.ITileRenderingInfoSyncHandler;
+import simelectricity.api.node.ISESimulatable;
+import simelectricity.api.tile.ISECableTile;
+import simelectricity.api.SEAPI;
+import simelectricity.essential.utils.ITileRenderingInfoSyncHandler;
+import simelectricity.Templates.Blocks.BlockWire;
+import simelectricity.Templates.Common.TileEntitySE;
 
 public class TileWire extends TileEntitySE implements ISECableTile, ITileRenderingInfoSyncHandler {
 	public ISESimulatable node = SEAPI.energyNetAgent.newCable(this, false);
-    protected boolean isAddedToEnergyNet = false;
     private boolean[] connections = new boolean[6];
 
     public int color = 0;

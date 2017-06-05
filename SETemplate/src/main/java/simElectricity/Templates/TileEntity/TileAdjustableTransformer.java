@@ -17,15 +17,15 @@
  * USA
  */
 
-package simElectricity.Templates.TileEntity;
+package simelectricity.Templates.TileEntity;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.ForgeDirection;
-import simElectricity.API.SEAPI;
-import simElectricity.API.DataProvider.ISETransformerData;
-import simElectricity.API.EnergyTile.ISESubComponent;
-import simElectricity.Templates.Common.TileEntityTwoPort;
-import simElectricity.Templates.Utils.IGuiSyncHandler;
+import simelectricity.api.SEAPI;
+import simelectricity.api.components.ISETransformerData;
+import simelectricity.api.node.ISESubComponent;
+import simelectricity.Templates.Common.TileEntityTwoPort;
+import simelectricity.Templates.Utils.IGuiSyncHandler;
 
 public class TileAdjustableTransformer extends TileEntityTwoPort implements ISETransformerData, IGuiSyncHandler {
     public ISESubComponent primary = SEAPI.energyNetAgent.newComponent(this, this);

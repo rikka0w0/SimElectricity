@@ -17,7 +17,7 @@
  * USA
  */
 
-package simElectricity.Templates.Common;
+package simelectricity.Templates.Common;
 
 import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.block.Block;
@@ -29,7 +29,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-import simElectricity.API.SEAPI;
+import simelectricity.api.SEAPI;
 
 import java.util.Random;
 

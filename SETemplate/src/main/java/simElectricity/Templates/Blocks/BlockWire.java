@@ -17,7 +17,7 @@
  * USA
  */
 
-package simElectricity.Templates.Blocks;
+package simelectricity.Templates.Blocks;
 
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
@@ -38,10 +38,11 @@ import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
-import simElectricity.API.SEAPI;
-import simElectricity.Templates.Common.BlockContainerSE;
-import simElectricity.Templates.ItemBlocks.ItemBlockWire;
-import simElectricity.Templates.TileEntity.TileWire;
+import simelectricity.api.SEAPI;
+import simelectricity.essential.utils.ITileRenderingInfoSyncHandler;
+import simelectricity.Templates.Common.BlockContainerSE;
+import simelectricity.Templates.ItemBlocks.ItemBlockWire;
+import simelectricity.Templates.TileEntity.TileWire;
 
 import java.util.List;
 
@@ -91,7 +92,7 @@ public class BlockWire extends BlockContainerSE {
     @Override
     public void onNeighborBlockChange(World world, int x, int y, int z, Block block) {
         if (!world.isRemote) {
-            TileWire te = (TileWire) world.getTileEntity(x, y, z);
+        	ITileRenderingInfoSyncHandler te = (ITileRenderingInfoSyncHandler) world.getTileEntity(x, y, z);
             te.sendRenderingInfoToClient();
         }
     }
@@ -101,14 +102,13 @@ public class BlockWire extends BlockContainerSE {
         if (world.isRemote)
             return;
 
-        TileWire te = (TileWire) world.getTileEntity(x, y, z);
+        ITileRenderingInfoSyncHandler te = (ITileRenderingInfoSyncHandler) world.getTileEntity(x, y, z);
         te.sendRenderingInfoToClient();
-        //updateRenderSides(te);
 
         for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) { //Update neighbors
         	TileEntity neighbor = world.getTileEntity(x + direction.offsetX, y + direction.offsetY, z + direction.offsetZ);
-            if (neighbor instanceof TileWire){
-            	((TileWire) neighbor).sendRenderingInfoToClient();
+            if (neighbor instanceof ITileRenderingInfoSyncHandler){
+            	((ITileRenderingInfoSyncHandler) neighbor).sendRenderingInfoToClient();
             }
         }
     }

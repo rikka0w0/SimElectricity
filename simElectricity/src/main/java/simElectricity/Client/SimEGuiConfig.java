@@ -17,14 +17,14 @@
  * USA
  */
 
-package simElectricity.Client;
+package simelectricity.client;
 
 import cpw.mods.fml.client.config.GuiConfig;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraftforge.common.config.ConfigElement;
 import net.minecraftforge.common.config.Configuration;
-import simElectricity.Common.SEUtils;
-import simElectricity.Common.ConfigManager;
+import simelectricity.common.SEUtils;
+import simelectricity.common.ConfigManager;
 
 public class SimEGuiConfig extends GuiConfig {
     @SuppressWarnings("unchecked")

@@ -17,7 +17,7 @@
  * USA
  */
 
-package simElectricity.Templates.Items;
+package simelectricity.Templates.Items;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -25,10 +25,10 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
-import simElectricity.API.Tile.ISEGridTile;
-import simElectricity.API.SEAPI;
-import simElectricity.Templates.Common.ItemSE;
-import simElectricity.Templates.Utils.Utils;
+import simelectricity.api.tile.ISEGridTile;
+import simelectricity.api.SEAPI;
+import simelectricity.Templates.Common.ItemSE;
+import simelectricity.Templates.Utils.Utils;
 
 import java.util.HashMap;
 import java.util.Map;

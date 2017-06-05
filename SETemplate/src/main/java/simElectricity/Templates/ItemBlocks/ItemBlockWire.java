@@ -17,7 +17,7 @@
  * USA
  */
 
-package simElectricity.Templates.ItemBlocks;
+package simelectricity.Templates.ItemBlocks;
 
 
 import cpw.mods.fml.relauncher.Side;
@@ -26,8 +26,8 @@ import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.StatCollector;
-import simElectricity.Templates.Blocks.BlockWire;
-import simElectricity.Templates.Common.ItemBlockSE;
+import simelectricity.Templates.Blocks.BlockWire;
+import simelectricity.Templates.Common.ItemBlockSE;
 
 import java.util.List;
 

@@ -1,6 +1,6 @@
-package simElectricity.API.Tile;
+package simelectricity.api.tile;
 
-import simElectricity.API.EnergyTile.ISEGridNode;
+import simelectricity.api.node.ISEGridNode;
 
 /**
  * This interface should be implemented by the tileEntity, which is responsible for HV tower/transformer rendering

@@ -17,15 +17,15 @@
  * USA
  */
 
-package simElectricity.API;
+package simelectricity.api;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 
-import simElectricity.API.Internal.IClientRender;
-import simElectricity.API.Internal.IEnergyNetAgent;
+import simelectricity.api.internal.IClientRender;
+import simelectricity.api.internal.IEnergyNetAgent;
 
 public class SEAPI {   
     public static boolean isSELoaded = false;

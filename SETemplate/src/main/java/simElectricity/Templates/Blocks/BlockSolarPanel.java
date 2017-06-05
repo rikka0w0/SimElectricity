@@ -17,7 +17,7 @@
  * USA
  */
 
-package simElectricity.Templates.Blocks;
+package simelectricity.Templates.Blocks;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -29,10 +29,10 @@ import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
-import simElectricity.Templates.Common.BlockStandardGenerator;
-import simElectricity.Templates.Common.TileSidedGenerator;
-import simElectricity.Templates.TileEntity.TileSolarPanel;
-import simElectricity.Templates.Utils.Utils;
+import simelectricity.Templates.Common.BlockStandardGenerator;
+import simelectricity.Templates.Common.TileSidedGenerator;
+import simelectricity.Templates.TileEntity.TileSolarPanel;
+import simelectricity.Templates.Utils.Utils;
 
 public class BlockSolarPanel extends BlockStandardGenerator {
     private IIcon[] iconBuffer = new IIcon[4];

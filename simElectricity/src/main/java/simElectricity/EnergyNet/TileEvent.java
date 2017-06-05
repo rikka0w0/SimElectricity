@@ -1,4 +1,4 @@
-package simElectricity.EnergyNet;
+package simelectricity.energynet;
 
 import net.minecraft.tileentity.TileEntity;
 

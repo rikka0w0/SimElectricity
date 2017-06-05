@@ -1,13 +1,13 @@
-package simElectricity.Templates.Client.Render;
+package simelectricity.Templates.Client.Render;
 
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
-import simElectricity.API.SEAPI;
-import simElectricity.API.Client.ITextureProvider;
-import simElectricity.API.Client.ITransmissionTower;
-import simElectricity.API.Client.ITransmissionTowerRenderHelper;
+import simelectricity.api.SEAPI;
+import simelectricity.api.client.ITextureProvider;
+import simelectricity.api.client.ITransmissionTower;
+import simelectricity.api.client.ITransmissionTowerRenderHelper;
 
 public abstract class RenderTranmissionTowerBase extends TileEntitySpecialRenderer implements ITextureProvider{
 	protected double[] from1, to1;

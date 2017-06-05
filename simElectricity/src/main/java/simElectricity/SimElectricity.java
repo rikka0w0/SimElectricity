@@ -17,7 +17,7 @@
  * USA
  */
 
-package simElectricity;
+package simelectricity;
 
 import java.lang.reflect.Method;
 
@@ -25,8 +25,6 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
-import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.relauncher.Side;
@@ -34,15 +32,16 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 
-import simElectricity.API.SEAPI;
+import simelectricity.api.SEAPI;
 
-import simElectricity.Common.SEUtils;
-import simElectricity.Common.CommandSimE;
-import simElectricity.Common.ConfigManager;
-import simElectricity.EnergyNet.EnergyNetAgent;
-import simElectricity.EnergyNet.EnergyNetEventHandler;
+import simelectricity.common.ItemSEMgrTool;
+import simelectricity.common.SEUtils;
+import simelectricity.common.CommandSimE;
+import simelectricity.common.ConfigManager;
+import simelectricity.energynet.EnergyNetAgent;
+import simelectricity.energynet.EnergyNetEventHandler;
 
-@Mod(modid = SEUtils.MODID, name = SEUtils.NAME, version = SimElectricity.version, guiFactory = "simElectricity.Client.SimEGuiFactory", dependencies = "required-after:Forge@[10.12.2.1147,)")
+@Mod(modid = SEUtils.MODID, name = SEUtils.NAME, version = SimElectricity.version, guiFactory = "simelectricity.client.SimEGuiFactory", dependencies = "required-after:Forge@[10.12.2.1147,)")
 public class SimElectricity {
 	public static final String version = "1.0.0";
 
@@ -60,7 +59,7 @@ public class SimElectricity {
     	
     	if (event.getSide().isClient()){
     		try {
-    			Class<?> clsClientRender = Class.forName("simElectricity.Client.ClientRender");
+    			Class<?> clsClientRender = Class.forName("simelectricity.client.ClientRender");
     			Method  mtdInitAPI = clsClientRender.getMethod("initClientAPI", new Class[0]);
     			mtdInitAPI.invoke(null, new Object[0]);
 			} catch (Exception e) {
@@ -88,18 +87,6 @@ public class SimElectricity {
         //Register items
         SEAPI.managementToolItem = new ItemSEMgrTool();
     }
-
-    /**
-     * Initialize
-     */
-    @EventHandler
-    public void init(FMLInitializationEvent event) {}
-
-    /**
-     * PostInitialize
-     */
-    @EventHandler
-    public void postInit(FMLPostInitializationEvent event) {}
     
     @EventHandler
     public void serverStart(FMLServerStartingEvent event){

@@ -1,11 +1,11 @@
-package simElectricity.EnergyNet;
+package simelectricity.energynet;
 
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import simElectricity.EnergyNet.Components.Cable;
-import simElectricity.EnergyNet.Components.GridNode;
-import simElectricity.EnergyNet.Components.SEComponent;
+import simelectricity.energynet.components.Cable;
+import simelectricity.energynet.components.GridNode;
+import simelectricity.energynet.components.SEComponent;
 
 /**
  * Unweighed graph, using Adjacency lists (SEComponent.neighbors)

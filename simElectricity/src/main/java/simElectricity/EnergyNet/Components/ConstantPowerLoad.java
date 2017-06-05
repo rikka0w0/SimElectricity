@@ -1,9 +1,9 @@
-package simElectricity.EnergyNet.Components;
+package simelectricity.energynet.components;
 
 import net.minecraft.tileentity.TileEntity;
 
-import simElectricity.API.DataProvider.ISEConstantPowerLoadData;
-import simElectricity.API.EnergyTile.ISESubComponent;
+import simelectricity.api.components.ISEConstantPowerLoadData;
+import simelectricity.api.node.ISESubComponent;
 
 public class ConstantPowerLoad extends SEComponent.Tile<ISEConstantPowerLoadData> implements ISESubComponent{
 	public double pRated, rMin, rMax;

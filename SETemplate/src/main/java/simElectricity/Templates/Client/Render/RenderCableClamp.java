@@ -1,8 +1,8 @@
-package simElectricity.Templates.Client.Render;
+package simelectricity.Templates.Client.Render;
 
 import org.lwjgl.opengl.GL11;
 
-import simElectricity.API.SEAPI;
+import simelectricity.api.SEAPI;
 
 import net.minecraft.util.ResourceLocation;
 

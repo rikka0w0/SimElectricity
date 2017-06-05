@@ -17,7 +17,7 @@
  * USA
  */
 
-package simElectricity.Templates.Common;
+package simelectricity.Templates.Common;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;

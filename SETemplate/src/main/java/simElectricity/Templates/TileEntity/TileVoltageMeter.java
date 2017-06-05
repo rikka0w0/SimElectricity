@@ -17,12 +17,12 @@
  * USA
  */
 
-package simElectricity.Templates.TileEntity;
+package simelectricity.Templates.TileEntity;
 
-import simElectricity.API.IEnergyNetUpdateHandler;
-import simElectricity.API.SEAPI;
-import simElectricity.Templates.Common.TileStandardSEMachine;
-import simElectricity.Templates.Utils.IGuiSyncHandler;
+import simelectricity.api.IEnergyNetUpdateHandler;
+import simelectricity.api.SEAPI;
+import simelectricity.Templates.Common.TileStandardSEMachine;
+import simelectricity.Templates.Utils.IGuiSyncHandler;
 
 public class TileVoltageMeter extends TileStandardSEMachine implements IEnergyNetUpdateHandler, IGuiSyncHandler{
     @Override

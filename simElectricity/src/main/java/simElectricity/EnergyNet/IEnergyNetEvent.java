@@ -1,3 +1,3 @@
-package simElectricity.EnergyNet;
+package simelectricity.energynet;
 
 public interface IEnergyNetEvent {}

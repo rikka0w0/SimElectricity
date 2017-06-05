@@ -1,4 +1,4 @@
-package simElectricity.EnergyNet.Components;
+package simelectricity.energynet.components;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -7,9 +7,9 @@ import java.util.LinkedList;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 
-import simElectricity.API.EnergyTile.ISEGridNode;
-import simElectricity.API.EnergyTile.ISESimulatable;
-import simElectricity.EnergyNet.EnergyNetDataProvider;
+import simelectricity.api.node.ISEGridNode;
+import simelectricity.api.node.ISESimulatable;
+import simelectricity.energynet.EnergyNetDataProvider;
 
 public class GridNode extends SEComponent implements ISEGridNode{
 	public EnergyNetDataProvider gridDataProvider;

@@ -1,4 +1,4 @@
-package simElectricity.EnergyNet.Matrix;
+package simelectricity.energynet.matrix;
 
 import edu.emory.mathcs.csparsej.tdouble.Dcs_common;
 import edu.emory.mathcs.csparsej.tdouble.Dcs_qrsol;

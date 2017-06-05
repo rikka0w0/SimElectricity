@@ -17,7 +17,7 @@
  * USA
  */
 
-package simElectricity.Templates.Items;
+package simelectricity.Templates.Items;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -29,10 +29,10 @@ import net.minecraft.util.ChatComponentText;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
-import simElectricity.API.EnergyTile.*;
-import simElectricity.API.Tile.*;
-import simElectricity.API.SEAPI;
-import simElectricity.Templates.Common.ItemSE;
+import simelectricity.api.node.*;
+import simelectricity.api.tile.*;
+import simelectricity.api.SEAPI;
+import simelectricity.Templates.Common.ItemSE;
 
 public class ItemUltimateMultimeter extends ItemSE {
     public ItemUltimateMultimeter() {
@@ -47,7 +47,7 @@ public class ItemUltimateMultimeter extends ItemSE {
     @Override
     @SideOnly(Side.CLIENT)
     public void registerIcons(IIconRegister r) {
-        itemIcon = r.registerIcon("simElectricity:Item_UltimateMultimeter");
+        itemIcon = r.registerIcon("setemplate:Item_UltimateMultimeter");
     }
 
     /**

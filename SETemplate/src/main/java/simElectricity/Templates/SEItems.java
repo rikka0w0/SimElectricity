@@ -17,10 +17,10 @@
  * USA
  */
 
-package simElectricity.Templates;
+package simelectricity.Templates;
 
 import cpw.mods.fml.common.registry.GameRegistry;
-import simElectricity.Templates.Items.*;
+import simelectricity.Templates.Items.*;
 
 @GameRegistry.ObjectHolder(SETemplate.MODID)
 public class SEItems {

@@ -17,7 +17,7 @@
  * USA
  */
 
-package simElectricity.Templates.Blocks;
+package simelectricity.Templates.Blocks;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -28,11 +28,11 @@ import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
-import simElectricity.API.ISEWrenchable;
-import simElectricity.Templates.Common.BlockStandardGenerator;
-import simElectricity.Templates.TileEntity.TileQuantumGenerator;
-import simElectricity.Templates.Utils.ClientUtils;
-import simElectricity.Templates.SETemplate;
+import simelectricity.api.ISEWrenchable;
+import simelectricity.Templates.Common.BlockStandardGenerator;
+import simelectricity.Templates.TileEntity.TileQuantumGenerator;
+import simelectricity.Templates.Utils.ClientUtils;
+import simelectricity.Templates.SETemplate;
 
 public class BlockQuantumGenerator extends BlockStandardGenerator {
     private IIcon[] iconBuffer = new IIcon[6];

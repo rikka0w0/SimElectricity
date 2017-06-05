@@ -1,11 +1,11 @@
-package simElectricity.API.Internal;
+package simelectricity.api.internal;
 
 import net.minecraft.tileentity.TileEntity;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import simElectricity.API.Client.ITextureProvider;
-import simElectricity.API.Client.ITransmissionTowerRenderHelper;
+import simelectricity.api.client.ITextureProvider;
+import simelectricity.api.client.ITransmissionTowerRenderHelper;
 
 /**
  * Provides an easy way to render cubes and wires

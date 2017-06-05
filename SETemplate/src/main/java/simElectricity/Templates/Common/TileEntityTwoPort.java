@@ -1,7 +1,7 @@
-package simElectricity.Templates.Common;
+package simelectricity.Templates.Common;
 
-import simElectricity.API.ISidedFacing;
-import simElectricity.API.Tile.ISETile;
+import simelectricity.api.ISidedFacing;
+import simelectricity.api.tile.ISETile;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.ForgeDirection;
 

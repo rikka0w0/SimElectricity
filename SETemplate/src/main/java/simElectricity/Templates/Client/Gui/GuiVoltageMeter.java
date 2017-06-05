@@ -17,7 +17,7 @@
  * USA
  */
 
-package simElectricity.Templates.Client.Gui;
+package simelectricity.Templates.Client.Gui;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -28,8 +28,8 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
 import org.lwjgl.opengl.GL11;
 
-import simElectricity.Templates.Container.ContainerVoltageMeter;
-import simElectricity.Templates.Utils.IGuiSyncHandler;
+import simelectricity.Templates.Container.ContainerVoltageMeter;
+import simelectricity.Templates.Utils.IGuiSyncHandler;
 
 @SideOnly(Side.CLIENT)
 public class GuiVoltageMeter extends GuiContainer implements IGuiSyncHandler{

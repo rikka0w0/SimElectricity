@@ -1,4 +1,4 @@
-package simElectricity.Templates.TileEntity;
+package simelectricity.Templates.TileEntity;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -9,11 +9,11 @@ import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 
-import simElectricity.API.IEnergyNetUpdateHandler;
-import simElectricity.API.SEAPI;
-import simElectricity.Templates.SEItems;
-import simElectricity.Templates.Common.TileStandardSEMachine;
-import simElectricity.Templates.Utils.Utils;
+import simelectricity.api.IEnergyNetUpdateHandler;
+import simelectricity.api.SEAPI;
+import simelectricity.Templates.SEItems;
+import simelectricity.Templates.Common.TileStandardSEMachine;
+import simelectricity.Templates.Utils.Utils;
 
 public class TileIceMachine extends TileStandardSEMachine implements IFluidHandler, IEnergyNetUpdateHandler{
 	public int maxCapacity = 10000;

@@ -17,7 +17,7 @@
  * USA
  */
 
-package simElectricity.EnergyNet;
+package simelectricity.energynet;
 
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
@@ -26,30 +26,30 @@ import net.minecraftforge.common.util.ForgeDirection;
 import java.util.Map;
 import java.util.WeakHashMap;
 
-import simElectricity.API.ISEPlaceable;
-import simElectricity.API.DataProvider.ISEComponentDataProvider;
-import simElectricity.API.DataProvider.ISEConstantPowerLoadData;
-import simElectricity.API.DataProvider.ISEDiodeData;
-import simElectricity.API.DataProvider.ISERegulatorData;
-import simElectricity.API.DataProvider.ISESwitchData;
-import simElectricity.API.DataProvider.ISETransformerData;
-import simElectricity.API.DataProvider.ISEVoltageSourceData;
-import simElectricity.API.EnergyTile.ISESimulatable;
-import simElectricity.API.EnergyTile.ISESubComponent;
-import simElectricity.Common.ConfigManager;
-import simElectricity.Common.SEUtils;
-import simElectricity.API.Internal.IEnergyNetAgent;
-import simElectricity.API.Tile.ISECableTile;
-import simElectricity.API.Tile.ISEGridTile;
-import simElectricity.API.Tile.ISETile;
-import simElectricity.EnergyNet.Components.Cable;
-import simElectricity.EnergyNet.Components.ConstantPowerLoad;
-import simElectricity.EnergyNet.Components.DiodeInput;
-import simElectricity.EnergyNet.Components.RegulatorInput;
-import simElectricity.EnergyNet.Components.SEComponent;
-import simElectricity.EnergyNet.Components.SwitchA;
-import simElectricity.EnergyNet.Components.TransformerPrimary;
-import simElectricity.EnergyNet.Components.VoltageSource;
+import simelectricity.api.ISEPlaceable;
+import simelectricity.api.components.ISEComponentDataProvider;
+import simelectricity.api.components.ISEConstantPowerLoadData;
+import simelectricity.api.components.ISEDiodeData;
+import simelectricity.api.components.ISERegulatorData;
+import simelectricity.api.components.ISESwitchData;
+import simelectricity.api.components.ISETransformerData;
+import simelectricity.api.components.ISEVoltageSourceData;
+import simelectricity.api.node.ISESimulatable;
+import simelectricity.api.node.ISESubComponent;
+import simelectricity.common.ConfigManager;
+import simelectricity.common.SEUtils;
+import simelectricity.api.internal.IEnergyNetAgent;
+import simelectricity.api.tile.ISECableTile;
+import simelectricity.api.tile.ISEGridTile;
+import simelectricity.api.tile.ISETile;
+import simelectricity.energynet.components.Cable;
+import simelectricity.energynet.components.ConstantPowerLoad;
+import simelectricity.energynet.components.DiodeInput;
+import simelectricity.energynet.components.RegulatorInput;
+import simelectricity.energynet.components.SEComponent;
+import simelectricity.energynet.components.SwitchA;
+import simelectricity.energynet.components.TransformerPrimary;
+import simelectricity.energynet.components.VoltageSource;
 
 public class EnergyNetAgent implements IEnergyNetAgent{
     @SuppressWarnings("unchecked")

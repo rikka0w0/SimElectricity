@@ -1,9 +1,9 @@
-package simElectricity.Templates.ItemBlocks;
+package simelectricity.Templates.ItemBlocks;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
-import simElectricity.Templates.Blocks.BlockTransmissionTower;
-import simElectricity.Templates.Common.ItemBlockSE;
+import simelectricity.Templates.Blocks.BlockTransmissionTower;
+import simelectricity.Templates.Common.ItemBlockSE;
 
 public class ItemBlockTransmissionTower extends ItemBlockSE{
     public ItemBlockTransmissionTower(Block block) {

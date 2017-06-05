@@ -17,7 +17,7 @@
  * USA
  */
 
-package simElectricity.Templates.Common;
+package simelectricity.Templates.Common;
 
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;

@@ -1,8 +1,8 @@
-package simElectricity.Templates.Utils;
+package simelectricity.Templates.Utils;
 
 import java.util.Arrays;
 
-import simElectricity.API.Tile.ISECableTile;
+import simelectricity.api.tile.ISECableTile;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;

@@ -1,4 +1,4 @@
-package simElectricity.Templates.Client.Gui;
+package simelectricity.Templates.Client.Gui;
 
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.OpenGlHelper;

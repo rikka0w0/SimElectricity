@@ -1,22 +1,22 @@
 /**
  * This source code contains code pieces from Lambda Innovation
  */
-package simElectricity.EnergyNet;
+package simelectricity.energynet;
 
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import simElectricity.API.EnergyTile.ISESubComponent;
-import simElectricity.API.Tile.ISECableTile;
-import simElectricity.API.Tile.ISEGridTile;
-import simElectricity.API.Tile.ISETile;
-import simElectricity.Common.SEUtils;
-import simElectricity.EnergyNet.Components.Cable;
-import simElectricity.EnergyNet.Components.GridNode;
-import simElectricity.EnergyNet.Components.RegulatorInput;
-import simElectricity.EnergyNet.Components.SEComponent;
+import simelectricity.api.node.ISESubComponent;
+import simelectricity.api.tile.ISECableTile;
+import simelectricity.api.tile.ISEGridTile;
+import simelectricity.api.tile.ISETile;
+import simelectricity.common.SEUtils;
+import simelectricity.energynet.components.Cable;
+import simelectricity.energynet.components.GridNode;
+import simelectricity.energynet.components.RegulatorInput;
+import simelectricity.energynet.components.SEComponent;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;

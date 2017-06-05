@@ -17,7 +17,7 @@
  * USA
  */
 
-package simElectricity.Templates.Common;
+package simelectricity.Templates.Common;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemBlock;

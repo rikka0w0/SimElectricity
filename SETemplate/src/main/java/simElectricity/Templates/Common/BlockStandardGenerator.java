@@ -17,7 +17,7 @@
  * USA
  */
 
-package simElectricity.Templates.Common;
+package simelectricity.Templates.Common;
 
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.EntityLivingBase;
@@ -25,7 +25,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
-import simElectricity.Templates.Utils.Utils;
+import simelectricity.Templates.Utils.Utils;
 
 /**
  * Standard generator block

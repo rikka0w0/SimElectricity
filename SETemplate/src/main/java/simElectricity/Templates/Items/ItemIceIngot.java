@@ -17,12 +17,12 @@
  * USA
  */
 
-package simElectricity.Templates.Items;
+package simelectricity.Templates.Items;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.renderer.texture.IIconRegister;
-import simElectricity.Templates.Common.ItemSE;
+import simelectricity.Templates.Common.ItemSE;
 
 public class ItemIceIngot extends ItemSE{
     public ItemIceIngot() {
@@ -33,6 +33,6 @@ public class ItemIceIngot extends ItemSE{
     @Override
     @SideOnly(Side.CLIENT)
     public void registerIcons(IIconRegister r) {
-        itemIcon = r.registerIcon("simElectricity:Item_IceIngot");
+        itemIcon = r.registerIcon("setemplate:Item_IceIngot");
     }
 }

@@ -17,7 +17,7 @@
  * USA
  */
 
-package simElectricity.Templates.Container;
+package simelectricity.Templates.Container;
 
 import java.util.Iterator;
 
@@ -25,9 +25,9 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.ICrafting;
 import net.minecraft.tileentity.TileEntity;
-import simElectricity.Templates.Common.ContainerBase;
-import simElectricity.Templates.TileEntity.TileAdjustableTransformer;
-import simElectricity.Templates.Utils.MessageGui;
+import simelectricity.Templates.Common.ContainerBase;
+import simelectricity.Templates.TileEntity.TileAdjustableTransformer;
+import simelectricity.Templates.Utils.MessageGui;
 
 public class ContainerAdjustableTransformer extends ContainerBase<TileAdjustableTransformer> {
     public ContainerAdjustableTransformer(InventoryPlayer inventoryPlayer, TileEntity te) {

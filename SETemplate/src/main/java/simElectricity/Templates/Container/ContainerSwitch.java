@@ -17,7 +17,7 @@
  * USA
  */
 
-package simElectricity.Templates.Container;
+package simelectricity.Templates.Container;
 
 import java.util.Iterator;
 
@@ -25,9 +25,9 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.ICrafting;
 import net.minecraft.tileentity.TileEntity;
-import simElectricity.Templates.Common.ContainerBase;
-import simElectricity.Templates.TileEntity.TileSwitch;
-import simElectricity.Templates.Utils.MessageGui;
+import simelectricity.Templates.Common.ContainerBase;
+import simelectricity.Templates.TileEntity.TileSwitch;
+import simelectricity.Templates.Utils.MessageGui;
 
 public class ContainerSwitch extends ContainerBase<TileSwitch> {
     public ContainerSwitch(InventoryPlayer inventoryPlayer, TileEntity te) {

@@ -1,10 +1,10 @@
-package simElectricity.Templates.Utils;
+package simelectricity.Templates.Utils;
 
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
-import simElectricity.Templates.SETemplate;
+import simelectricity.Templates.SETemplate;
 
 import io.netty.buffer.ByteBuf;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;

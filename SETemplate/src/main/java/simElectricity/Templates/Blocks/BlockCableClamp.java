@@ -1,9 +1,9 @@
-package simElectricity.Templates.Blocks;
+package simelectricity.Templates.Blocks;
 
-import simElectricity.API.SEAPI;
-import simElectricity.Templates.Common.BlockContainerSE;
-import simElectricity.Templates.TileEntity.TileCableClamp;
-import simElectricity.Templates.Utils.Utils;
+import simelectricity.api.SEAPI;
+import simelectricity.Templates.Common.BlockContainerSE;
+import simelectricity.Templates.TileEntity.TileCableClamp;
+import simelectricity.Templates.Utils.Utils;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;

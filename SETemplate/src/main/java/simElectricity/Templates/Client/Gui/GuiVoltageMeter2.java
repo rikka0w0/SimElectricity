@@ -1,8 +1,8 @@
-package simElectricity.Templates.Client.Gui;
+package simelectricity.Templates.Client.Gui;
 
 import org.lwjgl.opengl.GL11;
 
-import simElectricity.Templates.Utils.IGuiSyncHandler;
+import simelectricity.Templates.Utils.IGuiSyncHandler;
 
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;

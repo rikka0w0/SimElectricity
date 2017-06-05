@@ -1,4 +1,4 @@
-package simElectricity.Templates.Client.Gui;
+package simelectricity.Templates.Client.Gui;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,8 +8,8 @@ import org.lwjgl.opengl.GL11;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-import simElectricity.Templates.Container.ContainerIceMachine;
-import simElectricity.Templates.TileEntity.TileIceMachine;
+import simelectricity.Templates.Container.ContainerIceMachine;
+import simelectricity.Templates.TileEntity.TileIceMachine;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.inventory.GuiContainer;

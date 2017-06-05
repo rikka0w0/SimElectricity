@@ -17,7 +17,7 @@
  * USA
  */
 
-package simElectricity.Templates.Client.Gui;
+package simelectricity.Templates.Client.Gui;
 
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
@@ -31,9 +31,9 @@ import org.lwjgl.opengl.GL11;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import simElectricity.Templates.Container.ContainerAdjustableTransformer;
-import simElectricity.Templates.Utils.IGuiSyncHandler;
-import simElectricity.Templates.Utils.MessageGui;
+import simelectricity.Templates.Container.ContainerAdjustableTransformer;
+import simelectricity.Templates.Utils.IGuiSyncHandler;
+import simelectricity.Templates.Utils.MessageGui;
 
 @SideOnly(Side.CLIENT)
 public class GuiAdjustableTransformer extends GuiContainer implements IGuiSyncHandler{

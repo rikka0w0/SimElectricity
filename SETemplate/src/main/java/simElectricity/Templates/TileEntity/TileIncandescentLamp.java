@@ -17,16 +17,16 @@
  * USA
  */
 
-package simElectricity.Templates.TileEntity;
+package simelectricity.Templates.TileEntity;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraftforge.common.util.ForgeDirection;
 
-import simElectricity.API.IEnergyNetUpdateHandler;
-import simElectricity.API.SEAPI;
-import simElectricity.Templates.Common.TileStandardSEMachine;
-import simElectricity.Templates.Utils.ITileRenderingInfoSyncHandler;
+import simelectricity.api.IEnergyNetUpdateHandler;
+import simelectricity.api.SEAPI;
+import simelectricity.essential.utils.ITileRenderingInfoSyncHandler;
+import simelectricity.Templates.Common.TileStandardSEMachine;
 
 public class TileIncandescentLamp extends TileStandardSEMachine implements IEnergyNetUpdateHandler, ITileRenderingInfoSyncHandler {
     public byte lightLevel = 0;

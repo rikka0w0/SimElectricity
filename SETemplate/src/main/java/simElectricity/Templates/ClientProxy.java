@@ -17,7 +17,7 @@
  * USA
  */
 
-package simElectricity.Templates;
+package simelectricity.Templates;
 
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.client.registry.ClientRegistry;
@@ -27,9 +27,9 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
-import simElectricity.Templates.Client.Gui.*;
-import simElectricity.Templates.Client.Render.*;
-import simElectricity.Templates.TileEntity.*;
+import simelectricity.Templates.Client.Gui.*;
+import simelectricity.Templates.Client.Render.*;
+import simelectricity.Templates.TileEntity.*;
 
 @SideOnly(Side.CLIENT)
 public class ClientProxy extends CommonProxy {

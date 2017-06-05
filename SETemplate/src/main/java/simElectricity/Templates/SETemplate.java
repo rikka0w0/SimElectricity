@@ -1,8 +1,7 @@
-package simElectricity.Templates;
+package simelectricity.Templates;
 
-import simElectricity.API.SEAPI;
-import simElectricity.Templates.Utils.ITileRenderingInfoSyncHandler;
-import simElectricity.Templates.Utils.MessageGui;
+import simelectricity.api.SEAPI;
+import simelectricity.Templates.Utils.MessageGui;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.Mod.EventHandler;
@@ -16,7 +15,7 @@ import cpw.mods.fml.relauncher.Side;
 
 
 
-@Mod(modid = SETemplate.MODID, name = SETemplate.NAME, version = SETemplate.VER, dependencies = "required-after:Forge@[10.12.2.1147,); required-after:SimElectricity")
+@Mod(modid = SETemplate.MODID, name = SETemplate.NAME, version = SETemplate.VER, dependencies = "required-after:Forge@[10.12.2.1147,); required-after:simelectricity")
 public class SETemplate {
 	public static final String MODID = "SETemplate";
 	public static final String NAME = "SETemplate";
@@ -30,7 +29,7 @@ public class SETemplate {
     /**
      * Server and Client Proxy
      */
-    @SidedProxy(clientSide = "simElectricity.Templates.ClientProxy", serverSide = "simElectricity.Templates.CommonProxy")
+    @SidedProxy(clientSide = "simelectricity.Templates.ClientProxy", serverSide = "simelectricity.Templates.CommonProxy")
     public static CommonProxy proxy;
     
     
@@ -47,9 +46,6 @@ public class SETemplate {
 
         //Register Items
         SEItems.init();
-        
-        //Register Forge Event Handlers
-        new ITileRenderingInfoSyncHandler.ForgeEventHandler();
         
         networkChannel = NetworkRegistry.INSTANCE.newSimpleChannel(MODID);
         networkChannel.registerMessage(MessageGui.Handler.class, MessageGui.class, 0, Side.CLIENT);

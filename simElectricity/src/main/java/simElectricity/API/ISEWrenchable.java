@@ -1,4 +1,4 @@
-package simElectricity.API;
+package simelectricity.api;
 
 import net.minecraftforge.common.util.ForgeDirection;
 

@@ -1,9 +1,9 @@
-package simElectricity.EnergyNet.Components;
+package simelectricity.energynet.components;
 
 import net.minecraft.tileentity.TileEntity;
 
-import simElectricity.API.DataProvider.ISEDiodeData;
-import simElectricity.API.EnergyTile.ISESubComponent;
+import simelectricity.api.components.ISEDiodeData;
+import simelectricity.api.node.ISESubComponent;
 
 public class DiodeInput extends SEComponent.Tile<ISEDiodeData> implements ISESubComponent{
 	public double Rs, Is, Vt;

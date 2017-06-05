@@ -17,7 +17,7 @@
  * USA
  */
 
-package simElectricity.Templates.Client.Gui;
+package simelectricity.Templates.Client.Gui;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -31,9 +31,9 @@ import net.minecraft.util.StatCollector;
 import net.minecraftforge.common.util.ForgeDirection;
 import org.lwjgl.opengl.GL11;
 
-import simElectricity.Templates.Container.ContainerSwitch;
-import simElectricity.Templates.Utils.IGuiSyncHandler;
-import simElectricity.Templates.Utils.MessageGui;
+import simelectricity.Templates.Container.ContainerSwitch;
+import simelectricity.Templates.Utils.IGuiSyncHandler;
+import simelectricity.Templates.Utils.MessageGui;
 
 @SideOnly(Side.CLIENT)
 public class GuiSwitch extends GuiContainer implements IGuiSyncHandler{

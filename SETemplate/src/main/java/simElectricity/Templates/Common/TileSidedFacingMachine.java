@@ -17,11 +17,11 @@
  * USA
  */
 
-package simElectricity.Templates.Common;
+package simelectricity.Templates.Common;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.ForgeDirection;
-import simElectricity.API.ISidedFacing;
+import simelectricity.api.ISidedFacing;
 
 public abstract class TileSidedFacingMachine extends TileInventoryMachine implements ISidedFacing {
     public ForgeDirection facing = ForgeDirection.NORTH;

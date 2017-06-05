@@ -17,12 +17,12 @@
  * USA
  */
 
-package simElectricity.Templates.Common;
+package simelectricity.Templates.Common;
 
 import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import simElectricity.API.SEAPI;
+import simelectricity.api.SEAPI;
 
 /**
  * Basic SimElectricity Block

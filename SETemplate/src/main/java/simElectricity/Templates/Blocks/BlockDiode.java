@@ -1,4 +1,4 @@
-package simElectricity.Templates.Blocks;
+package simelectricity.Templates.Blocks;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -10,9 +10,9 @@ import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
-import simElectricity.Templates.Common.BlockContainerSE;
-import simElectricity.Templates.TileEntity.TileDiode;
-import simElectricity.Templates.Utils.Utils;
+import simelectricity.Templates.Common.BlockContainerSE;
+import simelectricity.Templates.TileEntity.TileDiode;
+import simelectricity.Templates.Utils.Utils;
 
 public class BlockDiode extends BlockContainerSE {
     private IIcon[] iconBuffer = new IIcon[5];

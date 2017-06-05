@@ -17,7 +17,7 @@
  * USA
  */
 
-package simElectricity.API;
+package simelectricity.api;
 
 
 public interface IEnergyNetUpdateHandler {

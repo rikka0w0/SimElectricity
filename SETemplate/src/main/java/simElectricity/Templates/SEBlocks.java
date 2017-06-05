@@ -17,11 +17,11 @@
  * USA
  */
 
-package simElectricity.Templates;
+package simelectricity.Templates;
 
 import cpw.mods.fml.common.registry.GameRegistry;
-import simElectricity.Templates.Blocks.*;
-import simElectricity.Templates.TileEntity.*;
+import simelectricity.Templates.Blocks.*;
+import simelectricity.Templates.TileEntity.*;
 
 @GameRegistry.ObjectHolder(SETemplate.MODID)
 public class SEBlocks {

@@ -17,7 +17,7 @@
  * USA
  */
 
-package simElectricity.Templates.Blocks;
+package simelectricity.Templates.Blocks;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -27,9 +27,9 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import simElectricity.Templates.Common.BlockStandardSEMachine;
-import simElectricity.Templates.TileEntity.TileVoltageMeter;
-import simElectricity.Templates.SETemplate;
+import simelectricity.Templates.Common.BlockStandardSEMachine;
+import simelectricity.Templates.TileEntity.TileVoltageMeter;
+import simelectricity.Templates.SETemplate;
 
 public class BlockVoltageMeter extends BlockStandardSEMachine {
     private IIcon[] iconBuffer = new IIcon[3];

@@ -1,4 +1,4 @@
-package simElectricity.API.Client;
+package simelectricity.api.client;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;

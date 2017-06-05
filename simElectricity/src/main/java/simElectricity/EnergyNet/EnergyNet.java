@@ -17,15 +17,15 @@
  * USA
  */
 
-package simElectricity.EnergyNet;
+package simelectricity.energynet;
 
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-import simElectricity.API.IEnergyNetUpdateHandler;
-import simElectricity.Common.ConfigManager;
-import simElectricity.Common.SEUtils;
-import simElectricity.EnergyNet.Components.GridNode;
-import simElectricity.EnergyNet.Matrix.IMatrixResolver;
+import simelectricity.api.IEnergyNetUpdateHandler;
+import simelectricity.common.ConfigManager;
+import simelectricity.common.SEUtils;
+import simelectricity.energynet.components.GridNode;
+import simelectricity.energynet.matrix.IMatrixResolver;
 
 import java.util.*;
 

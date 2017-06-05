@@ -1,27 +1,27 @@
-package simElectricity.EnergyNet;
+package simelectricity.energynet;
 
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import simElectricity.API.EnergyTile.ISESimulatable;
-import simElectricity.Common.ConfigManager;
-import simElectricity.Common.SEUtils;
-import simElectricity.EnergyNet.Matrix.IMatrixResolver;
+import simelectricity.api.node.ISESimulatable;
+import simelectricity.common.ConfigManager;
+import simelectricity.common.SEUtils;
+import simelectricity.energynet.matrix.IMatrixResolver;
 
-import simElectricity.EnergyNet.Components.Cable;
-import simElectricity.EnergyNet.Components.ConstantPowerLoad;
-import simElectricity.EnergyNet.Components.DiodeInput;
-import simElectricity.EnergyNet.Components.DiodeOutput;
-import simElectricity.EnergyNet.Components.GridNode;
-import simElectricity.EnergyNet.Components.RegulatorController;
-import simElectricity.EnergyNet.Components.RegulatorInput;
-import simElectricity.EnergyNet.Components.RegulatorOutput;
-import simElectricity.EnergyNet.Components.SEComponent;
-import simElectricity.EnergyNet.Components.TransformerPrimary;
-import simElectricity.EnergyNet.Components.TransformerSecondary;
-import simElectricity.EnergyNet.Components.VoltageSource;
-import simElectricity.EnergyNet.Components.SwitchA;
-import simElectricity.EnergyNet.Components.SwitchB;
+import simelectricity.energynet.components.Cable;
+import simelectricity.energynet.components.ConstantPowerLoad;
+import simelectricity.energynet.components.DiodeInput;
+import simelectricity.energynet.components.DiodeOutput;
+import simelectricity.energynet.components.GridNode;
+import simelectricity.energynet.components.RegulatorController;
+import simelectricity.energynet.components.RegulatorInput;
+import simelectricity.energynet.components.RegulatorOutput;
+import simelectricity.energynet.components.SEComponent;
+import simelectricity.energynet.components.TransformerPrimary;
+import simelectricity.energynet.components.TransformerSecondary;
+import simelectricity.energynet.components.VoltageSource;
+import simelectricity.energynet.components.SwitchA;
+import simelectricity.energynet.components.SwitchB;
 
 
 public class EnergyNetSimulator{

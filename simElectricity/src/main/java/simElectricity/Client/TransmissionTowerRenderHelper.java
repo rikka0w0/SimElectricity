@@ -1,9 +1,9 @@
-package simElectricity.Client;
+package simelectricity.client;
 
 import net.minecraft.tileentity.TileEntity;
-import simElectricity.API.SEAPI;
-import simElectricity.API.Client.ITransmissionTower;
-import simElectricity.API.Client.ITransmissionTowerRenderHelper;
+import simelectricity.api.SEAPI;
+import simelectricity.api.client.ITransmissionTower;
+import simelectricity.api.client.ITransmissionTowerRenderHelper;
 
 public class TransmissionTowerRenderHelper implements ITransmissionTowerRenderHelper{
 	private TileEntity te;

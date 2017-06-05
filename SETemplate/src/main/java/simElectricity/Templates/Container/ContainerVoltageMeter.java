@@ -17,7 +17,7 @@
  * USA
  */
 
-package simElectricity.Templates.Container;
+package simelectricity.Templates.Container;
 
 import java.util.Iterator;
 
@@ -25,10 +25,10 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.ICrafting;
 import net.minecraft.tileentity.TileEntity;
-import simElectricity.API.SEAPI;
-import simElectricity.Templates.Common.ContainerBase;
-import simElectricity.Templates.TileEntity.TileVoltageMeter;
-import simElectricity.Templates.Utils.MessageGui;
+import simelectricity.api.SEAPI;
+import simelectricity.Templates.Common.ContainerBase;
+import simelectricity.Templates.TileEntity.TileVoltageMeter;
+import simelectricity.Templates.Utils.MessageGui;
 
 public class ContainerVoltageMeter extends ContainerBase<TileVoltageMeter> {
     public ContainerVoltageMeter(InventoryPlayer inventoryPlayer, TileEntity te) {

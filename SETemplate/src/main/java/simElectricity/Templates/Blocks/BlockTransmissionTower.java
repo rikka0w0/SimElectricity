@@ -17,7 +17,7 @@
  * USA
  */
 
-package simElectricity.Templates.Blocks;
+package simelectricity.Templates.Blocks;
 
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
@@ -31,11 +31,11 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import simElectricity.API.SEAPI;
+import simelectricity.api.SEAPI;
 
-import simElectricity.Templates.Common.BlockContainerSE;
-import simElectricity.Templates.ItemBlocks.ItemBlockTransmissionTower;
-import simElectricity.Templates.TileEntity.TileTransmissionTower;
+import simelectricity.Templates.Common.BlockContainerSE;
+import simelectricity.Templates.ItemBlocks.ItemBlockTransmissionTower;
+import simelectricity.Templates.TileEntity.TileTransmissionTower;
 
 import java.util.List;
 

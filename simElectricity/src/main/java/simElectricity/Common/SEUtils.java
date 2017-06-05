@@ -17,7 +17,7 @@
  * USA
  */
 
-package simElectricity.Common;
+package simelectricity.common;
 
 import cpw.mods.fml.common.FMLLog;
 import net.minecraft.tileentity.TileEntity;
@@ -37,7 +37,7 @@ public enum SEUtils{
 	simulator("Simulator"),
 	energyNet("EnergyNet");
 	
-    public static final String MODID = "SimElectricity";
+    public static final String MODID = "simelectricity";
     public static final String NAME = "SimElectricity";
 
     private String text;

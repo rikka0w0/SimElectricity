@@ -17,7 +17,7 @@
  * USA
  */
 
-package simElectricity.Templates.Client.Gui;
+package simelectricity.Templates.Client.Gui;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -30,9 +30,9 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
 import org.lwjgl.opengl.GL11;
 
-import simElectricity.Templates.Container.ContainerQuantumGenerator;
-import simElectricity.Templates.Utils.IGuiSyncHandler;
-import simElectricity.Templates.Utils.MessageGui;
+import simelectricity.Templates.Container.ContainerQuantumGenerator;
+import simelectricity.Templates.Utils.IGuiSyncHandler;
+import simelectricity.Templates.Utils.MessageGui;
 
 @SideOnly(Side.CLIENT)
 public class GuiQuantumGenerator extends GuiContainer implements IGuiSyncHandler {

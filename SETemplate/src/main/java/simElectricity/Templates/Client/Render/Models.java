@@ -1,9 +1,9 @@
-package simElectricity.Templates.Client.Render;
+package simelectricity.Templates.Client.Render;
 
 import org.lwjgl.opengl.GL11;
 
-import simElectricity.API.SEAPI;
-import simElectricity.API.Client.ITextureProvider;
+import simelectricity.api.SEAPI;
+import simelectricity.api.client.ITextureProvider;
 
 public class Models {
     public static void renderInsulator(double length, ITextureProvider textureProvider, int textureID1, int textureID2) {

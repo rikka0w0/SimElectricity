@@ -17,13 +17,13 @@
  * USA
  */
 
-package simElectricity.Templates.TileEntity;
+package simelectricity.Templates.TileEntity;
 
 import net.minecraft.nbt.NBTTagCompound;
-import simElectricity.API.SEAPI;
+import simelectricity.api.SEAPI;
 
-import simElectricity.Templates.Common.TileStandardSEMachine;
-import simElectricity.Templates.Utils.IGuiSyncHandler;
+import simelectricity.Templates.Common.TileStandardSEMachine;
+import simelectricity.Templates.Utils.IGuiSyncHandler;
 
 public class TileAdjustableResistor extends TileStandardSEMachine implements IGuiSyncHandler {
     public double resistance = 1000;

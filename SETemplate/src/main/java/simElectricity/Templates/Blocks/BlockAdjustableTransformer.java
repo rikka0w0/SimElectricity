@@ -17,7 +17,7 @@
  * USA
  */
 
-package simElectricity.Templates.Blocks;
+package simelectricity.Templates.Blocks;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -29,10 +29,10 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import simElectricity.Templates.SETemplate;
-import simElectricity.Templates.Common.BlockContainerSE;
-import simElectricity.Templates.TileEntity.TileAdjustableTransformer;
-import simElectricity.Templates.Utils.Utils;
+import simelectricity.Templates.SETemplate;
+import simelectricity.Templates.Common.BlockContainerSE;
+import simelectricity.Templates.TileEntity.TileAdjustableTransformer;
+import simelectricity.Templates.Utils.Utils;
 
 public class BlockAdjustableTransformer extends BlockContainerSE {
     private IIcon[] iconBuffer = new IIcon[3];

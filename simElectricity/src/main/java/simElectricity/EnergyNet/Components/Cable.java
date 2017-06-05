@@ -1,8 +1,8 @@
-package simElectricity.EnergyNet.Components;
+package simelectricity.energynet.components;
 
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
-import simElectricity.API.Tile.ISECableTile;
+import simelectricity.api.tile.ISECableTile;
 
 public class Cable extends SEComponent.Tile<ISECableTile>{
 	//Properties, do not modify their value!

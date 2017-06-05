@@ -1,4 +1,4 @@
-package simElectricity.Client;
+package simelectricity.client;
 
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.tileentity.TileEntity;
@@ -8,11 +8,11 @@ import org.lwjgl.opengl.GL11;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-import simElectricity.API.SEAPI;
-import simElectricity.API.Client.ITextureProvider;
-import simElectricity.API.Client.ITransmissionTowerRenderHelper;
-import simElectricity.API.Internal.IClientRender;
-import simElectricity.Common.ConfigManager;
+import simelectricity.api.SEAPI;
+import simelectricity.api.client.ITextureProvider;
+import simelectricity.api.client.ITransmissionTowerRenderHelper;
+import simelectricity.api.internal.IClientRender;
+import simelectricity.common.ConfigManager;
 
 @SideOnly(Side.CLIENT)
 public class ClientRender implements IClientRender{

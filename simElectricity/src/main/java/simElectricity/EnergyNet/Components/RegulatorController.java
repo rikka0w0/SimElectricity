@@ -1,7 +1,7 @@
-package simElectricity.EnergyNet.Components;
+package simelectricity.energynet.components;
 
 import net.minecraft.tileentity.TileEntity;
-import simElectricity.API.EnergyTile.ISESubComponent;
+import simelectricity.api.node.ISESubComponent;
 
 public class RegulatorController extends SEComponent implements ISESubComponent {
 	public RegulatorInput input;

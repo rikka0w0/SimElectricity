@@ -17,15 +17,15 @@
  * USA
  */
 
-package simElectricity.Templates;
+package simelectricity.Templates;
 
 import cpw.mods.fml.common.network.IGuiHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
-import simElectricity.Templates.Container.*;
-import simElectricity.Templates.TileEntity.*;
+import simelectricity.Templates.Container.*;
+import simelectricity.Templates.TileEntity.*;
 
 public class CommonProxy implements IGuiHandler {
     @Override

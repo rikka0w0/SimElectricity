@@ -17,7 +17,7 @@
  * USA
  */
 
-package simElectricity.Templates.Client.Render;
+package simelectricity.Templates.Client.Render;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -29,8 +29,8 @@ import net.minecraft.util.Vec3;
 import net.minecraftforge.common.util.ForgeDirection;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
-import simElectricity.Templates.Blocks.BlockWire;
-import simElectricity.Templates.TileEntity.TileWire;
+import simelectricity.Templates.Blocks.BlockWire;
+import simelectricity.Templates.TileEntity.TileWire;
 
 @Deprecated
 @SideOnly(Side.CLIENT)

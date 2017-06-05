@@ -17,7 +17,7 @@
  * USA
  */
 
-package simElectricity.Common;
+package simelectricity.common;
 
 import cpw.mods.fml.client.event.ConfigChangedEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
@@ -25,7 +25,7 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.common.config.Configuration;
-import simElectricity.Common.SEUtils;
+import simelectricity.common.SEUtils;
 
 public class ConfigManager {
     public static Configuration config;

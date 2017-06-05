@@ -17,7 +17,7 @@
  * USA
  */
 
-package simElectricity.Templates.Blocks;
+package simelectricity.Templates.Blocks;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -28,11 +28,11 @@ import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
-import simElectricity.API.ISidedFacing;
-import simElectricity.Templates.Common.BlockStandardSEMachine;
-import simElectricity.Templates.TileEntity.TileAdjustableResistor;
-import simElectricity.Templates.Utils.ClientUtils;
-import simElectricity.Templates.SETemplate;
+import simelectricity.api.ISidedFacing;
+import simelectricity.Templates.Common.BlockStandardSEMachine;
+import simelectricity.Templates.TileEntity.TileAdjustableResistor;
+import simelectricity.Templates.Utils.ClientUtils;
+import simelectricity.Templates.SETemplate;
 
 public class BlockAdjustableResistor extends BlockStandardSEMachine {
     private IIcon[] iconBuffer = new IIcon[6];

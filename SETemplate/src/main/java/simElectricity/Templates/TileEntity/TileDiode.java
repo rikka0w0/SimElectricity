@@ -1,10 +1,10 @@
-package simElectricity.Templates.TileEntity;
+package simelectricity.Templates.TileEntity;
 
-import simElectricity.API.SEAPI;
+import simelectricity.api.SEAPI;
 
-import simElectricity.API.DataProvider.ISEDiodeData;
-import simElectricity.API.EnergyTile.ISESubComponent;
-import simElectricity.Templates.Common.TileEntityTwoPort;
+import simelectricity.api.components.ISEDiodeData;
+import simelectricity.api.node.ISESubComponent;
+import simelectricity.Templates.Common.TileEntityTwoPort;
 import net.minecraftforge.common.util.ForgeDirection;
 
 public class TileDiode extends TileEntityTwoPort implements ISEDiodeData{

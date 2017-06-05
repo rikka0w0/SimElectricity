@@ -1,12 +1,12 @@
-package simElectricity.EnergyNet.Components;
+package simelectricity.energynet.components;
 
 import java.util.LinkedList;
 
 import net.minecraft.tileentity.TileEntity;
 
-import simElectricity.API.DataProvider.ISEComponentDataProvider;
-import simElectricity.API.EnergyTile.ISESimulatable;
-import simElectricity.API.EnergyTile.ISESubComponent;
+import simelectricity.api.components.ISEComponentDataProvider;
+import simelectricity.api.node.ISESimulatable;
+import simelectricity.api.node.ISESubComponent;
 
 public abstract class SEComponent implements ISESimulatable{
 	/**

@@ -17,12 +17,12 @@
  * USA
  */
 
-package simElectricity.Templates.TileEntity;
+package simelectricity.Templates.TileEntity;
 
 import net.minecraftforge.common.util.ForgeDirection;
-import simElectricity.API.SEAPI;
-import simElectricity.Templates.Common.TileSidedGenerator;
-import simElectricity.Templates.Utils.IGuiSyncHandler;
+import simelectricity.api.SEAPI;
+import simelectricity.Templates.Common.TileSidedGenerator;
+import simelectricity.Templates.Utils.IGuiSyncHandler;
 
 public class TileQuantumGenerator extends TileSidedGenerator implements IGuiSyncHandler {
 

@@ -1,12 +1,12 @@
-package simElectricity.API.Internal;
+package simelectricity.api.internal;
 
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
-import simElectricity.API.DataProvider.ISEComponentDataProvider;
-import simElectricity.API.EnergyTile.ISESimulatable;
-import simElectricity.API.EnergyTile.ISESubComponent;
+import simelectricity.api.components.ISEComponentDataProvider;
+import simelectricity.api.node.ISESimulatable;
+import simelectricity.api.node.ISESubComponent;
 
 /**
  * Provides necessary functions which enable access to the SimElectricity EnergyNet

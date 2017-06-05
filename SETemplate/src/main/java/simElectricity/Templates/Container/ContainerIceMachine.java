@@ -17,7 +17,7 @@
  * USA
  */
 
-package simElectricity.Templates.Container;
+package simelectricity.Templates.Container;
 
 import java.util.Iterator;
 
@@ -28,9 +28,9 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.Slot;
 import net.minecraft.tileentity.TileEntity;
-import simElectricity.Templates.Common.ContainerBase;
-import simElectricity.Templates.Common.ProductSlot;
-import simElectricity.Templates.TileEntity.TileIceMachine;
+import simelectricity.Templates.Common.ContainerBase;
+import simelectricity.Templates.Common.ProductSlot;
+import simelectricity.Templates.TileEntity.TileIceMachine;
 
 public class ContainerIceMachine extends ContainerBase<TileIceMachine>{
 	public int progress,fluidID,amountP, isPowered;

@@ -17,7 +17,7 @@
  * USA
  */
 
-package simElectricity.EnergyNet;
+package simelectricity.energynet;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;

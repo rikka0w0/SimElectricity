@@ -1,4 +1,4 @@
-package simElectricity.Templates.TileEntity;
+package simelectricity.Templates.TileEntity;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -6,14 +6,14 @@ import net.minecraft.util.AxisAlignedBB;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-import simElectricity.API.SEAPI;
-import simElectricity.API.Client.ITransmissionTower;
-import simElectricity.API.Client.ITransmissionTowerRenderHelper;
-import simElectricity.API.EnergyTile.ISEGridNode;
-import simElectricity.API.EnergyTile.ISESimulatable;
-import simElectricity.API.Tile.ISEGridTile;
-import simElectricity.Templates.Common.TileEntitySE;
-import simElectricity.Templates.Utils.ITileRenderingInfoSyncHandler;
+import simelectricity.api.SEAPI;
+import simelectricity.api.client.ITransmissionTower;
+import simelectricity.api.client.ITransmissionTowerRenderHelper;
+import simelectricity.api.node.ISEGridNode;
+import simelectricity.api.node.ISESimulatable;
+import simelectricity.api.tile.ISEGridTile;
+import simelectricity.essential.utils.ITileRenderingInfoSyncHandler;
+import simelectricity.Templates.Common.TileEntitySE;
 
 
 

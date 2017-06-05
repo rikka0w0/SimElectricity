@@ -17,7 +17,7 @@
  * USA
  */
 
-package simElectricity.Templates.Items;
+package simelectricity.Templates.Items;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -26,8 +26,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
-import simElectricity.API.ISidedFacing;
-import simElectricity.Templates.Common.ItemSE;
+import simelectricity.api.ISidedFacing;
+import simelectricity.Templates.Common.ItemSE;
 
 public class ItemGlove extends ItemSE {
     public ItemGlove() {
@@ -41,7 +41,7 @@ public class ItemGlove extends ItemSE {
     @Override
     @SideOnly(Side.CLIENT)
     public void registerIcons(IIconRegister r) {
-        itemIcon = r.registerIcon("simElectricity:Item_Glove");
+        itemIcon = r.registerIcon("setemplate:Item_Glove");
     }
     
     @Override

@@ -17,15 +17,15 @@
  * USA
  */
 
-package simElectricity.Templates.Common;
+package simelectricity.Templates.Common;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.ForgeDirection;
-import simElectricity.API.ISEWrenchable;
-import simElectricity.API.SEAPI;
-import simElectricity.API.DataProvider.ISEVoltageSourceData;
-import simElectricity.API.EnergyTile.ISESubComponent;
-import simElectricity.API.Tile.ISETile;
+import simelectricity.api.ISEWrenchable;
+import simelectricity.api.SEAPI;
+import simelectricity.api.components.ISEVoltageSourceData;
+import simelectricity.api.node.ISESubComponent;
+import simelectricity.api.tile.ISETile;
 
 /**
  * A standard SE machine can inherits this class, make things easier and less confusion

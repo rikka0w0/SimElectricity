@@ -1,18 +1,18 @@
-package simElectricity.Templates.TileEntity;
+package simelectricity.Templates.TileEntity;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraftforge.common.util.ForgeDirection;
-import simElectricity.API.SEAPI;
-import simElectricity.API.Client.ITransmissionTower;
-import simElectricity.API.Client.ITransmissionTowerRenderHelper;
-import simElectricity.API.EnergyTile.ISEGridNode;
-import simElectricity.API.EnergyTile.ISESimulatable;
-import simElectricity.API.Tile.ISECableTile;
-import simElectricity.API.Tile.ISEGridTile;
-import simElectricity.Templates.Common.TileEntitySE;
+import simelectricity.api.SEAPI;
+import simelectricity.api.client.ITransmissionTower;
+import simelectricity.api.client.ITransmissionTowerRenderHelper;
+import simelectricity.api.node.ISEGridNode;
+import simelectricity.api.node.ISESimulatable;
+import simelectricity.api.tile.ISECableTile;
+import simelectricity.api.tile.ISEGridTile;
+import simelectricity.Templates.Common.TileEntitySE;
 
 public class TileCableClamp extends TileEntitySE implements ISECableTile, ISEGridTile, ITransmissionTower{
 	private ISESimulatable cableNode = SEAPI.energyNetAgent.newCable(this, true);

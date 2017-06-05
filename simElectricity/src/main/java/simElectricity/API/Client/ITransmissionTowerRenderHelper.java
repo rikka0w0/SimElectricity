@@ -1,4 +1,4 @@
-package simElectricity.API.Client;
+package simelectricity.api.client;
 
 public interface ITransmissionTowerRenderHelper {
 	double getRotation();

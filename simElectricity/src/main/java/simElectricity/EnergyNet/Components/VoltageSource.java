@@ -1,8 +1,8 @@
-package simElectricity.EnergyNet.Components;
+package simelectricity.energynet.components;
 
 import net.minecraft.tileentity.TileEntity;
-import simElectricity.API.DataProvider.ISEVoltageSourceData;
-import simElectricity.API.EnergyTile.ISESubComponent;
+import simelectricity.api.components.ISEVoltageSourceData;
+import simelectricity.api.node.ISESubComponent;
 
 public class VoltageSource extends SEComponent.Tile<ISEVoltageSourceData> implements ISESubComponent{
 	public double v, r;

@@ -17,7 +17,7 @@
  * USA
  */
 
-package simElectricity.Client;
+package simelectricity.client;
 
 import cpw.mods.fml.client.IModGuiFactory;
 import cpw.mods.fml.relauncher.Side;

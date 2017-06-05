@@ -1,6 +1,6 @@
-package simElectricity.EnergyNet;
+package simelectricity.energynet;
 
-import simElectricity.Common.SEUtils;
+import simelectricity.common.SEUtils;
 
 public class EnergyNetThread extends Thread{
 	public volatile boolean alive;
