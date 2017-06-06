@@ -1,0 +1,32 @@
+[
+{
+  "modid": "simelectricity",
+  "name": "SimElectricity",
+  "description": "A mod for real world circuit simulation!",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "https://github.com/RoyalAliceAcademyOfSciences/SimElectricity",
+  "updateUrl": "",
+  "authorList": ["Rikka0_0","Aurora","MeowJ"],
+  "credits": "",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+},
+{
+  "modid": "sime_essential",
+  "name": "SimElectricity Essential",
+  "description": "A mod for real world circuit simulation!",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "https://github.com/RoyalAliceAcademyOfSciences/SimElectricity",
+  "updateUrl": "",
+  "authorList": ["Rikka0_0"],
+  "parent": "simelectricity",
+  "credits": "",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
+
