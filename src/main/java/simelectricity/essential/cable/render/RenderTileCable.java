@@ -1,18 +1,16 @@
-package simelectricity.essential.cable;
+package simelectricity.essential.cable.render;
 
 import org.lwjgl.opengl.GL11;
 
 import simelectricity.essential.api.ISECoverPanel;
 import simelectricity.essential.api.ISEGenericCable;
+import simelectricity.essential.cable.BlockCable;
 import simelectricity.essential.utils.SERenderHelper;
 
 import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.ForgeDirection;
 import cpw.mods.fml.relauncher.Side;
@@ -54,11 +52,11 @@ public class RenderTileCable extends TileEntitySpecialRenderer {
         		Block block = coverPanel.getBlock();
         		int meta = coverPanel.getBlockMeta();
         		
-        		GL11.glPushMatrix();
-        		SERenderHelper.rotateUpwardCoordSysTo(side);
-        		renderCoverPanel(block, meta, side);
+        		//GL11.glPushMatrix();
+        		//SERenderHelper.rotateUpwardCoordSysTo(side);
+        		//renderCoverPanel(block, meta, side);
             	//TODO : Render cover panel
-        		GL11.glPopMatrix();
+        		//GL11.glPopMatrix();
         	}
         }
         
@@ -90,6 +88,7 @@ public class RenderTileCable extends TileEntitySpecialRenderer {
         GL11.glPopMatrix();
 	}
 
+    /*
     private void renderCoverPanel(Block block, int meta, ForgeDirection side){
 		IIcon icon = block.getIcon(side.UP.ordinal(), meta);
 		Tessellator t = Tessellator.instance;
@@ -104,7 +103,7 @@ public class RenderTileCable extends TileEntitySpecialRenderer {
 	    t.addVertexWithUV(0.5, 0.5, 0.5, icon.getMaxU(), icon.getMaxV());
 	    t.addVertexWithUV(0.5, 0.5, -0.5, icon.getMaxU(), icon.getMinV());
 		t.draw();
-    }
+    }*/
     
     /**
      * Facing upwards, 2-D square

@@ -4,6 +4,8 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 /**
  * Part of this source code is from BuildCraft
+ * <p/>
+ * Special thanks to SpaceToad and the BuildCraft Team
  * @author BuildCraft Team
  */
 public class MatrixTranformations {

@@ -2,11 +2,12 @@ package simelectricity.energynet.components;
 
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
+import simelectricity.api.components.ISECableParameter;
 import simelectricity.api.tile.ISECableTile;
 
-public class Cable extends SEComponent.Tile<ISECableTile>{
+public class Cable extends SEComponent.Tile<ISECableTile> implements ISECableParameter{
 	//Properties, do not modify their value!
-	public boolean isGridInterConnectionPoint;
+	public final boolean isGridInterConnectionPoint;
 	private boolean[] canConnectOnSide;		//Use canConnectOnSide() instead
 	public boolean isGridLinkEnabled;
 	public int color;
@@ -36,7 +37,26 @@ public class Cable extends SEComponent.Tile<ISECableTile>{
 		}
 	}
 	
+	////////////
+	///ISECableParameter
+	///////////
+	@Override
 	public boolean canConnectOnSide(ForgeDirection direction){
 		return this.canConnectOnSide[direction.ordinal()];
+	}
+
+	@Override
+	public int getColor() {
+		return color;
+	}
+
+	@Override
+	public double getResistance() {
+		return resistance;
+	}
+
+	@Override
+	public boolean isGridLinkEnabled() {
+		return isGridLinkEnabled;
 	}
 }

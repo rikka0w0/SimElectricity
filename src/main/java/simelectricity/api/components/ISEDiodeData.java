@@ -1,7 +1,8 @@
 package simelectricity.api.components;
 
 
-public interface ISEDiodeData extends ISEComponentDataProvider{
+
+public interface ISEDiodeData extends ISEComponentParameter{
 	
 	/**
 	 * Recommend value: 0.1

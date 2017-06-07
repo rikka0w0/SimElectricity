@@ -27,7 +27,7 @@ import java.util.Map;
 import java.util.WeakHashMap;
 
 import simelectricity.api.ISEPlaceable;
-import simelectricity.api.components.ISEComponentDataProvider;
+import simelectricity.api.components.ISEComponentParameter;
 import simelectricity.api.components.ISEConstantPowerLoadData;
 import simelectricity.api.components.ISEDiodeData;
 import simelectricity.api.components.ISERegulatorData;
@@ -89,6 +89,12 @@ public class EnergyNetAgent implements IEnergyNetAgent{
     }
     
     @Override
+    public double getCurrentMagnitude(ISESimulatable Tile){
+    	SEComponent obj = (SEComponent) Tile;
+        return EnergyNetAgent.getEnergyNetForWorld(obj.te.getWorldObj()).getCurrentMagnitude(Tile);
+    }
+    
+    @Override
 	public boolean canConnectTo(TileEntity tileEntity, ForgeDirection direction) {
 		if (tileEntity instanceof ISECableTile){
 			ISECableTile cableTile = (ISECableTile) tileEntity;
@@ -121,7 +127,7 @@ public class EnergyNetAgent implements IEnergyNetAgent{
     }
     
 	@Override
-	public ISESubComponent newComponent(ISEComponentDataProvider dataProvider, TileEntity parent) {
+	public ISESubComponent newComponent(ISEComponentParameter dataProvider, TileEntity parent) {
 		if (dataProvider instanceof ISEDiodeData)
 			//Create a pair of DiodeInput and DiodeOutput at the same time
 			return new DiodeInput((ISEDiodeData) dataProvider, parent);

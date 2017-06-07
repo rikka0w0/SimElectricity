@@ -12,7 +12,7 @@ import simelectricity.api.node.ISESimulatable;
 import simelectricity.energynet.EnergyNetDataProvider;
 
 public class GridNode extends SEComponent implements ISEGridNode{
-	public EnergyNetDataProvider gridDataProvider;
+	public EnergyNetDataProvider gridParameter;
 	
 	//0 - transmission line 1 - transformer primary 2 - transformer secondary
 	public byte type;
@@ -33,7 +33,7 @@ public class GridNode extends SEComponent implements ISEGridNode{
 	private double[] resistancesBuf;
 		
 	public GridNode(EnergyNetDataProvider dataProvider){
-		gridDataProvider = dataProvider;
+		gridParameter = dataProvider;
 		
 		interConnection = null;
 	}
@@ -59,7 +59,7 @@ public class GridNode extends SEComponent implements ISEGridNode{
 			String neighborID = getIDString(neighborX[i], neighborY[i], neighborZ[i]);
 			GridNode neighbor = gridNodeMap.get(neighborID);
 			
-			gridDataProvider.getTEGraph().addGridEdge(this, neighbor, resistancesBuf[i]);
+			gridParameter.getTEGraph().addGridEdge(this, neighbor, resistancesBuf[i]);
 		}
 		
 		return numOfNeighbors;

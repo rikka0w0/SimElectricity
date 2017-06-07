@@ -11,10 +11,12 @@ import simelectricity.essential.BlockRegistery;
 import simelectricity.essential.api.ISECoverPanel;
 import simelectricity.essential.api.ISEGenericCable;
 import simelectricity.essential.api.SEEAPI;
+import simelectricity.essential.cable.render.RenderBlockCable;
 import simelectricity.essential.common.ISESubBlock;
 import simelectricity.essential.common.SEBlock;
 import simelectricity.essential.common.SEItemBlock;
 import simelectricity.essential.utils.MatrixTranformations;
+import simelectricity.essential.utils.Utils;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
@@ -58,7 +60,7 @@ public class BlockCable extends SEBlock implements ITileEntityProvider, ISESubBl
 	    public IIcon getIconFromDamage(int damage){
 	    	return iconCache[damage];
 	    }
-	}//Removed canRenderInPass getRenderBlockPass renderAsNormalBlock
+	}
 	
 	///////////////////////////////
 	///Block Properties
@@ -109,6 +111,17 @@ public class BlockCable extends SEBlock implements ITileEntityProvider, ISESubBl
     {
         return renderID;
     }
+	
+	@Override
+	public boolean canRenderInPass(int pass) {
+		RenderBlockCable.renderPass = pass;
+		return true;
+	}
+	
+	@Override
+	public int getRenderBlockPass() {
+		return 1;
+	}
 	
 	@Deprecated	//Removed in 1.8 and above
 	@Override
@@ -398,6 +411,9 @@ public class BlockCable extends SEBlock implements ITileEntityProvider, ISESubBl
         ItemStack itemStack = player.getCurrentEquippedItem();
         if (itemStack == null)
         	return false;
+        
+        if (itemStack.stackSize == 0)
+        	return false;
     
         ISEGenericCable cable = (ISEGenericCable) te;
         ForgeDirection direction = ForgeDirection.getOrientation(side);
@@ -406,6 +422,12 @@ public class BlockCable extends SEBlock implements ITileEntityProvider, ISESubBl
         if (coverPanel != null){
         	if (cable.getCoverPanelOnSide(direction) != null)
         		return false;	//Already have a cover panel installed
+        	
+        	if (!player.capabilities.isCreativeMode){
+	        	itemStack.stackSize--;
+	        	if (itemStack.stackSize == 0)
+	        		itemStack = null;
+        	}
         	
         	if (!world.isRemote){	//Handle on server side
         		cable.installCoverPanel(direction, coverPanel);
@@ -442,4 +464,47 @@ public class BlockCable extends SEBlock implements ITileEntityProvider, ISESubBl
         ISEGenericCable cable = (ISEGenericCable) te;
         cable.onCableRenderingUpdateRequested();
     }
+    
+	@Override
+	public ItemStack getPickBlock(MovingObjectPosition target, World world, int x, int y, int z, EntityPlayer player) {	
+		TileEntity te = world.getTileEntity(x, y, z);
+        if (!(te instanceof ISEGenericCable))
+        	return null;		//Normally this could not happen, but just in case!
+    	
+        RaytraceResult result = doRayTrace(world, x, y, z, player);
+        if (result != null && result.boundingBox != null) {
+        	if (result.hitCenter){
+        		return createStackedBlock(getDamageValue(world, x, y, z));
+        	}else{
+                ISEGenericCable cable = (ISEGenericCable) te;
+                return cable.getCoverPanelOnSide(result.sideHit).getCoverPanelItem();
+        	}
+        }
+        
+		return null;
+	}
+	
+	@Override
+	public ItemStack getPickBlock(MovingObjectPosition target, World world, int x, int y, int z) {
+		return null;
+	}
+	
+	@Override
+	public void breakBlock(World world, int x, int y, int z, Block block, int par6) {
+        if (!world.isRemote){
+    		TileEntity te = world.getTileEntity(x, y, z);
+            if (!(te instanceof ISEGenericCable))
+            	return;		//Normally this could not happen, but just in case!
+            
+            ISEGenericCable cable = (ISEGenericCable) te;
+           
+            for(ForgeDirection direction: ForgeDirection.VALID_DIRECTIONS){
+            	ISECoverPanel coverPanel = cable.getCoverPanelOnSide(direction);
+            	if (coverPanel != null){
+            		Utils.dropItemIntoWorld(world, x, y, z, coverPanel.getCoverPanelItem());
+            	}
+            }
+        }
+		super.breakBlock(world, x, y, z, block, par6);
+	}
 }

@@ -197,7 +197,7 @@ public class EnergyNetDataProvider extends WorldSavedData{
 		obj.y = y;
 		obj.z = z;
 		obj.type = type;
-		obj.gridDataProvider = this;
+		obj.gridParameter = this;
 		tileEntityGraph.addVertex(obj);
 		gridNodeMap.put(obj.getIDString(), obj);
 		

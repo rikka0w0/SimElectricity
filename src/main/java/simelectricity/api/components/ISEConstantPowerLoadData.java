@@ -1,5 +1,6 @@
 package simelectricity.api.components;
 
+
 /**
  * Represents a constant power load
  * <p/>
@@ -9,7 +10,7 @@ package simelectricity.api.components;
  * <p/>
  * See SimElectricity wikipedia for circuit models and more informations
  */
-public interface ISEConstantPowerLoadData extends ISEComponentDataProvider{
+public interface ISEConstantPowerLoadData extends ISEComponentParameter{
 	/**
 	 * Returns the desired power that is consumed by this component
 	 */

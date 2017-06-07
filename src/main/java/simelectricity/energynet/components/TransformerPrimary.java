@@ -4,7 +4,7 @@ import net.minecraft.tileentity.TileEntity;
 import simelectricity.api.components.ISETransformerData;
 import simelectricity.api.node.ISESubComponent;
 
-public class TransformerPrimary extends SEComponent.Tile<ISETransformerData> implements ISESubComponent{	
+public class TransformerPrimary extends SEComponent.Tile<ISETransformerData> implements ISESubComponent, ISETransformerData{	
 	public double rsec, ratio;
 	public TransformerSecondary secondary;
 	
@@ -22,5 +22,15 @@ public class TransformerPrimary extends SEComponent.Tile<ISETransformerData> imp
 	public void updateComponentParameters() {
 		this.rsec = dataProvider.getInternalResistance();
 		this.ratio = dataProvider.getRatio();
+	}
+	
+	@Override
+	public double getRatio() {
+		return ratio;
+	}
+
+	@Override
+	public double getInternalResistance() {
+		return rsec;
 	}
 }

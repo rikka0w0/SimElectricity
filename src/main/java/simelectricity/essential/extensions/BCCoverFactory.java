@@ -32,12 +32,15 @@ public class BCCoverFactory implements ISECoverPanelFactory{
         
         IFacadePluggable facade = (IFacadePluggable) pipePluggable;
         
+        ItemStack newStack = itemStack.copy();
+        newStack.stackSize = 1;
+        
         return new CoverPanel(
         		true,
         		facade.isHollow(),
         		facade.getCurrentMetadata(),
-        		facade.getCurrentBlock()
-        		);
+        		facade.getCurrentBlock(),
+        		newStack);
 	}
 
 	@Override

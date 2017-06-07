@@ -1,7 +1,8 @@
 package simelectricity.api.components;
 
 
-public interface ISERegulatorData extends ISEComponentDataProvider{
+
+public interface ISERegulatorData extends ISEComponentParameter{
 	public double getRegulatedVoltage();
 	
 	public double getOutputResistance();

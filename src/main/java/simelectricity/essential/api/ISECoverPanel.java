@@ -1,6 +1,7 @@
 package simelectricity.essential.api;
 
 import net.minecraft.block.Block;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
 public interface ISECoverPanel {
@@ -8,5 +9,6 @@ public interface ISECoverPanel {
 	boolean isHollow();
 	int getBlockMeta();
 	Block getBlock();
+	ItemStack getCoverPanelItem();
 	void toNBT(NBTTagCompound nbt);
 }

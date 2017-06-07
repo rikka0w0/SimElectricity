@@ -1,2 +1,4 @@
-# Creative Tab
-itemGroup.SimElectricity=SimElectricity
+# Blocks
+tile.sime_essential:essential_cable.copper_thin.name=细铜线
+tile.sime_essential:essential_cable.copper_medium.name=铜线
+tile.sime_essential:essential_cable.copper_thick.name=粗铜线

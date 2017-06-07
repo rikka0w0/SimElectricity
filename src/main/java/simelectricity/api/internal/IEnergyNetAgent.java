@@ -4,7 +4,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
-import simelectricity.api.components.ISEComponentDataProvider;
+import simelectricity.api.components.ISEComponentParameter;
 import simelectricity.api.node.ISESimulatable;
 import simelectricity.api.node.ISESubComponent;
 
@@ -18,9 +18,11 @@ public interface IEnergyNetAgent {
      */
 	double getVoltage(ISESimulatable node);
 	
+	double getCurrentMagnitude(ISESimulatable node);
+	
 	boolean canConnectTo(TileEntity tileEntity, ForgeDirection direction);
 	
-	ISESubComponent newComponent(ISEComponentDataProvider dataProvider, TileEntity parent);
+	ISESubComponent newComponent(ISEComponentParameter dataProvider, TileEntity parent);
 	
 	ISESimulatable newCable(TileEntity dataProviderTileEntity, boolean isGridInterConnectionPoint);
 	

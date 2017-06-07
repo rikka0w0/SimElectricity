@@ -4,7 +4,7 @@ import net.minecraft.tileentity.TileEntity;
 import simelectricity.api.components.ISESwitchData;
 import simelectricity.api.node.ISESubComponent;
 
-public class SwitchA extends SEComponent.Tile<ISESwitchData> implements ISESubComponent{
+public class SwitchA extends SEComponent.Tile<ISESwitchData> implements ISESubComponent, ISESwitchData{
 	public boolean isOn;
 	public double resistance;
 	
@@ -24,5 +24,15 @@ public class SwitchA extends SEComponent.Tile<ISESwitchData> implements ISESubCo
 	public void updateComponentParameters() {
 		this.isOn = dataProvider.isOn();
 		this.resistance = dataProvider.getResistance();
+	}
+
+	@Override
+	public boolean isOn() {
+		return isOn;
+	}
+
+	@Override
+	public double getResistance() {
+		return resistance;
 	}
 }

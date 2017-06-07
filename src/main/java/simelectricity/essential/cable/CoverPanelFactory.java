@@ -31,9 +31,16 @@ public class CoverPanelFactory implements ISECoverPanelFactory{
 		boolean isHollow = nbt.getBoolean("isHollow");
 		byte meta = nbt.getByte("meta");
 		int blockID = nbt.getInteger("blockID");
-
+		ItemStack itemStack = ItemStack.loadItemStackFromNBT(nbt);
+		
+		
 		if (blockID == 0)
 			return null;
+		
+		if (itemStack == null)
+			return null;
+		
+		itemStack.stackSize = 1;
 		
 		Block block = Block.getBlockById(blockID);
 		
@@ -41,7 +48,7 @@ public class CoverPanelFactory implements ISECoverPanelFactory{
         		isBCFacade,
         		isHollow,
         		meta,
-        		block
-        		);
+        		block,
+        		itemStack);
 	}
 }

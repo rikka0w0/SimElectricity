@@ -516,5 +516,41 @@ public class EnergyNetSimulator{
     	}else{
     		return node.voltageCache;
     	}
-   }
+    }
+    
+	public double getCurrentMagnitude(ISESimulatable Tile) {
+    	SEComponent node = (SEComponent) Tile;
+    	if (node.eliminated){
+    		if (node.optimizedNeighbors.size() == 2){
+    			SEComponent A = node.optimizedNeighbors.getFirst();
+    			SEComponent B = node.optimizedNeighbors.getLast();
+    			double vA = A.voltageCache;
+    			double vB = B.voltageCache;
+    			double rA = node.optimizedResistance.getFirst();
+    			double rB = node.optimizedResistance.getLast();
+    			return Math.abs((vA-vB)/(rA+rB));
+    		}else if (node.optimizedNeighbors.size() == 1){
+    			return 0;
+    		}else if (node.optimizedNeighbors.size() == 0){
+    			return 0;
+    		}else{
+    			throw new RuntimeException("WTF mate whats going on?!");
+    		}    		
+    	}else if (node instanceof SwitchA){
+    		SwitchA switchA = (SwitchA) node;
+			double vA = switchA.voltageCache;
+			double vB = switchA.B.voltageCache;
+			return Math.abs((vA-vB)/switchA.resistance);
+    	}else if (node instanceof SwitchB){
+    		SwitchB switchB = (SwitchB) node;
+			double vA = switchB.voltageCache;
+			double vB = switchB.A.voltageCache;
+			return Math.abs((vA-vB)/switchB.A.resistance);
+    	}else if (node instanceof VoltageSource){
+    		VoltageSource vs = (VoltageSource) node;
+    		return Math.abs((vs.voltageCache-vs.v)/vs.r);
+    	}
+    	
+		return Double.NaN;
+	}
 }

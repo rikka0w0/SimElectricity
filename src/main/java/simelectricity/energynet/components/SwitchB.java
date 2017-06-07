@@ -1,9 +1,10 @@
 package simelectricity.energynet.components;
 
 import net.minecraft.tileentity.TileEntity;
+import simelectricity.api.components.ISESwitchData;
 import simelectricity.api.node.ISESubComponent;
 
-public class SwitchB extends SEComponent implements ISESubComponent{
+public class SwitchB extends SEComponent implements ISESubComponent, ISESwitchData{
 	public SwitchA A;
 	
 	public SwitchB (SwitchA A, TileEntity te){
@@ -14,5 +15,15 @@ public class SwitchB extends SEComponent implements ISESubComponent{
 	@Override
 	public ISESubComponent getComplement() {
 		return A;
+	}
+	
+	@Override
+	public boolean isOn() {
+		return A.isOn;
+	}
+
+	@Override
+	public double getResistance() {
+		return A.resistance;
 	}
 }

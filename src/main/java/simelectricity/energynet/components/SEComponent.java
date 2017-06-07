@@ -4,11 +4,11 @@ import java.util.LinkedList;
 
 import net.minecraft.tileentity.TileEntity;
 
-import simelectricity.api.components.ISEComponentDataProvider;
+import simelectricity.api.components.ISEComponentParameter;
 import simelectricity.api.node.ISESimulatable;
 import simelectricity.api.node.ISESubComponent;
 
-public abstract class SEComponent implements ISESimulatable{
+public abstract class SEComponent implements ISESimulatable, ISEComponentParameter{
 	/**
 	 * Host TileEntity for Tiles and Associated TileEntity for GridTiles
 	 */
@@ -29,15 +29,14 @@ public abstract class SEComponent implements ISESimulatable{
 	
 	
 	/**
-	 * @param <TYPE> extends ISEComponentDataProvider
+	 * @param <TYPE> extends ISEComponentParameter
 	 */
-	public static abstract class Tile<TYPE extends ISEComponentDataProvider> extends SEComponent{
+	public static abstract class Tile<TYPE extends ISEComponentParameter> extends SEComponent{
 		protected TYPE dataProvider;
 		
 		public Tile(TYPE dataProvider, TileEntity te){
 			this.dataProvider = dataProvider;
 			this.te = te;
-			//updateComponentParameters();
 		}
 		
 		/**
@@ -48,6 +47,10 @@ public abstract class SEComponent implements ISESimulatable{
 		public abstract void updateComponentParameters();
 	}
 	
+	@Override
+	public ISEComponentParameter getCachedParameters() {
+		return this;
+	}
 	
 	/**
 	 * Adjacency lists, part of graph

@@ -1,9 +1,10 @@
 package simelectricity.api.components;
 
+
 /**
  * A simple electrical model for machines or generators
  */
-public interface ISEVoltageSourceData extends ISEComponentDataProvider{
+public interface ISEVoltageSourceData extends ISEComponentParameter{
 	/**
 	 * Returns the voltage of the internal voltage source
 	 * <p/>
