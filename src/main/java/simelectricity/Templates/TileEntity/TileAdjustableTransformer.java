@@ -22,12 +22,12 @@ package simelectricity.Templates.TileEntity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.ForgeDirection;
 import simelectricity.api.SEAPI;
-import simelectricity.api.components.ISETransformerData;
+import simelectricity.api.components.ISETransformer;
 import simelectricity.api.node.ISESubComponent;
 import simelectricity.Templates.Common.TileEntityTwoPort;
 import simelectricity.Templates.Utils.IGuiSyncHandler;
 
-public class TileAdjustableTransformer extends TileEntityTwoPort implements ISETransformerData, IGuiSyncHandler {
+public class TileAdjustableTransformer extends TileEntityTwoPort implements ISETransformer, IGuiSyncHandler {
     public ISESubComponent primary = SEAPI.energyNetAgent.newComponent(this, this);
     
     //Input - primary, output - secondary

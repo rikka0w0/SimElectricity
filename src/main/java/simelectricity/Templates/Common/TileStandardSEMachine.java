@@ -23,14 +23,14 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.ForgeDirection;
 import simelectricity.api.ISEWrenchable;
 import simelectricity.api.SEAPI;
-import simelectricity.api.components.ISEVoltageSourceData;
+import simelectricity.api.components.ISEVoltageSource;
 import simelectricity.api.node.ISESubComponent;
 import simelectricity.api.tile.ISETile;
 
 /**
  * A standard SE machine can inherits this class, make things easier and less confusion
  */
-public abstract class TileStandardSEMachine extends TileSidedFacingMachine implements ISEWrenchable, ISETile, ISEVoltageSourceData {
+public abstract class TileStandardSEMachine extends TileSidedFacingMachine implements ISEWrenchable, ISETile, ISEVoltageSource {
     public ForgeDirection functionalSide = ForgeDirection.NORTH;
     public ISESubComponent tile = SEAPI.energyNetAgent.newComponent(this, this);
     

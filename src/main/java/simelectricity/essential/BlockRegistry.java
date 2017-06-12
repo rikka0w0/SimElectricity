@@ -4,7 +4,7 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import simelectricity.essential.cable.BlockCable;
 import simelectricity.essential.cable.TileCable;
 
-public class BlockRegistery {
+public class BlockRegistry {
 	public static BlockCable blockCable;
 	
 	public static void registerBlocks(){

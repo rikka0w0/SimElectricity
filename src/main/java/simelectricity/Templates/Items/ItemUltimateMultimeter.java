@@ -29,7 +29,7 @@ import net.minecraft.util.ChatComponentText;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
-import simelectricity.api.components.ISEVoltageSourceData;
+import simelectricity.api.components.ISEVoltageSource;
 import simelectricity.api.node.*;
 import simelectricity.api.tile.*;
 import simelectricity.api.SEAPI;
@@ -82,9 +82,9 @@ public class ItemUltimateMultimeter extends ItemSE {
         	ISETile tile = (ISETile)te;
         	ForgeDirection[] dirs = tile.getValidDirections();
         	
-        	if (dirs.length == 1 && tile.getComponent(dirs[0]).getCachedParameters() instanceof ISEVoltageSourceData){
+        	if (dirs.length == 1 && tile.getComponent(dirs[0]).getCachedParameters() instanceof ISEVoltageSource){
         		ISESubComponent vs = tile.getComponent(dirs[0]);
-        		ISEVoltageSourceData data = (ISEVoltageSourceData) tile.getComponent(dirs[0]).getCachedParameters();
+        		ISEVoltageSource data = (ISEVoltageSource) tile.getComponent(dirs[0]).getCachedParameters();
                 double voltage = SEAPI.energyNetAgent.getVoltage(vs);
                 double current = (voltage-data.getOutputVoltage())/data.getResistance();
                 chat(player, "Internal Voltage: " + String.valueOf(data.getOutputVoltage()) + ", " +

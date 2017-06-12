@@ -1,5 +1,5 @@
 # Creative Tab
-itemGroup.SimElectricity=SimElectricity
+itemGroup.simelectricity=SimElectricity
 
 # Items
 item.sime:SEManagementTool.name=Energy Net Management Tool

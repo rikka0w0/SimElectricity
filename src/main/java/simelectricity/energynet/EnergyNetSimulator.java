@@ -25,30 +25,36 @@ import simelectricity.energynet.components.SwitchB;
 
 
 public class EnergyNetSimulator{
-	//Contains information about the grid
-	protected EnergyNetDataProvider dataProvider;
-	
-    //Matrix solving algorithm used to solve the problem
-	protected IMatrixResolver matrix;
     //Records the number of iterations during last iterating process
 	protected int iterations;
-    //The allowed mismatch
-	protected double epsilon;
-    
-    
+	
+	//The absolute tolerance
+	protected final double epsilon;
     //The conductance placed between each PN junction(to alleviate convergence problem)
-	protected double Gpn;
-    //Diode parameter for regulator controllers
-	protected double Vt = 26e-6;
-	protected double Is = 1e-6;
+	protected final double Gpn;
+    //Diode parameters for regulator controllers
+	protected final double Vt = 26e-6;
+	protected final double Is = 1e-6;
+	
+    //Matrix solving algorithm used to solve the problem
+	protected final IMatrixResolver matrix;
+	//Contains information about the grid
+	protected final EnergyNetDataProvider dataProvider;
     
+	protected EnergyNetSimulator(double epsilon, double Gpn,
+			IMatrixResolver matrixSolver, EnergyNetDataProvider dataProvider){
+		this.epsilon = epsilon;
+		this.Gpn = Gpn;
+		this.matrix = matrixSolver;
+		this.dataProvider = dataProvider;
+	}
 	
 	/**
 	 * @param voltages input, node voltage array from last iteration
 	 * @param currents output, return the new current mismatch
 	 * @param iterator An iterator instance of the unknown voltage node linked list.
 	 */
-    private void calcCurrents(double[] voltages, double[] currents, Iterator<SEComponent> iterator){   	    	
+    private final void calcCurrents(double[] voltages, double[] currents, Iterator<SEComponent> iterator){   	    	
     	//Calculate the current flow into each node using their voltage
     	while(iterator.hasNext()){
     		SEComponent columnNode = iterator.next();
@@ -220,7 +226,7 @@ public class EnergyNetSimulator{
     	}
     }
 
-    private void formJacobian(double[] voltages, Iterator<SEComponent> iterator){   	
+    private final void formJacobian(double[] voltages, Iterator<SEComponent> iterator){   	
     	matrix.newMatrix(voltages.length);
 
     	while (iterator.hasNext()){
@@ -428,7 +434,7 @@ public class EnergyNetSimulator{
         matrix.finishEditing();
     }
     
-    public void runSimulator(boolean optimizeGraph) {   	
+    protected final void runSimulator(boolean optimizeGraph) {   	
     	if (optimizeGraph)
     		dataProvider.getTEGraph().optimizGraph();
     	
@@ -495,7 +501,7 @@ public class EnergyNetSimulator{
         SEUtils.logInfo("Calculation converges in " + String.valueOf(iterations) + " iterations.", SEUtils.simulator);        
     }
     
-    public static double getVoltage(ISESimulatable Tile){   	
+    public final static double getVoltage(ISESimulatable Tile){   
     	SEComponent node = (SEComponent) Tile;
     	if (node.eliminated){
     		if (node.optimizedNeighbors.size() == 2){
@@ -518,7 +524,7 @@ public class EnergyNetSimulator{
     	}
     }
     
-	public double getCurrentMagnitude(ISESimulatable Tile) {
+	public final static double getCurrentMagnitude(ISESimulatable Tile) {
     	SEComponent node = (SEComponent) Tile;
     	if (node.eliminated){
     		if (node.optimizedNeighbors.size() == 2){

@@ -6,7 +6,7 @@ import simelectricity.api.node.ISEGridNode;
  * This interface should be implemented by the tileEntity, which is responsible for HV tower/transformer rendering
  *
  */
-public interface ISEGridTile {
+public interface ISEGridTile{
     /**
      * This function will be called by the grid manager when a ISEGridObject is going to associate with the ISEGridTile
      * <p/>

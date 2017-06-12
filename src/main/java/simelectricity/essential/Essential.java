@@ -3,6 +3,8 @@ package simelectricity.essential;
 import simelectricity.essential.api.SEEAPI;
 import simelectricity.essential.cable.CoverPanelFactory;
 import simelectricity.essential.extensions.ExtensionBuildCraft;
+import simelectricity.essential.extensions.ExtensionRailCraft;
+import simelectricity.essential.fluids.FluidManager;
 import simelectricity.essential.utils.ITileRenderingInfoSyncHandler;
 
 import cpw.mods.fml.common.Mod;
@@ -28,8 +30,9 @@ public class Essential {
      */
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {    	
-    	ItemRegistery.registerItems();
-    	BlockRegistery.registerBlocks();
+    	ItemRegistry.registerItems();
+    	BlockRegistry.registerBlocks();
+    	FluidManager.registerFluids();
     	
     	SEEAPI.coverPanelFactory = new CoverPanelFactory();
     	
@@ -42,7 +45,7 @@ public class Essential {
      */
     @EventHandler
     public void init(FMLInitializationEvent event) {
-    	BlockRegistery.registerTileEntities();
+    	BlockRegistry.registerTileEntities();
     	
     	proxy.registerRenders();
     	
@@ -54,5 +57,6 @@ public class Essential {
     @EventHandler
     public void postInit(FMLPostInitializationEvent event) {
     	ExtensionBuildCraft.postInit();
+    	ExtensionRailCraft.postInit();
     }
 }

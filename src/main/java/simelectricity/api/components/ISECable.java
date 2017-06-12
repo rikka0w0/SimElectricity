@@ -2,7 +2,7 @@ package simelectricity.api.components;
 
 import net.minecraftforge.common.util.ForgeDirection;
 
-public interface ISECableParameter extends ISEComponentParameter{
+public interface ISECable extends ISEComponentParameter{
     /**
      * Returns the color of the cable
      * <p/>

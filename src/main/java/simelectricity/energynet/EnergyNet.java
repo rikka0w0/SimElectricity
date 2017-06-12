@@ -29,29 +29,24 @@ import simelectricity.energynet.matrix.IMatrixResolver;
 
 import java.util.*;
 
-public final class EnergyNet extends EnergyNetSimulator{
-	private EnergyNetThread thread;
-	private boolean scheduledRefresh = false;
-	
+public final class EnergyNet extends EnergyNetSimulator implements Runnable{	
 	///////////////////////////////////////////////////////
 	///Event Queue
 	///////////////////////////////////////////////////////
 	private LinkedList<IEnergyNetEvent> cachedEvents = new LinkedList<IEnergyNetEvent>();
-	private LinkedList<IEnergyNetEvent> events = new LinkedList<IEnergyNetEvent>();
+	private boolean scheduledRefresh = false;
 	
-	public void addEvent(IEnergyNetEvent event){
-		synchronized (this){
-			this.cachedEvents.add(event);
-		}
+	public synchronized void addEvent(IEnergyNetEvent event){
+		this.cachedEvents.add(event);
 	}
 	
 	/**
 	 * Called at pre-tick stage
 	 */
-	public void onPreTick(){
-		if (thread.isWorking()){
+	public synchronized void onPreTick(){
+		if (this.processing){
 			SEUtils.logWarn("Simulation takes longer than usual!", SEUtils.simulator);
-			while(thread.isWorking())
+			while(this.processing)
 				try {
 					Thread.sleep(1);
 				} catch (InterruptedException e) {
@@ -64,17 +59,12 @@ public final class EnergyNet extends EnergyNetSimulator{
 		
 		if (scheduledRefresh){
 			calc = true;
-			calc = false;
+			needOptimize = true;
+			scheduledRefresh = false;
 		}
 			
-		
-		synchronized (this){
-			this.events.clear();
-			this.events.addAll(cachedEvents);
-			this.cachedEvents.clear();
-		}
 
-		Iterator<IEnergyNetEvent> iterator = events.iterator();
+		Iterator<IEnergyNetEvent> iterator = cachedEvents.iterator();
 		
 		//Process EventQueue
 		while (iterator.hasNext()){
@@ -151,45 +141,36 @@ public final class EnergyNet extends EnergyNetSimulator{
 			
 		}
 		
-		if (calc)
-			thread.wakeUp(needOptimize);
+		cachedEvents.clear();
+		
+		if (calc){
+			this.needOptimize = needOptimize;
+			thread.interrupt();
+		}
 	}
 	
-	public void executeHandlers(){
-		Iterator<TileEntity> iterator = dataProvider.getLoadedTileIterator();
-		while(iterator.hasNext()){
-			TileEntity te = iterator.next();
-			if (te instanceof IEnergyNetUpdateHandler)
-				((IEnergyNetUpdateHandler)te).onEnergyNetUpdate();
-		}
-		iterator = dataProvider.getLoadedGridTileIterator();
-		while(iterator.hasNext()){
-			TileEntity te = iterator.next();
-			if (te instanceof IEnergyNetUpdateHandler)
-				((IEnergyNetUpdateHandler)te).onEnergyNetUpdate();
-		}
-	}
-    
-
+    //////////////////////////
+    /// Constructor
+    //////////////////////////
     public EnergyNet(World world) { 
-    	//Initialize simulator
-    	epsilon = Math.pow(10, -ConfigManager.precision);
-    	Gpn = 1.0D/ConfigManager.shuntPN;
-    	matrix = IMatrixResolver.MatrixHelper.newResolver(ConfigManager.matrixSolver);
-    	
-    	//Initialize data provider
-    	dataProvider = EnergyNetDataProvider.get(world);
+    	super(	Math.pow(10, -ConfigManager.precision),
+    			1.0D/ConfigManager.shuntPN,
+    			IMatrixResolver.MatrixHelper.newSolver(ConfigManager.matrixSolver),
+    			EnergyNetDataProvider.get(world));
     	
     	//Initialize thread
-    	thread = EnergyNetThread.create(world.provider.dimensionId, this);
+    	this.thread = new Thread(this, "SEEnergyNet_DIM" + String.valueOf(world.provider.dimensionId));
+    	this.alive = true;
+    	this.processing = false;
+	    this.thread.start();
     	
         SEUtils.logInfo("EnergyNet has been created for DIM" + String.valueOf(world.provider.dimensionId), SEUtils.general);
     }
     
-	public void notifyServerShuttingdown(){
-		thread.alive = false;
-	}
     
+    //////////////////////////
+    /// Misc.
+    //////////////////////////
     public String[] info(){
     	SEGraph tileEntityGraph = dataProvider.getTEGraph();
     	String density;
@@ -216,7 +197,7 @@ public final class EnergyNet extends EnergyNetSimulator{
         	    	};   		
     	}else{
         	return new String[]{
-        			"Time consumption:" + String.valueOf(thread.lastDuration()),
+        			"Time consumption: " + String.valueOf(this.duration) + "ms",
         	    	"Tiles: " + String.valueOf(tileEntityGraph.size()),
         	    	"Grid Objects: " + String.valueOf(dataProvider.getGridObjectCount()),
         	    	"Matrix size: " + String.valueOf(matrix.getMatrixSize()),
@@ -227,9 +208,77 @@ public final class EnergyNet extends EnergyNetSimulator{
         	    	};
     	}
     }
-
-    
+   
     public void reFresh(){
     	scheduledRefresh = true;
     }
+
+	
+
+    
+    //////////////////////////
+    /// Threading
+    //////////////////////////
+    private final Thread thread;
+    
+    private volatile boolean needOptimize;	//Set to true to launch the optimizer
+	private volatile boolean alive;			//Set to false to kill the energyNet thread
+	private volatile boolean processing;	//An indicator of the energyNet state
+	private volatile long duration;			//Time taken for the latest simulation, in milliseconds
+
+	public boolean hasValidState(){
+		return !processing;
+	}
+	
+	/**
+	 * @return thread name, e.g. SEEnergyNet_DIM0
+	 */
+    public String getThreadName(){
+    	return thread.getName();
+    }
+	
+	public void notifyServerShuttingdown(){
+		this.alive = false;
+	}
+	
+    @Override
+	public void run() {
+		long startAt;
+		while(alive){
+			try {			
+				SEUtils.logInfo(getThreadName() + " Sleep", SEUtils.simulator);
+				while (alive)
+					thread.sleep(1);
+			} catch (InterruptedException e) {
+				SEUtils.logInfo(getThreadName() + " wake up", SEUtils.simulator);
+				
+				if (!alive)
+					break;
+				
+				this.processing = true;
+				SEUtils.logInfo(getThreadName() + " Started", SEUtils.simulator);
+				startAt = System.currentTimeMillis();
+				runSimulator(needOptimize);
+				SEUtils.logInfo(getThreadName() + " Done", SEUtils.simulator);
+				duration = (System.currentTimeMillis() - startAt);
+
+				//Execute Handlers
+				Iterator<TileEntity> iterator = dataProvider.getLoadedTileIterator();
+				while(iterator.hasNext()){
+					TileEntity te = iterator.next();
+					if (te instanceof IEnergyNetUpdateHandler)
+						((IEnergyNetUpdateHandler)te).onEnergyNetUpdate();
+				}
+				iterator = dataProvider.getLoadedGridTileIterator();
+				while(iterator.hasNext()){
+					TileEntity te = iterator.next();
+					if (te instanceof IEnergyNetUpdateHandler)
+						((IEnergyNetUpdateHandler)te).onEnergyNetUpdate();
+				}
+				
+				this.processing = false;
+			}
+		}
+		SEUtils.logInfo(getThreadName() + " is shutting down", SEUtils.general);
+	}
 }

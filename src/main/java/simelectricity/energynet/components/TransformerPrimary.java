@@ -1,14 +1,14 @@
 package simelectricity.energynet.components;
 
 import net.minecraft.tileentity.TileEntity;
-import simelectricity.api.components.ISETransformerData;
+import simelectricity.api.components.ISETransformer;
 import simelectricity.api.node.ISESubComponent;
 
-public class TransformerPrimary extends SEComponent.Tile<ISETransformerData> implements ISESubComponent, ISETransformerData{	
+public class TransformerPrimary extends SEComponent.Tile<ISETransformer> implements ISESubComponent, ISETransformer{	
 	public double rsec, ratio;
 	public TransformerSecondary secondary;
 	
-	public TransformerPrimary(ISETransformerData dataProvider, TileEntity te){
+	public TransformerPrimary(ISETransformer dataProvider, TileEntity te){
 		super(dataProvider, te);
 		secondary = new TransformerSecondary(this, te);
 	}

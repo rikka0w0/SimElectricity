@@ -22,9 +22,8 @@ package simelectricity.api;
 
 public interface IEnergyNetUpdateHandler {
     /**
-     * This function will be called when the energNet updates</p>
-     * IBaseComponent, ICircuitComponent, IConductor, IEnergyTile, IManualJunction, ITransformer and ITransformerWinding can receive this event
-     * 
+     * This function will be called as soon as the energy net updating is done</p>
+     * ISECableTile, ISEGridTile and ISEMachineTile
      */
     void onEnergyNetUpdate();
 }

@@ -7,7 +7,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 import simelectricity.api.SEAPI;
-import simelectricity.essential.BlockRegistery;
+import simelectricity.essential.BlockRegistry;
 import simelectricity.essential.api.ISECoverPanel;
 import simelectricity.essential.api.ISEGenericCable;
 import simelectricity.essential.api.SEEAPI;
@@ -431,7 +431,7 @@ public class BlockCable extends SEBlock implements ITileEntityProvider, ISESubBl
         	
         	if (!world.isRemote){	//Handle on server side
         		cable.installCoverPanel(direction, coverPanel);
-        		world.notifyBlocksOfNeighborChange(x, y, z, BlockRegistery.blockCable);
+        		world.notifyBlocksOfNeighborChange(x, y, z, BlockRegistry.blockCable);
         	}
         	return true;
         }

@@ -2,12 +2,12 @@ package simelectricity.Templates.TileEntity;
 
 import simelectricity.api.SEAPI;
 
-import simelectricity.api.components.ISEDiodeData;
+import simelectricity.api.components.ISEDiode;
 import simelectricity.api.node.ISESubComponent;
 import simelectricity.Templates.Common.TileEntityTwoPort;
 import net.minecraftforge.common.util.ForgeDirection;
 
-public class TileDiode extends TileEntityTwoPort implements ISEDiodeData{
+public class TileDiode extends TileEntityTwoPort implements ISEDiode{
 	public ISESubComponent input = SEAPI.energyNetAgent.newComponent(this, this);
 	
 	/////////////////////////////////////////////////////////

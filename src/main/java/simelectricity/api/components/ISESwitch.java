@@ -1,7 +1,7 @@
 package simelectricity.api.components;
 
 
-public interface ISESwitchData extends ISEComponentParameter{
+public interface ISESwitch extends ISEComponentParameter{
 	boolean isOn();
 	double getResistance();
 }

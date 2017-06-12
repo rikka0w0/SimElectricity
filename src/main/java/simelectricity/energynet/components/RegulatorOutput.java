@@ -1,10 +1,10 @@
 package simelectricity.energynet.components;
 
 import net.minecraft.tileentity.TileEntity;
-import simelectricity.api.components.ISERegulatorData;
+import simelectricity.api.components.ISERegulator;
 import simelectricity.api.node.ISESubComponent;
 
-public class RegulatorOutput extends SEComponent implements ISESubComponent, ISERegulatorData{
+public class RegulatorOutput extends SEComponent implements ISESubComponent, ISERegulator{
 	public RegulatorInput input;
 	
 	public RegulatorOutput(RegulatorInput input, TileEntity te){

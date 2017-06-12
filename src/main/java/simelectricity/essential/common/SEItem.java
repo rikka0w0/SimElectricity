@@ -11,6 +11,9 @@ import net.minecraft.item.ItemStack;
 import simelectricity.essential.Essential;
 
 public abstract class SEItem extends Item{	
+	@Deprecated
+	protected String registryName;	//1.11.2 compatibility
+	
 	/**
 	 * 
 	 * @param name Naming rules: lower case English letters and numbers only, words are separated by '_', e.g. "cooked_beef"
@@ -19,6 +22,7 @@ public abstract class SEItem extends Item{
     public SEItem(String name, boolean hasSubItems) {
 		this.setUnlocalizedName(name);	//UnlocalizedName = "item." + name
 		//this.setRegistryName(name);
+    	this.registryName = name;
 		this.setHasSubtypes(hasSubItems);
 		
 		if (hasSubItems)

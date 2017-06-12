@@ -48,7 +48,7 @@ public interface IMatrixResolver {
     int getMatrixSize();
     
     public static class MatrixHelper {
-        public static IMatrixResolver newResolver(String name) {
+        public static IMatrixResolver newSolver(String name) {
             try {
                 return (IMatrixResolver) Class.forName("simelectricity.energynet.matrix." + name).newInstance();
             } catch (Exception e) {

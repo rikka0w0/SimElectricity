@@ -2,14 +2,14 @@ package simelectricity.energynet.components;
 
 import net.minecraft.tileentity.TileEntity;
 
-import simelectricity.api.components.ISEConstantPowerLoadData;
+import simelectricity.api.components.ISEConstantPowerLoad;
 import simelectricity.api.node.ISESubComponent;
 
-public class ConstantPowerLoad extends SEComponent.Tile<ISEConstantPowerLoadData> implements ISESubComponent, ISEConstantPowerLoadData{
+public class ConstantPowerLoad extends SEComponent.Tile<ISEConstantPowerLoad> implements ISESubComponent, ISEConstantPowerLoad{
 	public double pRated, rMin, rMax;
 	public boolean enabled;
 	
-	public ConstantPowerLoad(ISEConstantPowerLoadData dataProvider, TileEntity te){
+	public ConstantPowerLoad(ISEConstantPowerLoad dataProvider, TileEntity te){
 		super(dataProvider, te);
 	}
 

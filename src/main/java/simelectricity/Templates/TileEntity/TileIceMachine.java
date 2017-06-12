@@ -73,7 +73,7 @@ public class TileIceMachine extends TileStandardSEMachine implements IFluidHandl
             return;
         
         FluidStack fluid = tank.getFluid();
-        
+
         if(fluid!=null)
         	if (fluid.amount==0)
         		fluid=null;

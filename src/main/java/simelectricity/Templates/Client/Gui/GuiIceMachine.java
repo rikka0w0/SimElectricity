@@ -89,9 +89,10 @@ public class GuiIceMachine extends GuiContainer{
         
     	int x=par1-((width-xSize)/2),y=par2-((height-ySize)/2);
     	if (x>=35&y>=18&x<=50&y<=64){
-    		List<String> l = new ArrayList<String>();
-    		if (te.fluidID>0){
-    			l.add(String.valueOf(te.amountP/10)+"."+String.valueOf(te.amountP-(te.amountP/10)*10)+"%");
+    		Fluid fluid=FluidRegistry.getFluid(te.fluidID);
+    		if (fluid != null){
+    			List<String> l = new ArrayList<String>();
+    			l.add(fluid.getLocalizedName());
     			l.add("About "+String.valueOf(te.amountP*te.maxCapacity/1000)+"mB");
     			func_146283_a(l, x, y);   
             }             

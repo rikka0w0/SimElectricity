@@ -158,7 +158,7 @@ public class EnergyNetDataProvider extends WorldSavedData{
         	tileEntityGraph.removeVertex(cable);
         }
 	    else if (te instanceof ISETile){
-        	ISETile tile = (ISETile)te;
+	    	ISETile tile = (ISETile)te;
         	for (ForgeDirection direction : tile.getValidDirections()) {
         		ISESubComponent subComponent = tile.getComponent(direction);
         		tileEntityGraph.removeVertex((SEComponent) subComponent);
@@ -177,7 +177,7 @@ public class EnergyNetDataProvider extends WorldSavedData{
         	cable.updateComponentParameters();
         }
 	    else if (te instanceof ISETile){
-        	ISETile tile = (ISETile)te;
+	    	ISETile tile = (ISETile)te;
         	for (ForgeDirection direction : tile.getValidDirections()) {
         		ISESubComponent subComponent = tile.getComponent(direction);
         		

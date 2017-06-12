@@ -26,14 +26,13 @@ import net.minecraftforge.common.util.ForgeDirection;
 import java.util.Map;
 import java.util.WeakHashMap;
 
-import simelectricity.api.ISEPlaceable;
 import simelectricity.api.components.ISEComponentParameter;
-import simelectricity.api.components.ISEConstantPowerLoadData;
-import simelectricity.api.components.ISEDiodeData;
-import simelectricity.api.components.ISERegulatorData;
-import simelectricity.api.components.ISESwitchData;
-import simelectricity.api.components.ISETransformerData;
-import simelectricity.api.components.ISEVoltageSourceData;
+import simelectricity.api.components.ISEConstantPowerLoad;
+import simelectricity.api.components.ISEDiode;
+import simelectricity.api.components.ISERegulator;
+import simelectricity.api.components.ISESwitch;
+import simelectricity.api.components.ISETransformer;
+import simelectricity.api.components.ISEVoltageSource;
 import simelectricity.api.node.ISESimulatable;
 import simelectricity.api.node.ISESubComponent;
 import simelectricity.common.ConfigManager;
@@ -85,12 +84,16 @@ public class EnergyNetAgent implements IEnergyNetAgent{
     @Override
     public double getVoltage(ISESimulatable Tile) {
     	SEComponent obj = (SEComponent) Tile;
-        return EnergyNetAgent.getEnergyNetForWorld(obj.te.getWorldObj()).getVoltage(Tile);
+    	EnergyNet energyNet = EnergyNetAgent.getEnergyNetForWorld(obj.te.getWorldObj());
+    	
+        return energyNet.getVoltage(Tile);
     }
     
     @Override
     public double getCurrentMagnitude(ISESimulatable Tile){
     	SEComponent obj = (SEComponent) Tile;
+    	EnergyNet energyNet = EnergyNetAgent.getEnergyNetForWorld(obj.te.getWorldObj());
+    	
         return EnergyNetAgent.getEnergyNetForWorld(obj.te.getWorldObj()).getCurrentMagnitude(Tile);
     }
     
@@ -128,19 +131,19 @@ public class EnergyNetAgent implements IEnergyNetAgent{
     
 	@Override
 	public ISESubComponent newComponent(ISEComponentParameter dataProvider, TileEntity parent) {
-		if (dataProvider instanceof ISEDiodeData)
+		if (dataProvider instanceof ISEDiode)
 			//Create a pair of DiodeInput and DiodeOutput at the same time
-			return new DiodeInput((ISEDiodeData) dataProvider, parent);
-		else if (dataProvider instanceof ISETransformerData)
-			return new TransformerPrimary((ISETransformerData) dataProvider, parent);
-		else if (dataProvider instanceof ISERegulatorData)
-			return new RegulatorInput((ISERegulatorData) dataProvider, parent);
-		else if (dataProvider instanceof ISEConstantPowerLoadData)
-			return new ConstantPowerLoad((ISEConstantPowerLoadData) dataProvider, parent);
-		else if (dataProvider instanceof ISEVoltageSourceData)
-			return new VoltageSource((ISEVoltageSourceData) dataProvider, parent);
-		else if (dataProvider instanceof ISESwitchData)
-			return new SwitchA(((ISESwitchData)dataProvider), parent);
+			return new DiodeInput((ISEDiode) dataProvider, parent);
+		else if (dataProvider instanceof ISETransformer)
+			return new TransformerPrimary((ISETransformer) dataProvider, parent);
+		else if (dataProvider instanceof ISERegulator)
+			return new RegulatorInput((ISERegulator) dataProvider, parent);
+		else if (dataProvider instanceof ISEConstantPowerLoad)
+			return new ConstantPowerLoad((ISEConstantPowerLoad) dataProvider, parent);
+		else if (dataProvider instanceof ISEVoltageSource)
+			return new VoltageSource((ISEVoltageSource) dataProvider, parent);
+		else if (dataProvider instanceof ISESwitch)
+			return new SwitchA(((ISESwitch)dataProvider), parent);
 		return null;
 	}
 	
@@ -177,7 +180,7 @@ public class EnergyNetAgent implements IEnergyNetAgent{
         		SEUtils.logInfo("GridTile linked with GridObject at "+String.valueOf(te.xCoord)+","+String.valueOf(te.yCoord)+","+String.valueOf(te.zCoord), SEUtils.energyNet);
         }
         
-        if (te instanceof ISEPlaceable) {
+        if (te instanceof ISETile || te instanceof ISECableTile) {
 	        energyNet.addEvent(new TileEvent.Attach(te));
 	
 	        if (ConfigManager.showEnergyNetInfo)
@@ -214,7 +217,7 @@ public class EnergyNetAgent implements IEnergyNetAgent{
         		SEUtils.logInfo("GridTile destroyed at"+String.valueOf(te.xCoord)+","+String.valueOf(te.yCoord)+","+String.valueOf(te.zCoord), SEUtils.energyNet);
         }
         
-        if (te instanceof ISEPlaceable) {
+        if (te instanceof ISETile || te instanceof ISECableTile) {
 	        energyNet.addEvent(new TileEvent.Detach(te));     	
 	        if (ConfigManager.showEnergyNetInfo)
 	            SEUtils.logInfo("Tileentity " + te + " has detached from the energy network!", SEUtils.energyNet);

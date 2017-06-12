@@ -1,6 +1,5 @@
 package simelectricity.api.tile;
 
-import simelectricity.api.ISEPlaceable;
 import simelectricity.api.node.ISESubComponent;
 import net.minecraftforge.common.util.ForgeDirection;
 
@@ -9,7 +8,7 @@ import net.minecraftforge.common.util.ForgeDirection;
  * <p/>
  * Can be used to make transformers, regulators, diodes, switches, generators and loads
  */
-public interface ISETile extends ISEPlaceable{
+public interface ISETile{
 	/**
 	 * @return An array of directions that can be used to connect to {link}ISESubComponent
 	 */

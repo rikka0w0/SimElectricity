@@ -2,3 +2,10 @@
 tile.sime_essential:essential_cable.copper_thin.name=细铜线
 tile.sime_essential:essential_cable.copper_medium.name=铜线
 tile.sime_essential:essential_cable.copper_thick.name=粗铜线
+
+# Fluids
+fluid.vita_tea=扶她柠檬茶
+fluid.vita_tea.name=扶她柠檬茶
+
+# Items
+item.sime_essential:cell_vita.name=盒装扶她柠檬茶

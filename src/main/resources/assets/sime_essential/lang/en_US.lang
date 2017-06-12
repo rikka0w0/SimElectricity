@@ -2,3 +2,10 @@
 tile.sime_essential:essential_cable.copper_thin.name=Thin Copper Cable
 tile.sime_essential:essential_cable.copper_medium.name=Medium Copper Cable
 tile.sime_essential:essential_cable.copper_thick.name=Thick Copper Cable
+
+# Fluids
+fluid.vita_tea=Vita Lemon Tea
+fluid.vita_tea.name=Vita Lemon Tea
+
+# Items
+item.sime_essential:cell_vita.name=Vita Lemon Tea

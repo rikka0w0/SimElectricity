@@ -2,14 +2,14 @@ package simelectricity.energynet.components;
 
 import net.minecraft.tileentity.TileEntity;
 
-import simelectricity.api.components.ISEDiodeData;
+import simelectricity.api.components.ISEDiode;
 import simelectricity.api.node.ISESubComponent;
 
-public class DiodeInput extends SEComponent.Tile<ISEDiodeData> implements ISESubComponent, ISEDiodeData{
+public class DiodeInput extends SEComponent.Tile<ISEDiode> implements ISESubComponent, ISEDiode{
 	public double Rs, Is, Vt;
 	public DiodeOutput output;
 	
-	public DiodeInput(ISEDiodeData dataProvider, TileEntity te){
+	public DiodeInput(ISEDiode dataProvider, TileEntity te){
 		super(dataProvider, te);
 		output = new DiodeOutput(this, te);
 	}

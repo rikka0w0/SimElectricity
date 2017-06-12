@@ -1,7 +1,7 @@
 package simelectricity.api.components;
 
 
-public interface ISETransformerData extends ISEComponentParameter{
+public interface ISETransformer extends ISEComponentParameter{
 	public double getRatio();
 	
 	/**

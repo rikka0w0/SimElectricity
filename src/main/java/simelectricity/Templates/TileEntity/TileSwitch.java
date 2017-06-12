@@ -23,12 +23,12 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.ForgeDirection;
 import simelectricity.api.IEnergyNetUpdateHandler;
 import simelectricity.api.SEAPI;
-import simelectricity.api.components.ISESwitchData;
+import simelectricity.api.components.ISESwitch;
 import simelectricity.api.node.ISESubComponent;
 import simelectricity.Templates.Common.TileEntityTwoPort;
 import simelectricity.Templates.Utils.IGuiSyncHandler;
 
-public class TileSwitch extends TileEntityTwoPort implements ISESwitchData, IEnergyNetUpdateHandler, IGuiSyncHandler {	
+public class TileSwitch extends TileEntityTwoPort implements ISESwitch, IEnergyNetUpdateHandler, IGuiSyncHandler {	
 	ISESubComponent switchComponent = SEAPI.energyNetAgent.newComponent(this, this);
 	public double current=0F;
     

@@ -1,15 +1,15 @@
 package simelectricity.energynet.components;
 
 import net.minecraft.tileentity.TileEntity;
-import simelectricity.api.components.ISERegulatorData;
+import simelectricity.api.components.ISERegulator;
 import simelectricity.api.node.ISESubComponent;
 
-public class RegulatorInput extends SEComponent.Tile<ISERegulatorData> implements ISESubComponent, ISERegulatorData{
+public class RegulatorInput extends SEComponent.Tile<ISERegulator> implements ISESubComponent, ISERegulator{
 	public double Vref, Ro, Dmax, Rc, A, Rs, Rdummy;
 	public RegulatorOutput output;
 	public RegulatorController controller;
 	
-	public RegulatorInput(ISERegulatorData dataProvider, TileEntity te){
+	public RegulatorInput(ISERegulator dataProvider, TileEntity te){
 		super(dataProvider, te);
 		output = new RegulatorOutput(this, te);
 		controller = new RegulatorController(this, te);

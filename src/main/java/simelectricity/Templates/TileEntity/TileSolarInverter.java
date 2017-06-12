@@ -2,14 +2,14 @@ package simelectricity.Templates.TileEntity;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.ForgeDirection;
-import simelectricity.api.components.ISERegulatorData;
+import simelectricity.api.components.ISERegulator;
 import simelectricity.api.SEAPI;
 import simelectricity.api.node.ISESubComponent;
 import simelectricity.api.tile.ISETile;
 import simelectricity.Templates.Common.TileEntityTwoPort;
 import simelectricity.Templates.Utils.IGuiSyncHandler;
 
-public class TileSolarInverter extends TileEntityTwoPort implements ISETile, ISERegulatorData, IGuiSyncHandler{
+public class TileSolarInverter extends TileEntityTwoPort implements ISETile, ISERegulator, IGuiSyncHandler{
     public ISESubComponent input = SEAPI.energyNetAgent.newComponent(this, this);
 
     public double Vreg = 24;

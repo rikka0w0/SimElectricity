@@ -1,16 +1,16 @@
 package simelectricity.energynet.components;
 
 import net.minecraft.tileentity.TileEntity;
-import simelectricity.api.components.ISESwitchData;
+import simelectricity.api.components.ISESwitch;
 import simelectricity.api.node.ISESubComponent;
 
-public class SwitchA extends SEComponent.Tile<ISESwitchData> implements ISESubComponent, ISESwitchData{
+public class SwitchA extends SEComponent.Tile<ISESwitch> implements ISESubComponent, ISESwitch{
 	public boolean isOn;
 	public double resistance;
 	
 	public SwitchB B;
 	
-	public SwitchA(ISESwitchData dataProvider, TileEntity te) {
+	public SwitchA(ISESwitch dataProvider, TileEntity te) {
 		super(dataProvider, te);
 		this.B = new SwitchB(this, te);
 	}

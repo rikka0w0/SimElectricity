@@ -2,10 +2,10 @@ package simelectricity.energynet.components;
 
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
-import simelectricity.api.components.ISECableParameter;
+import simelectricity.api.components.ISECable;
 import simelectricity.api.tile.ISECableTile;
 
-public class Cable extends SEComponent.Tile<ISECableTile> implements ISECableParameter{
+public class Cable extends SEComponent.Tile<ISECable> implements ISECable{
 	//Properties, do not modify their value!
 	public final boolean isGridInterConnectionPoint;
 	private boolean[] canConnectOnSide;		//Use canConnectOnSide() instead
