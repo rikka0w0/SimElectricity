@@ -23,6 +23,7 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.Item;
@@ -41,7 +42,7 @@ import java.util.List;
 
 public class BlockTransmissionTower extends BlockContainerSE {
 	public static final String[] subNames = {"0","1","2"};
-
+	
     @Override
     @SuppressWarnings({ "rawtypes", "unchecked" })
     @SideOnly(Side.CLIENT)
@@ -108,5 +109,11 @@ public class BlockTransmissionTower extends BlockContainerSE {
     public int getRenderType()
     {
         return renderID;
+    }
+	
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void registerBlockIcons(IIconRegister r) {
+
     }
 }

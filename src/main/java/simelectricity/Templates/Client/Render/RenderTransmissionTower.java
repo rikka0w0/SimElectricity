@@ -110,48 +110,13 @@ public class RenderTransmissionTower extends RenderTranmissionTowerBase{
 	
 	@Override
 	public void renderInsulator(int meta){
-		switch (meta){
-		case 0:
+		if (meta == 0)
 			Models.renderInsulator(2, this, 0 ,2);
-			break;
-		case 1:
-			break;
-		default:
-			break;
-		}
-		
 	}
-	
+
+
 	@Override
-	public void renderTower(int meta){
-		switch (meta){
-		case 0:
-			Models.renderTower0(this);
-			break;
-		case 1:
-			GL11.glPushMatrix();
-			GL11.glTranslated(0,25,3.95);
-			GL11.glRotated(180,0,0,1);
-			Models.renderInsulator(2, this, 0 ,2);
-			GL11.glPopMatrix();
-			
-			GL11.glPushMatrix();
-			GL11.glTranslated(0,18,4.9);
-			GL11.glRotated(180,0,0,1);
-			Models.renderInsulator(2, this, 0 ,2);
-			GL11.glPopMatrix();
-			
-			GL11.glPushMatrix();
-			GL11.glTranslated(0,18,-4.9);
-			GL11.glRotated(180,0,0,1);
-			Models.renderInsulator(2, this, 0 ,2);
-			GL11.glPopMatrix();
-			
-			Models.renderTower0(this);
-			break;
-		default:
-			break;
-		}
+	public void renderTower(int meta) {
 		
 	}
 }

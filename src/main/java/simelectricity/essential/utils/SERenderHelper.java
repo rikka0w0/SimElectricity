@@ -261,5 +261,40 @@ public class SERenderHelper {
 	    }
     }
 
+    public static double distanceOf(double xStart, double yStart, double zStart, double xEnd, double yEnd, double zEnd) {
+        return Math.sqrt((xStart - xEnd) * (xStart - xEnd) +
+                (yStart - yEnd) * (yStart - yEnd) +
+                (zStart - zEnd) * (zStart - zEnd));
+    }
+    
+    public static void rotateToVec(double[][] vertexes, double xStart, double yStart, double zStart, double xEnd, double yEnd, double zEnd){
+        double distance = distanceOf(xStart, yStart, zStart, xEnd, yEnd, zEnd);
+        rotateAroundY(vertexes, (float)(Math.atan2(zStart - zEnd, xEnd - xStart) * 180 / Math.PI));
+        rotateAroundVector(vertexes, (float) (Math.acos((yEnd - yStart) / distance) * 180 / Math.PI), (zEnd - zStart) / distance, 0, (xStart - xEnd) / distance);
+    }
+    
+    public static void rotateAroundVector(double[][] vertexes, float angle, double x, double y, double z){
+    	//Normalize the axis vector
+    	double length = Math.sqrt(x*x + y*y + z*z);
+    	x = x/length;
+    	y = y/length;
+    	z = z/length;
+    	
+    	angle = angle * 0.01745329252F;	//Cast to radian
+    	double cos = MathHelper.cos(angle);
+    	double sin = MathHelper.sin(angle);
+    	
+    	for (int i=0; i<vertexes.length; i++){
+    		double d0 = vertexes[i][0]*(cos+x*x*(1-cos)) 	+ vertexes[i][1]*(x*y*(1-cos)-z*sin) 	+ vertexes[i][2]*(x*z*(1-cos)+y*sin);
+    		double d1 = vertexes[i][0]*(x*y*(1-cos)+z*sin) 	+ vertexes[i][1]*(cos+y*y*(1-cos)) 		+ vertexes[i][2]*(y*z*(1-cos)-x*sin);
+    		double d2 = vertexes[i][0]*(x*z*(1-cos)-y*sin) 	+ vertexes[i][1]*(y*z*(1-cos)+x*sin) 	+ vertexes[i][2]*(cos+z*z*(1-cos));
+    		vertexes[i][0] = d0;
+    		vertexes[i][1] = d1;
+    		vertexes[i][2] = d2;
+    	}
+    }
 
+    public static IIcon[] createTextureArray(IIcon icon){
+    	return new IIcon[]{icon, icon, icon, icon, icon, icon};
+    }
 }

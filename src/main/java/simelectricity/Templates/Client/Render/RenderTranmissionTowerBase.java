@@ -49,6 +49,9 @@ public abstract class RenderTranmissionTowerBase extends TileEntitySpecialRender
         GL11.glPushMatrix();
         GL11.glTranslated(x, y, z);
         GL11.glTranslated(0.5, 0, 0.5);
+        
+                
+        
         GL11.glRotated(rotation, 0, 1, 0);
 
         //Debugging purpose, indicates the direction

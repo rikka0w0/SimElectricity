@@ -51,7 +51,7 @@ public class ClientProxy extends CommonProxy {
         ClientRegistry.bindTileEntitySpecialRenderer(TileCableClamp.class, new RenderCableClamp());
         
         BlockTransmissionTower.renderID = (new RenderTower()).getRenderId();
-        RenderTower.bakeModel();
+        
     }
 
     @Override
