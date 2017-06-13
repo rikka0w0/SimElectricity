@@ -2,6 +2,8 @@ package simelectricity.essential.cable.render;
 
 import org.lwjgl.opengl.GL11;
 
+import simelectricity.api.SEAPI;
+import simelectricity.api.client.ITextureProvider;
 import simelectricity.essential.api.ISECoverPanel;
 import simelectricity.essential.api.ISEGenericCable;
 import simelectricity.essential.cable.BlockCable;
@@ -17,7 +19,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
-public class RenderTileCable extends TileEntitySpecialRenderer {
+public class RenderTileCable extends TileEntitySpecialRenderer implements ITextureProvider {
 	private static final ResourceLocation insulatorTexture = SERenderHelper.createResourceLocation("textures/cable/essentialCableInsulator.png");
 	private static final ResourceLocation copperTexture = SERenderHelper.createResourceLocation("textures/cable/essentialCableCopper.png");
 	
@@ -29,6 +31,11 @@ public class RenderTileCable extends TileEntitySpecialRenderer {
     	
         Tessellator t = Tessellator.instance;
         GL11.glPushMatrix();
+        GL11.glPushMatrix();
+        GL11.glTranslated(x, y, z);
+        //SEAPI.clientRender.renderCube(0.2, 1, 0.2, this, 0);
+        GL11.glPopMatrix();
+        
         GL11.glTranslated(x + 0.5, y + 0.5, z + 0.5);
         
         boolean rd,ru,rn,rs,rw,re;
@@ -182,4 +189,9 @@ public class RenderTileCable extends TileEntitySpecialRenderer {
         t.addVertexWithUV(-bound, maxY, -bound, 0, 1);
         t.draw();
     }
+
+	@Override
+	public void bindTexture(int index, int side) {
+		bindTexture(copperTexture);
+	}
 }

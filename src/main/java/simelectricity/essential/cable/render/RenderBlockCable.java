@@ -7,8 +7,10 @@ import simelectricity.essential.utils.MatrixTranformations;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.common.util.ForgeDirection;
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
@@ -28,7 +30,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 public class RenderBlockCable implements ISimpleBlockRenderingHandler{
 	public static int renderPass = -1;
 
-	private int renderID;
+	private final int renderID;
 	
 	private static final float[] xOffsets = new float[6];
 	private static final float[] yOffsets = new float[6];
@@ -166,6 +168,107 @@ public class RenderBlockCable implements ISimpleBlockRenderingHandler{
 			fakeBlock.setColor(0xFFFFFF);	
 		}		
 		
+		Block blk = Block.getBlockFromName("gold_ore");
+		IIcon icon = renderer.getBlockIcon(blk);
+		//renderer.renderFaceYPos(blk, x, y, z, icon);
+		//renderer.renderStandardBlock(Block.getBlockFromName("gold_ore"), x, y, z);
+
+		
+		double[][] myCube = createCubeVertexes(0.5,0.7,0.5);
+		translateCoord(myCube,x,y,z);
+		applyUV(myCube, icon);
+		
+
+
+		
 		return false;	//Also make sure to only return true in renderWorldBlock() if you actually render something otherwise the game will crash.
+	}
+	
+	public static void translateCoord(double[][] cubeVertexes, double x, double y, double z){
+		cubeVertexes[0][0] += x;
+		cubeVertexes[0][1] += y;
+		cubeVertexes[0][2] += z;
+		
+		cubeVertexes[1][0] += x;
+		cubeVertexes[1][1] += y;
+		cubeVertexes[1][2] += z;
+		
+		cubeVertexes[2][0] += x;
+		cubeVertexes[2][1] += y;
+		cubeVertexes[2][2] += z;
+		
+		cubeVertexes[3][0] += x;
+		cubeVertexes[3][1] += y;
+		cubeVertexes[3][2] += z;
+		
+		cubeVertexes[4][0] += x;
+		cubeVertexes[4][1] += y;
+		cubeVertexes[4][2] += z;
+		
+		cubeVertexes[5][0] += x;
+		cubeVertexes[5][1] += y;
+		cubeVertexes[5][2] += z;
+		
+		cubeVertexes[6][0] += x;
+		cubeVertexes[6][1] += y;
+		cubeVertexes[6][2] += z;
+		
+		cubeVertexes[7][0] += x;
+		cubeVertexes[7][1] += y;
+		cubeVertexes[7][2] += z;
+	}
+	
+	public static void applyUV(double[][] cubeVertexes, IIcon icon){
+		Tessellator tessellator = Tessellator.instance;    
+		
+        double d3 = icon.getInterpolatedU(0 * 16.0D);
+        double d4 = icon.getInterpolatedU(1 * 16.0D);
+        double d5 = icon.getInterpolatedV(0 * 16.0D);
+        double d6 = icon.getInterpolatedV(1 * 16.0D);
+		
+        double uMin = icon.getMinU();//3uMin
+        double uMax = icon.getMaxU();//4uMax
+        double vMin = icon.getMinV();//5vMin
+        double vMax = icon.getMaxV();//6vMax
+		
+        //Down
+		tessellator.addVertexWithUV(cubeVertexes[7][0], cubeVertexes[7][1], cubeVertexes[7][2], uMin, vMax);
+        tessellator.addVertexWithUV(cubeVertexes[6][0], cubeVertexes[6][1], cubeVertexes[6][2], uMin, vMin);
+        tessellator.addVertexWithUV(cubeVertexes[5][0], cubeVertexes[5][1], cubeVertexes[5][2], uMax, vMin);
+        tessellator.addVertexWithUV(cubeVertexes[4][0], cubeVertexes[4][1], cubeVertexes[4][2], uMax, vMax);
+        
+		//Up
+		tessellator.addVertexWithUV(cubeVertexes[0][0], cubeVertexes[0][1], cubeVertexes[0][2], uMax, vMax);
+        tessellator.addVertexWithUV(cubeVertexes[1][0], cubeVertexes[1][1], cubeVertexes[1][2], uMax, vMin);
+        tessellator.addVertexWithUV(cubeVertexes[2][0], cubeVertexes[2][1], cubeVertexes[2][2], uMin, vMin);
+        tessellator.addVertexWithUV(cubeVertexes[3][0], cubeVertexes[3][1], cubeVertexes[3][2], uMin, vMax);
+        
+        
+        //Zpos
+        tessellator.addVertexWithUV(cubeVertexes[3][0], cubeVertexes[3][1], cubeVertexes[3][2], uMin, vMin);
+        tessellator.addVertexWithUV(cubeVertexes[7][0], cubeVertexes[7][1], cubeVertexes[7][2], uMin, vMax);
+        tessellator.addVertexWithUV(cubeVertexes[4][0], cubeVertexes[4][1], cubeVertexes[4][2], uMax, vMax);
+        tessellator.addVertexWithUV(cubeVertexes[0][0], cubeVertexes[0][1], cubeVertexes[0][2], uMax, vMin);
+
+	}
+	
+	public static double[][] createCubeVertexes(double maxX, double maxY, double maxZ){
+		double[][] vertexes = new double[8][];
+		double x = maxX / 2.0D;
+		double z = maxZ / 2.0D;
+		
+		//Top
+		vertexes[0] = new double[]{x,maxY,x};
+		vertexes[1] = new double[]{x,maxY,-x};
+		vertexes[2] = new double[]{-x,maxY,-x};
+		vertexes[3] = new double[]{-x,maxY,x};
+		
+		//Bottom
+		vertexes[4] = new double[]{x,0,x};
+		vertexes[5] = new double[]{x,0,-x};
+		vertexes[6] = new double[]{-x,0,-x};
+		vertexes[7] = new double[]{-x,0,x};
+        
+        return vertexes;
 	}
 }
