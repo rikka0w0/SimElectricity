@@ -1,19 +1,13 @@
 package simelectricity.essential.cable.render;
 
-import org.lwjgl.opengl.GL11;
-
-import simelectricity.essential.api.ISECoverPanel;
 import simelectricity.essential.api.ISEGenericCable;
 import simelectricity.essential.cable.BlockCable;
-import simelectricity.essential.utils.MatrixTranformations;
 import simelectricity.essential.utils.SERenderHelper;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
-import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
-import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.common.util.ForgeDirection;
 

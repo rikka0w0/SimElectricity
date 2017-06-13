@@ -8,7 +8,6 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 import simelectricity.essential.api.ISECoverPanel;
 import simelectricity.essential.api.ISEGenericCable;
-import simelectricity.essential.cable.BlockCable;
 import simelectricity.essential.cable.CoverPanel;
 import simelectricity.essential.utils.MatrixTranformations;
 

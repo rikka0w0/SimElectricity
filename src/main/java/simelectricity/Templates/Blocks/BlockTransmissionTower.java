@@ -101,4 +101,12 @@ public class BlockTransmissionTower extends BlockContainerSE {
     public boolean isOpaqueCube() {
         return false;
     }
+    
+	@Deprecated
+	public static int renderID = 0; 	//Definition has changed from 1.8
+	@Override
+    public int getRenderType()
+    {
+        return renderID;
+    }
 }

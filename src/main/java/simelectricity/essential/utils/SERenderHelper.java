@@ -223,8 +223,8 @@ public class SERenderHelper {
 
         for (int i=0; i<vertexes.length; i++){
 	        double d0 = vertexes[i][0];
-	        double d1 = vertexes[i][1] * (double)f1 + vertexes[i][2] * (double)f2;
-	        double d2 = vertexes[i][2] * (double)f1 - vertexes[i][1] * (double)f2;
+	        double d1 = vertexes[i][1] * f1 + vertexes[i][2] * f2;
+	        double d2 = vertexes[i][2] * f1 - vertexes[i][1] * f2;
 	        vertexes[i][0] = d0;
 	        vertexes[i][1] = d1;
 	        vertexes[i][2] = d2;
@@ -236,9 +236,9 @@ public class SERenderHelper {
         float f2 = MathHelper.sin(angle * 0.01745329252F);
         
         for (int i=0; i<vertexes.length; i++){
-            double d0 = vertexes[i][0] * (double)f1 + vertexes[i][2] * (double)f2;
+            double d0 = vertexes[i][0] * f1 + vertexes[i][2] * f2;
             double d1 = vertexes[i][1];
-            double d2 = vertexes[i][2] * (double)f1 - vertexes[i][0] * (double)f2;
+            double d2 = vertexes[i][2] * f1 - vertexes[i][0] * f2;
             vertexes[i][0] = d0;
             vertexes[i][1] = d1;
             vertexes[i][2] = d2;
@@ -252,8 +252,8 @@ public class SERenderHelper {
 
         
         for (int i=0; i<vertexes.length; i++){
-	        double d0 = vertexes[i][0] * (double)f1 + vertexes[i][1] * (double)f2;
-	        double d1 = vertexes[i][1] * (double)f1 - vertexes[i][0] * (double)f2;
+	        double d0 = vertexes[i][0] * f1 + vertexes[i][1] * f2;
+	        double d1 = vertexes[i][1] * f1 - vertexes[i][0] * f2;
 	        double d2 = vertexes[i][2];
 	        vertexes[i][0] = d0;
 	        vertexes[i][1] = d1;

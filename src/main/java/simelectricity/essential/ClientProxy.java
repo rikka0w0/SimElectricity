@@ -1,9 +1,7 @@
 package simelectricity.essential;
 
 import simelectricity.essential.cable.BlockCable;
-import simelectricity.essential.cable.TileCable;
 import simelectricity.essential.cable.render.RenderBlockCable;
-import cpw.mods.fml.client.registry.ClientRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.World;
 

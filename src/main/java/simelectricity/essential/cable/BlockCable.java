@@ -1,7 +1,5 @@
 package simelectricity.essential.cable;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -18,7 +16,6 @@ import simelectricity.essential.common.ISESubBlock;
 import simelectricity.essential.common.SEBlock;
 import simelectricity.essential.common.SEItemBlock;
 import simelectricity.essential.utils.MatrixTranformations;
-import simelectricity.essential.utils.SERenderHelper;
 import simelectricity.essential.utils.Utils;
 
 import net.minecraft.block.Block;

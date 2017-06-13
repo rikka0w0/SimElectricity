@@ -27,6 +27,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
+import simelectricity.Templates.Blocks.BlockTransmissionTower;
 import simelectricity.Templates.Client.Gui.*;
 import simelectricity.Templates.Client.Render.*;
 import simelectricity.Templates.TileEntity.*;
@@ -48,6 +49,9 @@ public class ClientProxy extends CommonProxy {
         ClientRegistry.bindTileEntitySpecialRenderer(TileWire.class, new RenderWire());
         ClientRegistry.bindTileEntitySpecialRenderer(TileTransmissionTower.class, new RenderTransmissionTower());
         ClientRegistry.bindTileEntitySpecialRenderer(TileCableClamp.class, new RenderCableClamp());
+        
+        BlockTransmissionTower.renderID = (new RenderTower()).getRenderId();
+        RenderTower.bakeModel();
     }
 
     @Override
