@@ -1,8 +1,8 @@
 package simelectricity.essential;
 
+import simelectricity.essential.cable.BlockCable;
 import simelectricity.essential.cable.TileCable;
 import simelectricity.essential.cable.render.RenderBlockCable;
-import simelectricity.essential.cable.render.RenderTileCable;
 import cpw.mods.fml.client.registry.ClientRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.World;
@@ -19,9 +19,8 @@ public class ClientProxy extends CommonProxy{
 	}
 	
 	@Override
-	public void registerRenders() {
-		ClientRegistry.bindTileEntitySpecialRenderer(TileCable.class, new RenderTileCable());
-		
-		new RenderBlockCable();
+	public void registerRenders() {		
+		BlockCable.renderID = (new RenderBlockCable()).getRenderId();
+		RenderBlockCable.bakeCableModel(BlockRegistry.blockCable);
 	}
 }

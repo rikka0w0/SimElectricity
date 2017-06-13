@@ -6,6 +6,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
 public class CoverPanel implements ISECoverPanel{
+	public static final double thickness = 0.05;	//Constant
+	
 	private boolean isBCFacade;
 	private boolean isHollow;
 	private int meta;

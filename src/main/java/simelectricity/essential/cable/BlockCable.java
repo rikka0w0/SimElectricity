@@ -1,5 +1,7 @@
 package simelectricity.essential.cable;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -16,6 +18,7 @@ import simelectricity.essential.common.ISESubBlock;
 import simelectricity.essential.common.SEBlock;
 import simelectricity.essential.common.SEItemBlock;
 import simelectricity.essential.utils.MatrixTranformations;
+import simelectricity.essential.utils.SERenderHelper;
 import simelectricity.essential.utils.Utils;
 
 import net.minecraft.block.Block;
@@ -42,32 +45,39 @@ import net.minecraftforge.common.util.ForgeDirection;
  * @author Rikka0_0
  */
 public class BlockCable extends SEBlock implements ITileEntityProvider, ISESubBlock{
-	public static final String[] subNames = new String[]{"copper_thin", "copper_medium", "copper_thick"};
-	public static final double[] thickness = new double[]{0.22, 0.32, 0.42};
-	public static final double[] resistances = new double[]{0.1, 0.01, 0.001};
-	public static final double coverPanelThickness = 0.05;
+	///////////////////////////////
+	/// Cable Properties
+	///////////////////////////////
+	public final String[] subNames;
+	public final double[] thickness;
+	public final double[] resistances;
 	
-	//Replaced by json in 1.8 and above
-	@Deprecated
-	protected static IIcon[] iconCache = new IIcon[subNames.length];
-	@Deprecated
-	public static int renderID = 0;
-	@Deprecated
-	public static class ItemBlock extends SEItemBlock{
-		public ItemBlock(Block block) {	super(block);}
-		
-	    @SideOnly(Side.CLIENT)
-	    public IIcon getIconFromDamage(int damage){
-	    	return iconCache[damage];
-	    }
-	}
+	private final Class<? extends TileCable> tileEntityClass;
 	
 	///////////////////////////////
 	///Block Properties
 	///////////////////////////////
 	public BlockCable() {
-		super("essential_cable", Material.circuits, ItemBlock.class);
-		setHardness(0.2F);
+		this("essential_cable", Material.circuits, ItemBlock.class, 
+				new String[]{"copper_thin", "copper_medium", "copper_thick"},
+				new double[]{0.22, 0.32, 0.42},
+				new double[]{0.1, 0.01, 0.001},
+				TileCable.class);
+		setHardness(0.2F);		
+	}
+	
+	protected BlockCable(String name, Material material, Class<? extends ItemBlock> itemBlockClass,
+							String[] cableTypes, double[] thicknessList, double[] resistanceList, Class<? extends TileCable> tileEntityClass) {
+		super(name, material, itemBlockClass);
+		this.subNames = cableTypes;
+		this.thickness = thicknessList;
+		this.resistances = resistanceList;
+		this.tileEntityClass = tileEntityClass;
+		
+		// TODO make this client only if possible
+		this.insulatorTexture = new IIcon[subNames.length]; 
+		this.copperTexture = new IIcon[subNames.length]; 
+		this.inventoryTexture = new IIcon[subNames.length];
 	}
 	
 	@Override
@@ -78,11 +88,17 @@ public class BlockCable extends SEBlock implements ITileEntityProvider, ISESubBl
 
 	@Override
 	public TileEntity createNewTileEntity(World world, int meta) {
-		TileCable cable = new TileCable();
+		TileCable cable;
+		try {
+			cable = this.tileEntityClass.getConstructor().newInstance();
+			if (!world.isRemote)	//createNewTileEntity is only called by server when the block is firstly placed
+				cable.setResistanceOnPlace(resistances[meta]);
+			return cable;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		
-		if (!world.isRemote)	//createNewTileEntity is only called by server when the block is firstly placed
-			cable.setResistanceOnPlace(resistances[meta]);
-		return cable;
+		return null;
 	}
 	
 	@Override
@@ -95,6 +111,35 @@ public class BlockCable extends SEBlock implements ITileEntityProvider, ISESubBl
         return false;
     }
     
+	////////////////////////////////////
+	/// Rendering
+	////////////////////////////////////
+    @SideOnly(Side.CLIENT)
+    public double[][][][] cableBranchModels;    
+	//Replaced by json in 1.8 and above
+	@Deprecated
+	public final IIcon[] insulatorTexture; 
+	@Deprecated
+	public final IIcon[] copperTexture; 
+	@Deprecated
+	public final IIcon[] inventoryTexture;
+	@Deprecated
+	public static class ItemBlock extends SEItemBlock{	
+		public ItemBlock(Block block) {super(block);}
+		
+	    @SideOnly(Side.CLIENT)
+	    public IIcon getIconFromDamage(int damage){
+	    	return ((BlockCable)field_150939_a).inventoryTexture[damage];
+	    }
+	}
+	@Deprecated
+	public static int renderID = 0; 	//Definition has changed from 1.8
+	@Override
+    public int getRenderType()
+    {
+        return renderID;
+    }
+    
 	@Override
 	public boolean isOpaqueCube() {
 		return false;
@@ -104,13 +149,6 @@ public class BlockCable extends SEBlock implements ITileEntityProvider, ISESubBl
 	public boolean isNormalCube() {
 		return false;
 	}
-	
-	//Definition has changed from 1.8
-	@Override
-    public int getRenderType()
-    {
-        return renderID;
-    }
 	
 	@Override
 	public boolean canRenderInPass(int pass) {
@@ -129,7 +167,9 @@ public class BlockCable extends SEBlock implements ITileEntityProvider, ISESubBl
     public void registerBlockIcons(IIconRegister iconRegister)
     {
 		for (int i = 0; i<subNames.length; i++){
-			iconCache[i] = iconRegister.registerIcon("sime_essential:"+registryName+"_"+subNames[i]);
+			insulatorTexture[i] = iconRegister.registerIcon("sime_essential:cable/" + registryName + "_" + subNames[i] + "_insulator");
+			copperTexture[i] = iconRegister.registerIcon("sime_essential:cable/" + registryName + "_" + subNames[i] + "_copper");
+			inventoryTexture[i] = iconRegister.registerIcon("sime_essential:cable/" + registryName + "_" + subNames[i] + "_inventory");
 		}
     }
 	
@@ -137,7 +177,12 @@ public class BlockCable extends SEBlock implements ITileEntityProvider, ISESubBl
     @SideOnly(Side.CLIENT)
     @Override
     public IIcon getIcon(int side, int meta) {
-        return iconCache[meta];
+		if (side == 8)
+			return insulatorTexture[meta];
+		if (side == 9)
+			return copperTexture[meta];
+		
+		return inventoryTexture[meta];
     }
 	
 	@Override
@@ -179,7 +224,7 @@ public class BlockCable extends SEBlock implements ITileEntityProvider, ISESubBl
 		bounds[0][1] = 1;
 		// Y START - END
 		bounds[1][0] = 0;
-		bounds[1][1] = (float) coverPanelThickness;
+		bounds[1][1] = (float) CoverPanel.thickness;
 		// Z START - END
 		bounds[2][0] = 0;
 		bounds[2][1] = 1;
@@ -334,22 +379,22 @@ public class BlockCable extends SEBlock implements ITileEntityProvider, ISESubBl
 
 		//Cover panel
 		if (cable.getCoverPanelOnSide(ForgeDirection.DOWN) != null)
-			addCollisionBoxToList(x, y, z, axisAlignedBB, collidingBoxes, 0, 0, 0, 1, coverPanelThickness, 1);
+			addCollisionBoxToList(x, y, z, axisAlignedBB, collidingBoxes, 0, 0, 0, 1, CoverPanel.thickness, 1);
 		
 		if (cable.getCoverPanelOnSide(ForgeDirection.UP) != null)
-			addCollisionBoxToList(x, y, z, axisAlignedBB, collidingBoxes, 0, 1 - coverPanelThickness, 0, 1, 1, 1);
+			addCollisionBoxToList(x, y, z, axisAlignedBB, collidingBoxes, 0, 1 - CoverPanel.thickness, 0, 1, 1, 1);
 		
 		if (cable.getCoverPanelOnSide(ForgeDirection.NORTH) != null)
-			addCollisionBoxToList(x, y, z, axisAlignedBB, collidingBoxes, 0, 0, 0, 1, 1, coverPanelThickness);
+			addCollisionBoxToList(x, y, z, axisAlignedBB, collidingBoxes, 0, 0, 0, 1, 1, CoverPanel.thickness);
 		
 		if (cable.getCoverPanelOnSide(ForgeDirection.SOUTH) != null)
-			addCollisionBoxToList(x, y, z, axisAlignedBB, collidingBoxes, 0, 0, 1 - coverPanelThickness, 1, 1, 1);
+			addCollisionBoxToList(x, y, z, axisAlignedBB, collidingBoxes, 0, 0, 1 - CoverPanel.thickness, 1, 1, 1);
 				
 		if (cable.getCoverPanelOnSide(ForgeDirection.WEST) != null)
-			addCollisionBoxToList(x, y, z, axisAlignedBB, collidingBoxes, 0, 0, 0, coverPanelThickness, 1, 1);
+			addCollisionBoxToList(x, y, z, axisAlignedBB, collidingBoxes, 0, 0, 0, CoverPanel.thickness, 1, 1);
 		
 		if (cable.getCoverPanelOnSide(ForgeDirection.EAST) != null)
-			addCollisionBoxToList(x, y, z, axisAlignedBB, collidingBoxes, 1 - coverPanelThickness, 0, 0, 1, 1, 1);
+			addCollisionBoxToList(x, y, z, axisAlignedBB, collidingBoxes, 1 - CoverPanel.thickness, 0, 0, 1, 1, 1);
 	}
 
 	@SideOnly(Side.CLIENT)
@@ -486,7 +531,7 @@ public class BlockCable extends SEBlock implements ITileEntityProvider, ISESubBl
 	
 	@Override
 	public ItemStack getPickBlock(MovingObjectPosition target, World world, int x, int y, int z) {
-		return null;
+		return null; // TODO QAQ!!!
 	}
 	
 	@Override
