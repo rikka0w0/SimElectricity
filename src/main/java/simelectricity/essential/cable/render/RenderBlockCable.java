@@ -128,7 +128,7 @@ public class RenderBlockCable implements ISimpleBlockRenderingHandler{
 		});
 
 		
-		return false;	//Also make sure to only return true in renderWorldBlock() if you actually render something otherwise the game will crash.
+		return true;	//Also make sure to only return true in renderWorldBlock() if you actually render something otherwise the game will crash.
 	}
 
 	public static void bakeCableModel(BlockCable block){

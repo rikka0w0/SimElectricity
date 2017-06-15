@@ -70,7 +70,7 @@ public abstract class SEBlock extends Block{
     	return this.itemBlock;
     }
     
-    public abstract void beforeRegister();
+    public void beforeRegister(){}
     
 	//BlockState --------------------------------------------------------------------
 	/**

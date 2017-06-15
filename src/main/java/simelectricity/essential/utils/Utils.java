@@ -1,11 +1,13 @@
 package simelectricity.essential.utils;
 
+import java.util.List;
 import java.util.Random;
 
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -69,4 +71,12 @@ public class Utils {
             item.stackSize = 0;
         }
     }
+    
+	public static void addCollisionBoxToList(int x, int y, int z, AxisAlignedBB addCollisionBoxToList, List collidingBoxes,
+			double minX, double minY, double minZ, double maxX, double maxY, double maxZ){
+		AxisAlignedBB axisalignedbb1 = AxisAlignedBB.getBoundingBox(x + minX, y + minY, z + minZ, x + maxX, y + maxY, z + maxZ);
+	
+        if (axisalignedbb1 != null && addCollisionBoxToList.intersectsWith(axisalignedbb1))
+        	collidingBoxes.add(axisalignedbb1);
+	}
 }

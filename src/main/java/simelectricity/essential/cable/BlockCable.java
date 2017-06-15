@@ -203,14 +203,6 @@ public class BlockCable extends SEBlock implements ITileEntityProvider, ISESubBl
 	///CollisionBoxes
 	//////////////////////////////////
 	//Custom ray trace
-	private static void addCollisionBoxToList(int x, int y, int z, AxisAlignedBB addCollisionBoxToList, List collidingBoxes,
-			double minX, double minY, double minZ, double maxX, double maxY, double maxZ){
-		AxisAlignedBB axisalignedbb1 = AxisAlignedBB.getBoundingBox(x + minX, y + minY, z + minZ, x + maxX, y + maxY, z + maxZ);
-	
-        if (axisalignedbb1 != null && addCollisionBoxToList.intersectsWith(axisalignedbb1))
-        	collidingBoxes.add(axisalignedbb1);
-	}
-	
 	private static AxisAlignedBB getCoverPanelBoundingBox(ForgeDirection side) {
 		if (side == ForgeDirection.UNKNOWN)
 			return null;
@@ -301,7 +293,8 @@ public class BlockCable extends SEBlock implements ITileEntityProvider, ISESubBl
 		}
 
 		// reset bounds
-		setBlockBounds(0, 0, 0, 1, 1, 1);
+		this.setBlockBoundsBasedOnState(world, x, y, z);
+		//setBlockBounds(0, 0, 0, 1, 1, 1);
 
 		if (minIndex == -1) {
 			return null;	//The player is looking at the block, but his eye sight does not intersect with any part.
@@ -353,47 +346,83 @@ public class BlockCable extends SEBlock implements ITileEntityProvider, ISESubBl
 		double max = 0.5 + thickness[meta]/2;
 	
 		//Center
-		addCollisionBoxToList(x, y, z, axisAlignedBB, collidingBoxes, min, min, min, max, max, max);
+		Utils.addCollisionBoxToList(x, y, z, axisAlignedBB, collidingBoxes, min, min, min, max, max, max);
 	
 		//Branches
 		if (cable.connectedOnSide(ForgeDirection.DOWN))
-			addCollisionBoxToList(x, y, z, axisAlignedBB, collidingBoxes, min, 0, min, max, max, max);
+			Utils.addCollisionBoxToList(x, y, z, axisAlignedBB, collidingBoxes, min, 0, min, max, max, max);
 		
 		if (cable.connectedOnSide(ForgeDirection.UP))
-			addCollisionBoxToList(x, y, z, axisAlignedBB, collidingBoxes, min, min, min, max, 1, max);
+			Utils.addCollisionBoxToList(x, y, z, axisAlignedBB, collidingBoxes, min, min, min, max, 1, max);
 		
 		if (cable.connectedOnSide(ForgeDirection.NORTH))
-			addCollisionBoxToList(x, y, z, axisAlignedBB, collidingBoxes, min, min, 0, max, max, max);
+			Utils.addCollisionBoxToList(x, y, z, axisAlignedBB, collidingBoxes, min, min, 0, max, max, max);
 		
 		if (cable.connectedOnSide(ForgeDirection.SOUTH))
-			addCollisionBoxToList(x, y, z, axisAlignedBB, collidingBoxes, min, min, min, max, max, 1);
+			Utils.addCollisionBoxToList(x, y, z, axisAlignedBB, collidingBoxes, min, min, min, max, max, 1);
 				
 		if (cable.connectedOnSide(ForgeDirection.WEST))
-			addCollisionBoxToList(x, y, z, axisAlignedBB, collidingBoxes, 0, min, min, max, max, max);
+			Utils.addCollisionBoxToList(x, y, z, axisAlignedBB, collidingBoxes, 0, min, min, max, max, max);
 		
 		if (cable.connectedOnSide(ForgeDirection.EAST))
-			addCollisionBoxToList(x, y, z, axisAlignedBB, collidingBoxes, min, min, min, 1, max, max);
+			Utils.addCollisionBoxToList(x, y, z, axisAlignedBB, collidingBoxes, min, min, min, 1, max, max);
 
 		//Cover panel
 		if (cable.getCoverPanelOnSide(ForgeDirection.DOWN) != null)
-			addCollisionBoxToList(x, y, z, axisAlignedBB, collidingBoxes, 0, 0, 0, 1, CoverPanel.thickness, 1);
+			Utils.addCollisionBoxToList(x, y, z, axisAlignedBB, collidingBoxes, 0, 0, 0, 1, CoverPanel.thickness, 1);
 		
 		if (cable.getCoverPanelOnSide(ForgeDirection.UP) != null)
-			addCollisionBoxToList(x, y, z, axisAlignedBB, collidingBoxes, 0, 1 - CoverPanel.thickness, 0, 1, 1, 1);
+			Utils.addCollisionBoxToList(x, y, z, axisAlignedBB, collidingBoxes, 0, 1 - CoverPanel.thickness, 0, 1, 1, 1);
 		
 		if (cable.getCoverPanelOnSide(ForgeDirection.NORTH) != null)
-			addCollisionBoxToList(x, y, z, axisAlignedBB, collidingBoxes, 0, 0, 0, 1, 1, CoverPanel.thickness);
+			Utils.addCollisionBoxToList(x, y, z, axisAlignedBB, collidingBoxes, 0, 0, 0, 1, 1, CoverPanel.thickness);
 		
 		if (cable.getCoverPanelOnSide(ForgeDirection.SOUTH) != null)
-			addCollisionBoxToList(x, y, z, axisAlignedBB, collidingBoxes, 0, 0, 1 - CoverPanel.thickness, 1, 1, 1);
+			Utils.addCollisionBoxToList(x, y, z, axisAlignedBB, collidingBoxes, 0, 0, 1 - CoverPanel.thickness, 1, 1, 1);
 				
 		if (cable.getCoverPanelOnSide(ForgeDirection.WEST) != null)
-			addCollisionBoxToList(x, y, z, axisAlignedBB, collidingBoxes, 0, 0, 0, CoverPanel.thickness, 1, 1);
+			Utils.addCollisionBoxToList(x, y, z, axisAlignedBB, collidingBoxes, 0, 0, 0, CoverPanel.thickness, 1, 1);
 		
 		if (cable.getCoverPanelOnSide(ForgeDirection.EAST) != null)
-			addCollisionBoxToList(x, y, z, axisAlignedBB, collidingBoxes, 1 - CoverPanel.thickness, 0, 0, 1, 1, 1);
+			Utils.addCollisionBoxToList(x, y, z, axisAlignedBB, collidingBoxes, 1 - CoverPanel.thickness, 0, 0, 1, 1, 1);
 	}
 
+    @Override
+    public void setBlockBoundsBasedOnState(IBlockAccess world, int x, int y, int z) {
+		TileEntity te = world.getTileEntity(x, y, z);
+		
+		if (te instanceof ISEGenericCable){
+			int meta = world.getBlockMetadata(x, y, z);
+			ISEGenericCable cable = (ISEGenericCable)te;
+			
+			double x1,y1,z1, x2,y2,z2;
+			x1= 0.5 - thickness[meta]/2;
+			y1= x1;
+			z1= x1;
+			x2= 0.5 + thickness[meta]/2;
+			y2= x2;
+			z2= x2;
+			
+			if (cable.connectedOnSide(ForgeDirection.DOWN))
+				this.minY = 0;
+			
+			if (cable.connectedOnSide(ForgeDirection.UP))
+				this.maxY = 1;
+			
+			if (cable.connectedOnSide(ForgeDirection.NORTH))
+				this.minZ = 0;
+			
+			if (cable.connectedOnSide(ForgeDirection.SOUTH))
+				this.maxZ = 1;
+					
+			if (cable.connectedOnSide(ForgeDirection.WEST))
+				this.minX = 0;
+			
+			if (cable.connectedOnSide(ForgeDirection.EAST))
+				this.maxX = 1;
+		}
+    }
+	
 	@SideOnly(Side.CLIENT)
 	@Override
 	public AxisAlignedBB getSelectedBoundingBoxFromPool(World world, int x, int y, int z) {

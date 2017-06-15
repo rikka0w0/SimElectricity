@@ -55,12 +55,12 @@ public abstract class RenderTranmissionTowerBase extends TileEntitySpecialRender
         GL11.glRotated(rotation, 0, 1, 0);
 
         //Debugging purpose, indicates the direction
-        GL11.glPushMatrix();
-        SEAPI.clientRender.renderCable(0, 0, 0, 1, 0, 0, 0.1, this, 2);
-        GL11.glPopMatrix();
+        //GL11.glPushMatrix();
+        //SEAPI.clientRender.renderCable(0, 0, 0, 1, 0, 0, 0.1, this, 2);
+        //GL11.glPopMatrix();
         
         GL11.glPushMatrix();
-        renderTower(tileEntity.getBlockMetadata()); 
+        renderTower(); 
         GL11.glPopMatrix();
                
         GL11.glPopMatrix();
@@ -99,5 +99,5 @@ public abstract class RenderTranmissionTowerBase extends TileEntitySpecialRender
 	
 	public abstract void renderInsulator(int meta);
 	
-	public abstract void renderTower(int meta);
+	public abstract void renderTower();
 }

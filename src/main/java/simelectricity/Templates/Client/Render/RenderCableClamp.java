@@ -33,7 +33,7 @@ public class RenderCableClamp extends RenderTranmissionTowerBase{
 	}
 
 	@Override
-	public void renderTower(int meta) {
+	public void renderTower() {
     	GL11.glPushMatrix();
         SEAPI.clientRender.renderCube(0.25, 1, 0.25, this, 0);
         GL11.glPopMatrix();

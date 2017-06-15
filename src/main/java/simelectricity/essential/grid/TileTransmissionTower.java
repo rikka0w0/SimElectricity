@@ -1,4 +1,4 @@
-package simelectricity.Templates.TileEntity;
+package simelectricity.essential.grid;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -12,34 +12,43 @@ import simelectricity.api.client.ITransmissionTowerRenderHelper;
 import simelectricity.api.node.ISEGridNode;
 import simelectricity.api.node.ISESimulatable;
 import simelectricity.api.tile.ISEGridTile;
+import simelectricity.essential.common.SEEnergyTile;
 import simelectricity.essential.utils.ITileRenderingInfoSyncHandler;
-import simelectricity.Templates.Common.TileEntitySE;
 
 
 
-public class TileTransmissionTower extends TileEntitySE implements ISEGridTile,ITileRenderingInfoSyncHandler, ITransmissionTower{
-	public int facing;
+public class TileTransmissionTower extends SEEnergyTile implements ISEGridTile, ITileRenderingInfoSyncHandler, ITransmissionTower{
 	public int neighborCoords[] = new int[] { 0, -1, 0, 0, -1, 0 };
 	private ITransmissionTowerRenderHelper renderHelper;
 
 	@Override
-	public ITransmissionTowerRenderHelper getRenderHelper() {return renderHelper;}
+	public ITransmissionTowerRenderHelper getRenderHelper() {
+        //Create renderHelper on client side
+        if (worldObj.isRemote){
+			if (renderHelper == null)
+				renderHelper = SEAPI.clientRender.newTransmissionTowerRenderHelper(this);
+			renderHelper.updateRenderData(neighborCoords[0],neighborCoords[1],neighborCoords[2],neighborCoords[3],neighborCoords[4],neighborCoords[5]);
+        	return renderHelper;
+        }else{
+        	return null;
+        }
+	}
 	
 	@Override
 	public double getInsulatorLength() {return 2;}
 	
 	@Override
 	public double[] getInsulatorPositionArray() {
-		switch (getBlockMetadata()){
-		case 0: return new double[]{-1, 18, -4.5, -0.7, 23, 0, -1, 18, 4.5,
-				   					1, 18, -4.5, 0.7, 23, 0, 1, 18, 4.5};
-		case 1:	return new double[]{0, 16, -4.9, 0, 23, 3.95, 0, 16, 4.9};
-		default: return null;
-		}
-
+		if ((getBlockMetadata()&8) == 0)
+			return new double[]{-1, 18-18.0, -4.5, -0.7, 23-18.0, 0, -1, 18-18.0, 4.5,
+					1, 18-18.0, -4.5, 0.7, 23-18.0, 0, 1, 18-18.0, 4.5};
+		else
+			return new double[]{0, 16-18.0, -4.9, 0, 23-18.0, 3.95, 0, 16-18.0, 4.9};
 	}
 
-	public int getRotation() {return facing;}
+	public int getRotation() {
+		return getBlockMetadata() & 7;
+	}
 	
 	//ISEGridTile
     private ISEGridNode gridNode = null;
@@ -86,34 +95,7 @@ public class TileTransmissionTower extends TileEntitySE implements ISEGridTile,I
 	}
 	
 	
-	//TileEntity
-	@Override
-    public void updateEntity() {
-        super.updateEntity();
-        
-        //Create renderHelper on client side
-        if (worldObj.isRemote){
-			if (renderHelper == null)
-				renderHelper = SEAPI.clientRender.newTransmissionTowerRenderHelper(this);
-			renderHelper.updateRenderData(neighborCoords[0],neighborCoords[1],neighborCoords[2],neighborCoords[3],neighborCoords[4],neighborCoords[5]);
-        	return;
-        }        	
-	}
-	
-	@Override
-    public void readFromNBT(NBTTagCompound tagCompound) {
-        super.readFromNBT(tagCompound);
-
-        facing = tagCompound.getInteger("facing");
-    }
-
-    @Override
-    public void writeToNBT(NBTTagCompound tagCompound) {
-        super.writeToNBT(tagCompound);
-
-        tagCompound.setInteger("facing", facing);
-    }
-    
+	//TileEntity    
 	@SideOnly(Side.CLIENT)
     @Override
     public double getMaxRenderDistanceSquared()
@@ -131,13 +113,11 @@ public class TileTransmissionTower extends TileEntitySE implements ISEGridTile,I
 	///Sync
 	/////////////////////////////////////////////////////////
 	public void prepareS2CPacketData(NBTTagCompound nbt) {
-		nbt.setInteger("facing", facing);
 		nbt.setIntArray("neighborCoords", neighborCoords);
 	}
 	
 	@SideOnly(value = Side.CLIENT)
 	public void onSyncDataFromServerArrived(NBTTagCompound nbt) {
-		facing = nbt.getInteger("facing");
 		neighborCoords = nbt.getIntArray("neighborCoords");
 			
 		if (renderHelper == null)
@@ -150,11 +130,5 @@ public class TileTransmissionTower extends TileEntitySE implements ISEGridTile,I
 	@Override
 	public void sendRenderingInfoToClient() {
 		markTileEntityForS2CSync();
-	}
-
-	//TileEntitySE
-	@Override
-	public boolean attachToEnergyNet() {
-		return true;
 	}
 }

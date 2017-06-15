@@ -1,9 +1,10 @@
-package simelectricity.Templates.Client.Render;
+package simelectricity.essential.grid.render;
 
 import simelectricity.api.client.ITransmissionTower;
 import simelectricity.api.client.ITransmissionTowerRenderHelper;
 import simelectricity.essential.utils.SERenderHeap;
 import simelectricity.essential.utils.SERenderHelper;
+
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.tileentity.TileEntity;
@@ -18,10 +19,10 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
-public class RenderTower implements ISimpleBlockRenderingHandler{
+public class RenderTransmissionTowerTop implements ISimpleBlockRenderingHandler{
 	private final int renderID;
 	
-	public RenderTower(){
+	public RenderTransmissionTowerTop(){
 		renderID = RenderingRegistry.getNextAvailableRenderId();
 		RenderingRegistry.registerBlockHandler(renderID, this);
 		MinecraftForge.EVENT_BUS.register(this);
@@ -58,16 +59,29 @@ public class RenderTower implements ISimpleBlockRenderingHandler{
 		
 		int lightValue = block.getMixedBrightnessForBlock(world, x, y, z);
 		int meta = world.getBlockMetadata(x, y, z);
+		int rotation = (int) helper.getRotation();
 		
-		SERenderHeap tower = models[meta].clone();
+		SERenderHeap tower = models[meta>>3];
+		
+		if (tower == null)
+			return false;
 		
 		if (tower != null){
-			tower.rotateAroundVector((float) helper.getRotation(), 0, 1, 0);
-			tower.transform(x+0.5, y, z+0.5);
+			tower = tower.clone();
+			tower.rotateAroundVector(rotation, 0, 1, 0);
+			tower.transform(x+0.5, y-18, z+0.5);
 			tower.applyToTessellator(lightValue);
+			
+			//Direction indicator
+			/*
+			double[][] cube = SERenderHelper.createCubeVertexes(0.1, 1, 0.1);
+			SERenderHelper.rotateToVec(cube, 0, 0, 0, 1, 0, 0);
+			SERenderHelper.rotateAroundY(cube, rotation);
+			SERenderHelper.translateCoord(cube, x+0.5, y-17, z+0.5);
+			SERenderHelper.addCubeToTessellator(cube, SERenderHelper.createTextureArray(textures[2]), lightValue);
+			*/
 		}
-
-		return false;
+		return true;
 	}
 
 	///////////////////////////////////
@@ -91,7 +105,7 @@ public class RenderTower implements ISimpleBlockRenderingHandler{
 	@SubscribeEvent
 	public void eventHandler(TextureStitchEvent.Post event){
 		if (event.map.getTextureType() == 0){
-			models[0] = simelectricity.essential.grid.render.Models.renderTower0(textures[2]);
+			models[0] = simelectricity.essential.grid.render.Models.renderTower0Top(textures[2]);
 			
 			models[1] = models[0].clone();
 			SERenderHeap insulator = simelectricity.essential.grid.render.Models.renderInsulatorString(1.4, textures[1]);

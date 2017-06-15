@@ -18,40 +18,16 @@ public class Models {
     	return h;
     }
     
-    public static SERenderHeap renderTower0(IIcon metalTexture){
+    public static SERenderHeap renderTower0Top(IIcon metalTexture){
     	SERenderHeap mainHeap = new SERenderHeap();
     	
     	
     	SERenderHeap h1 = new SERenderHeap(); // 90 degrees x n
     	SERenderHeap h2 = new SERenderHeap(); // 180 degrees x n
-    	
-    	//Ground
-    	double[][] element = SERenderHelper.createCubeVertexes(0.15, 0.5, 0.15);
-		SERenderHelper.rotateAroundZ(element, 90);
-		SERenderHelper.translateCoord(element, -2.455, 0.075, -2.385);
-		h1.addCube(element, metalTexture);
-		
-		element = SERenderHelper.createCubeVertexes(0.15, 0.5, 0.15);
-		SERenderHelper.rotateAroundX(element, -90);
-		SERenderHelper.translateCoord(element, -2.385, 0.075, -2.455);
-		h1.addCube(element, metalTexture);
-		
-		//Base1
-		float angle1 = -4.4474F;
-		element = SERenderHelper.createCubeVertexes(0.15, 18.06, 0.15);
-		SERenderHelper.rotateAroundZ(element, angle1);
-		SERenderHelper.rotateAroundX(element, angle1);
-		SERenderHelper.translateCoord(element, 2.4, 0, -2.4);
-		h1.addCube(element, metalTexture);
-		
-        //Base2 (H)
-        element = SERenderHelper.createCubeVertexes(0.15, 4.05, 0.15);
-        SERenderHelper.rotateAroundX(element, -90);
-        SERenderHelper.translateCoord(element, -2.025, 4.5, -2.025);
-        h1.addCube(element, metalTexture);
 		
         //Base3 (H)
-        element = SERenderHelper.createCubeVertexes(0.15, 10, 0.15);
+		float angle1 = -4.4474F;
+        double[][] element = SERenderHelper.createCubeVertexes(0.15, 10, 0.15);
         SERenderHelper.rotateAroundX(element, -90);
         SERenderHelper.translateCoord(element, -1, 18, -5);
         h2.addCube(element, metalTexture);
@@ -99,58 +75,6 @@ public class Models {
         
         
         //Details
-        element = SERenderHelper.createCubeVertexes(0.15, 5.05, 0.15);
-        SERenderHelper.rotateAroundZ(element, 28.0725F);
-        SERenderHelper.rotateAroundX(element, -4.77F);
-        SERenderHelper.translateCoord(element, -2.4, 0.075, -2.4);
-        h1.addCube(element, metalTexture);
-        
-        element = SERenderHelper.createCubeVertexes(0.15, 5.05, 0.15);
-        SERenderHelper.rotateAroundX(element, -28.0725F);
-        SERenderHelper.rotateAroundZ(element, 4.77F);
-        SERenderHelper.translateCoord(element, -2.4, 0.075, -2.4);
-        h1.addCube(element, metalTexture);
-        
-        //
-        element = SERenderHelper.createCubeVertexes(0.15, 6.6, 0.15);
-        SERenderHelper.rotateAroundZ(element, 33F);
-        SERenderHelper.rotateAroundX(element, -4F);
-        SERenderHelper.translateCoord(element, -2, 4.5, -2);
-        h1.addCube(element, metalTexture); 	
-        
-        element = SERenderHelper.createCubeVertexes(0.15, 6.6, 0.15);
-        SERenderHelper.rotateAroundX(element, -33F);
-        SERenderHelper.rotateAroundZ(element, 4F);
-        SERenderHelper.translateCoord(element, -2, 4.5, -2);
-        h1.addCube(element, metalTexture);
-        
-        
-        //
-        element = SERenderHelper.createCubeVertexes(0.15, 5.2, 0.15);
-        SERenderHelper.rotateAroundZ(element, 33);
-        SERenderHelper.rotateAroundX(element, -4.3F);
-        SERenderHelper.translateCoord(element, -1.6, 10, -1.6);
-        h1.addCube(element, metalTexture); 	
-        
-        element = SERenderHelper.createCubeVertexes(0.15, 5.2, 0.15);
-        SERenderHelper.rotateAroundX(element, -33); 
-        SERenderHelper.rotateAroundZ(element, 4.3F);
-        SERenderHelper.translateCoord(element, -1.6, 10, -1.6);       
-        h1.addCube(element, metalTexture);
-
-        //////
-        element = SERenderHelper.createCubeVertexes(0.15, 4.4, 0.15);
-        SERenderHelper.rotateAroundZ(element, 30);
-        SERenderHelper.rotateAroundX(element, -4.5F);
-        SERenderHelper.translateCoord(element, -1.28, 14.2, -1.28);
-        h1.addCube(element, metalTexture); 	
-        
-        element = SERenderHelper.createCubeVertexes(0.15, 4.4, 0.15);
-        SERenderHelper.rotateAroundX(element, -30);
-        SERenderHelper.rotateAroundZ(element, 4.5F);
-        SERenderHelper.translateCoord(element, -1.28, 14.2, -1.28);
-        h1.addCube(element, metalTexture);
-        
         //
         element = SERenderHelper.createCubeVertexes(0.15, 2.4, 0.15);
         SERenderHelper.rotateAroundZ(element, 51);
@@ -297,5 +221,90 @@ public class Models {
 		mainHeap.appendHeap(h2.clone().rotateAroundVector(180, 0, 1, 0));	
 		
 		return mainHeap;
+    }
+
+    public static SERenderHeap renderTower0Bottom(IIcon metalTexture){
+    	SERenderHeap h1 = new SERenderHeap(); // 90 degrees x n
+    	
+    	//Ground
+    	double[][] element = SERenderHelper.createCubeVertexes(0.15, 0.5, 0.15);
+		SERenderHelper.rotateAroundZ(element, 90);
+		SERenderHelper.translateCoord(element, -2.455, 0.075, -2.385);
+		h1.addCube(element, metalTexture);
+		
+		element = SERenderHelper.createCubeVertexes(0.15, 0.5, 0.15);
+		SERenderHelper.rotateAroundX(element, -90);
+		SERenderHelper.translateCoord(element, -2.385, 0.075, -2.455);
+		h1.addCube(element, metalTexture);
+		
+		//Base1
+		float angle1 = -4.4474F;
+		element = SERenderHelper.createCubeVertexes(0.15, 18.06, 0.15);
+		SERenderHelper.rotateAroundZ(element, -angle1);
+		SERenderHelper.rotateAroundX(element, angle1);
+		SERenderHelper.translateCoord(element, -2.4, 0, -2.4);
+		h1.addCube(element, metalTexture);
+		
+        //Base2 (H)
+        element = SERenderHelper.createCubeVertexes(0.15, 4.05, 0.15);
+        SERenderHelper.rotateAroundX(element, -90);
+        SERenderHelper.translateCoord(element, -2.025, 4.5, -2.025);
+        h1.addCube(element, metalTexture);
+		
+        
+        //Details
+        element = SERenderHelper.createCubeVertexes(0.15, 5.05, 0.15);
+        SERenderHelper.rotateAroundZ(element, 28.0725F);
+        SERenderHelper.rotateAroundX(element, -4.77F);
+        SERenderHelper.translateCoord(element, -2.4, 0.075, -2.4);
+        h1.addCube(element, metalTexture);
+        
+        element = SERenderHelper.createCubeVertexes(0.15, 5.05, 0.15);
+        SERenderHelper.rotateAroundX(element, -28.0725F);
+        SERenderHelper.rotateAroundZ(element, 4.77F);
+        SERenderHelper.translateCoord(element, -2.4, 0.075, -2.4);
+        h1.addCube(element, metalTexture);
+        
+        //
+        element = SERenderHelper.createCubeVertexes(0.15, 6.6, 0.15);
+        SERenderHelper.rotateAroundZ(element, 33F);
+        SERenderHelper.rotateAroundX(element, -4F);
+        SERenderHelper.translateCoord(element, -2, 4.5, -2);
+        h1.addCube(element, metalTexture); 	
+        
+        element = SERenderHelper.createCubeVertexes(0.15, 6.6, 0.15);
+        SERenderHelper.rotateAroundX(element, -33F);
+        SERenderHelper.rotateAroundZ(element, 4F);
+        SERenderHelper.translateCoord(element, -2, 4.5, -2);
+        h1.addCube(element, metalTexture);
+        
+        
+        //
+        element = SERenderHelper.createCubeVertexes(0.15, 5.2, 0.15);
+        SERenderHelper.rotateAroundZ(element, 33);
+        SERenderHelper.rotateAroundX(element, -4.3F);
+        SERenderHelper.translateCoord(element, -1.6, 10, -1.6);
+        h1.addCube(element, metalTexture); 	
+        
+        element = SERenderHelper.createCubeVertexes(0.15, 5.2, 0.15);
+        SERenderHelper.rotateAroundX(element, -33); 
+        SERenderHelper.rotateAroundZ(element, 4.3F);
+        SERenderHelper.translateCoord(element, -1.6, 10, -1.6);       
+        h1.addCube(element, metalTexture);
+
+        //////
+        element = SERenderHelper.createCubeVertexes(0.15, 4.4, 0.15);
+        SERenderHelper.rotateAroundZ(element, 30);
+        SERenderHelper.rotateAroundX(element, -4.5F);
+        SERenderHelper.translateCoord(element, -1.28, 14.2, -1.28);
+        h1.addCube(element, metalTexture); 	
+        
+        element = SERenderHelper.createCubeVertexes(0.15, 4.4, 0.15);
+        SERenderHelper.rotateAroundX(element, -30);
+        SERenderHelper.rotateAroundZ(element, 4.5F);
+        SERenderHelper.translateCoord(element, -1.28, 14.2, -1.28);
+        h1.addCube(element, metalTexture);
+        
+		return h1;
     }
 }

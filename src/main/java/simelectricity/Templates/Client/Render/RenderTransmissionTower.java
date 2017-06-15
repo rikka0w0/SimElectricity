@@ -47,13 +47,14 @@ public class RenderTransmissionTower extends RenderTranmissionTowerBase{
         }
     }
 
-    
     @Override
     public void renderTileEntityAt(TileEntity tileEntity, double x, double y, double z, float f) {
     	ITransmissionTower tw = ((ITransmissionTower) tileEntity);
     	super.renderTileEntityAt(tileEntity, x, y, z, f);
     	
-    	if (tileEntity.getBlockMetadata() == 0 && render1 && render2){    		
+    	int meta = tileEntity.getBlockMetadata();
+    	
+    	if ((meta&8) == 0 && render1 && render2){       		
     		for (int i=0; i<9; i++){
     			from[i] = fixedfrom1[i];
     			to[i] = fixedfrom2[i];
@@ -81,7 +82,7 @@ public class RenderTransmissionTower extends RenderTranmissionTowerBase{
             GL11.glTranslated(x, y, z);
             GL11.glTranslated(0.5, 0, 0.5);
             GL11.glRotated(tw.getRenderHelper().getRotation(), 0, 1, 0);
-        	GL11.glTranslated(0, 25, 3.95);
+        	GL11.glTranslated(0, 25-18, 3.95);
             GL11.glRotated(180, 0, 0, 1);
             Models.renderInsulator(2, this, 0 ,2);
             GL11.glPopMatrix();
@@ -91,7 +92,7 @@ public class RenderTransmissionTower extends RenderTranmissionTowerBase{
             GL11.glTranslated(fixedfrom1[3], fixedfrom1[4],fixedfrom1[5]);
             SEAPI.clientRender.renderParabolicCable(fixedfrom1[3], fixedfrom1[4],fixedfrom1[5],
             		3.95 * Math.sin(rotation/180*Math.PI) + 0.5F + tileEntity.xCoord,
-            		tileEntity.yCoord + 23,
+            		tileEntity.yCoord + 23 -18,
             		3.95 * Math.cos(rotation/180*Math.PI) + 0.5F + tileEntity.zCoord,
             		0.15, 2, this, 1);
             GL11.glPopMatrix();
@@ -101,7 +102,7 @@ public class RenderTransmissionTower extends RenderTranmissionTowerBase{
             GL11.glTranslated(fixedfrom2[3], fixedfrom2[4],fixedfrom2[5]);
             SEAPI.clientRender.renderParabolicCable(fixedfrom2[3], fixedfrom2[4],fixedfrom2[5],
             		3.95 * Math.sin(rotation/180*Math.PI) + 0.5F + tileEntity.xCoord,
-            		tileEntity.yCoord + 23,
+            		tileEntity.yCoord + 23 -18,
             		3.95 * Math.cos(rotation/180*Math.PI) + 0.5F + tileEntity.zCoord,
             		0.15, 2, this, 1);
             GL11.glPopMatrix();
@@ -110,13 +111,13 @@ public class RenderTransmissionTower extends RenderTranmissionTowerBase{
 	
 	@Override
 	public void renderInsulator(int meta){
-		if (meta == 0)
+		if ((meta&8) == 0)
 			Models.renderInsulator(2, this, 0 ,2);
 	}
 
 
 	@Override
-	public void renderTower(int meta) {
+	public void renderTower() {
 		
 	}
 }
