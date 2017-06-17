@@ -1,13 +1,11 @@
 package simelectricity.essential.grid.render;
 
 import simelectricity.api.client.ITransmissionTower;
-import simelectricity.api.client.ITransmissionTowerRenderHelper;
 import simelectricity.essential.utils.SERenderHeap;
 import simelectricity.essential.utils.SERenderHelper;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.client.event.TextureStitchEvent;
@@ -47,43 +45,60 @@ public class RenderTransmissionTowerTop implements ISimpleBlockRenderingHandler{
 	@Override
 	public boolean renderWorldBlock(IBlockAccess world, int x, int y, int z,
 			Block block, int modelId, RenderBlocks renderer) {
-
-		TileEntity te = world.getTileEntity(x, y, z);
-		if (!(te instanceof ITransmissionTower))
-			return false;
-		
-		ITransmissionTowerRenderHelper helper = ((ITransmissionTower) te).getRenderHelper();
-		
-		if (helper == null)
-			return false;
-		
 		int lightValue = block.getMixedBrightnessForBlock(world, x, y, z);
 		int meta = world.getBlockMetadata(x, y, z);
-		int rotation = (int) helper.getRotation();
+		/*
+		 * Meta facing: MC: South - 0, OpenGL: Xpos(East) - 0
+		 */
+		int rotation = (meta&7)*45 - 90;
 		
-		SERenderHeap tower = models[meta>>3];
+		SERenderHeap tower = null;
 		
-		if (tower == null)
-			return false;
+		if (meta>>3 == 0){
+			tower = model0.clone();
+			
+			TransmissionTowerRenderHelper helper = ((ITransmissionTower) world.getTileEntity(x, y, z)).getRenderHelper();
+			
+			if (helper.render1())
+				renderInsulators(helper.from1(), helper.to1(), helper.angle1(), lightValue);	
+			if (helper.render2())
+				renderInsulators(helper.from2(), helper.to2(), helper.angle2(), lightValue);			
+	
+		}else{
+			tower = model1.clone();
+		}
+		
+		tower = tower.clone();
+		tower.rotateAroundVector(rotation, 0, 1, 0);
+		tower.transform(x+0.5, y-18, z+0.5);
+		tower.applyToTessellator(lightValue);
 		
 		if (tower != null){
-			tower = tower.clone();
-			tower.rotateAroundVector(rotation, 0, 1, 0);
-			tower.transform(x+0.5, y-18, z+0.5);
-			tower.applyToTessellator(lightValue);
 			
 			//Direction indicator
 			/*
 			double[][] cube = SERenderHelper.createCubeVertexes(0.1, 1, 0.1);
 			SERenderHelper.rotateToVec(cube, 0, 0, 0, 1, 0, 0);
-			SERenderHelper.rotateAroundY(cube, rotation);
-			SERenderHelper.translateCoord(cube, x+0.5, y-17, z+0.5);
+			//SERenderHelper.rotateAroundZ(cube, 45);
+			SERenderHelper.rotateAroundVector(cube, 35, 1, 0, 1);
+			SERenderHelper.translateCoord(cube, x+0.5, y, z+0.5);
 			SERenderHelper.addCubeToTessellator(cube, SERenderHelper.createTextureArray(textures[2]), lightValue);
 			*/
 		}
 		return true;
 	}
 
+	private static void renderInsulators(double[] from, double[] to, double[] angle, int lightValue){
+		for (int i=0; i<3; i++){
+			SERenderHeap insulator = modelInsulator.clone();
+			
+			insulator.rotateAroundZ((float) (angle[i]/Math.PI*180));
+			insulator.rotateToVec(from[3*i],from[3*i+1],from[3*i+2], to[3*i],from[3*i+1],to[3*i+2]);
+			insulator.transform(from[3*i], from[3*i+1],from[3*i+2]);
+			insulator.applyToTessellator(lightValue);	
+		}
+	}
+	
 	///////////////////////////////////
 	/// Load texture for models
 	///////////////////////////////////
@@ -101,20 +116,29 @@ public class RenderTransmissionTowerTop implements ISimpleBlockRenderingHandler{
 	///////////////////////////////////
 	/// Compile steady parts
 	///////////////////////////////////
-	private static SERenderHeap[] models = new SERenderHeap[3];
+	private static SERenderHeap model0;
+	private static SERenderHeap model1;
+	private static SERenderHeap modelInsulator;
+	
 	@SubscribeEvent
 	public void eventHandler(TextureStitchEvent.Post event){
 		if (event.map.getTextureType() == 0){
-			models[0] = simelectricity.essential.grid.render.Models.renderTower0Top(textures[2]);
+			model0 = simelectricity.essential.grid.render.Models.renderTower0Top(textures[2]);
 			
-			models[1] = models[0].clone();
-			SERenderHeap insulator = simelectricity.essential.grid.render.Models.renderInsulatorString(1.4, textures[1]);
+			model1 = model0.clone();
+			SERenderHeap insulator = Models.renderInsulatorString(1.4, textures[1]);
 			double[][] rod = SERenderHelper.createCubeVertexes(0.1, 1.95, 0.1);
 			SERenderHelper.translateCoord(rod, 0, -0.15, 0);
 			insulator.addCube(rod, textures[2]);
-			models[1].appendHeap(insulator.clone().transform(0,18-1.85,-4.9));
-			models[1].appendHeap(insulator.clone().transform(0,18-1.85,4.9));
-			models[1].appendHeap(insulator.transform(0,23.15,3.95));
+			model1.appendHeap(insulator.clone().transform(0,18-1.85,-4.9));
+			model1.appendHeap(insulator.clone().transform(0,18-1.85,4.9));
+			model1.appendHeap(insulator.transform(0,23.15,3.95));
+		
+			modelInsulator = Models.renderInsulatorString(1.4, textures[1]);
+			double[][] rod2 = SERenderHelper.createCubeVertexes(0.1, 2, 0.1);				
+			SERenderHelper.translateCoord(rod2, 0, -0.3, 0);
+			modelInsulator.addCube(rod2, textures[2]);
+			modelInsulator.transform(0, 0.3, 0);
 		}
 	}
 }

@@ -7,18 +7,18 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraftforge.common.util.ForgeDirection;
 import simelectricity.api.SEAPI;
 import simelectricity.api.client.ITransmissionTower;
-import simelectricity.api.client.ITransmissionTowerRenderHelper;
 import simelectricity.api.node.ISEGridNode;
 import simelectricity.api.node.ISESimulatable;
 import simelectricity.api.tile.ISECableTile;
 import simelectricity.api.tile.ISEGridTile;
+import simelectricity.essential.grid.render.TransmissionTowerRenderHelper;
 import simelectricity.Templates.Common.TileEntitySE;
 
 public class TileCableClamp extends TileEntitySE implements ISECableTile, ISEGridTile, ITransmissionTower{
 	private ISESimulatable cableNode = SEAPI.energyNetAgent.newCable(this, true);
 	private ISEGridNode gridNode = null;
     
-    private ITransmissionTowerRenderHelper renderHelper;
+    private TransmissionTowerRenderHelper renderHelper;
     private int neighborX, neighborY = -1, neighborZ;
     
     public ForgeDirection facing = ForgeDirection.NORTH;
@@ -45,7 +45,7 @@ public class TileCableClamp extends TileEntitySE implements ISECableTile, ISEGri
 		this.neighborZ = nbt.getInteger("neighborZ");
 		
 		if (renderHelper == null)
-			renderHelper = SEAPI.clientRender.newTransmissionTowerRenderHelper(this);
+			renderHelper = new TransmissionTowerRenderHelper(this);
 		renderHelper.updateRenderData(neighborX, neighborY, neighborZ, 0 ,-1, 0);
 		
 		super.onSyncDataFromServerArrived(nbt);
@@ -62,14 +62,7 @@ public class TileCableClamp extends TileEntitySE implements ISECableTile, ISEGri
 	@Override
     public void updateEntity() {
         super.updateEntity();
-        
-        //Create renderHelper on client side
-        if (worldObj.isRemote){
-			if (renderHelper == null)
-				renderHelper = SEAPI.clientRender.newTransmissionTowerRenderHelper(this);
-			renderHelper.updateRenderData(neighborX, neighborY, neighborZ, 0 ,-1, 0);
-        	return;
-        }        	
+   	
 	}
 	
     @Override
@@ -165,7 +158,21 @@ public class TileCableClamp extends TileEntitySE implements ISECableTile, ISEGri
 	///ITransmissionTower
 	/////////////////////////////////////////////////////////
 	@Override
-	public ITransmissionTowerRenderHelper getRenderHelper() {return renderHelper;}
+	public void updateRenderInfo() {
+		getRenderHelper().updateRenderData(neighborX, neighborY, neighborZ, 0 ,-1, 0);
+	}
+	
+	@Override
+	public TransmissionTowerRenderHelper getRenderHelper() {
+        //Create renderHelper on client side
+        if (worldObj.isRemote){
+			if (renderHelper == null)
+				renderHelper = new TransmissionTowerRenderHelper(this);
+        	return renderHelper;
+        }else{
+        	return null;
+        }
+	}
 	
 	@Override
 	public double getInsulatorLength() {return 2;}

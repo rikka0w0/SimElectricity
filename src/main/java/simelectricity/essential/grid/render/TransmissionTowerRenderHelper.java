@@ -1,11 +1,10 @@
-package simelectricity.client;
+package simelectricity.essential.grid.render;
 
 import net.minecraft.tileentity.TileEntity;
-import simelectricity.api.SEAPI;
 import simelectricity.api.client.ITransmissionTower;
-import simelectricity.api.client.ITransmissionTowerRenderHelper;
+import simelectricity.essential.utils.SEMathHelper;
 
-public class TransmissionTowerRenderHelper implements ITransmissionTowerRenderHelper{
+public class TransmissionTowerRenderHelper{
 	private TileEntity te;
 	
 	private double rotation;
@@ -22,43 +21,30 @@ public class TransmissionTowerRenderHelper implements ITransmissionTowerRenderHe
     
     private double[] dummyangle = new double[3];
     
-    @Override
 	public double getRotation() {return rotation;}
     
-	@Override
 	public boolean render1() {return render1;}
 
-	@Override
 	public double[] from1() {return from1;}
 
-	@Override
 	public double[] to1() {return to1;}
 
-	@Override
 	public double[] fixedfrom1() {return fixedfrom1;}
 
-	@Override
 	public double[] fixedto1() {return fixedto1;}
 	
-	@Override
 	public double[] angle1() {return angle1;}
 
-	@Override
 	public boolean render2() {return render2;}
 
-	@Override
 	public double[] from2() {return from2;}
 
-	@Override
 	public double[] to2() {return to2;}
 
-	@Override
 	public double[] fixedfrom2() {return fixedfrom2;}
 
-	@Override
 	public double[] fixedto2() {return fixedto2;}
 	
-	@Override
 	public double[] angle2() {return angle2;}
     
 	/////////////////////////////////////////////////////
@@ -82,15 +68,7 @@ public class TransmissionTowerRenderHelper implements ITransmissionTowerRenderHe
     	}
 
     }
-    
-    private static double distanceOf(double[] Start, double[] End) {
-    	double ret = 0;
-    	for (int i=0; i<Start.length; i++)
-    		ret += (Start[i] - End[i])*(Start[i] - End[i]);
-
-    	return Math.sqrt(ret);
-    }
-    
+        
     private static double distanceOf(double[] Start, double x, double z) {
         return Math.sqrt((Start[0] - x)*(Start[0] - x) + (Start[1] - z)*(Start[1] - z));
     }
@@ -181,8 +159,8 @@ public class TransmissionTowerRenderHelper implements ITransmissionTowerRenderHe
 			}
 		}
 		else if (curInsulatorXZ2 != null && neighborInsulatorXZ2 == null){
-			double dc1n1 = distanceOf(curInsulatorXZ1, neighborInsulatorXZ1);
-			double dc2n1 = distanceOf(curInsulatorXZ2, neighborInsulatorXZ1);
+			double dc1n1 = SEMathHelper.distanceOf(curInsulatorXZ1, neighborInsulatorXZ1);
+			double dc2n1 = SEMathHelper.distanceOf(curInsulatorXZ2, neighborInsulatorXZ1);
 			
 			if (dc2n1<dc1n1){
 				for (int i=0; i<9; i++){
@@ -197,8 +175,8 @@ public class TransmissionTowerRenderHelper implements ITransmissionTowerRenderHe
 			}
 		}
 		else if (curInsulatorXZ2 == null && neighborInsulatorXZ2 != null){
-			double dc1n1 = distanceOf(curInsulatorXZ1, neighborInsulatorXZ1);
-			double dc1n2 = distanceOf(curInsulatorXZ1, neighborInsulatorXZ2);
+			double dc1n1 = SEMathHelper.distanceOf(curInsulatorXZ1, neighborInsulatorXZ1);
+			double dc1n2 = SEMathHelper.distanceOf(curInsulatorXZ1, neighborInsulatorXZ2);
 			
 			if (dc1n2<dc1n1){
 				for (int i=0; i<9; i++){
@@ -213,10 +191,10 @@ public class TransmissionTowerRenderHelper implements ITransmissionTowerRenderHe
 			}
 		}
 		else if (curInsulatorXZ2 != null && neighborInsulatorXZ2 != null){
-			double dc1n1 = distanceOf(curInsulatorXZ1, neighborInsulatorXZ1);
-			double dc1n2 = distanceOf(curInsulatorXZ1, neighborInsulatorXZ2);
-			double dc2n1 = distanceOf(curInsulatorXZ2, neighborInsulatorXZ1);
-			double dc2n2 = distanceOf(curInsulatorXZ2, neighborInsulatorXZ2);
+			double dc1n1 = SEMathHelper.distanceOf(curInsulatorXZ1, neighborInsulatorXZ1);
+			double dc1n2 = SEMathHelper.distanceOf(curInsulatorXZ1, neighborInsulatorXZ2);
+			double dc2n1 = SEMathHelper.distanceOf(curInsulatorXZ2, neighborInsulatorXZ1);
+			double dc2n2 = SEMathHelper.distanceOf(curInsulatorXZ2, neighborInsulatorXZ2);
 					
 			for (int i=0; i<9; i++){
 				from[i] = curInsulatorPositionArray[i];
@@ -280,7 +258,7 @@ public class TransmissionTowerRenderHelper implements ITransmissionTowerRenderHe
     }
     
     private static double calcInitSlope(double xStart, double yStart, double zStart, double xEnd, double yEnd, double zEnd, double tension){
-    	double length = SEAPI.clientRender.distanceOf(xStart, yStart, zStart, xEnd, yEnd, zEnd);
+    	double length = SEMathHelper.distanceOf(xStart, yStart, zStart, xEnd, yEnd, zEnd);
     	double b = 4 * tension / length;
     	double a = -b / length;
     	return -Math.atan(2*a+b);
@@ -288,7 +266,7 @@ public class TransmissionTowerRenderHelper implements ITransmissionTowerRenderHe
     
     //I: from I: to O: fixed, angle
     private static void fixConnectionPoints(double[] from, double[] to, double[] angles, double[] fixedfrom, double insulatorLength, double tension){
-    	double distance = distanceOf(to,from);
+    	double distance = SEMathHelper.distanceOf(to,from);
     	
         angles[0] = calcInitSlope(from[0], from[1], from[2], to[0], to[1], to[2], tension) + Math.atan((to[1]-from[1])/distance);
         double lcos = insulatorLength * Math.cos(angles[0]);
@@ -312,7 +290,6 @@ public class TransmissionTowerRenderHelper implements ITransmissionTowerRenderHe
         fixedfrom[8] = from[8] - lcos * Math.cos(atan);
     }
     
-    @Override
     public void updateRenderData(int x1, int y1, int z1, int x2, int y2, int z2){		
     	ITransmissionTower tw = (ITransmissionTower)te;
     	

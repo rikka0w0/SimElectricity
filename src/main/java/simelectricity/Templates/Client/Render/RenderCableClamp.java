@@ -2,7 +2,7 @@ package simelectricity.Templates.Client.Render;
 
 import org.lwjgl.opengl.GL11;
 
-import simelectricity.api.SEAPI;
+import simelectricity.essential.utils.SEGLUtils;
 
 import net.minecraft.util.ResourceLocation;
 
@@ -35,12 +35,12 @@ public class RenderCableClamp extends RenderTranmissionTowerBase{
 	@Override
 	public void renderTower() {
     	GL11.glPushMatrix();
-        SEAPI.clientRender.renderCube(0.25, 1, 0.25, this, 0);
+    	SEGLUtils.renderCube(0.25, 1, 0.25, this, 0);
         GL11.glPopMatrix();
 		
 		GL11.glPushMatrix();
 		GL11.glTranslated(0.3,0.2,0);
-		SEAPI.clientRender.renderCube(0.4, 0.6, 0.6, this, 3);
+		SEGLUtils.renderCube(0.4, 0.6, 0.6, this, 3);
 		GL11.glPopMatrix();
 		
 		

@@ -176,18 +176,18 @@ public class SERenderHelper {
 			break;
 		case NORTH:
 			SERenderHelper.rotateAroundY(cubeVertexes, 180);
-			SERenderHelper.rotateAroundX(cubeVertexes, 90);
+			SERenderHelper.rotateAroundX(cubeVertexes, 270);
 			break;
 		case SOUTH:
-			SERenderHelper.rotateAroundX(cubeVertexes, 270);
+			SERenderHelper.rotateAroundX(cubeVertexes, 90);
 			break;
 		case WEST:
 			SERenderHelper.rotateAroundY(cubeVertexes, 270);
-			SERenderHelper.rotateAroundZ(cubeVertexes, 270);
+			SERenderHelper.rotateAroundZ(cubeVertexes, 90);
 			break;
 		case EAST:
 			SERenderHelper.rotateAroundY(cubeVertexes, 90);
-			SERenderHelper.rotateAroundZ(cubeVertexes, 90);
+			SERenderHelper.rotateAroundZ(cubeVertexes, 270);
 			break;
 		default:
 			break;
@@ -218,8 +218,8 @@ public class SERenderHelper {
 	}
 	
 	public static void rotateAroundX(double[][] vertexes, float angle){
-        float f1 = MathHelper.cos(angle * 0.01745329252F);
-        float f2 = MathHelper.sin(angle * 0.01745329252F);
+        float f1 = MathHelper.cos(-angle * 0.01745329252F);
+        float f2 = MathHelper.sin(-angle * 0.01745329252F);
 
         for (int i=0; i<vertexes.length; i++){
 	        double d0 = vertexes[i][0];
@@ -247,8 +247,8 @@ public class SERenderHelper {
 	
     public static void rotateAroundZ(double[][] vertexes, float angle)
     {
-        float f1 = MathHelper.cos(angle * 0.01745329252F);
-        float f2 = MathHelper.sin(angle * 0.01745329252F);
+        float f1 = MathHelper.cos(-angle * 0.01745329252F);
+        float f2 = MathHelper.sin(-angle * 0.01745329252F);
 
         
         for (int i=0; i<vertexes.length; i++){
@@ -260,15 +260,9 @@ public class SERenderHelper {
 	        vertexes[i][2] = d2;
 	    }
     }
-
-    public static double distanceOf(double xStart, double yStart, double zStart, double xEnd, double yEnd, double zEnd) {
-        return Math.sqrt((xStart - xEnd) * (xStart - xEnd) +
-                (yStart - yEnd) * (yStart - yEnd) +
-                (zStart - zEnd) * (zStart - zEnd));
-    }
     
     public static void rotateToVec(double[][] vertexes, double xStart, double yStart, double zStart, double xEnd, double yEnd, double zEnd){
-        double distance = distanceOf(xStart, yStart, zStart, xEnd, yEnd, zEnd);
+        double distance = SEMathHelper.distanceOf(xStart, yStart, zStart, xEnd, yEnd, zEnd);
         rotateAroundY(vertexes, (float)(Math.atan2(zStart - zEnd, xEnd - xStart) * 180 / Math.PI));
         rotateAroundVector(vertexes, (float) (Math.acos((yEnd - yStart) / distance) * 180 / Math.PI), (zEnd - zStart) / distance, 0, (xStart - xEnd) / distance);
     }

@@ -19,8 +19,6 @@
 
 package simelectricity;
 
-import java.lang.reflect.Method;
-
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
@@ -56,16 +54,6 @@ public class SimElectricity {
     	//Initialize utility functions
     	SEAPI.isSELoaded = true;
     	SEAPI.energyNetAgent = new EnergyNetAgent();
-    	
-    	if (event.getSide().isClient()){
-    		try {
-    			Class<?> clsClientRender = Class.forName("simelectricity.client.ClientRender");
-    			Method  mtdInitAPI = clsClientRender.getMethod("initClientAPI", new Class[0]);
-    			mtdInitAPI.invoke(null, new Object[0]);
-			} catch (Exception e) {
-				SEUtils.logError("Failed to initialize client API", SEUtils.loader);
-			}
-    	}
 
         //Load configurations
         FMLCommonHandler.instance().bus().register(new ConfigManager());

@@ -1,56 +1,59 @@
-package simelectricity.client;
+package simelectricity.essential.utils;
 
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.tileentity.TileEntity;
 
 import org.lwjgl.opengl.GL11;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
-import simelectricity.api.SEAPI;
 import simelectricity.api.client.ITextureProvider;
-import simelectricity.api.client.ITransmissionTowerRenderHelper;
-import simelectricity.api.internal.IClientRender;
 import simelectricity.common.ConfigManager;
 
-@SideOnly(Side.CLIENT)
-public class ClientRender implements IClientRender{
-	public static void initClientAPI(){
-		ClientRender instance = new ClientRender();
-		SEAPI.clientRender = instance;
-	}
-		
-	@Override
-    public void renderParabolicCable(double xStart, double yStart, double zStart, double xEnd, double yEnd, double zEnd, double thickness, double tension, ITextureProvider textureProvider, int textureIndex) {
-        double distance = distanceOf(xStart, yStart, zStart, xEnd, yEnd, zEnd);
+public class SEGLUtils {
+    /**
+     * Render parabolic cable between two points
+     * </p> coordinates are MineCraft coordinates, the cable will start from current openGL reference point
+     *
+     * @param xStart       Start X coordinate
+     * @param yStart       Start Y coordinate
+     * @param zStart       Start Z coordinate
+     * @param xEnd         End X coordinate
+     * @param yEnd         End Y coordinate
+     * @param zEnd         End Z coordinate
+     * @param thickness    Thickness of the cable
+     * @param textureIndex The index of texture
+     */
+    public static void renderParabolicCable(double xStart, double yStart, double zStart, double xEnd, double yEnd, double zEnd, double thickness, double tension, ITextureProvider textureProvider, int textureIndex) {
+        double distance = SEMathHelper.distanceOf(xStart, yStart, zStart, xEnd, yEnd, zEnd);
         p2pRotation(xStart, yStart, zStart, xEnd, yEnd, zEnd);
         render_parabola(distance, false, tension, ConfigManager.parabolaRenderSteps, thickness, textureProvider, textureIndex);
     }
 
-    @Override
-    public void renderHalfParabolicCable(double xStart, double yStart, double zStart, double xEnd, double yEnd, double zEnd, double thickness, double tension, ITextureProvider textureProvider, int textureIndex) {
-        double distance = distanceOf(xStart, yStart, zStart, xEnd, yEnd, zEnd);
+    /**
+     * Render parabolic cable between two points (Half)
+     * </p> coordinates are MineCraft coordinates, the cable will start from current openGL reference point
+     *
+     * @param xStart       Start X coordinate
+     * @param yStart       Start Y coordinate
+     * @param zStart       Start Z coordinate
+     * @param xEnd         End X coordinate
+     * @param yEnd         End Y coordinate
+     * @param zEnd         End Z coordinate
+     * @param thickness    Thickness of the cable
+     * @param textureIndex The index of texture
+     */
+    public static void renderHalfParabolicCable(double xStart, double yStart, double zStart, double xEnd, double yEnd, double zEnd, double thickness, double tension, ITextureProvider textureProvider, int textureIndex) {
+        double distance = SEMathHelper.distanceOf(xStart, yStart, zStart, xEnd, yEnd, zEnd);
         p2pRotation(xStart, yStart, zStart, xEnd, yEnd, zEnd);
         render_parabola(distance, true, tension, ConfigManager.parabolaRenderSteps, thickness, textureProvider, textureIndex);
     }
-
-    @Override
-    public void renderCable(double xStart, double yStart, double zStart, double xEnd, double yEnd, double zEnd, double thickness, ITextureProvider textureProvider, int textureIndex) {
-        double distance = distanceOf(xStart, yStart, zStart, xEnd, yEnd, zEnd);
-        p2pRotation(xStart, yStart, zStart, xEnd, yEnd, zEnd);
-        renderCube(thickness, distance, thickness, textureProvider, textureIndex);
-    }
-
-    @Override
-    public void renderHalfCable(double xStart, double yStart, double zStart, double xEnd, double yEnd, double zEnd, double thickness, ITextureProvider textureProvider, int textureIndex) {
-        double distance = distanceOf(xStart, yStart, zStart, xEnd, yEnd, zEnd);
-        p2pRotation(xStart, yStart, zStart, xEnd, yEnd, zEnd);
-        renderCube(thickness, distance / 2, thickness, textureProvider, textureIndex);
-    }
     
-    @Override
-    public void renderCube(double maxX, double maxY, double maxZ, ITextureProvider textureProvider, int textureIndex) {
+    /**
+     * Render a cube with given size and texture
+     *
+     * @param maxX Size of x
+     * @param maxY Size of y
+     * @param maxZ Size of z
+     */
+    public static void renderCube(double maxX, double maxY, double maxZ, ITextureProvider textureProvider, int textureIndex) {
         Tessellator t = Tessellator.instance;
 
         GL11.glPushMatrix();
@@ -122,7 +125,8 @@ public class ClientRender implements IClientRender{
      * @param thickness       The thickness of the curve
      * @param textureIndex    The texture binding to this curve
      */
-    private void render_parabola(double length, boolean half, double maxDisplacement, double steps, double thickness,ITextureProvider textureProvider, int textureIndex) {
+    
+    private static void render_parabola(double length, boolean half, double maxDisplacement, double steps, double thickness,ITextureProvider textureProvider, int textureIndex) {
         double b = 4 * maxDisplacement / length;
         double a = -b / length;
         double unitLength = length / steps;
@@ -142,7 +146,7 @@ public class ClientRender implements IClientRender{
             GL11.glPopMatrix();
         }
     }
-  	
+	
     /**
      * Rotate the coordinate system so that the object in it can lay between two points
      *
@@ -153,46 +157,9 @@ public class ClientRender implements IClientRender{
      * @param yEnd   End Y coordinate
      * @param zEnd   End Z coordinate
      */
-    @Override
-    public void p2pRotation(double xStart, double yStart, double zStart, double xEnd, double yEnd, double zEnd) {
-        double distance = distanceOf(xStart, yStart, zStart, xEnd, yEnd, zEnd);
+    public static void p2pRotation(double xStart, double yStart, double zStart, double xEnd, double yEnd, double zEnd) {
+        double distance = SEMathHelper.distanceOf(xStart, yStart, zStart, xEnd, yEnd, zEnd);
         GL11.glRotated(Math.acos((yEnd - yStart) / distance) * 180 / Math.PI, (zEnd - zStart) / distance, 0, (xStart - xEnd) / distance);
         GL11.glRotated(Math.atan2(zStart - zEnd, xEnd - xStart) * 180 / Math.PI, 0, 1, 0);
     }
-
-    /**
-     * Calculate the distance between two points
-     *
-     * @param xStart Start X coordinate
-     * @param yStart Start Y coordinate
-     * @param zStart Start Z coordinate
-     * @param xEnd   End X coordinate
-     * @param yEnd   End Y coordinate
-     * @param zEnd   End Z coordinate
-     */
-    @Override
-    public double distanceOf(double xStart, double yStart, double zStart, double xEnd, double yEnd, double zEnd) {
-        return Math.sqrt(Math.pow(xStart - xEnd, 2) +
-                Math.pow(yStart - yEnd, 2) +
-                Math.pow(zStart - zEnd, 2));
-    }
-    
-    /**
-     * Calculate the distance between two points
-     *
-     * @param xStart Start X coordinate
-     * @param zStart Start Z coordinate
-     * @param xEnd   End X coordinate
-     * @param zEnd   End Z coordinate
-     */
-    @Override
-    public double distanceOf(double xStart, double zStart, double xEnd, double zEnd) {
-        return Math.sqrt(Math.pow(xStart - xEnd, 2) +
-                Math.pow(zStart - zEnd, 2));
-    }
-
-	@Override
-	public ITransmissionTowerRenderHelper newTransmissionTowerRenderHelper(TileEntity te) {
-		return new TransmissionTowerRenderHelper(te);
-	}
 }

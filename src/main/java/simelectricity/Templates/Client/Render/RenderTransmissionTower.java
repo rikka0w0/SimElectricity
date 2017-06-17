@@ -2,8 +2,8 @@ package simelectricity.Templates.Client.Render;
 
 import org.lwjgl.opengl.GL11;
 
-import simelectricity.api.SEAPI;
 import simelectricity.api.client.ITransmissionTower;
+import simelectricity.essential.utils.SEGLUtils;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 
@@ -64,13 +64,13 @@ public class RenderTransmissionTower extends RenderTranmissionTowerBase{
             GL11.glPushMatrix();
             GL11.glTranslated(x-tileEntity.xCoord, y-tileEntity.yCoord, z-tileEntity.zCoord);
             GL11.glTranslated(from[0], from[1],from[2]);
-	        SEAPI.clientRender.renderParabolicCable(from[0], from[1],from[2], to[0], to[1],to[2], 0.15, 2, this, 1);
+            SEGLUtils.renderParabolicCable(from[0], from[1],from[2], to[0], to[1],to[2], 0.15, 2, this, 1);
             GL11.glPopMatrix();
             
             GL11.glPushMatrix();
             GL11.glTranslated(x-tileEntity.xCoord, y-tileEntity.yCoord, z-tileEntity.zCoord);
             GL11.glTranslated(from[6], from[7],from[8]);
-	        SEAPI.clientRender.renderParabolicCable(from[6], from[7],from[8], to[6], to[7],to[8], 0.15, 2, this, 1);
+            SEGLUtils.renderParabolicCable(from[6], from[7],from[8], to[6], to[7],to[8], 0.15, 2, this, 1);
             GL11.glPopMatrix();
             
             
@@ -90,7 +90,7 @@ public class RenderTransmissionTower extends RenderTranmissionTowerBase{
             GL11.glPushMatrix();
             GL11.glTranslated(x-tileEntity.xCoord, y-tileEntity.yCoord, z-tileEntity.zCoord);
             GL11.glTranslated(fixedfrom1[3], fixedfrom1[4],fixedfrom1[5]);
-            SEAPI.clientRender.renderParabolicCable(fixedfrom1[3], fixedfrom1[4],fixedfrom1[5],
+            SEGLUtils.renderParabolicCable(fixedfrom1[3], fixedfrom1[4],fixedfrom1[5],
             		3.95 * Math.sin(rotation/180*Math.PI) + 0.5F + tileEntity.xCoord,
             		tileEntity.yCoord + 23 -18,
             		3.95 * Math.cos(rotation/180*Math.PI) + 0.5F + tileEntity.zCoord,
@@ -100,7 +100,7 @@ public class RenderTransmissionTower extends RenderTranmissionTowerBase{
             GL11.glPushMatrix();
             GL11.glTranslated(x-tileEntity.xCoord, y-tileEntity.yCoord, z-tileEntity.zCoord);
             GL11.glTranslated(fixedfrom2[3], fixedfrom2[4],fixedfrom2[5]);
-            SEAPI.clientRender.renderParabolicCable(fixedfrom2[3], fixedfrom2[4],fixedfrom2[5],
+            SEGLUtils.renderParabolicCable(fixedfrom2[3], fixedfrom2[4],fixedfrom2[5],
             		3.95 * Math.sin(rotation/180*Math.PI) + 0.5F + tileEntity.xCoord,
             		tileEntity.yCoord + 23 -18,
             		3.95 * Math.cos(rotation/180*Math.PI) + 0.5F + tileEntity.zCoord,
@@ -111,8 +111,8 @@ public class RenderTransmissionTower extends RenderTranmissionTowerBase{
 	
 	@Override
 	public void renderInsulator(int meta){
-		if ((meta&8) == 0)
-			Models.renderInsulator(2, this, 0 ,2);
+		//if ((meta&8) == 0)
+			//Models.renderInsulator(2, this, 0 ,2);
 	}
 
 

@@ -6,28 +6,33 @@ import net.minecraft.util.AxisAlignedBB;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-import simelectricity.api.SEAPI;
 import simelectricity.api.client.ITransmissionTower;
-import simelectricity.api.client.ITransmissionTowerRenderHelper;
 import simelectricity.api.node.ISEGridNode;
 import simelectricity.api.node.ISESimulatable;
 import simelectricity.api.tile.ISEGridTile;
 import simelectricity.essential.common.SEEnergyTile;
+import simelectricity.essential.grid.render.TransmissionTowerRenderHelper;
 import simelectricity.essential.utils.ITileRenderingInfoSyncHandler;
 
 
 
 public class TileTransmissionTower extends SEEnergyTile implements ISEGridTile, ITileRenderingInfoSyncHandler, ITransmissionTower{
 	public int neighborCoords[] = new int[] { 0, -1, 0, 0, -1, 0 };
-	private ITransmissionTowerRenderHelper renderHelper;
+	private TransmissionTowerRenderHelper renderHelper;
 
 	@Override
-	public ITransmissionTowerRenderHelper getRenderHelper() {
+	public void updateRenderInfo() {
+		getRenderHelper().updateRenderData(neighborCoords[0],neighborCoords[1],neighborCoords[2],neighborCoords[3],neighborCoords[4],neighborCoords[5]);
+		if ((getBlockMetadata()&8) == 0)
+			this.markForRenderUpdate();
+	}
+	
+	@Override
+	public TransmissionTowerRenderHelper getRenderHelper() {
         //Create renderHelper on client side
         if (worldObj.isRemote){
 			if (renderHelper == null)
-				renderHelper = SEAPI.clientRender.newTransmissionTowerRenderHelper(this);
-			renderHelper.updateRenderData(neighborCoords[0],neighborCoords[1],neighborCoords[2],neighborCoords[3],neighborCoords[4],neighborCoords[5]);
+				renderHelper = new TransmissionTowerRenderHelper(this);
         	return renderHelper;
         }else{
         	return null;
@@ -119,11 +124,17 @@ public class TileTransmissionTower extends SEEnergyTile implements ISEGridTile, 
 	@SideOnly(value = Side.CLIENT)
 	public void onSyncDataFromServerArrived(NBTTagCompound nbt) {
 		neighborCoords = nbt.getIntArray("neighborCoords");
-			
-		if (renderHelper == null)
-				renderHelper = SEAPI.clientRender.newTransmissionTowerRenderHelper(this);
-		renderHelper.updateRenderData(neighborCoords[0],neighborCoords[1],neighborCoords[2],neighborCoords[3],neighborCoords[4],neighborCoords[5]);
-			
+
+		this.updateRenderInfo();
+		
+		TileEntity neighbor = worldObj.getTileEntity(neighborCoords[0],neighborCoords[1],neighborCoords[2]);
+		if (neighbor instanceof ITransmissionTower)
+			((ITransmissionTower)neighbor).updateRenderInfo();
+		
+		neighbor = worldObj.getTileEntity(neighborCoords[3],neighborCoords[4],neighborCoords[5]);
+		if (neighbor instanceof ITransmissionTower)
+			((ITransmissionTower)neighbor).updateRenderInfo();
+		
 		super.onSyncDataFromServerArrived(nbt);
 	}
 	

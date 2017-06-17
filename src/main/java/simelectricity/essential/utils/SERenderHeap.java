@@ -46,6 +46,13 @@ public class SERenderHeap {
 		return this;
 	}
 	
+	public SERenderHeap rotateToVec(double xStart, double yStart, double zStart, double xEnd, double yEnd, double zEnd){
+		Iterator<double[][]> cubeIterator = cubes.iterator();
+		while (cubeIterator.hasNext())
+			SERenderHelper.rotateToVec(cubeIterator.next(), xStart, yStart, zStart, xEnd, yEnd, zEnd);
+		return this;
+	}
+	
 	/**
 	 * Rotate respect to vector (x,y,z)
 	 * @param angle in degree
