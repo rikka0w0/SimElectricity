@@ -1,4 +1,4 @@
-package simelectricity.api.client;
+package simelectricity.essential.api;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -9,7 +9,6 @@ public interface ITransmissionTower {
 	void updateRenderInfo();
 	@SideOnly(Side.CLIENT)
 	TransmissionTowerRenderHelper getRenderHelper();
-	double getInsulatorLength();
-	double[] getInsulatorPositionArray();
+	@SideOnly(Side.CLIENT)
 	int getRotation();
 }

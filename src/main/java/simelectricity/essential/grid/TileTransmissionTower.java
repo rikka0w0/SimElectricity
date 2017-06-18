@@ -6,10 +6,10 @@ import net.minecraft.util.AxisAlignedBB;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-import simelectricity.api.client.ITransmissionTower;
 import simelectricity.api.node.ISEGridNode;
 import simelectricity.api.node.ISESimulatable;
 import simelectricity.api.tile.ISEGridTile;
+import simelectricity.essential.api.ITransmissionTower;
 import simelectricity.essential.common.SEEnergyTile;
 import simelectricity.essential.grid.render.TransmissionTowerRenderHelper;
 import simelectricity.essential.utils.ITileRenderingInfoSyncHandler;
@@ -20,6 +20,9 @@ public class TileTransmissionTower extends SEEnergyTile implements ISEGridTile, 
 	public int neighborCoords[] = new int[] { 0, -1, 0, 0, -1, 0 };
 	private TransmissionTowerRenderHelper renderHelper;
 
+	//////////////////////////////
+	/////ITransmissionTower
+	//////////////////////////////
 	@Override
 	public void updateRenderInfo() {
 		getRenderHelper().updateRenderData(neighborCoords[0],neighborCoords[1],neighborCoords[2],neighborCoords[3],neighborCoords[4],neighborCoords[5]);
@@ -32,30 +35,27 @@ public class TileTransmissionTower extends SEEnergyTile implements ISEGridTile, 
         //Create renderHelper on client side
         if (worldObj.isRemote){
 			if (renderHelper == null)
-				renderHelper = new TransmissionTowerRenderHelper(this);
+				renderHelper = new TransmissionTowerRenderHelper(this,2,
+						(getBlockMetadata()&8) == 0
+						?
+						new double[]{-1, 18-18.0, -4.5, -0.7, 23-18.0, 0, -1, 18-18.0, 4.5,
+										1, 18-18.0, -4.5, 0.7, 23-18.0, 0, 1, 18-18.0, 4.5}
+						:
+						new double[]{0, 16-18.0, -4.9, 0, 23-18.0, 3.95, 0, 16-18.0, 4.9}
+						);
         	return renderHelper;
         }else{
         	return null;
         }
-	}
-	
-	@Override
-	public double getInsulatorLength() {return 2;}
-	
-	@Override
-	public double[] getInsulatorPositionArray() {
-		if ((getBlockMetadata()&8) == 0)
-			return new double[]{-1, 18-18.0, -4.5, -0.7, 23-18.0, 0, -1, 18-18.0, 4.5,
-					1, 18-18.0, -4.5, 0.7, 23-18.0, 0, 1, 18-18.0, 4.5};
-		else
-			return new double[]{0, 16-18.0, -4.9, 0, 23-18.0, 3.95, 0, 16-18.0, 4.9};
 	}
 
 	public int getRotation() {
 		return getBlockMetadata() & 7;
 	}
 	
-	//ISEGridTile
+	//////////////////////////////
+	/////ISEGridTile
+	//////////////////////////////
     private ISEGridNode gridNode = null;
 	@Override
 	public void setGridNode(ISEGridNode gridObj) {this.gridNode = gridObj;}
@@ -100,7 +100,9 @@ public class TileTransmissionTower extends SEEnergyTile implements ISEGridTile, 
 	}
 	
 	
-	//TileEntity    
+	//////////////////////////////
+	/////TileEntity
+	//////////////////////////////
 	@SideOnly(Side.CLIENT)
     @Override
     public double getMaxRenderDistanceSquared()
@@ -117,10 +119,12 @@ public class TileTransmissionTower extends SEEnergyTile implements ISEGridTile, 
 	/////////////////////////////////////////////////////////
 	///Sync
 	/////////////////////////////////////////////////////////
+	@Override
 	public void prepareS2CPacketData(NBTTagCompound nbt) {
 		nbt.setIntArray("neighborCoords", neighborCoords);
 	}
 	
+	@Override
 	@SideOnly(value = Side.CLIENT)
 	public void onSyncDataFromServerArrived(NBTTagCompound nbt) {
 		neighborCoords = nbt.getIntArray("neighborCoords");

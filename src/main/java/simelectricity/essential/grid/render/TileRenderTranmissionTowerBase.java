@@ -1,15 +1,13 @@
-package simelectricity.Templates.Client.Render;
+package simelectricity.essential.grid.render;
 
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
-import simelectricity.api.client.ITextureProvider;
-import simelectricity.api.client.ITransmissionTower;
-import simelectricity.essential.grid.render.TransmissionTowerRenderHelper;
-import simelectricity.essential.utils.SEGLUtils;
+import net.minecraft.util.ResourceLocation;
+import simelectricity.essential.api.ITransmissionTower;
 
-public abstract class RenderTranmissionTowerBase extends TileEntitySpecialRenderer implements ITextureProvider{
+public class TileRenderTranmissionTowerBase extends TileEntitySpecialRenderer implements ITextureProvider{
 	protected double[] from1, to1;
 	protected double[] fixedfrom1, fixedto1;
 	protected double[] angle1;
@@ -44,31 +42,8 @@ public abstract class RenderTranmissionTowerBase extends TileEntitySpecialRender
 	    fixedto2 = helper.fixedto2();
 		
 	    rotation = helper.getRotation();
+
 	    
-    	//Tower rendering
-        GL11.glPushMatrix();
-        GL11.glTranslated(x, y, z);
-        GL11.glTranslated(0.5, 0, 0.5);
-        
-                
-        
-        GL11.glRotated(rotation, 0, 1, 0);
-
-        //Debugging purpose, indicates the direction
-        //GL11.glPushMatrix();
-        //GL11.glRotated(45, 0, 0, 1);
-        //SEAPI.clientRender.renderCube(0.1, 1, 0.1, this, 2);
-        //SEAPI.clientRender.renderCable(0, 0, 0, 1, 0, 0, 0.1, this, 2);
-        //GL11.glPopMatrix();
-        
-        GL11.glPushMatrix();
-        renderTower(); 
-        GL11.glPopMatrix();
-               
-        GL11.glPopMatrix();
-        //End of tower rendering
-        
-
         //Cable rendering   
         GL11.glPushMatrix();
         GL11.glTranslated(x-tileEntity.xCoord, y-tileEntity.yCoord, z-tileEntity.zCoord);
@@ -82,24 +57,17 @@ public abstract class RenderTranmissionTowerBase extends TileEntitySpecialRender
 	}
 	
 	private void renderCableAndInsulator(double[] from, double[] to, double[] fixedfrom, double[] fixedto, double[] angle, int meta){
-		for (int i=0; i<3; i++){
-			//Render insulators
-	        GL11.glPushMatrix();
-	        GL11.glTranslated(from[3*i], from[3*i+1],from[3*i+2]);
-	        SEGLUtils.p2pRotation(from[3*i],from[3*i+1],from[3*i+2], to[3*i],from[3*i+1],to[3*i+2]);
-	        GL11.glRotated(angle[i]/Math.PI*180, 0, 0, 1);
-	        renderInsulator(meta);
-	        GL11.glPopMatrix();
-	        
+		for (int i=0; i<3; i++){        
 	        //Render cable
 	        GL11.glPushMatrix();
 	        GL11.glTranslated(fixedfrom[3*i], fixedfrom[3*i+1],fixedfrom[3*i+2]);
-	        SEGLUtils.renderHalfParabolicCable(fixedfrom[3*i], fixedfrom[3*i+1],fixedfrom[3*i+2], fixedto[3*i], fixedto[3*i+1],fixedto[3*i+2], 0.15, 3, this, 1);
+	        CableGLRender.renderHalfParabolicCable(fixedfrom[3*i], fixedfrom[3*i+1],fixedfrom[3*i+2], fixedto[3*i], fixedto[3*i+1],fixedto[3*i+2], 0.15, 3, this, 1);
 	        GL11.glPopMatrix();
 		}
 	}
 	
-	public abstract void renderInsulator(int meta);
-	
-	public abstract void renderTower();
+	@Override
+	public void bindTexture(int index, int side) {
+		bindTexture(new ResourceLocation("simelectricity", "textures/blocks/Wiring/CopperCable_Thin_Side.png"));
+	}
 }

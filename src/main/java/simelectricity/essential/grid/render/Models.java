@@ -307,4 +307,59 @@ public class Models {
         
 		return h1;
     }
+
+    public static SERenderHeap renderCableJoint(IIcon[] textures){
+		SERenderHeap mainHeap = new SERenderHeap();
+		
+		SERenderHeap branch = new SERenderHeap();
+		double[][] cube = SERenderHelper.createCubeVertexes(0.15, 0.6, 0.15);
+		branch.addCube(cube, new IIcon[]{null, null, textures[2],textures[2],textures[2],textures[2]});
+		cube = SERenderHelper.createCubeVertexes(0.4, 0.1, 0.4);
+		SERenderHelper.translateCoord(cube, 0, 0.35, 0);
+		branch.addCube(cube, new IIcon[]{textures[2],textures[2],textures[2],textures[2],textures[2],textures[2]});
+		cube = SERenderHelper.createCubeVertexes(0.4, 0.1, 0.4);
+		SERenderHelper.translateCoord(cube, 0, 0.55, 0);
+		branch.addCube(cube, new IIcon[]{textures[2],textures[2],textures[2],textures[2],textures[2],textures[2]});
+		cube = SERenderHelper.createCubeVertexes(0.15, 1, 0.15);
+		SERenderHelper.rotateAroundX(cube, -10);
+		SERenderHelper.translateCoord(cube, 0, 0.55, 0);
+		branch.addCube(cube, new IIcon[]{null,textures[2],textures[2],textures[2],textures[2],textures[2]});
+		branch.rotateAroundX(45);
+		branch.rotateAroundZ(15);
+		mainHeap.appendHeap(branch);
+		
+		branch = new SERenderHeap();
+		cube = SERenderHelper.createCubeVertexes(0.15, 0.6, 0.15);
+		branch.addCube(cube, new IIcon[]{null, null,textures[2],textures[2],textures[2],textures[2]});
+		cube = SERenderHelper.createCubeVertexes(0.4, 0.1, 0.4);
+		SERenderHelper.translateCoord(cube, 0, 0.35, 0);
+		branch.addCube(cube, new IIcon[]{textures[2],textures[2],textures[2],textures[2],textures[2],textures[2]});
+		cube = SERenderHelper.createCubeVertexes(0.4, 0.1, 0.4);
+		SERenderHelper.translateCoord(cube, 0, 0.55, 0);
+		branch.addCube(cube, new IIcon[]{textures[2],textures[2],textures[2],textures[2],textures[2],textures[2]});
+		cube = SERenderHelper.createCubeVertexes(0.15, 1, 0.15);
+		SERenderHelper.translateCoord(cube, 0, 0.55, 0);
+		branch.addCube(cube, new IIcon[]{null,textures[2],textures[2],textures[2],textures[2],textures[2]});
+		branch.rotateAroundZ(-25);
+		mainHeap.appendHeap(branch);
+		
+		branch = new SERenderHeap();
+		cube = SERenderHelper.createCubeVertexes(0.15, 0.6, 0.15);
+		branch.addCube(cube, new IIcon[]{null, null,textures[2],textures[2],textures[2],textures[2]});
+		cube = SERenderHelper.createCubeVertexes(0.4, 0.1, 0.4);
+		SERenderHelper.translateCoord(cube, 0, 0.35, 0);
+		branch.addCube(cube, new IIcon[]{textures[2],textures[2],textures[2],textures[2],textures[2],textures[2]});
+		cube = SERenderHelper.createCubeVertexes(0.4, 0.1, 0.4);
+		SERenderHelper.translateCoord(cube, 0, 0.55, 0);
+		branch.addCube(cube, new IIcon[]{textures[2],textures[2],textures[2],textures[2],textures[2],textures[2]});
+		cube = SERenderHelper.createCubeVertexes(0.15, 1, 0.15);
+		SERenderHelper.rotateAroundX(cube, 10);
+		SERenderHelper.translateCoord(cube, 0, 0.55, 0);
+		branch.addCube(cube, new IIcon[]{null,textures[2],textures[2],textures[2],textures[2],textures[2]});
+		branch.rotateAroundX(-45);
+		branch.rotateAroundZ(15);
+		mainHeap.appendHeap(branch);
+		
+		return mainHeap;
+    }
 }

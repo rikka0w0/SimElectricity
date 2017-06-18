@@ -1,6 +1,6 @@
 package simelectricity.essential.grid.render;
 
-import simelectricity.api.client.ITransmissionTower;
+import simelectricity.essential.api.ITransmissionTower;
 import simelectricity.essential.utils.SERenderHeap;
 import simelectricity.essential.utils.SERenderHelper;
 
@@ -17,10 +17,10 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
-public class RenderTransmissionTowerTop implements ISimpleBlockRenderingHandler{
+public class BlockRenderTransmissionTowerTop implements ISimpleBlockRenderingHandler{
 	private final int renderID;
 	
-	public RenderTransmissionTowerTop(){
+	public BlockRenderTransmissionTowerTop(){
 		renderID = RenderingRegistry.getNextAvailableRenderId();
 		RenderingRegistry.registerBlockHandler(renderID, this);
 		MinecraftForge.EVENT_BUS.register(this);
@@ -64,6 +64,14 @@ public class RenderTransmissionTowerTop implements ISimpleBlockRenderingHandler{
 			if (helper.render2())
 				renderInsulators(helper.from2(), helper.to2(), helper.angle2(), lightValue);			
 	
+			if (helper.render1() & helper.render2()){
+				SERenderHeap insulator = modelInsulator.clone();
+				insulator.rotateAroundZ(180);
+				insulator.transform(0, 7, 3.95);
+				insulator.rotateAroundVector(rotation, 0, 1, 0);
+				insulator.transform(x+0.5, y, z+0.5);
+				insulator.applyToTessellator(lightValue);
+			}
 		}else{
 			tower = model1.clone();
 		}
@@ -73,18 +81,16 @@ public class RenderTransmissionTowerTop implements ISimpleBlockRenderingHandler{
 		tower.transform(x+0.5, y-18, z+0.5);
 		tower.applyToTessellator(lightValue);
 		
-		if (tower != null){
-			
-			//Direction indicator
-			/*
-			double[][] cube = SERenderHelper.createCubeVertexes(0.1, 1, 0.1);
-			SERenderHelper.rotateToVec(cube, 0, 0, 0, 1, 0, 0);
-			//SERenderHelper.rotateAroundZ(cube, 45);
-			SERenderHelper.rotateAroundVector(cube, 35, 1, 0, 1);
-			SERenderHelper.translateCoord(cube, x+0.5, y, z+0.5);
-			SERenderHelper.addCubeToTessellator(cube, SERenderHelper.createTextureArray(textures[2]), lightValue);
-			*/
-		}
+		//Direction indicator
+		/*
+		double[][] cube = SERenderHelper.createCubeVertexes(0.1, 1, 0.1);
+		SERenderHelper.rotateToVec(cube, 0, 0, 0, 1, 0, 0);
+		SERenderHelper.rotateAroundZ(cube, 45);
+		SERenderHelper.rotateAroundVector(cube, 35, 1, 0, 1);
+		SERenderHelper.translateCoord(cube, x+0.5, y, z+0.5);
+		SERenderHelper.addCubeToTessellator(cube, SERenderHelper.createTextureArray(textures[2]), lightValue);
+		*/
+		
 		return true;
 	}
 
@@ -110,7 +116,6 @@ public class RenderTransmissionTowerTop implements ISimpleBlockRenderingHandler{
 	    	textures[1] = event.map.registerIcon("simelectricity:HvInsulator");
 	    	textures[2] = event.map.registerIcon("simelectricity:AdjustableResistor_Top");
 		}
-
 	}
 	
 	///////////////////////////////////

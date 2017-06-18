@@ -21,7 +21,7 @@ public class SEMathHelper {
      * @param xEnd   End X coordinate
      * @param zEnd   End Z coordinate
      */
-	public static double distanceof(double xStart, double zStart, double xEnd, double zEnd){
+	public static double distanceOf(double xStart, double zStart, double xEnd, double zEnd){
         return Math.sqrt((xStart - xEnd) * (xStart - xEnd) +
                 (zStart - zEnd) * (zStart - zEnd));
 	}

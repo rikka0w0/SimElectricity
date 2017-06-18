@@ -33,11 +33,9 @@ public class SEBlocks {
     public static BlockSolarPanel solarPanel;
     public static BlockSwitch blockSwitch;
     public static BlockVoltageMeter voltageMeter;
-    public static BlockWire wire;
     public static BlockSolarInverter solarInverter;
     public static BlockIceMachine iceMachine;
     public static BlockDiode blockDiode;
-    public static BlockCableClamp cableClamp;
 
     public static void preInit() {
         adjustableResistor = new BlockAdjustableResistor();
@@ -47,18 +45,15 @@ public class SEBlocks {
         solarPanel = new BlockSolarPanel();
         blockSwitch = new BlockSwitch();
         voltageMeter = new BlockVoltageMeter();
-        wire = new BlockWire();
         solarInverter = new BlockSolarInverter();
         iceMachine = new BlockIceMachine();
         blockDiode = new BlockDiode();
-        cableClamp = new BlockCableClamp();
     }
 
     public static void init() {
         GameRegistry.registerTileEntity(TileQuantumGenerator.class, "TileQuantumGenerator");
         GameRegistry.registerTileEntity(TileSolarPanel.class, "TileSolarPanel");
         GameRegistry.registerTileEntity(TileVoltageMeter.class, "TileVoltageMeter");
-        GameRegistry.registerTileEntity(TileWire.class, "TileWire");
         GameRegistry.registerTileEntity(TileAdjustableResistor.class, "TileAdjustableResistor");
         GameRegistry.registerTileEntity(TileAdjustableTransformer.class, "TileAdjustableTransformer");
         GameRegistry.registerTileEntity(TileIncandescentLamp.class, "TileIncandescentLamp");
@@ -67,6 +62,5 @@ public class SEBlocks {
         GameRegistry.registerTileEntity(TileSolarInverter.class, "TileSolarInverter");
         GameRegistry.registerTileEntity(TileIceMachine.class, "TileIceMachine");
         GameRegistry.registerTileEntity(TileDiode.class, "TileDiode");
-        GameRegistry.registerTileEntity(TileCableClamp.class, "TileCableClamp");
     }
 }

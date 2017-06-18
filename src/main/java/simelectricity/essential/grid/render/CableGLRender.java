@@ -1,13 +1,13 @@
-package simelectricity.essential.utils;
+package simelectricity.essential.grid.render;
 
 import net.minecraft.client.renderer.Tessellator;
 
 import org.lwjgl.opengl.GL11;
 
-import simelectricity.api.client.ITextureProvider;
 import simelectricity.common.ConfigManager;
+import simelectricity.essential.utils.SEMathHelper;
 
-public class SEGLUtils {
+public class CableGLRender {
     /**
      * Render parabolic cable between two points
      * </p> coordinates are MineCraft coordinates, the cable will start from current openGL reference point

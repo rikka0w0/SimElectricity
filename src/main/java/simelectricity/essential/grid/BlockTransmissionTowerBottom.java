@@ -161,7 +161,7 @@ public class BlockTransmissionTowerBottom extends SEBlock{
 	
 	@Override
 	public int damageDropped(int meta){
-		return 0;
+		return 0;	//Prevent crash QAQ!!!
 	}
 	
     @Override

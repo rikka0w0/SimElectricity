@@ -66,10 +66,16 @@ public class BlockTransmissionTowerTop extends SEBlock implements ITileEntityPro
 		this.isBlockContainer = true;
 		this.setCreativeTab(SEAPI.SETab);
 	}
+
+    @Override
+    public TileEntity createNewTileEntity(World world, int meta) {
+        return new TileTransmissionTower();
+    }
 	
 	public static class ItemBlock extends SEItemBlock{
 		public ItemBlock(Block block) {super(block);}
 		
+		@Deprecated
 	    @SideOnly(Side.CLIENT)
 	    public IIcon getIconFromDamage(int damage){
 	    	return ((BlockTransmissionTowerTop)field_150939_a).inventoryTexture[damage];
@@ -103,9 +109,9 @@ public class BlockTransmissionTowerTop extends SEBlock implements ITileEntityPro
         return false;
     }
 	
-	///////////////////
+	///////////////////////////////////////
 	/// Utils
-	///////////////////	
+	///////////////////////////////////////
 	private static int[] createCollisionBoxCoordOffset(int facing, int x, int y, int z, int part){
 		//facing ID
 		int[][] collisionBoxCoordOffsetMatrix = new int[][]{
@@ -224,11 +230,6 @@ public class BlockTransmissionTowerTop extends SEBlock implements ITileEntityPro
         super.breakBlock(world, x, y, z, block, meta);
     }
 
-    @Override
-    public TileEntity createNewTileEntity(World world, int meta) {
-        return new TileTransmissionTower();
-    }
-
 	////////////////////////////////////
 	/// Rendering
 	////////////////////////////////////
@@ -264,6 +265,7 @@ public class BlockTransmissionTowerTop extends SEBlock implements ITileEntityPro
         return renderID;
     }
 	
+	@Deprecated
     @Override
     @SideOnly(Side.CLIENT)
     public void registerBlockIcons(IIconRegister r) {

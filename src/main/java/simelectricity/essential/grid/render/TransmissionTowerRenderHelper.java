@@ -1,11 +1,13 @@
 package simelectricity.essential.grid.render;
 
 import net.minecraft.tileentity.TileEntity;
-import simelectricity.api.client.ITransmissionTower;
+import simelectricity.essential.api.ITransmissionTower;
 import simelectricity.essential.utils.SEMathHelper;
 
 public class TransmissionTowerRenderHelper{
 	private TileEntity te;
+	private double insulatorLength;
+	private double[] insulatorPositionArray;
 	
 	private double rotation;
 	
@@ -47,9 +49,15 @@ public class TransmissionTowerRenderHelper{
 	
 	public double[] angle2() {return angle2;}
     
+	public double[] getInsulatorPositionArray(){return insulatorPositionArray;}
+	
+	public double getInsulatorLength(){return insulatorLength;}
+	
 	/////////////////////////////////////////////////////
-    public TransmissionTowerRenderHelper(TileEntity te){
+    public TransmissionTowerRenderHelper(TileEntity te, double insulatorLength, double[] insulatorPositionArray){
     	this.te = te;
+    	this.insulatorLength = insulatorLength;
+    	this.insulatorPositionArray = insulatorPositionArray;
     }
     
     private static void getRotatedXZ(double[] param, double rotation, int x, int z){	//ret: x,z, real MC coord
@@ -68,40 +76,35 @@ public class TransmissionTowerRenderHelper{
     	}
 
     }
-        
-    private static double distanceOf(double[] Start, double x, double z) {
-        return Math.sqrt((Start[0] - x)*(Start[0] - x) + (Start[1] - z)*(Start[1] - z));
-    }
     
-    private static void findVirtualConnection(TileEntity tileEntity, int neighborX, int neighborY, int neighborZ, double[] from, double[] to){   
+    private void findVirtualConnection(TileEntity tileEntity, int neighborX, int neighborY, int neighborZ, double[] from, double[] to){   
     	ITransmissionTower curTw = (ITransmissionTower) tileEntity;
     	double curRotation = curTw.getRotation()*45 - 90;
-		double[] curInsulatorPositionArray = curTw.getInsulatorPositionArray();	
 		
-		double[] curInsulatorXZ1 = new double[] {curInsulatorPositionArray[3], curInsulatorPositionArray[5]};
+		double[] curInsulatorXZ1 = new double[] {insulatorPositionArray[3], insulatorPositionArray[5]};
 		getRotatedXZ(curInsulatorXZ1, curRotation, tileEntity.xCoord, tileEntity.zCoord);
 		
-		if (curInsulatorPositionArray.length > 9){
-			double[] curInsulatorXZ2 = new double[] {curInsulatorPositionArray[12], curInsulatorPositionArray[14]};
+		if (insulatorPositionArray.length > 9){
+			double[] curInsulatorXZ2 = new double[] {insulatorPositionArray[12], insulatorPositionArray[14]};
 			getRotatedXZ(curInsulatorXZ2, curRotation, tileEntity.xCoord, tileEntity.zCoord);
-			double dc1n = distanceOf(curInsulatorXZ1, neighborX, neighborZ);
-			double dc2n = distanceOf(curInsulatorXZ2, neighborX, neighborZ);
+			double dc1n = SEMathHelper.distanceOf(curInsulatorXZ1[0], curInsulatorXZ1[1], neighborX, neighborZ);
+			double dc2n = SEMathHelper.distanceOf(curInsulatorXZ2[0], curInsulatorXZ2[1], neighborX, neighborZ);
 			
 			if (dc2n<dc1n){
 				for (int i=0; i<9; i++){
-					from[i] = curInsulatorPositionArray[i+9];
-					to[i] = curInsulatorPositionArray[i+9];
+					from[i] = insulatorPositionArray[i+9];
+					to[i] = insulatorPositionArray[i+9];
 				}
 			}else{
 				for (int i=0; i<9; i++){
-					from[i] = curInsulatorPositionArray[i];
-					to[i] = curInsulatorPositionArray[i];
+					from[i] = insulatorPositionArray[i];
+					to[i] = insulatorPositionArray[i];
 				}
 			}
 		}else{
 			for (int i=0; i<9; i++){
-				from[i] = curInsulatorPositionArray[i];
-				to[i] = curInsulatorPositionArray[i];
+				from[i] = insulatorPositionArray[i];
+				to[i] = insulatorPositionArray[i];
 			}
 		}
 		
@@ -118,28 +121,24 @@ public class TransmissionTowerRenderHelper{
 		swapIfIntersect(from, to);
     }
     
-    private static void findConnection(TileEntity tileEntity, TileEntity neighbor, double[] from, double[] to){    	
-    	ITransmissionTower curTw = (ITransmissionTower) tileEntity;
+    private void findConnection(TileEntity neighbor, double[] from, double[] to){    	
     	ITransmissionTower neighborTw = (ITransmissionTower) neighbor;
     	
-    	double curRotation = curTw.getRotation()*45 - 90;
-		double[] curInsulatorPositionArray = curTw.getInsulatorPositionArray();		
 		
 		double neighborRotation = neighborTw.getRotation()*45 - 90;
-		double[] neighborInsulatorPositionArray = neighborTw.getInsulatorPositionArray();		
+		double[] neighborInsulatorPositionArray = neighborTw.getRenderHelper().getInsulatorPositionArray();		
 		
 		
-		
-		double[] curInsulatorXZ1 = new double[] {curInsulatorPositionArray[3], curInsulatorPositionArray[5]};
-		getRotatedXZ(curInsulatorXZ1, curRotation, tileEntity.xCoord, tileEntity.zCoord);
+		double[] curInsulatorXZ1 = new double[] {insulatorPositionArray[3], insulatorPositionArray[5]};
+		getRotatedXZ(curInsulatorXZ1, rotation, te.xCoord, te.zCoord);
 		
 		double[] neighborInsulatorXZ1 = new double[] {neighborInsulatorPositionArray[3], neighborInsulatorPositionArray[5]};
 		getRotatedXZ(neighborInsulatorXZ1, neighborRotation, neighbor.xCoord, neighbor.zCoord);
 		
 		double[] curInsulatorXZ2 = null;
-		if (curInsulatorPositionArray.length > 9){
-			curInsulatorXZ2 = new double[] {curInsulatorPositionArray[12], curInsulatorPositionArray[14]};
-			getRotatedXZ(curInsulatorXZ2, curRotation, tileEntity.xCoord, tileEntity.zCoord);
+		if (insulatorPositionArray.length > 9){
+			curInsulatorXZ2 = new double[] {insulatorPositionArray[12], insulatorPositionArray[14]};
+			getRotatedXZ(curInsulatorXZ2, rotation, te.xCoord, te.zCoord);
 		}
 		
 		double[] neighborInsulatorXZ2 = null;
@@ -154,7 +153,7 @@ public class TransmissionTowerRenderHelper{
 		
 		if (curInsulatorXZ2 == null && neighborInsulatorXZ2 == null){
 			for (int i=0; i<9; i++){
-				from[i] = curInsulatorPositionArray[i];
+				from[i] = insulatorPositionArray[i];
 				to[i] = neighborInsulatorPositionArray[i];
 			}
 		}
@@ -164,12 +163,12 @@ public class TransmissionTowerRenderHelper{
 			
 			if (dc2n1<dc1n1){
 				for (int i=0; i<9; i++){
-					from[i] = curInsulatorPositionArray[i+9];
+					from[i] = insulatorPositionArray[i+9];
 					to[i] = neighborInsulatorPositionArray[i];
 				}
 			}else{
 				for (int i=0; i<9; i++){
-					from[i] = curInsulatorPositionArray[i];
+					from[i] = insulatorPositionArray[i];
 					to[i] = neighborInsulatorPositionArray[i];
 				}
 			}
@@ -180,12 +179,12 @@ public class TransmissionTowerRenderHelper{
 			
 			if (dc1n2<dc1n1){
 				for (int i=0; i<9; i++){
-					from[i] = curInsulatorPositionArray[i];
+					from[i] = insulatorPositionArray[i];
 					to[i] = neighborInsulatorPositionArray[i+9];
 				}
 			}else{
 				for (int i=0; i<9; i++){
-					from[i] = curInsulatorPositionArray[i];
+					from[i] = insulatorPositionArray[i];
 					to[i] = neighborInsulatorPositionArray[i];
 				}
 			}
@@ -197,37 +196,37 @@ public class TransmissionTowerRenderHelper{
 			double dc2n2 = SEMathHelper.distanceOf(curInsulatorXZ2, neighborInsulatorXZ2);
 					
 			for (int i=0; i<9; i++){
-				from[i] = curInsulatorPositionArray[i];
+				from[i] = insulatorPositionArray[i];
 				to[i] = neighborInsulatorPositionArray[i];
 			}
 			if (dc1n2<dc1n1){
 				dc1n1 = dc1n2;
 				for (int i=0; i<9; i++){
-					from[i] = curInsulatorPositionArray[i];
+					from[i] = insulatorPositionArray[i];
 					to[i] = neighborInsulatorPositionArray[i+9];
 				}
 			}
 			if (dc2n1<dc1n1){
 				dc1n1 = dc2n1;
 				for (int i=0; i<9; i++){
-					from[i] = curInsulatorPositionArray[i+9];
+					from[i] = insulatorPositionArray[i+9];
 					to[i] = neighborInsulatorPositionArray[i];
 				}
 			}
 			if (dc2n2<dc1n1){
 				for (int i=0; i<9; i++){
-					from[i] = curInsulatorPositionArray[i+9];
+					from[i] = insulatorPositionArray[i+9];
 					to[i] = neighborInsulatorPositionArray[i+9];
 				}
 			}
 		}
 		
 		//Transform to 'Real' MC coordinates
-		transformCoord(from, curRotation, tileEntity.xCoord, tileEntity.zCoord);
+		transformCoord(from, rotation, te.xCoord, te.zCoord);
 		transformCoord(to, neighborRotation, neighbor.xCoord, neighbor.zCoord);
-		from[1] += tileEntity.yCoord;
-		from[4] += tileEntity.yCoord;
-		from[7] += tileEntity.yCoord;
+		from[1] += te.yCoord;
+		from[4] += te.yCoord;
+		from[7] += te.yCoord;
 		to[1] += neighbor.yCoord;
 		to[4] += neighbor.yCoord;
 		to[7] += neighbor.yCoord;
@@ -235,7 +234,7 @@ public class TransmissionTowerRenderHelper{
 		swapIfIntersect(from, to);
     }
     
-    private static void swapIfIntersect(double[] from, double[] to){
+    public static void swapIfIntersect(double[] from, double[] to){
 		double m1 = (from[0]-to[0])/(from[2]-to[2]);
 		double k1 = from[0] - from[2] * m1;
 		double m2 = (from[6]-to[6])/(from[8]-to[8]);
@@ -291,9 +290,7 @@ public class TransmissionTowerRenderHelper{
     }
     
     public void updateRenderData(int x1, int y1, int z1, int x2, int y2, int z2){		
-    	ITransmissionTower tw = (ITransmissionTower)te;
-    	
-		rotation = tw.getRotation()*45 - 90;
+		rotation = ((ITransmissionTower)te).getRotation()*45 - 90;
         
 		TileEntity neighbor1 = te.getWorldObj().getTileEntity(x1, y1, z1);
 		TileEntity neighbor2 = te.getWorldObj().getTileEntity(x2, y2, z2);
@@ -308,18 +305,18 @@ public class TransmissionTowerRenderHelper{
 					fixedto1[i] = to1[i];
 			}
 			else{
-				findConnection(te, neighbor1, from1, to1);
+				findConnection(neighbor1, from1, to1);
 				
-				if (((ITransmissionTower) neighbor1).getInsulatorPositionArray().length > 9)
-					fixConnectionPoints(to1, from1, dummyangle, fixedto1, ((ITransmissionTower) neighbor1).getInsulatorLength(), 3);
+				if (((ITransmissionTower) neighbor1).getRenderHelper().getInsulatorPositionArray().length > 9)
+					fixConnectionPoints(to1, from1, dummyangle, fixedto1, ((ITransmissionTower) neighbor1).getRenderHelper().getInsulatorLength(), 3);
 				else{
 					for (int i=0; i<9; i++)
 						fixedto1[i] = to1[i];
 				}
 			}
 				
-			if (tw.getInsulatorPositionArray().length > 9){
-				fixConnectionPoints(from1, to1, angle1, fixedfrom1, tw.getInsulatorLength(), 3);
+			if (insulatorPositionArray.length > 9){
+				fixConnectionPoints(from1, to1, angle1, fixedfrom1, insulatorLength, 3);
 			}else{
 				for (int i=0; i<9; i++)
 					fixedfrom1[i] = from1[i];
@@ -336,10 +333,10 @@ public class TransmissionTowerRenderHelper{
 					fixedto2[i] = to2[i];	
 			}
 			else{
-				findConnection(te, neighbor2, from2, to2);
+				findConnection(neighbor2, from2, to2);
 				
-				if (((ITransmissionTower) neighbor2).getInsulatorPositionArray().length > 9)
-					fixConnectionPoints(to2, from2, dummyangle, fixedto2, ((ITransmissionTower) neighbor2).getInsulatorLength(), 3);
+				if (((ITransmissionTower) neighbor2).getRenderHelper().getInsulatorPositionArray().length > 9)
+					fixConnectionPoints(to2, from2, dummyangle, fixedto2, ((ITransmissionTower) neighbor2).getRenderHelper().getInsulatorLength(), 3);
 				else{
 					for (int i=0; i<9; i++)
 						fixedto2[i] = to2[i];				
@@ -347,8 +344,8 @@ public class TransmissionTowerRenderHelper{
 			}
 				
 			
-			if (tw.getInsulatorPositionArray().length > 9){
-				fixConnectionPoints(from2, to2, angle2, fixedfrom2, tw.getInsulatorLength(), 3);
+			if (insulatorPositionArray.length > 9){
+				fixConnectionPoints(from2, to2, angle2, fixedfrom2, insulatorLength, 3);
 			}else{
 				for (int i=0; i<9; i++)
 					fixedfrom2[i] = from2[i];

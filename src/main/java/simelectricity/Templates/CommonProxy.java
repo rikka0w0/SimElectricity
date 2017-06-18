@@ -33,9 +33,6 @@ public class CommonProxy implements IGuiHandler {
         return null;
     }
 
-    public void registerTileEntitySpecialRenderer() {
-    }
-
     public Object getCurrentGui(){
     	return null;
     }

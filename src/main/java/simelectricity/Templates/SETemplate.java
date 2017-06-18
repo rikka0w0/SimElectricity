@@ -62,8 +62,6 @@ public class SETemplate {
         NetworkRegistry.INSTANCE.registerGuiHandler(instance, proxy);
 
 
-        proxy.registerTileEntitySpecialRenderer();
-
         //Register TileEntities
         SEBlocks.init();
     }

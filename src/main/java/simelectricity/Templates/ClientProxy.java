@@ -20,7 +20,6 @@
 package simelectricity.Templates;
 
 import cpw.mods.fml.client.FMLClientHandler;
-import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.entity.player.EntityPlayer;
@@ -28,7 +27,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
 import simelectricity.Templates.Client.Gui.*;
-import simelectricity.Templates.Client.Render.*;
 import simelectricity.Templates.TileEntity.*;
 
 @SideOnly(Side.CLIENT)
@@ -42,14 +40,7 @@ public class ClientProxy extends CommonProxy {
     public World getClientWorld() {
         return FMLClientHandler.instance().getClient().theWorld;
     }
-
-    @Override
-    public void registerTileEntitySpecialRenderer() {
-        ClientRegistry.bindTileEntitySpecialRenderer(TileWire.class, new RenderWire());
-        
-        ClientRegistry.bindTileEntitySpecialRenderer(TileCableClamp.class, new RenderCableClamp());        
-    }
-
+    
     @Override
     public Object getClientGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
         TileEntity te = world.getTileEntity(x, y, z);

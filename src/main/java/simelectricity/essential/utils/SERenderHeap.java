@@ -28,14 +28,20 @@ public class SERenderHeap {
 	}
 	
 	public SERenderHeap appendHeap(SERenderHeap heap){
-		cubes.addAll(heap.cubes);
-		textures.addAll(heap.textures);
+		this.cubes.addAll(heap.cubes);
+		this.textures.addAll(heap.textures);
 		return this;
 	}
 	
 	public SERenderHeap addCube(double[][] cube, IIcon texture){
-		cubes.add(cube);
-		textures.add(SERenderHelper.createTextureArray(texture));
+		this.cubes.add(cube);
+		this.textures.add(SERenderHelper.createTextureArray(texture));
+		return this;
+	}
+	
+	public SERenderHeap addCube(double[][] cube, IIcon[] textures){
+		this.cubes.add(cube);
+		this.textures.add(textures);
 		return this;
 	}
 	
@@ -64,6 +70,20 @@ public class SERenderHeap {
 		Iterator<double[][]> cubeIterator = cubes.iterator();
 		while (cubeIterator.hasNext())
 			SERenderHelper.rotateAroundVector(cubeIterator.next(), angle, x, y, z);
+		return this;
+	}
+	
+	public SERenderHeap rotateAroundX(float angle){
+		Iterator<double[][]> cubeIterator = cubes.iterator();
+		while (cubeIterator.hasNext())
+			SERenderHelper.rotateAroundX(cubeIterator.next(), angle);
+		return this;
+	}
+	
+	public SERenderHeap rotateAroundY(float angle){
+		Iterator<double[][]> cubeIterator = cubes.iterator();
+		while (cubeIterator.hasNext())
+			SERenderHelper.rotateAroundY(cubeIterator.next(), angle);
 		return this;
 	}
 	

@@ -3,8 +3,7 @@ package simelectricity.api.tile;
 import simelectricity.api.node.ISEGridNode;
 
 /**
- * This interface should be implemented by the tileEntity, which is responsible for HV tower/transformer rendering
- *
+ * TileEntities can implement this interface
  */
 public interface ISEGridTile{
     /**
@@ -18,15 +17,16 @@ public interface ISEGridTile{
 	 * @return the GridNode instance from setGridNode()
 	 */
 	ISEGridNode getGridNode();
+	
     /**
-     * This function will be called every time when the neighbor list of its ISEGridObject has changed
+     * This function will be called as soon as the neighbor list of its ISEGridObject has changed
      * <p/>
      * E.g. Connection established, map loading, Connection removed...
      */
 	void onGridNeighborUpdated();
 	
     /**
-     * Called by HV cable items, to decide whether this ISEGridObject can be connected
+     * Called by HV cable items, to decide if this ISEGridObject can be connected
      */
 	boolean canConnect();
 }

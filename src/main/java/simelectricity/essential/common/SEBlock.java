@@ -54,7 +54,7 @@ public abstract class SEBlock extends Block{
     
 	@Override
 	public int damageDropped(int meta){
-		return meta;
+		return itemBlock.getHasSubtypes() ? meta : 0;
 	//public final int damageDropped(IBlockState state) {
 	    //return getMetaFromState(state);
 	}
@@ -63,7 +63,8 @@ public abstract class SEBlock extends Block{
 	public ItemStack getPickBlock(MovingObjectPosition target, World world, int x, int y, int z, EntityPlayer player){
 	//public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player){
 	    //return new ItemStack(itemBlock, 1, this.getMetaFromState(world.getBlockState(pos)));
-		return new ItemStack(itemBlock, 1, world.getBlockMetadata(x, y, z));
+		return itemBlock.getHasSubtypes() ? new ItemStack(itemBlock, 1, world.getBlockMetadata(x, y, z))
+											: super.getPickBlock(target, world, x, y, z, player);
 	}
     
     public final SEItemBlock getItemBlock(){

@@ -12,10 +12,10 @@ import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 
-public class RenderTransmissionTowerBottom implements ISimpleBlockRenderingHandler{
+public class BlockRenderTransmissionTowerBottom implements ISimpleBlockRenderingHandler{
 	private final int renderID;
 	
-	public RenderTransmissionTowerBottom(){
+	public BlockRenderTransmissionTowerBottom(){
 		renderID = RenderingRegistry.getNextAvailableRenderId();
 		RenderingRegistry.registerBlockHandler(renderID, this);
 		MinecraftForge.EVENT_BUS.register(this);
