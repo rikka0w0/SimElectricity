@@ -44,10 +44,6 @@ public class BlockCableJoint extends SEBlock implements ITileEntityProvider{
 	    @Override
 	    public boolean placeBlockAt(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ, int metadata){
 	        int facing = 8 - MathHelper.floor_double((player.rotationYaw) * 8.0F / 360.0F + 0.5D) & 7;
-	    	
-	        //Only multiple of 2 only, S0 W2 N4 E6
-	        facing = facing >> 1;
-	        facing = facing << 1;
 	        
 	        return super.placeBlockAt(stack, player, world, x, y, z, side, hitX, hitY, hitZ, facing);
 	    }

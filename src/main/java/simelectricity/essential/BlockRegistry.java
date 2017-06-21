@@ -1,6 +1,8 @@
 package simelectricity.essential;
 
 import cpw.mods.fml.common.registry.GameRegistry;
+import simelectricity.essential.blocks.BlockElectronics;
+import simelectricity.essential.blocks.TileVoltageMeter;
 import simelectricity.essential.cable.BlockCable;
 import simelectricity.essential.cable.TileCable;
 import simelectricity.essential.grid.BlockCableJoint;
@@ -16,8 +18,9 @@ public class BlockRegistry {
 	public static BlockTransmissionTowerTop transmissionTowerTop;
 	public static BlockTransmissionTowerBottom transmissionTowerBottom;
 	public static BlockTransmissionTowerCollisionBox transmissionTowerCollisionBox;
-	
 	public static BlockCableJoint cableJoint;
+	
+	public static BlockElectronics blockElectronics;
 	
 	public static void registerBlocks(){
 		blockCable = new BlockCable();
@@ -25,13 +28,16 @@ public class BlockRegistry {
 		transmissionTowerTop = new BlockTransmissionTowerTop();
 		transmissionTowerBottom = new BlockTransmissionTowerBottom();
 		transmissionTowerCollisionBox = new BlockTransmissionTowerCollisionBox();
-		
 		cableJoint = new BlockCableJoint();
+		
+		blockElectronics = new BlockElectronics();
 	}
 	
 	public static void registerTileEntities(){
-		GameRegistry.registerTileEntity(TileCable.class, "TileCable");
-		GameRegistry.registerTileEntity(TileTransmissionTower.class, "TileTransmissionTower");
-		GameRegistry.registerTileEntity(TileCableJoint.class, "TileCableJoint");
+		GameRegistry.registerTileEntity(TileCable.class, "SEECable");
+		GameRegistry.registerTileEntity(TileTransmissionTower.class, "SEETransmissionTower");
+		GameRegistry.registerTileEntity(TileCableJoint.class, "SEECableJoint");
+		
+		GameRegistry.registerTileEntity(TileVoltageMeter.class, "SEEVoltageMeter");
 	}	
 }

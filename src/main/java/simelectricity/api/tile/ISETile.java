@@ -12,7 +12,7 @@ public interface ISETile{
 	/**
 	 * @return An array of directions that can be used to connect to {link}ISESubComponent
 	 */
-	public ForgeDirection[] getValidDirections();
+	//public ForgeDirection[] getValidDirections();
 	
 	public ISESubComponent getComponent(ForgeDirection side);
 }

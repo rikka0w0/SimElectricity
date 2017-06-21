@@ -27,9 +27,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
 
-import simelectricity.api.components.ISEVoltageSource;
 import simelectricity.api.node.*;
 import simelectricity.api.tile.*;
 import simelectricity.api.SEAPI;
@@ -79,6 +77,7 @@ public class ItemUltimateMultimeter extends ItemSE {
         		chat(player, "Current: " + String.valueOf(currentMagnitude));
         }
         else if (te instanceof ISETile){
+        	/*
         	ISETile tile = (ISETile)te;
         	ForgeDirection[] dirs = tile.getValidDirections();
         	
@@ -100,6 +99,7 @@ public class ItemUltimateMultimeter extends ItemSE {
         		String[] temp = comp.toString().split("[.]");
         		chat(player, temp[temp.length-1].split("@")[0] + ": " + String.valueOf(SEAPI.energyNetAgent.getVoltage(comp)));
         	}
+        	*/
         }
         if (te instanceof ISEGridTile){
     		ISEGridNode comp = ((ISEGridTile) te).getGridNode();

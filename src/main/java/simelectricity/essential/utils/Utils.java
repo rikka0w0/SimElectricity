@@ -14,11 +14,22 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 public class Utils {
 	/**
+	 * [side][facing]
+	 */
+	public static final int[][] sideAndFacingToSpriteOffset = new int[][]{
+        {3, 2, 0, 0, 0, 0},
+        {2, 3, 1, 1, 1, 1},
+        {1, 1, 3, 2, 5, 4},
+        {0, 0, 2, 3, 4, 5},
+        {4, 5, 4, 5, 3, 2},
+        {5, 4, 5, 4, 2, 3}};
+	
+	/**
 	 * @param player
 	 * @param ignoreVertical If set to true, possible results are NESW, else the result can also be up or down/
 	 * @return the direction where the player/entity is looking at
 	 */
-    public static ForgeDirection getPlayerSight(EntityLivingBase player, boolean ignoreVertical) {
+    public static final ForgeDirection getPlayerSight(EntityLivingBase player, boolean ignoreVertical) {
         int heading = MathHelper.floor_double(player.rotationYaw * 4.0F / 360.0F + 0.5D) & 3;
         int pitch = Math.round(player.rotationPitch);
         
@@ -47,7 +58,7 @@ public class Utils {
     /**
      * Drop items inside the inventory
      */
-    public static void dropItemIntoWorld(World world, int x, int y, int z, ItemStack item) {
+    public static final void dropItemIntoWorld(World world, int x, int y, int z, ItemStack item) {
         Random rand = new Random();
 
         if (item != null && item.stackSize > 0) {
@@ -72,7 +83,7 @@ public class Utils {
         }
     }
     
-	public static void addCollisionBoxToList(int x, int y, int z, AxisAlignedBB addCollisionBoxToList, List collidingBoxes,
+	public static final void addCollisionBoxToList(int x, int y, int z, AxisAlignedBB addCollisionBoxToList, List collidingBoxes,
 			double minX, double minY, double minZ, double maxX, double maxY, double maxZ){
 		AxisAlignedBB axisalignedbb1 = AxisAlignedBB.getBoundingBox(x + minX, y + minY, z + minZ, x + maxX, y + maxY, z + maxZ);
 	

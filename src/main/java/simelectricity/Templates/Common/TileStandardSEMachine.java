@@ -87,11 +87,6 @@ public abstract class TileStandardSEMachine extends TileSidedFacingMachine imple
     
     //ISETile
 	@Override
-	public ForgeDirection[] getValidDirections() {
-		return new ForgeDirection[]{functionalSide};
-	}
-
-	@Override
 	public ISESubComponent getComponent(ForgeDirection side) {
 		return side == functionalSide ? tile : null;
 	}

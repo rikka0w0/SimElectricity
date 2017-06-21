@@ -557,7 +557,7 @@ public class BlockCable extends SEBlock implements ITileEntityProvider, ISESubBl
 	
 	@Override
 	public ItemStack getPickBlock(MovingObjectPosition target, World world, int x, int y, int z) {
-		return null; // TODO QAQ!!!
+		return createStackedBlock(getDamageValue(world, x, y, z));
 	}
 	
 	@Override

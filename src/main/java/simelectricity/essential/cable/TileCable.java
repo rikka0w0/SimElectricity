@@ -176,6 +176,7 @@ public class TileCable extends SEEnergyTile implements ISEGenericCable, ISECable
 		nbt.setTag("coverPanels", coverPanelsToNBT());
 	}
 	
+	@SideOnly(value = Side.CLIENT)
 	@Override
 	public void onSyncDataFromServerArrived(NBTTagCompound nbt){
 		byte bc = nbt.getByte("connections");

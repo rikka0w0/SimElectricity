@@ -57,7 +57,9 @@ public class ContainerAdjustableResistor extends ContainerBase<TileAdjustableRes
     @Override
     public void detectAndSendChanges() {
         super.detectAndSendChanges();
-                
+        
+        //System.out.println("!");
+        
     	Iterator iterator = this.crafters.iterator();
     	while (iterator.hasNext())
     	{

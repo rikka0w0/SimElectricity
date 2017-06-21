@@ -122,22 +122,24 @@ public class EnergyNetDataProvider extends WorldSavedData{
         }
         else if (te instanceof ISETile){
         	ISETile tile = (ISETile)te;
-        	for (ForgeDirection direction : tile.getValidDirections()) {
+        	for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
         		ISESubComponent subComponent = tile.getComponent(direction);
-        		tileEntityGraph.addVertex((SEComponent) subComponent);
-        		
-    			TileEntity neighborTileEntity = SEUtils.getTileEntityOnDirection(te, direction);
-                
-                if (neighborTileEntity instanceof ISECableTile){
-                	// Connected properly
-                	if (((Cable)((ISECableTile)neighborTileEntity).getNode()).canConnectOnSide(direction.getOpposite()))
-                		tileEntityGraph.addEdge((SEComponent) ((ISECableTile)neighborTileEntity).getNode(),(SEComponent)  subComponent);
-                }
-                
-                
-                //Also don`t forget to attach the regulator controller to the energyNet!
-                if (subComponent instanceof RegulatorInput)
-                	tileEntityGraph.addVertex(((RegulatorInput)subComponent).controller);	
+        		if (subComponent != null){
+            		tileEntityGraph.addVertex((SEComponent) subComponent);
+            		
+        			TileEntity neighborTileEntity = SEUtils.getTileEntityOnDirection(te, direction);
+                    
+                    if (neighborTileEntity instanceof ISECableTile){
+                    	// Connected properly
+                    	if (((Cable)((ISECableTile)neighborTileEntity).getNode()).canConnectOnSide(direction.getOpposite()))
+                    		tileEntityGraph.addEdge((SEComponent) ((ISECableTile)neighborTileEntity).getNode(),(SEComponent)  subComponent);
+                    }
+                    
+                    
+                    //Also don`t forget to attach the regulator controller to the energyNet!
+                    if (subComponent instanceof RegulatorInput)
+                    	tileEntityGraph.addVertex(((RegulatorInput)subComponent).controller);	
+        		}
         	}
         }
         else{
@@ -159,12 +161,14 @@ public class EnergyNetDataProvider extends WorldSavedData{
         }
 	    else if (te instanceof ISETile){
 	    	ISETile tile = (ISETile)te;
-        	for (ForgeDirection direction : tile.getValidDirections()) {
+        	for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
         		ISESubComponent subComponent = tile.getComponent(direction);
-        		tileEntityGraph.removeVertex((SEComponent) subComponent);
-        		
-        		if (subComponent instanceof RegulatorInput)
-                	tileEntityGraph.removeVertex(((RegulatorInput)subComponent).controller);
+        		if (subComponent != null){
+            		tileEntityGraph.removeVertex((SEComponent) subComponent);
+            		
+            		if (subComponent instanceof RegulatorInput)
+                    	tileEntityGraph.removeVertex(((RegulatorInput)subComponent).controller);
+        		}
         	}
 	    }else{
         	throw new RuntimeException("Unexpected TileEntity:" + te.toString());
@@ -178,7 +182,7 @@ public class EnergyNetDataProvider extends WorldSavedData{
         }
 	    else if (te instanceof ISETile){
 	    	ISETile tile = (ISETile)te;
-        	for (ForgeDirection direction : tile.getValidDirections()) {
+        	for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
         		ISESubComponent subComponent = tile.getComponent(direction);
         		
         		if (subComponent instanceof SEComponent.Tile)

@@ -31,12 +31,6 @@ public abstract class TileEntityTwoPort extends TileEntitySE implements ISidedFa
         tagCompound.setByte("outputSide", (byte) outputSide.ordinal());
         tagCompound.setByte("facing", (byte) facing.ordinal());
     }
-	
-	/////////////////////////////////////////////////////////
-	///ISETile
-	/////////////////////////////////////////////////////////    
-	@Override
-	public ForgeDirection[] getValidDirections() {return new ForgeDirection[]{inputSide, outputSide};}
 
 	/////////////////////////////////////////////////////////
 	///ISidedFacing

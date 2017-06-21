@@ -1,7 +1,6 @@
 package simelectricity.essential.grid.render;
 
 import simelectricity.essential.utils.SERenderHeap;
-import simelectricity.essential.utils.SERenderHelper;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.util.IIcon;
@@ -44,11 +43,13 @@ public class BlockRenderCableJoint implements ISimpleBlockRenderingHandler{
 		int meta = world.getBlockMetadata(x, y, z);
 		int rotation = (meta&7)*45-90;
 		
+		/*
 		double[][] cube = SERenderHelper.createCubeVertexes(0.1, 1, 0.1);
 		SERenderHelper.rotateToVec(cube, 0, 0, 0, 1, 0, 0);
 		SERenderHelper.rotateAroundY(cube, rotation);
 		SERenderHelper.translateCoord(cube, x+0.5, y, z+0.5);
 		SERenderHelper.addCubeToTessellator(cube, SERenderHelper.createTextureArray(textures[2]), lightValue);
+		*/
 		
 		SERenderHeap body = model.clone();
 		
@@ -66,9 +67,9 @@ public class BlockRenderCableJoint implements ISimpleBlockRenderingHandler{
 	@SubscribeEvent
 	public void eventHandler(TextureStitchEvent.Pre event){
 		if (event.map.getTextureType() == 0){
-	    	textures[0] = event.map.registerIcon("simelectricity:Wiring/CopperCable_Thin_Side");
-	    	textures[1] = event.map.registerIcon("simelectricity:HvInsulator");
-	    	textures[2] = event.map.registerIcon("simelectricity:AdjustableResistor_Top");
+	    	textures[0] = event.map.registerIcon("sime_essential:essential_cable_joint_texture_updown");
+	    	textures[1] = event.map.registerIcon("sime_essential:essential_cable_joint_texture_metal");
+	    	textures[2] = event.map.registerIcon("sime_essential:essential_cable_joint_texture_side");
 		}
 	}
 	

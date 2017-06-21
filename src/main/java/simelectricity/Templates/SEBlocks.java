@@ -32,7 +32,6 @@ public class SEBlocks {
     public static BlockQuantumGenerator quantumGenerator;
     public static BlockSolarPanel solarPanel;
     public static BlockSwitch blockSwitch;
-    public static BlockVoltageMeter voltageMeter;
     public static BlockSolarInverter solarInverter;
     public static BlockIceMachine iceMachine;
     public static BlockDiode blockDiode;
@@ -44,7 +43,6 @@ public class SEBlocks {
         quantumGenerator = new BlockQuantumGenerator();
         solarPanel = new BlockSolarPanel();
         blockSwitch = new BlockSwitch();
-        voltageMeter = new BlockVoltageMeter();
         solarInverter = new BlockSolarInverter();
         iceMachine = new BlockIceMachine();
         blockDiode = new BlockDiode();
@@ -53,7 +51,6 @@ public class SEBlocks {
     public static void init() {
         GameRegistry.registerTileEntity(TileQuantumGenerator.class, "TileQuantumGenerator");
         GameRegistry.registerTileEntity(TileSolarPanel.class, "TileSolarPanel");
-        GameRegistry.registerTileEntity(TileVoltageMeter.class, "TileVoltageMeter");
         GameRegistry.registerTileEntity(TileAdjustableResistor.class, "TileAdjustableResistor");
         GameRegistry.registerTileEntity(TileAdjustableTransformer.class, "TileAdjustableTransformer");
         GameRegistry.registerTileEntity(TileIncandescentLamp.class, "TileIncandescentLamp");
