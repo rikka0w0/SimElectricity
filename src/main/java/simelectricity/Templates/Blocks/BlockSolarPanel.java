@@ -81,7 +81,7 @@ public class BlockSolarPanel extends BlockStandardGenerator {
         if (!(te instanceof TileSolarPanel))
             return iconBuffer[0];
 
-        if (((TileSolarPanel) te).getFunctionalSide().ordinal() == side) {
+        if (((TileSolarPanel) te).functionalSide.ordinal() == side) {
             return iconBuffer[2];
         } else if (side == 0) { //Down
             return iconBuffer[0];

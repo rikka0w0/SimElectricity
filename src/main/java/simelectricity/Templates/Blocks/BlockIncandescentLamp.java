@@ -55,12 +55,12 @@ public class BlockIncandescentLamp extends BlockStandardSEMachine {
             return iconBuffer[0];
 
         if (((TileIncandescentLamp) te).lightLevel>8){
-        	if (((TileIncandescentLamp) te).getFunctionalSide().ordinal() == side)
+        	if (((TileIncandescentLamp) te).functionalSide.ordinal() == side)
         		return iconBuffer[3];
         	else
         		return iconBuffer[1];
         }else{
-        	if (((TileIncandescentLamp) te).getFunctionalSide().ordinal() == side)
+        	if (((TileIncandescentLamp) te).functionalSide.ordinal() == side)
         		return iconBuffer[2];
         	else
         		return iconBuffer[0];       	

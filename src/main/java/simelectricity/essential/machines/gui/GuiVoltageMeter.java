@@ -1,12 +1,17 @@
-package simelectricity.essential.blocks;
+package simelectricity.essential.machines.gui;
 
 import org.lwjgl.opengl.GL11;
+
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
 
+@SideOnly(Side.CLIENT)
 public class GuiVoltageMeter extends GuiContainer{	
 	protected final ContainerVoltageMeter container;
 	

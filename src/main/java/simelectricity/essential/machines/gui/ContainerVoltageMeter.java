@@ -1,4 +1,4 @@
-package simelectricity.essential.blocks;
+package simelectricity.essential.machines.gui;
 
 import java.util.Iterator;
 
@@ -9,6 +9,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.ICrafting;
 import net.minecraft.tileentity.TileEntity;
 import simelectricity.essential.common.ContainerNoInventory;
+import simelectricity.essential.machines.tile.TileVoltageMeter;
 import simelectricity.essential.utils.network.ISEContainerUpdate;
 import simelectricity.essential.utils.network.MessageContainerSync;
 

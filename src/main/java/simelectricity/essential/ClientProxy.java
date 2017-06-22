@@ -3,8 +3,6 @@ package simelectricity.essential;
 import cpw.mods.fml.client.registry.ClientRegistry;
 
 
-import simelectricity.essential.blocks.GuiVoltageMeter;
-import simelectricity.essential.blocks.TileVoltageMeter;
 import simelectricity.essential.cable.BlockCable;
 import simelectricity.essential.cable.render.RenderBlockCable;
 import simelectricity.essential.grid.BlockCableJoint;
@@ -17,6 +15,10 @@ import simelectricity.essential.grid.render.TileRenderTransmissionTower;
 import simelectricity.essential.grid.render.BlockRenderTransmissionTowerTop;
 import simelectricity.essential.grid.render.BlockRenderTransmissionTowerBottom;
 import simelectricity.essential.grid.render.TileRenderTranmissionTowerBase;
+import simelectricity.essential.machines.BlockElectronics;
+import simelectricity.essential.machines.gui.GuiVoltageMeter;
+import simelectricity.essential.machines.render.BlockRenderMachine;
+import simelectricity.essential.machines.tile.TileVoltageMeter;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
@@ -53,6 +55,8 @@ public class ClientProxy extends CommonProxy{
 		//Cable Joint
 		BlockCableJoint.renderID = (new BlockRenderCableJoint()).getRenderId();
 		ClientRegistry.bindTileEntitySpecialRenderer(TileCableJoint.class, new TileRenderTranmissionTowerBase());
+		
+		BlockElectronics.renderID = (new BlockRenderMachine()).getRenderId();
 	}
 
 	@Override

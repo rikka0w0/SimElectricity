@@ -67,11 +67,6 @@ public abstract class SESinglePortMachine<TYPE extends ISEComponentParameter> ex
         this.worldObj.notifyBlockChange(xCoord, yCoord, zCoord, this.getBlockType());
         SEAPI.energyNetAgent.updateTileConnection(this);
     }
-    
-    @Override
-    public ForgeDirection getFunctionalSide() {
-        return functionalSide;
-    }
 
     @Override
     public boolean canSetFunctionalSide(ForgeDirection newFunctionalSide) {

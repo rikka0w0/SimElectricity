@@ -1,6 +1,7 @@
 package simelectricity.essential.grid.render;
 
 import simelectricity.essential.utils.SERenderHeap;
+
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.util.IIcon;
@@ -43,13 +44,6 @@ public class BlockRenderCableJoint implements ISimpleBlockRenderingHandler{
 		int meta = world.getBlockMetadata(x, y, z);
 		int rotation = (meta&7)*45-90;
 		
-		/*
-		double[][] cube = SERenderHelper.createCubeVertexes(0.1, 1, 0.1);
-		SERenderHelper.rotateToVec(cube, 0, 0, 0, 1, 0, 0);
-		SERenderHelper.rotateAroundY(cube, rotation);
-		SERenderHelper.translateCoord(cube, x+0.5, y, z+0.5);
-		SERenderHelper.addCubeToTessellator(cube, SERenderHelper.createTextureArray(textures[2]), lightValue);
-		*/
 		
 		SERenderHeap body = model.clone();
 		

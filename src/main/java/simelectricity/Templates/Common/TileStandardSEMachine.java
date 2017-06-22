@@ -46,11 +46,6 @@ public abstract class TileStandardSEMachine extends TileSidedFacingMachine imple
 	}
     
     @Override
-    public ForgeDirection getFunctionalSide() {
-        return functionalSide;
-    }
-
-    @Override
     public void setFunctionalSide(ForgeDirection newFunctionalSide) {
     	boolean reJoinEnergyNet = (newFunctionalSide != functionalSide);
         functionalSide = newFunctionalSide;

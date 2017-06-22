@@ -1,7 +1,7 @@
 package simelectricity.essential;
 
-import simelectricity.essential.blocks.ContainerVoltageMeter;
-import simelectricity.essential.blocks.TileVoltageMeter;
+import simelectricity.essential.machines.gui.ContainerVoltageMeter;
+import simelectricity.essential.machines.tile.TileVoltageMeter;
 
 import cpw.mods.fml.common.network.IGuiHandler;
 import net.minecraft.entity.player.EntityPlayer;

@@ -1,8 +1,6 @@
 package simelectricity.essential;
 
 import cpw.mods.fml.common.registry.GameRegistry;
-import simelectricity.essential.blocks.BlockElectronics;
-import simelectricity.essential.blocks.TileVoltageMeter;
 import simelectricity.essential.cable.BlockCable;
 import simelectricity.essential.cable.TileCable;
 import simelectricity.essential.grid.BlockCableJoint;
@@ -11,6 +9,9 @@ import simelectricity.essential.grid.BlockTransmissionTowerTop;
 import simelectricity.essential.grid.BlockTransmissionTowerBottom;
 import simelectricity.essential.grid.TileCableJoint;
 import simelectricity.essential.grid.TileTransmissionTower;
+import simelectricity.essential.machines.BlockElectronics;
+import simelectricity.essential.machines.tile.TileQuantumGenerator;
+import simelectricity.essential.machines.tile.TileVoltageMeter;
 
 public class BlockRegistry {
 	public static BlockCable blockCable;
@@ -39,5 +40,6 @@ public class BlockRegistry {
 		GameRegistry.registerTileEntity(TileCableJoint.class, "SEECableJoint");
 		
 		GameRegistry.registerTileEntity(TileVoltageMeter.class, "SEEVoltageMeter");
+		GameRegistry.registerTileEntity(TileQuantumGenerator.class, "SEEQuantumGenerator");
 	}	
 }
