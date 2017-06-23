@@ -47,6 +47,8 @@ public class SEGraph {
         	wires.addLast(node);
         else
         	components.addLast(node);
+        
+        node.isValid = true;
     }
        
     /**
@@ -110,6 +112,9 @@ public class SEGraph {
     public void removeVertex(SEComponent node) {
         if (!containsNode(node))
             return;
+        
+        //Mark as dead
+        node.isValid = false;
         
         //Cut possible interconnection
         if (node instanceof Cable)

@@ -22,9 +22,13 @@ package simelectricity.energynet;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import simelectricity.api.IEnergyNetUpdateHandler;
+import simelectricity.api.node.ISESimulatable;
 import simelectricity.common.ConfigManager;
 import simelectricity.common.SEUtils;
+import simelectricity.energynet.GridEvent.AppendNode;
+import simelectricity.energynet.GridEvent.RemoveNode;
 import simelectricity.energynet.components.GridNode;
+import simelectricity.energynet.components.SEComponent;
 import simelectricity.energynet.matrix.IMatrixResolver;
 
 import java.util.*;
@@ -104,37 +108,31 @@ public final class EnergyNet extends EnergyNetSimulator implements Runnable{
 			if (event instanceof GridEvent){
 				GridEvent gridEvent = (GridEvent) event;
 				if (event instanceof GridEvent.AppendNode){
+					GridEvent.AppendNode appendEvent = (AppendNode) event;
 					needOptimize = true;
 					calc = true;
-					dataProvider.addGridNode(gridEvent.x1, gridEvent.y1, gridEvent.z1, ((GridEvent.AppendNode)event).type);
+					dataProvider.addGridNode((GridNode) appendEvent.node);
 				}else if (event instanceof GridEvent.RemoveNode){
-			    	GridNode node = dataProvider.getGridObjectAtCoord(gridEvent.x1, gridEvent.y1, gridEvent.z1);
-			    	if (node != null){
+					GridEvent.RemoveNode removeEvent = (RemoveNode) event;
+			    	if (removeEvent.node != null){
 			    		needOptimize = true;
 						calc = true;
-			    		dataProvider.removeGridNode(node);
+			    		dataProvider.removeGridNode((GridNode) removeEvent.node);
 			    	}
 				}else if (event instanceof GridEvent.Connect){
 					GridEvent.Connect connectEvent = ((GridEvent.Connect)event);
-					
-			    	GridNode node1 = dataProvider.getGridObjectAtCoord(connectEvent.x1,connectEvent.y1,connectEvent.z1);
-			    	GridNode node2 = dataProvider.getGridObjectAtCoord(connectEvent.x2,connectEvent.y2,connectEvent.z2);
-			    	
-			    	if (node1 != null && node2 != null){
+			    	if (connectEvent.node1 != null && connectEvent.node2 != null){
 			    		needOptimize = true;
 						calc = true;
-			    		dataProvider.addGridConnection(node1, node2, connectEvent.resistance);
+			    		dataProvider.addGridConnection((GridNode) connectEvent.node1, (GridNode) connectEvent.node2, connectEvent.resistance);
 			    	}
 				}else if (event instanceof GridEvent.BreakConnection){
 					GridEvent.BreakConnection breakConEvent = ((GridEvent.BreakConnection)event);
-					
-			    	GridNode node1 = dataProvider.getGridObjectAtCoord(breakConEvent.x1,breakConEvent.y1,breakConEvent.z1);
-			    	GridNode node2 = dataProvider.getGridObjectAtCoord(breakConEvent.x2,breakConEvent.y2,breakConEvent.z2);
 			    	
-			    	if (node1 != null && node2 != null){
+			    	if (breakConEvent.node1 != null && breakConEvent.node2 != null){
 			    		needOptimize = true;
 						calc = true;
-			    		dataProvider.removeGridConnection(node1, node2);
+			    		dataProvider.removeGridConnection((GridNode) breakConEvent.node1, (GridNode) breakConEvent.node2);
 			    	}
 				}
 			}
@@ -147,6 +145,10 @@ public final class EnergyNet extends EnergyNetSimulator implements Runnable{
 			this.needOptimize = needOptimize;
 			thread.interrupt();
 		}
+	}
+	
+	public synchronized static boolean isNodeValid(ISESimulatable node){
+		return ((SEComponent)node).isValid;
 	}
 	
     //////////////////////////

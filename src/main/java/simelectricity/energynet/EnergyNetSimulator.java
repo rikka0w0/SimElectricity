@@ -501,7 +501,7 @@ public class EnergyNetSimulator{
         SEUtils.logInfo("Calculation converges in " + String.valueOf(iterations) + " iterations.", SEUtils.simulator);        
     }
     
-    public final static double getVoltage(ISESimulatable Tile){   
+    public final synchronized static double getVoltage(ISESimulatable Tile){   
     	SEComponent node = (SEComponent) Tile;
     	if (node.eliminated){
     		if (node.optimizedNeighbors.size() == 2){
@@ -524,7 +524,7 @@ public class EnergyNetSimulator{
     	}
     }
     
-	public final static double getCurrentMagnitude(ISESimulatable Tile) {
+	public final synchronized static double getCurrentMagnitude(ISESimulatable Tile) {
     	SEComponent node = (SEComponent) Tile;
     	if (node.eliminated){
     		if (node.optimizedNeighbors.size() == 2){

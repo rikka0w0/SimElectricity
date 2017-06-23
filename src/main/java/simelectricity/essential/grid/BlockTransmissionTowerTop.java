@@ -38,6 +38,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 import simelectricity.api.SEAPI;
+import simelectricity.api.tile.ISEGridTile;
 import simelectricity.essential.BlockRegistry;
 import simelectricity.essential.common.ISESubBlock;
 import simelectricity.essential.common.SEBlock;
@@ -206,7 +207,7 @@ public class BlockTransmissionTowerTop extends SEBlock implements ITileEntityPro
         if (world.isRemote)
             return; 
 
-        SEAPI.energyNetAgent.attachGridObject(world, x, y, z, (byte)0);
+        SEAPI.energyNetAgent.attachGridObject(world, SEAPI.energyNetAgent.newGridNode(x, y, z, (byte)0));
     }
     
     @Override
@@ -226,7 +227,10 @@ public class BlockTransmissionTowerTop extends SEBlock implements ITileEntityPro
     		world.setBlockToAir(x+part[0], y+part[1]-18, z+part[2]);
     	}
     	
-    	SEAPI.energyNetAgent.detachGridObject(world, x, y, z);
+    	TileEntity te = world.getTileEntity(x, y, z);	//Do this before the tileEntity is removed!
+    	if (te instanceof ISEGridTile)
+    		SEAPI.energyNetAgent.detachGridObject(world, ((ISEGridTile) te).getGridNode());
+    	
         super.breakBlock(world, x, y, z, block, meta);
     }
 

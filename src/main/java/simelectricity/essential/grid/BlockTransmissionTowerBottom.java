@@ -13,6 +13,8 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
+import simelectricity.api.node.ISEGridNode;
+import simelectricity.api.tile.ISEGridTile;
 import simelectricity.essential.BlockRegistry;
 import simelectricity.essential.api.ISEHVCableConnector;
 import simelectricity.essential.common.SEBlock;
@@ -192,10 +194,14 @@ public class BlockTransmissionTowerBottom extends SEBlock implements ISEHVCableC
 	}
 
 	@Override
-	public int[] getGridNodeCoord(World world, int x, int y, int z) {
+	public ISEGridNode getGridNode(World world, int x, int y, int z) {
 		int meta = world.getBlockMetadata(x, y, z);
 		int[] coord = getCenterBoxCoord(x, y, z, meta);
 		coord[1] += 18;
-		return coord;
+		TileEntity te = world.getTileEntity(coord[0], coord[1], coord[2]);
+		if (te instanceof ISEGridTile)
+			return ((ISEGridTile) te).getGridNode();
+		
+		return null;
 	}
 }

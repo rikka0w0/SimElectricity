@@ -9,14 +9,12 @@ import simelectricity.api.node.ISESimulatable;
 import simelectricity.api.node.ISESubComponent;
 
 public abstract class SEComponent implements ISESimulatable, ISEComponentParameter{
+	public boolean isValid = false;
 	/**
 	 * Host TileEntity for Tiles and Associated TileEntity for GridTiles
 	 */
 	public TileEntity te;
 	
-	//Only two port networks need to override this!
-	@Override
-	public ISESubComponent getComplement() {return null;}
 	
 	//Optimization and simulation runtime
 	public boolean visited;
@@ -25,6 +23,8 @@ public abstract class SEComponent implements ISESimulatable, ISEComponentParamet
 	public LinkedList<Double> optimizedResistance = new LinkedList<Double>();
 	public int index;
 	
+	
+	
 	public volatile double voltageCache = 0;
 	
 	
@@ -32,7 +32,7 @@ public abstract class SEComponent implements ISESimulatable, ISEComponentParamet
 	 * @param <TYPE> extends ISEComponentParameter
 	 */
 	public static abstract class Tile<TYPE extends ISEComponentParameter> extends SEComponent{
-		protected TYPE dataProvider;
+		protected final TYPE dataProvider;
 		
 		public Tile(TYPE dataProvider, TileEntity te){
 			this.dataProvider = dataProvider;
@@ -46,6 +46,13 @@ public abstract class SEComponent implements ISESimulatable, ISEComponentParamet
 		 */
 		public abstract void updateComponentParameters();
 	}
+	
+	/////////////////////////////
+	/// ISESimulatable
+	/////////////////////////////
+	//Only two port networks need to override this!
+	@Override
+	public ISESubComponent getComplement() {return null;}
 	
 	@Override
 	public ISEComponentParameter getCachedParameters() {

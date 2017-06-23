@@ -194,19 +194,11 @@ public class EnergyNetDataProvider extends WorldSavedData{
 	}
 	
 	//Grid Event handling ----------------------------------------------------------------------------
-	public GridNode addGridNode(int x, int y, int z, byte type){
-		GridNode obj = new GridNode(this);
-		
-		obj.x = x;
-		obj.y = y;
-		obj.z = z;
-		obj.type = type;
-		obj.gridParameter = this;
-		tileEntityGraph.addVertex(obj);
-		gridNodeMap.put(obj.getIDString(), obj);
+	public void addGridNode(GridNode gridNode){		
+		tileEntityGraph.addVertex(gridNode);
+		gridNodeMap.put(gridNode.getIDString(), gridNode);
 		
 		this.markDirty();
-		return obj;
 	}
 	
 	public void removeGridNode(GridNode gridNode){		
@@ -314,18 +306,17 @@ public class EnergyNetDataProvider extends WorldSavedData{
 	@Override
 	public void readFromNBT(NBTTagCompound nbt) {	
 		gridNodeMap.clear();
-		//gridObjects.clear();
 		
 		NBTTagList NBTObjects = nbt.getTagList("Objects", Constants.NBT.TAG_COMPOUND);
 		for (int i = 0; i < NBTObjects.tagCount(); i++) {
 			NBTTagCompound compound = NBTObjects.getCompoundTagAt(i);
-			GridNode obj = new GridNode(this);	
-			byte type = compound.getByte("type");
+			GridNode obj = new GridNode(compound);	
+			//byte type = compound.getByte("type");
 			
 
 				//throw new RuntimeException("Undefined grid object type");
 
-			obj.readFromNBT(compound);
+			//obj.readFromNBT(compound);
 			tileEntityGraph.addVertex(obj);
 			
 			gridNodeMap.put(obj.getIDString(), obj);
@@ -334,7 +325,7 @@ public class EnergyNetDataProvider extends WorldSavedData{
 
 		//Build node connections
 		for (GridNode gridNode : gridNodeMap.values()){
-			gridNode.buildNeighborConnection(gridNodeMap);
+			gridNode.buildNeighborConnection(gridNodeMap, tileEntityGraph);
 		}
 		
 		SEUtils.logInfo("Grid objectes has been loaded", SEUtils.energyNet);

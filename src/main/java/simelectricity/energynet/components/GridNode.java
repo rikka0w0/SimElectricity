@@ -9,79 +9,69 @@ import net.minecraft.tileentity.TileEntity;
 
 import simelectricity.api.node.ISEGridNode;
 import simelectricity.api.node.ISESimulatable;
-import simelectricity.energynet.EnergyNetDataProvider;
+import simelectricity.energynet.SEGraph;
 
 public class GridNode extends SEComponent implements ISEGridNode{
-	public EnergyNetDataProvider gridParameter;
+	//public EnergyNetDataProvider gridDataProvider;
 	
 	//0 - transmission line 1 - transformer primary 2 - transformer secondary
-	public byte type;
-	public int x;
-	public int y;
-	public int z;
+	private final byte type;
+	private final int x;
+	private final int y;
+	private final int z;
 	
 	//Only stores resistances between GridNodes!
 	public LinkedList<Double> neighborR = new LinkedList<Double>();
 	
 	//Simulation & Optimization
-	public Cable interConnection;
+	public Cable interConnection = null;;
 	
 	//Only used for loading
-	protected int neighborX[];
-	protected int neighborY[];
-	protected int neighborZ[];
+	private int neighborX[];
+	private int neighborY[];
+	private int neighborZ[];
 	private double[] resistancesBuf;
 		
-	public GridNode(EnergyNetDataProvider dataProvider){
-		gridParameter = dataProvider;
-		
-		interConnection = null;
+	public GridNode(int x, int y, int z, byte type){
+		this.x = x;
+		this.y = y;
+		this.z = z;
+		this.type = type;
 	}
 	
-	public double getResistance(GridNode neighbor) {
-		Iterator<SEComponent> iterator1 = neighbors.iterator();
-		Iterator<Double> iterator2 = neighborR.iterator();
-		while(iterator1.hasNext()){
-			SEComponent cur = iterator1.next();
-			if (cur instanceof GridNode){
-				double res = iterator2.next();
-				if (cur == neighbor)
-					return res;
-			}
-		}
-		return Double.NaN;
-	}
+	///////////////////////
+	/// Read from NBT
+	///////////////////////
 	
-	public int buildNeighborConnection(HashMap<String, GridNode> gridNodeMap){
-		int numOfNeighbors = neighborX.length;
-		
-		for (int i = 0; i<numOfNeighbors ; i++){
-			String neighborID = getIDString(neighborX[i], neighborY[i], neighborZ[i]);
-			GridNode neighbor = gridNodeMap.get(neighborID);
-			
-			gridParameter.getTEGraph().addGridEdge(this, neighbor, resistancesBuf[i]);
-		}
-		
-		return numOfNeighbors;
-	}
-	
-	public void readFromNBT(NBTTagCompound nbt) {
-		type = nbt.getByte("type");
-		x = nbt.getInteger("x");
-		y = nbt.getInteger("y");
-		z = nbt.getInteger("z");
-		neighborX = nbt.getIntArray("neigborX");
-		neighborY = nbt.getIntArray("neigborY");
-		neighborZ = nbt.getIntArray("neigborZ");
+	public GridNode(NBTTagCompound nbt){
+		this.x = nbt.getInteger("x");
+		this.y = nbt.getInteger("y");
+		this.z = nbt.getInteger("z");
+		this.type = nbt.getByte("type");
+		this.neighborX = nbt.getIntArray("neigborX");
+		this.neighborY = nbt.getIntArray("neigborY");
+		this.neighborZ = nbt.getIntArray("neigborZ");
 		
 		
 		int numOfNeighbors = neighborX.length;
-		resistancesBuf = new double[numOfNeighbors];
+		this.resistancesBuf = new double[numOfNeighbors];
 		for (int i=0; i<numOfNeighbors; i++){
 			resistancesBuf[i] = nbt.getDouble("R"+String.valueOf(i));
 		}
 	}
 	
+	public void buildNeighborConnection(HashMap<String, GridNode> gridNodeMap, SEGraph graph){
+		for (int i = 0; i<neighborX.length ; i++){
+			String neighborID = getIDString(neighborX[i], neighborY[i], neighborZ[i]);
+			GridNode neighbor = gridNodeMap.get(neighborID);
+			
+			graph.addGridEdge(this, neighbor, resistancesBuf[i]);
+		}
+	}
+	
+	///////////////////////
+	/// Save to NBT
+	///////////////////////
 	public void writeToNBT(NBTTagCompound nbt) {	
 		nbt.setByte("type", type);
 		nbt.setInteger("x", x);
@@ -112,6 +102,21 @@ public class GridNode extends SEComponent implements ISEGridNode{
 		nbt.setIntArray("neigborX", neighborX);
 		nbt.setIntArray("neigborY", neighborY);
 		nbt.setIntArray("neigborZ", neighborZ);
+	}
+	
+	
+	public double getResistance(GridNode neighbor) {
+		Iterator<SEComponent> iterator1 = neighbors.iterator();
+		Iterator<Double> iterator2 = neighborR.iterator();
+		while(iterator1.hasNext()){
+			SEComponent cur = iterator1.next();
+			if (cur instanceof GridNode){
+				double res = iterator2.next();
+				if (cur == neighbor)
+					return res;
+			}
+		}
+		return Double.NaN;
 	}
 	
 	public String getIDString(){

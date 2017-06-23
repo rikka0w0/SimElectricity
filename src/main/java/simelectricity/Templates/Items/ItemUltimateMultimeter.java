@@ -27,6 +27,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.ForgeDirection;
 
 import simelectricity.api.node.*;
 import simelectricity.api.tile.*;
@@ -77,29 +78,17 @@ public class ItemUltimateMultimeter extends ItemSE {
         		chat(player, "Current: " + String.valueOf(currentMagnitude));
         }
         else if (te instanceof ISETile){
-        	/*
+        	
         	ISETile tile = (ISETile)te;
-        	ForgeDirection[] dirs = tile.getValidDirections();
         	
-        	if (dirs.length == 1 && tile.getComponent(dirs[0]).getCachedParameters() instanceof ISEVoltageSource){
-        		ISESubComponent vs = tile.getComponent(dirs[0]);
-        		ISEVoltageSource data = (ISEVoltageSource) tile.getComponent(dirs[0]).getCachedParameters();
-                double voltage = SEAPI.energyNetAgent.getVoltage(vs);
-                double current = (voltage-data.getOutputVoltage())/data.getResistance();
-                chat(player, "Internal Voltage: " + String.valueOf(data.getOutputVoltage()) + ", " +
-            				"Voltage: " + String.valueOf(voltage)); 
-                chat(player, "Resistance: " + String.valueOf(data.getResistance()) + ", " +
-            				"Input current: " + String.valueOf(current));
-                chat(player, "Input power: " + String.valueOf(current*voltage));
-        	}
-        	else 
-        	
-        	for (ForgeDirection dir : tile.getValidDirections()){
+        	for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS){
         		ISESubComponent comp = tile.getComponent(dir);
-        		String[] temp = comp.toString().split("[.]");
-        		chat(player, temp[temp.length-1].split("@")[0] + ": " + String.valueOf(SEAPI.energyNetAgent.getVoltage(comp)));
+        		if (comp != null){
+	        		String[] temp = comp.toString().split("[.]");
+	        		chat(player, temp[temp.length-1].split("@")[0] + ": " + String.valueOf(SEAPI.energyNetAgent.getVoltage(comp)));
+        		}
         	}
-        	*/
+        	
         }
         if (te instanceof ISEGridTile){
     		ISEGridNode comp = ((ISEGridTile) te).getGridNode();

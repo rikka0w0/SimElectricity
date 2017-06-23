@@ -200,6 +200,10 @@ public class BlockElectronics  extends SEBlock implements ITileEntityProvider, I
         if (player.isSneaking())
             return false;
 
+        int meta = world.getBlockMetadata(x, y, z);
+        if (meta == 3)
+        	return false;	//Incandescent Lamp doesn't have an Gui!
+        
         player.openGui(Essential.instance, 0, world, x, y, z);
         return true;
 	}

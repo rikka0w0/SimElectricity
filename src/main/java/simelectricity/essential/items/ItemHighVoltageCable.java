@@ -6,11 +6,11 @@ import java.util.Map;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 import simelectricity.api.SEAPI;
+import simelectricity.api.node.ISEGridNode;
 import simelectricity.essential.api.ISEHVCableConnector;
 import simelectricity.essential.common.SEItem;
 import simelectricity.essential.utils.SEMathHelper;
@@ -50,7 +50,7 @@ public class ItemHighVoltageCable extends SEItem{
 
         int[] lastCoordinate = lastCoordinates.get(player);
 
-        if (lastCoordinate[1] == -1) {        	
+        if (lastCoordinate[1] == -1) {	//First selection
             lastCoordinate[0] = x;
             lastCoordinate[1] = y;
             lastCoordinate[2] = z;
@@ -68,19 +68,26 @@ public class ItemHighVoltageCable extends SEItem{
                     }else if (distance > 100){
                     	Utils.chat(player, EnumChatFormatting.RED + StatCollector.translateToLocal("chat.sime_essential:tranmission_tower_too_far") + EnumChatFormatting.RESET);
                     }else{
-                    	double resistance = distance * resistivityList[itemStack.getItemDamage()];
-                    	int[] coord1 = ((ISEHVCableConnector) block).getGridNodeCoord(world, x, y, z);
-                    	int[] coord2 = ((ISEHVCableConnector) neighbor).getGridNodeCoord(world, lastCoordinate[0], lastCoordinate[1], lastCoordinate[2]);
-                    	TileEntity te = world.getTileEntity(coord1[0], coord1[1], coord1[2]);
-                    	te = world.getTileEntity(coord2[0], coord2[1], coord2[2]);
-                    	SEAPI.energyNetAgent.connectGridNode(world, coord1[0], coord1[1], coord1[2], coord2[0], coord2[1], coord2[2], resistance);
+                    	double resistance = distance * resistivityList[itemStack.getItemDamage()];	//Calculate the resistance
+                    	ISEGridNode node1 = ((ISEHVCableConnector) block).getGridNode(world, x, y, z);
+                    	ISEGridNode node2 = ((ISEHVCableConnector) neighbor).getGridNode(world, lastCoordinate[0], lastCoordinate[1], lastCoordinate[2]);
+
+                    	if (node1 != null && node2 != null &&
+                    		SEAPI.energyNetAgent.isNodeValid(world, node1) &&
+                    		SEAPI.energyNetAgent.isNodeValid(world, node2)){
+                    		
+                    		SEAPI.energyNetAgent.connectGridNode(world, node1, node2, resistance);
+                    		Utils.chat(player, StatCollector.translateToLocal("chat.sime_essential:tranmission_tower_connected"));
+                    	}else{
+                    		Utils.chat(player, StatCollector.translateToLocal("chat.sime_essential:tranmission_tower_last_selection_invalid"));
+						}
 
                         lastCoordinate[0] = 0;
                         lastCoordinate[1] = -1;
                         lastCoordinate[2] = 0;
                         lastCoordinates.put(player, lastCoordinate);
                         
-                        Utils.chat(player, StatCollector.translateToLocal("chat.sime_essential:tranmission_tower_connected"));
+                        
                     }
         		}else{
                     lastCoordinate[0] = 0;

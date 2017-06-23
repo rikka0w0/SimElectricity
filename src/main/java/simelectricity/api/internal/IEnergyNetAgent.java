@@ -5,6 +5,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import simelectricity.api.components.ISEComponentParameter;
+import simelectricity.api.node.ISEGridNode;
 import simelectricity.api.node.ISESimulatable;
 import simelectricity.api.node.ISESubComponent;
 
@@ -26,6 +27,10 @@ public interface IEnergyNetAgent {
 	
 	ISESimulatable newCable(TileEntity dataProviderTileEntity, boolean isGridInterConnectionPoint);
 	
+	ISEGridNode newGridNode(int x, int y, int z, byte type);
+	
+	boolean isNodeValid(World world, ISESimulatable node);
+	
     /**
      * Add a TileEntity to the energyNet
      */
@@ -37,11 +42,11 @@ public interface IEnergyNetAgent {
 
     void updateTileConnection(TileEntity te);
     
-    void attachGridObject(World world, int x, int y, int z, byte type);
+    void attachGridObject(World world, ISEGridNode node);
     
-    void detachGridObject(World world, int x, int y, int z);
+    void detachGridObject(World world, ISEGridNode node);
     
-    void connectGridNode(World world, int x1, int y1, int z1, int x2, int y2, int z2, double resistance);
+    void connectGridNode(World world, ISEGridNode node1, ISEGridNode node2, double resistance);
     
-    void breakGridConnection(World world, int x1, int y1, int z1, int x2, int y2, int z2);
+    void breakGridConnection(World world, ISEGridNode node1, ISEGridNode node2);
 }

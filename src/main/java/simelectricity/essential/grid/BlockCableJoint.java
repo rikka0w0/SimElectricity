@@ -15,6 +15,8 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import simelectricity.api.SEAPI;
+import simelectricity.api.node.ISEGridNode;
+import simelectricity.api.tile.ISEGridTile;
 import simelectricity.essential.api.ISEHVCableConnector;
 import simelectricity.essential.common.SEBlock;
 import simelectricity.essential.common.SEItemBlock;
@@ -111,12 +113,15 @@ public class BlockCableJoint extends SEBlock implements ITileEntityProvider, ISE
         if (world.isRemote)
             return; 
         
-        SEAPI.energyNetAgent.attachGridObject(world, x, y, z, (byte)0);
+        SEAPI.energyNetAgent.attachGridObject(world, SEAPI.energyNetAgent.newGridNode(x, y, z, (byte)0));
     }
     
     @Override
     public void breakBlock(World world, int x, int y, int z, Block block, int meta) {
-    	SEAPI.energyNetAgent.detachGridObject(world, x, y, z);
+    	TileEntity te = world.getTileEntity(x, y, z);	//Do this before the tileEntity is removed!
+    	if (te instanceof ISEGridTile)
+    		SEAPI.energyNetAgent.detachGridObject(world, ((ISEGridTile) te).getGridNode());
+    	
         super.breakBlock(world, x, y, z, block, meta);
     }
     
@@ -133,7 +138,11 @@ public class BlockCableJoint extends SEBlock implements ITileEntityProvider, ISE
 	}
 
 	@Override
-	public int[] getGridNodeCoord(World world, int x, int y, int z) {
-		return new int[]{x,y,z};
+	public ISEGridNode getGridNode(World world, int x, int y, int z) {
+		TileEntity te = world.getTileEntity(x, y, z);
+		if (te instanceof ISEGridTile)
+			return ((ISEGridTile) te).getGridNode();
+		
+		return null;
 	}
 }

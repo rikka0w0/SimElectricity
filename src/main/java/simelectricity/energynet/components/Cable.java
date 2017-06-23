@@ -37,9 +37,9 @@ public class Cable extends SEComponent.Tile<ISECable> implements ISECable{
 		}
 	}
 	
-	////////////
+	/////////////////////////
 	///ISECableParameter
-	///////////
+	/////////////////////////
 	@Override
 	public boolean canConnectOnSide(ForgeDirection direction){
 		return this.canConnectOnSide[direction.ordinal()];
