@@ -15,10 +15,11 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import simelectricity.api.SEAPI;
+import simelectricity.essential.api.ISEHVCableConnector;
 import simelectricity.essential.common.SEBlock;
 import simelectricity.essential.common.SEItemBlock;
 
-public class BlockCableJoint extends SEBlock implements ITileEntityProvider{
+public class BlockCableJoint extends SEBlock implements ITileEntityProvider, ISEHVCableConnector{
 	///////////////////
 	/// Initialize
 	///////////////////
@@ -99,7 +100,7 @@ public class BlockCableJoint extends SEBlock implements ITileEntityProvider{
     @Override
     @SideOnly(Side.CLIENT)
     public void registerBlockIcons(IIconRegister r) {
-    	this.inventoryTexture = r.registerIcon("sime_essential:essential_cable_joint");
+    	this.inventoryTexture = r.registerIcon("sime_essential:transmission/essential_cable_joint");
     }
 	
 	//////////////////////////////////////
@@ -119,8 +120,20 @@ public class BlockCableJoint extends SEBlock implements ITileEntityProvider{
         super.breakBlock(world, x, y, z, block, meta);
     }
     
-    @Override
-    public boolean onBlockActivated(World p_149727_1_, int p_149727_2_, int p_149727_3_, int p_149727_4_, EntityPlayer p_149727_5_, int p_149727_6_, float p_149727_7_, float p_149727_8_, float p_149727_9_){
-        return false;
-    }
+	//////////////////////////////////////
+	/// ISEHVCableConnector
+	//////////////////////////////////////
+	@Override
+	public boolean canHVCableConnect(World world, int x, int y, int z) {
+		TileEntity te = world.getTileEntity(x, y, z);
+		if (te instanceof TileCableJoint)
+			return ((TileCableJoint) te).canConnect();
+		else
+			return false;
+	}
+
+	@Override
+	public int[] getGridNodeCoord(World world, int x, int y, int z) {
+		return new int[]{x,y,z};
+	}
 }

@@ -14,4 +14,13 @@ fluid.vita_tea.name=扶她柠檬茶
 
 # Items
 item.sime_essential:cell_vita.name=盒装扶她柠檬茶
+item.sime_essential:essential_hv_cable.copper.name=铜制高压线
+item.sime_essential:essential_hv_cable.aluminum.name=铝制高压线
 
+# Message
+chat.sime_essential:tranmission_tower_selected=你选择了一个输电塔
+chat.sime_essential:tranmission_tower_recursive_connection=不能把输电塔连接到本身上!
+chat.sime_essential:tranmission_tower_too_close=太近了!
+chat.sime_essential:tranmission_tower_too_far=太远了!
+chat.sime_essential:tranmission_tower_connected=已连接!
+chat.sime_essential:tranmission_tower_last_selection_invalid=之前选择的输电塔已被移除!

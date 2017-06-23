@@ -14,3 +14,13 @@ fluid.vita_tea.name=Vita Lemon Tea
 
 # Items
 item.sime_essential:cell_vita.name=Vita Lemon Tea
+item.sime_essential:essential_hv_cable.copper.name=Copper High Voltage Cable
+item.sime_essential:essential_hv_cable.aluminum.name=Aluminum High Voltage Cable
+
+# Message
+chat.sime_essential:tranmission_tower_selected=You have selected a transmission tower
+chat.sime_essential:tranmission_tower_recursive_connection=You can not connect a tower to itself
+chat.sime_essential:tranmission_tower_too_close=Too close!
+chat.sime_essential:tranmission_tower_too_far=Too far!
+chat.sime_essential:tranmission_tower_connected=Connected!
+chat.sime_essential:tranmission_tower_last_selection_invalid=Previous selected tower has been removed!

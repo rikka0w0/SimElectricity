@@ -12,12 +12,10 @@ import simelectricity.api.tile.ISEGridTile;
 import simelectricity.essential.api.ISETransmissionTower;
 import simelectricity.essential.common.SEEnergyTile;
 import simelectricity.essential.grid.render.TransmissionTowerRenderHelper;
-import simelectricity.essential.utils.ITileRenderingInfoSyncHandler;
 
 
-
-public class TileTransmissionTower extends SEEnergyTile implements ISEGridTile, ITileRenderingInfoSyncHandler, ISETransmissionTower{
-	public int neighborCoords[] = new int[] { 0, -1, 0, 0, -1, 0 };
+public class TileTransmissionTower extends SEEnergyTile implements ISEGridTile, ISETransmissionTower{
+	private int neighborCoords[] = new int[] { 0, -1, 0, 0, -1, 0 };
 	private TransmissionTowerRenderHelper renderHelper;
 
 	//////////////////////////////
@@ -80,17 +78,12 @@ public class TileTransmissionTower extends SEEnergyTile implements ISEGridTile, 
 					break loop;
     		}
     	}
-		this.sendRenderingInfoToClient();
+		this.markTileEntityForS2CSync();
 		
-		TileEntity neighbor1 = worldObj.getTileEntity(neighborCoords[0], neighborCoords[1], neighborCoords[2]);
-		TileEntity neighbor2 = worldObj.getTileEntity(neighborCoords[3], neighborCoords[4], neighborCoords[5]);
-		if (neighbor1 instanceof ITileRenderingInfoSyncHandler)
-			((ITileRenderingInfoSyncHandler) neighbor1).sendRenderingInfoToClient();
-		if (neighbor2 instanceof ITileRenderingInfoSyncHandler)
-			((ITileRenderingInfoSyncHandler) neighbor2).sendRenderingInfoToClient();
+		worldObj.markBlockForUpdate(neighborCoords[0], neighborCoords[1], neighborCoords[2]);
+		worldObj.markBlockForUpdate(neighborCoords[3], neighborCoords[4], neighborCoords[5]);
 	}
 
-	@Override
 	public boolean canConnect() {
 		for (int i=0; i<neighborCoords.length; i+=3){
 			if (neighborCoords[i+1] == -1)
@@ -140,10 +133,5 @@ public class TileTransmissionTower extends SEEnergyTile implements ISEGridTile, 
 			((ISETransmissionTower)neighbor).updateRenderInfo();
 		
 		super.onSyncDataFromServerArrived(nbt);
-	}
-	
-	@Override
-	public void sendRenderingInfoToClient() {
-		markTileEntityForS2CSync();
 	}
 }

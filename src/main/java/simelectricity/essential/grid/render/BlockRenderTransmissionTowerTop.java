@@ -108,13 +108,12 @@ public class BlockRenderTransmissionTowerTop implements ISimpleBlockRenderingHan
 	///////////////////////////////////
 	/// Load texture for models
 	///////////////////////////////////
-	public static final IIcon[] textures = new IIcon[3];
+	public static IIcon textureInsulator, textureMetal;
 	@SubscribeEvent
 	public void eventHandler(TextureStitchEvent.Pre event){
 		if (event.map.getTextureType() == 0){
-	    	textures[0] = event.map.registerIcon("simelectricity:Wiring/CopperCable_Thin_Side");
-	    	textures[1] = event.map.registerIcon("simelectricity:HvInsulator");
-	    	textures[2] = event.map.registerIcon("simelectricity:AdjustableResistor_Top");
+			textureInsulator = event.map.registerIcon("sime_essential:transmission/glass_insulator");
+			textureMetal = event.map.registerIcon("sime_essential:transmission/metal");
 		}
 	}
 	
@@ -128,21 +127,21 @@ public class BlockRenderTransmissionTowerTop implements ISimpleBlockRenderingHan
 	@SubscribeEvent
 	public void eventHandler(TextureStitchEvent.Post event){
 		if (event.map.getTextureType() == 0){
-			model0 = simelectricity.essential.grid.render.Models.renderTower0Top(textures[2]);
+			model0 = simelectricity.essential.grid.render.Models.renderTower0Top(textureMetal);
 			
 			model1 = model0.clone();
-			SERenderHeap insulator = Models.renderInsulatorString(1.4, textures[1]);
+			SERenderHeap insulator = Models.renderInsulatorString(1.4, textureInsulator);
 			double[][] rod = SERenderHelper.createCubeVertexes(0.1, 1.95, 0.1);
 			SERenderHelper.translateCoord(rod, 0, -0.15, 0);
-			insulator.addCube(rod, textures[2]);
+			insulator.addCube(rod, textureMetal);
 			model1.appendHeap(insulator.clone().transform(0,18-1.85,-4.9));
 			model1.appendHeap(insulator.clone().transform(0,18-1.85,4.9));
 			model1.appendHeap(insulator.transform(0,23.15,3.95));
 		
-			modelInsulator = Models.renderInsulatorString(1.4, textures[1]);
+			modelInsulator = Models.renderInsulatorString(1.4, textureInsulator);
 			double[][] rod2 = SERenderHelper.createCubeVertexes(0.1, 2, 0.1);				
 			SERenderHelper.translateCoord(rod2, 0, -0.3, 0);
-			modelInsulator.addCube(rod2, textures[2]);
+			modelInsulator.addCube(rod2, textureMetal);
 			modelInsulator.transform(0, 0.3, 0);
 		}
 	}

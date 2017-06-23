@@ -5,10 +5,13 @@ import java.util.Random;
 
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.MathHelper;
+import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
@@ -90,4 +93,8 @@ public class Utils {
         if (axisalignedbb1 != null && addCollisionBoxToList.intersectsWith(axisalignedbb1))
         	collidingBoxes.add(axisalignedbb1);
 	}
+	
+	public static void chat(EntityPlayer player, String text) {
+        player.addChatMessage(new ChatComponentText(StatCollector.translateToLocal(text)));
+    }
 }

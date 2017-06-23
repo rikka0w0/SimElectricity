@@ -1,11 +1,12 @@
 package simelectricity.essential;
 
+import net.minecraftforge.common.MinecraftForge;
 import simelectricity.essential.api.SEEAPI;
+import simelectricity.essential.cable.CableWatchEventHandler;
 import simelectricity.essential.cable.CoverPanelFactory;
 import simelectricity.essential.extensions.ExtensionBuildCraft;
 import simelectricity.essential.extensions.ExtensionRailCraft;
 import simelectricity.essential.fluids.FluidManager;
-import simelectricity.essential.utils.ITileRenderingInfoSyncHandler;
 import simelectricity.essential.utils.network.MessageContainerSync;
 
 import cpw.mods.fml.common.Mod;
@@ -41,9 +42,6 @@ public class Essential {
     	FluidManager.registerFluids();
     	
     	SEEAPI.coverPanelFactory = new CoverPanelFactory();
-    	
-        //Register Forge Event Handlers
-        new ITileRenderingInfoSyncHandler.ForgeEventHandler();
         
         networkChannel = NetworkRegistry.INSTANCE.newSimpleChannel(modID);
         networkChannel.registerMessage(MessageContainerSync.Handler.class, MessageContainerSync.class, 0, Side.CLIENT);
@@ -58,6 +56,8 @@ public class Essential {
     	BlockRegistry.registerTileEntities();
     	
     	proxy.registerRenders();
+    	
+    	MinecraftForge.EVENT_BUS.register(new CableWatchEventHandler());
     	
         //Register GUI handler
         NetworkRegistry.INSTANCE.registerGuiHandler(instance, proxy);

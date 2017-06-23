@@ -8,15 +8,17 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 import simelectricity.essential.BlockRegistry;
+import simelectricity.essential.api.ISEHVCableConnector;
 import simelectricity.essential.common.SEBlock;
 import simelectricity.essential.common.SEItemBlock;
 
-public class BlockTransmissionTowerBottom extends SEBlock{
+public class BlockTransmissionTowerBottom extends SEBlock implements ISEHVCableConnector{
 	///////////////////
 	/// Utils
 	///////////////////	
@@ -174,8 +176,26 @@ public class BlockTransmissionTowerBottom extends SEBlock{
     		world.setBlockToAir(coord[0], coord[1], coord[2]);
     }
     
-    @Override
-    public boolean onBlockActivated(World p_149727_1_, int p_149727_2_, int p_149727_3_, int p_149727_4_, EntityPlayer p_149727_5_, int p_149727_6_, float p_149727_7_, float p_149727_8_, float p_149727_9_){
-        return true;
-    }
+	//////////////////////////////////////
+	/// ISEHVCableConnector
+	//////////////////////////////////////
+	@Override
+	public boolean canHVCableConnect(World world, int x, int y, int z) {
+		int meta = world.getBlockMetadata(x, y, z);
+		int[] coord = getCenterBoxCoord(x, y, z, meta);
+		coord[1] += 18;
+		TileEntity te = world.getTileEntity(coord[0], coord[1], coord[2]);
+		if (te instanceof TileTransmissionTower)
+			return ((TileCableJoint) te).canConnect();
+		else
+			return false;
+	}
+
+	@Override
+	public int[] getGridNodeCoord(World world, int x, int y, int z) {
+		int meta = world.getBlockMetadata(x, y, z);
+		int[] coord = getCenterBoxCoord(x, y, z, meta);
+		coord[1] += 18;
+		return coord;
+	}
 }

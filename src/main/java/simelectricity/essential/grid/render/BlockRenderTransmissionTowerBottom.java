@@ -56,7 +56,7 @@ public class BlockRenderTransmissionTowerBottom implements ISimpleBlockRendering
 		
 		
 		
-		SERenderHeap tower = Models.renderTower0Bottom(textures[2]);
+		SERenderHeap tower = Models.renderTower0Bottom(textureMetal);
 		tower = tower.clone();
 
 		//Calculate the rotation
@@ -98,13 +98,11 @@ public class BlockRenderTransmissionTowerBottom implements ISimpleBlockRendering
 	///////////////////////////////////
 	/// Load texture for models
 	///////////////////////////////////
-	public static final IIcon[] textures = new IIcon[3];
+	public static IIcon textureMetal;
 	@SubscribeEvent
 	public void eventHandler(TextureStitchEvent.Pre event){
 		if (event.map.getTextureType() == 0){
-	    	textures[0] = event.map.registerIcon("simelectricity:Wiring/CopperCable_Thin_Side");
-	    	textures[1] = event.map.registerIcon("simelectricity:HvInsulator");
-	    	textures[2] = event.map.registerIcon("simelectricity:AdjustableResistor_Top");
+			textureMetal = event.map.registerIcon("sime_essential:transmission/metal");
 		}
 	}
 }

@@ -15,9 +15,8 @@ import simelectricity.essential.api.ISECoverPanel;
 import simelectricity.essential.api.ISEGenericCable;
 import simelectricity.essential.api.SEEAPI;
 import simelectricity.essential.common.SEEnergyTile;
-import simelectricity.essential.utils.ITileRenderingInfoSyncHandler;
 
-public class TileCable extends SEEnergyTile implements ISEGenericCable, ISECableTile, ITileRenderingInfoSyncHandler{
+public class TileCable extends SEEnergyTile implements ISEGenericCable, ISECableTile{
 	private ISESimulatable node = SEAPI.energyNetAgent.newCable(this, false);
     private int color = 0;
     private double resistance = 10;
@@ -153,12 +152,7 @@ public class TileCable extends SEEnergyTile implements ISEGenericCable, ISECable
 
 	////////////////////////////////////////
 	//Server->Client sync
-	////////////////////////////////////////
-	@Override
-	public void sendRenderingInfoToClient() {
-		onCableRenderingUpdateRequested();
-	}
-	
+	////////////////////////////////////////	
 	@Override
 	public void prepareS2CPacketData(NBTTagCompound nbt){	
 		super.prepareS2CPacketData(nbt);

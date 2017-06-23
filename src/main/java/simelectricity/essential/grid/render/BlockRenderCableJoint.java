@@ -61,9 +61,9 @@ public class BlockRenderCableJoint implements ISimpleBlockRenderingHandler{
 	@SubscribeEvent
 	public void eventHandler(TextureStitchEvent.Pre event){
 		if (event.map.getTextureType() == 0){
-	    	textures[0] = event.map.registerIcon("sime_essential:essential_cable_joint_texture_updown");
-	    	textures[1] = event.map.registerIcon("sime_essential:essential_cable_joint_texture_metal");
-	    	textures[2] = event.map.registerIcon("sime_essential:essential_cable_joint_texture_side");
+	    	textures[0] = event.map.registerIcon("sime_essential:transmission/essential_cable_joint_texture_updown");
+	    	textures[1] = event.map.registerIcon("sime_essential:transmission/essential_cable_joint_texture_metal");
+	    	textures[2] = event.map.registerIcon("sime_essential:transmission/essential_cable_joint_texture_side");
 		}
 	}
 	

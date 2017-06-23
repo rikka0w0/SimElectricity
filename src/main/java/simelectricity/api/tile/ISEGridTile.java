@@ -24,9 +24,4 @@ public interface ISEGridTile{
      * E.g. Connection established, map loading, Connection removed...
      */
 	void onGridNeighborUpdated();
-	
-    /**
-     * Called by HV cable items, to decide if this ISEGridObject can be connected
-     */
-	boolean canConnect();
 }

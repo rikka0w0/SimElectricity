@@ -1,6 +1,6 @@
 package simelectricity.essential.utils;
 
-public class SEMathHelper {
+public class SEMathHelper {	
 	/**
 	 * The dimension of Start and End must be the same 
 	 * @return the distance between two n-dimension point, n can be any number more than 2

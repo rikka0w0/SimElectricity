@@ -68,6 +68,6 @@ public class TileRenderTranmissionTowerBase extends TileEntitySpecialRenderer im
 	
 	@Override
 	public void bindTexture(int index, int side) {
-		bindTexture(new ResourceLocation("sime_essential", "textures/render/hv_cable.png"));
+		bindTexture(new ResourceLocation("sime_essential", "textures/blocks/transmission/hv_cable.png"));
 	}
 }

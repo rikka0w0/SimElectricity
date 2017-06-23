@@ -270,7 +270,7 @@ public class BlockTransmissionTowerTop extends SEBlock implements ITileEntityPro
     @SideOnly(Side.CLIENT)
     public void registerBlockIcons(IIconRegister r) {
     	for (int i=0; i<subNames.length; i++){
-    		this.inventoryTexture[i] = r.registerIcon("sime_essential:essential_transmission_tower");
+    		this.inventoryTexture[i] = r.registerIcon("sime_essential:transmission/essential_transmission_tower");
     	}
     }
 

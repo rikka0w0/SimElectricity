@@ -8,11 +8,10 @@ import simelectricity.api.SEAPI;
 import simelectricity.api.components.ISEVoltageSource;
 import simelectricity.essential.common.SESinglePortMachine;
 import simelectricity.essential.machines.render.ISESocketProvider;
-import simelectricity.essential.utils.ITileRenderingInfoSyncHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class TileIncandescentLamp extends SESinglePortMachine<ISEVoltageSource> implements ISEVoltageSource, IEnergyNetUpdateHandler, ISESocketProvider, ITileRenderingInfoSyncHandler{
+public class TileIncandescentLamp extends SESinglePortMachine<ISEVoltageSource> implements ISEVoltageSource, IEnergyNetUpdateHandler, ISESocketProvider{
     public byte lightLevel;
     
 	@Override
@@ -33,18 +32,13 @@ public class TileIncandescentLamp extends SESinglePortMachine<ISEVoltageSource> 
         if (lightLevel > 15)
             lightLevel = 15;
         
-        sendRenderingInfoToClient();
+        this.markTileEntityForS2CSync();
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
 	public int getSocketIconIndex(ForgeDirection side) {
 		return side == this.functionalSide ? 0 : -1;
-	}
-	
-	@Override
-	public void sendRenderingInfoToClient() {
-		this.markTileEntityForS2CSync();
 	}
 	
 	@Override

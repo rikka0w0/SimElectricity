@@ -14,9 +14,8 @@ import simelectricity.api.tile.ISEGridTile;
 import simelectricity.essential.api.ISETransmissionTower;
 import simelectricity.essential.common.SEEnergyTile;
 import simelectricity.essential.grid.render.TransmissionTowerRenderHelper;
-import simelectricity.essential.utils.ITileRenderingInfoSyncHandler;
 
-public class TileCableJoint extends SEEnergyTile implements ISECableTile, ISEGridTile, ISETransmissionTower, ITileRenderingInfoSyncHandler{
+public class TileCableJoint extends SEEnergyTile implements ISECableTile, ISEGridTile, ISETransmissionTower{
 	private ISESimulatable cableNode = SEAPI.energyNetAgent.newCable(this, true);
     
     private TransmissionTowerRenderHelper renderHelper;
@@ -92,7 +91,6 @@ public class TileCableJoint extends SEEnergyTile implements ISECableTile, ISEGri
 		this.markTileEntityForS2CSync();
 	}
 	
-	@Override
 	public boolean canConnect() {
 		return neighborY == -1;
 	}
@@ -121,11 +119,6 @@ public class TileCableJoint extends SEEnergyTile implements ISECableTile, ISEGri
 			((ISETransmissionTower)neighbor).updateRenderInfo();
 		
 		super.onSyncDataFromServerArrived(nbt);
-	}
-	
-	@Override
-	public void sendRenderingInfoToClient() {
-		markTileEntityForS2CSync();
 	}
 	
 	/////////////////////////////////////////////////////////
