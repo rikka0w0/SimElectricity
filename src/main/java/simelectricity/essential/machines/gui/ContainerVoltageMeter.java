@@ -22,26 +22,21 @@ public class ContainerVoltageMeter extends ContainerNoInventory<TileVoltageMeter
 
 	@Override
 	public void detectAndSendChanges() {
-		boolean changed = false;
 		double voltage = this.tileEntity.voltage;
 		
 		//Look for any changes
-		if (this.voltage != voltage)
-			changed = true;
-		
-		if (!changed)
+		if (this.voltage == voltage)
 			return;
 		
 		this.voltage = voltage;
 		
-		//Send change to all crafters
+		//Send change to all crafter
     	Iterator<ICrafting> iterator = this.crafters.iterator();
     	while (iterator.hasNext()) {
     		ICrafting crafter = iterator.next();
     		
     		if (crafter instanceof EntityPlayerMP){
     			MessageContainerSync.sendToClient((EntityPlayerMP)crafter, voltage);
-    			System.out.println("!");
     		}
     	}
 	}

@@ -4,7 +4,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import simelectricity.essential.grid.render.TransmissionTowerRenderHelper;
 
-public interface ITransmissionTower {
+public interface ISETransmissionTower {
 	@SideOnly(Side.CLIENT)
 	void updateRenderInfo();
 	@SideOnly(Side.CLIENT)

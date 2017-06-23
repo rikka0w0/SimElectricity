@@ -9,14 +9,14 @@ import cpw.mods.fml.relauncher.SideOnly;
 import simelectricity.api.node.ISEGridNode;
 import simelectricity.api.node.ISESimulatable;
 import simelectricity.api.tile.ISEGridTile;
-import simelectricity.essential.api.ITransmissionTower;
+import simelectricity.essential.api.ISETransmissionTower;
 import simelectricity.essential.common.SEEnergyTile;
 import simelectricity.essential.grid.render.TransmissionTowerRenderHelper;
 import simelectricity.essential.utils.ITileRenderingInfoSyncHandler;
 
 
 
-public class TileTransmissionTower extends SEEnergyTile implements ISEGridTile, ITileRenderingInfoSyncHandler, ITransmissionTower{
+public class TileTransmissionTower extends SEEnergyTile implements ISEGridTile, ITileRenderingInfoSyncHandler, ISETransmissionTower{
 	public int neighborCoords[] = new int[] { 0, -1, 0, 0, -1, 0 };
 	private TransmissionTowerRenderHelper renderHelper;
 
@@ -132,12 +132,12 @@ public class TileTransmissionTower extends SEEnergyTile implements ISEGridTile, 
 		this.updateRenderInfo();
 		
 		TileEntity neighbor = worldObj.getTileEntity(neighborCoords[0],neighborCoords[1],neighborCoords[2]);
-		if (neighbor instanceof ITransmissionTower)
-			((ITransmissionTower)neighbor).updateRenderInfo();
+		if (neighbor instanceof ISETransmissionTower)
+			((ISETransmissionTower)neighbor).updateRenderInfo();
 		
 		neighbor = worldObj.getTileEntity(neighborCoords[3],neighborCoords[4],neighborCoords[5]);
-		if (neighbor instanceof ITransmissionTower)
-			((ITransmissionTower)neighbor).updateRenderInfo();
+		if (neighbor instanceof ISETransmissionTower)
+			((ISETransmissionTower)neighbor).updateRenderInfo();
 		
 		super.onSyncDataFromServerArrived(nbt);
 	}

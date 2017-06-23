@@ -2,7 +2,7 @@ package simelectricity.essential.grid.render;
 
 import org.lwjgl.opengl.GL11;
 
-import simelectricity.essential.api.ITransmissionTower;
+import simelectricity.essential.api.ISETransmissionTower;
 import net.minecraft.tileentity.TileEntity;
 
 public class TileRenderTransmissionTower extends TileRenderTranmissionTowerBase{
@@ -11,7 +11,7 @@ public class TileRenderTransmissionTower extends TileRenderTranmissionTowerBase{
 
     @Override
     public void renderTileEntityAt(TileEntity tileEntity, double x, double y, double z, float f) {
-    	ITransmissionTower tw = ((ITransmissionTower) tileEntity);
+    	ISETransmissionTower tw = ((ISETransmissionTower) tileEntity);
     	super.renderTileEntityAt(tileEntity, x, y, z, f);
     	
     	int meta = tileEntity.getBlockMetadata();

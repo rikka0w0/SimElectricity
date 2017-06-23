@@ -10,9 +10,12 @@ import simelectricity.essential.grid.BlockTransmissionTowerBottom;
 import simelectricity.essential.grid.TileCableJoint;
 import simelectricity.essential.grid.TileTransmissionTower;
 import simelectricity.essential.machines.BlockElectronics;
+import simelectricity.essential.machines.tile.TileAdjustableResistor;
+import simelectricity.essential.machines.tile.TileIncandescentLamp;
 import simelectricity.essential.machines.tile.TileQuantumGenerator;
 import simelectricity.essential.machines.tile.TileVoltageMeter;
 
+//@GameRegistry.ObjectHolder(SETemplate.MODID)
 public class BlockRegistry {
 	public static BlockCable blockCable;
 	
@@ -41,5 +44,7 @@ public class BlockRegistry {
 		
 		GameRegistry.registerTileEntity(TileVoltageMeter.class, "SEEVoltageMeter");
 		GameRegistry.registerTileEntity(TileQuantumGenerator.class, "SEEQuantumGenerator");
+		GameRegistry.registerTileEntity(TileAdjustableResistor.class, "SEEAdjustableResistor");
+		GameRegistry.registerTileEntity(TileIncandescentLamp.class, "SEEIncandescentLamp");
 	}	
 }

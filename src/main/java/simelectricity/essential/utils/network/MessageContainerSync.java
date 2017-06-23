@@ -1,20 +1,38 @@
 package simelectricity.essential.utils.network;
 
+import java.util.Iterator;
+
 import simelectricity.essential.Essential;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.Container;
+import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.util.ForgeDirection;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class MessageContainerSync implements IMessage{
 	public static void sendToClient(EntityPlayerMP player, Object... data){
-		Essential.instance.networkChannel.sendTo(new MessageContainerSync(false, data), player);
+		Essential.instance.networkChannel.sendTo(new MessageContainerSync(data), player);
 	}
+	
+	@SideOnly(Side.CLIENT)
+	public static void sendButtonClickEventToSever(Container clientContainer, int buttonID, boolean isCtrlPressed){
+		Essential.instance.networkChannel.sendToServer(new MessageContainerSync(clientContainer.windowId,
+				new Object[]{EVENT_BUTTON_CLICK, buttonID, isCtrlPressed}));
+	}
+	
+	@SideOnly(Side.CLIENT)
+	public static void sendToServer(Container clientContainer, Object... data){
+		Essential.instance.networkChannel.sendToServer(new MessageContainerSync(clientContainer.windowId, data));
+	}
+	
+	private final static byte EVENT_CUSTOM = 0;
+	private final static byte EVENT_BUTTON_CLICK = 1;
 	
 	private final static byte TYPE_BYTE = 0;
 	private final static byte TYPE_INT = 1;
@@ -24,20 +42,28 @@ public class MessageContainerSync implements IMessage{
 	
 	//MessageData
 	private boolean toServer;
+	private int windowID;
 	private Object[] data;
 	
 	public MessageContainerSync(){}
 	
-	private MessageContainerSync (boolean toServer, Object[] data){
-		this.toServer = toServer;
-		
+	@SideOnly(Side.CLIENT)
+	private MessageContainerSync (int windowID, Object[] data){
+		this.toServer = true;
+		this.windowID = windowID;
+		this.data = data;
+	}
+	
+	private MessageContainerSync (Object[] data){
+		this.toServer = false;
+		this.windowID = -1;
 		this.data = data;
 	}
 	
 	@Override
 	public void toBytes(ByteBuf buf) {
     	buf.writeBoolean(toServer);
-		
+    	buf.writeInt(windowID);
     	buf.writeByte(data.length);
 
     	for (int i = 0; i < data.length; i++){
@@ -46,7 +72,7 @@ public class MessageContainerSync implements IMessage{
         		buf.writeByte((Byte) data[i]);
     		}
     		else if (data[i].getClass() == Integer.class){
-        		buf.writeByte(TYPE_DOUBLE);
+        		buf.writeByte(TYPE_INT);
         		buf.writeInt((Integer) data[i]);
     		}
     		else if (data[i].getClass() == Double.class){
@@ -67,8 +93,9 @@ public class MessageContainerSync implements IMessage{
 	@Override
 	public void fromBytes(ByteBuf buf) {
 		toServer = buf.readBoolean();
-
-		data = new Object[buf.readByte()];
+		windowID = buf.readInt();
+		int length = buf.readByte();
+		data = new Object[length];
 
 		for (int i = 0; i < data.length; i++){
 	    	switch (buf.readByte()){
@@ -102,8 +129,23 @@ public class MessageContainerSync implements IMessage{
 		public IMessage onMessage(MessageContainerSync message, MessageContext ctx) {
 			if (ctx.side == Side.SERVER){
 				//Server
-				
-				
+				Iterator<EntityPlayerMP> playerListIterator = MinecraftServer.getServer().getConfigurationManager().playerEntityList.iterator();
+				while (playerListIterator.hasNext()){
+					EntityPlayerMP player = playerListIterator.next();
+					
+					if (player.openContainer.windowId == message.windowID){
+						Container container = player.openContainer;
+						
+						switch ((Byte)message.data[0]){
+						case EVENT_CUSTOM:
+							if (container instanceof ISECustomContainerEventHandler)
+								((ISECustomContainerEventHandler) container).onDataArrivedFromClient(message.data);
+						case EVENT_BUTTON_CLICK:
+							if (container instanceof ISEButtonEventHandler)
+								((ISEButtonEventHandler) container).onButtonPressed((Integer)message.data[1], (Boolean)message.data[2]);
+						}
+					}
+				}
 			}else{
 				//Client
 				Container invContainer = Essential.proxy.getClientPlayer().openContainer;

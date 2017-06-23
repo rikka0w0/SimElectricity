@@ -2,6 +2,8 @@ package simelectricity.essential.machines.gui;
 
 import org.lwjgl.opengl.GL11;
 
+import simelectricity.essential.utils.SEUnitHelper;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -32,7 +34,7 @@ public class GuiVoltageMeter extends GuiContainer{
         //the parameters for drawString are: string, x, y, color
 
         fontRendererObj.drawString(StatCollector.translateToLocal("tile.sime:VoltageMeter.name"), 8, 6, 4210752);
-        fontRendererObj.drawString("Voltage: " + container.voltage + "V", 18, 22, 4210752);
+        fontRendererObj.drawString("Voltage: " + SEUnitHelper.getVoltageStringWithUnit(container.voltage), 18, 22, 4210752);
 
         //draws "Inventory" or your regional equivalent
         fontRendererObj.drawString(StatCollector.translateToLocal("container.inventory"), 8, ySize - 96, 4210752);

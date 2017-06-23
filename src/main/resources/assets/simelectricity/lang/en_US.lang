@@ -3,3 +3,14 @@ itemGroup.simelectricity=SimElectricity
 
 # Items
 item.sime:SEManagementTool.name=Energy Net Management Tool
+
+# Gui
+gui.sime:voltage_input=Input Voltage
+gui.sime:current_input=Input Current
+gui.sime:power_input=Input Power
+gui.sime:voltage_output=Output Voltage
+gui.sime:current_output=Output Current
+gui.sime:power_output=Output Power
+gui.sime:buffered_energy=Buffered Energy
+gui.sime:resistance_internal=Internal Resistance
+gui.sime:voltage_internal=Internal Voltage

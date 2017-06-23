@@ -3,6 +3,11 @@ tile.sime_essential:essential_cable.copper_thin.name=Thin Copper Cable
 tile.sime_essential:essential_cable.copper_medium.name=Medium Copper Cable
 tile.sime_essential:essential_cable.copper_thick.name=Thick Copper Cable
 
+tile.sime_essential:essential_electronics.voltage_meter.name=Voltage Meter
+tile.sime_essential:essential_electronics.quantum_generator.name=Quantum Generator
+tile.sime_essential:essential_electronics.adjustable_resistor.name=Adjustable Resistor
+tile.sime_essential:essential_electronics.incandescent_lamp.name=Incandescent Lamp
+
 # Fluids
 fluid.vita_tea=Vita Lemon Tea
 fluid.vita_tea.name=Vita Lemon Tea

@@ -1,6 +1,6 @@
 package simelectricity.essential.grid.render;
 
-import simelectricity.essential.api.ITransmissionTower;
+import simelectricity.essential.api.ISETransmissionTower;
 import simelectricity.essential.utils.SERenderHeap;
 import simelectricity.essential.utils.SERenderHelper;
 
@@ -57,7 +57,7 @@ public class BlockRenderTransmissionTowerTop implements ISimpleBlockRenderingHan
 		if (meta>>3 == 0){
 			tower = model0.clone();
 			
-			TransmissionTowerRenderHelper helper = ((ITransmissionTower) world.getTileEntity(x, y, z)).getRenderHelper();
+			TransmissionTowerRenderHelper helper = ((ISETransmissionTower) world.getTileEntity(x, y, z)).getRenderHelper();
 			
 			if (helper.render1())
 				renderInsulators(helper.from1(), helper.to1(), helper.angle1(), lightValue);	

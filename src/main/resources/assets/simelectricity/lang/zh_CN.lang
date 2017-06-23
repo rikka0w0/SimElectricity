@@ -3,3 +3,14 @@ itemGroup.simelectricity=SimElectricity
 
 # Items
 item.sime:SEManagementTool.name=能源网管理工具
+
+# Gui
+gui.sime:voltage_input=输入电压
+gui.sime:current_input=输入电流
+gui.sime:power_input=输入功率
+gui.sime:voltage_output=输出电压
+gui.sime:current_output=输出电流
+gui.sime:power_output=输出功率
+gui.sime:buffered_energy=已缓冲能量
+gui.sime:resistance_internal=内阻
+gui.sime:voltage_internal=电源电压

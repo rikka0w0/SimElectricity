@@ -1,7 +1,7 @@
 package simelectricity.essential.grid.render;
 
 import net.minecraft.tileentity.TileEntity;
-import simelectricity.essential.api.ITransmissionTower;
+import simelectricity.essential.api.ISETransmissionTower;
 import simelectricity.essential.utils.SEMathHelper;
 
 public class TransmissionTowerRenderHelper{
@@ -78,7 +78,7 @@ public class TransmissionTowerRenderHelper{
     }
     
     private void findVirtualConnection(TileEntity tileEntity, int neighborX, int neighborY, int neighborZ, double[] from, double[] to){   
-    	ITransmissionTower curTw = (ITransmissionTower) tileEntity;
+    	ISETransmissionTower curTw = (ISETransmissionTower) tileEntity;
     	double curRotation = curTw.getRotation()*45 - 90;
 		
 		double[] curInsulatorXZ1 = new double[] {insulatorPositionArray[3], insulatorPositionArray[5]};
@@ -122,7 +122,7 @@ public class TransmissionTowerRenderHelper{
     }
     
     private void findConnection(TileEntity neighbor, double[] from, double[] to){    	
-    	ITransmissionTower neighborTw = (ITransmissionTower) neighbor;
+    	ISETransmissionTower neighborTw = (ISETransmissionTower) neighbor;
     	
 		
 		double neighborRotation = neighborTw.getRotation()*45 - 90;
@@ -290,7 +290,7 @@ public class TransmissionTowerRenderHelper{
     }
     
     public void updateRenderData(int x1, int y1, int z1, int x2, int y2, int z2){		
-		rotation = ((ITransmissionTower)te).getRotation()*45 - 90;
+		rotation = ((ISETransmissionTower)te).getRotation()*45 - 90;
         
 		TileEntity neighbor1 = te.getWorldObj().getTileEntity(x1, y1, z1);
 		TileEntity neighbor2 = te.getWorldObj().getTileEntity(x2, y2, z2);
@@ -307,8 +307,8 @@ public class TransmissionTowerRenderHelper{
 			else{
 				findConnection(neighbor1, from1, to1);
 				
-				if (((ITransmissionTower) neighbor1).getRenderHelper().getInsulatorPositionArray().length > 9)
-					fixConnectionPoints(to1, from1, dummyangle, fixedto1, ((ITransmissionTower) neighbor1).getRenderHelper().getInsulatorLength(), 3);
+				if (((ISETransmissionTower) neighbor1).getRenderHelper().getInsulatorPositionArray().length > 9)
+					fixConnectionPoints(to1, from1, dummyangle, fixedto1, ((ISETransmissionTower) neighbor1).getRenderHelper().getInsulatorLength(), 3);
 				else{
 					for (int i=0; i<9; i++)
 						fixedto1[i] = to1[i];
@@ -335,8 +335,8 @@ public class TransmissionTowerRenderHelper{
 			else{
 				findConnection(neighbor2, from2, to2);
 				
-				if (((ITransmissionTower) neighbor2).getRenderHelper().getInsulatorPositionArray().length > 9)
-					fixConnectionPoints(to2, from2, dummyangle, fixedto2, ((ITransmissionTower) neighbor2).getRenderHelper().getInsulatorLength(), 3);
+				if (((ISETransmissionTower) neighbor2).getRenderHelper().getInsulatorPositionArray().length > 9)
+					fixConnectionPoints(to2, from2, dummyangle, fixedto2, ((ISETransmissionTower) neighbor2).getRenderHelper().getInsulatorLength(), 3);
 				else{
 					for (int i=0; i<9; i++)
 						fixedto2[i] = to2[i];				

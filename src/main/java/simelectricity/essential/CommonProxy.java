@@ -1,6 +1,10 @@
 package simelectricity.essential;
 
+import simelectricity.essential.machines.gui.ContainerAdjustableResistor;
+import simelectricity.essential.machines.gui.ContainerQuantumGenerator;
 import simelectricity.essential.machines.gui.ContainerVoltageMeter;
+import simelectricity.essential.machines.tile.TileAdjustableResistor;
+import simelectricity.essential.machines.tile.TileQuantumGenerator;
 import simelectricity.essential.machines.tile.TileVoltageMeter;
 
 import cpw.mods.fml.common.network.IGuiHandler;
@@ -32,6 +36,10 @@ public class CommonProxy implements IGuiHandler{
 		
 		if (te instanceof TileVoltageMeter)
 			return new ContainerVoltageMeter(te);
+		if (te instanceof TileQuantumGenerator)
+			return new ContainerQuantumGenerator(te);
+		if (te instanceof TileAdjustableResistor)
+			return new ContainerAdjustableResistor(te);
 		
 		return null;
 	}

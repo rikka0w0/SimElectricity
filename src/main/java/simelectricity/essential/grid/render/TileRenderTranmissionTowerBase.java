@@ -5,7 +5,7 @@ import org.lwjgl.opengl.GL11;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
-import simelectricity.essential.api.ITransmissionTower;
+import simelectricity.essential.api.ISETransmissionTower;
 
 public class TileRenderTranmissionTowerBase extends TileEntitySpecialRenderer implements ITextureProvider{
 	protected double[] from1, to1;
@@ -22,7 +22,7 @@ public class TileRenderTranmissionTowerBase extends TileEntitySpecialRenderer im
 	
 	@Override
     public void renderTileEntityAt(TileEntity tileEntity, double x, double y, double z, float f) {
-		TransmissionTowerRenderHelper helper = ((ITransmissionTower) tileEntity).getRenderHelper();
+		TransmissionTowerRenderHelper helper = ((ISETransmissionTower) tileEntity).getRenderHelper();
 		
 		if (helper == null)
 			return;

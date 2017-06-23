@@ -16,8 +16,12 @@ import simelectricity.essential.grid.render.BlockRenderTransmissionTowerTop;
 import simelectricity.essential.grid.render.BlockRenderTransmissionTowerBottom;
 import simelectricity.essential.grid.render.TileRenderTranmissionTowerBase;
 import simelectricity.essential.machines.BlockElectronics;
+import simelectricity.essential.machines.gui.GuiAdjustableResistor;
+import simelectricity.essential.machines.gui.GuiQuantumGenerator;
 import simelectricity.essential.machines.gui.GuiVoltageMeter;
 import simelectricity.essential.machines.render.BlockRenderMachine;
+import simelectricity.essential.machines.tile.TileAdjustableResistor;
+import simelectricity.essential.machines.tile.TileQuantumGenerator;
 import simelectricity.essential.machines.tile.TileVoltageMeter;
 
 import net.minecraft.client.Minecraft;
@@ -66,6 +70,10 @@ public class ClientProxy extends CommonProxy{
 		
 		if (te instanceof TileVoltageMeter)
 			return new GuiVoltageMeter(te);
+		if (te instanceof TileQuantumGenerator)
+			return new GuiQuantumGenerator(te);
+		if (te instanceof TileAdjustableResistor)
+			return new GuiAdjustableResistor(te);
 		
 		return null;
 	}
