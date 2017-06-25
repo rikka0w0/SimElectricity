@@ -2,8 +2,8 @@ package simelectricity.essential.grid.render;
 
 import net.minecraft.util.IIcon;
 
-import simelectricity.essential.utils.SERenderHeap;
-import simelectricity.essential.utils.SERenderHelper;
+import simelectricity.essential.utils.client.SERenderHeap;
+import simelectricity.essential.utils.client.SERenderHelper;
 
 public class Models {    
     public static SERenderHeap renderInsulatorString(double length, IIcon insulatorTexture) {	

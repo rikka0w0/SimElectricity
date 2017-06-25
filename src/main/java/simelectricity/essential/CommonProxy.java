@@ -1,12 +1,5 @@
 package simelectricity.essential;
 
-import simelectricity.essential.machines.gui.ContainerAdjustableResistor;
-import simelectricity.essential.machines.gui.ContainerQuantumGenerator;
-import simelectricity.essential.machines.gui.ContainerVoltageMeter;
-import simelectricity.essential.machines.tile.TileAdjustableResistor;
-import simelectricity.essential.machines.tile.TileQuantumGenerator;
-import simelectricity.essential.machines.tile.TileVoltageMeter;
-
 import cpw.mods.fml.common.network.IGuiHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
@@ -34,14 +27,7 @@ public class CommonProxy implements IGuiHandler{
 			int x, int y, int z) {
 		TileEntity te = world.getTileEntity(x, y, z);
 		
-		if (te instanceof TileVoltageMeter)
-			return new ContainerVoltageMeter(te);
-		if (te instanceof TileQuantumGenerator)
-			return new ContainerQuantumGenerator(te);
-		if (te instanceof TileAdjustableResistor)
-			return new ContainerAdjustableResistor(te);
-		
-		return null;
+		return BlockRegistry.getContainer(te, player);
 	}
 
 	@Override

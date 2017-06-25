@@ -16,16 +16,20 @@ import simelectricity.essential.grid.render.BlockRenderTransmissionTowerTop;
 import simelectricity.essential.grid.render.BlockRenderTransmissionTowerBottom;
 import simelectricity.essential.grid.render.TileRenderTranmissionTowerBase;
 import simelectricity.essential.machines.BlockElectronics;
+import simelectricity.essential.machines.BlockTwoPortElectronics;
 import simelectricity.essential.machines.gui.GuiAdjustableResistor;
+import simelectricity.essential.machines.gui.GuiAdjustableTransformer;
 import simelectricity.essential.machines.gui.GuiQuantumGenerator;
 import simelectricity.essential.machines.gui.GuiVoltageMeter;
 import simelectricity.essential.machines.render.BlockRenderMachine;
 import simelectricity.essential.machines.tile.TileAdjustableResistor;
+import simelectricity.essential.machines.tile.TileAdjustableTransformer;
 import simelectricity.essential.machines.tile.TileQuantumGenerator;
 import simelectricity.essential.machines.tile.TileVoltageMeter;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.Container;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
@@ -61,19 +65,24 @@ public class ClientProxy extends CommonProxy{
 		ClientRegistry.bindTileEntitySpecialRenderer(TileCableJoint.class, new TileRenderTranmissionTowerBase());
 		
 		BlockElectronics.renderID = (new BlockRenderMachine()).getRenderId();
+		BlockTwoPortElectronics.renderID = BlockElectronics.renderID;
 	}
 
 	@Override
 	public Object getClientGuiElement(int ID, EntityPlayer player, World world,
 			int x, int y, int z) {
 		TileEntity te = world.getTileEntity(x, y, z);
+		Container container = BlockRegistry.getContainer(te, player);
 		
 		if (te instanceof TileVoltageMeter)
-			return new GuiVoltageMeter(te);
+			return new GuiVoltageMeter(container);
 		if (te instanceof TileQuantumGenerator)
-			return new GuiQuantumGenerator(te);
+			return new GuiQuantumGenerator(container);
 		if (te instanceof TileAdjustableResistor)
-			return new GuiAdjustableResistor(te);
+			return new GuiAdjustableResistor(container);
+		
+		if (te instanceof TileAdjustableTransformer)
+			return new GuiAdjustableTransformer(container);
 		
 		return null;
 	}

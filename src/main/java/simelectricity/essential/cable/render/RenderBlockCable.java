@@ -2,7 +2,7 @@ package simelectricity.essential.cable.render;
 
 import simelectricity.essential.api.ISEGenericCable;
 import simelectricity.essential.cable.BlockCable;
-import simelectricity.essential.utils.SERenderHelper;
+import simelectricity.essential.utils.client.SERenderHelper;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;

@@ -3,30 +3,23 @@ package simelectricity.essential.machines.gui;
 import org.lwjgl.opengl.GL11;
 
 import simelectricity.essential.utils.SEUnitHelper;
+import simelectricity.essential.utils.client.SEGuiContainer;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 
-import net.minecraft.client.gui.inventory.GuiContainer;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.inventory.Container;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
 
 @SideOnly(Side.CLIENT)
-public class GuiVoltageMeter extends GuiContainer{	
-	protected final ContainerVoltageMeter container;
-	
-	private int sqr;
-	
-	public GuiVoltageMeter(TileEntity te) {
-		super(new ContainerVoltageMeter(te));
-		this.container = (ContainerVoltageMeter) super.inventorySlots;
+public final class GuiVoltageMeter extends SEGuiContainer<ContainerVoltageMeter>{	
+	public GuiVoltageMeter(Container container) {
+		super(container);
 	}
 
-    String float2Str(float f, int dig) {
-        return String.valueOf(((int) (f * dig)) / dig) + "." + String.valueOf((int) (f * dig) - ((int) (f * dig)) / dig * dig);
-    }
+	private int sqr;
 	
     @Override
     protected void drawGuiContainerForegroundLayer(int x, int y) {

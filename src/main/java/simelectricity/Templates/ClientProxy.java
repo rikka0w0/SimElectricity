@@ -45,8 +45,6 @@ public class ClientProxy extends CommonProxy {
     public Object getClientGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
         TileEntity te = world.getTileEntity(x, y, z);
 
-        if (te instanceof TileAdjustableTransformer)
-            return new GuiAdjustableTransformer(player.inventory, te);
         if (te instanceof TileSwitch)
             return new GuiSwitch(player.inventory, te);
         if (te instanceof TileSolarInverter)

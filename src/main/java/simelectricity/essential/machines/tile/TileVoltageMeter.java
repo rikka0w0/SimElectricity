@@ -9,7 +9,7 @@ import simelectricity.api.components.ISEVoltageSource;
 import simelectricity.essential.common.SESinglePortMachine;
 import simelectricity.essential.machines.render.ISESocketProvider;
 
-public class TileVoltageMeter extends SESinglePortMachine<ISEVoltageSource> implements ISEVoltageSource, IEnergyNetUpdateHandler, ISESocketProvider{
+public class TileVoltageMeter extends SESinglePortMachine implements ISEVoltageSource, IEnergyNetUpdateHandler, ISESocketProvider{
     public double voltage = 0;
 	
 	@Override

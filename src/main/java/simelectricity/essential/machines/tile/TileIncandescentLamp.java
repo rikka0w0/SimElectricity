@@ -11,7 +11,7 @@ import simelectricity.essential.machines.render.ISESocketProvider;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class TileIncandescentLamp extends SESinglePortMachine<ISEVoltageSource> implements ISEVoltageSource, IEnergyNetUpdateHandler, ISESocketProvider{
+public class TileIncandescentLamp extends SESinglePortMachine implements ISEVoltageSource, IEnergyNetUpdateHandler, ISESocketProvider{
     public byte lightLevel;
     
 	@Override

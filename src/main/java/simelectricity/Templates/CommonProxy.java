@@ -45,8 +45,6 @@ public class CommonProxy implements IGuiHandler {
     public Object getServerGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
         TileEntity te = world.getTileEntity(x, y, z);
 
-        if (te instanceof TileAdjustableTransformer)
-            return new ContainerAdjustableTransformer(player.inventory, te);
         if (te instanceof TileSwitch)
             return new ContainerSwitch(player.inventory, te);
         if (te instanceof TileSolarInverter)

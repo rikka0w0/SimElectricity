@@ -26,7 +26,6 @@ import simelectricity.Templates.TileEntity.*;
 @GameRegistry.ObjectHolder(SETemplate.MODID)
 public class SEBlocks {
 
-    public static BlockAdjustableTransformer adjustableTransformer;
     public static BlockSolarPanel solarPanel;
     public static BlockSwitch blockSwitch;
     public static BlockSolarInverter solarInverter;
@@ -34,7 +33,6 @@ public class SEBlocks {
     public static BlockDiode blockDiode;
 
     public static void preInit() {
-        adjustableTransformer = new BlockAdjustableTransformer();
         solarPanel = new BlockSolarPanel();
         blockSwitch = new BlockSwitch();
         solarInverter = new BlockSolarInverter();
@@ -44,7 +42,6 @@ public class SEBlocks {
 
     public static void init() {
         GameRegistry.registerTileEntity(TileSolarPanel.class, "TileSolarPanel");
-        GameRegistry.registerTileEntity(TileAdjustableTransformer.class, "TileAdjustableTransformer");
         GameRegistry.registerTileEntity(TileSwitch.class, "TileSwitch");
        
         GameRegistry.registerTileEntity(TileSolarInverter.class, "TileSolarInverter");

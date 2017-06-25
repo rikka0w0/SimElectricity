@@ -1,10 +1,11 @@
-package simelectricity.essential.utils;
+package simelectricity.essential.utils.client;
 
 import org.lwjgl.opengl.GL11;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import simelectricity.essential.Essential;
+import simelectricity.essential.utils.SEMathHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.MathHelper;

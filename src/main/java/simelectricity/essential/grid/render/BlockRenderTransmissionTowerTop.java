@@ -1,8 +1,8 @@
 package simelectricity.essential.grid.render;
 
 import simelectricity.essential.api.ISETransmissionTower;
-import simelectricity.essential.utils.SERenderHeap;
-import simelectricity.essential.utils.SERenderHelper;
+import simelectricity.essential.utils.client.SERenderHeap;
+import simelectricity.essential.utils.client.SERenderHelper;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;

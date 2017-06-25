@@ -1,10 +1,14 @@
-package simelectricity.essential.utils;
+package simelectricity.essential.utils.client;
 
 import java.util.Iterator;
 import java.util.LinkedList;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 import net.minecraft.util.IIcon;
 
+@SideOnly(Side.CLIENT)
 public class SERenderHeap {
 	private final LinkedList<double[][]> cubes = new LinkedList();
 	private final LinkedList<IIcon[]> textures = new LinkedList();

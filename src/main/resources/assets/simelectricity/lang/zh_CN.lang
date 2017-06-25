@@ -14,3 +14,5 @@ gui.sime:power_output=输出功率
 gui.sime:buffered_energy=已缓冲能量
 gui.sime:resistance_internal=内阻
 gui.sime:voltage_internal=电源电压
+gui.sime:ratio_step_up=升压比
+gui.sime:resistance_secondary=内阻(参考次级侧)

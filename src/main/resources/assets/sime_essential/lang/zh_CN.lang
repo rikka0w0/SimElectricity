@@ -8,6 +8,8 @@ tile.sime_essential:essential_electronics.quantum_generator.name=量子发电机
 tile.sime_essential:essential_electronics.adjustable_resistor.name=可调负载电阻
 tile.sime_essential:essential_electronics.incandescent_lamp.name=节能灯
 
+tile.sime_essential:essential_two_port_electronics.adjustable_transformer.name=可调变压器
+
 # Fluids
 fluid.vita_tea=扶她柠檬茶
 fluid.vita_tea.name=扶她柠檬茶

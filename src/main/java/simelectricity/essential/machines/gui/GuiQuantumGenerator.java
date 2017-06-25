@@ -2,22 +2,23 @@ package simelectricity.essential.machines.gui;
 
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.inventory.GuiContainer;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.inventory.Container;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
 
 import org.lwjgl.opengl.GL11;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 import simelectricity.essential.utils.SEUnitHelper;
+import simelectricity.essential.utils.client.SEGuiContainer;
 import simelectricity.essential.utils.network.MessageContainerSync;
 
-public class GuiQuantumGenerator extends GuiContainer{
-	protected final ContainerQuantumGenerator container;
-	
-    public GuiQuantumGenerator(TileEntity te) {
-		super(new ContainerQuantumGenerator(te));
-		container = (ContainerQuantumGenerator) super.inventorySlots;
+@SideOnly(Side.CLIENT)
+public final class GuiQuantumGenerator extends SEGuiContainer<ContainerQuantumGenerator>{
+	public GuiQuantumGenerator(Container container) {
+		super(container);
 	}
 
 	@Override

@@ -1,6 +1,6 @@
 package simelectricity.essential.grid.render;
 
-import simelectricity.essential.utils.SERenderHeap;
+import simelectricity.essential.utils.client.SERenderHeap;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;

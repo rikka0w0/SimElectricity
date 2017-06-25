@@ -14,3 +14,5 @@ gui.sime:power_output=Output Power
 gui.sime:buffered_energy=Buffered Energy
 gui.sime:resistance_internal=Internal Resistance
 gui.sime:voltage_internal=Internal Voltage
+gui.sime:ratio_step_up=Step-up ratio
+gui.sime:resistance_secondary=Resistance(Ref. to Sec.)

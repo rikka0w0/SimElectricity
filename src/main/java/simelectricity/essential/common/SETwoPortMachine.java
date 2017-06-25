@@ -4,17 +4,17 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.ForgeDirection;
-import simelectricity.api.ISEWrenchable;
 import simelectricity.api.ISidedFacing;
 import simelectricity.api.SEAPI;
 import simelectricity.api.components.ISEComponentParameter;
 import simelectricity.api.node.ISESubComponent;
 import simelectricity.api.tile.ISETile;
 
-public abstract class SESinglePortMachine extends SEEnergyTile implements ISidedFacing, ISEWrenchable, ISETile, ISEComponentParameter {
-	protected ForgeDirection functionalSide = ForgeDirection.SOUTH;
+public class SETwoPortMachine extends SEEnergyTile implements ISidedFacing, ISETile, ISEComponentParameter {
+	public ForgeDirection inputSide = ForgeDirection.SOUTH;
+	public ForgeDirection outputSide = ForgeDirection.NORTH;
 	protected ForgeDirection facing = ForgeDirection.NORTH;
-	protected ISESubComponent circuit = SEAPI.energyNetAgent.newComponent(this, this);
+	protected ISESubComponent input = SEAPI.energyNetAgent.newComponent(this, this);
 	
 	///////////////////////////////////
     /// TileEntity
@@ -23,7 +23,8 @@ public abstract class SESinglePortMachine extends SEEnergyTile implements ISided
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
 
-        functionalSide = ForgeDirection.getOrientation(tagCompound.getByte("functionalSide"));
+        inputSide = ForgeDirection.getOrientation(tagCompound.getByte("inputSide"));
+        outputSide = ForgeDirection.getOrientation((tagCompound.getByte("outputSide")));
         facing = ForgeDirection.getOrientation((tagCompound.getByte("facing")));
     }
 
@@ -31,7 +32,8 @@ public abstract class SESinglePortMachine extends SEEnergyTile implements ISided
     public void writeToNBT(NBTTagCompound tagCompound) {
         super.writeToNBT(tagCompound);
 
-        tagCompound.setByte("functionalSide", (byte) functionalSide.ordinal());
+        tagCompound.setByte("inputSide", (byte) inputSide.ordinal());
+        tagCompound.setByte("outputSide", (byte) outputSide.ordinal());
         tagCompound.setByte("facing", (byte) facing.ordinal());
     }
 
@@ -55,26 +57,6 @@ public abstract class SESinglePortMachine extends SEEnergyTile implements ISided
         return true;
     }
     
-    
-    ///////////////////////////////////
-    /// ISEWrenchable
-    ///////////////////////////////////
-    @Override
-    public void setFunctionalSide(ForgeDirection newFunctionalSide) {
-        functionalSide = newFunctionalSide;
-        
-        this.markTileEntityForS2CSync();
-        this.worldObj.notifyBlockChange(xCoord, yCoord, zCoord, this.getBlockType());
-        
-        if (this.isAddedToEnergyNet)
-        	SEAPI.energyNetAgent.updateTileConnection(this);
-    }
-
-    @Override
-    public boolean canSetFunctionalSide(ForgeDirection newFunctionalSide) {
-        return true;
-    }
-    
 	/////////////////////////////////////////////////////////
 	///Sync
 	/////////////////////////////////////////////////////////
@@ -82,14 +64,16 @@ public abstract class SESinglePortMachine extends SEEnergyTile implements ISided
 	public void prepareS2CPacketData(NBTTagCompound nbt){
 		super.prepareS2CPacketData(nbt);
 		
-		nbt.setByte("functionalSide", (byte)functionalSide.ordinal());
+        nbt.setByte("inputSide", (byte) inputSide.ordinal());
+        nbt.setByte("outputSide", (byte) outputSide.ordinal());
 		nbt.setByte("facing", (byte)facing.ordinal());
 	}
 	
     @SideOnly(value = Side.CLIENT)
 	@Override
 	public void onSyncDataFromServerArrived(NBTTagCompound nbt){
-		functionalSide = ForgeDirection.getOrientation(nbt.getByte("functionalSide"));
+        inputSide = ForgeDirection.getOrientation(nbt.getByte("inputSide"));
+        outputSide = ForgeDirection.getOrientation((nbt.getByte("outputSide")));
 		facing = ForgeDirection.getOrientation(nbt.getByte("facing"));
 		
 		// Flag 1 - update Rendering Only!
@@ -103,6 +87,25 @@ public abstract class SESinglePortMachine extends SEEnergyTile implements ISided
 	/////////////////////////////////////////////////////////
 	@Override
 	public ISESubComponent getComponent(ForgeDirection side){
-		return side == functionalSide ? circuit : null;
+		if (side == inputSide)
+			return input;
+		else if (side == outputSide)
+			return input.getComplement();
+		else 
+			return null;
+	}
+	
+	/////////////////////////////////////////////////////////
+	/// Utils
+	/////////////////////////////////////////////////////////
+	public void setFunctionalSide(ForgeDirection input, ForgeDirection output){
+		this.inputSide = input;
+		this.outputSide = output;
+		
+        this.markTileEntityForS2CSync();
+        this.worldObj.notifyBlockChange(xCoord, yCoord, zCoord, this.getBlockType());
+        
+        if (this.isAddedToEnergyNet)
+        	SEAPI.energyNetAgent.updateTileConnection(this);
 	}
 }

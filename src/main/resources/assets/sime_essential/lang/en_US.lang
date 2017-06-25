@@ -8,6 +8,8 @@ tile.sime_essential:essential_electronics.quantum_generator.name=Quantum Generat
 tile.sime_essential:essential_electronics.adjustable_resistor.name=Adjustable Resistor
 tile.sime_essential:essential_electronics.incandescent_lamp.name=Incandescent Lamp
 
+tile.sime_essential:essential_two_port_electronics.adjustable_transformer.name=Adjustable Transformer
+
 # Fluids
 fluid.vita_tea=Vita Lemon Tea
 fluid.vita_tea.name=Vita Lemon Tea

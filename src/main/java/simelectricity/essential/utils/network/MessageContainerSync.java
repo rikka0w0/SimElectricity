@@ -27,12 +27,19 @@ public class MessageContainerSync implements IMessage{
 	}
 	
 	@SideOnly(Side.CLIENT)
+	public static void sendDirectionSelectorClickEventToSever(Container clientContainer, ForgeDirection direction, int mouseButton){
+		Essential.instance.networkChannel.sendToServer(new MessageContainerSync(clientContainer.windowId,
+				new Object[]{EVENT_DIRECTION_SELECT, direction, mouseButton}));
+	}
+	
+	@SideOnly(Side.CLIENT)
 	public static void sendToServer(Container clientContainer, Object... data){
 		Essential.instance.networkChannel.sendToServer(new MessageContainerSync(clientContainer.windowId, data));
 	}
 	
 	private final static byte EVENT_CUSTOM = 0;
 	private final static byte EVENT_BUTTON_CLICK = 1;
+	private final static byte EVENT_DIRECTION_SELECT = 2;
 	
 	private final static byte TYPE_BYTE = 0;
 	private final static byte TYPE_INT = 1;
@@ -140,9 +147,15 @@ public class MessageContainerSync implements IMessage{
 						case EVENT_CUSTOM:
 							if (container instanceof ISECustomContainerEventHandler)
 								((ISECustomContainerEventHandler) container).onDataArrivedFromClient(message.data);
+							break;
 						case EVENT_BUTTON_CLICK:
 							if (container instanceof ISEButtonEventHandler)
 								((ISEButtonEventHandler) container).onButtonPressed((Integer)message.data[1], (Boolean)message.data[2]);
+							break;
+						case EVENT_DIRECTION_SELECT:
+							if (container instanceof ISEDirectionSelectorEventHandler)
+								((ISEDirectionSelectorEventHandler) container).onDirectionSelected((ForgeDirection)message.data[1], (Integer)message.data[2]);
+							break;
 						}
 					}
 				}

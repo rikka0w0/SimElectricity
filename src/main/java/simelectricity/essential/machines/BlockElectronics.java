@@ -14,9 +14,9 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
+import simelectricity.api.ISidedFacing;
 import simelectricity.api.SEAPI;
 import simelectricity.essential.Essential;
-import simelectricity.essential.cable.render.RenderBlockCable;
 import simelectricity.essential.common.ISESubBlock;
 import simelectricity.essential.common.SEBlock;
 import simelectricity.essential.common.SEItemBlock;
@@ -27,7 +27,7 @@ import simelectricity.essential.machines.tile.TileQuantumGenerator;
 import simelectricity.essential.machines.tile.TileVoltageMeter;
 import simelectricity.essential.utils.Utils;
 
-public class BlockElectronics  extends SEBlock implements ITileEntityProvider, ISESubBlock{
+public class BlockElectronics extends SEBlock implements ITileEntityProvider, ISESubBlock{
 	private static final String[] subNames = new String[]{"voltage_meter", "quantum_generator", "adjustable_resistor", "incandescent_lamp"};
 	
 	//[meta][side]
@@ -131,10 +131,8 @@ public class BlockElectronics  extends SEBlock implements ITileEntityProvider, I
     	TileEntity te = world.getTileEntity(x, y, z);
     	int meta = world.getBlockMetadata(x, y, z);
     	
-    	if (te instanceof SESinglePortMachine){
-    		SESinglePortMachine spm = (SESinglePortMachine) te;
-    		
-    		int facing = spm.getFacing().ordinal();
+    	if (te instanceof ISidedFacing){    		
+    		int facing = ((ISidedFacing)te).getFacing().ordinal();
     		
     		if (isSecondState(te))
     			return iconBuffer2[meta][Utils.sideAndFacingToSpriteOffset[side][facing]];
@@ -163,12 +161,6 @@ public class BlockElectronics  extends SEBlock implements ITileEntityProvider, I
 	@Override
 	public boolean isOpaqueCube() {
 		return false;
-	}
-	
-	@Override
-	public boolean canRenderInPass(int pass) {
-		RenderBlockCable.renderPass = pass;
-		return true;
 	}
 	
 	@Override
@@ -217,7 +209,7 @@ public class BlockElectronics  extends SEBlock implements ITileEntityProvider, I
         TileEntity te = world.getTileEntity(x, y, z);
         
         if (te instanceof SESinglePortMachine){
-            ForgeDirection sight = Utils.getPlayerSight(player, false);
+            ForgeDirection sight = Utils.getPlayerSight(player);
             ((SESinglePortMachine) te).setFacing(sight);
             ((SESinglePortMachine) te).setFunctionalSide(sight);
         }
