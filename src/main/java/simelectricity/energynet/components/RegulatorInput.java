@@ -19,6 +19,11 @@ public class RegulatorInput extends SEComponent.Tile<ISERegulator> implements IS
 	public ISESubComponent getComplement() {
 		return output;
 	}
+	
+	@Override
+	public ISESubComponent getComplement2() {
+		return controller;
+	}
 
 	@Override
 	public void updateComponentParameters() {

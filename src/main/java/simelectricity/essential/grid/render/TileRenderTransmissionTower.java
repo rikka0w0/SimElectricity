@@ -2,7 +2,7 @@ package simelectricity.essential.grid.render;
 
 import org.lwjgl.opengl.GL11;
 
-import simelectricity.essential.api.ISETransmissionTower;
+import simelectricity.essential.grid.ISETransmissionTower;
 import net.minecraft.tileentity.TileEntity;
 
 public class TileRenderTransmissionTower extends TileRenderTranmissionTowerBase{

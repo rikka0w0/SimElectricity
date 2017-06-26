@@ -17,7 +17,6 @@ import net.minecraft.world.World;
 import simelectricity.api.SEAPI;
 import simelectricity.api.node.ISEGridNode;
 import simelectricity.api.tile.ISEGridTile;
-import simelectricity.essential.api.ISEHVCableConnector;
 import simelectricity.essential.common.SEBlock;
 import simelectricity.essential.common.SEItemBlock;
 

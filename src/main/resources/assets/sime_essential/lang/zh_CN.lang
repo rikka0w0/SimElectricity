@@ -9,6 +9,9 @@ tile.sime_essential:essential_electronics.adjustable_resistor.name=可调负载�
 tile.sime_essential:essential_electronics.incandescent_lamp.name=节能灯
 
 tile.sime_essential:essential_two_port_electronics.adjustable_transformer.name=可调变压器
+tile.sime_essential:essential_two_port_electronics.voltage_regulator.name=稳压器
+tile.sime_essential:essential_two_port_electronics.diode.name=二极管
+tile.sime_essential:essential_two_port_electronics.switch.name=开关
 
 # Fluids
 fluid.vita_tea=扶她柠檬茶

@@ -1,7 +1,7 @@
 package simelectricity.essential.grid.render;
 
 import net.minecraft.tileentity.TileEntity;
-import simelectricity.essential.api.ISETransmissionTower;
+import simelectricity.essential.grid.ISETransmissionTower;
 import simelectricity.essential.utils.SEMathHelper;
 
 public class TransmissionTowerRenderHelper{

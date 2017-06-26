@@ -16,13 +16,20 @@ import simelectricity.essential.machines.BlockElectronics;
 import simelectricity.essential.machines.BlockTwoPortElectronics;
 import simelectricity.essential.machines.gui.ContainerAdjustableResistor;
 import simelectricity.essential.machines.gui.ContainerAdjustableTransformer;
+import simelectricity.essential.machines.gui.ContainerDiode;
 import simelectricity.essential.machines.gui.ContainerQuantumGenerator;
+import simelectricity.essential.machines.gui.ContainerSwitch;
 import simelectricity.essential.machines.gui.ContainerVoltageMeter;
+import simelectricity.essential.machines.gui.ContainerVoltageRegulator;
 import simelectricity.essential.machines.tile.TileAdjustableResistor;
 import simelectricity.essential.machines.tile.TileAdjustableTransformer;
+import simelectricity.essential.machines.tile.TileDiode;
 import simelectricity.essential.machines.tile.TileIncandescentLamp;
 import simelectricity.essential.machines.tile.TileQuantumGenerator;
+import simelectricity.essential.machines.tile.TileSolarPanel;
+import simelectricity.essential.machines.tile.TileSwitch;
 import simelectricity.essential.machines.tile.TileVoltageMeter;
+import simelectricity.essential.machines.tile.TileVoltageRegulator;
 
 //@GameRegistry.ObjectHolder(SETemplate.MODID)
 public class BlockRegistry {
@@ -57,8 +64,12 @@ public class BlockRegistry {
 		GameRegistry.registerTileEntity(TileQuantumGenerator.class, "SEEQuantumGenerator");
 		GameRegistry.registerTileEntity(TileAdjustableResistor.class, "SEEAdjustableResistor");
 		GameRegistry.registerTileEntity(TileIncandescentLamp.class, "SEEIncandescentLamp");
+		GameRegistry.registerTileEntity(TileSolarPanel.class, "SEESolarPanel");
 		
 		GameRegistry.registerTileEntity(TileAdjustableTransformer.class, "SEEAdjustableTransformer");
+		GameRegistry.registerTileEntity(TileVoltageRegulator.class, "SEEVoltageRegulator");
+		GameRegistry.registerTileEntity(TileDiode.class, "SEEDiode");
+		GameRegistry.registerTileEntity(TileSwitch.class, "SEESwitch");
 	}
 	
 	public static Container getContainer(TileEntity te, EntityPlayer player){
@@ -71,6 +82,12 @@ public class BlockRegistry {
 		
 		if (te instanceof TileAdjustableTransformer)
 			return new ContainerAdjustableTransformer(te);
+		if (te instanceof TileVoltageRegulator)
+			return new ContainerVoltageRegulator(te);
+		if (te instanceof TileDiode)
+			return new ContainerDiode(te);
+		if (te instanceof TileSwitch)
+			return new ContainerSwitch(te);
 		
 		return null;
 	}

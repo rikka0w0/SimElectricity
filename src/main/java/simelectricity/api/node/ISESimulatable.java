@@ -7,5 +7,6 @@ import simelectricity.api.components.ISEComponentParameter;
  */
 public interface ISESimulatable {
 	public ISESubComponent getComplement();
+	public ISESubComponent getComplement2();
 	public ISEComponentParameter getCachedParameters();
 }

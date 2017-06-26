@@ -1,6 +1,6 @@
 package simelectricity.essential.grid.render;
 
-import simelectricity.essential.api.ISETransmissionTower;
+import simelectricity.essential.grid.ISETransmissionTower;
 import simelectricity.essential.utils.client.SERenderHeap;
 import simelectricity.essential.utils.client.SERenderHelper;
 

@@ -50,9 +50,13 @@ public abstract class SEComponent implements ISESimulatable, ISEComponentParamet
 	/////////////////////////////
 	/// ISESimulatable
 	/////////////////////////////
-	//Only two port networks need to override this!
+	/**Only two port networks need to override this!*/
 	@Override
 	public ISESubComponent getComplement() {return null;}
+	
+	/**Only regulator need to override this!*/
+	@Override
+	public ISESubComponent getComplement2() {return null;}
 	
 	@Override
 	public ISEComponentParameter getCachedParameters() {

@@ -11,8 +11,8 @@ import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 import simelectricity.api.SEAPI;
 import simelectricity.api.node.ISEGridNode;
-import simelectricity.essential.api.ISEHVCableConnector;
 import simelectricity.essential.common.SEItem;
+import simelectricity.essential.grid.ISEHVCableConnector;
 import simelectricity.essential.utils.SEMathHelper;
 import simelectricity.essential.utils.Utils;
 

@@ -6,23 +6,18 @@ import simelectricity.essential.Essential;
 import simelectricity.essential.utils.Utils;
 import simelectricity.essential.utils.client.GuiDirectionSelector;
 import simelectricity.essential.utils.client.SEGuiContainer;
-import simelectricity.essential.utils.network.MessageContainerSync;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.inventory.Container;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
-import net.minecraftforge.common.util.ForgeDirection;
 
 @SideOnly(Side.CLIENT)
 public final class GuiAdjustableTransformer extends SEGuiContainer<ContainerAdjustableTransformer>{	
 	public GuiAdjustableTransformer(Container container) {
 		super(container);
 	}
-
-	private GuiDirectionSelector directionSelector;
 
     @Override
     protected void drawGuiContainerForegroundLayer(int x, int y) {
@@ -43,12 +38,8 @@ public final class GuiAdjustableTransformer extends SEGuiContainer<ContainerAdju
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         mc.renderEngine.bindTexture(new ResourceLocation("sime_essential:textures/gui/adjustable_transformer.png"));
         this.drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
-        
-        ForgeDirection inputSide = container.inputSide, outputSide = container.outputSide;
-        if (inputSide == null || outputSide == null)
-        	return;
-        
-        directionSelector.draw(inputSide, outputSide);
+              
+        directionSelector.draw(container.inputSide, container.outputSide);
     }
 	
     @Override
@@ -76,22 +67,5 @@ public final class GuiAdjustableTransformer extends SEGuiContainer<ContainerAdju
         directionSelector = new GuiDirectionSelector(guiLeft + 132, guiTop + 50,
         		Utils.getPlayerSightHorizontal(Essential.proxy.getClientPlayer())
         		);
-    }
-	
-    @Override
-    public void actionPerformed(GuiButton button) {
-    	MessageContainerSync.sendButtonClickEventToSever(container, button.id, GuiScreen.isCtrlKeyDown());
-    }
-    
-    @Override
-    public void mouseClicked(int x, int y, int button) {
-        super.mouseClicked(x, y, button);
-        
-        ForgeDirection selectedDirection = directionSelector.onMouseClick(x, y);
-
-        if (selectedDirection == ForgeDirection.UNKNOWN)
-            return;
-        
-        MessageContainerSync.sendDirectionSelectorClickEventToSever(container, selectedDirection, button);
     }
 }

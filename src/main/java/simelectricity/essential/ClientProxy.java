@@ -15,17 +15,21 @@ import simelectricity.essential.grid.render.TileRenderTransmissionTower;
 import simelectricity.essential.grid.render.BlockRenderTransmissionTowerTop;
 import simelectricity.essential.grid.render.BlockRenderTransmissionTowerBottom;
 import simelectricity.essential.grid.render.TileRenderTranmissionTowerBase;
-import simelectricity.essential.machines.BlockElectronics;
-import simelectricity.essential.machines.BlockTwoPortElectronics;
 import simelectricity.essential.machines.gui.GuiAdjustableResistor;
 import simelectricity.essential.machines.gui.GuiAdjustableTransformer;
+import simelectricity.essential.machines.gui.GuiDiode;
 import simelectricity.essential.machines.gui.GuiQuantumGenerator;
+import simelectricity.essential.machines.gui.GuiSwitch;
 import simelectricity.essential.machines.gui.GuiVoltageMeter;
+import simelectricity.essential.machines.gui.GuiVoltageRegulator;
 import simelectricity.essential.machines.render.BlockRenderMachine;
 import simelectricity.essential.machines.tile.TileAdjustableResistor;
 import simelectricity.essential.machines.tile.TileAdjustableTransformer;
+import simelectricity.essential.machines.tile.TileDiode;
 import simelectricity.essential.machines.tile.TileQuantumGenerator;
+import simelectricity.essential.machines.tile.TileSwitch;
 import simelectricity.essential.machines.tile.TileVoltageMeter;
+import simelectricity.essential.machines.tile.TileVoltageRegulator;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
@@ -64,8 +68,8 @@ public class ClientProxy extends CommonProxy{
 		BlockCableJoint.renderID = (new BlockRenderCableJoint()).getRenderId();
 		ClientRegistry.bindTileEntitySpecialRenderer(TileCableJoint.class, new TileRenderTranmissionTowerBase());
 		
-		BlockElectronics.renderID = (new BlockRenderMachine()).getRenderId();
-		BlockTwoPortElectronics.renderID = BlockElectronics.renderID;
+		BlockRegistry.blockElectronics.renderID = (new BlockRenderMachine()).getRenderId();
+		BlockRegistry.blockTwoPortElectronics.renderID = BlockRegistry.blockElectronics.renderID;
 	}
 
 	@Override
@@ -83,6 +87,12 @@ public class ClientProxy extends CommonProxy{
 		
 		if (te instanceof TileAdjustableTransformer)
 			return new GuiAdjustableTransformer(container);
+		if (te instanceof TileVoltageRegulator)
+			return new GuiVoltageRegulator(container);
+		if (te instanceof TileDiode)
+			return new GuiDiode(container);
+		if (te instanceof TileSwitch)
+			return new GuiSwitch(container);
 		
 		return null;
 	}

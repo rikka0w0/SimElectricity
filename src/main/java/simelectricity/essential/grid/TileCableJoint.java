@@ -11,7 +11,6 @@ import simelectricity.api.node.ISEGridNode;
 import simelectricity.api.node.ISESimulatable;
 import simelectricity.api.tile.ISECableTile;
 import simelectricity.api.tile.ISEGridTile;
-import simelectricity.essential.api.ISETransmissionTower;
 import simelectricity.essential.common.SEEnergyTile;
 import simelectricity.essential.grid.render.TransmissionTowerRenderHelper;
 

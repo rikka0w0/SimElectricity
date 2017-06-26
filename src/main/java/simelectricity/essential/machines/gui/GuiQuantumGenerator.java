@@ -1,7 +1,6 @@
 package simelectricity.essential.machines.gui;
 
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.inventory.Container;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
@@ -13,7 +12,6 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 import simelectricity.essential.utils.SEUnitHelper;
 import simelectricity.essential.utils.client.SEGuiContainer;
-import simelectricity.essential.utils.network.MessageContainerSync;
 
 @SideOnly(Side.CLIENT)
 public final class GuiQuantumGenerator extends SEGuiContainer<ContainerQuantumGenerator>{
@@ -45,12 +43,9 @@ public final class GuiQuantumGenerator extends SEGuiContainer<ContainerQuantumGe
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float opacity, int par2, int par3) {
-        //draw your Gui here, only thing you need to change is the path
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         mc.renderEngine.bindTexture(new ResourceLocation("sime_essential:textures/gui/quantum_generator.png"));
-        int x = (width - xSize) / 2;
-        int y = (height - ySize) / 2;
-        this.drawTexturedModalRect(x, y, 0, 0, xSize, ySize);
+        this.drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
     }
     
     @Override
@@ -72,10 +67,5 @@ public final class GuiQuantumGenerator extends SEGuiContainer<ContainerQuantumGe
         buttonList.add(new GuiButton(9, guiLeft + xbase + 70, 	guiTop + ybase + 38, 20, 20, "+1"));
         buttonList.add(new GuiButton(10, guiLeft + xbase + 90, 	guiTop + ybase + 38, 20, 20, "+10"));
         buttonList.add(new GuiButton(11, guiLeft + xbase + 110, 	guiTop + ybase + 38, 30, 20, "+100"));
-    }
-
-    @Override
-    public void actionPerformed(GuiButton button) {
-    	MessageContainerSync.sendButtonClickEventToSever(container, button.id, GuiScreen.isCtrlKeyDown());
     }
 }

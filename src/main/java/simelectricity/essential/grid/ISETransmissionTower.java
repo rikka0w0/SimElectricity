@@ -1,4 +1,4 @@
-package simelectricity.essential.api;
+package simelectricity.essential.grid;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;

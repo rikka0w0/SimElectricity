@@ -9,6 +9,9 @@ tile.sime_essential:essential_electronics.adjustable_resistor.name=Adjustable Re
 tile.sime_essential:essential_electronics.incandescent_lamp.name=Incandescent Lamp
 
 tile.sime_essential:essential_two_port_electronics.adjustable_transformer.name=Adjustable Transformer
+tile.sime_essential:essential_two_port_electronics.voltage_regulator.name=Voltage Regulator
+tile.sime_essential:essential_two_port_electronics.diode.name=Diode
+tile.sime_essential:essential_two_port_electronics.switch.name=Switch
 
 # Fluids
 fluid.vita_tea=Vita Lemon Tea

@@ -4,10 +4,8 @@ import org.lwjgl.opengl.GL11;
 
 import simelectricity.essential.utils.SEUnitHelper;
 import simelectricity.essential.utils.client.SEGuiContainer;
-import simelectricity.essential.utils.network.MessageContainerSync;
 
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.inventory.Container;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
@@ -64,10 +62,5 @@ public final class GuiAdjustableResistor extends SEGuiContainer<ContainerAdjusta
         buttonList.add(new GuiButton(5, guiLeft + xbase + 110, 	guiTop + ybase + 38, 30, 20, "+100"));
         
         buttonList.add(new GuiButton(6, guiLeft + xbase + 100, 	guiTop + ybase, 40, 20, "Clear"));
-    }
-    
-    @Override
-    public void actionPerformed(GuiButton button) {
-    	MessageContainerSync.sendButtonClickEventToSever(container, button.id, GuiScreen.isCtrlKeyDown());
     }
 }

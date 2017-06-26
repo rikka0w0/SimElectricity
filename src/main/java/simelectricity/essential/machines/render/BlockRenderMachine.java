@@ -109,7 +109,7 @@ public class BlockRenderMachine implements ISimpleBlockRenderingHandler{
 	///////////////////////////////////
 	/// Load texture for models
 	///////////////////////////////////
-	public static final IIcon[] iconCache = new IIcon[4];
+	public static final IIcon[] iconCache = new IIcon[5];
 	@SubscribeEvent
 	public void eventHandler(TextureStitchEvent.Pre event){
 		if (event.map.getTextureType() == 0){

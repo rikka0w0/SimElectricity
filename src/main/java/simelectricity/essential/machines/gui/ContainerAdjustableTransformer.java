@@ -10,14 +10,13 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import simelectricity.api.SEAPI;
-import simelectricity.essential.common.ContainerNoInventory;
+import simelectricity.essential.common.ContainerNoInventoryTwoPort;
 import simelectricity.essential.machines.tile.TileAdjustableTransformer;
 import simelectricity.essential.utils.network.ISEButtonEventHandler;
 import simelectricity.essential.utils.network.ISEContainerUpdate;
-import simelectricity.essential.utils.network.ISEDirectionSelectorEventHandler;
 import simelectricity.essential.utils.network.MessageContainerSync;
 
-public class ContainerAdjustableTransformer extends ContainerNoInventory<TileAdjustableTransformer> implements ISEContainerUpdate, ISEButtonEventHandler, ISEDirectionSelectorEventHandler{
+public class ContainerAdjustableTransformer extends ContainerNoInventoryTwoPort<TileAdjustableTransformer> implements ISEContainerUpdate, ISEButtonEventHandler{
 	public double ratio, outputResistance;
 	public ForgeDirection inputSide, outputSide;
 	
@@ -147,25 +146,5 @@ public class ContainerAdjustableTransformer extends ContainerNoInventory<TileAdj
 		tileEntity.outputResistance = outputResistance;
 		
 		SEAPI.energyNetAgent.updateTileParameter(tileEntity);
-	}
-
-	@Override
-	public void onDirectionSelected(ForgeDirection direction, int mouseButton) {
-		ForgeDirection inputSide = tileEntity.inputSide, outputSide = tileEntity.outputSide;
-		
-		System.out.println(direction);
-		
-	    if (mouseButton == 0) {        //Left key
-	        if (outputSide == direction)
-	            outputSide = inputSide;
-	        inputSide = direction;
-	    } else if (mouseButton == 1) { //Right key
-	        if (inputSide == direction)
-	            inputSide = outputSide;
-	        outputSide = direction;
-        }
-		
-	    SEAPI.energyNetAgent.updateTileConnection(tileEntity);
-	    tileEntity.setFunctionalSide(inputSide, outputSide);
 	}
 }
