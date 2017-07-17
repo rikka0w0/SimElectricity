@@ -5,6 +5,8 @@ import cpw.mods.fml.client.registry.ClientRegistry;
 
 import simelectricity.essential.cable.BlockCable;
 import simelectricity.essential.cable.render.RenderBlockCable;
+import simelectricity.essential.cable.render.RenderLedPanel;
+import simelectricity.essential.extensions.buildcraft.client.BCFacadeRender;
 import simelectricity.essential.grid.BlockCableJoint;
 import simelectricity.essential.grid.BlockTransmissionTowerTop;
 import simelectricity.essential.grid.BlockTransmissionTowerBottom;
@@ -21,7 +23,6 @@ import simelectricity.essential.machines.gui.GuiDiode;
 import simelectricity.essential.machines.gui.GuiQuantumGenerator;
 import simelectricity.essential.machines.gui.GuiSwitch;
 import simelectricity.essential.machines.gui.GuiVoltageMeter;
-import simelectricity.essential.machines.gui.GuiVoltageRegulator;
 import simelectricity.essential.machines.render.BlockRenderMachine;
 import simelectricity.essential.machines.tile.TileAdjustableResistor;
 import simelectricity.essential.machines.tile.TileAdjustableTransformer;
@@ -29,7 +30,6 @@ import simelectricity.essential.machines.tile.TileDiode;
 import simelectricity.essential.machines.tile.TileQuantumGenerator;
 import simelectricity.essential.machines.tile.TileSwitch;
 import simelectricity.essential.machines.tile.TileVoltageMeter;
-import simelectricity.essential.machines.tile.TileVoltageRegulator;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
@@ -70,6 +70,10 @@ public class ClientProxy extends CommonProxy{
 		
 		BlockRegistry.blockElectronics.renderID = (new BlockRenderMachine()).getRenderId();
 		BlockRegistry.blockTwoPortElectronics.renderID = BlockRegistry.blockElectronics.renderID;
+		
+		//BCFacadeRender
+		new BCFacadeRender();
+		new RenderLedPanel();
 	}
 
 	@Override
@@ -87,8 +91,6 @@ public class ClientProxy extends CommonProxy{
 		
 		if (te instanceof TileAdjustableTransformer)
 			return new GuiAdjustableTransformer(container);
-		if (te instanceof TileVoltageRegulator)
-			return new GuiVoltageRegulator(container);
 		if (te instanceof TileDiode)
 			return new GuiDiode(container);
 		if (te instanceof TileSwitch)

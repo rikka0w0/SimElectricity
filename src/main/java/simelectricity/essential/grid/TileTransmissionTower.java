@@ -46,6 +46,7 @@ public class TileTransmissionTower extends SEEnergyTile implements ISEGridTile, 
         }
 	}
 
+	@Override
 	public int getRotation() {
 		return getBlockMetadata() & 7;
 	}

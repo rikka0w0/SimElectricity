@@ -26,4 +26,9 @@ public class VoltageSource extends SEComponent.Tile<ISEVoltageSource> implements
 	public double getResistance() {
 		return r;
 	}
+	
+	@Override
+	public String toString() {
+		return "V";
+	}
 }

@@ -11,16 +11,23 @@ import simelectricity.energynet.components.SEComponent;
  * Unweighed graph, using Adjacency lists (SEComponent.neighbors)
  */
 public class SEGraph {
+	// A list of pointers to registered components and cables
 	private LinkedList<SEComponent> components;
-	private LinkedList<SEComponent> wires;	
+	private LinkedList<SEComponent> wires;
+	
 	private LinkedList<SEComponent> terminalNodes;
 	
     public SEGraph() {
     	components = new LinkedList<SEComponent>();
     	wires = new LinkedList<SEComponent>();
+    	
     	terminalNodes = new LinkedList<SEComponent>();
     }
 	
+    /**
+     * 
+     * @return total number of registered tiles (the number of nodes)
+     */
     public int size(){
     	return components.size() + wires.size();
     }
@@ -35,9 +42,8 @@ public class SEGraph {
 			return false;
 	}
 	
-	
     /**
-     * Add a vertex into the graph
+     * Add an EnergyTiles/GridNode into the graph
      */
     public void addVertex(SEComponent node) {
         if (containsNode(node))
@@ -50,7 +56,35 @@ public class SEGraph {
         
         node.isValid = true;
     }
-       
+	
+    //////////////////////////
+    /// EnergyTiles
+    //////////////////////////
+    /**
+     * Remove a vertex and its edges
+     */
+    public void removeVertex(SEComponent node) {
+        if (!containsNode(node))
+            return;
+        
+        //Mark as dead
+        node.isValid = false;
+        
+        //Cut possible interconnection
+        if (node instanceof Cable)
+        	breakInterconnection((Cable)node);
+        
+        //Remove this node from its neighbor list
+        for (SEComponent neighbor: node.neighbors){
+        	LinkedList<SEComponent> list = neighbor.neighbors;
+        	if (list.contains(node))
+        		list.remove(node);
+        }
+
+        node.neighbors.clear();
+        (isWire(node) ? wires : components).remove(node);
+    }
+    
     /**
      * Add a neighbor to a vertex
      */
@@ -68,6 +102,26 @@ public class SEGraph {
         	neighbor.neighbors.addLast(node);
     }
     
+    /**
+     * Remove an edge
+     */
+    public void removeEdge(SEComponent node, SEComponent neighbor) {
+        if (!containsNode(node))
+            return;
+        
+        if (!containsNode(neighbor))
+            return;
+
+        if (neighbor.neighbors.contains(neighbor))
+        	neighbor.neighbors.remove(neighbor);
+
+        if (neighbor.neighbors.contains(node))
+        	neighbor.neighbors.remove(node);
+    }
+    
+    //////////////////////////
+    /// Grid
+    //////////////////////////
 	public void addGridEdge(GridNode node1, GridNode node2, double resistance){
         if (!containsNode(node1))
             return;
@@ -87,50 +141,6 @@ public class SEGraph {
         }
 	}
 	
-	public void interconnection(Cable cable, GridNode gridNode){
-		gridNode.interConnection = cable;
-		cable.connectedGridNode = gridNode;
-	}
-	
-	public void breakInterconnection(Cable cable){
-    	if (cable.connectedGridNode != null){
-        	cable.connectedGridNode.interConnection = null;
-        	cable.connectedGridNode = null;			
-    	}
-	}
-	
-	public void breakInterconnection(GridNode gridNode){
-		if (gridNode.interConnection != null){
-			gridNode.interConnection.connectedGridNode = null;
-			gridNode.interConnection = null;
-		}
-	}
-    
-    /**
-     * Remove a vertex, including its assosiated edges
-     */
-    public void removeVertex(SEComponent node) {
-        if (!containsNode(node))
-            return;
-        
-        //Mark as dead
-        node.isValid = false;
-        
-        //Cut possible interconnection
-        if (node instanceof Cable)
-        	breakInterconnection((Cable)node);
-        
-        //Remove this node from its neighbors' list
-        for (SEComponent neighbor: node.neighbors){
-        	LinkedList<SEComponent> list = neighbor.neighbors;
-        	if (list.contains(node))
-        		list.remove(node);
-        }
-
-        node.neighbors.clear();
-        (isWire(node) ? wires : components).remove(node);
-    }
-    
     public LinkedList<GridNode> removeGridVertex(GridNode gridNode){
         if (!containsNode(gridNode))
             return null;
@@ -169,23 +179,6 @@ public class SEGraph {
         return ret;
     }
     
-    /**
-     * Remove an edge
-     */
-    public void removeEdge(SEComponent node, SEComponent neighbor) {
-        if (!containsNode(node))
-            return;
-        
-        if (!containsNode(neighbor))
-            return;
-
-        if (neighbor.neighbors.contains(neighbor))
-        	neighbor.neighbors.remove(neighbor);
-
-        if (neighbor.neighbors.contains(node))
-        	neighbor.neighbors.remove(node);
-    }
-    
     public void removeGridEdge(GridNode node1, GridNode node2){
 		Iterator<SEComponent> iterator1 = node1.neighbors.iterator();
 		Iterator<Double> iterator2 = node1.neighborR.iterator();
@@ -209,6 +202,30 @@ public class SEGraph {
 			}
 		}		
     }
+    ///////////////////////////////////
+    /// Grid - Cable interconnection
+    ///////////////////////////////////
+	
+	public void interconnection(Cable cable, GridNode gridNode){
+		gridNode.interConnection = cable;
+		cable.connectedGridNode = gridNode;
+	}
+	
+	public void breakInterconnection(Cable cable){
+    	if (cable.connectedGridNode != null){
+        	cable.connectedGridNode.interConnection = null;
+        	cable.connectedGridNode = null;			
+    	}
+	}
+	
+	public void breakInterconnection(GridNode gridNode){
+		if (gridNode.interConnection != null){
+			gridNode.interConnection.connectedGridNode = null;
+			gridNode.interConnection = null;
+		}
+	}
+    
+
            
     
     public void clearVoltageCache(){
@@ -227,6 +244,18 @@ public class SEGraph {
 			if(((GridNode)node).getType() == GridNode.ISEGridNode_Wire)
 				return true;
 		}
+		return false;
+	}
+	
+	private static boolean shouldCalcVoltage(SEComponent node){
+		if (node.neighbors.size()>2)				//A node has more than 2 connections
+			return true;
+		if (isInterconnectionTerminal(node))		//A interconnection terminal
+			return true;
+		
+		if ((node instanceof Cable) && ((Cable)node).hasShuntResistance)
+			return true;
+		
 		return false;
 	}
 	
@@ -262,7 +291,7 @@ public class SEGraph {
     	
     	throw new RuntimeException("Unaccptable conntection");
     }
-       
+    
     public void optimizGraph(){
     	LinkedList<SEComponent> path = new LinkedList<SEComponent>();
     	
@@ -283,9 +312,7 @@ public class SEGraph {
 			
 			wire.eliminated = true;
     		
-			if (wire.neighbors.size()>2				//A node has more than 2 connections
-    				||								//OR
-    			isInterconnectionTerminal(wire))	//A interconnection terminal
+			if (shouldCalcVoltage(wire))
     			terminalNodes.add(wire);
     	}
     	
@@ -314,9 +341,7 @@ public class SEGraph {
         				
         				resistance += calcR(prev, reach);
         				
-        				if (reach.neighbors.size() > 2
-        						|| 
-        					isInterconnectionTerminal(reach))	//We have to calculate the voltage of the interconnection point
+        				if (shouldCalcVoltage(reach))	//We have to calculate the voltage of the interconnection point
         					break search;
         				
         				else if (reach.neighbors.size() == 1){
@@ -346,6 +371,7 @@ public class SEGraph {
         		    	}
         			}while (true);	
         			
+        			//node->reach
         			if (reach != null){	//node-node connection
 		    			//Reached another device node (i.e. transformer primary)
 		    			//resistance = total resistance from "node" to the end

@@ -37,6 +37,7 @@ public class BlockCableJoint extends SEBlock implements ITileEntityProvider, ISE
 	public static class ItemBlock extends SEItemBlock{
 		public ItemBlock(Block block) {super(block);}
 		
+		@Override
 		@Deprecated
 	    @SideOnly(Side.CLIENT)
 	    public IIcon getIconFromDamage(int damage){

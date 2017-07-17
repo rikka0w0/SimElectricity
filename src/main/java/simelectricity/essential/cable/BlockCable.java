@@ -124,7 +124,8 @@ public class BlockCable extends SEBlock implements ITileEntityProvider, ISESubBl
 	public static class ItemBlock extends SEItemBlock{	
 		public ItemBlock(Block block) {super(block);}
 		
-	    @SideOnly(Side.CLIENT)
+	    @Override
+		@SideOnly(Side.CLIENT)
 	    public IIcon getIconFromDamage(int damage){
 	    	return ((BlockCable)field_150939_a).inventoryTexture[damage];
 	    }
@@ -213,7 +214,7 @@ public class BlockCable extends SEBlock implements ITileEntityProvider, ISESubBl
 		bounds[0][1] = 1;
 		// Y START - END
 		bounds[1][0] = 0;
-		bounds[1][1] = (float) CoverPanel.thickness;
+		bounds[1][1] = (float) ISECoverPanel.thickness;
 		// Z START - END
 		bounds[2][0] = 0;
 		bounds[2][1] = 1;
@@ -369,22 +370,22 @@ public class BlockCable extends SEBlock implements ITileEntityProvider, ISESubBl
 
 		//Cover panel
 		if (cable.getCoverPanelOnSide(ForgeDirection.DOWN) != null)
-			Utils.addCollisionBoxToList(x, y, z, axisAlignedBB, collidingBoxes, 0, 0, 0, 1, CoverPanel.thickness, 1);
+			Utils.addCollisionBoxToList(x, y, z, axisAlignedBB, collidingBoxes, 0, 0, 0, 1, ISECoverPanel.thickness, 1);
 		
 		if (cable.getCoverPanelOnSide(ForgeDirection.UP) != null)
-			Utils.addCollisionBoxToList(x, y, z, axisAlignedBB, collidingBoxes, 0, 1 - CoverPanel.thickness, 0, 1, 1, 1);
+			Utils.addCollisionBoxToList(x, y, z, axisAlignedBB, collidingBoxes, 0, 1 - ISECoverPanel.thickness, 0, 1, 1, 1);
 		
 		if (cable.getCoverPanelOnSide(ForgeDirection.NORTH) != null)
-			Utils.addCollisionBoxToList(x, y, z, axisAlignedBB, collidingBoxes, 0, 0, 0, 1, 1, CoverPanel.thickness);
+			Utils.addCollisionBoxToList(x, y, z, axisAlignedBB, collidingBoxes, 0, 0, 0, 1, 1, ISECoverPanel.thickness);
 		
 		if (cable.getCoverPanelOnSide(ForgeDirection.SOUTH) != null)
-			Utils.addCollisionBoxToList(x, y, z, axisAlignedBB, collidingBoxes, 0, 0, 1 - CoverPanel.thickness, 1, 1, 1);
+			Utils.addCollisionBoxToList(x, y, z, axisAlignedBB, collidingBoxes, 0, 0, 1 - ISECoverPanel.thickness, 1, 1, 1);
 				
 		if (cable.getCoverPanelOnSide(ForgeDirection.WEST) != null)
-			Utils.addCollisionBoxToList(x, y, z, axisAlignedBB, collidingBoxes, 0, 0, 0, CoverPanel.thickness, 1, 1);
+			Utils.addCollisionBoxToList(x, y, z, axisAlignedBB, collidingBoxes, 0, 0, 0, ISECoverPanel.thickness, 1, 1);
 		
 		if (cable.getCoverPanelOnSide(ForgeDirection.EAST) != null)
-			Utils.addCollisionBoxToList(x, y, z, axisAlignedBB, collidingBoxes, 1 - CoverPanel.thickness, 0, 0, 1, 1, 1);
+			Utils.addCollisionBoxToList(x, y, z, axisAlignedBB, collidingBoxes, 1 - ISECoverPanel.thickness, 0, 0, 1, 1, 1);
 	}
 
     @Override
@@ -489,7 +490,7 @@ public class BlockCable extends SEBlock implements ITileEntityProvider, ISESubBl
         ISEGenericCable cable = (ISEGenericCable) te;
         ForgeDirection direction = ForgeDirection.getOrientation(side);
         
-        ISECoverPanel coverPanel = SEEAPI.coverPanelFactory.fromItemStack(itemStack);
+        ISECoverPanel coverPanel = SEEAPI.coverPanelRegistry.fromItemStack(itemStack);
         if (coverPanel != null){
         	if (cable.getCoverPanelOnSide(direction) != null)
         		return false;	//Already have a cover panel installed

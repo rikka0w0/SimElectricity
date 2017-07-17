@@ -62,18 +62,22 @@ public class SERenderHelper {
 		double z = maxZ / 2.0D;
 		
 		//Top
-		vertexes[0] = new double[]{x,maxY,x};
-		vertexes[1] = new double[]{x,maxY,-x};
-		vertexes[2] = new double[]{-x,maxY,-x};
-		vertexes[3] = new double[]{-x,maxY,x};
+		vertexes[0] = new double[]{x,maxY,z};
+		vertexes[1] = new double[]{x,maxY,-z};
+		vertexes[2] = new double[]{-x,maxY,-z};
+		vertexes[3] = new double[]{-x,maxY,z};
 		
 		//Bottom
-		vertexes[4] = new double[]{x,0,x};
-		vertexes[5] = new double[]{x,0,-x};
-		vertexes[6] = new double[]{-x,0,-x};
-		vertexes[7] = new double[]{-x,0,x};
+		vertexes[4] = new double[]{x,0,z};
+		vertexes[5] = new double[]{x,0,-z};
+		vertexes[6] = new double[]{-x,0,-z};
+		vertexes[7] = new double[]{-x,0,z};
         
         return vertexes;
+	}
+	
+	public static void addCubeToTessellator(double[][] cubeVertexes, IIcon icon, int lightValue){
+		addCubeToTessellator(cubeVertexes, createTextureArray(icon), new int[]{lightValue, lightValue, lightValue, lightValue, lightValue, lightValue});
 	}
 	
 	public static void addCubeToTessellator(double[][] cubeVertexes, IIcon[] icons, int lightValue){

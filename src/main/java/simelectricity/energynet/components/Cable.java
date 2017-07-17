@@ -9,9 +9,12 @@ public class Cable extends SEComponent.Tile<ISECable> implements ISECable{
 	//Properties, do not modify their value!
 	public final boolean isGridInterConnectionPoint;
 	private boolean[] canConnectOnSide;		//Use canConnectOnSide() instead
+	
 	public boolean isGridLinkEnabled;
 	public int color;
 	public double resistance;
+	public boolean hasShuntResistance;
+	public double shuntResistance;
 	
 	//Simulation & Optimization
 	public GridNode connectedGridNode;
@@ -29,6 +32,8 @@ public class Cable extends SEComponent.Tile<ISECable> implements ISECable{
 		this.color = dataProvider.getColor();
 		this.resistance = dataProvider.getResistance();
 		this.isGridLinkEnabled = dataProvider.isGridLinkEnabled();
+		this.hasShuntResistance = dataProvider.hasShuntResistance();
+		this.shuntResistance = dataProvider.getShuntResistance();
 	
 		int i = 0;
 		for (ForgeDirection dir: ForgeDirection.VALID_DIRECTIONS){
@@ -58,5 +63,15 @@ public class Cable extends SEComponent.Tile<ISECable> implements ISECable{
 	@Override
 	public boolean isGridLinkEnabled() {
 		return isGridLinkEnabled;
+	}
+
+	@Override
+	public boolean hasShuntResistance() {
+		return hasShuntResistance;
+	}
+
+	@Override
+	public double getShuntResistance() {
+		return shuntResistance;
 	}
 }

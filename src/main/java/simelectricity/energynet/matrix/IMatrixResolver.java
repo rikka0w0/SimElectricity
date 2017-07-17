@@ -35,7 +35,7 @@ public interface IMatrixResolver {
 	/**
 	 * Print the matrix, must be called after finishEditing()
 	 * */
-    public void print();
+    public void print(String[] header);
     
     /**
      * Return the number of non-zero elements with in the matrix

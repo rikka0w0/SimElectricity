@@ -76,6 +76,7 @@ public class BlockTransmissionTowerTop extends SEBlock implements ITileEntityPro
 	public static class ItemBlock extends SEItemBlock{
 		public ItemBlock(Block block) {super(block);}
 		
+		@Override
 		@Deprecated
 	    @SideOnly(Side.CLIENT)
 	    public IIcon getIconFromDamage(int damage){

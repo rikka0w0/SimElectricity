@@ -15,7 +15,6 @@ import simelectricity.api.tile.ISETile;
 import simelectricity.common.SEUtils;
 import simelectricity.energynet.components.Cable;
 import simelectricity.energynet.components.GridNode;
-import simelectricity.energynet.components.RegulatorInput;
 import simelectricity.energynet.components.SEComponent;
 
 import net.minecraft.nbt.NBTTagCompound;
@@ -134,11 +133,6 @@ public class EnergyNetDataProvider extends WorldSavedData{
                     	if (((Cable)((ISECableTile)neighborTileEntity).getNode()).canConnectOnSide(direction.getOpposite()))
                     		tileEntityGraph.addEdge((SEComponent) ((ISECableTile)neighborTileEntity).getNode(),(SEComponent)  subComponent);
                     }
-                    
-                    
-                    //Also don`t forget to attach the regulator controller to the energyNet!
-                    if (subComponent instanceof RegulatorInput)
-                    	tileEntityGraph.addVertex(((RegulatorInput)subComponent).controller);	
         		}
         	}
         }
@@ -165,9 +159,6 @@ public class EnergyNetDataProvider extends WorldSavedData{
         		ISESubComponent subComponent = tile.getComponent(direction);
         		if (subComponent != null){
             		tileEntityGraph.removeVertex((SEComponent) subComponent);
-            		
-            		if (subComponent instanceof RegulatorInput)
-                    	tileEntityGraph.removeVertex(((RegulatorInput)subComponent).controller);
         		}
         	}
 	    }else{

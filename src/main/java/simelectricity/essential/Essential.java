@@ -3,7 +3,8 @@ package simelectricity.essential;
 import net.minecraftforge.common.MinecraftForge;
 import simelectricity.essential.api.SEEAPI;
 import simelectricity.essential.cable.CableWatchEventHandler;
-import simelectricity.essential.cable.CoverPanelFactory;
+import simelectricity.essential.cable.CoverPanelRegistry;
+import simelectricity.essential.cable.SECoverPanelFactory;
 import simelectricity.essential.extensions.ExtensionBuildCraft;
 import simelectricity.essential.extensions.ExtensionRailCraft;
 import simelectricity.essential.fluids.FluidManager;
@@ -41,7 +42,7 @@ public class Essential {
     	BlockRegistry.registerBlocks();
     	FluidManager.registerFluids();
     	
-    	SEEAPI.coverPanelFactory = new CoverPanelFactory();
+    	SEEAPI.coverPanelRegistry = new CoverPanelRegistry();
         
         networkChannel = NetworkRegistry.INSTANCE.newSimpleChannel(modID);
         networkChannel.registerMessage(MessageContainerSync.Handler.class, MessageContainerSync.class, 0, Side.CLIENT);
@@ -68,6 +69,8 @@ public class Essential {
      */
     @EventHandler
     public void postInit(FMLPostInitializationEvent event) {
+    	SEEAPI.coverPanelRegistry.registerCoverPanelFactory(new SECoverPanelFactory());
+    	
     	ExtensionBuildCraft.postInit();
     	ExtensionRailCraft.postInit();
     }

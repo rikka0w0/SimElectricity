@@ -22,9 +22,13 @@ public interface ISECable extends ISEComponentParameter{
      * <p/>
      * Check SimElectricity wikipedia for circuit models and more informations
      */
-    public double getResistance();
+    double getResistance();
     
     boolean canConnectOnSide(ForgeDirection direction);
     
     boolean isGridLinkEnabled();
+    
+    boolean hasShuntResistance();
+    
+    double getShuntResistance();
 }

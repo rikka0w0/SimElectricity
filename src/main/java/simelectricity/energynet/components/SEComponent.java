@@ -54,10 +54,6 @@ public abstract class SEComponent implements ISESimulatable, ISEComponentParamet
 	@Override
 	public ISESubComponent getComplement() {return null;}
 	
-	/**Only regulator need to override this!*/
-	@Override
-	public ISESubComponent getComplement2() {return null;}
-	
 	@Override
 	public ISEComponentParameter getCachedParameters() {
 		return this;
@@ -67,4 +63,23 @@ public abstract class SEComponent implements ISESimulatable, ISEComponentParamet
 	 * Adjacency lists, part of graph
 	 */
 	public LinkedList<SEComponent> neighbors = new LinkedList<SEComponent>();
+	
+	/////////////////////////////
+	/// Utils
+	/////////////////////////////
+	public static String getStringWithoutUnit(double number){
+		double tmp = Math.abs(number);
+		if (tmp>=1000000)
+			return String.format("%.3f", number/1000000) + "M";
+		if (tmp>=1000)
+			return String.format("%.3f", number/1000) + "K";
+		if (tmp>=1)
+			return String.format("%.3f", number);
+		if (tmp>=0.001)
+			return String.format("%.3f", number*1000) + "m";
+		if (tmp>=0.000001)
+			return String.format("%.3f", number*1000000) + "u";		
+		
+		return "0";
+	}
 }

@@ -29,7 +29,6 @@ import java.util.WeakHashMap;
 import simelectricity.api.components.ISEComponentParameter;
 import simelectricity.api.components.ISEConstantPowerLoad;
 import simelectricity.api.components.ISEDiode;
-import simelectricity.api.components.ISERegulator;
 import simelectricity.api.components.ISESwitch;
 import simelectricity.api.components.ISETransformer;
 import simelectricity.api.components.ISEVoltageSource;
@@ -47,7 +46,6 @@ import simelectricity.energynet.components.Cable;
 import simelectricity.energynet.components.ConstantPowerLoad;
 import simelectricity.energynet.components.DiodeInput;
 import simelectricity.energynet.components.GridNode;
-import simelectricity.energynet.components.RegulatorInput;
 import simelectricity.energynet.components.SEComponent;
 import simelectricity.energynet.components.SwitchA;
 import simelectricity.energynet.components.TransformerPrimary;
@@ -139,8 +137,6 @@ public class EnergyNetAgent implements IEnergyNetAgent{
 			return new DiodeInput((ISEDiode) dataProvider, parent);
 		else if (dataProvider instanceof ISETransformer)
 			return new TransformerPrimary((ISETransformer) dataProvider, parent);
-		else if (dataProvider instanceof ISERegulator)
-			return new RegulatorInput((ISERegulator) dataProvider, parent);
 		else if (dataProvider instanceof ISEConstantPowerLoad)
 			return new ConstantPowerLoad((ISEConstantPowerLoad) dataProvider, parent);
 		else if (dataProvider instanceof ISEVoltageSource)
@@ -289,7 +285,8 @@ public class EnergyNetAgent implements IEnergyNetAgent{
     	}*/
     }   
     
-    public void breakGridConnection(World world, ISEGridNode node1, ISEGridNode node2) {
+    @Override
+	public void breakGridConnection(World world, ISEGridNode node1, ISEGridNode node2) {
     	EnergyNet energyNet = EnergyNetAgent.getEnergyNetForWorld(world);
     	
     	EnergyNetAgent.getEnergyNetForWorld(world).addEvent(new GridEvent.BreakConnection(world, node1, node2));

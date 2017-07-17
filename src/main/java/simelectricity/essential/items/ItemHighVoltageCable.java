@@ -96,7 +96,7 @@ public class ItemHighVoltageCable extends SEItem{
                     lastCoordinates.put(player, lastCoordinate);
                     
                     Utils.chat(player, StatCollector.translateToLocal("chat.sime_essential:tranmission_tower_last_selection_invalid"));
-        		}  		
+        		}
         	}
         }
     	

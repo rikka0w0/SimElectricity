@@ -13,6 +13,7 @@ public class SERenderHeap {
 	private final LinkedList<double[][]> cubes = new LinkedList();
 	private final LinkedList<IIcon[]> textures = new LinkedList();
 	
+	@Override
 	public SERenderHeap clone(){
 		SERenderHeap ret = new SERenderHeap();
 		for (double[][] cube: cubes)

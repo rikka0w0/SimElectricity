@@ -22,11 +22,11 @@ package simelectricity.energynet.matrix;
 public class Gaussian implements IMatrixResolver{
     public static final double EPSILON = 1e-10;
 
-    double[][] matrix;
-    int currentRow;
-    int currentColumn;
-    int nZ;
-    int size;
+    private double[][] matrix;
+    private int currentRow;
+    private int currentColumn;
+    private int nZ;
+    private int size;
     
 	@Override
 	public void newMatrix(int size) {
@@ -48,7 +48,7 @@ public class Gaussian implements IMatrixResolver{
 	}
 
 	@Override
-	public void print() {
+	public void print(String[] header) {
 		for (int r = 0; r<size; r++){
 			for (int c = 0; c<size; c++){
 				System.out.print(matrix[c][r]);

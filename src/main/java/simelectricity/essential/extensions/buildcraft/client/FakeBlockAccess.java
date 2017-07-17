@@ -1,9 +1,10 @@
-package simelectricity.essential.cable.render;
+package simelectricity.essential.extensions.buildcraft.client;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import simelectricity.essential.api.ISECoverPanel;
 import simelectricity.essential.api.ISEGenericCable;
+import simelectricity.essential.extensions.buildcraft.BCFacadePanel;
 
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
@@ -27,8 +28,8 @@ public class FakeBlockAccess implements IBlockAccess{
 		TileEntity tile = world.getTileEntity(x, y, z);
 		if (tile instanceof ISEGenericCable) {
 			ISECoverPanel coverPanel = ((ISEGenericCable) tile).getCoverPanelOnSide(side);
-			if (coverPanel != null)
-				return coverPanel.getBlock();
+			if (coverPanel instanceof BCFacadePanel)
+				return ((BCFacadePanel) coverPanel).getBlock();
 		}
 		return Blocks.air;
 	}
@@ -48,8 +49,8 @@ public class FakeBlockAccess implements IBlockAccess{
 		TileEntity tile = world.getTileEntity(x, y, z);
 		if (tile instanceof ISEGenericCable) {
 			ISECoverPanel coverPanel = ((ISEGenericCable) tile).getCoverPanelOnSide(side);
-			if (coverPanel != null)
-				return coverPanel.getBlockMeta();
+			if (coverPanel instanceof BCFacadePanel)
+				return ((BCFacadePanel) coverPanel).getBlockMeta();
 		}
 		return 0;
 	}

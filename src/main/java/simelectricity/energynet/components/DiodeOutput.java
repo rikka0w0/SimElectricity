@@ -32,4 +32,9 @@ public class DiodeOutput extends SEComponent implements ISESubComponent, ISEDiod
 	public double getThermalVoltage() {
 		return input.Vt;
 	}
+	
+	@Override
+	public String toString(){
+		return "DOut";
+	}
 }

@@ -17,7 +17,6 @@ import simelectricity.essential.common.SETwoPortMachine;
 import simelectricity.essential.machines.tile.TileAdjustableTransformer;
 import simelectricity.essential.machines.tile.TileDiode;
 import simelectricity.essential.machines.tile.TileSwitch;
-import simelectricity.essential.machines.tile.TileVoltageRegulator;
 import simelectricity.essential.utils.Utils;
 
 public class BlockTwoPortElectronics extends SEMachineBlock{
@@ -34,7 +33,7 @@ public class BlockTwoPortElectronics extends SEMachineBlock{
 		case 0:
 			return new TileAdjustableTransformer();
 		case 1:
-			return new TileVoltageRegulator();
+			return null;
 		case 2:
 			return new TileDiode();
 		case 3:

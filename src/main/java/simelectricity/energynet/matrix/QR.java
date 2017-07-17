@@ -33,10 +33,10 @@ public class QR implements IMatrixResolver{
 	
 	@Override
 	public void setElementValue(int column, int row, double value){		
-		if (Math.abs(value) < EPSILON){
-			setElementToZero(column, row);
-			return;
-		}
+		//if (Math.abs(value) < EPSILON){
+		//	setElementToZero(column, row);
+		//	return;
+		//}
 		
 		
 		ListIterator<Integer> Ai= AiList.listIterator(Ap[column]);	//Ap[column] -> rowIndexStart, rowIndex -> index in Ai
@@ -111,7 +111,8 @@ public class QR implements IMatrixResolver{
 	@Override
 	public void finishEditing(){
 		matrix = Dcs_util.cs_spalloc(size, size, nZ, true, false);
-		matrix.p = Ap;
+		for (int i=0; i<Ap.length; i++)
+			matrix.p[i] = Ap[i];
 
 		Iterator<Integer> Ai= AiList.iterator();
 		Iterator<Double> Ax= AxList.iterator();
@@ -125,25 +126,33 @@ public class QR implements IMatrixResolver{
 	}
 	
 	@Override
-	public void print(){
-		for (int c = 0; c<size; c++){
-			System.out.println("Column"+String.valueOf(c)+":");
+	public void print(String[] header){
+		double[][] matrixIneff = new double[size][size];
+		
+		for (int columnIndex=0; columnIndex<size; columnIndex++){
+			int rowIndex = 0;
 			
-			int start = matrix.p[c];
-			int end = matrix.p[c+1];
+			//Get column pointer boundaries
+			int start = matrix.p[columnIndex];
+			int end = matrix.p[columnIndex+1];
 			
-			int h=0;
 			for (int i=start; i<end; i++){
-				for (int p=h; p<matrix.i[i]; p++)
-					System.out.println(0);
-				
-				System.out.println(matrix.x[i]);
-				h = matrix.i[i]+1;
+				matrixIneff[columnIndex][matrix.i[i]] = matrix.x[i];
 			}
-			
-			for (int p=h; p<size; p++)
-				System.out.println(0);
 		}
+		
+		String ret = String.format("%-20s", "\\");
+		for (int j=0; j<size; j++)
+			ret += String.format("%-20s", header[j]);
+		ret += "\r\n";
+		
+		for (int i=0; i<size;i++){
+			ret += String.format("%-20s", header[i]);
+			for (int j=0; j<size; j++)
+				ret += String.format("%-20.5e", matrixIneff[i][j]);
+			ret += "\r\n";
+		}
+		System.out.print(ret+"\r\n");
 	}
 	
 	@Override

@@ -1,7 +1,10 @@
 package simelectricity.essential.api;
 
-import simelectricity.essential.api.internal.ISECoverPanelFactory;
+import simelectricity.essential.api.internal.ISECoverPanelRegistry;
 
 public class SEEAPI {
-	public static ISECoverPanelFactory coverPanelFactory;
+	/**
+	 * Register your CoverPanelFactory, create CoverPanel from ItemStack or NBT
+	 */
+	public static ISECoverPanelRegistry coverPanelRegistry;
 }

@@ -63,6 +63,16 @@ public class TileCableJoint extends SEEnergyTile implements ISECableTile, ISEGri
 	public boolean isGridLinkEnabled() {
 		return true;
 	}
+	
+	@Override
+	public boolean hasShuntResistance() {
+		return false;
+	}
+
+	@Override
+	public double getShuntResistance() {
+		return 0;
+	}
     
 	//////////////////////////////
 	/////ISEGridTile

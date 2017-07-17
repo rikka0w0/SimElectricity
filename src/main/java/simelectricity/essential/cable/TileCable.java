@@ -49,7 +49,7 @@ public class TileCable extends SEEnergyTile implements ISEGenericCable, ISECable
             NBTTagCompound tag = tagList.getCompoundTagAt(i);
             int side = tag.getInteger("side");
             if (side > -1 && side < installedCoverPanels.length)
-            	installedCoverPanels[side] = SEEAPI.coverPanelFactory.fromNBT(tag);
+            	installedCoverPanels[side] = SEEAPI.coverPanelRegistry.fromNBT(tag);
         }
 	}
     
@@ -150,6 +150,15 @@ public class TileCable extends SEEnergyTile implements ISEGenericCable, ISECable
 	@Override
 	public boolean isGridLinkEnabled() {return false;}
 
+	@Override
+	public boolean hasShuntResistance() {
+		return false;
+	}
+
+	@Override
+	public double getShuntResistance() {
+		return 0;
+	}
 	////////////////////////////////////////
 	//Server->Client sync
 	////////////////////////////////////////	

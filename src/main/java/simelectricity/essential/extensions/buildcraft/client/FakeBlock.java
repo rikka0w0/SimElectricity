@@ -1,4 +1,4 @@
-package simelectricity.essential.cable.render;
+package simelectricity.essential.extensions.buildcraft.client;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;

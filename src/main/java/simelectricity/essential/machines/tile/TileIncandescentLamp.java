@@ -27,10 +27,12 @@ public class TileIncandescentLamp extends SESinglePortMachine implements ISEVolt
 	@Override
 	public void onEnergyNetUpdate() {
 		double voltage = SEAPI.energyNetAgent.getVoltage(this.circuit);
+		double lightLevel = (voltage*voltage/getResistance() / 0.3D);
 		
-        lightLevel = (byte) (voltage*voltage/getResistance() / 0.3F);
         if (lightLevel > 15)
             lightLevel = 15;
+        
+        this.lightLevel = (byte) lightLevel;
         
         this.markTileEntityForS2CSync();
 	}

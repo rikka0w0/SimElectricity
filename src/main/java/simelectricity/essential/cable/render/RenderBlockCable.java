@@ -1,5 +1,6 @@
 package simelectricity.essential.cable.render;
 
+import simelectricity.essential.api.ISECoverPanel;
 import simelectricity.essential.api.ISEGenericCable;
 import simelectricity.essential.cable.BlockCable;
 import simelectricity.essential.utils.client.SERenderHelper;
@@ -54,7 +55,13 @@ public class RenderBlockCable implements ISimpleBlockRenderingHandler{
 		/////////////////////////////
 		/// Render cover panels
 		/////////////////////////////
-		RenderHelperCoverPanel.renderCoverPanel(world, x, y, z, renderer, renderPass, cable);
+		for (ForgeDirection side: ForgeDirection.VALID_DIRECTIONS){
+			ISECoverPanel coverPanel = cable.getCoverPanelOnSide(side);
+			if (coverPanel == null)
+				continue;
+
+			coverPanel.getCoverPanelRender().renderCoverPanel(world, x, y, z, renderer, renderPass, cable, coverPanel, side);
+		}
 		
 		/////////////////////////////////
 		/// Render center and branches
