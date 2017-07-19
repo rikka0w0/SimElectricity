@@ -23,6 +23,9 @@ item.sime_essential:essential_hv_cable.copper.name=铜制高压线
 item.sime_essential:essential_hv_cable.aluminum.name=铝制高压线
 item.sime_essential:essential_item.ledpanel.name=LED灯板
 item.sime_essential:essential_item.voltagesensor.name=电压检测板
+item.sime_essential:essential_tools.crowbar.name=撬棍
+item.sime_essential:essential_tools.wrench.name=扳手
+item.sime_essential:essential_tools.glove.name=手套
 
 # Message
 chat.sime_essential:tranmission_tower_selected=你选择了一个输电塔

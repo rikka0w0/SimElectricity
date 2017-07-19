@@ -62,7 +62,7 @@ public class BCFacadePanel implements ISECoverPanel{
 
 	@Override
 	public ItemStack getCoverPanelItem() {
-		return itemStack;
+		return itemStack.copy();
 	}
 
 	@Override

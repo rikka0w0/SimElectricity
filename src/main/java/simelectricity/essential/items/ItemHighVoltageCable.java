@@ -3,10 +3,15 @@ package simelectricity.essential.items;
 import java.util.HashMap;
 import java.util.Map;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 import net.minecraft.block.Block;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.IIcon;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 import simelectricity.api.SEAPI;
@@ -17,13 +22,17 @@ import simelectricity.essential.utils.SEMathHelper;
 import simelectricity.essential.utils.Utils;
 
 public class ItemHighVoltageCable extends SEItem{
+	private final static String[] subNames = new String[]{"copper", "aluminum"};
 	private final Map<EntityPlayer, int[]> lastCoordinates;
+	private final IIcon[] iconCache;
 	
 	private final static double[] resistivityList = new double[]{0.1, 0.2};
 	
 	public ItemHighVoltageCable() {
 		super("essential_hv_cable", true);
 		this.lastCoordinates = new HashMap<EntityPlayer, int[]>();
+		
+		this.iconCache = new IIcon[this.getUnlocalizedName().length()];
 	}
 
 	@Override
@@ -33,8 +42,24 @@ public class ItemHighVoltageCable extends SEItem{
 	
 	@Override
 	public String[] getSubItemUnlocalizedNames(){
-		return new String[]{"copper", "aluminum"};
+		return subNames;
 	}
+	
+	@Override
+    @SideOnly(Side.CLIENT)
+    public void registerIcons(IIconRegister r)	{
+		for (int i=0; i<subNames.length; i++)
+			iconCache[i] = r.registerIcon("sime_essential:hvcable_"+subNames[i]);
+    }
+	
+    /**
+     * Gets an icon index based on an item's damage value
+     */
+    @SideOnly(Side.CLIENT)
+    public IIcon getIconFromDamage(int dmg)
+    {
+        return iconCache[dmg];
+    }
 	
     @Override
     public boolean onItemUse(ItemStack itemStack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {

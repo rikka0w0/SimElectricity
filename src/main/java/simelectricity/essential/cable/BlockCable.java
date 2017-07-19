@@ -1,6 +1,8 @@
 package simelectricity.essential.cable;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import cpw.mods.fml.relauncher.Side;
@@ -15,6 +17,7 @@ import simelectricity.essential.cable.render.RenderBlockCable;
 import simelectricity.essential.common.ISESubBlock;
 import simelectricity.essential.common.SEBlock;
 import simelectricity.essential.common.SEItemBlock;
+import simelectricity.essential.utils.BlockPos;
 import simelectricity.essential.utils.MatrixTranformations;
 import simelectricity.essential.utils.Utils;
 
@@ -55,7 +58,7 @@ public class BlockCable extends SEBlock implements ITileEntityProvider, ISESubBl
 	///Block Properties
 	///////////////////////////////
 	public BlockCable() {
-		this("essential_cable", Material.circuits, ItemBlock.class, 
+		this("essential_cable", Material.glass, ItemBlock.class, 
 				new String[]{"copper_thin", "copper_medium", "copper_thick"},
 				new double[]{0.22, 0.32, 0.42},
 				new double[]{0.1, 0.01, 0.001},
@@ -573,22 +576,50 @@ public class BlockCable extends SEBlock implements ITileEntityProvider, ISESubBl
 		return createStackedBlock(getDamageValue(world, x, y, z));
 	}
 	
+	private final HashMap<BlockPos, ArrayList<ItemStack>> dropList = new HashMap<BlockPos, ArrayList<ItemStack>>();
+	
 	@Override
-	public void breakBlock(World world, int x, int y, int z, Block block, int par6) {
+	public void breakBlock(World world, int x, int y, int z, Block block, int meta) {
+		ArrayList<ItemStack> drops = getDrops(world, x, y, z, meta, 0);
+		dropList.put(new BlockPos(x, y, z), drops);
+		super.breakBlock(world, x, y, z, block, meta);
+	}
+	
+	@Override
+	public ArrayList<ItemStack> getDrops(World world, int x, int y, int z, int metadata, int fortune){
+		ArrayList<ItemStack> ret = super.getDrops(world, x, y, z, metadata, fortune);
         if (!world.isRemote){
     		TileEntity te = world.getTileEntity(x, y, z);
             if (!(te instanceof ISEGenericCable))
-            	return;		//Normally this could not happen, but just in case!
+            	return ret;		//Normally this could not happen, but just in case!
             
             ISEGenericCable cable = (ISEGenericCable) te;
            
             for(ForgeDirection direction: ForgeDirection.VALID_DIRECTIONS){
             	ISECoverPanel coverPanel = cable.getCoverPanelOnSide(direction);
             	if (coverPanel != null){
-            		Utils.dropItemIntoWorld(world, x, y, z, coverPanel.getCoverPanelItem());
+            		ret.add(coverPanel.getCoverPanelItem());
             	}
             }
         }
-		super.breakBlock(world, x, y, z, block, par6);
+		return ret;
+	}
+	
+	@Override
+	public void dropBlockAsItemWithChance(World world, int x, int y, int z, int l, float f, int dmg) {
+		//super.dropBlockAsItemWithChance(world, x, y, z, l, f, dmg);
+		
+		if (world.isRemote)
+			return;
+		
+		BlockPos blockPos = new BlockPos(x, y, z);
+		ArrayList<ItemStack> drops = dropList.remove(blockPos);
+		
+		if (drops == null)
+			return;
+		
+		for (ItemStack itemStack: drops){
+			this.dropBlockAsItem(world, x, y, z, itemStack);
+		}
 	}
 }

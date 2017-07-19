@@ -23,7 +23,9 @@ item.sime_essential:essential_hv_cable.copper.name=Copper High Voltage Cable
 item.sime_essential:essential_hv_cable.aluminum.name=Aluminum High Voltage Cable
 item.sime_essential:essential_item.ledpanel.name=Led Panel
 item.sime_essential:essential_item.voltagesensor.name=Voltage Sensor
-
+item.sime_essential:essential_tools.crowbar.name=Crowbar
+item.sime_essential:essential_tools.wrench.name=Wrench
+item.sime_essential:essential_tools.glove.name=Glove
 
 # Message
 chat.sime_essential:tranmission_tower_selected=You have selected a transmission tower
