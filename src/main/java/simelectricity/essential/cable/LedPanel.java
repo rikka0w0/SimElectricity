@@ -31,4 +31,14 @@ public class LedPanel implements ISECoverPanel{
 		return RenderLedPanel.instance;
 	}
 
+	public static double getResistance(){
+		return 9900;
+	}
+	
+	public static byte getLightValue(double power){
+		power = power / 0.3;
+        if (power > 15)
+        	power = 15;
+        return (byte)power;
+	}
 }

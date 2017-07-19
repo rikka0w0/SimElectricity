@@ -187,7 +187,7 @@ public class BlockTransmissionTowerBottom extends SEBlock implements ISEHVCableC
 		coord[1] += 18;
 		TileEntity te = world.getTileEntity(coord[0], coord[1], coord[2]);
 		if (te instanceof TileTransmissionTower)
-			return ((TileCableJoint) te).canConnect();
+			return ((TileTransmissionTower) te).canConnect();
 		else
 			return false;
 	}

@@ -200,6 +200,15 @@ public class BlockCable extends SEBlock implements ITileEntityProvider, ISESubBl
 				false;
 	}
 	
+    @Override
+    public int getLightValue(IBlockAccess world, int x, int y, int z) {
+        TileEntity te = world.getTileEntity(x, y, z);
+        
+        if (te instanceof TileCable){
+        	return ((TileCable) te).lightLevel;
+        }
+        return 0;
+    }
 	//////////////////////////////////
 	///CollisionBoxes
 	//////////////////////////////////

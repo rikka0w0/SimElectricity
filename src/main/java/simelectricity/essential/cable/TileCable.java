@@ -5,9 +5,11 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.world.EnumSkyBlock;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
 
+import simelectricity.api.IEnergyNetUpdateHandler;
 import simelectricity.api.SEAPI;
 import simelectricity.api.node.ISESimulatable;
 import simelectricity.api.tile.ISECableTile;
@@ -16,16 +18,18 @@ import simelectricity.essential.api.ISEGenericCable;
 import simelectricity.essential.api.SEEAPI;
 import simelectricity.essential.common.SEEnergyTile;
 
-public class TileCable extends SEEnergyTile implements ISEGenericCable, ISECableTile{
+public class TileCable extends SEEnergyTile implements ISEGenericCable, ISECableTile, IEnergyNetUpdateHandler{
 	private ISESimulatable node = SEAPI.energyNetAgent.newCable(this, false);
     private int color = 0;
     private double resistance = 10;
-	
+	public byte lightLevel;
+    
     /**
      * Accessible from client
      */
     private boolean[] connections = new boolean[6];
     private ISECoverPanel[] installedCoverPanels = new ISECoverPanel[6];
+    private boolean hasLedPanel;
     
 	////////////////////////////////////////
 	//Private functions
@@ -48,8 +52,13 @@ public class TileCable extends SEEnergyTile implements ISEGenericCable, ISECable
         for (int i = 0; i < tagList.tagCount(); i++) {
             NBTTagCompound tag = tagList.getCompoundTagAt(i);
             int side = tag.getInteger("side");
-            if (side > -1 && side < installedCoverPanels.length)
-            	installedCoverPanels[side] = SEEAPI.coverPanelRegistry.fromNBT(tag);
+            if (side > -1 && side < installedCoverPanels.length){
+            	ISECoverPanel coverPanel = SEEAPI.coverPanelRegistry.fromNBT(tag);
+            	installedCoverPanels[side] = coverPanel;
+            	
+        		if (coverPanel instanceof LedPanel)
+        			hasLedPanel = true;
+            }
         }
 	}
     
@@ -91,7 +100,13 @@ public class TileCable extends SEEnergyTile implements ISEGenericCable, ISECable
 			//If the cover panel is not hollow, it may block some connection
 			if (connectedOnSide(side))
 				SEAPI.energyNetAgent.updateTileConnection(this);
-		}		
+		}
+		
+		if (coverPanel instanceof LedPanel){
+			hasLedPanel = true;
+			
+			SEAPI.energyNetAgent.updateTileConnection(this);
+		}
 		
 		onCableRenderingUpdateRequested();
 	}
@@ -152,12 +167,12 @@ public class TileCable extends SEEnergyTile implements ISEGenericCable, ISECable
 
 	@Override
 	public boolean hasShuntResistance() {
-		return false;
+		return hasLedPanel;
 	}
 
 	@Override
 	public double getShuntResistance() {
-		return 0;
+		return hasLedPanel ? LedPanel.getResistance() : 0;
 	}
 	////////////////////////////////////////
 	//Server->Client sync
@@ -177,6 +192,8 @@ public class TileCable extends SEEnergyTile implements ISEGenericCable, ISECable
 		nbt.setByte("connections", bc);
 		
 		nbt.setTag("coverPanels", coverPanelsToNBT());
+		
+		nbt.setByte("lightLevel", lightLevel);
 	}
 	
 	@SideOnly(value = Side.CLIENT)
@@ -193,7 +210,34 @@ public class TileCable extends SEEnergyTile implements ISEGenericCable, ISECable
 				
 		coverPanelsFromNBT(nbt.getTagList("coverPanels", Constants.NBT.TAG_COMPOUND));
 		
+		byte lightLevel = nbt.getByte("lightLevel");
+		if (this.lightLevel != lightLevel){
+			this.lightLevel = lightLevel;
+			//Detect change & proceed
+			worldObj.updateLightByType(EnumSkyBlock.Block, xCoord, yCoord, zCoord);	//checkLightFor
+		}
+		
 		// Flag 1 - update Rendering Only!
 		markForRenderUpdate();
+	}
+
+	////////////////////////////////////////
+	//IEnergyNetUpdateHandler
+	////////////////////////////////////////	
+	@Override
+	public void onEnergyNetUpdate() {
+		if (!hasLedPanel)
+			return;
+		
+		double voltage = SEAPI.energyNetAgent.getVoltage(this.node);
+		double power = (voltage*voltage/LedPanel.getResistance());
+		byte lightLevel = LedPanel.getLightValue(power);
+		
+		if (this.lightLevel != lightLevel){
+			//If light value changes, send a sync. packet to client
+			this.lightLevel = lightLevel;
+			
+			this.markTileEntityForS2CSync();
+		}
 	}
 }
