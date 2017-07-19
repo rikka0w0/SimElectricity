@@ -264,6 +264,8 @@ public class BlockCable extends SEBlock implements ITileEntityProvider, ISESubBl
 		ForgeDirection[] sideHit = new ForgeDirection[31];
 		Arrays.fill(sideHit, ForgeDirection.UNKNOWN);
 		
+		setBlockBounds(0, 0, 0, 1, 1, 1);
+		
 		for (ForgeDirection side : ForgeDirection.values()) {
 			if (side == ForgeDirection.UNKNOWN || ((ISEGenericCable)te).connectedOnSide(side)) {
 				AxisAlignedBB bb = getCableBoundingBox(side, (float) this.thickness[meta]);
@@ -303,9 +305,9 @@ public class BlockCable extends SEBlock implements ITileEntityProvider, ISESubBl
 		}
 
 		// reset bounds
-		this.setBlockBoundsBasedOnState(world, x, y, z);
-		//setBlockBounds(0, 0, 0, 1, 1, 1);
-
+		//this.setBlockBoundsBasedOnState(world, x, y, z);
+		setBlockBounds(0, 0, 0, 1, 1, 1);
+		
 		if (minIndex == -1) {
 			return null;	//The player is looking at the block, but his eye sight does not intersect with any part.
 		} else {
@@ -397,9 +399,10 @@ public class BlockCable extends SEBlock implements ITileEntityProvider, ISESubBl
 			Utils.addCollisionBoxToList(x, y, z, axisAlignedBB, collidingBoxes, 1 - ISECoverPanel.thickness, 0, 0, 1, 1, 1);
 	}
 
+	/*
     @Override
     public void setBlockBoundsBasedOnState(IBlockAccess world, int x, int y, int z) {
-		TileEntity te = world.getTileEntity(x, y, z);
+    	TileEntity te = world.getTileEntity(x, y, z);
 		
 		if (te instanceof ISEGenericCable){
 			int meta = world.getBlockMetadata(x, y, z);
@@ -431,7 +434,7 @@ public class BlockCable extends SEBlock implements ITileEntityProvider, ISESubBl
 			if (cable.connectedOnSide(ForgeDirection.EAST))
 				this.maxX = 1;
 		}
-    }
+    }*/
 	
 	@SideOnly(Side.CLIENT)
 	@Override
@@ -439,7 +442,7 @@ public class BlockCable extends SEBlock implements ITileEntityProvider, ISESubBl
 		RaytraceResult rayTraceResult = doRayTrace(world, x, y, z, Minecraft.getMinecraft().thePlayer);
 			
 		if (rayTraceResult != null && rayTraceResult.boundingBox != null && (!rayTraceResult.hitCenter)) {
-			return rayTraceResult.boundingBox.offset(x, y, z);
+			return rayTraceResult.boundingBox.offset(x, y, z).expand(0.01, 0.01, 0.01);
 		}
 		TileEntity te = world.getTileEntity(x, y, z);
 		
@@ -501,7 +504,7 @@ public class BlockCable extends SEBlock implements ITileEntityProvider, ISESubBl
         
         ISECoverPanel coverPanel = SEEAPI.coverPanelRegistry.fromItemStack(itemStack);
         if (coverPanel != null){
-        	if (cable.getCoverPanelOnSide(direction) != null)
+        	if (!cable.canInstallCoverPanelOnSide(direction, coverPanel))
         		return false;	//Already have a cover panel installed
         	
         	if (!player.capabilities.isCreativeMode){

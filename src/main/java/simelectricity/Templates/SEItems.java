@@ -26,14 +26,10 @@ import simelectricity.Templates.Items.*;
 public class SEItems {
     //Instances of items
     public static ItemUltimateMultimeter ultimateMultimeter;
-    public static ItemGlove itemGlove;
-    public static ItemWrench itemWrench;
     public static ItemIceIngot iceIngot;
 
     public static void init() {
     	ultimateMultimeter = new ItemUltimateMultimeter();
-    	itemGlove = new ItemGlove();
-    	itemWrench = new ItemWrench();
         iceIngot = new ItemIceIngot();
     }
 }

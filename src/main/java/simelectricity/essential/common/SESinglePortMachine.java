@@ -60,18 +60,12 @@ public abstract class SESinglePortMachine extends SEEnergyTile implements ISided
     /// ISEWrenchable
     ///////////////////////////////////
     @Override
-    public void setFunctionalSide(ForgeDirection newFunctionalSide) {
-        functionalSide = newFunctionalSide;
-        
-        this.markTileEntityForS2CSync();
-        this.worldObj.notifyBlockChange(xCoord, yCoord, zCoord, this.getBlockType());
-        
-        if (this.isAddedToEnergyNet)
-        	SEAPI.energyNetAgent.updateTileConnection(this);
+    public void onWrenchAction(ForgeDirection side, boolean isCreativePlayer) {
+    	SetFunctionalSide(side);
     }
 
     @Override
-    public boolean canSetFunctionalSide(ForgeDirection newFunctionalSide) {
+    public boolean canWrenchBeUsed(ForgeDirection side) {
         return true;
     }
     
@@ -104,5 +98,18 @@ public abstract class SESinglePortMachine extends SEEnergyTile implements ISided
 	@Override
 	public ISESubComponent getComponent(ForgeDirection side){
 		return side == functionalSide ? circuit : null;
+	}
+	
+	/////////////////////////////////////////////////////////
+	///Utils
+	/////////////////////////////////////////////////////////
+	public void SetFunctionalSide(ForgeDirection side) {
+        functionalSide = side;
+        
+        this.markTileEntityForS2CSync();
+        this.worldObj.notifyBlockChange(xCoord, yCoord, zCoord, this.getBlockType());
+        
+        if (this.isAddedToEnergyNet)
+        	SEAPI.energyNetAgent.updateTileConnection(this);
 	}
 }

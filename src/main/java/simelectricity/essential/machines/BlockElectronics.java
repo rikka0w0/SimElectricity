@@ -154,7 +154,7 @@ public class BlockElectronics extends SEMachineBlock implements ITileEntityProvi
             if (sight == ForgeDirection.UP && te instanceof TileSolarPanel)
             	sight = ForgeDirection.DOWN;
             
-            ((SESinglePortMachine) te).setFunctionalSide(sight);
+            ((SESinglePortMachine) te).SetFunctionalSide(sight);
         }
     }
 }

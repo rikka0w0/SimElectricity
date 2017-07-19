@@ -64,7 +64,7 @@ public class TileSolarPanel extends SESinglePortMachine implements ISEVoltageSou
     /// ISESidedFacing
     ///////////////////////////////////
     @Override
-    public boolean canSetFunctionalSide(ForgeDirection newFunctionalSide) {
+    public boolean canWrenchBeUsed(ForgeDirection newFunctionalSide) {
         return newFunctionalSide != ForgeDirection.UP;
     }
     

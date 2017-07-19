@@ -46,7 +46,7 @@ public abstract class TileStandardSEMachine extends TileSidedFacingMachine imple
 	}
     
     @Override
-    public void setFunctionalSide(ForgeDirection newFunctionalSide) {
+    public void onWrenchAction(ForgeDirection newFunctionalSide, boolean isCreativePlayer) {
     	boolean reJoinEnergyNet = (newFunctionalSide != functionalSide);
         functionalSide = newFunctionalSide;
         
@@ -56,7 +56,7 @@ public abstract class TileStandardSEMachine extends TileSidedFacingMachine imple
     }
 
     @Override
-    public boolean canSetFunctionalSide(ForgeDirection newFunctionalSide) {
+    public boolean canWrenchBeUsed(ForgeDirection newFunctionalSide) {
         return newFunctionalSide != facing;
     }
     

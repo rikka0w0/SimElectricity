@@ -2,6 +2,8 @@ package simelectricity.essential.cable;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.block.Block;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.AxisAlignedBB;
@@ -10,6 +12,7 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import simelectricity.api.IEnergyNetUpdateHandler;
+import simelectricity.api.ISECrowbarTarget;
 import simelectricity.api.SEAPI;
 import simelectricity.api.node.ISESimulatable;
 import simelectricity.api.tile.ISECableTile;
@@ -17,8 +20,9 @@ import simelectricity.essential.api.ISECoverPanel;
 import simelectricity.essential.api.ISEGenericCable;
 import simelectricity.essential.api.SEEAPI;
 import simelectricity.essential.common.SEEnergyTile;
+import simelectricity.essential.utils.Utils;
 
-public class TileCable extends SEEnergyTile implements ISEGenericCable, ISECableTile, IEnergyNetUpdateHandler{
+public class TileCable extends SEEnergyTile implements ISECrowbarTarget, ISEGenericCable, ISECableTile, IEnergyNetUpdateHandler{
 	private ISESimulatable node = SEAPI.energyNetAgent.newCable(this, false);
     private int color = 0;
     private double resistance = 10;
@@ -49,6 +53,9 @@ public class TileCable extends SEEnergyTile implements ISEGenericCable, ISECable
 	}
 	
 	private void coverPanelsFromNBT(NBTTagList tagList){
+		for (int i=0; i<6; i++)
+			installedCoverPanels[i] = null;
+		
         for (int i = 0; i < tagList.tagCount(); i++) {
             NBTTagCompound tag = tagList.getCompoundTagAt(i);
             int side = tag.getInteger("side");
@@ -90,6 +97,11 @@ public class TileCable extends SEEnergyTile implements ISEGenericCable, ISECable
 	@Override
 	public ISECoverPanel getCoverPanelOnSide(ForgeDirection side){
 		return installedCoverPanels[side.ordinal()];
+	}
+	
+	@Override
+	public boolean canInstallCoverPanelOnSide(ForgeDirection side, ISECoverPanel coverPanel) {
+		return installedCoverPanels[side.ordinal()] == null;
 	}
 	
 	@Override
@@ -239,5 +251,61 @@ public class TileCable extends SEEnergyTile implements ISEGenericCable, ISECable
 			
 			this.markTileEntityForS2CSync();
 		}
+	}
+
+	////////////////////////////////////////
+	//ISECrowbarTarget
+	////////////////////////////////////////	
+	@Override
+	public ForgeDirection getSelectedSide(EntityPlayer player, ForgeDirection side){
+		Block block = this.worldObj.getBlock(this.xCoord, this.yCoord , this.zCoord);
+		if (block instanceof BlockCable){
+			BlockCable blockCable = (BlockCable) block;
+			RaytraceResult result = blockCable.doRayTrace(this.worldObj, this.xCoord, this.yCoord , this.zCoord, player);
+			return result.sideHit;
+		}
+		return side;
+	}
+	
+	@Override
+	public boolean canCrowbarBeUsed(ForgeDirection side) {
+		if (side == ForgeDirection.UNKNOWN)
+			return false;
+		
+		ISECoverPanel coverPanel = installedCoverPanels[side.ordinal()];
+		return coverPanel != null;
+	}
+	
+	@Override
+	public void onCrowbarAction(ForgeDirection side, boolean isCreativePlayer) {
+		if (side == ForgeDirection.UNKNOWN)
+			return;
+		
+		ISECoverPanel coverPanel = installedCoverPanels[side.ordinal()];
+		if (coverPanel == null)
+			return;
+		
+		//Remove the panel
+		installedCoverPanels[side.ordinal()] = null;
+		
+		if (coverPanel instanceof LedPanel){
+			boolean hasLedPanel = false;
+			for (ForgeDirection dir: ForgeDirection.VALID_DIRECTIONS){
+				if (installedCoverPanels[dir.ordinal()] instanceof LedPanel)
+					hasLedPanel = true;
+			}
+			
+			this.hasLedPanel = hasLedPanel;
+			
+			if (!this.hasLedPanel)
+				this.lightLevel = 0;
+			
+			SEAPI.energyNetAgent.updateTileConnection(this);
+		}
+		
+		onCableRenderingUpdateRequested();
+		
+		if (!isCreativePlayer)
+			Utils.dropItemIntoWorld(worldObj, xCoord, yCoord, zCoord, coverPanel.getCoverPanelItem());
 	}
 }
