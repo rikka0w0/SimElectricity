@@ -112,4 +112,20 @@ public class Utils {
 	public static void chat(EntityPlayer player, String text) {
         player.addChatMessage(new ChatComponentText(StatCollector.translateToLocal(text)));
     }
+	
+	public static ForgeDirection getDirectionFromRedstoneSide(int iSide){
+		switch (iSide){
+		case -1:
+			return ForgeDirection.UP;
+		case 0:
+			return ForgeDirection.NORTH;
+		case 1:
+			return ForgeDirection.EAST;
+		case 2:
+			return ForgeDirection.SOUTH;
+		case 3:
+			return ForgeDirection.WEST;
+		}
+		return ForgeDirection.UNKNOWN;
+	}
 }

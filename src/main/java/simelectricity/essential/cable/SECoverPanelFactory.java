@@ -14,6 +14,8 @@ public class SECoverPanelFactory implements ISECoverPanelFactory{
 			switch (itemStack.getItemDamage()){
 			case 0:	//LED Panel
 				return true;
+			case 1:
+				return true;
 			}
 		}
 		
@@ -26,6 +28,8 @@ public class SECoverPanelFactory implements ISECoverPanelFactory{
 			switch (itemStack.getItemDamage()){
 			case 0:	//LED Panel
 				return new LedPanel();
+			case 1:
+				return new VoltageSensorPanel();
 			}
 		}
 		
@@ -35,7 +39,8 @@ public class SECoverPanelFactory implements ISECoverPanelFactory{
 	@Override
 	public boolean acceptNBT(NBTTagCompound nbt) {
 		String coverPanelType = nbt.getString("coverPanelType");
-		return coverPanelType.equals("LedPanel");
+		return 	coverPanelType.equals("LedPanel") ||
+				coverPanelType.equals("VoltageSensorPanel");
 	}
 
 	@Override
@@ -44,6 +49,9 @@ public class SECoverPanelFactory implements ISECoverPanelFactory{
 		
 		if (coverPanelType.equals("LedPanel"))
 			return new LedPanel();
+		
+		if (coverPanelType.equals("VoltageSensorPanel"))
+			return new VoltageSensorPanel();
 		
 		return null;
 	}

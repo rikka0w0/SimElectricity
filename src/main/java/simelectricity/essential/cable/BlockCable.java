@@ -12,6 +12,7 @@ import simelectricity.api.SEAPI;
 import simelectricity.essential.BlockRegistry;
 import simelectricity.essential.api.ISECoverPanel;
 import simelectricity.essential.api.ISEGenericCable;
+import simelectricity.essential.api.ISERedstoneEmitterCoverPanel;
 import simelectricity.essential.api.SEEAPI;
 import simelectricity.essential.cable.render.RenderBlockCable;
 import simelectricity.essential.common.ISESubBlock;
@@ -621,5 +622,45 @@ public class BlockCable extends SEBlock implements ITileEntityProvider, ISESubBl
 		for (ItemStack itemStack: drops){
 			this.dropBlockAsItem(world, x, y, z, itemStack);
 		}
+	}
+	
+	///////////////////////
+	///Redstone
+	///////////////////////
+	@Override
+	public boolean canProvidePower() {
+		return true;
+	}
+	
+	@Override
+	public boolean canConnectRedstone(IBlockAccess world, int x, int y, int z, int iSide) {
+		TileEntity te = world.getTileEntity(x, y, z);
+		
+		if (te instanceof TileCable){
+			TileCable cable = (TileCable) te;
+			ForgeDirection side = Utils.getDirectionFromRedstoneSide(iSide);
+			ISECoverPanel coverPanel = cable.getCoverPanelOnSide(side);
+			
+			return coverPanel instanceof ISERedstoneEmitterCoverPanel;
+		}
+		
+		return false;
+	}
+	
+	@Override
+	public int isProvidingWeakPower(IBlockAccess world, int x, int y, int z, int iSide) {
+		TileEntity te = world.getTileEntity(x, y, z);
+		
+		if (te instanceof TileCable){
+			TileCable cable = (TileCable) te;
+			ForgeDirection side = ForgeDirection.getOrientation(iSide).getOpposite();
+			ISECoverPanel coverPanel = cable.getCoverPanelOnSide(side);
+			
+			return 	coverPanel instanceof ISERedstoneEmitterCoverPanel 
+					?	(((ISERedstoneEmitterCoverPanel) coverPanel).isProvidingWeakPower()?15:0) 
+					: 	0;
+		}
+		
+		return 0;
 	}
 }

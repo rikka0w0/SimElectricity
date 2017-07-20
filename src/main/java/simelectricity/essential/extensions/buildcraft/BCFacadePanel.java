@@ -40,13 +40,19 @@ public class BCFacadePanel implements ISECoverPanel{
 		}
 			
 	}
+	
+	public int getBlockMeta() {return meta;}
+	
+	public Block getBlock() {return block;}
+	
 
 	@Override
 	public boolean isHollow() {return isHollow;}
-
-	public int getBlockMeta() {return meta;}
-
-	public Block getBlock() {return block;}
+	
+	@Override
+	public ItemStack getCoverPanelItem() {
+		return itemStack.copy();
+	}
 
 	@Override
 	public void toNBT(NBTTagCompound nbt) {
@@ -59,12 +65,7 @@ public class BCFacadePanel implements ISECoverPanel{
 		if (itemStack != null)
 			itemStack.writeToNBT(nbt);
 	}
-
-	@Override
-	public ItemStack getCoverPanelItem() {
-		return itemStack.copy();
-	}
-
+	
 	@Override
 	@SideOnly(Side.CLIENT)
 	public ISECoverPanelRender getCoverPanelRender() {

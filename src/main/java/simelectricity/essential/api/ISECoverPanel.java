@@ -11,7 +11,7 @@ public interface ISECoverPanel {
 	/**
 	 * @return false: prevent other cable/machine from connecting to the side with this cover panel
 	 */
-	boolean isHollow();
+	boolean isHollow();	
 	
 	/**
 	 * @return a safe copy of the ItemStack, stack size always 1

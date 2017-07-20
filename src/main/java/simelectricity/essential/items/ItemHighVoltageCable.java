@@ -104,7 +104,7 @@ public class ItemHighVoltageCable extends SEItem{
             		double distance = SEMathHelper.distanceOf(node1.getXCoord(), node1.getZCoord(), node2.getXCoord(), node2.getZCoord());
                     if (distance < 5) {
                     	Utils.chat(player, EnumChatFormatting.RED + StatCollector.translateToLocal("chat.sime_essential:tranmission_tower_too_close") + EnumChatFormatting.RESET);
-                    }else if (distance > 100){
+                    }else if (distance > 200){
                     	Utils.chat(player, EnumChatFormatting.RED + StatCollector.translateToLocal("chat.sime_essential:tranmission_tower_too_far") + EnumChatFormatting.RESET);
                     }else{
                     	double resistance = distance * resistivityList[itemStack.getItemDamage()];	//Calculate the resistance

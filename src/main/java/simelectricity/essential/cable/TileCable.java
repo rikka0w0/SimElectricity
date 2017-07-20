@@ -16,8 +16,10 @@ import simelectricity.api.ISECrowbarTarget;
 import simelectricity.api.SEAPI;
 import simelectricity.api.node.ISESimulatable;
 import simelectricity.api.tile.ISECableTile;
+import simelectricity.essential.BlockRegistry;
 import simelectricity.essential.api.ISECoverPanel;
 import simelectricity.essential.api.ISEGenericCable;
+import simelectricity.essential.api.ISERedstoneEmitterCoverPanel;
 import simelectricity.essential.api.SEEAPI;
 import simelectricity.essential.common.SEEnergyTile;
 import simelectricity.essential.utils.Utils;
@@ -26,8 +28,11 @@ public class TileCable extends SEEnergyTile implements ISECrowbarTarget, ISEGene
 	private ISESimulatable node = SEAPI.energyNetAgent.newCable(this, false);
     private int color = 0;
     private double resistance = 10;
-	public byte lightLevel;
+    private double voltage;
     
+	public byte lightLevel;
+    public boolean emitRedstoneSignal;
+	
     /**
      * Accessible from client
      */
@@ -119,6 +124,8 @@ public class TileCable extends SEEnergyTile implements ISECrowbarTarget, ISEGene
 			
 			SEAPI.energyNetAgent.updateTileConnection(this);
 		}
+		
+		checkRedStoneSignal();
 		
 		onCableRenderingUpdateRequested();
 	}
@@ -238,19 +245,21 @@ public class TileCable extends SEEnergyTile implements ISECrowbarTarget, ISEGene
 	////////////////////////////////////////	
 	@Override
 	public void onEnergyNetUpdate() {
-		if (!hasLedPanel)
-			return;
+		voltage = SEAPI.energyNetAgent.getVoltage(this.node);
 		
-		double voltage = SEAPI.energyNetAgent.getVoltage(this.node);
-		double power = (voltage*voltage/LedPanel.getResistance());
-		byte lightLevel = LedPanel.getLightValue(power);
-		
-		if (this.lightLevel != lightLevel){
-			//If light value changes, send a sync. packet to client
-			this.lightLevel = lightLevel;
+		if (hasLedPanel){
+			double power = (voltage*voltage/LedPanel.getResistance());
+			byte lightLevel = LedPanel.getLightValue(power);
 			
-			this.markTileEntityForS2CSync();
+			if (this.lightLevel != lightLevel){
+				//If light value changes, send a sync. packet to client
+				this.lightLevel = lightLevel;
+				
+				this.markTileEntityForS2CSync();
+			}
 		}
+		
+		checkRedStoneSignal();
 	}
 
 	////////////////////////////////////////
@@ -302,10 +311,31 @@ public class TileCable extends SEEnergyTile implements ISECrowbarTarget, ISEGene
 			
 			SEAPI.energyNetAgent.updateTileConnection(this);
 		}
+		else if (coverPanel instanceof ISERedstoneEmitterCoverPanel){
+			worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, BlockRegistry.blockCable, side.getOpposite().ordinal());
+		}
 		
 		onCableRenderingUpdateRequested();
 		
+		//Spawn an item entity for player to pick up
 		if (!isCreativePlayer)
 			Utils.dropItemIntoWorld(worldObj, xCoord, yCoord, zCoord, coverPanel.getCoverPanelItem());
+	}
+	
+	///////////////////////
+	///Redstone
+	///////////////////////
+	/**
+	 * Notify neighbor blocks if the redstone state changes
+	 */
+	public void checkRedStoneSignal(){
+		for (ForgeDirection dir: ForgeDirection.VALID_DIRECTIONS){
+			ISECoverPanel coverPanel = installedCoverPanels[dir.ordinal()];
+			
+			if (coverPanel instanceof VoltageSensorPanel){
+				if (((VoltageSensorPanel) coverPanel).checkRedStoneSignal(this, voltage))
+					worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, BlockRegistry.blockCable, dir.getOpposite().ordinal());
+			}
+		}
 	}
 }

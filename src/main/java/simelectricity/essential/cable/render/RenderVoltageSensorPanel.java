@@ -4,24 +4,24 @@ import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.util.IIcon;
 import simelectricity.essential.api.ISECoverPanelRender;
 import simelectricity.essential.api.ISEGenericCable;
-import simelectricity.essential.cable.LedPanel;
+import simelectricity.essential.cable.VoltageSensorPanel;
 
-public class RenderLedPanel extends GenericPanelRender<LedPanel>{
+public class RenderVoltageSensorPanel extends GenericPanelRender<VoltageSensorPanel>{
 	public static ISECoverPanelRender instance;
 	
-	public RenderLedPanel(){
+	public RenderVoltageSensorPanel(){
 		super();
 		this.instance = this;
 	}
-
+	
 	private IIcon panelTexture;
 	@Override
 	protected void registerBlockIcon(IIconRegister r) {
-		panelTexture = r.registerIcon("sime_essential:coverpanel/ledpanel");
+		panelTexture = r.registerIcon("sime_essential:coverpanel/voltagesensor");
 	}
 	
 	@Override
-	protected IIcon getPanelTexture(ISEGenericCable cable, LedPanel coverPanel) {
+	protected IIcon getPanelTexture(ISEGenericCable cable, VoltageSensorPanel coverPanel) {
 		return panelTexture;
 	}
 }

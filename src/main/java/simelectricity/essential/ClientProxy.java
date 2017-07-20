@@ -6,6 +6,7 @@ import cpw.mods.fml.client.registry.ClientRegistry;
 import simelectricity.essential.cable.BlockCable;
 import simelectricity.essential.cable.render.RenderBlockCable;
 import simelectricity.essential.cable.render.RenderLedPanel;
+import simelectricity.essential.cable.render.RenderVoltageSensorPanel;
 import simelectricity.essential.extensions.buildcraft.client.BCFacadeRender;
 import simelectricity.essential.grid.BlockCableJoint;
 import simelectricity.essential.grid.BlockTransmissionTowerTop;
@@ -74,6 +75,7 @@ public class ClientProxy extends CommonProxy{
 		//BCFacadeRender
 		new BCFacadeRender();
 		new RenderLedPanel();
+		new RenderVoltageSensorPanel();
 	}
 
 	@Override
