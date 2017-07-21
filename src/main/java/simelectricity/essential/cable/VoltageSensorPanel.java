@@ -1,5 +1,7 @@
 package simelectricity.essential.cable;
 
+import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -7,10 +9,15 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import simelectricity.essential.ItemRegistry;
 import simelectricity.essential.api.ISECoverPanelRender;
+import simelectricity.essential.api.ISEGuiCoverPanel;
 import simelectricity.essential.api.ISERedstoneEmitterCoverPanel;
+import simelectricity.essential.cable.gui.ContainerVoltageSensor;
+import simelectricity.essential.cable.gui.GuiVoltageSensor;
 import simelectricity.essential.cable.render.RenderVoltageSensorPanel;
 
-public class VoltageSensorPanel implements ISERedstoneEmitterCoverPanel{
+public class VoltageSensorPanel implements ISERedstoneEmitterCoverPanel, ISEGuiCoverPanel{
+	private boolean inverted = false;
+	private double threshold = 100;
 	private boolean emitRedStoneSignal = false;
 	
 	@Override
@@ -50,5 +57,19 @@ public class VoltageSensorPanel implements ISERedstoneEmitterCoverPanel{
 	@SideOnly(Side.CLIENT)
 	public ISECoverPanelRender getCoverPanelRender() {
 		return RenderVoltageSensorPanel.instance;
+	}
+	
+	/////////////////////////
+	///ISEGuiCoverPanel
+	/////////////////////////
+	@Override
+	public Container getServerContainer(TileEntity te) {
+		return new ContainerVoltageSensor(this, te);
+	}
+
+	@Override
+	@SideOnly(Side.CLIENT)
+	public GuiContainer getClientGuiContainer(TileEntity te) {
+		return new GuiVoltageSensor(getServerContainer(te));
 	}
 }

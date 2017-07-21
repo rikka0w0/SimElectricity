@@ -9,6 +9,7 @@ gui.sime:voltage=电压
 gui.sime:voltage_input=输入电压
 gui.sime:voltage_output=输出电压
 gui.sime:voltage_regulated=稳压值
+gui.sime:voltage_threshold=触发电压
 gui.sime:current=电流
 gui.sime:current_input=输入电流
 gui.sime:current_output=输出电流

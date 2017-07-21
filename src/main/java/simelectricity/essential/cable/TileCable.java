@@ -3,7 +3,9 @@ package simelectricity.essential.cable;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
+import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.Container;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.AxisAlignedBB;
@@ -19,12 +21,14 @@ import simelectricity.api.tile.ISECableTile;
 import simelectricity.essential.BlockRegistry;
 import simelectricity.essential.api.ISECoverPanel;
 import simelectricity.essential.api.ISEGenericCable;
+import simelectricity.essential.api.ISEGuiCoverPanel;
 import simelectricity.essential.api.ISERedstoneEmitterCoverPanel;
 import simelectricity.essential.api.SEEAPI;
+import simelectricity.essential.common.ISEGuiProvider;
 import simelectricity.essential.common.SEEnergyTile;
 import simelectricity.essential.utils.Utils;
 
-public class TileCable extends SEEnergyTile implements ISECrowbarTarget, ISEGenericCable, ISECableTile, IEnergyNetUpdateHandler{
+public class TileCable extends SEEnergyTile implements ISECrowbarTarget, ISEGenericCable, ISECableTile, IEnergyNetUpdateHandler, ISEGuiProvider{
 	private ISESimulatable node = SEAPI.energyNetAgent.newCable(this, false);
     private int color = 0;
     private double resistance = 10;
@@ -97,6 +101,18 @@ public class TileCable extends SEEnergyTile implements ISECrowbarTarget, ISEGene
 	@Override
 	public boolean connectedOnSide(ForgeDirection side) {
 		return connections[side.ordinal()];
+	}
+	
+	@Override
+	public ForgeDirection getSelectedSide(EntityPlayer player, ForgeDirection side){
+		ForgeDirection selectedDirection = side;
+		Block block = worldObj.getBlock(xCoord, yCoord, zCoord);
+		if (block instanceof BlockCable){
+			RaytraceResult result = ((BlockCable) block).doRayTrace(worldObj, xCoord, yCoord, zCoord, player);
+			return result.hitCenter ? ForgeDirection.UNKNOWN : result.sideHit;
+		}
+		
+		return selectedDirection;
 	}
 	
 	@Override
@@ -266,17 +282,6 @@ public class TileCable extends SEEnergyTile implements ISECrowbarTarget, ISEGene
 	//ISECrowbarTarget
 	////////////////////////////////////////	
 	@Override
-	public ForgeDirection getSelectedSide(EntityPlayer player, ForgeDirection side){
-		Block block = this.worldObj.getBlock(this.xCoord, this.yCoord , this.zCoord);
-		if (block instanceof BlockCable){
-			BlockCable blockCable = (BlockCable) block;
-			RaytraceResult result = blockCable.doRayTrace(this.worldObj, this.xCoord, this.yCoord , this.zCoord, player);
-			return result.sideHit;
-		}
-		return side;
-	}
-	
-	@Override
 	public boolean canCrowbarBeUsed(ForgeDirection side) {
 		if (side == ForgeDirection.UNKNOWN)
 			return false;
@@ -329,13 +334,28 @@ public class TileCable extends SEEnergyTile implements ISECrowbarTarget, ISEGene
 	 * Notify neighbor blocks if the redstone state changes
 	 */
 	public void checkRedStoneSignal(){
-		for (ForgeDirection dir: ForgeDirection.VALID_DIRECTIONS){
-			ISECoverPanel coverPanel = installedCoverPanels[dir.ordinal()];
+		for (ForgeDirection side: ForgeDirection.VALID_DIRECTIONS){
+			ISECoverPanel coverPanel = installedCoverPanels[side.ordinal()];
 			
-			if (coverPanel instanceof VoltageSensorPanel){
-				if (((VoltageSensorPanel) coverPanel).checkRedStoneSignal(this, voltage))
-					worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, BlockRegistry.blockCable, dir.getOpposite().ordinal());
+			if (coverPanel instanceof ISERedstoneEmitterCoverPanel){
+				if (((ISERedstoneEmitterCoverPanel) coverPanel).checkRedStoneSignal(this, voltage))
+					worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, BlockRegistry.blockCable, side.getOpposite().ordinal());
 			}
 		}
+	}
+	
+	///////////////////////
+	///ISEGuiProvider
+	///////////////////////
+	@Override
+	public Container getServerContainer(ForgeDirection side) {
+		ISECoverPanel coverPanel = installedCoverPanels[side.ordinal()];
+		return coverPanel instanceof ISEGuiCoverPanel ? ((ISEGuiCoverPanel)coverPanel).getServerContainer(this) : null;
+	}
+
+	@Override
+	public GuiContainer getClientGuiContainer(ForgeDirection side) {
+		ISECoverPanel coverPanel = installedCoverPanels[side.ordinal()];
+		return coverPanel instanceof ISEGuiCoverPanel ? ((ISEGuiCoverPanel)coverPanel).getClientGuiContainer(this) : null;
 	}
 }

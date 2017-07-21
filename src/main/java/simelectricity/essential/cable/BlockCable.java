@@ -10,8 +10,11 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 import simelectricity.api.SEAPI;
 import simelectricity.essential.BlockRegistry;
+import simelectricity.essential.Essential;
 import simelectricity.essential.api.ISECoverPanel;
+import simelectricity.essential.api.ISECoverPanelHost;
 import simelectricity.essential.api.ISEGenericCable;
+import simelectricity.essential.api.ISEGuiCoverPanel;
 import simelectricity.essential.api.ISERedstoneEmitterCoverPanel;
 import simelectricity.essential.api.SEEAPI;
 import simelectricity.essential.cable.render.RenderBlockCable;
@@ -261,6 +264,9 @@ public class BlockCable extends SEBlock implements ITileEntityProvider, ISESubBl
 
 	private RaytraceResult doRayTrace(World world, int x, int y, int z, Vec3 origin, Vec3 direction) {
 		TileEntity te = world.getTileEntity(x, y, z);
+		if (te == null)
+			return null;
+		
 		int meta = world.getBlockMetadata(x, y, z);
 		
 		MovingObjectPosition[] hits = new MovingObjectPosition[31];
@@ -485,32 +491,55 @@ public class BlockCable extends SEBlock implements ITileEntityProvider, ISESubBl
 		
 		return null;
 	}
-
+	
 	//////////////////////////////////////
 	/////Item drops and Block activities
-	//////////////////////////////////////    
+	////////////////////////////////////// 
+	private boolean openGui(World world, int x, int y, int z, EntityPlayer player, ForgeDirection side){
+		RaytraceResult result = doRayTrace(world, x, y, z, player);
+		
+		if (result.hitCenter)
+			return false;
+		
+		if (result.sideHit == ForgeDirection.UNKNOWN)
+			return false;
+		
+		TileEntity te = world.getTileEntity(x, y, z);
+		if (te instanceof ISECoverPanelHost){
+			ISECoverPanelHost host = (ISECoverPanelHost) te;
+			ISECoverPanel coverPanel = host.getCoverPanelOnSide(result.sideHit);
+			
+			if (coverPanel instanceof ISEGuiCoverPanel){
+				player.openGui(Essential.instance, result.sideHit.ordinal(), world, x, y, z);
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
 	@Override
-    public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float p_149727_7_, float p_149727_8_, float p_149727_9_){
+    public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int iSide, float p_149727_7_, float p_149727_8_, float p_149727_9_){
         TileEntity te = world.getTileEntity(x, y, z);
         
         if (!(te instanceof ISEGenericCable))
         	return false;		//Normally this could not happen, but just in case!
                
         ItemStack itemStack = player.getCurrentEquippedItem();
+        ForgeDirection side = ForgeDirection.getOrientation(iSide);
         if (itemStack == null)
-        	return false;
+        	return openGui(world, x, y ,z, player, side);
         
         if (itemStack.stackSize == 0)
-        	return false;
+        	return openGui(world, x, y ,z, player, side);
     
         ISEGenericCable cable = (ISEGenericCable) te;
-        ForgeDirection direction = ForgeDirection.getOrientation(side);
-        
+                
         ISECoverPanel coverPanel = SEEAPI.coverPanelRegistry.fromItemStack(itemStack);
-        if (coverPanel != null){
-        	if (!cable.canInstallCoverPanelOnSide(direction, coverPanel))
-        		return false;	//Already have a cover panel installed
-        	
+        if (coverPanel == null)
+        	return openGui(world, x, y ,z, player, side);
+        
+    	if (cable.canInstallCoverPanelOnSide(side, coverPanel)){
         	if (!player.capabilities.isCreativeMode){
 	        	itemStack.stackSize--;
 	        	if (itemStack.stackSize == 0)
@@ -518,13 +547,13 @@ public class BlockCable extends SEBlock implements ITileEntityProvider, ISESubBl
         	}
         	
         	if (!world.isRemote){	//Handle on server side
-        		cable.installCoverPanel(direction, coverPanel);
+        		cable.installCoverPanel(side, coverPanel);
         		world.notifyBlocksOfNeighborChange(x, y, z, BlockRegistry.blockCable);
         	}
         	return true;
-        }
+    	}
         
-        return false;
+    	return openGui(world, x, y ,z, player, side);
     }
 	
     @Override

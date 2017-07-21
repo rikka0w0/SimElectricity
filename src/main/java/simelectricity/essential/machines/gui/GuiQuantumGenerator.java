@@ -31,7 +31,7 @@ public final class GuiQuantumGenerator extends SEGuiContainer<ContainerQuantumGe
 
         fontRendererObj.drawString(StatCollector.translateToLocal("gui.sime:resistance_internal"), 18, 85, 4210752);
         fontRendererObj.drawString(StatCollector.translateToLocal("gui.sime:voltage_internal"), 18, 124, 4210752);
-    
+    //gui.sime_essential:redstone_behavior_inverted
         int ybase = 22;
         fontRendererObj.drawString(StatCollector.translateToLocal("gui.sime:voltage_output"), 85, ybase, 4210752);
         fontRendererObj.drawString(SEUnitHelper.getVoltageStringWithUnit(container.voltage), 85, ybase+8, 4210752);

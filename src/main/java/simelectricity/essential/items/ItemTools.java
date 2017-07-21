@@ -9,10 +9,12 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
 import simelectricity.api.ISECrowbarTarget;
 import simelectricity.api.ISEWrenchable;
 import simelectricity.api.ISidedFacing;
 import simelectricity.api.SEAPI;
+import simelectricity.essential.api.ISECoverPanelHost;
 import simelectricity.essential.common.SEItem;
 
 public class ItemTools extends SEItem {
@@ -74,7 +76,10 @@ public class ItemTools extends SEItem {
     	if (te instanceof ISECrowbarTarget){
     		ISECrowbarTarget crowbarTarget = (ISECrowbarTarget) te;
     		
-    		ForgeDirection selectedDirection = crowbarTarget.getSelectedSide(player, side);
+    		ForgeDirection selectedDirection = side;
+    		if (te instanceof ISECoverPanelHost)
+    			selectedDirection = ((ISECoverPanelHost) te).getSelectedSide(player, side);
+    		
     		if (crowbarTarget.canCrowbarBeUsed(selectedDirection)){
     			if (!te.getWorldObj().isRemote)
     				crowbarTarget.onCrowbarAction(selectedDirection, player.capabilities.isCreativeMode);
@@ -101,7 +106,7 @@ public class ItemTools extends SEItem {
     	return false;
     }
     
-    private static boolean useGlove(TileEntity te, EntityPlayer player, ForgeDirection side){
+    public static boolean useGlove(TileEntity te, EntityPlayer player, ForgeDirection side){
     	if (te instanceof ISidedFacing){
     		ISidedFacing target = (ISidedFacing) te;
     		

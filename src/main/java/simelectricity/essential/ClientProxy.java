@@ -2,11 +2,11 @@ package simelectricity.essential;
 
 import cpw.mods.fml.client.registry.ClientRegistry;
 
-
 import simelectricity.essential.cable.BlockCable;
 import simelectricity.essential.cable.render.RenderBlockCable;
 import simelectricity.essential.cable.render.RenderLedPanel;
 import simelectricity.essential.cable.render.RenderVoltageSensorPanel;
+import simelectricity.essential.common.ISEGuiProvider;
 import simelectricity.essential.extensions.buildcraft.client.BCFacadeRender;
 import simelectricity.essential.grid.BlockCableJoint;
 import simelectricity.essential.grid.BlockTransmissionTowerTop;
@@ -37,6 +37,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.ForgeDirection;
 
 public class ClientProxy extends CommonProxy{
 	@Override
@@ -82,6 +83,10 @@ public class ClientProxy extends CommonProxy{
 	public Object getClientGuiElement(int ID, EntityPlayer player, World world,
 			int x, int y, int z) {
 		TileEntity te = world.getTileEntity(x, y, z);
+		
+		if (te instanceof ISEGuiProvider)
+			return ((ISEGuiProvider) te).getClientGuiContainer(ForgeDirection.getOrientation(ID));
+		
 		Container container = BlockRegistry.getContainer(te, player);
 		
 		if (te instanceof TileVoltageMeter)
