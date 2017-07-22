@@ -20,15 +20,19 @@ import simelectricity.api.node.ISESimulatable;
 import simelectricity.api.tile.ISECableTile;
 import simelectricity.essential.BlockRegistry;
 import simelectricity.essential.api.ISECoverPanel;
+import simelectricity.essential.api.ISEElectricalCoverPanel;
+import simelectricity.essential.api.ISEElectricalLoadCoverPanel;
 import simelectricity.essential.api.ISEGenericCable;
 import simelectricity.essential.api.ISEGuiCoverPanel;
+import simelectricity.essential.api.ISEIuminousCoverPanel;
+import simelectricity.essential.api.ISEIuminousCoverPanelHost;
 import simelectricity.essential.api.ISERedstoneEmitterCoverPanel;
 import simelectricity.essential.api.SEEAPI;
 import simelectricity.essential.common.ISEGuiProvider;
 import simelectricity.essential.common.SEEnergyTile;
 import simelectricity.essential.utils.Utils;
 
-public class TileCable extends SEEnergyTile implements ISECrowbarTarget, ISEGenericCable, ISECableTile, IEnergyNetUpdateHandler, ISEGuiProvider{
+public class TileCable extends SEEnergyTile implements ISECrowbarTarget, ISEGenericCable, ISEIuminousCoverPanelHost, ISECableTile, IEnergyNetUpdateHandler, ISEGuiProvider{
 	private ISESimulatable node = SEAPI.energyNetAgent.newCable(this, false);
     private int color = 0;
     private double resistance = 10;
@@ -42,7 +46,6 @@ public class TileCable extends SEEnergyTile implements ISECrowbarTarget, ISEGene
      */
     private boolean[] connections = new boolean[6];
     private ISECoverPanel[] installedCoverPanels = new ISECoverPanel[6];
-    private boolean hasLedPanel;
     
 	////////////////////////////////////////
 	//Private functions
@@ -72,8 +75,7 @@ public class TileCable extends SEEnergyTile implements ISECrowbarTarget, ISEGene
             	ISECoverPanel coverPanel = SEEAPI.coverPanelRegistry.fromNBT(tag);
             	installedCoverPanels[side] = coverPanel;
             	
-        		if (coverPanel instanceof LedPanel)
-        			hasLedPanel = true;
+            	coverPanel.setHost(this, ForgeDirection.getOrientation(side));
             }
         }
 	}
@@ -128,6 +130,7 @@ public class TileCable extends SEEnergyTile implements ISECrowbarTarget, ISEGene
 	@Override
 	public void installCoverPanel(ForgeDirection side, ISECoverPanel coverPanel) {
 		installedCoverPanels[side.ordinal()] = coverPanel;
+		coverPanel.setHost(this, side);
 		
 		if (!coverPanel.isHollow()){
 			//If the cover panel is not hollow, it may block some connection
@@ -135,13 +138,11 @@ public class TileCable extends SEEnergyTile implements ISECrowbarTarget, ISEGene
 				SEAPI.energyNetAgent.updateTileConnection(this);
 		}
 		
-		if (coverPanel instanceof LedPanel){
-			hasLedPanel = true;
-			
-			SEAPI.energyNetAgent.updateTileConnection(this);
-		}
+		if (coverPanel instanceof ISEElectricalCoverPanel)
+			((ISEElectricalCoverPanel) coverPanel).onPlaced(voltage);
 		
-		checkRedStoneSignal();
+		if (coverPanel instanceof ISEElectricalLoadCoverPanel)
+			SEAPI.energyNetAgent.updateTileConnection(this);
 		
 		onCableRenderingUpdateRequested();
 	}
@@ -202,12 +203,20 @@ public class TileCable extends SEEnergyTile implements ISECrowbarTarget, ISEGene
 
 	@Override
 	public boolean hasShuntResistance() {
-		return hasLedPanel;
+		boolean hasShuntResistance = false;
+		for (ISECoverPanel coverPanel: this.installedCoverPanels)
+			hasShuntResistance |= (coverPanel instanceof ISEElectricalLoadCoverPanel);
+		return hasShuntResistance;
 	}
 
 	@Override
 	public double getShuntResistance() {
-		return hasLedPanel ? LedPanel.getResistance() : 0;
+		double shuntConductance = 0;
+		for (ISECoverPanel coverPanel: this.installedCoverPanels)
+			if (coverPanel instanceof ISEElectricalLoadCoverPanel)
+				shuntConductance += 1.0D / ((ISEElectricalLoadCoverPanel) coverPanel).getResistance();
+		
+		return 1.0D / shuntConductance;
 	}
 	////////////////////////////////////////
 	//Server->Client sync
@@ -263,19 +272,10 @@ public class TileCable extends SEEnergyTile implements ISECrowbarTarget, ISEGene
 	public void onEnergyNetUpdate() {
 		voltage = SEAPI.energyNetAgent.getVoltage(this.node);
 		
-		if (hasLedPanel){
-			double power = (voltage*voltage/LedPanel.getResistance());
-			byte lightLevel = LedPanel.getLightValue(power);
-			
-			if (this.lightLevel != lightLevel){
-				//If light value changes, send a sync. packet to client
-				this.lightLevel = lightLevel;
-				
-				this.markTileEntityForS2CSync();
-			}
+		for (ISECoverPanel coverPanel: this.installedCoverPanels){
+			if (coverPanel instanceof ISEElectricalCoverPanel)
+				((ISEElectricalCoverPanel) coverPanel).onEnergyNetUpdate(voltage);
 		}
-		
-		checkRedStoneSignal();
 	}
 
 	////////////////////////////////////////
@@ -302,46 +302,21 @@ public class TileCable extends SEEnergyTile implements ISECrowbarTarget, ISEGene
 		//Remove the panel
 		installedCoverPanels[side.ordinal()] = null;
 		
-		if (coverPanel instanceof LedPanel){
-			boolean hasLedPanel = false;
-			for (ForgeDirection dir: ForgeDirection.VALID_DIRECTIONS){
-				if (installedCoverPanels[dir.ordinal()] instanceof LedPanel)
-					hasLedPanel = true;
-			}
-			
-			this.hasLedPanel = hasLedPanel;
-			
-			if (!this.hasLedPanel)
-				this.lightLevel = 0;
-			
+		if (coverPanel instanceof ISEElectricalLoadCoverPanel)
 			SEAPI.energyNetAgent.updateTileConnection(this);
-		}
-		else if (coverPanel instanceof ISERedstoneEmitterCoverPanel){
+		
+		onLightValueUpdated();
+		
+		//Notify neighbor block that this side no longer emits redstone signal
+		if (coverPanel instanceof ISERedstoneEmitterCoverPanel)
 			worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, BlockRegistry.blockCable, side.getOpposite().ordinal());
-		}
+		
 		
 		onCableRenderingUpdateRequested();
 		
 		//Spawn an item entity for player to pick up
 		if (!isCreativePlayer)
 			Utils.dropItemIntoWorld(worldObj, xCoord, yCoord, zCoord, coverPanel.getCoverPanelItem());
-	}
-	
-	///////////////////////
-	///Redstone
-	///////////////////////
-	/**
-	 * Notify neighbor blocks if the redstone state changes
-	 */
-	public void checkRedStoneSignal(){
-		for (ForgeDirection side: ForgeDirection.VALID_DIRECTIONS){
-			ISECoverPanel coverPanel = installedCoverPanels[side.ordinal()];
-			
-			if (coverPanel instanceof ISERedstoneEmitterCoverPanel){
-				if (((ISERedstoneEmitterCoverPanel) coverPanel).checkRedStoneSignal(this, voltage))
-					worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, BlockRegistry.blockCable, side.getOpposite().ordinal());
-			}
-		}
 	}
 	
 	///////////////////////
@@ -357,5 +332,25 @@ public class TileCable extends SEEnergyTile implements ISECrowbarTarget, ISEGene
 	public GuiContainer getClientGuiContainer(ForgeDirection side) {
 		ISECoverPanel coverPanel = installedCoverPanels[side.ordinal()];
 		return coverPanel instanceof ISEGuiCoverPanel ? ((ISEGuiCoverPanel)coverPanel).getClientGuiContainer(this) : null;
+	}
+
+	/////////////////////////////////
+	///ISEIuminousCoverPanelHost
+	/////////////////////////////////
+	@Override
+	public void onLightValueUpdated() {
+		byte lightLevel = 0;
+		for (ISECoverPanel coverPanel: this.installedCoverPanels){
+			if (coverPanel instanceof ISEIuminousCoverPanel){
+				byte ll = ((ISEIuminousCoverPanel) coverPanel).getLightValue();
+				if (ll > lightLevel)
+					lightLevel = ll;
+			}
+		}
+		
+		if (this.lightLevel != lightLevel){
+			this.lightLevel = lightLevel;
+			this.markTileEntityForS2CSync();
+		}
 	}
 }

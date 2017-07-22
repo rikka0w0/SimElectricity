@@ -23,7 +23,7 @@ public abstract class SETileEntity extends TileEntity{
 		return (oldState.getBlock() != newState.getBlock());	//Was "return !isVanilla || (oldBlock != newBlock);" in 1.7.10
 	}
 	*/
-	
+    
 	protected void markTileEntityForS2CSync(){
 		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 		//worldObj.notifyBlockUpdate(getPos(), worldObj.getBlockState(getPos()), worldObj.getBlockState(getPos()), 2);

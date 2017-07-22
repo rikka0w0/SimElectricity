@@ -24,7 +24,7 @@ public class GuiVoltageSensor extends SEGuiContainer<ContainerVoltageSensor>{
         fontRendererObj.drawString(StatCollector.translateToLocal("gui.sime:voltage_threshold"), 18, 124, 4210752);
         
         int ybase = 22;
-        fontRendererObj.drawString(SEUnitHelper.getVoltageStringWithUnit(1), 85, ybase+8, 4210752);
+        fontRendererObj.drawString(SEUnitHelper.getVoltageStringWithUnit(container.thresholdVoltage), 85, ybase+8, 4210752);
 	}
 	
     @Override
@@ -40,13 +40,13 @@ public class GuiVoltageSensor extends SEGuiContainer<ContainerVoltageSensor>{
         int xbase = 18;
         int ybase = 97;
         
-        buttonList.add(new GuiButton(0, guiLeft + xbase, 		guiTop + ybase, 140, 20, StatCollector.translateToLocal("gui.sime_essential:redstone_toggle_behavior")));
+        buttonList.add(new GuiButton(6, guiLeft + xbase, 		guiTop + ybase, 140, 20, StatCollector.translateToLocal("gui.sime_essential:redstone_toggle_behavior")));
         
-        buttonList.add(new GuiButton(1, guiLeft + xbase, 		guiTop + ybase + 38, 30, 20, "-100"));
-        buttonList.add(new GuiButton(2, guiLeft + xbase + 30, 	guiTop + ybase + 38, 20, 20, "-10"));
-        buttonList.add(new GuiButton(3, guiLeft + xbase + 50, 	guiTop + ybase + 38, 20, 20, "-1"));
-        buttonList.add(new GuiButton(4, guiLeft + xbase + 70, 	guiTop + ybase + 38, 20, 20, "+1"));
-        buttonList.add(new GuiButton(5, guiLeft + xbase + 90, 	guiTop + ybase + 38, 20, 20, "+10"));
-        buttonList.add(new GuiButton(6, guiLeft + xbase + 110, 	guiTop + ybase + 38, 30, 20, "+100"));
+        buttonList.add(new GuiButton(0, guiLeft + xbase, 		guiTop + ybase + 38, 30, 20, "-100"));
+        buttonList.add(new GuiButton(1, guiLeft + xbase + 30, 	guiTop + ybase + 38, 20, 20, "-10"));
+        buttonList.add(new GuiButton(2, guiLeft + xbase + 50, 	guiTop + ybase + 38, 20, 20, "-1"));
+        buttonList.add(new GuiButton(3, guiLeft + xbase + 70, 	guiTop + ybase + 38, 20, 20, "+1"));
+        buttonList.add(new GuiButton(4, guiLeft + xbase + 90, 	guiTop + ybase + 38, 20, 20, "+10"));
+        buttonList.add(new GuiButton(5, guiLeft + xbase + 110, 	guiTop + ybase + 38, 30, 20, "+100"));
     }
 }

@@ -5,39 +5,38 @@ import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.common.util.ForgeDirection;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import simelectricity.essential.ItemRegistry;
 import simelectricity.essential.api.ISECoverPanelRender;
+import simelectricity.essential.api.ISEElectricalCoverPanel;
 import simelectricity.essential.api.ISEGuiCoverPanel;
 import simelectricity.essential.api.ISERedstoneEmitterCoverPanel;
 import simelectricity.essential.cable.gui.ContainerVoltageSensor;
 import simelectricity.essential.cable.gui.GuiVoltageSensor;
 import simelectricity.essential.cable.render.RenderVoltageSensorPanel;
 
-public class VoltageSensorPanel implements ISERedstoneEmitterCoverPanel, ISEGuiCoverPanel{
-	private boolean inverted = false;
-	private double threshold = 100;
-	private boolean emitRedStoneSignal = false;
+public class VoltageSensorPanel implements ISEElectricalCoverPanel, ISERedstoneEmitterCoverPanel, ISEGuiCoverPanel{
+	public boolean emitRedStoneSignal = false;
+	public boolean inverted = false;
+	public double thresholdVoltage = 100;
 	
+	private TileEntity hostTileEntity;
+	private ForgeDirection installedSide;
+	private double voltage;
+	
+	/////////////////////////
+	///ISERedstoneEmitterCoverPanel
+	/////////////////////////
 	@Override
 	public boolean isProvidingWeakPower(){
 		return emitRedStoneSignal;
 	}
 	
-	@Override
-	public boolean checkRedStoneSignal(TileEntity te, double voltage){
-		boolean changed = false;
-		boolean emitRedStoneSignal = voltage > 100;
-		
-		if (emitRedStoneSignal != this.emitRedStoneSignal){
-			this.emitRedStoneSignal = emitRedStoneSignal;
-			changed = true;
-		}
-		
-		return changed;
-	}
-	
+	/////////////////////////
+	///ISECoverPanel
+	/////////////////////////
 	@Override
 	public boolean isHollow() {
 		return false;
@@ -58,7 +57,19 @@ public class VoltageSensorPanel implements ISERedstoneEmitterCoverPanel, ISEGuiC
 	public ISECoverPanelRender getCoverPanelRender() {
 		return RenderVoltageSensorPanel.instance;
 	}
+
+	@Override
+	public void setHost(TileEntity hostTileEntity, ForgeDirection side) {
+		this.hostTileEntity = hostTileEntity;
+		this.installedSide = side;
+	}
 	
+	@Override
+	public void onPlaced(double voltage) {
+		this.voltage = voltage;
+		
+		checkRedStoneSignal();
+	}
 	/////////////////////////
 	///ISEGuiCoverPanel
 	/////////////////////////
@@ -71,5 +82,35 @@ public class VoltageSensorPanel implements ISERedstoneEmitterCoverPanel, ISEGuiC
 	@SideOnly(Side.CLIENT)
 	public GuiContainer getClientGuiContainer(TileEntity te) {
 		return new GuiVoltageSensor(getServerContainer(te));
+	}
+
+	/////////////////////////
+	///ISEElectricalCoverPanel
+	/////////////////////////
+	@Override
+	public void onEnergyNetUpdate(double voltage) {
+		this.voltage = voltage;
+		
+		checkRedStoneSignal();
+	}
+	
+	/**
+	 * @return true - redstone signal has changed
+	 */
+	public boolean checkRedStoneSignal(){
+		boolean emitRedStoneSignal = voltage > thresholdVoltage;
+		
+		emitRedStoneSignal ^= inverted;
+		
+		if (emitRedStoneSignal != this.emitRedStoneSignal){
+			this.emitRedStoneSignal = emitRedStoneSignal;
+			
+			//Notify neighbor blocks if redstone signal polarity changes
+			hostTileEntity.getWorldObj().notifyBlocksOfNeighborChange(
+					hostTileEntity.xCoord, hostTileEntity.yCoord, hostTileEntity.zCoord, hostTileEntity.getBlockType(), installedSide.getOpposite().ordinal());
+			return true;
+		}
+		
+		return false;
 	}
 }

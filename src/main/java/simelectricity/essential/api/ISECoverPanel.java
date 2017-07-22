@@ -4,6 +4,8 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.common.util.ForgeDirection;
 
 public interface ISECoverPanel {
 	public static final double thickness = 0.05;	//Constant
@@ -27,4 +29,12 @@ public interface ISECoverPanel {
 	
 	@SideOnly(Side.CLIENT)
 	ISECoverPanelRender getCoverPanelRender();
+	
+	
+	/**
+	 * Called when the cover panel is loaded from NBT data or placed by a player using itemStack
+	 * @param hostTileEntity
+	 * @param side
+	 */
+	void setHost(TileEntity hostTileEntity, ForgeDirection side);
 }

@@ -5,6 +5,8 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.common.util.ForgeDirection;
 import simelectricity.essential.api.ISECoverPanel;
 import simelectricity.essential.api.ISECoverPanelRender;
 import simelectricity.essential.extensions.buildcraft.client.BCFacadeRender;
@@ -71,4 +73,7 @@ public class BCFacadePanel implements ISECoverPanel{
 	public ISECoverPanelRender getCoverPanelRender() {
 		return BCFacadeRender.instance;
 	}
+
+	@Override
+	public void setHost(TileEntity hostTileEntity, ForgeDirection side) {}
 }
