@@ -24,7 +24,7 @@ public class GuiVoltageSensor extends SEGuiContainer<ContainerVoltageSensor>{
         fontRendererObj.drawString(StatCollector.translateToLocal("gui.sime:voltage_threshold"), 18, 124, 4210752);
         
         int ybase = 22;
-        fontRendererObj.drawString(SEUnitHelper.getVoltageStringWithUnit(container.thresholdVoltage), 85, ybase+8, 4210752);
+        fontRendererObj.drawString(SEUnitHelper.getVoltageStringWithUnit(container.thresholdVoltage), 20, 51, 4210752);
 	}
 	
     @Override
@@ -32,6 +32,9 @@ public class GuiVoltageSensor extends SEGuiContainer<ContainerVoltageSensor>{
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         mc.renderEngine.bindTexture(new ResourceLocation("sime_essential:textures/gui/voltage_sensor.png"));
         this.drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
+       
+        this.drawTexturedModalRect(guiLeft+70, guiTop+30, container.inverted ? 52 : 0, 166, 52, 33);
+        this.drawTexturedModalRect(guiLeft+130, guiTop+36, container.emitRedstoneSignal ? 180 : 176, 0, 4, 16);
     }
     
     @Override
