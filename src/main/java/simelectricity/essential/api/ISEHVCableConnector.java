@@ -1,4 +1,4 @@
-package simelectricity.essential.grid;
+package simelectricity.essential.api;
 
 import simelectricity.api.node.ISEGridNode;
 import net.minecraft.world.World;

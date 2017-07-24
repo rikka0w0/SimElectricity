@@ -20,6 +20,7 @@ import simelectricity.essential.utils.Utils;
 public class BlockTransmissionTowerCollisionBox extends SEBlock{
 	public BlockTransmissionTowerCollisionBox() {
 		super("essential_transmission_tower_collision_box", Material.rock, SEItemBlock.class);
+		this.setBlockUnbreakable();
 	}
 	
 	@Override
@@ -72,6 +73,13 @@ public class BlockTransmissionTowerCollisionBox extends SEBlock{
 			Utils.addCollisionBoxToList(x, y, z, axisAlignedBB, collidingBoxes, 0.5, 0, 0, 1, 0.05, 0.5);
 		else if (meta == 8)
 			Utils.addCollisionBoxToList(x, y, z, axisAlignedBB, collidingBoxes, 0, 0, 0, 0.5, 0.05, 0.5);
+		
+		
+		
+		else if (meta == 9)
+			Utils.addCollisionBoxToList(x, y, z, axisAlignedBB, collidingBoxes, 0, 0, 0.125F, 1, 0.25F, 0.875F);
+		else if (meta == 10)
+			Utils.addCollisionBoxToList(x, y, z, axisAlignedBB, collidingBoxes, 0.125F, 0, 0, 0.875F, 0.25F, 1);
 	}
 	
 	@Override
@@ -96,6 +104,15 @@ public class BlockTransmissionTowerCollisionBox extends SEBlock{
 			setBlockBounds(0.5F, 0, 0, 1, 0.05F, 0.5F);
 		else if (meta == 8)
 			setBlockBounds(0, 0, 0, 0.5F, 0.05F, 0.5F);
+		
+		
+		
+		
+		else if (meta == 9)
+			setBlockBounds(0, 0, 0.125F, 1, 0.25F, 0.875F);
+		else if (meta == 10)
+			setBlockBounds(0.125F, 0, 0, 0.875F, 0.25F, 1);
+		
 		else
 			setBlockBounds(0, 0, 0, 1, 1, 1);
 	}

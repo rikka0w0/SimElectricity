@@ -16,6 +16,7 @@ import net.minecraft.world.World;
 import simelectricity.api.node.ISEGridNode;
 import simelectricity.api.tile.ISEGridTile;
 import simelectricity.essential.BlockRegistry;
+import simelectricity.essential.api.ISEHVCableConnector;
 import simelectricity.essential.common.SEBlock;
 import simelectricity.essential.common.SEItemBlock;
 
@@ -111,7 +112,7 @@ public class BlockTransmissionTowerBottom extends SEBlock implements ISEHVCableC
 	/// Initialize
 	///////////////////
 	public BlockTransmissionTowerBottom() {
-		super("essential_transmission_tower_bottom", Material.circuits, SEItemBlock.class);
+		super("essential_transmission_tower_bottom", Material.glass, SEItemBlock.class);
 	}
 
 	////////////////////////////////////

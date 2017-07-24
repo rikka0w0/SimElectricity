@@ -61,7 +61,7 @@ public class TileRenderTranmissionTowerBase extends TileEntitySpecialRenderer im
 	        //Render cable
 	        GL11.glPushMatrix();
 	        GL11.glTranslated(fixedfrom[3*i], fixedfrom[3*i+1],fixedfrom[3*i+2]);
-	        CableGLRender.renderHalfParabolicCable(fixedfrom[3*i], fixedfrom[3*i+1],fixedfrom[3*i+2], fixedto[3*i], fixedto[3*i+1],fixedto[3*i+2], 0.15, 3, this, 1);
+	        CableGLRender.renderHalfParabolicCable(fixedfrom[3*i], fixedfrom[3*i+1],fixedfrom[3*i+2], fixedto[3*i], fixedto[3*i+1],fixedto[3*i+2], 0.075, 3, this, 1);
 	        GL11.glPopMatrix();
 		}
 	}

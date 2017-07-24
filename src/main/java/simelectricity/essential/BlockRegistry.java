@@ -7,11 +7,13 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import simelectricity.essential.cable.BlockCable;
 import simelectricity.essential.cable.TileCable;
 import simelectricity.essential.grid.BlockCableJoint;
+import simelectricity.essential.grid.BlockTransmissionTower2;
 import simelectricity.essential.grid.BlockTransmissionTowerCollisionBox;
 import simelectricity.essential.grid.BlockTransmissionTowerTop;
 import simelectricity.essential.grid.BlockTransmissionTowerBottom;
 import simelectricity.essential.grid.TileCableJoint;
 import simelectricity.essential.grid.TileTransmissionTower;
+import simelectricity.essential.grid.TileTransmissionTower2;
 import simelectricity.essential.machines.BlockElectronics;
 import simelectricity.essential.machines.BlockTwoPortElectronics;
 import simelectricity.essential.machines.gui.ContainerAdjustableResistor;
@@ -37,6 +39,7 @@ public class BlockRegistry {
 	public static BlockTransmissionTowerBottom transmissionTowerBottom;
 	public static BlockTransmissionTowerCollisionBox transmissionTowerCollisionBox;
 	public static BlockCableJoint cableJoint;
+	public static BlockTransmissionTower2 transmissionTower2;
 	
 	public static BlockElectronics blockElectronics;
 	public static BlockTwoPortElectronics blockTwoPortElectronics;
@@ -48,6 +51,7 @@ public class BlockRegistry {
 		transmissionTowerBottom = new BlockTransmissionTowerBottom();
 		transmissionTowerCollisionBox = new BlockTransmissionTowerCollisionBox();
 		cableJoint = new BlockCableJoint();
+		transmissionTower2 = new BlockTransmissionTower2();
 		
 		blockElectronics = new BlockElectronics();
 		blockTwoPortElectronics = new BlockTwoPortElectronics();
@@ -57,6 +61,7 @@ public class BlockRegistry {
 		GameRegistry.registerTileEntity(TileCable.class, "SEECable");
 		GameRegistry.registerTileEntity(TileTransmissionTower.class, "SEETransmissionTower");
 		GameRegistry.registerTileEntity(TileCableJoint.class, "SEECableJoint");
+		GameRegistry.registerTileEntity(TileTransmissionTower2.class, "SEETransmissionTower2");
 		
 		GameRegistry.registerTileEntity(TileVoltageMeter.class, "SEEVoltageMeter");
 		GameRegistry.registerTileEntity(TileQuantumGenerator.class, "SEEQuantumGenerator");

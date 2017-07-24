@@ -17,13 +17,28 @@ public class TileTransmissionTower extends SEEnergyTile implements ISEGridTile, 
 	private int neighborCoords[] = new int[] { 0, -1, 0, 0, -1, 0 };
 	private TransmissionTowerRenderHelper renderHelper;
 
+	protected int getTypeFromMeta(){
+		return getBlockMetadata() >> 3;
+	}
+	
+	protected TransmissionTowerRenderHelper createRenderHelper(){
+		return new TransmissionTowerRenderHelper(this,2,
+				getTypeFromMeta() == 0
+				?
+				new double[]{-1, 18-18.0, -4.5, -0.7, 23-18.0, 0, -1, 18-18.0, 4.5,
+								1, 18-18.0, -4.5, 0.7, 23-18.0, 0, 1, 18-18.0, 4.5}
+				:
+				new double[]{0, 16-18.0, -4.9, 0, 23-18.0, 3.95, 0, 16-18.0, 4.9}
+				);
+	}
+	
 	//////////////////////////////
 	/////ITransmissionTower
 	//////////////////////////////
 	@Override
 	public void updateRenderInfo() {
 		getRenderHelper().updateRenderData(neighborCoords[0],neighborCoords[1],neighborCoords[2],neighborCoords[3],neighborCoords[4],neighborCoords[5]);
-		if ((getBlockMetadata()&8) == 0)
+		if (getTypeFromMeta() == 0)
 			this.markForRenderUpdate();
 	}
 	
@@ -32,14 +47,7 @@ public class TileTransmissionTower extends SEEnergyTile implements ISEGridTile, 
         //Create renderHelper on client side
         if (worldObj.isRemote){
 			if (renderHelper == null)
-				renderHelper = new TransmissionTowerRenderHelper(this,2,
-						(getBlockMetadata()&8) == 0
-						?
-						new double[]{-1, 18-18.0, -4.5, -0.7, 23-18.0, 0, -1, 18-18.0, 4.5,
-										1, 18-18.0, -4.5, 0.7, 23-18.0, 0, 1, 18-18.0, 4.5}
-						:
-						new double[]{0, 16-18.0, -4.9, 0, 23-18.0, 3.95, 0, 16-18.0, 4.9}
-						);
+				renderHelper = createRenderHelper();
         	return renderHelper;
         }else{
         	return null;

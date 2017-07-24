@@ -51,7 +51,7 @@ public class BlockTransmissionTowerTop extends SEBlock implements ITileEntityPro
 	/// Initialize
 	///////////////////
 	public BlockTransmissionTowerTop() {
-		super("essential_transmission_tower", Material.circuits, ItemBlock.class);
+		super("essential_transmission_tower", Material.glass, ItemBlock.class);
 		this.inventoryTexture = new IIcon[subNames.length];
 		
 		setBlockBounds(0.0F, 0.0F, 0.0F, 1F, 0.05F, 1F);
@@ -219,13 +219,13 @@ public class BlockTransmissionTowerTop extends SEBlock implements ITileEntityPro
     	
     	for (int[] part: list){
     		if (world.getBlock(x+part[0], y+part[1], z+part[2]) == BlockRegistry.transmissionTowerCollisionBox)
-    		world.setBlockToAir(x+part[0], y+part[1], z+part[2]);
+    			world.setBlockToAir(x+part[0], y+part[1], z+part[2]);
     	}
     	
     	list = BlockTransmissionTowerBottom.getBaseBlockCoordOffsets(meta);
     	for (int[] part: list){
     		if (world.getBlock(x+part[0], y+part[1]-18, z+part[2]) == BlockRegistry.transmissionTowerBottom)
-    		world.setBlockToAir(x+part[0], y+part[1]-18, z+part[2]);
+    			world.setBlockToAir(x+part[0], y+part[1]-18, z+part[2]);
     	}
     	
     	TileEntity te = world.getTileEntity(x, y, z);	//Do this before the tileEntity is removed!

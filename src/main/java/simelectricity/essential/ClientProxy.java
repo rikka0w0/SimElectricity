@@ -9,15 +9,20 @@ import simelectricity.essential.cable.render.RenderVoltageSensorPanel;
 import simelectricity.essential.common.ISEGuiProvider;
 import simelectricity.essential.extensions.buildcraft.client.BCFacadeRender;
 import simelectricity.essential.grid.BlockCableJoint;
+import simelectricity.essential.grid.BlockTransmissionTower2;
 import simelectricity.essential.grid.BlockTransmissionTowerTop;
 import simelectricity.essential.grid.BlockTransmissionTowerBottom;
 import simelectricity.essential.grid.TileCableJoint;
 import simelectricity.essential.grid.TileTransmissionTower;
+import simelectricity.essential.grid.TileTransmissionTower2;
 import simelectricity.essential.grid.render.BlockRenderCableJoint;
+import simelectricity.essential.grid.render.BlockRenderTransmissionTower2;
+import simelectricity.essential.grid.render.ModelBaker;
 import simelectricity.essential.grid.render.TileRenderTransmissionTower;
 import simelectricity.essential.grid.render.BlockRenderTransmissionTowerTop;
 import simelectricity.essential.grid.render.BlockRenderTransmissionTowerBottom;
 import simelectricity.essential.grid.render.TileRenderTranmissionTowerBase;
+import simelectricity.essential.grid.render.TileRenderTransmissionTower2;
 import simelectricity.essential.machines.gui.GuiAdjustableResistor;
 import simelectricity.essential.machines.gui.GuiAdjustableTransformer;
 import simelectricity.essential.machines.gui.GuiDiode;
@@ -62,9 +67,12 @@ public class ClientProxy extends CommonProxy{
 		RenderBlockCable.bakeCableModel(BlockRegistry.blockCable);
 		
 		//Transmission Tower
+		new ModelBaker();
 		BlockTransmissionTowerTop.renderID = (new BlockRenderTransmissionTowerTop()).getRenderId();
 		ClientRegistry.bindTileEntitySpecialRenderer(TileTransmissionTower.class, new TileRenderTransmissionTower());
 		BlockTransmissionTowerBottom.renderID = (new BlockRenderTransmissionTowerBottom()).getRenderId();
+		BlockTransmissionTower2.renderID = (new BlockRenderTransmissionTower2()).getRenderId();
+		ClientRegistry.bindTileEntitySpecialRenderer(TileTransmissionTower2.class, new TileRenderTransmissionTower2());
 		
 		//Cable Joint
 		BlockCableJoint.renderID = (new BlockRenderCableJoint()).getRenderId();
