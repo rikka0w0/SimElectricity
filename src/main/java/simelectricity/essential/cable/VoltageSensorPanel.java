@@ -2,13 +2,11 @@ package simelectricity.essential.cable;
 
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.inventory.Container;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import simelectricity.essential.ItemRegistry;
 import simelectricity.essential.api.ISECoverPanelRender;
 import simelectricity.essential.api.ISEElectricalCoverPanel;
 import simelectricity.essential.api.ISEGuiCoverPanel;
@@ -26,6 +24,13 @@ public class VoltageSensorPanel implements ISEElectricalCoverPanel, ISERedstoneE
 	private ForgeDirection installedSide;
 	private double voltage;
 	
+	public VoltageSensorPanel(){}
+	
+	public VoltageSensorPanel(NBTTagCompound nbt) {
+		inverted = nbt.getBoolean("inverted");
+		thresholdVoltage = nbt.getDouble("thresholdVoltage");
+	}
+	
 	/////////////////////////
 	///ISERedstoneEmitterCoverPanel
 	/////////////////////////
@@ -41,15 +46,13 @@ public class VoltageSensorPanel implements ISEElectricalCoverPanel, ISERedstoneE
 	public boolean isHollow() {
 		return false;
 	}
-	
-	@Override
-	public ItemStack getCoverPanelItem() {
-		return new ItemStack(ItemRegistry.itemMisc, 1, 1);
-	}
 
 	@Override
 	public void toNBT(NBTTagCompound nbt) {
 		nbt.setString("coverPanelType", "VoltageSensorPanel");
+		
+		nbt.setBoolean("inverted", inverted);
+		nbt.setDouble("thresholdVoltage",thresholdVoltage);
 	}
 
 	@Override

@@ -1,12 +1,10 @@
 package simelectricity.essential.cable;
 
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import simelectricity.essential.ItemRegistry;
 import simelectricity.essential.api.ISECoverPanelRender;
 import simelectricity.essential.api.ISEElectricalLoadCoverPanel;
 import simelectricity.essential.api.ISEIuminousCoverPanel;
@@ -19,11 +17,6 @@ public class LedPanel implements ISEElectricalLoadCoverPanel, ISEIuminousCoverPa
 	
 	@Override
 	public boolean isHollow() {	return false;}
-	
-	@Override
-	public ItemStack getCoverPanelItem() {
-		return new ItemStack(ItemRegistry.itemMisc, 1, 0);
-	}
 
 	@Override
 	public void toNBT(NBTTagCompound nbt) {

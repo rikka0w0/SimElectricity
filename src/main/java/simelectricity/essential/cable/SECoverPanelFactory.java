@@ -2,6 +2,7 @@ package simelectricity.essential.cable;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import simelectricity.essential.ItemRegistry;
 import simelectricity.essential.api.ISECoverPanel;
 import simelectricity.essential.api.ISECoverPanelFactory;
 import simelectricity.essential.items.ItemMisc;
@@ -51,9 +52,26 @@ public class SECoverPanelFactory implements ISECoverPanelFactory{
 			return new LedPanel();
 		
 		if (coverPanelType.equals("VoltageSensorPanel"))
-			return new VoltageSensorPanel();
+			return new VoltageSensorPanel(nbt);
 		
 		return null;
 	}
 
+	@Override
+	public boolean acceptCoverPanel(ISECoverPanel coverPanel) {
+		return 	(coverPanel instanceof LedPanel) ||
+				(coverPanel instanceof VoltageSensorPanel);
+	}
+
+	@Override
+	public ItemStack getItemStack(ISECoverPanel coverPanel) {
+		if (coverPanel instanceof LedPanel)
+			return new ItemStack(ItemRegistry.itemMisc, 1, 0);
+		if (coverPanel instanceof VoltageSensorPanel)
+			return new ItemStack(ItemRegistry.itemMisc, 1, 1);
+		
+		return null;
+	}
+
+	
 }

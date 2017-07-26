@@ -47,14 +47,10 @@ public class BCFacadePanel implements ISECoverPanel{
 	
 	public Block getBlock() {return block;}
 	
-
-	@Override
-	public boolean isHollow() {return isHollow;}
+	public ItemStack getItem() {return itemStack.copy();}
 	
 	@Override
-	public ItemStack getCoverPanelItem() {
-		return itemStack.copy();
-	}
+	public boolean isHollow() {return isHollow;}
 
 	@Override
 	public void toNBT(NBTTagCompound nbt) {

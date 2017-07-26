@@ -60,4 +60,22 @@ public class CoverPanelRegistry implements ISECoverPanelRegistry{
 		
 		return selectedFactory.fromItemStack(itemStack);
 	}
+
+	@Override
+	public ItemStack toItemStack(ISECoverPanel coverPanel) {
+		ISECoverPanelFactory selectedFactory = null;
+		for (ISECoverPanelFactory factory: factories){
+			if (factory.acceptCoverPanel(coverPanel)){
+				if (selectedFactory == null)
+					selectedFactory = factory;
+				else
+					throw new RuntimeException("More than one ISECoverPanelFactory accepts the ItemStack!");
+			}
+		}
+		
+		if (selectedFactory == null)
+			return null;
+		
+		return selectedFactory.getItemStack(coverPanel);
+	}
 }

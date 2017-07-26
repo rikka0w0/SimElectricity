@@ -316,7 +316,8 @@ public class TileCable extends SEEnergyTile implements ISECrowbarTarget, ISEGene
 		
 		//Spawn an item entity for player to pick up
 		if (!isCreativePlayer)
-			Utils.dropItemIntoWorld(worldObj, xCoord, yCoord, zCoord, coverPanel.getCoverPanelItem());
+			Utils.dropItemIntoWorld(worldObj, xCoord, yCoord, zCoord, 
+					SEEAPI.coverPanelRegistry.toItemStack(coverPanel));
 	}
 	
 	///////////////////////

@@ -498,6 +498,9 @@ public class BlockCable extends SEBlock implements ITileEntityProvider, ISESubBl
 	private boolean openGui(World world, int x, int y, int z, EntityPlayer player, ForgeDirection side){
 		RaytraceResult result = doRayTrace(world, x, y, z, player);
 		
+		if (result == null)
+			return false; //This is not suppose to happen, but just in case!
+			
 		if (result.hitCenter)
 			return false;
 		
@@ -594,7 +597,7 @@ public class BlockCable extends SEBlock implements ITileEntityProvider, ISESubBl
         		return createStackedBlock(getDamageValue(world, x, y, z));
         	}else{
                 ISEGenericCable cable = (ISEGenericCable) te;
-                return cable.getCoverPanelOnSide(result.sideHit).getCoverPanelItem();
+                return SEEAPI.coverPanelRegistry.toItemStack(cable.getCoverPanelOnSide(result.sideHit));
         	}
         }
         
@@ -628,7 +631,7 @@ public class BlockCable extends SEBlock implements ITileEntityProvider, ISESubBl
             for(ForgeDirection direction: ForgeDirection.VALID_DIRECTIONS){
             	ISECoverPanel coverPanel = cable.getCoverPanelOnSide(direction);
             	if (coverPanel != null){
-            		ret.add(coverPanel.getCoverPanelItem());
+            		ret.add(SEEAPI.coverPanelRegistry.toItemStack(coverPanel));
             	}
             }
         }

@@ -66,4 +66,16 @@ public class BCCoverFactory implements ISECoverPanelFactory{
 		
 		return facade;
 	}
+
+	@Override
+	public boolean acceptCoverPanel(ISECoverPanel coverPanel) {
+		return coverPanel instanceof BCFacadePanel;
+	}
+
+	@Override
+	public ItemStack getItemStack(ISECoverPanel coverPanel) {
+		BCFacadePanel facade = (BCFacadePanel) coverPanel;
+		
+		return facade.getItem();
+	}
 }
