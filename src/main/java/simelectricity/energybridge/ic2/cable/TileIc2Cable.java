@@ -75,7 +75,7 @@ public class TileIc2Cable extends TileCable implements IEnergyStorage, IEnergySi
 	@Override
 	public int getOutput() {
 		// TODO Auto-generated method stub
-		return 0;
+		return 1;
 	}
 
 	@Override
@@ -93,19 +93,19 @@ public class TileIc2Cable extends TileCable implements IEnergyStorage, IEnergySi
 	@Override
 	public boolean acceptsEnergyFrom(TileEntity emitter, ForgeDirection direction) {
 		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	@Override
 	public boolean emitsEnergyTo(TileEntity receiver, ForgeDirection direction) {
 		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	@Override
 	public double getOfferedEnergy() {
 		// TODO Auto-generated method stub
-		return 0;
+		return 128;
 	}
 
 	@Override
@@ -117,7 +117,7 @@ public class TileIc2Cable extends TileCable implements IEnergyStorage, IEnergySi
 	@Override
 	public int getSourceTier() {
 		// TODO Auto-generated method stub
-		return 0;
+		return 1;
 	}
 
 	@Override
