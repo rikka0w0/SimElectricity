@@ -192,7 +192,10 @@ public class EnergyNetDataProvider extends WorldSavedData{
 		this.markDirty();
 	}
 	
-	public void removeGridNode(GridNode gridNode){		
+	public void removeGridNode(GridNode gridNode){
+		if (gridNode == null)
+			return;			//TODO should we log this?
+		
 		for (GridNode affectedNeighbors: tileEntityGraph.removeGridVertex(gridNode)){
 			TileEntity te = affectedNeighbors.te;
 			if (te instanceof ISEGridTile)
@@ -204,6 +207,9 @@ public class EnergyNetDataProvider extends WorldSavedData{
 	}
 	
 	public void addGridConnection(GridNode node1, GridNode node2, double resistance){
+		if (node1 == null || node2 == null)
+			return;
+		
 		tileEntityGraph.addGridEdge(node1, node2, resistance);
 		
 		TileEntity te1 = node1.te;
@@ -218,6 +224,9 @@ public class EnergyNetDataProvider extends WorldSavedData{
 	}
 	
 	public void removeGridConnection(GridNode node1, GridNode node2){
+		if (node1 == null || node2 == null)
+			return;
+		
 		tileEntityGraph.removeGridEdge(node1, node2);
 		
 		TileEntity te1 = node1.te;
@@ -231,6 +240,37 @@ public class EnergyNetDataProvider extends WorldSavedData{
 		this.markDirty();
 	}
 
+	public void makeTransformer(GridNode primary, GridNode secondary, double ratio, double resistance){
+		if (primary == null || secondary == null)
+			return;
+		
+		tileEntityGraph.makeTransformer(primary, secondary, ratio, resistance);
+		
+		TileEntity te1 = primary.te;
+		TileEntity te2 = secondary.te;
+		
+		if (te1 instanceof ISEGridTile)
+			((ISEGridTile)te1).onGridNeighborUpdated();
+		if (te2 instanceof ISEGridTile)
+			((ISEGridTile)te2).onGridNeighborUpdated();
+		
+		this.markDirty();
+	}
+	
+	public void breakTransformer(GridNode node){
+		if (node == null)
+			return;
+		
+		tileEntityGraph.breakTransformer(node);
+		
+		TileEntity te = node.te;
+		
+		if (te instanceof ISEGridTile)
+			((ISEGridTile)te).onGridNeighborUpdated();
+		
+		this.markDirty();
+	}
+	
 	public void onGridTilePresent(TileEntity te){
 		ISEGridTile gridTile = (ISEGridTile)te;
 		GridNode gridObject = gridNodeMap.get(GridNode.getIDStringFromTileEntity(te));

@@ -84,6 +84,22 @@ public class EnergyNetSimulator{
 				//Cable - GridNode interconnection
 				if (gridNode.interConnection != null && gridNode.interConnection.isGridLinkEnabled)
 					currents[columnNode.index] -= (voltages[columnNode.index] - voltages[gridNode.interConnection.index])/gridNode.interConnection.resistance;	
+				
+				if (gridNode.type == GridNode.ISEGridNode_TransformerPrimary){
+					GridNode pri = gridNode;
+					GridNode sec = pri.complement;
+					double ratio = pri.ratio;
+					double res = pri.resistance;
+					currents[columnNode.index] -= (voltages[pri.index]*ratio*ratio/res) - (voltages[sec.index]*ratio/res);
+				}
+				
+				if (gridNode.type == GridNode.ISEGridNode_TransformerSecondary){
+					GridNode sec = gridNode;
+					GridNode pri = sec.complement;
+					double ratio = pri.ratio;
+					double res = pri.resistance;
+					currents[columnNode.index] -= -(voltages[pri.index]*ratio/res) + (voltages[sec.index]/res);
+				}
 			}
 
 			
@@ -127,13 +143,13 @@ public class EnergyNetSimulator{
     			TransformerSecondary sec = pri.secondary;
     			double ratio = pri.ratio;
     			double res = pri.rsec;
-    			currents[columnNode.index] -= (voltages[columnNode.index]*ratio*ratio/res) - (voltages[sec.index]*ratio/res);
+    			currents[columnNode.index] -= (voltages[pri.index]*ratio*ratio/res) - (voltages[sec.index]*ratio/res);
     		}else if (columnNode instanceof TransformerSecondary){
     			TransformerSecondary sec = (TransformerSecondary) columnNode;
     			TransformerPrimary pri = sec.primary;
     			double ratio = pri.ratio;
     			double res = pri.rsec;
-    			currents[columnNode.index] -= -(voltages[pri.index]*ratio/res) + (voltages[columnNode.index]/res);
+    			currents[columnNode.index] -= -(voltages[pri.index]*ratio/res) + (voltages[sec.index]/res);
     		}   		
     		
     		
@@ -206,6 +222,32 @@ public class EnergyNetSimulator{
 				if (gridNode.interConnection != null && gridNode.interConnection.isGridLinkEnabled){
 					diagonalElement += 1.0D / gridNode.interConnection.resistance;
 				}
+				
+				if (gridNode.type == GridNode.ISEGridNode_TransformerPrimary){
+					GridNode pri = gridNode;
+					GridNode sec = pri.complement;
+					double ratio = pri.ratio;
+					double res = pri.resistance;
+
+	       			int iPri = pri.index;
+	       			int iSec = sec.index;
+	       	
+	       			//Primary diagonal element
+	       			diagonalElement += ratio*ratio/res;
+	       			
+	       			//Off-diagonal elements
+	       			matrix.setElementValue(iPri, iSec, -ratio / res);
+	       			matrix.setElementValue(iSec, iPri, -ratio / res);
+				}
+				
+				if (gridNode.type == GridNode.ISEGridNode_TransformerSecondary){
+					GridNode sec = gridNode;
+					GridNode pri = sec.complement;
+					double ratio = pri.ratio;
+					double res = pri.resistance;
+					
+					diagonalElement += 1.0D / res;
+				}
 			}
 			
         	
@@ -256,7 +298,7 @@ public class EnergyNetSimulator{
         	//Transformer
         	else if (columnNode instanceof TransformerPrimary){
        			TransformerPrimary pri = (TransformerPrimary) columnNode;
-       			int iPri = columnIndex;
+       			int iPri = pri.index;
        			int iSec = pri.secondary.index;
        			
        			double ratio = pri.ratio;

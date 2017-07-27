@@ -52,6 +52,14 @@ public abstract class GridEvent implements IEnergyNetEvent{
 		}
 	}
 	
+	public static class BreakTranformer extends GridEvent{
+		protected ISEGridNode node;
+		public BreakTranformer(World world, ISEGridNode node) {
+			super(world);
+		}
+		
+	}
+	
 	public static class BreakConnection extends GridEvent{
 		protected ISEGridNode node1, node2;
 		public BreakConnection(World world, ISEGridNode node1, ISEGridNode node2) {
