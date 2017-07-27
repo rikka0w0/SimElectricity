@@ -8,6 +8,9 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
 
+import simelectricity.energybridge.ic2.cable.BlockIc2Cable;
+import simelectricity.essential.cable.render.RenderBlockCable;
+
 @Mod(modid = EnergyBridge.modid, name = "SimElectricity Energy Bridge", version = "1.0.0", dependencies = "required-after:sime_essential")
 public class EnergyBridge {
 	public static final String modid = "sime_energybridge";
@@ -18,13 +21,15 @@ public class EnergyBridge {
 	@Instance(EnergyBridge.modid)
 	public static EnergyBridge instance;
 	
+	public static BlockIc2Cable bicc;
+	
     /**
      * PreInitialize
      */
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {    
     	//Register Blocks
-    	
+    	bicc = new BlockIc2Cable();
     }
 	
     @EventHandler
@@ -34,5 +39,7 @@ public class EnergyBridge {
     	
         //Register GUI handler
         NetworkRegistry.INSTANCE.registerGuiHandler(this, proxy);   
+        
+        proxy.registerRenders();
     }
 }
