@@ -27,10 +27,18 @@ public interface IEnergyNetAgent {
 	
 	ISESimulatable newCable(TileEntity dataProviderTileEntity, boolean isGridInterConnectionPoint);
 	
-	ISEGridNode newGridNode(int x, int y, int z, byte type);
+	ISEGridNode newGridNode(int x, int y, int z);
 	
+	ISEGridNode getGridNodeAt(World world, int x, int y, int z);
+
 	boolean isNodeValid(World world, ISESimulatable node);
 	
+	
+	
+	
+	///////////////////////////
+	///Events
+	///////////////////////////	
     /**
      * Add a TileEntity to the energyNet
      */
@@ -49,4 +57,8 @@ public interface IEnergyNetAgent {
     void connectGridNode(World world, ISEGridNode node1, ISEGridNode node2, double resistance);
     
     void breakGridConnection(World world, ISEGridNode node1, ISEGridNode node2);
+    
+    void makeTransformer(World world, ISEGridNode primary, ISEGridNode secondary, double ratio, double resistance);
+    
+    void breakTransformer(World world, ISEGridNode node);
 }

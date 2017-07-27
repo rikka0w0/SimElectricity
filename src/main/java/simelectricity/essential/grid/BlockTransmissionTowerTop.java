@@ -208,7 +208,7 @@ public class BlockTransmissionTowerTop extends SEBlock implements ITileEntityPro
         if (world.isRemote)
             return; 
 
-        SEAPI.energyNetAgent.attachGridObject(world, SEAPI.energyNetAgent.newGridNode(x, y, z, (byte)0));
+        SEAPI.energyNetAgent.attachGridObject(world, SEAPI.energyNetAgent.newGridNode(x, y, z));
     }
     
     @Override

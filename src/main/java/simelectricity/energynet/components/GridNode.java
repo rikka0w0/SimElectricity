@@ -12,13 +12,15 @@ import simelectricity.api.node.ISESimulatable;
 import simelectricity.energynet.SEGraph;
 
 public class GridNode extends SEComponent implements ISEGridNode{
-	//public EnergyNetDataProvider gridDataProvider;
-	
-	//0 - transmission line 1 - transformer primary 2 - transformer secondary
-	private final byte type;
 	private final int x;
 	private final int y;
 	private final int z;
+	
+	//0 - transmission line 1 - transformer primary 2 - transformer secondary
+	public byte type;
+	//Transformer secondary/primary
+	public GridNode complement;
+	public double ratio, resistance;
 	
 	//Only stores resistances between GridNodes!
 	public LinkedList<Double> neighborR = new LinkedList<Double>();
@@ -27,16 +29,17 @@ public class GridNode extends SEComponent implements ISEGridNode{
 	public Cable interConnection = null;;
 	
 	//Only used for loading
-	private int neighborX[];
-	private int neighborY[];
-	private int neighborZ[];
+	private int[] neighborX;
+	private int[] neighborY;
+	private int[] neighborZ;
 	private double[] resistancesBuf;
+	private int complementX, complementY, complementZ;
 		
-	public GridNode(int x, int y, int z, byte type){
+	public GridNode(int x, int y, int z){
 		this.x = x;
 		this.y = y;
 		this.z = z;
-		this.type = type;
+		this.type = ISEGridNode.ISEGridNode_Wire;
 	}
 	
 	///////////////////////
@@ -52,6 +55,14 @@ public class GridNode extends SEComponent implements ISEGridNode{
 		this.neighborY = nbt.getIntArray("neigborY");
 		this.neighborZ = nbt.getIntArray("neigborZ");
 		
+		this.complementY = nbt.getInteger("complementY");
+		if (this.complementY>0){
+			this.complementX = nbt.getInteger("complementX");
+			this.complementZ = nbt.getInteger("complementZ");
+			this.ratio = nbt.getDouble("ratio");
+			this.resistance = nbt.getDouble("resistance");
+		}
+
 		
 		int numOfNeighbors = neighborX.length;
 		this.resistancesBuf = new double[numOfNeighbors];
@@ -67,6 +78,8 @@ public class GridNode extends SEComponent implements ISEGridNode{
 			
 			graph.addGridEdge(this, neighbor, resistancesBuf[i]);
 		}
+		
+		this.complement = gridNodeMap.get(getIDString(complementX, complementY, complementZ));
 	}
 	
 	///////////////////////
@@ -102,6 +115,16 @@ public class GridNode extends SEComponent implements ISEGridNode{
 		nbt.setIntArray("neigborX", neighborX);
 		nbt.setIntArray("neigborY", neighborY);
 		nbt.setIntArray("neigborZ", neighborZ);
+		
+		if (complement != null){
+			nbt.setInteger("complementX", complement.getXCoord());
+			nbt.setInteger("complementY", complement.getYCoord());
+			nbt.setInteger("complementZ", complement.getZCoord());
+		}else{
+			nbt.setInteger("complementY", -1);
+		}
+		nbt.setDouble("ratio", ratio);
+		nbt.setDouble("resistance", resistance);
 	}
 	
 	

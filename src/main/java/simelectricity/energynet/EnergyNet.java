@@ -26,6 +26,8 @@ import simelectricity.api.node.ISESimulatable;
 import simelectricity.common.ConfigManager;
 import simelectricity.common.SEUtils;
 import simelectricity.energynet.GridEvent.AppendNode;
+import simelectricity.energynet.GridEvent.BreakTranformer;
+import simelectricity.energynet.GridEvent.MakeTransformer;
 import simelectricity.energynet.GridEvent.RemoveNode;
 import simelectricity.energynet.components.GridNode;
 import simelectricity.energynet.components.SEComponent;
@@ -114,26 +116,27 @@ public final class EnergyNet extends EnergyNetSimulator implements Runnable{
 					dataProvider.addGridNode((GridNode) appendEvent.node);
 				}else if (event instanceof GridEvent.RemoveNode){
 					GridEvent.RemoveNode removeEvent = (RemoveNode) event;
-			    	if (removeEvent.node != null){
-			    		needOptimize = true;
-						calc = true;
-			    		dataProvider.removeGridNode((GridNode) removeEvent.node);
-			    	}
+			    	needOptimize = true;
+					calc = true;
+			    	dataProvider.removeGridNode((GridNode) removeEvent.node);
 				}else if (event instanceof GridEvent.Connect){
 					GridEvent.Connect connectEvent = ((GridEvent.Connect)event);
-			    	if (connectEvent.node1 != null && connectEvent.node2 != null){
-			    		needOptimize = true;
-						calc = true;
-			    		dataProvider.addGridConnection((GridNode) connectEvent.node1, (GridNode) connectEvent.node2, connectEvent.resistance);
-			    	}
+			    	needOptimize = true;
+					calc = true;
+			    	dataProvider.addGridConnection((GridNode) connectEvent.node1, (GridNode) connectEvent.node2, connectEvent.resistance);
 				}else if (event instanceof GridEvent.BreakConnection){
 					GridEvent.BreakConnection breakConEvent = ((GridEvent.BreakConnection)event);
-			    	
-			    	if (breakConEvent.node1 != null && breakConEvent.node2 != null){
-			    		needOptimize = true;
-						calc = true;
-			    		dataProvider.removeGridConnection((GridNode) breakConEvent.node1, (GridNode) breakConEvent.node2);
-			    	}
+			    	needOptimize = true;
+					calc = true;
+			    	dataProvider.removeGridConnection((GridNode) breakConEvent.node1, (GridNode) breakConEvent.node2);
+				}else if (event instanceof GridEvent.MakeTransformer){
+					GridEvent.MakeTransformer makeTranEvent = (MakeTransformer) event;
+					calc = true;
+			    	dataProvider.makeTransformer((GridNode) makeTranEvent.pri, (GridNode) makeTranEvent.sec, makeTranEvent.ratio, makeTranEvent.resistance);
+				}else if (event instanceof GridEvent.BreakTranformer){
+					GridEvent.BreakTranformer brkTranEvent = (BreakTranformer) event;
+					calc = true;
+					dataProvider.breakTransformer((GridNode) brkTranEvent.node);
 				}
 			}
 			

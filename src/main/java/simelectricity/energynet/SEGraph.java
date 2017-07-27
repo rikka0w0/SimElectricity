@@ -148,6 +148,9 @@ public class SEGraph {
         //Cut possible interconnection
         breakInterconnection(gridNode);
         
+        //Break transformer
+        breakTransformer(gridNode);
+        
         LinkedList<GridNode> ret = new LinkedList<GridNode>();
         
 		//Delete resistance properties of GridNodes
@@ -202,10 +205,10 @@ public class SEGraph {
 			}
 		}		
     }
+    
     ///////////////////////////////////
     /// Grid - Cable interconnection
     ///////////////////////////////////
-	
 	public void interconnection(Cable cable, GridNode gridNode){
 		gridNode.interConnection = cable;
 		cable.connectedGridNode = gridNode;
@@ -225,9 +228,38 @@ public class SEGraph {
 		}
 	}
     
-
-           
+    ///////////////////////////////////
+    /// Grid Transformer
+    ///////////////////////////////////
+	public void makeTransformer(GridNode primary, GridNode secondary, double ratio, double resistance){
+		primary.type = GridNode.ISEGridNode_TransformerPrimary;
+		primary.complement = secondary;
+		primary.ratio = ratio;
+		primary.resistance = resistance;
+		
+		primary.type = GridNode.ISEGridNode_TransformerSecondary;
+		secondary.complement = primary;
+		secondary.ratio = ratio;
+		secondary.resistance = resistance;
+	}
     
+	public void breakTransformer(GridNode node){
+		if (node.complement != null){
+			node.complement.type = GridNode.ISEGridNode_Wire;
+			node.complement.complement = null;
+			node.complement.ratio = 0;
+			node.complement.resistance = 0;
+		}
+		
+		node.type = GridNode.ISEGridNode_Wire;
+		node.complement = null;
+		node.ratio = 0;
+		node.resistance = 0;
+	}
+	
+	
+	
+	
     public void clearVoltageCache(){
     	for (SEComponent node : terminalNodes)
     		node.voltageCache = 0;

@@ -18,7 +18,6 @@ import simelectricity.api.ISECrowbarTarget;
 import simelectricity.api.SEAPI;
 import simelectricity.api.node.ISESimulatable;
 import simelectricity.api.tile.ISECableTile;
-import simelectricity.essential.BlockRegistry;
 import simelectricity.essential.api.ISECoverPanel;
 import simelectricity.essential.api.ISEElectricalCoverPanel;
 import simelectricity.essential.api.ISEElectricalLoadCoverPanel;
@@ -309,7 +308,7 @@ public class TileCable extends SEEnergyTile implements ISECrowbarTarget, ISEGene
 		
 		//Notify neighbor block that this side no longer emits redstone signal
 		if (coverPanel instanceof ISERedstoneEmitterCoverPanel)
-			worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, BlockRegistry.blockCable, side.getOpposite().ordinal());
+			worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, this.getBlockType(), side.getOpposite().ordinal());
 		
 		
 		onCableRenderingUpdateRequested();

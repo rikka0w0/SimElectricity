@@ -154,9 +154,21 @@ public class EnergyNetAgent implements IEnergyNetAgent{
 	}
 
 	@Override
-	public ISEGridNode newGridNode(int x, int y, int z, byte type){
-		return new GridNode(x, y, z, type);
+	public ISEGridNode newGridNode(int x, int y, int z){
+		return new GridNode(x, y, z);
 	}
+	
+	@Override
+	public ISEGridNode getGridNodeAt(World world, int x, int y, int z) {
+		EnergyNetAgent.getEnergyNetForWorld(world).dataProvider.getGridObjectAtCoord(x, y, z);
+		return null;
+	}
+	
+	@Override
+	public boolean isNodeValid(World world, ISESimulatable node) {
+		return EnergyNetAgent.getEnergyNetForWorld(world).isNodeValid(node);
+	}
+	
 	
 	@Override
     public void attachTile(TileEntity te) {
@@ -240,10 +252,11 @@ public class EnergyNetAgent implements IEnergyNetAgent{
             SEUtils.logInfo("Tileentity " + te + " has rejoined the energy network!", SEUtils.energyNet);
     }
     
+	
+	
+	
 	@Override
     public void attachGridObject(World world, ISEGridNode node) {
-    	EnergyNet energyNet = EnergyNetAgent.getEnergyNetForWorld(world);
-    	
     	EnergyNetAgent.getEnergyNetForWorld(world).addEvent(new GridEvent.AppendNode(world, node));
     	
     	/*if (energyNet.addGridNode(x, y, z, type)){
@@ -257,8 +270,6 @@ public class EnergyNetAgent implements IEnergyNetAgent{
     
 	@Override
     public void detachGridObject(World world, ISEGridNode node) {
-    	EnergyNet energyNet = EnergyNetAgent.getEnergyNetForWorld(world);
-
     	EnergyNetAgent.getEnergyNetForWorld(world).addEvent(new GridEvent.RemoveNode(world, node));
     	/*if (energyNet.removeGridNode(x, y, z)){
     		if (ConfigManager.showEnergyNetInfo)
@@ -271,8 +282,6 @@ public class EnergyNetAgent implements IEnergyNetAgent{
     
 	@Override
     public void connectGridNode(World world, ISEGridNode node1, ISEGridNode node2, double resistance) {
-    	EnergyNet energyNet = EnergyNetAgent.getEnergyNetForWorld(world);
-
     	EnergyNetAgent.getEnergyNetForWorld(world).addEvent(new GridEvent.Connect(world, node1, node2, resistance));
     	/*if (energyNet.addGridConnection(x1, y1, z1, x2, y2, z2, resistance)){
     		if (ConfigManager.showEnergyNetInfo)
@@ -287,8 +296,6 @@ public class EnergyNetAgent implements IEnergyNetAgent{
     
     @Override
 	public void breakGridConnection(World world, ISEGridNode node1, ISEGridNode node2) {
-    	EnergyNet energyNet = EnergyNetAgent.getEnergyNetForWorld(world);
-    	
     	EnergyNetAgent.getEnergyNetForWorld(world).addEvent(new GridEvent.BreakConnection(world, node1, node2));
     	/*if (energyNet.removeGridConnection(x1, y1, z1, x2, y2, z2)){
     		if (ConfigManager.showEnergyNetInfo)
@@ -302,7 +309,12 @@ public class EnergyNetAgent implements IEnergyNetAgent{
     }
 
 	@Override
-	public boolean isNodeValid(World world, ISESimulatable node) {
-		return EnergyNetAgent.getEnergyNetForWorld(world).isNodeValid(node);
+	public void makeTransformer(World world, ISEGridNode primary, ISEGridNode secondary, double resistance, double ratio) {
+		EnergyNetAgent.getEnergyNetForWorld(world).addEvent(new GridEvent.MakeTransformer(world, primary, secondary, resistance, ratio));
+	}
+
+	@Override
+	public void breakTransformer(World world, ISEGridNode node) {
+		EnergyNetAgent.getEnergyNetForWorld(world).addEvent(new GridEvent.BreakTranformer(world, node));
 	}
 }
