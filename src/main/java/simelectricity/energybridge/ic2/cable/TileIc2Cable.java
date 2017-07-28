@@ -116,20 +116,17 @@ public class TileIc2Cable extends TileCable implements IEnergyStorage, IEnergySi
 
 	@Override
 	public int getSourceTier() {
-		// TODO Auto-generated method stub
 		return 1;
 	}
 
 	@Override
 	public double getDemandedEnergy() {
-		// TODO Auto-generated method stub
-		return 0;
+		return 1;
 	}
 
 	@Override
 	public int getSinkTier() {
-		// TODO Auto-generated method stub
-		return 0;
+		return 1;
 	}
 
 	@Override
