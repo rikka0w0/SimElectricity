@@ -11,45 +11,50 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 import simelectricity.api.SEAPI;
 import simelectricity.essential.common.ContainerNoInventoryTwoPort;
-import simelectricity.essential.machines.tile.TileSwitch;
+import simelectricity.essential.machines.tile.TileCurrentSensor;
 import simelectricity.essential.utils.network.ISEButtonEventHandler;
 import simelectricity.essential.utils.network.ISEContainerUpdate;
 import simelectricity.essential.utils.network.MessageContainerSync;
 
-public class ContainerSwitch extends ContainerNoInventoryTwoPort<TileSwitch> implements ISEContainerUpdate, ISEButtonEventHandler{
-	public double resistance;
-	public boolean isOn;
-	public double maxCurrent;
-	public double current;
+public class ContainerCurrentSensor extends ContainerNoInventoryTwoPort<TileCurrentSensor> implements ISEContainerUpdate, ISEButtonEventHandler{
+	public double thresholdCurrent, resistance;
 	public ForgeDirection inputSide, outputSide;
+	public boolean absoluteMode, inverted;
 	
-	public ContainerSwitch(TileEntity tileEntity) {
+	public double current;
+	public boolean emitRedstoneSignal;
+	
+	public ContainerCurrentSensor(TileEntity tileEntity) {
 		super(tileEntity);
 	}
-	
+
 	@Override
 	public void detectAndSendChanges() {
-		double resistance = tileEntity.resistance;
-		boolean isOn = tileEntity.isOn;
-		double maxCurrent = tileEntity.maxCurrent;
-		double current = tileEntity.current;
+		double thresholdCurrent = tileEntity.thresholdCurrent, resistance = tileEntity.resistance;
 		ForgeDirection inputSide = tileEntity.inputSide, outputSide = tileEntity.outputSide;
+		boolean absoluteMode = tileEntity.absoluteMode, inverted = tileEntity.inverted;
+		double current = tileEntity.current;
+		boolean emitRedstoneSignal = tileEntity.emitRedstoneSignal;
 		
 		//Look for any changes
-		if (this.resistance == resistance &&
-			this.isOn == isOn &&
-			this.maxCurrent == maxCurrent &&
-			this.current == current &&
+		if (this.thresholdCurrent == thresholdCurrent &&
+			this.resistance == resistance &&
 			this.inputSide == inputSide &&
-			this.outputSide == outputSide)
+			this.outputSide == outputSide &&
+			this.absoluteMode == absoluteMode &&
+			this.inverted == inverted &&
+			this.current == current && 
+			this.emitRedstoneSignal == emitRedstoneSignal)
 			return;
 
+		this.thresholdCurrent = thresholdCurrent;
 		this.resistance = resistance;
-		this.isOn = isOn;
-		this.maxCurrent = maxCurrent;
-		this.current = current;
 		this.inputSide = inputSide;
 		this.outputSide = outputSide;
+		this.absoluteMode = absoluteMode;
+		this.inverted = inverted;
+		this.current = current;
+		this.emitRedstoneSignal = emitRedstoneSignal;
 		
 		//Send change to all crafter
     	Iterator<ICrafting> iterator = this.crafters.iterator();
@@ -57,7 +62,7 @@ public class ContainerSwitch extends ContainerNoInventoryTwoPort<TileSwitch> imp
     		ICrafting crafter = iterator.next();
     		
     		if (crafter instanceof EntityPlayerMP){
-    			MessageContainerSync.sendToClient((EntityPlayerMP)crafter, resistance, isOn, maxCurrent, current, inputSide, outputSide);
+    			MessageContainerSync.sendToClient((EntityPlayerMP)crafter, thresholdCurrent, resistance, inputSide, outputSide, absoluteMode, inverted, current, emitRedstoneSignal);
     		}
     	}
 	}
@@ -65,46 +70,45 @@ public class ContainerSwitch extends ContainerNoInventoryTwoPort<TileSwitch> imp
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void onDataArrivedFromServer(Object[] data) {
-		this.resistance = (Double) data[0];
-		this.isOn = (Boolean) data[1];
-		this.maxCurrent = (Double) data[2];
-		this.current = (Double) data[3];
-		this.inputSide = (ForgeDirection) data[4];
-		this.outputSide = (ForgeDirection) data[5];
+		this.thresholdCurrent = (Double) data[0];
+		this.resistance = (Double) data[1];
+		this.inputSide = (ForgeDirection) data[2];
+		this.outputSide = (ForgeDirection) data[3];
+		this.absoluteMode = (Boolean) data[4];
+		this.inverted = (Boolean) data[5];
+		this.current = (Double) data[6];
+		this.emitRedstoneSignal = (Boolean) data[7];
 	}
-
+	
 	@Override
 	public void onButtonPressed(int buttonID, boolean isCtrlPressed) {
 		double resistance = this.tileEntity.resistance;
-		double maxCurrent = this.tileEntity.maxCurrent;
-		boolean isOn = this.isOn;
-		
-		boolean isOnChanged = false;
-		
+		double thresholdCurrent = this.tileEntity.thresholdCurrent;
+				
         switch (buttonID) {
         case 0:
-        	maxCurrent -= 100;
+        	thresholdCurrent -= 100;
             break;
         case 1:
-        	maxCurrent -= 10;
+        	thresholdCurrent -= 10;
             break;
         case 2:
         	if (isCtrlPressed)
-        		maxCurrent -= 0.1;
+        		thresholdCurrent -= 0.1;
         	else
-        		maxCurrent -= 1;
+        		thresholdCurrent -= 1;
             break;
         case 3:
         	if (isCtrlPressed)
-        		maxCurrent += 0.1;
+        		thresholdCurrent += 0.1;
         	else
-        		maxCurrent += 1;
+        		thresholdCurrent += 1;
             break;
         case 4:
-        	maxCurrent += 10;
+        	thresholdCurrent += 10;
             break;
         case 5:
-        	maxCurrent += 100;
+        	thresholdCurrent += 100;
             break;
             
             
@@ -132,12 +136,6 @@ public class ContainerSwitch extends ContainerNoInventoryTwoPort<TileSwitch> imp
         case 11:
         	resistance += 1;
             break;
-            
-            
-        case 12:
-        	isOnChanged = true;
-        	isOn = !isOn;
-        	break;
         default:
         }
 
@@ -146,18 +144,19 @@ public class ContainerSwitch extends ContainerNoInventoryTwoPort<TileSwitch> imp
 	    if (resistance > 100)
 	        resistance = 100;
 	    
-	    if (maxCurrent < 0.1)
-	        maxCurrent = 0.1;
-	    if (maxCurrent > 1000)
-	        maxCurrent = 1000;
-			
-	    this.tileEntity.resistance = resistance;
-	    this.tileEntity.maxCurrent = maxCurrent;
-	    
-	    if (isOnChanged){
-	    	this.tileEntity.setSwitchStatus(isOn);
-	    }else{
+	    if (thresholdCurrent < 0.1)
+	    	thresholdCurrent = 0.1;
+	    if (thresholdCurrent > 1000)
+	    	thresholdCurrent = 1000;
+		
+	    if (tileEntity.resistance != resistance){
+	    	tileEntity.resistance = resistance;
 	    	SEAPI.energyNetAgent.updateTileParameter(this.tileEntity);
+	    }
+	    
+	    if (this.tileEntity.thresholdCurrent != thresholdCurrent){
+	    	this.tileEntity.thresholdCurrent = thresholdCurrent;
+	    	tileEntity.checkRedstoneStatus();
 	    }
 	}
 }

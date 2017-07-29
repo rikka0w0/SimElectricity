@@ -14,6 +14,7 @@ gui.sime:current=Current
 gui.sime:current_input=Input Current
 gui.sime:current_output=Output Current
 gui.sime:current_trip=Trip Current
+gui.sime:current_threshold=Threshold Current
 gui.sime:power_input=Input Power
 gui.sime:power_output=Output Power
 gui.sime:buffered_energy=Buffered Energy

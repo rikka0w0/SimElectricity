@@ -3,6 +3,7 @@ package simelectricity.essential.machines.gui;
 import org.lwjgl.opengl.GL11;
 
 import simelectricity.essential.Essential;
+import simelectricity.essential.utils.SEUnitHelper;
 import simelectricity.essential.utils.Utils;
 import simelectricity.essential.utils.client.GuiDirectionSelector;
 import simelectricity.essential.utils.client.SEGuiContainer;
@@ -29,8 +30,10 @@ public final class GuiAdjustableTransformer extends SEGuiContainer<ContainerAdju
         fontRendererObj.drawString(StatCollector.translateToLocal("gui.sime:ratio_step_up"), 18, 85, 4210752);
         fontRendererObj.drawString(StatCollector.translateToLocal("gui.sime:resistance_secondary"), 18, 124, 4210752);
         
-        fontRendererObj.drawString("1:" + String.format("%.1f", container.ratio), 32, 32, 4210752);
-        fontRendererObj.drawString(String.format("%.3f", container.outputResistance) + " \u03a9", 32, 47, 4210752);
+        fontRendererObj.drawString("1:" + String.format("%.1f", container.ratio), 74, 22, 4210752);
+        fontRendererObj.drawString(String.format("%.3f", container.outputResistance) + " \u03a9", 100, 56, 4210752);
+        fontRendererObj.drawString(SEUnitHelper.getVoltageStringWithUnit(container.vPri), 16, 30, 4210752);
+        fontRendererObj.drawString(SEUnitHelper.getVoltageStringWithUnit(container.vSec), 110, 30, 4210752);
     }
     
     @Override
@@ -38,6 +41,7 @@ public final class GuiAdjustableTransformer extends SEGuiContainer<ContainerAdju
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         mc.renderEngine.bindTexture(new ResourceLocation("sime_essential:textures/gui/adjustable_transformer.png"));
         this.drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
+        this.drawTexturedModalRect(guiLeft + 74, guiTop + 32, 176, 0, 28, 48);
               
         directionSelector.draw(container.inputSide, container.outputSide);
     }
@@ -64,7 +68,7 @@ public final class GuiAdjustableTransformer extends SEGuiContainer<ContainerAdju
         buttonList.add(new GuiButton(10, guiLeft + xbase + 100, 	guiTop + ybase + 38, 20, 20, "+.1"));
         buttonList.add(new GuiButton(11, guiLeft + xbase + 120, 	guiTop + ybase + 38, 20, 20, "+1"));
 
-        directionSelector = new GuiDirectionSelector(guiLeft + 132, guiTop + 50,
+        directionSelector = new GuiDirectionSelector(guiLeft + 24, guiTop + 52,
         		Utils.getPlayerSightHorizontal(Essential.proxy.getClientPlayer())
         		);
     }

@@ -658,12 +658,7 @@ public class BlockCable extends SEBlock implements ITileEntityProvider, ISESubBl
 	
 	///////////////////////
 	///Redstone
-	///////////////////////
-	@Override
-	public boolean canProvidePower() {
-		return true;
-	}
-	
+	///////////////////////	
 	@Override
 	public boolean canConnectRedstone(IBlockAccess world, int x, int y, int z, int iSide) {
 		TileEntity te = world.getTileEntity(x, y, z);

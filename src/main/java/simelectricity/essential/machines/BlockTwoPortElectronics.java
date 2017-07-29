@@ -8,6 +8,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
@@ -15,6 +16,7 @@ import simelectricity.essential.Essential;
 import simelectricity.essential.common.SEMachineBlock;
 import simelectricity.essential.common.SETwoPortMachine;
 import simelectricity.essential.machines.tile.TileAdjustableTransformer;
+import simelectricity.essential.machines.tile.TileCurrentSensor;
 import simelectricity.essential.machines.tile.TileDiode;
 import simelectricity.essential.machines.tile.TileSwitch;
 import simelectricity.essential.utils.Utils;
@@ -24,7 +26,7 @@ public class BlockTwoPortElectronics extends SEMachineBlock{
 	///Block Properties
 	///////////////////////////////
 	public BlockTwoPortElectronics() {
-		super("essential_two_port_electronics", new String[]{"adjustable_transformer","voltage_regulator","diode","switch"});
+		super("essential_two_port_electronics", new String[]{"adjustable_transformer","current_sensor","diode","switch"});
 	}
 
 	@Override
@@ -33,7 +35,7 @@ public class BlockTwoPortElectronics extends SEMachineBlock{
 		case 0:
 			return new TileAdjustableTransformer();
 		case 1:
-			return null;
+			return new TileCurrentSensor();
 		case 2:
 			return new TileDiode();
 		case 3:
@@ -57,13 +59,13 @@ public class BlockTwoPortElectronics extends SEMachineBlock{
 		iconBuffer[0][4] = iconRegister.registerIcon("sime_essential:machines/adjustable_transformer");
 		iconBuffer[0][5] = iconRegister.registerIcon("sime_essential:machines/adjustable_transformer");
 		
-		//Voltage Regulator
-		iconBuffer[1][0] = iconRegister.registerIcon("sime_essential:machines/voltage_regulator");
-		iconBuffer[1][1] = iconRegister.registerIcon("sime_essential:machines/voltage_regulator");
-		iconBuffer[1][2] = iconRegister.registerIcon("sime_essential:machines/voltage_regulator");
-		iconBuffer[1][3] = iconRegister.registerIcon("sime_essential:machines/voltage_regulator");
-		iconBuffer[1][4] = iconRegister.registerIcon("sime_essential:machines/voltage_regulator");
-		iconBuffer[1][5] = iconRegister.registerIcon("sime_essential:machines/voltage_regulator");
+		//Current Sensor
+		iconBuffer[1][0] = iconRegister.registerIcon("sime_essential:machines/current_sensor");
+		iconBuffer[1][1] = iconRegister.registerIcon("sime_essential:machines/current_sensor");
+		iconBuffer[1][2] = iconRegister.registerIcon("sime_essential:machines/current_sensor");
+		iconBuffer[1][3] = iconRegister.registerIcon("sime_essential:machines/current_sensor");
+		iconBuffer[1][4] = iconRegister.registerIcon("sime_essential:machines/current_sensor");
+		iconBuffer[1][5] = iconRegister.registerIcon("sime_essential:machines/current_sensor");
 		
 		//Diode
 		iconBuffer[2][0] = iconRegister.registerIcon("sime_essential:machines/diode");
@@ -126,11 +128,38 @@ public class BlockTwoPortElectronics extends SEMachineBlock{
             return;
 
         TileEntity te = world.getTileEntity(x, y, z);
-        
+               
         if (te instanceof SETwoPortMachine){
             ForgeDirection sight = Utils.getPlayerSight(player);
             ((SETwoPortMachine) te).setFacing(sight.getOpposite());
-            ((SETwoPortMachine) te).setFunctionalSide(sight.getOpposite(), sight);
+            
+            if (te instanceof TileSwitch)
+            	((SETwoPortMachine) te).setFunctionalSide(ForgeDirection.UP, ForgeDirection.DOWN);
+            else
+            	((SETwoPortMachine) te).setFunctionalSide(sight.getOpposite(), sight);
         }
     }
+    
+	///////////////////////
+	///Redstone
+	///////////////////////	
+	@Override
+	public boolean canConnectRedstone(IBlockAccess world, int x, int y, int z, int iSide) {
+		TileEntity te = world.getTileEntity(x, y, z);
+		
+		if (te instanceof TileCurrentSensor)
+			return true;
+		
+		return false;
+	}
+	
+	@Override
+	public int isProvidingWeakPower(IBlockAccess world, int x, int y, int z, int iSide) {
+		TileEntity te = world.getTileEntity(x, y, z);
+		
+		if (te instanceof TileCurrentSensor)
+			return ((TileCurrentSensor) te).emitRedstoneSignal ? 15 : 0;
+		
+		return 0;
+	}
 }

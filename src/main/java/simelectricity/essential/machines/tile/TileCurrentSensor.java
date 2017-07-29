@@ -10,12 +10,15 @@ import simelectricity.api.components.ISESwitch;
 import simelectricity.essential.common.SETwoPortMachine;
 import simelectricity.essential.machines.render.ISESocketProvider;
 
-public class TileSwitch extends SETwoPortMachine implements ISESwitch, IEnergyNetUpdateHandler, ISESocketProvider{
+public class TileCurrentSensor extends SETwoPortMachine implements ISESwitch, IEnergyNetUpdateHandler, ISESocketProvider{
 	public double current;
+	public boolean emitRedstoneSignal;
     
     public double resistance = 0.001;
-    public double maxCurrent = 1;
-    public boolean isOn = false;
+    public double thresholdCurrent = 1;
+    public boolean absoluteMode, inverted;
+    
+ 
 	
 	/////////////////////////////////////////////////////////
 	///TileEntity
@@ -25,8 +28,9 @@ public class TileSwitch extends SETwoPortMachine implements ISESwitch, IEnergyNe
         super.readFromNBT(tagCompound);
 
         resistance = tagCompound.getDouble("resistance");
-        maxCurrent = tagCompound.getDouble("maxCurrent");
-        isOn = tagCompound.getBoolean("isOn");
+        thresholdCurrent = tagCompound.getDouble("thresholdCurrent");
+        absoluteMode = tagCompound.getBoolean("absoluteMode");
+        inverted = tagCompound.getBoolean("inverted");
     }
 
     @Override
@@ -34,8 +38,9 @@ public class TileSwitch extends SETwoPortMachine implements ISESwitch, IEnergyNe
         super.writeToNBT(tagCompound);
 
         tagCompound.setDouble("resistance", resistance);
-        tagCompound.setDouble("maxCurrent", maxCurrent);
-        tagCompound.setBoolean("isOn", isOn);
+        tagCompound.setDouble("thresholdCurrent", thresholdCurrent);
+        tagCompound.setBoolean("absoluteMode", absoluteMode);
+        tagCompound.setBoolean("inverted", inverted);
     }
     
 	/////////////////////////////////////////////////////////
@@ -43,14 +48,9 @@ public class TileSwitch extends SETwoPortMachine implements ISESwitch, IEnergyNe
 	/////////////////////////////////////////////////////////
     @Override
     public void onEnergyNetUpdate() {
-    	if (isOn){
-        	current = SEAPI.energyNetAgent.getCurrentMagnitude(this.input);
-    	}else{
-    		current = 0;
-    	}
-
-        if (current > maxCurrent)
-        	setSwitchStatus(false);
+    	current = SEAPI.energyNetAgent.getCurrentMagnitude(this.input);
+    	
+    	checkRedstoneStatus();
     }
     
 	/////////////////////////////////////////////////////////
@@ -58,32 +58,12 @@ public class TileSwitch extends SETwoPortMachine implements ISESwitch, IEnergyNe
 	/////////////////////////////////////////////////////////
 	@Override
 	public boolean isOn(){
-		return isOn;
+		return true;
 	}
 
 	@Override
 	public double getResistance() {
 		return resistance;
-	}
-	
-	/////////////////////////////////////////////////////////
-	///Sync
-	/////////////////////////////////////////////////////////
-	@Override
-	public void prepareS2CPacketData(NBTTagCompound nbt){	
-		super.prepareS2CPacketData(nbt);
-		
-		nbt.setBoolean("isOn", isOn);
-	}
-	
-	@SideOnly(value = Side.CLIENT)
-	@Override
-	public void onSyncDataFromServerArrived(NBTTagCompound nbt){	
-		isOn = nbt.getBoolean("isOn");
-
-		this.markForRenderUpdate();
-		
-		super.onSyncDataFromServerArrived(nbt);
 	}
 	
     ///////////////////////////////////
@@ -100,13 +80,18 @@ public class TileSwitch extends SETwoPortMachine implements ISESwitch, IEnergyNe
 			return -1;
 	}
 	
-    ///////////////////////////////////
-    /// Utils
-    ///////////////////////////////////
-	public void setSwitchStatus(boolean isOn){
-        this.isOn = isOn;
-        SEAPI.energyNetAgent.updateTileParameter(this);
-        
-        this.markTileEntityForS2CSync();
+	///////////////////////////////////
+	private boolean setRedstone(boolean status){
+		if (emitRedstoneSignal != status){
+			emitRedstoneSignal = status;
+			worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, this.getBlockType());
+			return true;
+		}
+		return false;
+	}
+	
+	public void checkRedstoneStatus(){
+		double current = absoluteMode ? Math.abs(this.current) : this.current;
+		setRedstone((current > thresholdCurrent) ^ inverted);
 	}
 }

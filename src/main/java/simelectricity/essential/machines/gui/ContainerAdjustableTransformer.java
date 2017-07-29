@@ -19,6 +19,7 @@ import simelectricity.essential.utils.network.MessageContainerSync;
 public class ContainerAdjustableTransformer extends ContainerNoInventoryTwoPort<TileAdjustableTransformer> implements ISEContainerUpdate, ISEButtonEventHandler{
 	public double ratio, outputResistance;
 	public ForgeDirection inputSide, outputSide;
+	public double vPri, vSec;
 	
 	public ContainerAdjustableTransformer(TileEntity tileEntity) {
 		super(tileEntity);
@@ -28,18 +29,23 @@ public class ContainerAdjustableTransformer extends ContainerNoInventoryTwoPort<
 	public void detectAndSendChanges() {
 		double ratio = tileEntity.ratio, outputResistance = tileEntity.outputResistance;
 		ForgeDirection inputSide = tileEntity.inputSide, outputSide = tileEntity.outputSide;
+		double vPri = tileEntity.vPri, vSec = tileEntity.vSec;
 		
 		//Look for any changes
 		if (this.ratio == ratio &&
 			this.outputResistance == outputResistance &&
 			this.inputSide == inputSide &&
-			this.outputSide == outputSide)
+			this.outputSide == outputSide &&
+			this.vPri == vPri &&
+			this.vSec == vSec)
 			return;
 
 		this.ratio = ratio;
 		this.outputResistance = outputResistance;
 		this.inputSide = inputSide;
 		this.outputSide = outputSide;
+		this.vPri = vPri;
+		this.vSec = vSec;
 		
 		//Send change to all crafter
     	Iterator<ICrafting> iterator = this.crafters.iterator();
@@ -47,7 +53,7 @@ public class ContainerAdjustableTransformer extends ContainerNoInventoryTwoPort<
     		ICrafting crafter = iterator.next();
     		
     		if (crafter instanceof EntityPlayerMP){
-    			MessageContainerSync.sendToClient((EntityPlayerMP)crafter, ratio, outputResistance, inputSide, outputSide);
+    			MessageContainerSync.sendToClient((EntityPlayerMP)crafter, ratio, outputResistance, inputSide, outputSide, vPri, vSec);
     		}
     	}
 	}
@@ -59,6 +65,8 @@ public class ContainerAdjustableTransformer extends ContainerNoInventoryTwoPort<
 		this.outputResistance = (Double) data[1];
 		this.inputSide = (ForgeDirection) data[2];
 		this.outputSide = (ForgeDirection) data[3];
+		this.vPri = (Double) data[4];
+		this.vSec = (Double) data[5];
 	}
 	
 	@Override
@@ -121,7 +129,7 @@ public class ContainerAdjustableTransformer extends ContainerNoInventoryTwoPort<
 				ratio += 0.01;
 			break;
 		case 4:
-			outputResistance += 0.1;
+			ratio += 0.1;
 			break;
 		case 5:
 			if (isCtrlPressed)

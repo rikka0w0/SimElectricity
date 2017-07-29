@@ -25,6 +25,7 @@ import simelectricity.essential.grid.render.TileRenderTranmissionTowerBase;
 import simelectricity.essential.grid.render.TileRenderTransmissionTower2;
 import simelectricity.essential.machines.gui.GuiAdjustableResistor;
 import simelectricity.essential.machines.gui.GuiAdjustableTransformer;
+import simelectricity.essential.machines.gui.GuiCurrentSensor;
 import simelectricity.essential.machines.gui.GuiDiode;
 import simelectricity.essential.machines.gui.GuiQuantumGenerator;
 import simelectricity.essential.machines.gui.GuiSwitch;
@@ -32,6 +33,7 @@ import simelectricity.essential.machines.gui.GuiVoltageMeter;
 import simelectricity.essential.machines.render.BlockRenderMachine;
 import simelectricity.essential.machines.tile.TileAdjustableResistor;
 import simelectricity.essential.machines.tile.TileAdjustableTransformer;
+import simelectricity.essential.machines.tile.TileCurrentSensor;
 import simelectricity.essential.machines.tile.TileDiode;
 import simelectricity.essential.machines.tile.TileQuantumGenerator;
 import simelectricity.essential.machines.tile.TileSwitch;
@@ -106,6 +108,8 @@ public class ClientProxy extends CommonProxy{
 		
 		if (te instanceof TileAdjustableTransformer)
 			return new GuiAdjustableTransformer(container);
+		if (te instanceof TileCurrentSensor)
+			return new GuiCurrentSensor(container);
 		if (te instanceof TileDiode)
 			return new GuiDiode(container);
 		if (te instanceof TileSwitch)

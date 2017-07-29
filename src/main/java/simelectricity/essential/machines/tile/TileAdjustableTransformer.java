@@ -4,13 +4,17 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.ForgeDirection;
+import simelectricity.api.IEnergyNetUpdateHandler;
+import simelectricity.api.SEAPI;
 import simelectricity.api.components.ISETransformer;
 import simelectricity.essential.common.SETwoPortMachine;
 import simelectricity.essential.machines.render.ISESocketProvider;
 
-public class TileAdjustableTransformer extends SETwoPortMachine implements ISETransformer, ISESocketProvider{
+public class TileAdjustableTransformer extends SETwoPortMachine implements ISETransformer, IEnergyNetUpdateHandler, ISESocketProvider{
     //Input - primary, output - secondary
     public double ratio = 10, outputResistance = 1;
+    
+    public double vPri, vSec;
     
 	/////////////////////////////////////////////////////////
 	///TileEntity
@@ -29,6 +33,15 @@ public class TileAdjustableTransformer extends SETwoPortMachine implements ISETr
 
         tagCompound.setDouble("ratio", ratio);
         tagCompound.setDouble("outputResistance", outputResistance);
+    }
+    
+	/////////////////////////////////////////////////////////
+	///IEnergyNetUpdateHandler
+	/////////////////////////////////////////////////////////
+    @Override
+    public void onEnergyNetUpdate() {
+    	vPri = SEAPI.energyNetAgent.getVoltage(input);
+    	vSec = SEAPI.energyNetAgent.getVoltage(input.getComplement());
     }
     
 	/////////////////////////////////////////////////////////
