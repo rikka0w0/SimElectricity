@@ -16,7 +16,7 @@ public class TileCurrentSensor extends SETwoPortMachine implements ISESwitch, IE
     
     public double resistance = 0.001;
     public double thresholdCurrent = 1;
-    public boolean absoluteMode, inverted;
+    public boolean absMode, inverted;
     
  
 	
@@ -29,7 +29,7 @@ public class TileCurrentSensor extends SETwoPortMachine implements ISESwitch, IE
 
         resistance = tagCompound.getDouble("resistance");
         thresholdCurrent = tagCompound.getDouble("thresholdCurrent");
-        absoluteMode = tagCompound.getBoolean("absoluteMode");
+        absMode = tagCompound.getBoolean("absMode");
         inverted = tagCompound.getBoolean("inverted");
     }
 
@@ -39,7 +39,7 @@ public class TileCurrentSensor extends SETwoPortMachine implements ISESwitch, IE
 
         tagCompound.setDouble("resistance", resistance);
         tagCompound.setDouble("thresholdCurrent", thresholdCurrent);
-        tagCompound.setBoolean("absoluteMode", absoluteMode);
+        tagCompound.setBoolean("absMode", absMode);
         tagCompound.setBoolean("inverted", inverted);
     }
     
@@ -91,7 +91,7 @@ public class TileCurrentSensor extends SETwoPortMachine implements ISESwitch, IE
 	}
 	
 	public void checkRedstoneStatus(){
-		double current = absoluteMode ? Math.abs(this.current) : this.current;
+		double current = absMode ? Math.abs(this.current) : this.current;
 		setRedstone((current > thresholdCurrent) ^ inverted);
 	}
 }

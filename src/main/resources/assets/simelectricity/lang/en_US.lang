@@ -25,3 +25,4 @@ gui.sime:ratio_step_up=Step-up ratio
 gui.sime:resistance_secondary=Resistance(Ref. to Sec.)
 gui.sime:forward_biased=Forward Biased
 gui.sime:reverse_biased=Reverse Biasedz
+gui.sime:condition_threshold=Threshold Condition

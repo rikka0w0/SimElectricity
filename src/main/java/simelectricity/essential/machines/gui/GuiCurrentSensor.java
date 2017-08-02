@@ -28,11 +28,10 @@ public class GuiCurrentSensor extends SEGuiContainer<ContainerCurrentSensor>{
         fontRendererObj.drawString(StatCollector.translateToLocal("gui.sime:resistance_internal"), 18, 124, 4210752);
         
         int ybase = 22;
-        fontRendererObj.drawString(StatCollector.translateToLocal("gui.sime:current_threshold"), 10, ybase, 4210752);
-        fontRendererObj.drawString(SEUnitHelper.getCurrentStringWithUnit(container.thresholdCurrent), 10, ybase+8, 4210752);
-        fontRendererObj.drawString(StatCollector.translateToLocal("gui.sime:current"), 10, ybase+16, 4210752);
-        fontRendererObj.drawString(SEUnitHelper.getCurrentStringWithUnit(container.current), 10, ybase+24, 4210752);
-        fontRendererObj.drawString("Ron = " + String.format("%.3f", container.resistance) + " \u03a9", 10, ybase+32, 4210752);
+        fontRendererObj.drawString(StatCollector.translateToLocal("gui.sime:condition_threshold"), 10, ybase, 4210752);
+        fontRendererObj.drawString(container.conditionString, 10, ybase+8, 4210752);
+        fontRendererObj.drawString("I=" + SEUnitHelper.getCurrentStringWithUnit(container.current), 10, ybase+16, 4210752);
+        fontRendererObj.drawString("Ron = " + String.format("%.3f", container.resistance) + " \u03a9", 10, ybase+24, 4210752);
     }
 
     @Override
@@ -41,7 +40,7 @@ public class GuiCurrentSensor extends SEGuiContainer<ContainerCurrentSensor>{
         mc.renderEngine.bindTexture(new ResourceLocation("sime_essential:textures/gui/current_sensor.png"));
         this.drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
         
-        this.drawTexturedModalRect(guiLeft+130, guiTop+36, container.emitRedstoneSignal ? 180 : 176, 0, 4, 16);
+        this.drawTexturedModalRect(guiLeft+152, guiTop+44, container.emitRedstoneSignal ? 180 : 176, 0, 4, 16);
         
         directionSelector.draw(container.inputSide, container.outputSide);
     }
@@ -66,6 +65,9 @@ public class GuiCurrentSensor extends SEGuiContainer<ContainerCurrentSensor>{
         buttonList.add(new GuiButton(9, guiLeft + xbase + 70, 	guiTop + ybase + 38, 30, 20, "+.01"));
         buttonList.add(new GuiButton(10, guiLeft + xbase + 100, 	guiTop + ybase + 38, 20, 20, "+.1"));
         buttonList.add(new GuiButton(11, guiLeft + xbase + 120, 	guiTop + ybase + 38, 20, 20, "+1"));
+        
+        buttonList.add(new GuiButton(12, guiLeft + xbase + 50, guiTop + ybase - 36, 90, 20, "Toggle Behavior"));
+        buttonList.add(new GuiButton(13, guiLeft + xbase , guiTop + ybase - 36, 50, 20, "Abs()"));
         
         directionSelector = new GuiDirectionSelector(guiLeft + 116, guiTop + 20,
         		Utils.getPlayerSightHorizontal(Essential.proxy.getClientPlayer())

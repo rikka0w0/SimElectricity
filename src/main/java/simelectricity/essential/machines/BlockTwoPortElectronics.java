@@ -143,6 +143,16 @@ public class BlockTwoPortElectronics extends SEMachineBlock{
 	///////////////////////
 	///Redstone
 	///////////////////////	
+    @Override
+    public boolean shouldCheckWeakPower(IBlockAccess world, int x, int y, int z, int side){
+		TileEntity te = world.getTileEntity(x, y, z);
+		
+		if (te instanceof TileCurrentSensor)
+			return false;	//Use isProvidingWeakPower, to check redstone power
+		
+		return true;
+    }
+    
 	@Override
 	public boolean canConnectRedstone(IBlockAccess world, int x, int y, int z, int iSide) {
 		TileEntity te = world.getTileEntity(x, y, z);

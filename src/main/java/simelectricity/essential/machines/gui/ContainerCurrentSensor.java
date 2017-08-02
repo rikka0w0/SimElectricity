@@ -12,6 +12,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 import simelectricity.api.SEAPI;
 import simelectricity.essential.common.ContainerNoInventoryTwoPort;
 import simelectricity.essential.machines.tile.TileCurrentSensor;
+import simelectricity.essential.utils.SEUnitHelper;
 import simelectricity.essential.utils.network.ISEButtonEventHandler;
 import simelectricity.essential.utils.network.ISEContainerUpdate;
 import simelectricity.essential.utils.network.MessageContainerSync;
@@ -19,10 +20,13 @@ import simelectricity.essential.utils.network.MessageContainerSync;
 public class ContainerCurrentSensor extends ContainerNoInventoryTwoPort<TileCurrentSensor> implements ISEContainerUpdate, ISEButtonEventHandler{
 	public double thresholdCurrent, resistance;
 	public ForgeDirection inputSide, outputSide;
-	public boolean absoluteMode, inverted;
+	public boolean absMode, inverted;
 	
 	public double current;
 	public boolean emitRedstoneSignal;
+	
+	@SideOnly(Side.CLIENT)
+	public String conditionString;
 	
 	public ContainerCurrentSensor(TileEntity tileEntity) {
 		super(tileEntity);
@@ -32,7 +36,7 @@ public class ContainerCurrentSensor extends ContainerNoInventoryTwoPort<TileCurr
 	public void detectAndSendChanges() {
 		double thresholdCurrent = tileEntity.thresholdCurrent, resistance = tileEntity.resistance;
 		ForgeDirection inputSide = tileEntity.inputSide, outputSide = tileEntity.outputSide;
-		boolean absoluteMode = tileEntity.absoluteMode, inverted = tileEntity.inverted;
+		boolean absMode = tileEntity.absMode, inverted = tileEntity.inverted;
 		double current = tileEntity.current;
 		boolean emitRedstoneSignal = tileEntity.emitRedstoneSignal;
 		
@@ -41,7 +45,7 @@ public class ContainerCurrentSensor extends ContainerNoInventoryTwoPort<TileCurr
 			this.resistance == resistance &&
 			this.inputSide == inputSide &&
 			this.outputSide == outputSide &&
-			this.absoluteMode == absoluteMode &&
+			this.absMode == absMode &&
 			this.inverted == inverted &&
 			this.current == current && 
 			this.emitRedstoneSignal == emitRedstoneSignal)
@@ -51,7 +55,7 @@ public class ContainerCurrentSensor extends ContainerNoInventoryTwoPort<TileCurr
 		this.resistance = resistance;
 		this.inputSide = inputSide;
 		this.outputSide = outputSide;
-		this.absoluteMode = absoluteMode;
+		this.absMode = absMode;
 		this.inverted = inverted;
 		this.current = current;
 		this.emitRedstoneSignal = emitRedstoneSignal;
@@ -62,7 +66,7 @@ public class ContainerCurrentSensor extends ContainerNoInventoryTwoPort<TileCurr
     		ICrafting crafter = iterator.next();
     		
     		if (crafter instanceof EntityPlayerMP){
-    			MessageContainerSync.sendToClient((EntityPlayerMP)crafter, thresholdCurrent, resistance, inputSide, outputSide, absoluteMode, inverted, current, emitRedstoneSignal);
+    			MessageContainerSync.sendToClient((EntityPlayerMP)crafter, thresholdCurrent, resistance, inputSide, outputSide, absMode, inverted, current, emitRedstoneSignal);
     		}
     	}
 	}
@@ -74,16 +78,22 @@ public class ContainerCurrentSensor extends ContainerNoInventoryTwoPort<TileCurr
 		this.resistance = (Double) data[1];
 		this.inputSide = (ForgeDirection) data[2];
 		this.outputSide = (ForgeDirection) data[3];
-		this.absoluteMode = (Boolean) data[4];
+		this.absMode = (Boolean) data[4];
 		this.inverted = (Boolean) data[5];
 		this.current = (Double) data[6];
 		this.emitRedstoneSignal = (Boolean) data[7];
+		
+		this.conditionString = this.absMode ? "|I|" : "I";
+		this.conditionString += this.inverted ? "<" : ">";
+		this.conditionString += SEUnitHelper.getCurrentStringWithUnit(this.thresholdCurrent);
 	}
 	
 	@Override
 	public void onButtonPressed(int buttonID, boolean isCtrlPressed) {
 		double resistance = this.tileEntity.resistance;
 		double thresholdCurrent = this.tileEntity.thresholdCurrent;
+		boolean absMode = this.tileEntity.absMode;
+		boolean inverted = this.tileEntity.inverted;
 				
         switch (buttonID) {
         case 0:
@@ -136,6 +146,15 @@ public class ContainerCurrentSensor extends ContainerNoInventoryTwoPort<TileCurr
         case 11:
         	resistance += 1;
             break;
+            
+            
+        case 12:
+        	inverted = !inverted;
+        	break;
+        	
+        case 13:
+        	absMode = !absMode;
+        	break;
         default:
         }
 
@@ -156,6 +175,16 @@ public class ContainerCurrentSensor extends ContainerNoInventoryTwoPort<TileCurr
 	    
 	    if (this.tileEntity.thresholdCurrent != thresholdCurrent){
 	    	this.tileEntity.thresholdCurrent = thresholdCurrent;
+	    	tileEntity.checkRedstoneStatus();
+	    }
+	    
+	    if (tileEntity.inverted != inverted){
+	    	tileEntity.inverted = inverted;
+	    	tileEntity.checkRedstoneStatus();
+	    }
+	    
+	    if (tileEntity.absMode != absMode){
+	    	tileEntity.absMode = absMode;
 	    	tileEntity.checkRedstoneStatus();
 	    }
 	}

@@ -25,3 +25,4 @@ gui.sime:ratio_step_up=升压比
 gui.sime:resistance_secondary=内阻(参考次级侧)
 gui.sime:forward_biased=正向偏置
 gui.sime:reverse_biased=反向偏置
+gui.sime:condition_threshold=触发条件
