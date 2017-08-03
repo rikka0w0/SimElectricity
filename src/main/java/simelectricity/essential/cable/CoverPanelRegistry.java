@@ -5,8 +5,8 @@ import java.util.LinkedList;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
-import simelectricity.essential.api.ISECoverPanel;
 import simelectricity.essential.api.ISECoverPanelFactory;
+import simelectricity.essential.api.coverpanel.ISECoverPanel;
 import simelectricity.essential.api.internal.ISECoverPanelRegistry;
 
 public class CoverPanelRegistry implements ISECoverPanelRegistry{

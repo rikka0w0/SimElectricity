@@ -1,7 +1,7 @@
 package simelectricity.essential.api.internal;
 
-import simelectricity.essential.api.ISECoverPanel;
 import simelectricity.essential.api.ISECoverPanelFactory;
+import simelectricity.essential.api.coverpanel.ISECoverPanel;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 

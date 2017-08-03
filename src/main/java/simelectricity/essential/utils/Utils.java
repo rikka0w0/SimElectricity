@@ -110,6 +110,10 @@ public class Utils {
 	}
 	
 	public static void chat(EntityPlayer player, String text) {
+        player.addChatMessage(new ChatComponentText(text));
+    }
+	
+	public static void chatWithLocalization(EntityPlayer player, String text) {
         player.addChatMessage(new ChatComponentText(StatCollector.translateToLocal(text)));
     }
 	

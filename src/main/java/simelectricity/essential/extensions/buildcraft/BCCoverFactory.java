@@ -10,8 +10,8 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import simelectricity.essential.api.ISECoverPanel;
 import simelectricity.essential.api.ISECoverPanelFactory;
+import simelectricity.essential.api.coverpanel.ISECoverPanel;
 
 public class BCCoverFactory implements ISECoverPanelFactory{
 	@Override

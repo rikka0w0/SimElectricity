@@ -1,5 +1,6 @@
 package simelectricity.essential.api;
 
+import simelectricity.essential.api.coverpanel.ISECoverPanel;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 

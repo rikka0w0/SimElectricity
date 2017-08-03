@@ -26,6 +26,7 @@ item.sime_essential:essential_item.voltagesensor.name=Voltage Sensor
 item.sime_essential:essential_tools.crowbar.name=Crowbar
 item.sime_essential:essential_tools.wrench.name=Wrench
 item.sime_essential:essential_tools.glove.name=Glove
+item.sime_essential:essential_tools.multimeter.name=Multimeter
 
 # Message
 chat.sime_essential:tranmission_tower_selected=You have selected a transmission tower

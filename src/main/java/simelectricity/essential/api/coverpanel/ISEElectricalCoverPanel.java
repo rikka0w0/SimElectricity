@@ -1,4 +1,4 @@
-package simelectricity.essential.api;
+package simelectricity.essential.api.coverpanel;
 
 /**
  *	Able to respond to EnergyNet update;

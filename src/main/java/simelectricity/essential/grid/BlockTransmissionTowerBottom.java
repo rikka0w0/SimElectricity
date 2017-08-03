@@ -194,7 +194,7 @@ public class BlockTransmissionTowerBottom extends SEBlock implements ISEHVCableC
 	}
 
 	@Override
-	public ISEGridNode getGridNode(World world, int x, int y, int z) {
+	public ISEGridNode getNode(World world, int x, int y, int z){
 		int meta = world.getBlockMetadata(x, y, z);
 		int[] coord = getCenterBoxCoord(x, y, z, meta);
 		coord[1] += 18;

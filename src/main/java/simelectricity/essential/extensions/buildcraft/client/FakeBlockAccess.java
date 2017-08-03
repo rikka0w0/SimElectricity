@@ -2,8 +2,8 @@ package simelectricity.essential.extensions.buildcraft.client;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import simelectricity.essential.api.ISECoverPanel;
 import simelectricity.essential.api.ISEGenericCable;
+import simelectricity.essential.api.coverpanel.ISECoverPanel;
 import simelectricity.essential.extensions.buildcraft.BCFacadePanel;
 
 import net.minecraft.block.Block;

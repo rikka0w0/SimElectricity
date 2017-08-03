@@ -1,5 +1,6 @@
 package simelectricity.essential.api;
 
+import simelectricity.essential.api.coverpanel.ISECoverPanel;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.common.util.ForgeDirection;
 

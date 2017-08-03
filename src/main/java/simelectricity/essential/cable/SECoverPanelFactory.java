@@ -3,8 +3,8 @@ package simelectricity.essential.cable;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import simelectricity.essential.ItemRegistry;
-import simelectricity.essential.api.ISECoverPanel;
 import simelectricity.essential.api.ISECoverPanelFactory;
+import simelectricity.essential.api.coverpanel.ISECoverPanel;
 import simelectricity.essential.items.ItemMisc;
 
 public class SECoverPanelFactory implements ISECoverPanelFactory{

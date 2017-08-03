@@ -1,5 +1,6 @@
-package simelectricity.essential.api;
+package simelectricity.essential.api.coverpanel;
 
+import simelectricity.essential.api.client.ISECoverPanelRender;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.nbt.NBTTagCompound;

@@ -139,7 +139,7 @@ public class BlockCableJoint extends SEBlock implements ITileEntityProvider, ISE
 	}
 
 	@Override
-	public ISEGridNode getGridNode(World world, int x, int y, int z) {
+	public ISEGridNode getNode(World world, int x, int y, int z) {
 		TileEntity te = world.getTileEntity(x, y, z);
 		if (te instanceof ISEGridTile)
 			return ((ISEGridTile) te).getGridNode();

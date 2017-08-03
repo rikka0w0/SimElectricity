@@ -392,7 +392,7 @@ public class BlockTransmissionTower2 extends SEBlock implements ITileEntityProvi
 	}
 
 	@Override
-	public ISEGridNode getGridNode(World world, int x, int y, int z) {
+	public ISEGridNode getNode(World world, int x, int y, int z){
 		TileEntity te = getCenterTileFromRodPos(world, x, y, z);
 		
 		if (te instanceof ISEGridTile)

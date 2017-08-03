@@ -1,7 +1,7 @@
 package simelectricity.essential.cable.render;
 
-import simelectricity.essential.api.ISECoverPanel;
 import simelectricity.essential.api.ISEGenericCable;
+import simelectricity.essential.api.coverpanel.ISECoverPanel;
 import simelectricity.essential.cable.BlockCable;
 import simelectricity.essential.utils.client.SERenderHelper;
 

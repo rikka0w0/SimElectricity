@@ -26,6 +26,7 @@ item.sime_essential:essential_item.voltagesensor.name=电压检测板
 item.sime_essential:essential_tools.crowbar.name=撬棍
 item.sime_essential:essential_tools.wrench.name=扳手
 item.sime_essential:essential_tools.glove.name=手套
+item.sime_essential:essential_tools.multimeter.name=万用表
 
 # Message
 chat.sime_essential:tranmission_tower_selected=你选择了一个输电塔

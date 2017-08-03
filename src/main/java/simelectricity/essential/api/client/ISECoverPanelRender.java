@@ -1,5 +1,7 @@
-package simelectricity.essential.api;
+package simelectricity.essential.api.client;
 
+import simelectricity.essential.api.ISEGenericCable;
+import simelectricity.essential.api.coverpanel.ISECoverPanel;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.renderer.RenderBlocks;

@@ -11,9 +11,9 @@ import net.minecraftforge.common.util.ForgeDirection;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import simelectricity.essential.api.ISECoverPanel;
-import simelectricity.essential.api.ISECoverPanelRender;
 import simelectricity.essential.api.ISEGenericCable;
+import simelectricity.essential.api.client.ISECoverPanelRender;
+import simelectricity.essential.api.coverpanel.ISECoverPanel;
 import simelectricity.essential.utils.client.SERenderHelper;
 
 public abstract class GenericPanelRender<TYPE extends ISECoverPanel> implements ISECoverPanelRender<ISECoverPanel>{

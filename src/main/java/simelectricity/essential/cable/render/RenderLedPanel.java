@@ -2,8 +2,8 @@ package simelectricity.essential.cable.render;
 
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.util.IIcon;
-import simelectricity.essential.api.ISECoverPanelRender;
 import simelectricity.essential.api.ISEGenericCable;
+import simelectricity.essential.api.client.ISECoverPanelRender;
 import simelectricity.essential.cable.LedPanel;
 
 public class RenderLedPanel extends GenericPanelRender<LedPanel>{

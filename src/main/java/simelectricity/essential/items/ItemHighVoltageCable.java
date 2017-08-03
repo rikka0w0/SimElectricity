@@ -82,30 +82,30 @@ public class ItemHighVoltageCable extends SEItem{
                 lastCoordinate[0] = x;
                 lastCoordinate[1] = y;
                 lastCoordinate[2] = z;
-                Utils.chat(player, "chat.sime_essential:tranmission_tower_selected");
+                Utils.chatWithLocalization(player, "chat.sime_essential:tranmission_tower_selected");
         	}else{
-        		Utils.chat(player, EnumChatFormatting.RED + "chat.sime_essential:tranmission_tower_too_many_connection");
+        		Utils.chatWithLocalization(player, EnumChatFormatting.RED + "chat.sime_essential:tranmission_tower_too_many_connection");
         	}
         }else{
         	Block neighbor = world.getBlock(lastCoordinate[0], lastCoordinate[1], lastCoordinate[2]);
         	
         	if (neighbor instanceof ISEHVCableConnector){
         		ISEHVCableConnector connector2 = (ISEHVCableConnector) neighbor;
-            	ISEGridNode node1 = connector1.getGridNode(world, x, y, z);
-            	ISEGridNode node2 = connector2.getGridNode(world, lastCoordinate[0], lastCoordinate[1], lastCoordinate[2]);
+            	ISEGridNode node1 = (ISEGridNode) connector1.getNode(world, x, y, z);
+            	ISEGridNode node2 = (ISEGridNode) connector2.getNode(world, lastCoordinate[0], lastCoordinate[1], lastCoordinate[2]);
         		
             	if (node1 == node2){
-            		Utils.chat(player, EnumChatFormatting.RED + StatCollector.translateToLocal("chat.sime_essential:tranmission_tower_recursive_connection"));
+            		Utils.chatWithLocalization(player, EnumChatFormatting.RED + StatCollector.translateToLocal("chat.sime_essential:tranmission_tower_recursive_connection"));
             	}else if (!connector1.canHVCableConnect(world, x, y, z)){
-            		Utils.chat(player, EnumChatFormatting.RED + StatCollector.translateToLocal("chat.sime_essential:tranmission_tower_current_selection_invalid"));
+            		Utils.chatWithLocalization(player, EnumChatFormatting.RED + StatCollector.translateToLocal("chat.sime_essential:tranmission_tower_current_selection_invalid"));
             	}else if (!connector2.canHVCableConnect(world, lastCoordinate[0], lastCoordinate[1], lastCoordinate[2])){
-            		Utils.chat(player, EnumChatFormatting.RED + StatCollector.translateToLocal("chat.sime_essential:tranmission_tower_last_selection_invalid"));
+            		Utils.chatWithLocalization(player, EnumChatFormatting.RED + StatCollector.translateToLocal("chat.sime_essential:tranmission_tower_last_selection_invalid"));
             	}else{
             		double distance = SEMathHelper.distanceOf(node1.getXCoord(), node1.getZCoord(), node2.getXCoord(), node2.getZCoord());
                     if (distance < 5) {
-                    	Utils.chat(player, EnumChatFormatting.RED + StatCollector.translateToLocal("chat.sime_essential:tranmission_tower_too_close") + EnumChatFormatting.RESET);
+                    	Utils.chatWithLocalization(player, EnumChatFormatting.RED + StatCollector.translateToLocal("chat.sime_essential:tranmission_tower_too_close") + EnumChatFormatting.RESET);
                     }else if (distance > 200){
-                    	Utils.chat(player, EnumChatFormatting.RED + StatCollector.translateToLocal("chat.sime_essential:tranmission_tower_too_far") + EnumChatFormatting.RESET);
+                    	Utils.chatWithLocalization(player, EnumChatFormatting.RED + StatCollector.translateToLocal("chat.sime_essential:tranmission_tower_too_far") + EnumChatFormatting.RESET);
                     }else{
                     	double resistance = distance * resistivityList[itemStack.getItemDamage()];	//Calculate the resistance
                     	if (node1 != null && node2 != null &&
@@ -113,12 +113,12 @@ public class ItemHighVoltageCable extends SEItem{
                         	SEAPI.energyNetAgent.isNodeValid(world, node2)){
                         		
                         		SEAPI.energyNetAgent.connectGridNode(world, node1, node2, resistance);
-                        		Utils.chat(player, StatCollector.translateToLocal("chat.sime_essential:tranmission_tower_connected"));
+                        		Utils.chatWithLocalization(player, StatCollector.translateToLocal("chat.sime_essential:tranmission_tower_connected"));
                         	}
                     }
             	}
         	}else{
-        		Utils.chat(player, EnumChatFormatting.RED + StatCollector.translateToLocal("chat.sime_essential:tranmission_tower_current_selection_invalid"));
+        		Utils.chatWithLocalization(player, EnumChatFormatting.RED + StatCollector.translateToLocal("chat.sime_essential:tranmission_tower_current_selection_invalid"));
         	}
         	
             lastCoordinate[0] = 0;

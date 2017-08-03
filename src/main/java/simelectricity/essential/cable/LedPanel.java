@@ -5,10 +5,10 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import simelectricity.essential.api.ISECoverPanelRender;
-import simelectricity.essential.api.ISEElectricalLoadCoverPanel;
-import simelectricity.essential.api.ISEIuminousCoverPanel;
 import simelectricity.essential.api.ISEIuminousCoverPanelHost;
+import simelectricity.essential.api.client.ISECoverPanelRender;
+import simelectricity.essential.api.coverpanel.ISEElectricalLoadCoverPanel;
+import simelectricity.essential.api.coverpanel.ISEIuminousCoverPanel;
 import simelectricity.essential.cable.render.RenderLedPanel;
 
 public class LedPanel implements ISEElectricalLoadCoverPanel, ISEIuminousCoverPanel{
