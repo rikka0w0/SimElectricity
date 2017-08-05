@@ -5,6 +5,7 @@ import simelectricity.essential.api.SEEAPI;
 import simelectricity.essential.cable.CableWatchEventHandler;
 import simelectricity.essential.cable.CoverPanelRegistry;
 import simelectricity.essential.cable.SECoverPanelFactory;
+import simelectricity.essential.common.multiblock.MultiBlockRegistry;
 import simelectricity.essential.extensions.ExtensionBuildCraft;
 import simelectricity.essential.extensions.ExtensionRailCraft;
 import simelectricity.essential.fluids.FluidManager;
@@ -41,6 +42,8 @@ public class Essential {
     	ItemRegistry.registerItems();
     	BlockRegistry.registerBlocks();
     	FluidManager.registerFluids();
+    	
+    	MultiBlockRegistry.registerMultiBlocks();
     	
     	SEEAPI.coverPanelRegistry = new CoverPanelRegistry();
         

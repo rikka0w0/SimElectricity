@@ -1,9 +1,9 @@
 package simelectricity.essential.utils;
 
 public class BlockPos implements Comparable<BlockPos> {
-	public int x;
-	public int y;
-	public int z;
+	private int x;
+	private int y;
+	private int z;
 	
 	public BlockPos(int x, int y, int z) {
 		this.x = x;
