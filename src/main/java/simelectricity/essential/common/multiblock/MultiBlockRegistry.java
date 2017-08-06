@@ -2,6 +2,8 @@ package simelectricity.essential.common.multiblock;
 
 import java.util.LinkedList;
 
+import cpw.mods.fml.common.registry.GameRegistry;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 
@@ -26,5 +28,9 @@ public class MultiBlockRegistry {
 	
 	public static boolean onBlockPlaced(World world, int x, int y, int z, int side, EntityPlayer player){
 		return false;
+	}
+
+	public static void registerTE() {
+		GameRegistry.registerTileEntity(TileMBTest.class, "mbtest");
 	}
 }

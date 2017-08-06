@@ -58,7 +58,7 @@ public class Essential {
     @EventHandler
     public void init(FMLInitializationEvent event) {
     	BlockRegistry.registerTileEntities();
-    	
+    	MultiBlockRegistry.registerTE();
     	proxy.registerRenders();
     	
     	MinecraftForge.EVENT_BUS.register(new CableWatchEventHandler());
