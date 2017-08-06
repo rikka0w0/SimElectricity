@@ -47,7 +47,7 @@ public class BlockMBTest extends SEBlock implements ITileEntityProvider{
 	@Override
 	public void breakBlock(World world, int x, int y, int z, Block block, int meta) {
 		if (meta == 1)
-			System.out.println(qaq.restoreStructure(world.getTileEntity(x, y, z), block, meta));
+			qaq.restoreStructure(world.getTileEntity(x, y, z), block, meta);
 		
 		super.breakBlock(world, x, y, z, block, meta);
 	}

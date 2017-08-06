@@ -9,6 +9,17 @@ public class MultiBlockTileInfo {
 	public final int xOffset, yOffset, zOffset;
 	public final int xOrigin, yOrigin, zOrigin;
 	
+	/**
+	 * Structure creation
+	 * @param facing
+	 * @param mirrored
+	 * @param xOffset
+	 * @param yOffset
+	 * @param zOffset
+	 * @param xOrigin
+	 * @param yOrigin
+	 * @param zOrigin
+	 */
 	public MultiBlockTileInfo(ForgeDirection facing, boolean mirrored, int xOffset, int yOffset, int zOffset, int xOrigin, int yOrigin, int zOrigin){
 		this.facing = facing;
 		this.mirrored = mirrored;
@@ -18,6 +29,7 @@ public class MultiBlockTileInfo {
 		this.xOrigin = xOrigin;
 		this.yOrigin = yOrigin;
 		this.zOrigin = zOrigin;
+		this.formed = true;
 	}
 	
 	public MultiBlockTileInfo(NBTTagCompound nbt){
@@ -29,6 +41,7 @@ public class MultiBlockTileInfo {
 		this.xOrigin = nbt.getInteger("xOrigin");
 		this.yOrigin = nbt.getInteger("yOrigin");
 		this.zOrigin = nbt.getInteger("zOrigin");
+		this.formed = nbt.getBoolean("formed");
 	}
 	
 	public void saveToNBT(NBTTagCompound nbt){
@@ -40,5 +53,8 @@ public class MultiBlockTileInfo {
 		nbt.setInteger("xOrigin", xOrigin);
 		nbt.setInteger("yOrigin", yOrigin);
 		nbt.setInteger("zOrigin", zOrigin);
+		nbt.setBoolean("formed", formed);
 	}
+	
+	public boolean formed;
 }

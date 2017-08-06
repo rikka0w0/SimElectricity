@@ -28,4 +28,9 @@ public class TileMBTest extends SETileEntity implements ISEMultiBlockTile{
 	public MultiBlockTileInfo getMultiBlockTileInfo() {
 		return this.mbInfo;
 	}
+
+	@Override
+	public void onStructureRemoved() {
+		System.out.println("Structure Removed");
+	}
 }

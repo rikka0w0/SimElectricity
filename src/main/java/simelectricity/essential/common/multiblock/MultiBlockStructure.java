@@ -156,9 +156,12 @@ public class MultiBlockStructure {
 		return null;
 	}
 
-	public boolean restoreStructure(TileEntity te, Block blockJustRemoved, int metaJustRemoved){
+	public void restoreStructure(TileEntity te, Block blockJustRemoved, int metaJustRemoved){
 		if (te instanceof ISEMultiBlockTile){
 			MultiBlockTileInfo mbInfo = ((ISEMultiBlockTile) te).getMultiBlockTileInfo();
+			if (!mbInfo.formed)
+				return;
+			
 			World world = te.getWorldObj();
 
 			int rotation = mbInfo.facing.ordinal() - 2;
@@ -197,6 +200,8 @@ public class MultiBlockStructure {
 								theMeta = world.getBlockMetadata(x, y, z);
 								
 								if (theBlock != null && !blockInfo.isDifferent2(theBlock, theMeta)){
+									TileEntity te2 = world.getTileEntity(x, y, z);
+									((ISEMultiBlockTile)te2).getMultiBlockTileInfo().formed = false;
 									world.setBlock(x, y, z, blockInfo.block, blockInfo.meta, 0x3);
 								}
 							}
@@ -208,10 +213,8 @@ public class MultiBlockStructure {
 				}
 			}
 			
-			return correctStructure;
+			((ISEMultiBlockTile) te).onStructureRemoved();
 		}
-		System.out.println("!");
-		return false;
 	}
 	
 	public static int[] offsetFromOrigin(BlockInfo[][][] configuration, int rotation, boolean mirrored, int x, int y, int z){
@@ -387,10 +390,10 @@ public class MultiBlockStructure {
 							TileEntity te = world.getTileEntity(x, y, z);
 							
 							if (te instanceof ISEMultiBlockTile){
-								((ISEMultiBlockTile) te).onStructureCreated(
-										new MultiBlockTileInfo(
+								MultiBlockTileInfo mbInfo = new MultiBlockTileInfo(
 										facing, mirrored, offset[0], offset[1], offset[2], xOriginActual, yOriginActual, zOriginActual
-										));
+										);
+								((ISEMultiBlockTile) te).onStructureCreated(mbInfo);
 							}
 						}
 					
