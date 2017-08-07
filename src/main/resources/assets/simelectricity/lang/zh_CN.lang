@@ -2,7 +2,7 @@
 itemGroup.simelectricity=SimElectricity
 
 # Items
-item.sime:SEManagementTool.name=能源网管理工具
+item.sime:semanagementtool.name=能源网管理工具
 
 # Gui
 gui.sime:voltage=电压

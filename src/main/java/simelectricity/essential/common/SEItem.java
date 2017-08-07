@@ -12,7 +12,6 @@ import simelectricity.essential.Essential;
 
 public abstract class SEItem extends Item{	
 	@Deprecated
-
 	protected String registryName;	//1.11.2 compatibility
 	
 	/**

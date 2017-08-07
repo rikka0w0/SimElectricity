@@ -11,7 +11,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
 public class ItemSEMgrTool extends Item{
-	public final static String name = "SEManagementTool";
+	public final static String name = "semanagementtool";
     public ItemSEMgrTool() {
         setUnlocalizedName(name);
         setHasSubtypes(true);
@@ -29,7 +29,7 @@ public class ItemSEMgrTool extends Item{
     @Override
     @SideOnly(Side.CLIENT)
     public void registerIcons(IIconRegister r) {
-        itemIcon = r.registerIcon("simelectricity:Item_ManagementTools");
+        itemIcon = r.registerIcon("simelectricity:semanagementtool");
     }
     
     @Override

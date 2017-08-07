@@ -32,7 +32,7 @@ public class ItemHighVoltageCable extends SEItem{
 		super("essential_hv_cable", true);
 		this.lastCoordinates = new HashMap<EntityPlayer, int[]>();
 		
-		this.iconCache = new IIcon[this.getUnlocalizedName().length()];
+		this.iconCache = new IIcon[subNames.length];
 	}
 
 	@Override

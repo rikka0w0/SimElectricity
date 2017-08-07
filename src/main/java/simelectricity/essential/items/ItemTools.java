@@ -36,7 +36,7 @@ public class ItemTools extends SEItem {
 		this.setMaxStackSize(1);
 		this.setMaxDamage(0);
 		
-		this.iconCache = new IIcon[this.getUnlocalizedName().length()];
+		this.iconCache = new IIcon[subNames.length];
 	}
 
 	@Override

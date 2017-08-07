@@ -15,7 +15,7 @@ public class ItemMisc extends SEItem{
 	public ItemMisc() {
 		super("essential_item", true);
 		
-		this.iconCache = new IIcon[this.getUnlocalizedName().length()];
+		this.iconCache = new IIcon[subNames.length];
 	}
 
 	@Override
