@@ -17,15 +17,16 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 
 import simelectricity.essential.Essential;
-import simelectricity.essential.common.SEMachineBlock;
-import simelectricity.essential.common.SETwoPortMachine;
+import simelectricity.essential.client.semachine.ISESidedTextureBlock;
+import simelectricity.essential.common.semachine.SEMachineBlock;
+import simelectricity.essential.common.semachine.SETwoPortMachine;
 import simelectricity.essential.machines.tile.TileAdjustableTransformer;
 import simelectricity.essential.machines.tile.TileCurrentSensor;
 import simelectricity.essential.machines.tile.TileDiode;
 import simelectricity.essential.machines.tile.TileSwitch;
 import simelectricity.essential.utils.Utils;
 
-public class BlockTwoPortElectronics extends SEMachineBlock{
+public class BlockTwoPortElectronics extends SEMachineBlock implements ISESidedTextureBlock{
 	public static String subNames[] = new String[]{"adjustable_transformer","current_sensor","diode","switch"};
 	
 	///////////////////////////////
@@ -73,6 +74,21 @@ public class BlockTwoPortElectronics extends SEMachineBlock{
 		if (te instanceof TileSwitch && !((TileSwitch) te).isOn)
 			return true;
 		return false;
+	}
+	
+	@Override
+	@SideOnly(Side.CLIENT)
+	public String getModelNameFrom(IBlockState blockState) {
+		int meta = blockState.getValue(this.propertyMeta);
+		return "electronics_"+subNames[meta];
+	}
+	
+	@Override
+	@SideOnly(Side.CLIENT)
+	public boolean hasSecondState(IBlockState state){
+		int meta = this.getMetaFromState(state);
+
+		return meta == 3;
 	}
 	
 	@Override

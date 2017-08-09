@@ -3,9 +3,6 @@ package simelectricity.essential.items;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
@@ -21,7 +18,6 @@ import simelectricity.api.node.ISEGridNode;
 import simelectricity.essential.api.ISEHVCableConnector;
 import simelectricity.essential.client.ISESimpleTextureItem;
 import simelectricity.essential.common.SEItem;
-import simelectricity.essential.utils.SEMathHelper;
 import simelectricity.essential.utils.Utils;
 
 public class ItemHighVoltageCable extends SEItem implements ISESimpleTextureItem{

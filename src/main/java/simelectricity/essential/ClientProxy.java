@@ -1,6 +1,7 @@
 package simelectricity.essential;
 
 import simelectricity.essential.client.CustomModelLoader;
+import simelectricity.essential.client.semachine.SEMachineStateMapper;
 import simelectricity.essential.common.ISEGuiProvider;
 import simelectricity.essential.machines.gui.GuiAdjustableResistor;
 import simelectricity.essential.machines.gui.GuiAdjustableTransformer;
@@ -9,7 +10,6 @@ import simelectricity.essential.machines.gui.GuiDiode;
 import simelectricity.essential.machines.gui.GuiQuantumGenerator;
 import simelectricity.essential.machines.gui.GuiSwitch;
 import simelectricity.essential.machines.gui.GuiVoltageMeter;
-import simelectricity.essential.machines.render.SEMachineStateMapper;
 import simelectricity.essential.machines.tile.TileAdjustableResistor;
 import simelectricity.essential.machines.tile.TileAdjustableTransformer;
 import simelectricity.essential.machines.tile.TileCurrentSensor;

@@ -6,8 +6,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import simelectricity.api.IEnergyNetUpdateHandler;
 import simelectricity.api.SEAPI;
 import simelectricity.api.components.ISEVoltageSource;
-import simelectricity.essential.common.SESinglePortMachine;
-import simelectricity.essential.machines.render.ISESocketProvider;
+import simelectricity.essential.common.semachine.ISESocketProvider;
+import simelectricity.essential.common.semachine.SESinglePortMachine;
 
 public class TileVoltageMeter extends SESinglePortMachine implements ISEVoltageSource, IEnergyNetUpdateHandler, ISESocketProvider{
     public double voltage = 0;

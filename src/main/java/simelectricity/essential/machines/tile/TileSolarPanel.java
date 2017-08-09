@@ -6,8 +6,8 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import simelectricity.api.SEAPI;
 import simelectricity.api.components.ISEVoltageSource;
-import simelectricity.essential.common.SESinglePortMachine;
-import simelectricity.essential.machines.render.ISESocketProvider;
+import simelectricity.essential.common.semachine.ISESocketProvider;
+import simelectricity.essential.common.semachine.SESinglePortMachine;
 
 public class TileSolarPanel extends SESinglePortMachine implements ISEVoltageSource, ISESocketProvider, ITickable{
     //Component parameters

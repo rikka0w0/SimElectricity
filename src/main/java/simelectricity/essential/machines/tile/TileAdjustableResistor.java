@@ -8,8 +8,8 @@ import net.minecraft.util.ITickable;
 import simelectricity.api.IEnergyNetUpdateHandler;
 import simelectricity.api.SEAPI;
 import simelectricity.api.components.ISEVoltageSource;
-import simelectricity.essential.common.SESinglePortMachine;
-import simelectricity.essential.machines.render.ISESocketProvider;
+import simelectricity.essential.common.semachine.ISESocketProvider;
+import simelectricity.essential.common.semachine.SESinglePortMachine;
 
 public class TileAdjustableResistor extends SESinglePortMachine implements ISEVoltageSource, IEnergyNetUpdateHandler, ISESocketProvider, ITickable{
 	//Component parameters

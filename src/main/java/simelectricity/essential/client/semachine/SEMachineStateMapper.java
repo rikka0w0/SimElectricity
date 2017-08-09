@@ -1,6 +1,6 @@
-package simelectricity.essential.machines.render;
+package simelectricity.essential.client.semachine;
 
-import simelectricity.essential.common.SEMachineBlock;
+import simelectricity.essential.common.semachine.SEMachineBlock;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -29,9 +29,13 @@ public class SEMachineStateMapper extends StateMapperBase{
 			ISESidedTextureBlock stBlock = (ISESidedTextureBlock) block;
 			
 			String modelName = stBlock.getModelNameFrom(state);
+			boolean has2State = stBlock.hasSecondState(state);
+			
+			String varStr = (has2State ? "2" : "1") + modelName;
+			
 			ModelResourceLocation res = new ModelResourceLocation(
 					this.domain + ":" + VPATH,
-					modelName
+					varStr
 					);
 			return res;
 		}
@@ -45,7 +49,9 @@ public class SEMachineStateMapper extends StateMapperBase{
 	}
 	
 	public static IModel loadModel(String domain, String resPath, String variantStr) throws Exception {
-		IModel model = new SEMachineRawModel(domain, variantStr, false);
+		boolean has2State = variantStr.startsWith("2");
+		variantStr = variantStr.substring(1);
+		IModel model = new SEMachineRawModel(domain, variantStr, has2State);
 		return model;
 	}
 	

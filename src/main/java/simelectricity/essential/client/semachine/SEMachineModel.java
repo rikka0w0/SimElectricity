@@ -1,4 +1,4 @@
-package simelectricity.essential.machines.render;
+package simelectricity.essential.client.semachine;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,7 +8,7 @@ import javax.vecmath.Matrix4f;
 
 import org.apache.commons.lang3.tuple.Pair;
 
-import simelectricity.essential.common.ExtendedProperties;
+import simelectricity.essential.common.semachine.ExtendedProperties;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -36,20 +36,22 @@ public class SEMachineModel implements IPerspectiveAwareModel {
 	}
 	@Override
 	public List<BakedQuad> getQuads(@Nullable IBlockState blockState, @Nullable EnumFacing side, long rand) {
-	    if (!(blockState instanceof IExtendedBlockState)) {
-		      return firstState[2].getQuads(blockState, side, rand);
-		}
-		
-		//List<BakedQuad> quadsList = new LinkedList<BakedQuad>();
-		
+	    if (!(blockState instanceof IExtendedBlockState))
+	    	//Normally this should not happen, just in case, to prevent crashing
+	    	return firstState[2].getQuads(blockState, side, rand);
+				
 		IExtendedBlockState exBlockState = (IExtendedBlockState)blockState;
 		EnumFacing facing = exBlockState.getValue(ExtendedProperties.propertyFacing);
-	    
+	    boolean is2State = exBlockState.getValue(ExtendedProperties.propertIs2State);
+		
 		if (facing == null)
 			return firstState[2].getQuads(blockState, side, rand);
 	    
-		//System.out.println(facing);
-		return firstState[facing.ordinal()].getQuads(blockState, side, rand);
+		List<BakedQuad> selectedModel = is2State ? 
+				secondState[facing.ordinal()].getQuads(blockState, side, rand) :
+				firstState[facing.ordinal()].getQuads(blockState, side, rand);
+		
+		return selectedModel;
 	}
 	
 	@Override

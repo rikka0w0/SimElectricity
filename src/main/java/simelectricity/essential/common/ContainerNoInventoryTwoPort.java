@@ -3,6 +3,7 @@ package simelectricity.essential.common;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import simelectricity.api.SEAPI;
+import simelectricity.essential.common.semachine.SETwoPortMachine;
 import simelectricity.essential.utils.network.ISEDirectionSelectorEventHandler;
 
 public abstract class ContainerNoInventoryTwoPort<TYPE extends SETwoPortMachine> extends ContainerNoInventory<TYPE> implements ISEDirectionSelectorEventHandler{

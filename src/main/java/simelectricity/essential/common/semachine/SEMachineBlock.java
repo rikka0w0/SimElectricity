@@ -1,4 +1,4 @@
-package simelectricity.essential.common;
+package simelectricity.essential.common.semachine;
 
 import java.util.ArrayList;
 
@@ -6,6 +6,9 @@ import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
 import simelectricity.api.ISidedFacing;
 import simelectricity.api.SEAPI;
+import simelectricity.essential.common.ISESubBlock;
+import simelectricity.essential.common.SEItemBlock;
+import simelectricity.essential.common.SEMetaBlock;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -63,6 +66,7 @@ public abstract class SEMachineBlock extends SEMetaBlock implements ITileEntityP
 	@Override
 	protected void createUnlistedProperties(ArrayList<IUnlistedProperty> properties){
 		properties.add(ExtendedProperties.propertyFacing);
+		properties.add(ExtendedProperties.propertIs2State);
 	}
 	
 	@Override
@@ -74,6 +78,7 @@ public abstract class SEMachineBlock extends SEMetaBlock implements ITileEntityP
 			if (te instanceof ISidedFacing){
 				EnumFacing facing = ((ISidedFacing) te).getFacing();
 				retval = retval.withProperty(ExtendedProperties.propertyFacing, facing);
+				retval = retval.withProperty(ExtendedProperties.propertIs2State, isSecondState(te));
 			}
 			
 			return retval;

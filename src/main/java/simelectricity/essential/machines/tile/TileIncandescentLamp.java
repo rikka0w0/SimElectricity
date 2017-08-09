@@ -6,8 +6,8 @@ import net.minecraft.util.EnumFacing;
 import simelectricity.api.IEnergyNetUpdateHandler;
 import simelectricity.api.SEAPI;
 import simelectricity.api.components.ISEVoltageSource;
-import simelectricity.essential.common.SESinglePortMachine;
-import simelectricity.essential.machines.render.ISESocketProvider;
+import simelectricity.essential.common.semachine.ISESocketProvider;
+import simelectricity.essential.common.semachine.SESinglePortMachine;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 

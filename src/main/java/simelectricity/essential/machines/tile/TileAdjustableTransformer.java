@@ -7,8 +7,8 @@ import net.minecraft.util.EnumFacing;
 import simelectricity.api.IEnergyNetUpdateHandler;
 import simelectricity.api.SEAPI;
 import simelectricity.api.components.ISETransformer;
-import simelectricity.essential.common.SETwoPortMachine;
-import simelectricity.essential.machines.render.ISESocketProvider;
+import simelectricity.essential.common.semachine.ISESocketProvider;
+import simelectricity.essential.common.semachine.SETwoPortMachine;
 
 public class TileAdjustableTransformer extends SETwoPortMachine implements ISETransformer, IEnergyNetUpdateHandler, ISESocketProvider{
     //Input - primary, output - secondary

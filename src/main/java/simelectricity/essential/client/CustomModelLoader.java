@@ -1,6 +1,6 @@
 package simelectricity.essential.client;
 
-import simelectricity.essential.machines.render.SEMachineStateMapper;
+import simelectricity.essential.client.semachine.SEMachineStateMapper;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.item.Item;

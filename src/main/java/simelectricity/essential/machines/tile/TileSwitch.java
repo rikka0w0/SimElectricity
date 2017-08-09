@@ -7,8 +7,8 @@ import net.minecraft.util.EnumFacing;
 import simelectricity.api.IEnergyNetUpdateHandler;
 import simelectricity.api.SEAPI;
 import simelectricity.api.components.ISESwitch;
-import simelectricity.essential.common.SETwoPortMachine;
-import simelectricity.essential.machines.render.ISESocketProvider;
+import simelectricity.essential.common.semachine.ISESocketProvider;
+import simelectricity.essential.common.semachine.SETwoPortMachine;
 
 public class TileSwitch extends SETwoPortMachine implements ISESwitch, IEnergyNetUpdateHandler, ISESocketProvider{
 	public double current;

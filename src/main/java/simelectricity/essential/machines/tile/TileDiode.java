@@ -6,8 +6,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import simelectricity.api.IEnergyNetUpdateHandler;
 import simelectricity.api.SEAPI;
 import simelectricity.api.components.ISEDiode;
-import simelectricity.essential.common.SETwoPortMachine;
-import simelectricity.essential.machines.render.ISESocketProvider;
+import simelectricity.essential.common.semachine.ISESocketProvider;
+import simelectricity.essential.common.semachine.SETwoPortMachine;
 
 public class TileDiode extends SETwoPortMachine implements ISEDiode, IEnergyNetUpdateHandler, ISESocketProvider{
 	public double inputVoltage, outputVoltage;

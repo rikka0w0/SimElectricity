@@ -1,8 +1,5 @@
 package simelectricity.essential.items;
 
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
 import simelectricity.api.SEAPI;
 import simelectricity.essential.client.ISESimpleTextureItem;
 import simelectricity.essential.common.SEItem;

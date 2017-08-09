@@ -26,7 +26,7 @@ public final class GuiVoltageMeter extends SEGuiContainer<ContainerVoltageMeter>
         //draw text and stuff here
         //the parameters for drawString are: string, x, y, color
 
-        fontRendererObj.drawString(I18n.translateToLocal("tile.sime:VoltageMeter.name"), 8, 6, 4210752);
+        fontRendererObj.drawString(I18n.translateToLocal("tile.sime_essential:essential_electronics.voltage_meter.name"), 8, 6, 4210752);
         fontRendererObj.drawString("Voltage: " + SEUnitHelper.getVoltageStringWithUnit(container.voltage), 18, 22, 4210752);
 
         //draws "Inventory" or your regional equivalent

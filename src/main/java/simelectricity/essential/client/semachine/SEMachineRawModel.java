@@ -1,4 +1,4 @@
-package simelectricity.essential.machines.render;
+package simelectricity.essential.client.semachine;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -119,7 +119,7 @@ public class SEMachineRawModel implements IModel{
 				IModel model = this.models[i];
 				IModelState actualState = MultiModelState.getPartState(state, model, i);
 				IBakedModel bakedModel = model.bake(actualState, format, bakedTextureGetter);
-				secondStateModel[i] = bakedModel;
+				secondStateModel[i-6] = bakedModel;
 			}
 		}
 		

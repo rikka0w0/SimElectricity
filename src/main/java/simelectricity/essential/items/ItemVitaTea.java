@@ -4,7 +4,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import simelectricity.api.SEAPI;
-import simelectricity.essential.Essential;
 import simelectricity.essential.client.ISESimpleTextureItem;
 import simelectricity.essential.common.SEItem;
 

@@ -1,4 +1,4 @@
-package simelectricity.essential.machines.render;
+package simelectricity.essential.common.semachine;
 
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;

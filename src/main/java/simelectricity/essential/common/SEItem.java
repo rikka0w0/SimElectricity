@@ -1,8 +1,5 @@
 package simelectricity.essential.common;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;

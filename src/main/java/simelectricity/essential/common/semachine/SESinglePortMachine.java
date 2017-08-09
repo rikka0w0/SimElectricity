@@ -1,20 +1,21 @@
-package simelectricity.essential.common;
+package simelectricity.essential.common.semachine;
 
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
+import simelectricity.api.ISEWrenchable;
 import simelectricity.api.ISidedFacing;
 import simelectricity.api.SEAPI;
 import simelectricity.api.components.ISEComponentParameter;
 import simelectricity.api.node.ISESubComponent;
 import simelectricity.api.tile.ISETile;
+import simelectricity.essential.common.SEEnergyTile;
 
-public class SETwoPortMachine extends SEEnergyTile implements ISidedFacing, ISETile, ISEComponentParameter {
-	public EnumFacing inputSide = EnumFacing.SOUTH;
-	public EnumFacing outputSide = EnumFacing.NORTH;
+public abstract class SESinglePortMachine extends SEEnergyTile implements ISidedFacing, ISEWrenchable, ISETile, ISEComponentParameter {
+	protected EnumFacing functionalSide = EnumFacing.SOUTH;
 	protected EnumFacing facing = EnumFacing.NORTH;
-	protected ISESubComponent input = SEAPI.energyNetAgent.newComponent(this, this);
+	protected ISESubComponent circuit = SEAPI.energyNetAgent.newComponent(this, this);
 	
 	///////////////////////////////////
     /// TileEntity
@@ -22,18 +23,15 @@ public class SETwoPortMachine extends SEEnergyTile implements ISidedFacing, ISET
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
-
-        inputSide = EnumFacing.getFront(tagCompound.getByte("inputSide"));
-        outputSide = EnumFacing.getFront((tagCompound.getByte("outputSide")));
+        
+        functionalSide = EnumFacing.getFront(tagCompound.getByte("functionalSide"));
         facing = EnumFacing.getFront((tagCompound.getByte("facing")));
     }
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
-        tagCompound.setByte("inputSide", (byte) inputSide.ordinal());
-        tagCompound.setByte("outputSide", (byte) outputSide.ordinal());
+        tagCompound.setByte("functionalSide", (byte) functionalSide.ordinal());
         tagCompound.setByte("facing", (byte) facing.ordinal());
-        
         return super.writeToNBT(tagCompound);
     }
 
@@ -57,6 +55,20 @@ public class SETwoPortMachine extends SEEnergyTile implements ISidedFacing, ISET
         return true;
     }
     
+    
+    ///////////////////////////////////
+    /// ISEWrenchable
+    ///////////////////////////////////
+    @Override
+    public void onWrenchAction(EnumFacing side, boolean isCreativePlayer) {
+    	SetFunctionalSide(side);
+    }
+
+    @Override
+    public boolean canWrenchBeUsed(EnumFacing side) {
+        return true;
+    }
+    
 	/////////////////////////////////////////////////////////
 	///Sync
 	/////////////////////////////////////////////////////////
@@ -64,16 +76,14 @@ public class SETwoPortMachine extends SEEnergyTile implements ISidedFacing, ISET
 	public void prepareS2CPacketData(NBTTagCompound nbt){
 		super.prepareS2CPacketData(nbt);
 		
-        nbt.setByte("inputSide", (byte) inputSide.ordinal());
-        nbt.setByte("outputSide", (byte) outputSide.ordinal());
+		nbt.setByte("functionalSide", (byte)functionalSide.ordinal());
 		nbt.setByte("facing", (byte)facing.ordinal());
 	}
 	
     @SideOnly(value = Side.CLIENT)
 	@Override
 	public void onSyncDataFromServerArrived(NBTTagCompound nbt){
-        inputSide = EnumFacing.getFront(nbt.getByte("inputSide"));
-        outputSide = EnumFacing.getFront((nbt.getByte("outputSide")));
+		functionalSide = EnumFacing.getFront(nbt.getByte("functionalSide"));
 		facing = EnumFacing.getFront(nbt.getByte("facing"));
 		
 		// Flag 1 - update Rendering Only!
@@ -87,23 +97,18 @@ public class SETwoPortMachine extends SEEnergyTile implements ISidedFacing, ISET
 	/////////////////////////////////////////////////////////
 	@Override
 	public ISESubComponent getComponent(EnumFacing side){
-		if (side == inputSide)
-			return input;
-		else if (side == outputSide)
-			return input.getComplement();
-		else 
-			return null;
+		return side == functionalSide ? circuit : null;
 	}
 	
 	/////////////////////////////////////////////////////////
-	/// Utils
+	///Utils
 	/////////////////////////////////////////////////////////
-	public void setFunctionalSide(EnumFacing input, EnumFacing output){
-		this.inputSide = input;
-		this.outputSide = output;
-		
+	public void SetFunctionalSide(EnumFacing side) {
+        functionalSide = side;
+        
         this.markTileEntityForS2CSync();
         //this.worldObj.notifyBlockChange(xCoord, yCoord, zCoord, this.getBlockType());
+        //TODO: QAQ!
         
         if (this.isAddedToEnergyNet)
         	SEAPI.energyNetAgent.updateTileConnection(this);
