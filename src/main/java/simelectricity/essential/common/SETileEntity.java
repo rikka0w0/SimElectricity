@@ -58,7 +58,7 @@ public abstract class SETileEntity extends TileEntity{
     {	
 		
 		if (world.isRemote){
-			System.out.println("[DEBUG]:Client recived INDIVIDUAL tileSync packet");	//Debug
+			//System.out.println("[DEBUG]:Client recived INDIVIDUAL tileSync packet");	//Debug
 			
 			//This is supposed to be Client ONLY!
 			//SPacketUpdateTileEntity starts with S, means that this packet is sent from server to client
@@ -91,7 +91,7 @@ public abstract class SETileEntity extends TileEntity{
 		super.readFromNBT(tag);
 		
 		if (world.isRemote){
-			System.out.println("[DEBUG]:Client recived CHUNK tileSync packet");	//Debug
+			//System.out.println("[DEBUG]:Client recived CHUNK tileSync packet");	//Debug
 			
 			onSyncDataFromServerArrived(tag);
 		}

@@ -1,11 +1,14 @@
 package simelectricity.essential.machines.render;
 
-import simelectricity.essential.client.ISESidedTextureBlock;
+import simelectricity.essential.common.SEMachineBlock;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.StateMapperBase;
+import net.minecraft.item.ItemBlock;
 import net.minecraftforge.client.model.IModel;
+import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -44,5 +47,16 @@ public class SEMachineStateMapper extends StateMapperBase{
 	public static IModel loadModel(String domain, String resPath, String variantStr) throws Exception {
 		IModel model = new SEMachineRawModel(domain, variantStr, false);
 		return model;
+	}
+	
+	public void register(SEMachineBlock block){
+		ModelLoader.setCustomStateMapper(block, this);
+		
+		ItemBlock itemBlock = block.getItemBlock();
+		for (int meta: block.propertyMeta.getAllowedValues()){
+			IBlockState blockState = block.getStateFromMeta(meta);
+			ModelResourceLocation res = this.getModelResourceLocation(blockState);
+			ModelLoader.setCustomModelResourceLocation(itemBlock, meta, res);
+		}
 	}
 }

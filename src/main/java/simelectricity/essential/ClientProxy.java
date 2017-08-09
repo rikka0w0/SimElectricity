@@ -25,7 +25,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.client.model.ModelLoader;
 
 public class ClientProxy extends CommonProxy{
 	@Override
@@ -51,7 +50,8 @@ public class ClientProxy extends CommonProxy{
 		loader.registerIconsFor(ItemRegistry.itemMisc);
 		loader.registerIconsFor(ItemRegistry.itemTools);
 		
-		ModelLoader.setCustomStateMapper(BlockRegistry.blockElectronics, new SEMachineStateMapper(Essential.modID));
+		SEMachineStateMapper SEMStateMapper = new SEMachineStateMapper(Essential.modID);
+		SEMStateMapper.register(BlockRegistry.blockElectronics);
 	}
 	
 	@Override

@@ -1,4 +1,4 @@
-package simelectricity.essential.client;
+package simelectricity.essential.machines.render;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraftforge.fml.relauncher.Side;

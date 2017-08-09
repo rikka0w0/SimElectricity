@@ -23,7 +23,10 @@ import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.client.model.MultiModelState;
 import net.minecraftforge.common.model.IModelState;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
+@SideOnly(Side.CLIENT)
 public class SEMachineRawModel implements IModel{
 	private final List<ResourceLocation> dependencies = new ArrayList<ResourceLocation>();
     private final Set<ResourceLocation> textures = Sets.newHashSet();

@@ -39,7 +39,7 @@ public class BlockRegistry {
 	//public static BlockTwoPortElectronics blockTwoPortElectronics;
 	
 	public static void registerBlocks(){
-		blockCable = new BlockCable();
+		//blockCable = new BlockCable();
 		
 		//transmissionTowerTop = new BlockTransmissionTowerTop();
 		//transmissionTowerBottom = new BlockTransmissionTowerBottom();

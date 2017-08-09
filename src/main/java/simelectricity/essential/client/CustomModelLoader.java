@@ -1,11 +1,9 @@
 package simelectricity.essential.client;
 
-import simelectricity.essential.common.SEBlock;
 import simelectricity.essential.machines.render.SEMachineStateMapper;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
@@ -29,7 +27,7 @@ public class CustomModelLoader implements ICustomModelLoader{
 	
 	@Override
 	public void onResourceManagerReload(IResourceManager resourceManager) {
-		// TODO Does nothing?
+		// TODO Do nothing?
 	}
 	
 	@Override
@@ -70,8 +68,8 @@ public class CustomModelLoader implements ICustomModelLoader{
 		return null;
 	}
 	
-	public void registerIconsFor(Item item){
-		if (item instanceof ISESimpleTextureItem){
+	public void registerIconsFor(Item item) {
+		if (item instanceof ISESimpleTextureItem) {
 			ISESimpleTextureItem simpleTextureItem = (ISESimpleTextureItem) item;
 			
 			NonNullList<ItemStack> itemStacks = NonNullList.create();
@@ -84,9 +82,5 @@ public class CustomModelLoader implements ICustomModelLoader{
 				ModelLoader.setCustomModelResourceLocation(item, damage, res);
 			}
 		}
-	}
-	
-	public void registerIconFor(SEBlock block){
-		ItemBlock itemBlock = block.getItemBlock();
 	}
 }

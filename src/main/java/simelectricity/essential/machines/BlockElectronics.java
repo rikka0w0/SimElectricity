@@ -15,10 +15,10 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 
 import simelectricity.essential.Essential;
-import simelectricity.essential.client.ISESidedTextureBlock;
 import simelectricity.essential.common.ISESubBlock;
 import simelectricity.essential.common.SEMachineBlock;
 import simelectricity.essential.common.SESinglePortMachine;
+import simelectricity.essential.machines.render.ISESidedTextureBlock;
 import simelectricity.essential.machines.tile.TileAdjustableResistor;
 import simelectricity.essential.machines.tile.TileIncandescentLamp;
 import simelectricity.essential.machines.tile.TileQuantumGenerator;
