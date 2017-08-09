@@ -2,16 +2,17 @@ package simelectricity.essential.cable.gui;
 
 import java.util.Iterator;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import simelectricity.essential.cable.VoltageSensorPanel;
 import simelectricity.essential.utils.network.ISEButtonEventHandler;
 import simelectricity.essential.utils.network.ISEContainerUpdate;
 import simelectricity.essential.utils.network.MessageContainerSync;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Container;
-import net.minecraft.inventory.ICrafting;
+import net.minecraft.inventory.IContainerListener;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 
@@ -27,7 +28,7 @@ public class ContainerVoltageSensor extends Container implements ISEContainerUpd
 	}
 	
 	@Override
-	public ItemStack slotClick(int p_75144_1_, int p_75144_2_, int p_75144_3_, EntityPlayer p_75144_4_){
+	public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, EntityPlayer player){
 		return null;
 	}
 	
@@ -53,9 +54,9 @@ public class ContainerVoltageSensor extends Container implements ISEContainerUpd
 		this.thresholdVoltage = thresholdVoltage;
 		
 		//Send change to all crafter
-    	Iterator<ICrafting> iterator = this.crafters.iterator();
+    	Iterator<IContainerListener> iterator = this.listeners.iterator();
     	while (iterator.hasNext()) {
-    		ICrafting crafter = iterator.next();
+    		IContainerListener crafter = iterator.next();
     		
     		if (crafter instanceof EntityPlayerMP){
     			MessageContainerSync.sendToClient((EntityPlayerMP)crafter, emitRedstoneSignal, inverted, thresholdVoltage);

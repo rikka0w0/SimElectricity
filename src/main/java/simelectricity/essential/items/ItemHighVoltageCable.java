@@ -3,36 +3,36 @@ package simelectricity.essential.items;
 import java.util.HashMap;
 import java.util.Map;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import net.minecraft.block.Block;
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumChatFormatting;
-import net.minecraft.util.IIcon;
-import net.minecraft.util.StatCollector;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
 import simelectricity.api.SEAPI;
 import simelectricity.api.node.ISEGridNode;
 import simelectricity.essential.api.ISEHVCableConnector;
+import simelectricity.essential.client.ISESimpleTextureItem;
 import simelectricity.essential.common.SEItem;
 import simelectricity.essential.utils.SEMathHelper;
 import simelectricity.essential.utils.Utils;
 
-public class ItemHighVoltageCable extends SEItem{
+public class ItemHighVoltageCable extends SEItem implements ISESimpleTextureItem{
 	private final static String[] subNames = new String[]{"copper", "aluminum"};
 	private final Map<EntityPlayer, int[]> lastCoordinates;
-	private final IIcon[] iconCache;
 	
 	private final static double[] resistivityList = new double[]{0.1, 0.2};
 	
 	public ItemHighVoltageCable() {
 		super("essential_hv_cable", true);
 		this.lastCoordinates = new HashMap<EntityPlayer, int[]>();
-		
-		this.iconCache = new IIcon[subNames.length];
 	}
 
 	@Override
@@ -46,29 +46,30 @@ public class ItemHighVoltageCable extends SEItem{
 	}
 	
 	@Override
-    @SideOnly(Side.CLIENT)
-    public void registerIcons(IIconRegister r)	{
-		for (int i=0; i<subNames.length; i++)
-			iconCache[i] = r.registerIcon("sime_essential:hvcable_"+subNames[i]);
-    }
-	
-    /**
-     * Gets an icon index based on an item's damage value
-     */
-    @SideOnly(Side.CLIENT)
-    public IIcon getIconFromDamage(int dmg)
-    {
-        return iconCache[dmg];
-    }
+	public String getIconName(int damage) {
+		return "hvcable_" + subNames[damage];
+	}
 	
     @Override
-    public boolean onItemUse(ItemStack itemStack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
-        if (world.isRemote)
-        	return true;
+    public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+        ItemStack itemStack = player.getItemStackFromSlot(EntityEquipmentSlot.MAINHAND);
     	
-        Block block = world.getBlock(x, y, z);
+        if (itemStack.getItem() != this){
+        	itemStack = player.getItemStackFromSlot(EntityEquipmentSlot.OFFHAND);
+        	if (itemStack.getItem() != this)
+        		return EnumActionResult.FAIL;
+        }
+        
+    	if (world.isRemote)
+        	return EnumActionResult.SUCCESS;
+    	
+        int x = pos.getX();
+        int y = pos.getY();
+        int z = pos.getZ();
+        Block block = world.getBlockState(pos).getBlock();
+        
         if (!(block instanceof ISEHVCableConnector))
-        	return true;
+        	return EnumActionResult.SUCCESS;
         
         ISEHVCableConnector connector1 = (ISEHVCableConnector) block;
         
@@ -84,28 +85,28 @@ public class ItemHighVoltageCable extends SEItem{
                 lastCoordinate[2] = z;
                 Utils.chatWithLocalization(player, "chat.sime_essential:tranmission_tower_selected");
         	}else{
-        		Utils.chatWithLocalization(player, EnumChatFormatting.RED + "chat.sime_essential:tranmission_tower_too_many_connection");
+        		Utils.chatWithLocalization(player, "chat.sime_essential:tranmission_tower_too_many_connection");
         	}
         }else{
-        	Block neighbor = world.getBlock(lastCoordinate[0], lastCoordinate[1], lastCoordinate[2]);
+        	Block neighbor = world.getBlockState(new BlockPos(lastCoordinate[0], lastCoordinate[1], lastCoordinate[2])).getBlock();
         	
         	if (neighbor instanceof ISEHVCableConnector){
         		ISEHVCableConnector connector2 = (ISEHVCableConnector) neighbor;
-            	ISEGridNode node1 = (ISEGridNode) connector1.getNode(world, x, y, z);
-            	ISEGridNode node2 = (ISEGridNode) connector2.getNode(world, lastCoordinate[0], lastCoordinate[1], lastCoordinate[2]);
+            	ISEGridNode node1 = (ISEGridNode) connector1.getNode(world, pos);
+            	ISEGridNode node2 = (ISEGridNode) connector2.getNode(world, new BlockPos(lastCoordinate[0], lastCoordinate[1], lastCoordinate[2]));
         		
             	if (node1 == node2){
-            		Utils.chatWithLocalization(player, EnumChatFormatting.RED + StatCollector.translateToLocal("chat.sime_essential:tranmission_tower_recursive_connection"));
+            		Utils.chatWithLocalization(player, I18n.translateToLocal("chat.sime_essential:tranmission_tower_recursive_connection"));
             	}else if (!connector1.canHVCableConnect(world, x, y, z)){
-            		Utils.chatWithLocalization(player, EnumChatFormatting.RED + StatCollector.translateToLocal("chat.sime_essential:tranmission_tower_current_selection_invalid"));
+            		Utils.chatWithLocalization(player, I18n.translateToLocal("chat.sime_essential:tranmission_tower_current_selection_invalid"));
             	}else if (!connector2.canHVCableConnect(world, lastCoordinate[0], lastCoordinate[1], lastCoordinate[2])){
-            		Utils.chatWithLocalization(player, EnumChatFormatting.RED + StatCollector.translateToLocal("chat.sime_essential:tranmission_tower_last_selection_invalid"));
+            		Utils.chatWithLocalization(player, I18n.translateToLocal("chat.sime_essential:tranmission_tower_last_selection_invalid"));
             	}else{
-            		double distance = SEMathHelper.distanceOf(node1.getXCoord(), node1.getZCoord(), node2.getXCoord(), node2.getZCoord());
+            		double distance = node1.getPos().distanceSq(node2.getPos());
                     if (distance < 5) {
-                    	Utils.chatWithLocalization(player, EnumChatFormatting.RED + StatCollector.translateToLocal("chat.sime_essential:tranmission_tower_too_close") + EnumChatFormatting.RESET);
+                    	Utils.chatWithLocalization(player, I18n.translateToLocal("chat.sime_essential:tranmission_tower_too_close"));
                     }else if (distance > 200){
-                    	Utils.chatWithLocalization(player, EnumChatFormatting.RED + StatCollector.translateToLocal("chat.sime_essential:tranmission_tower_too_far") + EnumChatFormatting.RESET);
+                    	Utils.chatWithLocalization(player, I18n.translateToLocal("chat.sime_essential:tranmission_tower_too_far"));
                     }else{
                     	double resistance = distance * resistivityList[itemStack.getItemDamage()];	//Calculate the resistance
                     	if (node1 != null && node2 != null &&
@@ -113,12 +114,12 @@ public class ItemHighVoltageCable extends SEItem{
                         	SEAPI.energyNetAgent.isNodeValid(world, node2)){
                         		
                         		SEAPI.energyNetAgent.connectGridNode(world, node1, node2, resistance);
-                        		Utils.chatWithLocalization(player, StatCollector.translateToLocal("chat.sime_essential:tranmission_tower_connected"));
+                        		Utils.chatWithLocalization(player, I18n.translateToLocal("chat.sime_essential:tranmission_tower_connected"));
                         	}
                     }
             	}
         	}else{
-        		Utils.chatWithLocalization(player, EnumChatFormatting.RED + StatCollector.translateToLocal("chat.sime_essential:tranmission_tower_current_selection_invalid"));
+        		Utils.chatWithLocalization(player, I18n.translateToLocal("chat.sime_essential:tranmission_tower_current_selection_invalid"));
         	}
         	
             lastCoordinate[0] = 0;
@@ -127,6 +128,6 @@ public class ItemHighVoltageCable extends SEItem{
             lastCoordinates.put(player, lastCoordinate);
         }
     	
-        return true;        	
+        return EnumActionResult.SUCCESS;        	
     }
 }

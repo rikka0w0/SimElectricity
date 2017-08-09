@@ -1,19 +1,21 @@
 package simelectricity.essential.machines;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraft.block.ITileEntityProvider;
-import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
 
 import simelectricity.essential.Essential;
+import simelectricity.essential.client.ISESidedTextureBlock;
 import simelectricity.essential.common.ISESubBlock;
 import simelectricity.essential.common.SEMachineBlock;
 import simelectricity.essential.common.SESinglePortMachine;
@@ -24,12 +26,25 @@ import simelectricity.essential.machines.tile.TileSolarPanel;
 import simelectricity.essential.machines.tile.TileVoltageMeter;
 import simelectricity.essential.utils.Utils;
 
-public class BlockElectronics extends SEMachineBlock implements ITileEntityProvider, ISESubBlock{
+public class BlockElectronics extends SEMachineBlock implements ITileEntityProvider, ISESubBlock, ISESidedTextureBlock{
+	public static String subNames[] = new String[]{"voltage_meter", "quantum_generator", "adjustable_resistor", "incandescent_lamp", "solar_panel"};
 	///////////////////////////////
 	///Block Properties
 	///////////////////////////////
 	public BlockElectronics() {
-		super("essential_electronics", new String[]{"voltage_meter", "quantum_generator", "adjustable_resistor", "incandescent_lamp", "solar_panel"});
+		super("essential_electronics", subNames);
+	}
+	
+	@Override
+	protected int getNumOfSubTypes() {
+		return subNames.length;
+	}
+	
+	@Override
+	@SideOnly(Side.CLIENT)
+	public String getModelNameFrom(IBlockState blockState) {
+		int meta = blockState.getValue(this.propertyMeta);
+		return "electronics_"+subNames[meta];
 	}
 	
 	@Override
@@ -49,63 +64,6 @@ public class BlockElectronics extends SEMachineBlock implements ITileEntityProvi
 		return null;
 	}
 	
-	
-	////////////////////////////////////
-	/// Rendering
-	////////////////////////////////////
-	@Deprecated	//Removed in 1.8 and above
-	@Override
-    @SideOnly(Side.CLIENT)
-    public void registerBlockIcons(IIconRegister iconRegister) {
-		//Voltage Meter
-		iconBuffer[0][0] = iconRegister.registerIcon("sime_essential:machines/voltage_meter_side");
-		iconBuffer[0][1] = iconRegister.registerIcon("sime_essential:machines/voltage_meter_side");
-		iconBuffer[0][2] = iconRegister.registerIcon("sime_essential:machines/voltage_meter_side");
-		iconBuffer[0][3] = iconRegister.registerIcon("sime_essential:machines/voltage_meter_front");
-		iconBuffer[0][4] = iconRegister.registerIcon("sime_essential:machines/voltage_meter_side");
-		iconBuffer[0][5] = iconRegister.registerIcon("sime_essential:machines/voltage_meter_side");
-		
-		//Quantum Generator
-		iconBuffer[1][0] = iconRegister.registerIcon("sime_essential:machines/quantum_generator");
-		iconBuffer[1][1] = iconRegister.registerIcon("sime_essential:machines/quantum_generator");
-		iconBuffer[1][2] = iconRegister.registerIcon("sime_essential:machines/quantum_generator");
-		iconBuffer[1][3] = iconRegister.registerIcon("sime_essential:machines/quantum_generator");
-		iconBuffer[1][4] = iconRegister.registerIcon("sime_essential:machines/quantum_generator");
-		iconBuffer[1][5] = iconRegister.registerIcon("sime_essential:machines/quantum_generator");
-		
-		//Adjustable Resistor
-		iconBuffer[2][0] = iconRegister.registerIcon("sime_essential:machines/adjustable_resistor_bottom");
-		iconBuffer[2][1] = iconRegister.registerIcon("sime_essential:machines/adjustable_resistor_top");
-		iconBuffer[2][2] = iconRegister.registerIcon("sime_essential:machines/adjustable_resistor_side");
-		iconBuffer[2][3] = iconRegister.registerIcon("sime_essential:machines/adjustable_resistor_front");
-		iconBuffer[2][4] = iconRegister.registerIcon("sime_essential:machines/adjustable_resistor_side");
-		iconBuffer[2][5] = iconRegister.registerIcon("sime_essential:machines/adjustable_resistor_side");
-		
-		//Incandescent Lamp
-		iconBuffer[3][0] = iconRegister.registerIcon("sime_essential:machines/incandescent_lamp");
-		iconBuffer[3][1] = iconRegister.registerIcon("sime_essential:machines/incandescent_lamp");
-		iconBuffer[3][2] = iconRegister.registerIcon("sime_essential:machines/incandescent_lamp");
-		iconBuffer[3][3] = iconRegister.registerIcon("sime_essential:machines/incandescent_lamp");
-		iconBuffer[3][4] = iconRegister.registerIcon("sime_essential:machines/incandescent_lamp");
-		iconBuffer[3][5] = iconRegister.registerIcon("sime_essential:machines/incandescent_lamp");
-		
-		iconBuffer2[3] = new IIcon[6];
-		iconBuffer2[3][0] = iconRegister.registerIcon("sime_essential:machines/incandescent_lamp_off");
-		iconBuffer2[3][1] = iconRegister.registerIcon("sime_essential:machines/incandescent_lamp_off");
-		iconBuffer2[3][2] = iconRegister.registerIcon("sime_essential:machines/incandescent_lamp_off");
-		iconBuffer2[3][3] = iconRegister.registerIcon("sime_essential:machines/incandescent_lamp_off");
-		iconBuffer2[3][4] = iconRegister.registerIcon("sime_essential:machines/incandescent_lamp_off");
-		iconBuffer2[3][5] = iconRegister.registerIcon("sime_essential:machines/incandescent_lamp_off");
-		
-		//Solar Panel
-		iconBuffer[4][0] = iconRegister.registerIcon("sime_essential:machines/solar_panel_bottom");
-		iconBuffer[4][1] = iconRegister.registerIcon("sime_essential:machines/solar_panel_top");
-		iconBuffer[4][2] = iconRegister.registerIcon("sime_essential:machines/solar_panel_side");
-		iconBuffer[4][3] = iconRegister.registerIcon("sime_essential:machines/solar_panel_side");
-		iconBuffer[4][4] = iconRegister.registerIcon("sime_essential:machines/solar_panel_side");
-		iconBuffer[4][5] = iconRegister.registerIcon("sime_essential:machines/solar_panel_side");
-    }
-	
 	//////////////////////////////////////
 	/////Item drops and Block activities
 	//////////////////////////////////////
@@ -117,8 +75,8 @@ public class BlockElectronics extends SEMachineBlock implements ITileEntityProvi
 	}
 	
     @Override
-    public int getLightValue(IBlockAccess world, int x, int y, int z) {
-        TileEntity te = world.getTileEntity(x, y, z);
+    public int getLightValue(IBlockState state, IBlockAccess world, BlockPos pos) {
+        TileEntity te = world.getTileEntity(pos);
         
         if (te instanceof TileIncandescentLamp){
         	return ((TileIncandescentLamp) te).lightLevel;
@@ -127,32 +85,35 @@ public class BlockElectronics extends SEMachineBlock implements ITileEntityProvi
     }
 	
 	@Override
-    public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float p_149727_7_, float p_149727_8_, float p_149727_9_){
+	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ){
         if (player.isSneaking())
             return false;
 
-        int meta = world.getBlockMetadata(x, y, z);
+        int meta = state.getBlock().getMetaFromState(state);
         if (meta == 3 || meta == 4)
         	return false;	//Incandescent Lamp doesn't have an Gui!
         
-        player.openGui(Essential.instance, 0, world, x, y, z);
+        //When openGui() is call on the server side, Forge seems automatically send a packet to client side
+        //in order to notify the client to set up the container and show the Gui.
+        if (!world.isRemote)
+        	player.openGui(Essential.instance, 0, world, pos.getX(), pos.getY(), pos.getZ());
         return true;
 	}
 	
     @Override
-    public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase player, ItemStack itemStack) {
-        super.onBlockPlacedBy(world, x, y, z, player, itemStack);
+    public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
+        super.onBlockPlacedBy(world, pos, state, placer, stack);
         if (world.isRemote)
             return;
 
-        TileEntity te = world.getTileEntity(x, y, z);
+        TileEntity te = world.getTileEntity(pos);
         
         if (te instanceof SESinglePortMachine){
-            ForgeDirection sight = Utils.getPlayerSight(player);
+            EnumFacing sight = Utils.getPlayerSight(placer);
             ((SESinglePortMachine) te).setFacing(sight.getOpposite());
             
-            if (sight == ForgeDirection.UP && te instanceof TileSolarPanel)
-            	sight = ForgeDirection.DOWN;
+            if (sight == EnumFacing.UP && te instanceof TileSolarPanel)
+            	sight = EnumFacing.DOWN;
             
             ((SESinglePortMachine) te).SetFunctionalSide(sight);
         }

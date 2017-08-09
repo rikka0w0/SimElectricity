@@ -1,11 +1,12 @@
 package simelectricity.essential;
 
 import simelectricity.essential.common.ISEGuiProvider;
-import cpw.mods.fml.common.network.IGuiHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.fml.common.network.IGuiHandler;
 
 public class CommonProxy implements IGuiHandler{	
 	public EntityPlayer getClientPlayer() {
@@ -20,6 +21,8 @@ public class CommonProxy implements IGuiHandler{
 		return null;
 	}
 	
+	public void registerModel(){}
+	
 	public void registerRenders() {
 
 	}
@@ -27,10 +30,10 @@ public class CommonProxy implements IGuiHandler{
 	@Override
 	public final Object getServerGuiElement(int ID, EntityPlayer player, World world,
 			int x, int y, int z) {
-		TileEntity te = world.getTileEntity(x, y, z);
+		TileEntity te = world.getTileEntity(new BlockPos(x, y, z));
 		
 		if (te instanceof ISEGuiProvider)
-			return ((ISEGuiProvider) te).getServerContainer(ForgeDirection.getOrientation(ID));
+			return ((ISEGuiProvider) te).getServerContainer(EnumFacing.getFront(ID));
 		
 		return BlockRegistry.getContainer(te, player);
 	}

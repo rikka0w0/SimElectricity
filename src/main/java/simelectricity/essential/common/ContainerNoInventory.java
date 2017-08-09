@@ -1,6 +1,7 @@
 package simelectricity.essential.common;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -9,8 +10,8 @@ public abstract class ContainerNoInventory<TYPE extends TileEntity> extends Cont
 	protected TYPE tileEntity;
 	
 	@Override
-	public ItemStack slotClick(int p_75144_1_, int p_75144_2_, int p_75144_3_, EntityPlayer p_75144_4_){
-		return null;
+	public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, EntityPlayer player){
+		return ItemStack.EMPTY;
 	}
 	
 	public ContainerNoInventory(TileEntity tileEntity){

@@ -1,16 +1,17 @@
 package simelectricity.essential.machines.tile;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ITickable;
 import simelectricity.api.IEnergyNetUpdateHandler;
 import simelectricity.api.SEAPI;
 import simelectricity.api.components.ISEVoltageSource;
 import simelectricity.essential.common.SESinglePortMachine;
 import simelectricity.essential.machines.render.ISESocketProvider;
 
-public class TileAdjustableResistor extends SESinglePortMachine implements ISEVoltageSource, IEnergyNetUpdateHandler, ISESocketProvider{
+public class TileAdjustableResistor extends SESinglePortMachine implements ISEVoltageSource, IEnergyNetUpdateHandler, ISESocketProvider, ITickable{
 	//Component parameters
 	public double resistance = 100;
 	
@@ -24,10 +25,8 @@ public class TileAdjustableResistor extends SESinglePortMachine implements ISEVo
     /// TileEntity
 	///////////////////////////////////
 	@Override
-    public void updateEntity() {
-        super.updateEntity();
-        
-        if (worldObj.isRemote)
+    public void update() {
+        if (world.isRemote)
         	return;
         
         bufferedEnergy += powerLevel/20;
@@ -41,10 +40,10 @@ public class TileAdjustableResistor extends SESinglePortMachine implements ISEVo
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound tagCompound) {
-        super.writeToNBT(tagCompound);
-        
+    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {       
         tagCompound.setDouble("resistance", resistance);
+        
+        return super.writeToNBT(tagCompound);
     }
     
     ///////////////////////////////////
@@ -78,7 +77,7 @@ public class TileAdjustableResistor extends SESinglePortMachine implements ISEVo
     ///////////////////////////////////
 	@Override
 	@SideOnly(Side.CLIENT)
-	public int getSocketIconIndex(ForgeDirection side) {
+	public int getSocketIconIndex(EnumFacing side) {
 		return side == functionalSide ? 0 : -1;
 	}
 }

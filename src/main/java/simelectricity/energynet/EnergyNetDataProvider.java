@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import simelectricity.SimElectricity;
 import simelectricity.api.node.ISESubComponent;
 import simelectricity.api.tile.ISECableTile;
 import simelectricity.api.tile.ISEGridTile;
@@ -20,17 +21,18 @@ import simelectricity.energynet.components.SEComponent;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSavedData;
 import net.minecraft.world.storage.MapStorage;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.common.util.ForgeDirection;
 
 public class EnergyNetDataProvider extends WorldSavedData{
-	private static final String DATA_NAME = SEUtils.MODID + "_GridData";
+	private static final String DATA_NAME = SimElectricity.MODID + "_GridData";
 	
 	//Map between coord and GridNode
-	private HashMap<String, GridNode> gridNodeMap = new HashMap<String, GridNode>();
+	private HashMap<BlockPos, GridNode> gridNodeMap = new HashMap<BlockPos, GridNode>();
 
 	private List<TileEntity> loadedTiles = new LinkedList<TileEntity>();
 	//Records TE that associated with grid nodes
@@ -53,8 +55,8 @@ public class EnergyNetDataProvider extends WorldSavedData{
 		return gridNodeMap.size();
 	}
 	
-	public GridNode getGridObjectAtCoord(int x, int y, int z){
-		return gridNodeMap.get(GridNode.getIDString(x, y, z));
+	public GridNode getGridObjectAtCoord(BlockPos pos){
+		return gridNodeMap.get(pos);
 	}
 	
 	
@@ -75,12 +77,12 @@ public class EnergyNetDataProvider extends WorldSavedData{
         	tileEntityGraph.addVertex(cable);
         	
         	if (cable.isGridInterConnectionPoint){
-        		GridNode gridNode = this.getGridObjectAtCoord(te.xCoord, te.yCoord, te.zCoord);
+        		GridNode gridNode = this.getGridObjectAtCoord(te.getPos());
         		tileEntityGraph.interconnection(cable, gridNode);
         	}
         	
         	//Build connection with neighbors
-            for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
+            for (EnumFacing direction : EnumFacing.VALUES) {
             	TileEntity neighborTileEntity = SEUtils.getTileEntityOnDirection(te, direction);
             	
                 if (neighborTileEntity instanceof ISECableTile) {  //Conductor
@@ -121,7 +123,7 @@ public class EnergyNetDataProvider extends WorldSavedData{
         }
         else if (te instanceof ISETile){
         	ISETile tile = (ISETile)te;
-        	for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
+        	for (EnumFacing direction : EnumFacing.VALUES) {
         		ISESubComponent subComponent = tile.getComponent(direction);
         		if (subComponent != null){
             		tileEntityGraph.addVertex((SEComponent) subComponent);
@@ -155,7 +157,7 @@ public class EnergyNetDataProvider extends WorldSavedData{
         }
 	    else if (te instanceof ISETile){
 	    	ISETile tile = (ISETile)te;
-        	for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
+        	for (EnumFacing direction : EnumFacing.VALUES) {
         		ISESubComponent subComponent = tile.getComponent(direction);
         		if (subComponent != null){
             		tileEntityGraph.removeVertex((SEComponent) subComponent);
@@ -173,7 +175,7 @@ public class EnergyNetDataProvider extends WorldSavedData{
         }
 	    else if (te instanceof ISETile){
 	    	ISETile tile = (ISETile)te;
-        	for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
+        	for (EnumFacing direction : EnumFacing.VALUES) {
         		ISESubComponent subComponent = tile.getComponent(direction);
         		
         		if (subComponent instanceof SEComponent.Tile)
@@ -187,7 +189,7 @@ public class EnergyNetDataProvider extends WorldSavedData{
 	//Grid Event handling ----------------------------------------------------------------------------
 	public void addGridNode(GridNode gridNode){		
 		tileEntityGraph.addVertex(gridNode);
-		gridNodeMap.put(gridNode.getIDString(), gridNode);
+		gridNodeMap.put(gridNode.getPos(), gridNode);
 		
 		this.markDirty();
 	}
@@ -202,7 +204,7 @@ public class EnergyNetDataProvider extends WorldSavedData{
 				((ISEGridTile)te).onGridNeighborUpdated();
 		}
 
-		gridNodeMap.remove(gridNode.getIDString());
+		gridNodeMap.remove(gridNode.getPos());
 		this.markDirty();
 	}
 	
@@ -273,7 +275,7 @@ public class EnergyNetDataProvider extends WorldSavedData{
 	
 	public void onGridTilePresent(TileEntity te){
 		ISEGridTile gridTile = (ISEGridTile)te;
-		GridNode gridObject = gridNodeMap.get(GridNode.getIDStringFromTileEntity(te));
+		GridNode gridObject = gridNodeMap.get(te.getPos());
 		if (gridObject == null)
 			return;
 		loadedGridTiles.add(te);
@@ -286,7 +288,7 @@ public class EnergyNetDataProvider extends WorldSavedData{
 		loadedGridTiles.remove(te);
 		
 		ISEGridTile gridTile = (ISEGridTile)te;
-		GridNode gridObject = gridNodeMap.get(GridNode.getIDStringFromTileEntity(te));
+		GridNode gridObject = gridNodeMap.get(te.getPos());
 		
 		//gridObject can be null if the GridObject is just removed
 		if (gridObject != null)
@@ -317,8 +319,8 @@ public class EnergyNetDataProvider extends WorldSavedData{
 			throw new RuntimeException("Not allowed to create WiWorldData in client"); 
 		
 		// The IS_GLOBAL constant is there for clarity, and should be simplified into the right branch.
-		MapStorage storage = world.perWorldStorage;
-		EnergyNetDataProvider instance = (EnergyNetDataProvider) storage.loadData(EnergyNetDataProvider.class, DATA_NAME);
+		MapStorage storage = world.getPerWorldStorage();
+		EnergyNetDataProvider instance = (EnergyNetDataProvider) storage.getOrLoadData(EnergyNetDataProvider.class, DATA_NAME);
 
 		if (instance == null) {
 		  instance = new EnergyNetDataProvider();
@@ -350,7 +352,7 @@ public class EnergyNetDataProvider extends WorldSavedData{
 			//obj.readFromNBT(compound);
 			tileEntityGraph.addVertex(obj);
 			
-			gridNodeMap.put(obj.getIDString(), obj);
+			gridNodeMap.put(obj.getPos(), obj);
 		}		
 		
 
@@ -364,7 +366,7 @@ public class EnergyNetDataProvider extends WorldSavedData{
 
 	
 	@Override
-	public void writeToNBT(NBTTagCompound nbt) {	
+	public NBTTagCompound writeToNBT(NBTTagCompound nbt) {	
 		NBTTagList NBTNodes = new NBTTagList();
 		for (GridNode gridNode : gridNodeMap.values()){
 			NBTTagCompound tag = new NBTTagCompound();
@@ -372,5 +374,7 @@ public class EnergyNetDataProvider extends WorldSavedData{
 			NBTNodes.appendTag(tag);
 		}
 		nbt.setTag("Objects", NBTNodes);
+		
+		return nbt;
 	}
 }

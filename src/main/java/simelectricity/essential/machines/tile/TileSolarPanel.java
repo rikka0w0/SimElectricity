@@ -1,14 +1,15 @@
 package simelectricity.essential.machines.tile;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ITickable;
 import simelectricity.api.SEAPI;
 import simelectricity.api.components.ISEVoltageSource;
 import simelectricity.essential.common.SESinglePortMachine;
 import simelectricity.essential.machines.render.ISESocketProvider;
 
-public class TileSolarPanel extends SESinglePortMachine implements ISEVoltageSource, ISESocketProvider{
+public class TileSolarPanel extends SESinglePortMachine implements ISEVoltageSource, ISESocketProvider, ITickable{
     //Component parameters
 	public double internalVoltage = 230;
     public double resistance = 0.1;
@@ -22,19 +23,17 @@ public class TileSolarPanel extends SESinglePortMachine implements ISEVoltageSou
     /// TileEntity
 	///////////////////////////////////
 	@Override
-    public void updateEntity() {
-        super.updateEntity();
-
-        if (worldObj.isRemote)
+    public void update() {
+        if (world.isRemote)
             return;
 
         //Server only
-        if (!worldObj.provider.isSurfaceWorld() || !worldObj.canBlockSeeTheSky(xCoord, yCoord + 1, zCoord)){
+        if (!world.provider.isSurfaceWorld() || !world.canBlockSeeSky(pos.up())){
         	detectAndSendChange(STATE_CAVE);
         	return;
         }
         
-        if (worldObj.isDaytime())
+        if (world.isDaytime())
             detectAndSendChange(STATE_DAY);
         else 
             detectAndSendChange(STATE_NIGHT);
@@ -64,8 +63,8 @@ public class TileSolarPanel extends SESinglePortMachine implements ISEVoltageSou
     /// ISESidedFacing
     ///////////////////////////////////
     @Override
-    public boolean canWrenchBeUsed(ForgeDirection newFunctionalSide) {
-        return newFunctionalSide != ForgeDirection.UP;
+    public boolean canWrenchBeUsed(EnumFacing newFunctionalSide) {
+        return newFunctionalSide != EnumFacing.UP;
     }
     
     ///////////////////////////////////
@@ -86,7 +85,7 @@ public class TileSolarPanel extends SESinglePortMachine implements ISEVoltageSou
     ///////////////////////////////////
 	@Override
 	@SideOnly(Side.CLIENT)
-	public int getSocketIconIndex(ForgeDirection side) {
+	public int getSocketIconIndex(EnumFacing side) {
 		return side == functionalSide ? 1 : -1;
 	}
 }

@@ -1,8 +1,8 @@
 package simelectricity.essential.api;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 public interface ISEGenericCable extends ISECoverPanelHost{
 	void onCableRenderingUpdateRequested();
-	boolean connectedOnSide(ForgeDirection side);
+	boolean connectedOnSide(EnumFacing side);
 }

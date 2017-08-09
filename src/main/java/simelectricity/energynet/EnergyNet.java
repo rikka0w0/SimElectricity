@@ -164,12 +164,12 @@ public final class EnergyNet extends EnergyNetSimulator implements Runnable{
     			EnergyNetDataProvider.get(world));
     	
     	//Initialize thread
-    	this.thread = new Thread(this, "SEEnergyNet_DIM" + String.valueOf(world.provider.dimensionId));
+    	this.thread = new Thread(this, "SEEnergyNet_DIM" + String.valueOf(world.provider.getDimension()));
     	this.alive = true;
     	this.processing = false;
 	    this.thread.start();
     	
-        SEUtils.logInfo("EnergyNet has been created for DIM" + String.valueOf(world.provider.dimensionId), SEUtils.general);
+        SEUtils.logInfo("EnergyNet has been created for DIM" + String.valueOf(world.provider.getDimension()), SEUtils.general);
     }
     
     

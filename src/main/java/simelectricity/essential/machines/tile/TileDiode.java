@@ -1,8 +1,8 @@
 package simelectricity.essential.machines.tile;
 
-import net.minecraftforge.common.util.ForgeDirection;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.util.EnumFacing;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import simelectricity.api.IEnergyNetUpdateHandler;
 import simelectricity.api.SEAPI;
 import simelectricity.api.components.ISEDiode;
@@ -39,7 +39,7 @@ public class TileDiode extends SETwoPortMachine implements ISEDiode, IEnergyNetU
 	
 	@Override
 	@SideOnly(Side.CLIENT)
-	public int getSocketIconIndex(ForgeDirection side) {
+	public int getSocketIconIndex(EnumFacing side) {
 		if (side == inputSide)
 			return 2;
 		else if (side == outputSide)

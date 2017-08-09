@@ -1,19 +1,18 @@
 package simelectricity.essential.common;
 
+import java.util.LinkedList;
 import java.util.List;
 
-import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.NonNullList;
 import simelectricity.essential.Essential;
 
-public abstract class SEItem extends Item{	
-	@Deprecated
-	protected String registryName;	//1.11.2 compatibility
-	
+public abstract class SEItem extends Item{
 	/**
 	 * 
 	 * @param name Naming rules: lower case English letters and numbers only, words are separated by '_', e.g. "cooked_beef"
@@ -21,8 +20,7 @@ public abstract class SEItem extends Item{
 	 */
     public SEItem(String name, boolean hasSubItems) {
 		this.setUnlocalizedName(name);	//UnlocalizedName = "item." + name
-		//this.setRegistryName(name);
-    	this.registryName = name;
+		this.setRegistryName(name);
 		this.setHasSubtypes(hasSubItems);
 		
 		if (hasSubItems)
@@ -30,10 +28,7 @@ public abstract class SEItem extends Item{
 		
 		this.beforeRegister();
 		
-		GameRegistry.registerItem(this, name);
-		
-		//GameRegistry.register(this);
-		//new SEItemRenderRegistery(this);
+		GameRegistry.register(this);
     }
     
     @Override
@@ -48,9 +43,7 @@ public abstract class SEItem extends Item{
     
     @Override
     @SideOnly(Side.CLIENT)
-    //public final void getSubItems(Item itemIn, CreativeTabs tab, NonNullList<ItemStack> subItems)
-    public final void getSubItems(Item itemIn, CreativeTabs tab, List subItems)
-    {
+    public final void getSubItems(Item itemIn, CreativeTabs tab, NonNullList<ItemStack> subItems){
     	if (this.getHasSubtypes()){
             for (int ix = 0; ix < getSubItemUnlocalizedNames().length; ix++) 
                 subItems.add(new ItemStack(this, 1, ix));

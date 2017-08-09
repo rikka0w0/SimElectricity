@@ -5,13 +5,13 @@ import org.lwjgl.opengl.GL11;
 import simelectricity.essential.utils.SEUnitHelper;
 import simelectricity.essential.utils.client.SEGuiContainer;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 
 import net.minecraft.inventory.Container;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.StatCollector;
+import net.minecraft.util.text.translation.I18n;
 
 @SideOnly(Side.CLIENT)
 public final class GuiVoltageMeter extends SEGuiContainer<ContainerVoltageMeter>{	
@@ -26,11 +26,11 @@ public final class GuiVoltageMeter extends SEGuiContainer<ContainerVoltageMeter>
         //draw text and stuff here
         //the parameters for drawString are: string, x, y, color
 
-        fontRendererObj.drawString(StatCollector.translateToLocal("tile.sime:VoltageMeter.name"), 8, 6, 4210752);
+        fontRendererObj.drawString(I18n.translateToLocal("tile.sime:VoltageMeter.name"), 8, 6, 4210752);
         fontRendererObj.drawString("Voltage: " + SEUnitHelper.getVoltageStringWithUnit(container.voltage), 18, 22, 4210752);
 
         //draws "Inventory" or your regional equivalent
-        fontRendererObj.drawString(StatCollector.translateToLocal("container.inventory"), 8, ySize - 96, 4210752);
+        fontRendererObj.drawString(I18n.translateToLocal("container.inventory"), 8, ySize - 96, 4210752);
         fontRendererObj.drawString("x10^" + String.valueOf(sqr), xSize - 38, ySize - 96, 4210752);
     }
     

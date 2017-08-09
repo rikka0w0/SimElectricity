@@ -1,9 +1,9 @@
 package simelectricity.essential.machines.tile;
 
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.common.util.ForgeDirection;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.util.EnumFacing;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import simelectricity.api.IEnergyNetUpdateHandler;
 import simelectricity.api.SEAPI;
 import simelectricity.api.components.ISEVoltageSource;
@@ -31,11 +31,11 @@ public class TileQuantumGenerator extends SESinglePortMachine implements ISEVolt
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound tagCompound) {
-        super.writeToNBT(tagCompound);
-        
+    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {       
         tagCompound.setDouble("internalVoltage", internalVoltage);
         tagCompound.setDouble("resistance", resistance);
+        
+        return super.writeToNBT(tagCompound);
     }
 
     ///////////////////////////////////
@@ -69,7 +69,7 @@ public class TileQuantumGenerator extends SESinglePortMachine implements ISEVolt
     ///////////////////////////////////
 	@Override
 	@SideOnly(Side.CLIENT)
-	public int getSocketIconIndex(ForgeDirection side) {
+	public int getSocketIconIndex(EnumFacing side) {
 		return side == functionalSide ? 1 : -1;
 	}
 }

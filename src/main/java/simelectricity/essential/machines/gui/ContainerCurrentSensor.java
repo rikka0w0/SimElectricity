@@ -2,13 +2,13 @@ package simelectricity.essential.machines.gui;
 
 import java.util.Iterator;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.inventory.ICrafting;
+import net.minecraft.inventory.IContainerListener;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import simelectricity.api.SEAPI;
 import simelectricity.essential.common.ContainerNoInventoryTwoPort;
 import simelectricity.essential.machines.tile.TileCurrentSensor;
@@ -19,7 +19,7 @@ import simelectricity.essential.utils.network.MessageContainerSync;
 
 public class ContainerCurrentSensor extends ContainerNoInventoryTwoPort<TileCurrentSensor> implements ISEContainerUpdate, ISEButtonEventHandler{
 	public double thresholdCurrent, resistance;
-	public ForgeDirection inputSide, outputSide;
+	public EnumFacing inputSide, outputSide;
 	public boolean absMode, inverted;
 	
 	public double current;
@@ -35,7 +35,7 @@ public class ContainerCurrentSensor extends ContainerNoInventoryTwoPort<TileCurr
 	@Override
 	public void detectAndSendChanges() {
 		double thresholdCurrent = tileEntity.thresholdCurrent, resistance = tileEntity.resistance;
-		ForgeDirection inputSide = tileEntity.inputSide, outputSide = tileEntity.outputSide;
+		EnumFacing inputSide = tileEntity.inputSide, outputSide = tileEntity.outputSide;
 		boolean absMode = tileEntity.absMode, inverted = tileEntity.inverted;
 		double current = tileEntity.current;
 		boolean emitRedstoneSignal = tileEntity.emitRedstoneSignal;
@@ -61,9 +61,9 @@ public class ContainerCurrentSensor extends ContainerNoInventoryTwoPort<TileCurr
 		this.emitRedstoneSignal = emitRedstoneSignal;
 		
 		//Send change to all crafter
-    	Iterator<ICrafting> iterator = this.crafters.iterator();
+    	Iterator<IContainerListener> iterator = this.listeners.iterator();
     	while (iterator.hasNext()) {
-    		ICrafting crafter = iterator.next();
+    		IContainerListener crafter = iterator.next();
     		
     		if (crafter instanceof EntityPlayerMP){
     			MessageContainerSync.sendToClient((EntityPlayerMP)crafter, thresholdCurrent, resistance, inputSide, outputSide, absMode, inverted, current, emitRedstoneSignal);
@@ -76,8 +76,8 @@ public class ContainerCurrentSensor extends ContainerNoInventoryTwoPort<TileCurr
 	public void onDataArrivedFromServer(Object[] data) {
 		this.thresholdCurrent = (Double) data[0];
 		this.resistance = (Double) data[1];
-		this.inputSide = (ForgeDirection) data[2];
-		this.outputSide = (ForgeDirection) data[3];
+		this.inputSide = (EnumFacing) data[2];
+		this.outputSide = (EnumFacing) data[3];
 		this.absMode = (Boolean) data[4];
 		this.inverted = (Boolean) data[5];
 		this.current = (Double) data[6];

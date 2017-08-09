@@ -1,14 +1,14 @@
 package simelectricity.essential.common;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.inventory.Container;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public interface ISEGuiProvider {
-	Container getServerContainer(ForgeDirection side);
+	Container getServerContainer(EnumFacing side);
 	
 	@SideOnly(Side.CLIENT)
-	GuiContainer getClientGuiContainer(ForgeDirection side);
+	GuiContainer getClientGuiContainer(EnumFacing side);
 }

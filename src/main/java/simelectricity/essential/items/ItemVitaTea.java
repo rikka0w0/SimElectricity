@@ -1,12 +1,14 @@
 package simelectricity.essential.items;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import simelectricity.api.SEAPI;
 import simelectricity.essential.Essential;
+import simelectricity.essential.client.ISESimpleTextureItem;
 import simelectricity.essential.common.SEItem;
 
-public class ItemVitaTea extends SEItem{
+public class ItemVitaTea extends SEItem implements ISESimpleTextureItem{
 	public ItemVitaTea() {
 		super("cell_vita", false);
 
@@ -17,10 +19,14 @@ public class ItemVitaTea extends SEItem{
 		this.setCreativeTab(SEAPI.SETab);
 	}
 
-    @Deprecated
-	@SideOnly(Side.CLIENT)
-    @Override
-    protected String getIconString(){
-    	return Essential.modID + ":" + this.registryName;
+	@Override
+	public String getIconName(int damage) {
+		return "cell_vita";
+	}
+	
+    @SideOnly(Side.CLIENT)
+    public boolean hasEffect(ItemStack stack)
+    {
+    	return true;
     }
 }

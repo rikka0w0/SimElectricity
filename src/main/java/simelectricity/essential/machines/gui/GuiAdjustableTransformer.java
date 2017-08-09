@@ -7,12 +7,12 @@ import simelectricity.essential.utils.SEUnitHelper;
 import simelectricity.essential.utils.Utils;
 import simelectricity.essential.utils.client.GuiDirectionSelector;
 import simelectricity.essential.utils.client.SEGuiContainer;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.inventory.Container;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.StatCollector;
+import net.minecraft.util.text.translation.I18n;
 
 @SideOnly(Side.CLIENT)
 public final class GuiAdjustableTransformer extends SEGuiContainer<ContainerAdjustableTransformer>{	
@@ -25,10 +25,10 @@ public final class GuiAdjustableTransformer extends SEGuiContainer<ContainerAdju
         //draw text and stuff here
         //the parameters for drawString are: string, x, y, color
 
-        fontRendererObj.drawString(StatCollector.translateToLocal("tile.sime_essential:essential_two_port_electronics.adjustable_transformer.name"), 8, 6, 4210752);
+        fontRendererObj.drawString(I18n.translateToLocal("tile.sime_essential:essential_two_port_electronics.adjustable_transformer.name"), 8, 6, 4210752);
 
-        fontRendererObj.drawString(StatCollector.translateToLocal("gui.sime:ratio_step_up"), 18, 85, 4210752);
-        fontRendererObj.drawString(StatCollector.translateToLocal("gui.sime:resistance_secondary"), 18, 124, 4210752);
+        fontRendererObj.drawString(I18n.translateToLocal("gui.sime:ratio_step_up"), 18, 85, 4210752);
+        fontRendererObj.drawString(I18n.translateToLocal("gui.sime:resistance_secondary"), 18, 124, 4210752);
         
         fontRendererObj.drawString("1:" + String.format("%.1f", container.ratio), 74, 22, 4210752);
         fontRendererObj.drawString(String.format("%.3f", container.outputResistance) + " \u03a9", 100, 56, 4210752);

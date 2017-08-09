@@ -1,9 +1,9 @@
 package simelectricity.essential.common;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import simelectricity.api.ISidedFacing;
 import simelectricity.api.SEAPI;
 import simelectricity.api.components.ISEComponentParameter;
@@ -11,9 +11,9 @@ import simelectricity.api.node.ISESubComponent;
 import simelectricity.api.tile.ISETile;
 
 public class SETwoPortMachine extends SEEnergyTile implements ISidedFacing, ISETile, ISEComponentParameter {
-	public ForgeDirection inputSide = ForgeDirection.SOUTH;
-	public ForgeDirection outputSide = ForgeDirection.NORTH;
-	protected ForgeDirection facing = ForgeDirection.NORTH;
+	public EnumFacing inputSide = EnumFacing.SOUTH;
+	public EnumFacing outputSide = EnumFacing.NORTH;
+	protected EnumFacing facing = EnumFacing.NORTH;
 	protected ISESubComponent input = SEAPI.energyNetAgent.newComponent(this, this);
 	
 	///////////////////////////////////
@@ -23,37 +23,37 @@ public class SETwoPortMachine extends SEEnergyTile implements ISidedFacing, ISET
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
 
-        inputSide = ForgeDirection.getOrientation(tagCompound.getByte("inputSide"));
-        outputSide = ForgeDirection.getOrientation((tagCompound.getByte("outputSide")));
-        facing = ForgeDirection.getOrientation((tagCompound.getByte("facing")));
+        inputSide = EnumFacing.getFront(tagCompound.getByte("inputSide"));
+        outputSide = EnumFacing.getFront((tagCompound.getByte("outputSide")));
+        facing = EnumFacing.getFront((tagCompound.getByte("facing")));
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound tagCompound) {
-        super.writeToNBT(tagCompound);
-
+    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
         tagCompound.setByte("inputSide", (byte) inputSide.ordinal());
         tagCompound.setByte("outputSide", (byte) outputSide.ordinal());
         tagCompound.setByte("facing", (byte) facing.ordinal());
+        
+        return super.writeToNBT(tagCompound);
     }
 
     ///////////////////////////////////
     /// ISidedFacing
     ///////////////////////////////////
     @Override
-    public void setFacing(ForgeDirection newFacing) {
+    public void setFacing(EnumFacing newFacing) {
         facing = newFacing;
         
         this.markTileEntityForS2CSync();
     }
 
     @Override
-    public ForgeDirection getFacing() {
+    public EnumFacing getFacing() {
         return facing;
     }
 
     @Override
-    public boolean canSetFacing(ForgeDirection newFacing) {
+    public boolean canSetFacing(EnumFacing newFacing) {
         return true;
     }
     
@@ -72,9 +72,9 @@ public class SETwoPortMachine extends SEEnergyTile implements ISidedFacing, ISET
     @SideOnly(value = Side.CLIENT)
 	@Override
 	public void onSyncDataFromServerArrived(NBTTagCompound nbt){
-        inputSide = ForgeDirection.getOrientation(nbt.getByte("inputSide"));
-        outputSide = ForgeDirection.getOrientation((nbt.getByte("outputSide")));
-		facing = ForgeDirection.getOrientation(nbt.getByte("facing"));
+        inputSide = EnumFacing.getFront(nbt.getByte("inputSide"));
+        outputSide = EnumFacing.getFront((nbt.getByte("outputSide")));
+		facing = EnumFacing.getFront(nbt.getByte("facing"));
 		
 		// Flag 1 - update Rendering Only!
 		markForRenderUpdate();
@@ -86,7 +86,7 @@ public class SETwoPortMachine extends SEEnergyTile implements ISidedFacing, ISET
 	///ISETile
 	/////////////////////////////////////////////////////////
 	@Override
-	public ISESubComponent getComponent(ForgeDirection side){
+	public ISESubComponent getComponent(EnumFacing side){
 		if (side == inputSide)
 			return input;
 		else if (side == outputSide)
@@ -98,12 +98,12 @@ public class SETwoPortMachine extends SEEnergyTile implements ISidedFacing, ISET
 	/////////////////////////////////////////////////////////
 	/// Utils
 	/////////////////////////////////////////////////////////
-	public void setFunctionalSide(ForgeDirection input, ForgeDirection output){
+	public void setFunctionalSide(EnumFacing input, EnumFacing output){
 		this.inputSide = input;
 		this.outputSide = output;
 		
         this.markTileEntityForS2CSync();
-        this.worldObj.notifyBlockChange(xCoord, yCoord, zCoord, this.getBlockType());
+        //this.worldObj.notifyBlockChange(xCoord, yCoord, zCoord, this.getBlockType());
         
         if (this.isAddedToEnergyNet)
         	SEAPI.energyNetAgent.updateTileConnection(this);

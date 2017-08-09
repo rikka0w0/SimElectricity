@@ -9,20 +9,7 @@ public abstract class SEEnergyTile extends SETileEntity{
      * Called just before joining the energyNet, do some initialization here
      */
     public void onLoad() {
-    }
-
-    /**
-     * Called just before detaching from the energyNet
-     */    
-    public void onUnload() {
-    }
-	
-	@Override
-    public void updateEntity() {
-        super.updateEntity();
-               	
-        if (!worldObj.isRemote && !isAddedToEnergyNet) {
-            onLoad();
+        if (!world.isRemote && !isAddedToEnergyNet) {
             SEAPI.energyNetAgent.attachTile(this);
             this.isAddedToEnergyNet = true;
         }
@@ -32,8 +19,7 @@ public abstract class SEEnergyTile extends SETileEntity{
     public void invalidate() {
     	super.invalidate();
     	
-        if (!worldObj.isRemote && isAddedToEnergyNet) {
-            onUnload();
+        if (!world.isRemote && isAddedToEnergyNet) {
             SEAPI.energyNetAgent.detachTile(this);
             this.isAddedToEnergyNet = false;
         }

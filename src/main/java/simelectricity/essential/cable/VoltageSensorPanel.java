@@ -4,16 +4,15 @@ import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.inventory.Container;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.util.ForgeDirection;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.util.EnumFacing;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import simelectricity.essential.api.client.ISECoverPanelRender;
 import simelectricity.essential.api.coverpanel.ISEElectricalCoverPanel;
 import simelectricity.essential.api.coverpanel.ISEGuiCoverPanel;
 import simelectricity.essential.api.coverpanel.ISERedstoneEmitterCoverPanel;
 import simelectricity.essential.cable.gui.ContainerVoltageSensor;
 import simelectricity.essential.cable.gui.GuiVoltageSensor;
-import simelectricity.essential.cable.render.RenderVoltageSensorPanel;
 
 public class VoltageSensorPanel implements ISEElectricalCoverPanel, ISERedstoneEmitterCoverPanel, ISEGuiCoverPanel{
 	public boolean emitRedStoneSignal = false;
@@ -21,7 +20,7 @@ public class VoltageSensorPanel implements ISEElectricalCoverPanel, ISERedstoneE
 	public double thresholdVoltage = 100;
 	
 	private TileEntity hostTileEntity;
-	private ForgeDirection installedSide;
+	private EnumFacing installedSide;
 	private double voltage;
 	
 	public VoltageSensorPanel(){}
@@ -58,11 +57,11 @@ public class VoltageSensorPanel implements ISEElectricalCoverPanel, ISERedstoneE
 	@Override
 	@SideOnly(Side.CLIENT)
 	public ISECoverPanelRender getCoverPanelRender() {
-		return RenderVoltageSensorPanel.instance;
+		return null;	//TODO: Missing Render
 	}
 
 	@Override
-	public void setHost(TileEntity hostTileEntity, ForgeDirection side) {
+	public void setHost(TileEntity hostTileEntity, EnumFacing side) {
 		this.hostTileEntity = hostTileEntity;
 		this.installedSide = side;
 	}
@@ -109,8 +108,7 @@ public class VoltageSensorPanel implements ISEElectricalCoverPanel, ISERedstoneE
 			this.emitRedStoneSignal = emitRedStoneSignal;
 			
 			//Notify neighbor blocks if redstone signal polarity changes
-			hostTileEntity.getWorldObj().notifyBlocksOfNeighborChange(
-					hostTileEntity.xCoord, hostTileEntity.yCoord, hostTileEntity.zCoord, hostTileEntity.getBlockType(), installedSide.getOpposite().ordinal());
+			hostTileEntity.getWorld().neighborChanged(hostTileEntity.getPos().offset(installedSide.getOpposite()), hostTileEntity.getBlockType(), hostTileEntity.getPos());
 			return true;
 		}
 		

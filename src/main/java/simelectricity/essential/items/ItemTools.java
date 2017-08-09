@@ -1,15 +1,17 @@
 package simelectricity.essential.items;
 
 import net.minecraft.block.Block;
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import simelectricity.api.ISECrowbarTarget;
 import simelectricity.api.ISEWrenchable;
@@ -23,20 +25,18 @@ import simelectricity.api.tile.ISEGridTile;
 import simelectricity.api.tile.ISETile;
 import simelectricity.essential.api.ISECoverPanelHost;
 import simelectricity.essential.api.ISENodeDelegateBlock;
+import simelectricity.essential.client.ISESimpleTextureItem;
 import simelectricity.essential.common.SEItem;
 import simelectricity.essential.utils.SEUnitHelper;
 import simelectricity.essential.utils.Utils;
 
-public class ItemTools extends SEItem {
+public class ItemTools extends SEItem implements ISESimpleTextureItem{
 	private final static String[] subNames = new String[]{"crowbar", "wrench", "glove", "multimeter"};
-	private final IIcon[] iconCache;
 	
 	public ItemTools() {
 		super("essential_tools", true);
 		this.setMaxStackSize(1);
 		this.setMaxDamage(0);
-		
-		this.iconCache = new IIcon[subNames.length];
 	}
 
 	@Override
@@ -48,111 +48,107 @@ public class ItemTools extends SEItem {
 	public String[] getSubItemUnlocalizedNames(){
 		return subNames;
 	}
-	
-	@Override
-    @SideOnly(Side.CLIENT)
-    public void registerIcons(IIconRegister r)	{
-		for (int i=0; i<subNames.length; i++)
-			iconCache[i] = r.registerIcon("sime_essential:tool_"+subNames[i]);
-    }
-	
-    /**
-     * Gets an icon index based on an item's damage value
-     */
-    @SideOnly(Side.CLIENT)
-    public IIcon getIconFromDamage(int dmg)
-    {
-        return iconCache[dmg];
-    }
     
+	@Override
+	public String getIconName(int damage) {
+		return "tool_" + subNames[damage];
+	}
+	
     @Override
-    public boolean onItemUse(ItemStack itemStack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
-    	ForgeDirection direction = ForgeDirection.getOrientation(side);
-    	TileEntity te = world.getTileEntity(x, y, z);
+    public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+        ItemStack itemStack = player.getItemStackFromSlot(EntityEquipmentSlot.MAINHAND);
+    	
+        if (itemStack.getItem() != this){
+        	itemStack = player.getItemStackFromSlot(EntityEquipmentSlot.OFFHAND);
+        	if (itemStack.getItem() != this)
+        		return EnumActionResult.FAIL;
+        }
+      
+    	TileEntity te = world.getTileEntity(pos);
     	
     	switch (itemStack.getItemDamage()){
     	case 0:
-    		return useCrowbar(te, player, direction);
+    		return useCrowbar(te, player, facing);
     	case 1:
-    		return useWrench(te, player, direction);
+    		return useWrench(te, player, facing);
     	case 2:
-    		return useGlove(te, player, direction);
+    		return useGlove(te, player, facing);
     	case 3:
-    		return useMultimeter(world, x, y, z, player, direction);
+    		return useMultimeter(world, pos, player, facing);
     	}
     	
-    	return false;
+    	return EnumActionResult.FAIL;
     }
     
-    public static boolean useCrowbar(TileEntity te, EntityPlayer player, ForgeDirection side){
+    public static EnumActionResult useCrowbar(TileEntity te, EntityPlayer player, EnumFacing side){
     	if (te instanceof ISECrowbarTarget){
     		ISECrowbarTarget crowbarTarget = (ISECrowbarTarget) te;
     		
-    		ForgeDirection selectedDirection = side;
+    		EnumFacing selectedDirection = side;
     		if (te instanceof ISECoverPanelHost)
     			selectedDirection = ((ISECoverPanelHost) te).getSelectedSide(player, side);
     		
     		if (crowbarTarget.canCrowbarBeUsed(selectedDirection)){
-    			if (!te.getWorldObj().isRemote)
+    			if (!te.getWorld().isRemote)
     				crowbarTarget.onCrowbarAction(selectedDirection, player.capabilities.isCreativeMode);
     			
-    			return true;
+    			return EnumActionResult.SUCCESS;
     		}
     	}
     	
-    	return false;
+    	return EnumActionResult.FAIL;
     }
     
-    public static boolean useWrench(TileEntity te, EntityPlayer player, ForgeDirection side){
+    public static EnumActionResult useWrench(TileEntity te, EntityPlayer player, EnumFacing side){
     	if (te instanceof ISEWrenchable){
     		ISEWrenchable wrenchTarget = (ISEWrenchable) te;
     		
     		if (wrenchTarget.canWrenchBeUsed(side)){
-    			if (!te.getWorldObj().isRemote)
+    			if (!te.getWorld().isRemote)
     				wrenchTarget.onWrenchAction(side, player.capabilities.isCreativeMode);
     			
-    			return true;
+    			return EnumActionResult.SUCCESS;
     		}
     	}
     	
-    	return false;
+    	return EnumActionResult.FAIL;
     }
     
-    public static boolean useGlove(TileEntity te, EntityPlayer player, ForgeDirection side){
+    public static EnumActionResult useGlove(TileEntity te, EntityPlayer player, EnumFacing side){
     	if (te instanceof ISidedFacing){
     		ISidedFacing target = (ISidedFacing) te;
     		
     		if (target.canSetFacing(side)) {
-    			if (!te.getWorldObj().isRemote)
+    			if (!te.getWorld().isRemote)
     				target.setFacing(side);
     			
-    			return true;
+    			return EnumActionResult.SUCCESS;
     		}
     	}
-    	return false;
+    	return EnumActionResult.FAIL;
     }
     
-    public static boolean useMultimeter(World world, int x, int y, int z, EntityPlayer player, ForgeDirection side){
-    	TileEntity te = world.getTileEntity(x, y, z);
+    public static EnumActionResult useMultimeter(World world, BlockPos pos, EntityPlayer player, EnumFacing side){
+    	TileEntity te = world.getTileEntity(pos);
     	
     	if (te instanceof ISECableTile) {
-            if (te.getWorldObj().isRemote)
-            	return true;
+            if (te.getWorld().isRemote)
+            	return EnumActionResult.SUCCESS;
             
             Utils.chat(player, "------------------");
     		ISESimulatable node = ((ISECableTile) te).getNode();
     		printVI(node, player);
         		
-    		return true;
+    		return EnumActionResult.SUCCESS;
     	}else if (te instanceof ISETile){
-            if (te.getWorldObj().isRemote)
-            	return true;
+            if (te.getWorld().isRemote)
+            	return EnumActionResult.SUCCESS;
     		
             Utils.chat(player, "------------------");   
             
     		ISETile tile = (ISETile)te;
     		
-        	for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS){
+        	for (EnumFacing dir : EnumFacing.VALUES){
         		ISESubComponent comp = tile.getComponent(dir);
         		if (comp != null){
 	        		String[] temp = comp.toString().split("[.]");
@@ -161,31 +157,31 @@ public class ItemTools extends SEItem {
         		}
         	}
         	
-        	return true;
+        	return EnumActionResult.SUCCESS;
     	}else if (te instanceof ISEGridTile){
-            if (te.getWorldObj().isRemote)
-            	return true;
+            if (te.getWorld().isRemote)
+            	return EnumActionResult.SUCCESS;
     		
             Utils.chat(player, "------------------");  
     		ISEGridNode node = ((ISEGridTile) te).getGridNode();
     		printVI(node, player);
     		
-    		return true;
+    		return EnumActionResult.SUCCESS;
     	}else{
-    		Block block = world.getBlock(x, y, z);
+    		Block block = world.getBlockState(pos).getBlock();
     		if (block instanceof ISENodeDelegateBlock){
     			if (world.isRemote)
-	            	return true;
+    				return EnumActionResult.SUCCESS;
     			
     			Utils.chat(player, "------------------"); 
-    			ISESimulatable node = ((ISENodeDelegateBlock) block).getNode(world, x, y, z);
+    			ISESimulatable node = ((ISENodeDelegateBlock) block).getNode(world, pos);
     			printVI(node, player);
     			
-    			return true;
+    			return EnumActionResult.SUCCESS;
     		}
     	}
     	
-    	return false;
+    	return EnumActionResult.FAIL;
     }
     
     public static void printVI(ISESimulatable node, EntityPlayer player){

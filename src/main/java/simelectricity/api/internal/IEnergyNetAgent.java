@@ -1,8 +1,9 @@
 package simelectricity.api.internal;
 
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
 
 import simelectricity.api.components.ISEComponentParameter;
 import simelectricity.api.node.ISEGridNode;
@@ -21,15 +22,15 @@ public interface IEnergyNetAgent {
 	
 	double getCurrentMagnitude(ISESimulatable node);
 	
-	boolean canConnectTo(TileEntity tileEntity, ForgeDirection direction);
+	boolean canConnectTo(TileEntity tileEntity, EnumFacing direction);
 	
 	ISESubComponent newComponent(ISEComponentParameter dataProvider, TileEntity parent);
 	
 	ISESimulatable newCable(TileEntity dataProviderTileEntity, boolean isGridInterConnectionPoint);
 	
-	ISEGridNode newGridNode(int x, int y, int z);
+	ISEGridNode newGridNode(BlockPos pos);
 	
-	ISEGridNode getGridNodeAt(World world, int x, int y, int z);
+	ISEGridNode getGridNodeAt(World world, BlockPos pos);
 
 	boolean isNodeValid(World world, ISESimulatable node);
 	

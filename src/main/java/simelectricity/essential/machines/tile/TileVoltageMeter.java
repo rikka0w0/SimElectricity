@@ -1,8 +1,8 @@
 package simelectricity.essential.machines.tile;
 
-import net.minecraftforge.common.util.ForgeDirection;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.util.EnumFacing;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import simelectricity.api.IEnergyNetUpdateHandler;
 import simelectricity.api.SEAPI;
 import simelectricity.api.components.ISEVoltageSource;
@@ -29,7 +29,7 @@ public class TileVoltageMeter extends SESinglePortMachine implements ISEVoltageS
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public int getSocketIconIndex(ForgeDirection side) {
+	public int getSocketIconIndex(EnumFacing side) {
 		return side == this.functionalSide ? 0 : -1;
 	}
 }

@@ -1,6 +1,6 @@
 package simelectricity.essential.utils;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 /**
  * Part of this source code is from BuildCraft
@@ -40,7 +40,7 @@ public class MatrixTranformations {
 	 * @param targetArray the array that should be transformed
 	 * @param direction
 	 */
-	public static void transform(float[][] targetArray, ForgeDirection direction) {
+	public static void transform(float[][] targetArray, EnumFacing direction) {
 		if ((direction.ordinal() & 0x1) == 1) {
 			mirrorY(targetArray);
 		}

@@ -19,11 +19,13 @@
 
 package simelectricity.common;
 
-import cpw.mods.fml.common.FMLLog;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
+import net.minecraftforge.fml.common.FMLLog;
 
 import org.apache.logging.log4j.Level;
+
+import simelectricity.SimElectricity;
 
 /**
  * Created by <Meow J> on 8/6/2014.
@@ -37,8 +39,7 @@ public enum SEUtils{
 	simulator("Simulator"),
 	energyNet("EnergyNet");
 	
-    public static final String MODID = "simelectricity";
-    public static final String NAME = "SimElectricity";
+
 
     private String text;
     
@@ -55,26 +56,23 @@ public enum SEUtils{
     	if (!ConfigManager.showEnergyNetInfo && (source == energyNet || source == simulator))
     		return;
     	
-        FMLLog.log(NAME, Level.INFO, source + "|" + String.valueOf(object));
+        FMLLog.log(SimElectricity.NAME, Level.INFO, source + "|" + String.valueOf(object));
     }
 
     public static void logWarn(Object object, SEUtils source) {
-        FMLLog.log(NAME, Level.WARN, source + "|" + String.valueOf(object));
+        FMLLog.log(SimElectricity.NAME, Level.WARN, source + "|" + String.valueOf(object));
     }
 
     public static void logError(Object object, SEUtils source) {
-        FMLLog.log(NAME, Level.ERROR, source + "|" + String.valueOf(object));
+        FMLLog.log(SimElectricity.NAME, Level.ERROR, source + "|" + String.valueOf(object));
     }
 
     public static void logFatal(Object object, SEUtils source) {
-        FMLLog.log(NAME, Level.FATAL, source + "|" + String.valueOf(object));
+        FMLLog.log(SimElectricity.NAME, Level.FATAL, source + "|" + String.valueOf(object));
     }
     
     
-	public static TileEntity getTileEntityOnDirection(TileEntity te, ForgeDirection direction){
-    	return te.getWorldObj().getTileEntity(
-                te.xCoord + direction.offsetX,
-                te.yCoord + direction.offsetY,
-                te.zCoord + direction.offsetZ);
+	public static TileEntity getTileEntityOnDirection(TileEntity te, EnumFacing direction){
+    	return te.getWorld().getTileEntity(te.getPos().offset(direction));
 	}
 }

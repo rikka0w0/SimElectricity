@@ -1,9 +1,9 @@
 package simelectricity.api;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 public interface ISECrowbarTarget {
-	boolean canCrowbarBeUsed(ForgeDirection side);
+	boolean canCrowbarBeUsed(EnumFacing side);
 	//Server only
-	void onCrowbarAction(ForgeDirection side, boolean isCreativePlayer);
+	void onCrowbarAction(EnumFacing side, boolean isCreativePlayer);
 }

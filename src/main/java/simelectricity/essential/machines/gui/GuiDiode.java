@@ -2,12 +2,12 @@ package simelectricity.essential.machines.gui;
 
 import org.lwjgl.opengl.GL11;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import net.minecraft.inventory.Container;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.StatCollector;
+import net.minecraft.util.text.translation.I18n;
 import simelectricity.essential.Essential;
 import simelectricity.essential.utils.SEUnitHelper;
 import simelectricity.essential.utils.Utils;
@@ -25,15 +25,15 @@ public final class GuiDiode extends SEGuiContainer<ContainerDiode>{
         //draw text and stuff here
         //the parameters for drawString are: string, x, y, color
 
-        fontRendererObj.drawString(StatCollector.translateToLocal("tile.sime_essential:essential_two_port_electronics.diode.name"), 8, 6, 4210752);
+        fontRendererObj.drawString(I18n.translateToLocal("tile.sime_essential:essential_two_port_electronics.diode.name"), 8, 6, 4210752);
         
         int ybase = 22;
-        fontRendererObj.drawString(StatCollector.translateToLocal("gui.sime:voltage_input"), 85, ybase, 4210752);
+        fontRendererObj.drawString(I18n.translateToLocal("gui.sime:voltage_input"), 85, ybase, 4210752);
         fontRendererObj.drawString(SEUnitHelper.getVoltageStringWithUnit(container.inputVoltage), 85, ybase+8, 4210752);
-        fontRendererObj.drawString(StatCollector.translateToLocal("gui.sime:voltage_output"), 85, ybase+16, 4210752);
+        fontRendererObj.drawString(I18n.translateToLocal("gui.sime:voltage_output"), 85, ybase+16, 4210752);
         fontRendererObj.drawString(SEUnitHelper.getVoltageStringWithUnit(container.outputVoltage), 85, ybase+24, 4210752);
         
-        fontRendererObj.drawString(StatCollector.translateToLocal(container.forwardBiased ?
+        fontRendererObj.drawString(I18n.translateToLocal(container.forwardBiased ?
         		"gui.sime:forward_biased" :
         		"gui.sime:reverse_biased"
         		), 85, ybase+32, 4210752);

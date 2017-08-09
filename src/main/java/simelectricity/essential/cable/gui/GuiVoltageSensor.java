@@ -5,7 +5,7 @@ import org.lwjgl.opengl.GL11;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.inventory.Container;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.StatCollector;
+import net.minecraft.util.text.translation.I18n;
 import simelectricity.essential.utils.SEUnitHelper;
 import simelectricity.essential.utils.client.SEGuiContainer;
 
@@ -19,9 +19,9 @@ public class GuiVoltageSensor extends SEGuiContainer<ContainerVoltageSensor>{
         //draw text and stuff here
         //the parameters for drawString are: string, x, y, color
 
-        fontRendererObj.drawString(StatCollector.translateToLocal("item.sime_essential:essential_item.voltagesensor.name"), 8, 6, 4210752);
+        fontRendererObj.drawString(I18n.translateToLocal("item.sime_essential:essential_item.voltagesensor.name"), 8, 6, 4210752);
         
-        fontRendererObj.drawString(StatCollector.translateToLocal("gui.sime:voltage_threshold"), 18, 124, 4210752);
+        fontRendererObj.drawString(I18n.translateToLocal("gui.sime:voltage_threshold"), 18, 124, 4210752);
         
         int ybase = 22;
         fontRendererObj.drawString(SEUnitHelper.getVoltageStringWithUnit(container.thresholdVoltage), 20, 51, 4210752);
@@ -43,7 +43,7 @@ public class GuiVoltageSensor extends SEGuiContainer<ContainerVoltageSensor>{
         int xbase = 18;
         int ybase = 97;
         
-        buttonList.add(new GuiButton(6, guiLeft + xbase, 		guiTop + ybase, 140, 20, StatCollector.translateToLocal("gui.sime_essential:redstone_toggle_behavior")));
+        buttonList.add(new GuiButton(6, guiLeft + xbase, 		guiTop + ybase, 140, 20, I18n.translateToLocal("gui.sime_essential:redstone_toggle_behavior")));
         
         buttonList.add(new GuiButton(0, guiLeft + xbase, 		guiTop + ybase + 38, 30, 20, "-100"));
         buttonList.add(new GuiButton(1, guiLeft + xbase + 30, 	guiTop + ybase + 38, 20, 20, "-10"));

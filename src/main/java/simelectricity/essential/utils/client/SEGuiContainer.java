@@ -1,13 +1,15 @@
 package simelectricity.essential.utils.client;
 
+import java.io.IOException;
+
 import simelectricity.essential.utils.network.MessageContainerSync;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.inventory.Container;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public abstract class SEGuiContainer<TYPE extends Container> extends GuiContainer{
@@ -25,15 +27,15 @@ public abstract class SEGuiContainer<TYPE extends Container> extends GuiContaine
     }
     
     @Override
-    public void mouseClicked(int x, int y, int button) {
+    public void mouseClicked(int x, int y, int button) throws IOException {
         super.mouseClicked(x, y, button);
         
         if (directionSelector == null)
         	return;
         
-        ForgeDirection selectedDirection = directionSelector.onMouseClick(x, y);
+        EnumFacing selectedDirection = directionSelector.onMouseClick(x, y);
 
-        if (selectedDirection == ForgeDirection.UNKNOWN)
+        if (selectedDirection == null)
             return;
         
         MessageContainerSync.sendDirectionSelectorClickEventToSever(container, selectedDirection, button);

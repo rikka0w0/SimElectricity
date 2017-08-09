@@ -1,5 +1,6 @@
 package simelectricity.essential.api;
 
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import simelectricity.api.node.ISESimulatable;
 
@@ -12,5 +13,5 @@ public interface ISENodeDelegateBlock {
 	 * @param z
 	 * @return
 	 */
-	ISESimulatable getNode(World world, int x, int y, int z);
+	ISESimulatable getNode(World world, BlockPos pos);
 }

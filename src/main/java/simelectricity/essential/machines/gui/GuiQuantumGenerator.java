@@ -3,12 +3,12 @@ package simelectricity.essential.machines.gui;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.inventory.Container;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.StatCollector;
+import net.minecraft.util.text.translation.I18n;
 
 import org.lwjgl.opengl.GL11;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import simelectricity.essential.utils.SEUnitHelper;
 import simelectricity.essential.utils.client.SEGuiContainer;
@@ -24,20 +24,20 @@ public final class GuiQuantumGenerator extends SEGuiContainer<ContainerQuantumGe
         //draw text and stuff here
         //the parameters for drawString are: string, x, y, color
 
-        fontRendererObj.drawString(StatCollector.translateToLocal("tile.sime_essential:essential_electronics.quantum_generator.name"), 8, 6, 4210752);
+        fontRendererObj.drawString(I18n.translateToLocal("tile.sime_essential:essential_electronics.quantum_generator.name"), 8, 6, 4210752);
 
         fontRendererObj.drawString(String.format("%.0f", container.internalVoltage) + " V", 30, 46, 4210752);
         fontRendererObj.drawString(String.format("%.3f", container.resistance) + " \u03a9", 30, 24, 4210752);
 
-        fontRendererObj.drawString(StatCollector.translateToLocal("gui.sime:resistance_internal"), 18, 85, 4210752);
-        fontRendererObj.drawString(StatCollector.translateToLocal("gui.sime:voltage_internal"), 18, 124, 4210752);
+        fontRendererObj.drawString(I18n.translateToLocal("gui.sime:resistance_internal"), 18, 85, 4210752);
+        fontRendererObj.drawString(I18n.translateToLocal("gui.sime:voltage_internal"), 18, 124, 4210752);
     //gui.sime_essential:redstone_behavior_inverted
         int ybase = 22;
-        fontRendererObj.drawString(StatCollector.translateToLocal("gui.sime:voltage_output"), 85, ybase, 4210752);
+        fontRendererObj.drawString(I18n.translateToLocal("gui.sime:voltage_output"), 85, ybase, 4210752);
         fontRendererObj.drawString(SEUnitHelper.getVoltageStringWithUnit(container.voltage), 85, ybase+8, 4210752);
-        fontRendererObj.drawString(StatCollector.translateToLocal("gui.sime:current_output"), 85, ybase+16, 4210752);
+        fontRendererObj.drawString(I18n.translateToLocal("gui.sime:current_output"), 85, ybase+16, 4210752);
         fontRendererObj.drawString(SEUnitHelper.getCurrentStringWithUnit(container.current), 85, ybase+24, 4210752);
-        fontRendererObj.drawString(StatCollector.translateToLocal("gui.sime:power_output"), 85, ybase+32, 4210752);
+        fontRendererObj.drawString(I18n.translateToLocal("gui.sime:power_output"), 85, ybase+32, 4210752);
         fontRendererObj.drawString(SEUnitHelper.getPowerStringWithUnit(container.outputPower), 85, ybase+40, 4210752);
 	}
 

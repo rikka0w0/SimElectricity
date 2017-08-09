@@ -2,14 +2,14 @@ package simelectricity.essential.machines.tile;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.EnumSkyBlock;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import simelectricity.api.IEnergyNetUpdateHandler;
 import simelectricity.api.SEAPI;
 import simelectricity.api.components.ISEVoltageSource;
 import simelectricity.essential.common.SESinglePortMachine;
 import simelectricity.essential.machines.render.ISESocketProvider;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class TileIncandescentLamp extends SESinglePortMachine implements ISEVoltageSource, IEnergyNetUpdateHandler, ISESocketProvider{
     public byte lightLevel;
@@ -39,7 +39,7 @@ public class TileIncandescentLamp extends SESinglePortMachine implements ISEVolt
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public int getSocketIconIndex(ForgeDirection side) {
+	public int getSocketIconIndex(EnumFacing side) {
 		return side == this.functionalSide ? 0 : -1;
 	}
 	
@@ -55,6 +55,6 @@ public class TileIncandescentLamp extends SESinglePortMachine implements ISEVolt
 		super.onSyncDataFromServerArrived(nbt);
 		lightLevel = nbt.getByte("lightLevel");
 		this.markForRenderUpdate();
-		worldObj.updateLightByType(EnumSkyBlock.Block, xCoord, yCoord, zCoord);	//checkLightFor
+		world.checkLight(pos);	//checkLightFor
 	}
 }

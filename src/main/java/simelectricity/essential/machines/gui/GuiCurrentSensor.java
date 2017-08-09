@@ -5,7 +5,7 @@ import org.lwjgl.opengl.GL11;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.inventory.Container;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.StatCollector;
+import net.minecraft.util.text.translation.I18n;
 import simelectricity.essential.Essential;
 import simelectricity.essential.utils.SEUnitHelper;
 import simelectricity.essential.utils.Utils;
@@ -22,13 +22,13 @@ public class GuiCurrentSensor extends SEGuiContainer<ContainerCurrentSensor>{
         //draw text and stuff here
         //the parameters for drawString are: string, x, y, color
 
-        fontRendererObj.drawString(StatCollector.translateToLocal("tile.sime_essential:essential_two_port_electronics.current_sensor.name"), 8, 6, 4210752);
+        fontRendererObj.drawString(I18n.translateToLocal("tile.sime_essential:essential_two_port_electronics.current_sensor.name"), 8, 6, 4210752);
         
-        fontRendererObj.drawString(StatCollector.translateToLocal("gui.sime:current_threshold"), 18, 85, 4210752);
-        fontRendererObj.drawString(StatCollector.translateToLocal("gui.sime:resistance_internal"), 18, 124, 4210752);
+        fontRendererObj.drawString(I18n.translateToLocal("gui.sime:current_threshold"), 18, 85, 4210752);
+        fontRendererObj.drawString(I18n.translateToLocal("gui.sime:resistance_internal"), 18, 124, 4210752);
         
         int ybase = 22;
-        fontRendererObj.drawString(StatCollector.translateToLocal("gui.sime:condition_threshold"), 10, ybase, 4210752);
+        fontRendererObj.drawString(I18n.translateToLocal("gui.sime:condition_threshold"), 10, ybase, 4210752);
         fontRendererObj.drawString(container.conditionString, 10, ybase+8, 4210752);
         fontRendererObj.drawString("I=" + SEUnitHelper.getCurrentStringWithUnit(container.current), 10, ybase+16, 4210752);
         fontRendererObj.drawString("Ron = " + String.format("%.3f", container.resistance) + " \u03a9", 10, ybase+24, 4210752);

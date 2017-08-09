@@ -1,16 +1,20 @@
 package simelectricity.essential.machines;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.client.renderer.texture.IIconRegister;
+import javax.annotation.Nullable;
+
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
 
 import simelectricity.essential.Essential;
 import simelectricity.essential.common.SEMachineBlock;
@@ -22,11 +26,18 @@ import simelectricity.essential.machines.tile.TileSwitch;
 import simelectricity.essential.utils.Utils;
 
 public class BlockTwoPortElectronics extends SEMachineBlock{
+	public static String subNames[] = new String[]{"adjustable_transformer","current_sensor","diode","switch"};
+	
 	///////////////////////////////
 	///Block Properties
 	///////////////////////////////
 	public BlockTwoPortElectronics() {
-		super("essential_two_port_electronics", new String[]{"adjustable_transformer","current_sensor","diode","switch"});
+		super("essential_two_port_electronics", subNames);
+	}
+	
+	@Override
+	protected int getNumOfSubTypes() {
+		return subNames.length;
 	}
 
 	@Override
@@ -44,57 +55,19 @@ public class BlockTwoPortElectronics extends SEMachineBlock{
 		return null;
 	}
 	
-	////////////////////////////////////
-	/// Rendering
-	////////////////////////////////////
-	@Deprecated	//Removed in 1.8 and above
-	@Override
-    @SideOnly(Side.CLIENT)
-    public void registerBlockIcons(IIconRegister iconRegister) {
-		//Adjustable Transformer
-		iconBuffer[0][0] = iconRegister.registerIcon("sime_essential:machines/adjustable_transformer");
-		iconBuffer[0][1] = iconRegister.registerIcon("sime_essential:machines/adjustable_transformer");
-		iconBuffer[0][2] = iconRegister.registerIcon("sime_essential:machines/adjustable_transformer");
-		iconBuffer[0][3] = iconRegister.registerIcon("sime_essential:machines/adjustable_transformer");
-		iconBuffer[0][4] = iconRegister.registerIcon("sime_essential:machines/adjustable_transformer");
-		iconBuffer[0][5] = iconRegister.registerIcon("sime_essential:machines/adjustable_transformer");
-		
-		//Current Sensor
-		iconBuffer[1][0] = iconRegister.registerIcon("sime_essential:machines/current_sensor");
-		iconBuffer[1][1] = iconRegister.registerIcon("sime_essential:machines/current_sensor");
-		iconBuffer[1][2] = iconRegister.registerIcon("sime_essential:machines/current_sensor");
-		iconBuffer[1][3] = iconRegister.registerIcon("sime_essential:machines/current_sensor");
-		iconBuffer[1][4] = iconRegister.registerIcon("sime_essential:machines/current_sensor");
-		iconBuffer[1][5] = iconRegister.registerIcon("sime_essential:machines/current_sensor");
-		
-		//Diode
-		iconBuffer[2][0] = iconRegister.registerIcon("sime_essential:machines/diode");
-		iconBuffer[2][1] = iconRegister.registerIcon("sime_essential:machines/diode");
-		iconBuffer[2][2] = iconRegister.registerIcon("sime_essential:machines/diode");
-		iconBuffer[2][3] = iconRegister.registerIcon("sime_essential:machines/diode");
-		iconBuffer[2][4] = iconRegister.registerIcon("sime_essential:machines/diode");
-		iconBuffer[2][5] = iconRegister.registerIcon("sime_essential:machines/diode");
-		
-		//Switch
-		iconBuffer[3][0] = iconRegister.registerIcon("sime_essential:machines/switch_side");
-		iconBuffer[3][1] = iconRegister.registerIcon("sime_essential:machines/switch_side");
-		iconBuffer[3][2] = iconRegister.registerIcon("sime_essential:machines/switch_side");
-		iconBuffer[3][3] = iconRegister.registerIcon("sime_essential:machines/switch_front");
-		iconBuffer[3][4] = iconRegister.registerIcon("sime_essential:machines/switch_side");
-		iconBuffer[3][5] = iconRegister.registerIcon("sime_essential:machines/switch_side");
-		
-		iconBuffer2[3] = new IIcon[6];
-		iconBuffer2[3][0] = iconRegister.registerIcon("sime_essential:machines/switch_side");
-		iconBuffer2[3][1] = iconRegister.registerIcon("sime_essential:machines/switch_side");
-		iconBuffer2[3][2] = iconRegister.registerIcon("sime_essential:machines/switch_side");
-		iconBuffer2[3][3] = iconRegister.registerIcon("sime_essential:machines/switch_front_off");
-		iconBuffer2[3][4] = iconRegister.registerIcon("sime_essential:machines/switch_side");
-		iconBuffer2[3][5] = iconRegister.registerIcon("sime_essential:machines/switch_side");		
-	}
-	
 	//////////////////////////////////////
 	/////Item drops and Block activities
 	//////////////////////////////////////
+	@Override
+	public int damageDropped(IBlockState state) {
+	    return getMetaFromState(state);
+	}
+	
+	@Override
+	public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player){
+	    return new ItemStack(itemBlock, 1, this.getMetaFromState(world.getBlockState(pos)));
+	}
+	
 	@Override
 	protected boolean isSecondState(TileEntity te){
 		if (te instanceof TileSwitch && !((TileSwitch) te).isOn)
@@ -103,38 +76,39 @@ public class BlockTwoPortElectronics extends SEMachineBlock{
 	}
 	
 	@Override
-    public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float p_149727_7_, float p_149727_8_, float p_149727_9_){
+	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ){
         if (player.isSneaking())
             return false;
         
-        TileEntity te = world.getTileEntity(x, y, z);
+        TileEntity te = world.getTileEntity(pos);
         if (te instanceof TileSwitch){
         	TileSwitch tileSwitch = (TileSwitch) te;
-        	if (tileSwitch.getFacing() == ForgeDirection.getOrientation(side)){
+        	if (tileSwitch.getFacing() == facing){
                 if (!world.isRemote)
                 	tileSwitch.setSwitchStatus(!tileSwitch.isOn);
         		return true;
         	}
         }
         
-        player.openGui(Essential.instance, 0, world, x, y, z);
+        if (!world.isRemote)
+        	player.openGui(Essential.instance, 0, world, pos.getX(), pos.getY(), pos.getZ());
         return true;
 	}
 	
     @Override
-    public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase player, ItemStack itemStack) {
-        super.onBlockPlacedBy(world, x, y, z, player, itemStack);
+    public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
+        super.onBlockPlacedBy(world, pos, state, placer, stack);
         if (world.isRemote)
             return;
 
-        TileEntity te = world.getTileEntity(x, y, z);
+        TileEntity te = world.getTileEntity(pos);
                
         if (te instanceof SETwoPortMachine){
-            ForgeDirection sight = Utils.getPlayerSight(player);
+            EnumFacing sight = Utils.getPlayerSight(placer);
             ((SETwoPortMachine) te).setFacing(sight.getOpposite());
             
             if (te instanceof TileSwitch)
-            	((SETwoPortMachine) te).setFunctionalSide(ForgeDirection.UP, ForgeDirection.DOWN);
+            	((SETwoPortMachine) te).setFunctionalSide(EnumFacing.UP, EnumFacing.DOWN);
             else
             	((SETwoPortMachine) te).setFunctionalSide(sight.getOpposite(), sight);
         }
@@ -144,8 +118,8 @@ public class BlockTwoPortElectronics extends SEMachineBlock{
 	///Redstone
 	///////////////////////	
     @Override
-    public boolean shouldCheckWeakPower(IBlockAccess world, int x, int y, int z, int side){
-		TileEntity te = world.getTileEntity(x, y, z);
+    public boolean shouldCheckWeakPower(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side){
+		TileEntity te = world.getTileEntity(pos);
 		
 		if (te instanceof TileCurrentSensor)
 			return false;	//Use isProvidingWeakPower, to check redstone power
@@ -154,8 +128,8 @@ public class BlockTwoPortElectronics extends SEMachineBlock{
     }
     
 	@Override
-	public boolean canConnectRedstone(IBlockAccess world, int x, int y, int z, int iSide) {
-		TileEntity te = world.getTileEntity(x, y, z);
+	public boolean canConnectRedstone(IBlockState state, IBlockAccess world, BlockPos pos, @Nullable EnumFacing side) {
+		TileEntity te = world.getTileEntity(pos);
 		
 		if (te instanceof TileCurrentSensor)
 			return true;
@@ -164,8 +138,8 @@ public class BlockTwoPortElectronics extends SEMachineBlock{
 	}
 	
 	@Override
-	public int isProvidingWeakPower(IBlockAccess world, int x, int y, int z, int iSide) {
-		TileEntity te = world.getTileEntity(x, y, z);
+	public int getWeakPower(IBlockState blockState, IBlockAccess world, BlockPos pos, EnumFacing side) {
+		TileEntity te = world.getTileEntity(pos);
 		
 		if (te instanceof TileCurrentSensor)
 			return ((TileCurrentSensor) te).emitRedstoneSignal ? 15 : 0;

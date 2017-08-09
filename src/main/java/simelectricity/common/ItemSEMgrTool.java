@@ -1,24 +1,26 @@
 package simelectricity.common;
 
-import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import simelectricity.api.SEAPI;
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 
 public class ItemSEMgrTool extends Item{
 	public final static String name = "semanagementtool";
     public ItemSEMgrTool() {
         setUnlocalizedName(name);
+        setRegistryName(name);
         setHasSubtypes(true);
         setMaxDamage(0);
     	setCreativeTab(SEAPI.SETab);
         maxStackSize = 1;
-        GameRegistry.registerItem(this, name);
+        GameRegistry.register(this);
     }
     
     @Override
@@ -27,13 +29,7 @@ public class ItemSEMgrTool extends Item{
     }
     
     @Override
-    @SideOnly(Side.CLIENT)
-    public void registerIcons(IIconRegister r) {
-        itemIcon = r.registerIcon("simelectricity:semanagementtool");
-    }
-    
-    @Override
-    public boolean onItemUse(ItemStack itemStack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
-    	return false;
+    public EnumActionResult onItemUse(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ){
+        return EnumActionResult.PASS;
     }
 }

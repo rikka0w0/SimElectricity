@@ -6,15 +6,14 @@ import java.util.LinkedList;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.math.BlockPos;
 
 import simelectricity.api.node.ISEGridNode;
 import simelectricity.api.node.ISESimulatable;
 import simelectricity.energynet.SEGraph;
 
 public class GridNode extends SEComponent implements ISEGridNode{
-	private final int x;
-	private final int y;
-	private final int z;
+	private final BlockPos pos;
 	
 	//0 - transmission line 1 - transformer primary 2 - transformer secondary
 	public byte type;
@@ -35,10 +34,8 @@ public class GridNode extends SEComponent implements ISEGridNode{
 	private double[] resistancesBuf;
 	private int complementX, complementY, complementZ;
 		
-	public GridNode(int x, int y, int z){
-		this.x = x;
-		this.y = y;
-		this.z = z;
+	public GridNode(BlockPos pos){
+		this.pos = pos;
 		this.type = ISEGridNode.ISEGridNode_Wire;
 	}
 	
@@ -47,16 +44,18 @@ public class GridNode extends SEComponent implements ISEGridNode{
 	///////////////////////
 	
 	public GridNode(NBTTagCompound nbt){
-		this.x = nbt.getInteger("x");
-		this.y = nbt.getInteger("y");
-		this.z = nbt.getInteger("z");
+		this.pos = new BlockPos(
+				nbt.getInteger("x"),
+				nbt.getInteger("y"),
+				nbt.getInteger("z")
+				);
 		this.type = nbt.getByte("type");
 		this.neighborX = nbt.getIntArray("neigborX");
 		this.neighborY = nbt.getIntArray("neigborY");
 		this.neighborZ = nbt.getIntArray("neigborZ");
 		
 		this.complementY = nbt.getInteger("complementY");
-		if (this.complementY>0){
+		if (complementY>0){
 			this.complementX = nbt.getInteger("complementX");
 			this.complementZ = nbt.getInteger("complementZ");
 			this.ratio = nbt.getDouble("ratio");
@@ -71,15 +70,14 @@ public class GridNode extends SEComponent implements ISEGridNode{
 		}
 	}
 	
-	public void buildNeighborConnection(HashMap<String, GridNode> gridNodeMap, SEGraph graph){
+	public void buildNeighborConnection(HashMap<BlockPos, GridNode> gridNodeMap, SEGraph graph){
 		for (int i = 0; i<neighborX.length ; i++){
-			String neighborID = getIDString(neighborX[i], neighborY[i], neighborZ[i]);
-			GridNode neighbor = gridNodeMap.get(neighborID);
+			GridNode neighbor = gridNodeMap.get(new BlockPos(neighborX[i], neighborY[i], neighborZ[i]));
 			
 			graph.addGridEdge(this, neighbor, resistancesBuf[i]);
 		}
 		
-		this.complement = gridNodeMap.get(getIDString(complementX, complementY, complementZ));
+		this.complement = gridNodeMap.get(new BlockPos(complementX, complementY, complementZ));
 	}
 	
 	///////////////////////
@@ -87,9 +85,9 @@ public class GridNode extends SEComponent implements ISEGridNode{
 	///////////////////////
 	public void writeToNBT(NBTTagCompound nbt) {	
 		nbt.setByte("type", type);
-		nbt.setInteger("x", x);
-		nbt.setInteger("y", y);
-		nbt.setInteger("z", z);
+		nbt.setInteger("x", pos.getX());
+		nbt.setInteger("y", pos.getY());
+		nbt.setInteger("z", pos.getZ());
 		
 		int length = 0;
 		for (SEComponent neighbor : neighbors){
@@ -105,9 +103,9 @@ public class GridNode extends SEComponent implements ISEGridNode{
 		for (SEComponent neighbor : neighbors){
 			if (neighbor instanceof GridNode){
 				GridNode gridNode = (GridNode)neighbor;
-				neighborX[i] = gridNode.x;
-				neighborY[i] = gridNode.y;
-				neighborZ[i] = gridNode.z;
+				neighborX[i] = gridNode.pos.getX();
+				neighborY[i] = gridNode.pos.getY();
+				neighborZ[i] = gridNode.pos.getZ();
 				nbt.setDouble("R"+String.valueOf(i), iterator.next());
 				i++;
 			}
@@ -117,9 +115,9 @@ public class GridNode extends SEComponent implements ISEGridNode{
 		nbt.setIntArray("neigborZ", neighborZ);
 		
 		if (complement != null){
-			nbt.setInteger("complementX", complement.getXCoord());
-			nbt.setInteger("complementY", complement.getYCoord());
-			nbt.setInteger("complementZ", complement.getZCoord());
+			nbt.setInteger("complementX", complement.getPos().getX());
+			nbt.setInteger("complementY", complement.getPos().getY());
+			nbt.setInteger("complementZ", complement.getPos().getZ());
 		}else{
 			nbt.setInteger("complementY", -1);
 		}
@@ -142,19 +140,6 @@ public class GridNode extends SEComponent implements ISEGridNode{
 		return Double.NaN;
 	}
 	
-	public String getIDString(){
-		return getIDString(x, y, z);
-	}
-	
-	public static String getIDString(int x, int y, int z){
-		return String.valueOf(x) + ":" +String.valueOf(y) + ":" + String.valueOf(z);
-	}
-	
-	public static String getIDStringFromTileEntity(TileEntity te){
-		return getIDString(te.xCoord, te.yCoord, te.zCoord);
-	}
-	
-	
 	//ISEGridObject -----------------------------
 	@Override
 	public LinkedList<ISESimulatable> getNeighborList(){
@@ -166,18 +151,8 @@ public class GridNode extends SEComponent implements ISEGridNode{
 	}
 	
 	@Override
-	public int getXCoord(){
-		return this.x;
-	}
-	
-	@Override
-	public int getYCoord(){
-		return this.y;
-	}
-	
-	@Override
-	public int getZCoord(){
-		return this.z;
+	public BlockPos getPos(){
+		return this.pos;
 	}
 
 	@Override

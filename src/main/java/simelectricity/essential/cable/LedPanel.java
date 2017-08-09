@@ -2,14 +2,13 @@ package simelectricity.essential.cable;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.util.ForgeDirection;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.util.EnumFacing;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import simelectricity.essential.api.ISEIuminousCoverPanelHost;
 import simelectricity.essential.api.client.ISECoverPanelRender;
 import simelectricity.essential.api.coverpanel.ISEElectricalLoadCoverPanel;
 import simelectricity.essential.api.coverpanel.ISEIuminousCoverPanel;
-import simelectricity.essential.cable.render.RenderLedPanel;
 
 public class LedPanel implements ISEElectricalLoadCoverPanel, ISEIuminousCoverPanel{
 	private byte lightLevel;
@@ -26,11 +25,11 @@ public class LedPanel implements ISEElectricalLoadCoverPanel, ISEIuminousCoverPa
 	@Override
 	@SideOnly(Side.CLIENT)
 	public ISECoverPanelRender getCoverPanelRender() {
-		return RenderLedPanel.instance;
+		return null;	//TODO: Missing Render
 	}
 
 	@Override
-	public void setHost(TileEntity hostTileEntity, ForgeDirection side) {
+	public void setHost(TileEntity hostTileEntity, EnumFacing side) {
 		this.hostTileEntity = hostTileEntity;
 	}
 	

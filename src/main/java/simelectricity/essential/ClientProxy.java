@@ -1,28 +1,7 @@
 package simelectricity.essential;
 
-import cpw.mods.fml.client.registry.ClientRegistry;
-
-import simelectricity.essential.cable.BlockCable;
-import simelectricity.essential.cable.render.RenderBlockCable;
-import simelectricity.essential.cable.render.RenderLedPanel;
-import simelectricity.essential.cable.render.RenderVoltageSensorPanel;
+import simelectricity.essential.client.CustomModelLoader;
 import simelectricity.essential.common.ISEGuiProvider;
-import simelectricity.essential.extensions.buildcraft.client.BCFacadeRender;
-import simelectricity.essential.grid.BlockCableJoint;
-import simelectricity.essential.grid.BlockTransmissionTower2;
-import simelectricity.essential.grid.BlockTransmissionTowerTop;
-import simelectricity.essential.grid.BlockTransmissionTowerBottom;
-import simelectricity.essential.grid.TileCableJoint;
-import simelectricity.essential.grid.TileTransmissionTower;
-import simelectricity.essential.grid.TileTransmissionTower2;
-import simelectricity.essential.grid.render.BlockRenderCableJoint;
-import simelectricity.essential.grid.render.BlockRenderTransmissionTower2;
-import simelectricity.essential.grid.render.ModelBaker;
-import simelectricity.essential.grid.render.TileRenderTransmissionTower;
-import simelectricity.essential.grid.render.BlockRenderTransmissionTowerTop;
-import simelectricity.essential.grid.render.BlockRenderTransmissionTowerBottom;
-import simelectricity.essential.grid.render.TileRenderTranmissionTowerBase;
-import simelectricity.essential.grid.render.TileRenderTransmissionTower2;
 import simelectricity.essential.machines.gui.GuiAdjustableResistor;
 import simelectricity.essential.machines.gui.GuiAdjustableTransformer;
 import simelectricity.essential.machines.gui.GuiCurrentSensor;
@@ -30,7 +9,7 @@ import simelectricity.essential.machines.gui.GuiDiode;
 import simelectricity.essential.machines.gui.GuiQuantumGenerator;
 import simelectricity.essential.machines.gui.GuiSwitch;
 import simelectricity.essential.machines.gui.GuiVoltageMeter;
-import simelectricity.essential.machines.render.BlockRenderMachine;
+import simelectricity.essential.machines.render.SEMachineStateMapper;
 import simelectricity.essential.machines.tile.TileAdjustableResistor;
 import simelectricity.essential.machines.tile.TileAdjustableTransformer;
 import simelectricity.essential.machines.tile.TileCurrentSensor;
@@ -43,18 +22,20 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.client.model.ModelLoader;
 
 public class ClientProxy extends CommonProxy{
 	@Override
 	public EntityPlayer getClientPlayer(){
-		return Minecraft.getMinecraft().thePlayer;
+		return Minecraft.getMinecraft().player;
 	}
 	
 	@Override
 	public World getClientWorld(){
-		return Minecraft.getMinecraft().theWorld;
+		return Minecraft.getMinecraft().world;
 	}
 	
 	@Override
@@ -63,39 +44,28 @@ public class ClientProxy extends CommonProxy{
 	}
 	
 	@Override
+	public void registerModel(){
+		CustomModelLoader loader = new CustomModelLoader(Essential.modID);		
+		loader.registerIconsFor(ItemRegistry.itemHVCable);
+		loader.registerIconsFor(ItemRegistry.itemVitaTea);
+		loader.registerIconsFor(ItemRegistry.itemMisc);
+		loader.registerIconsFor(ItemRegistry.itemTools);
+		
+		ModelLoader.setCustomStateMapper(BlockRegistry.blockElectronics, new SEMachineStateMapper(Essential.modID));
+	}
+	
+	@Override
 	public void registerRenders() {
-		//Cable
-		BlockCable.renderID = (new RenderBlockCable()).getRenderId();
-		RenderBlockCable.bakeCableModel(BlockRegistry.blockCable);
-		
-		//Transmission Tower
-		new ModelBaker();
-		BlockTransmissionTowerTop.renderID = (new BlockRenderTransmissionTowerTop()).getRenderId();
-		ClientRegistry.bindTileEntitySpecialRenderer(TileTransmissionTower.class, new TileRenderTransmissionTower());
-		BlockTransmissionTowerBottom.renderID = (new BlockRenderTransmissionTowerBottom()).getRenderId();
-		BlockTransmissionTower2.renderID = (new BlockRenderTransmissionTower2()).getRenderId();
-		ClientRegistry.bindTileEntitySpecialRenderer(TileTransmissionTower2.class, new TileRenderTransmissionTower2());
-		
-		//Cable Joint
-		BlockCableJoint.renderID = (new BlockRenderCableJoint()).getRenderId();
-		ClientRegistry.bindTileEntitySpecialRenderer(TileCableJoint.class, new TileRenderTranmissionTowerBase());
-		
-		BlockRegistry.blockElectronics.renderID = (new BlockRenderMachine()).getRenderId();
-		BlockRegistry.blockTwoPortElectronics.renderID = BlockRegistry.blockElectronics.renderID;
-		
-		//BCFacadeRender
-		new BCFacadeRender();
-		new RenderLedPanel();
-		new RenderVoltageSensorPanel();
+
 	}
 
 	@Override
 	public Object getClientGuiElement(int ID, EntityPlayer player, World world,
 			int x, int y, int z) {
-		TileEntity te = world.getTileEntity(x, y, z);
+		TileEntity te = world.getTileEntity(new BlockPos(x, y, z));
 		
 		if (te instanceof ISEGuiProvider)
-			return ((ISEGuiProvider) te).getClientGuiContainer(ForgeDirection.getOrientation(ID));
+			return ((ISEGuiProvider) te).getClientGuiContainer(EnumFacing.getFront(ID));
 		
 		Container container = BlockRegistry.getContainer(te, player);
 		

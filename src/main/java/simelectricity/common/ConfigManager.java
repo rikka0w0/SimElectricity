@@ -19,12 +19,13 @@
 
 package simelectricity.common;
 
-import cpw.mods.fml.client.event.ConfigChangedEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.fml.client.event.ConfigChangedEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import simelectricity.SimElectricity;
 import simelectricity.common.SEUtils;
 
 public class ConfigManager {
@@ -69,7 +70,7 @@ public class ConfigManager {
     //This function is supposed to be called by a client only!
     @SubscribeEvent
     public void onConfigChanged(ConfigChangedEvent.OnConfigChangedEvent event) {
-        if (event.modID.equalsIgnoreCase(SEUtils.MODID))
+        if (event.getModID().equalsIgnoreCase(SimElectricity.MODID))
             syncConfig(true);
     }
 }

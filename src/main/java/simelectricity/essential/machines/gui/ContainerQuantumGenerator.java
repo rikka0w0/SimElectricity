@@ -2,10 +2,10 @@ package simelectricity.essential.machines.gui;
 
 import java.util.Iterator;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.inventory.ICrafting;
+import net.minecraft.inventory.IContainerListener;
 import net.minecraft.tileentity.TileEntity;
 import simelectricity.api.SEAPI;
 import simelectricity.essential.common.ContainerNoInventory;
@@ -59,9 +59,9 @@ public class ContainerQuantumGenerator extends ContainerNoInventory<TileQuantumG
 		this.current = current;
 		
 		//Send change to all crafter
-    	Iterator<ICrafting> iterator = this.crafters.iterator();
+    	Iterator<IContainerListener> iterator = this.listeners.iterator();
     	while (iterator.hasNext()) {
-    		ICrafting crafter = iterator.next();
+    		IContainerListener crafter = iterator.next();
     		
     		if (crafter instanceof EntityPlayerMP){
     			MessageContainerSync.sendToClient((EntityPlayerMP)crafter, internalVoltage, resistance, voltage, current);

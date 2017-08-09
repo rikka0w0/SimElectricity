@@ -1,6 +1,6 @@
 package simelectricity.api.components;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 public interface ISECable extends ISEComponentParameter{
     /**
@@ -24,7 +24,7 @@ public interface ISECable extends ISEComponentParameter{
      */
     double getResistance();
     
-    boolean canConnectOnSide(ForgeDirection direction);
+    boolean canConnectOnSide(EnumFacing direction);
     
     boolean isGridLinkEnabled();
     

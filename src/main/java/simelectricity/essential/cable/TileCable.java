@@ -1,17 +1,17 @@
 package simelectricity.essential.cable;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.AxisAlignedBB;
 
 import simelectricity.api.IEnergyNetUpdateHandler;
 import simelectricity.api.ISECrowbarTarget;
@@ -74,7 +74,7 @@ public class TileCable extends SEEnergyTile implements ISECrowbarTarget, ISEGene
             	ISECoverPanel coverPanel = SEEAPI.coverPanelRegistry.fromNBT(tag);
             	installedCoverPanels[side] = coverPanel;
             	
-            	coverPanel.setHost(this, ForgeDirection.getOrientation(side));
+            	coverPanel.setHost(this, EnumFacing.getFront(side));
             }
         }
 	}
@@ -89,7 +89,7 @@ public class TileCable extends SEEnergyTile implements ISECrowbarTarget, ISEGene
     @Override
     public void onCableRenderingUpdateRequested(){
 		//Update connection
-        ForgeDirection[] dirs = ForgeDirection.VALID_DIRECTIONS;
+        EnumFacing[] dirs = EnumFacing.VALUES;
         for (int i = 0; i < 6; i++) {
         	connections[i] = SEAPI.energyNetAgent.canConnectTo(this, dirs[i]);
         }
@@ -100,34 +100,35 @@ public class TileCable extends SEEnergyTile implements ISECrowbarTarget, ISEGene
     }
     
 	@Override
-	public boolean connectedOnSide(ForgeDirection side) {
+	public boolean connectedOnSide(EnumFacing side) {
 		return connections[side.ordinal()];
 	}
 	
 	@Override
-	public ForgeDirection getSelectedSide(EntityPlayer player, ForgeDirection side){
-		ForgeDirection selectedDirection = side;
-		Block block = worldObj.getBlock(xCoord, yCoord, zCoord);
+	public EnumFacing getSelectedSide(EntityPlayer player, EnumFacing side){
+		EnumFacing selectedDirection = side;
+		Block block = getBlockType();
 		if (block instanceof BlockCable){
-			RaytraceResult result = ((BlockCable) block).doRayTrace(worldObj, xCoord, yCoord, zCoord, player);
-			return result.hitCenter ? ForgeDirection.UNKNOWN : result.sideHit;
+			//RaytraceResult result = ((BlockCable) block).doRayTrace(world, pos, player);
+			//return result.hitCenter ? null : result.sideHit;
+			return selectedDirection;	//TODO: need to be fixed!
 		}
 		
 		return selectedDirection;
 	}
 	
 	@Override
-	public ISECoverPanel getCoverPanelOnSide(ForgeDirection side){
+	public ISECoverPanel getCoverPanelOnSide(EnumFacing side){
 		return installedCoverPanels[side.ordinal()];
 	}
 	
 	@Override
-	public boolean canInstallCoverPanelOnSide(ForgeDirection side, ISECoverPanel coverPanel) {
+	public boolean canInstallCoverPanelOnSide(EnumFacing side, ISECoverPanel coverPanel) {
 		return installedCoverPanels[side.ordinal()] == null;
 	}
 	
 	@Override
-	public void installCoverPanel(ForgeDirection side, ISECoverPanel coverPanel) {
+	public void installCoverPanel(EnumFacing side, ISECoverPanel coverPanel) {
 		installedCoverPanels[side.ordinal()] = coverPanel;
 		coverPanel.setHost(this, side);
 		
@@ -153,7 +154,7 @@ public class TileCable extends SEEnergyTile implements ISECrowbarTarget, ISEGene
     @SideOnly(Side.CLIENT)
     public AxisAlignedBB getRenderBoundingBox() {
         AxisAlignedBB bb = INFINITE_EXTENT_AABB;
-        bb = AxisAlignedBB.getBoundingBox(xCoord, yCoord, zCoord, xCoord + 1, yCoord + 1, zCoord + 1);
+        bb = new AxisAlignedBB(pos, pos.add(1, 1, 1));
         return bb;
     }
 
@@ -168,12 +169,12 @@ public class TileCable extends SEEnergyTile implements ISECrowbarTarget, ISEGene
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound tagCompound) {
-        super.writeToNBT(tagCompound);
-
+    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
         tagCompound.setInteger("color", color);
         tagCompound.setDouble("resistance", resistance);
         tagCompound.setTag("coverPanels", coverPanelsToNBT());
+        
+        return super.writeToNBT(tagCompound);
     }
     
 	///////////////////////////////////////
@@ -189,7 +190,7 @@ public class TileCable extends SEEnergyTile implements ISECrowbarTarget, ISEGene
 	public ISESimulatable getNode() {return node;}
 
 	@Override
-	public boolean canConnectOnSide(ForgeDirection direction) {
+	public boolean canConnectOnSide(EnumFacing direction) {
 		ISECoverPanel coverPanel = getCoverPanelOnSide(direction);
 		if (coverPanel == null)
 			return true;
@@ -257,7 +258,8 @@ public class TileCable extends SEEnergyTile implements ISECrowbarTarget, ISEGene
 		if (this.lightLevel != lightLevel){
 			this.lightLevel = lightLevel;
 			//Detect change & proceed
-			worldObj.updateLightByType(EnumSkyBlock.Block, xCoord, yCoord, zCoord);	//checkLightFor
+			world.checkLight(pos);
+			//world.updateLightByType(EnumSkyBlock.Block, xCoord, yCoord, zCoord);	//checkLightFor
 		}
 		
 		// Flag 1 - update Rendering Only!
@@ -281,8 +283,8 @@ public class TileCable extends SEEnergyTile implements ISECrowbarTarget, ISEGene
 	//ISECrowbarTarget
 	////////////////////////////////////////	
 	@Override
-	public boolean canCrowbarBeUsed(ForgeDirection side) {
-		if (side == ForgeDirection.UNKNOWN)
+	public boolean canCrowbarBeUsed(EnumFacing side) {
+		if (side == null)
 			return false;
 		
 		ISECoverPanel coverPanel = installedCoverPanels[side.ordinal()];
@@ -290,8 +292,8 @@ public class TileCable extends SEEnergyTile implements ISECrowbarTarget, ISEGene
 	}
 	
 	@Override
-	public void onCrowbarAction(ForgeDirection side, boolean isCreativePlayer) {
-		if (side == ForgeDirection.UNKNOWN)
+	public void onCrowbarAction(EnumFacing side, boolean isCreativePlayer) {
+		if (side == null)
 			return;
 		
 		ISECoverPanel coverPanel = installedCoverPanels[side.ordinal()];
@@ -308,14 +310,14 @@ public class TileCable extends SEEnergyTile implements ISECrowbarTarget, ISEGene
 		
 		//Notify neighbor block that this side no longer emits redstone signal
 		if (coverPanel instanceof ISERedstoneEmitterCoverPanel)
-			worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, this.getBlockType(), side.getOpposite().ordinal());
+			world.notifyNeighborsOfStateChange(pos, blockType, false);
 		
 		
 		onCableRenderingUpdateRequested();
 		
 		//Spawn an item entity for player to pick up
 		if (!isCreativePlayer)
-			Utils.dropItemIntoWorld(worldObj, xCoord, yCoord, zCoord, 
+			Utils.dropItemIntoWorld(world, pos, 
 					SEEAPI.coverPanelRegistry.toItemStack(coverPanel));
 	}
 	
@@ -323,13 +325,13 @@ public class TileCable extends SEEnergyTile implements ISECrowbarTarget, ISEGene
 	///ISEGuiProvider
 	///////////////////////
 	@Override
-	public Container getServerContainer(ForgeDirection side) {
+	public Container getServerContainer(EnumFacing side) {
 		ISECoverPanel coverPanel = installedCoverPanels[side.ordinal()];
 		return coverPanel instanceof ISEGuiCoverPanel ? ((ISEGuiCoverPanel)coverPanel).getServerContainer(this) : null;
 	}
 
 	@Override
-	public GuiContainer getClientGuiContainer(ForgeDirection side) {
+	public GuiContainer getClientGuiContainer(EnumFacing side) {
 		ISECoverPanel coverPanel = installedCoverPanels[side.ordinal()];
 		return coverPanel instanceof ISEGuiCoverPanel ? ((ISEGuiCoverPanel)coverPanel).getClientGuiContainer(this) : null;
 	}

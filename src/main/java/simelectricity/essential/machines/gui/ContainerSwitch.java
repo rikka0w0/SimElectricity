@@ -2,13 +2,13 @@ package simelectricity.essential.machines.gui;
 
 import java.util.Iterator;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.inventory.ICrafting;
+import net.minecraft.inventory.IContainerListener;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import simelectricity.api.SEAPI;
 import simelectricity.essential.common.ContainerNoInventoryTwoPort;
 import simelectricity.essential.machines.tile.TileSwitch;
@@ -17,11 +17,11 @@ import simelectricity.essential.utils.network.ISEContainerUpdate;
 import simelectricity.essential.utils.network.MessageContainerSync;
 
 public class ContainerSwitch extends ContainerNoInventoryTwoPort<TileSwitch> implements ISEContainerUpdate, ISEButtonEventHandler{
-	public double resistance;
-	public boolean isOn;
-	public double maxCurrent;
-	public double current;
-	public ForgeDirection inputSide, outputSide;
+	public volatile double resistance;
+	public volatile boolean isOn;
+	public volatile double maxCurrent;
+	public volatile double current;
+	public volatile EnumFacing inputSide, outputSide;
 	
 	public ContainerSwitch(TileEntity tileEntity) {
 		super(tileEntity);
@@ -33,7 +33,7 @@ public class ContainerSwitch extends ContainerNoInventoryTwoPort<TileSwitch> imp
 		boolean isOn = tileEntity.isOn;
 		double maxCurrent = tileEntity.maxCurrent;
 		double current = tileEntity.current;
-		ForgeDirection inputSide = tileEntity.inputSide, outputSide = tileEntity.outputSide;
+		EnumFacing inputSide = tileEntity.inputSide, outputSide = tileEntity.outputSide;
 		
 		//Look for any changes
 		if (this.resistance == resistance &&
@@ -52,11 +52,12 @@ public class ContainerSwitch extends ContainerNoInventoryTwoPort<TileSwitch> imp
 		this.outputSide = outputSide;
 		
 		//Send change to all crafter
-    	Iterator<ICrafting> iterator = this.crafters.iterator();
+    	Iterator<IContainerListener> iterator = this.listeners.iterator();
     	while (iterator.hasNext()) {
-    		ICrafting crafter = iterator.next();
+    		IContainerListener crafter = iterator.next();
     		
     		if (crafter instanceof EntityPlayerMP){
+    			crafter.sendProgressBarUpdate(this, 123, 456);
     			MessageContainerSync.sendToClient((EntityPlayerMP)crafter, resistance, isOn, maxCurrent, current, inputSide, outputSide);
     		}
     	}
@@ -69,8 +70,10 @@ public class ContainerSwitch extends ContainerNoInventoryTwoPort<TileSwitch> imp
 		this.isOn = (Boolean) data[1];
 		this.maxCurrent = (Double) data[2];
 		this.current = (Double) data[3];
-		this.inputSide = (ForgeDirection) data[4];
-		this.outputSide = (ForgeDirection) data[5];
+		this.inputSide = (EnumFacing) data[4];
+		this.outputSide = (EnumFacing) data[5];
+		
+		System.out.println(isOn);
 	}
 
 	@Override

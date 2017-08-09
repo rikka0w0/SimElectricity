@@ -19,16 +19,16 @@
 
 package simelectricity.api;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 /**
  * A tile entity should implement this, if its facing want to be changed by the glove item, all machines are recommended to implement this!
  */
 public interface ISidedFacing {
     /**
-     * Return the facing(Should have a line of "{@code private ForgeDirection facing = ForgeDirection.NORTH;} in the tile entity class)
+     * Return the facing(Should have a line of "{@code private EnumFacing facing = EnumFacing.NORTH;} in the tile entity class)
      */
-    ForgeDirection getFacing();
+	EnumFacing getFacing();
 
     /**
      * Usually contains a line of
@@ -37,10 +37,10 @@ public interface ISidedFacing {
      * </p>
      * Note: SERVER ONLY! Initiate a server->client sync if needed
      */
-    void setFacing(ForgeDirection newFacing);
+    void setFacing(EnumFacing newFacing);
 
     /**
      * Tell the glove, which facing is allowed or not allowed, directly return false means glove can do nothing!
      */
-    boolean canSetFacing(ForgeDirection newFacing);
+    boolean canSetFacing(EnumFacing newFacing);
 }

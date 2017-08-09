@@ -1,20 +1,22 @@
 package simelectricity.essential.machines.gui;
 
+import java.io.IOException;
+
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.inventory.Container;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.StatCollector;
+import net.minecraft.util.text.translation.I18n;
 import simelectricity.essential.Essential;
 import simelectricity.essential.utils.SEUnitHelper;
 import simelectricity.essential.utils.Utils;
 import simelectricity.essential.utils.client.GuiDirectionSelector;
 import simelectricity.essential.utils.client.SEGuiContainer;
 import simelectricity.essential.utils.network.MessageContainerSync;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public final class GuiSwitch extends SEGuiContainer<ContainerSwitch>{
@@ -27,15 +29,15 @@ public final class GuiSwitch extends SEGuiContainer<ContainerSwitch>{
         //draw text and stuff here
         //the parameters for drawString are: string, x, y, color
 
-        fontRendererObj.drawString(StatCollector.translateToLocal("tile.sime_essential:essential_two_port_electronics.switch.name"), 8, 6, 4210752);
+        fontRendererObj.drawString(I18n.translateToLocal("tile.sime_essential:essential_two_port_electronics.switch.name"), 8, 6, 4210752);
         
-        fontRendererObj.drawString(StatCollector.translateToLocal("gui.sime:current_trip"), 18, 85, 4210752);
-        fontRendererObj.drawString(StatCollector.translateToLocal("gui.sime:resistance_internal"), 18, 124, 4210752);
+        fontRendererObj.drawString(I18n.translateToLocal("gui.sime:current_trip"), 18, 85, 4210752);
+        fontRendererObj.drawString(I18n.translateToLocal("gui.sime:resistance_internal"), 18, 124, 4210752);
         
         int ybase = 22;
-        fontRendererObj.drawString(StatCollector.translateToLocal("gui.sime:current_trip"), 10, ybase, 4210752);
+        fontRendererObj.drawString(I18n.translateToLocal("gui.sime:current_trip"), 10, ybase, 4210752);
         fontRendererObj.drawString(SEUnitHelper.getCurrentStringWithUnit(container.maxCurrent), 10, ybase+8, 4210752);
-        fontRendererObj.drawString(StatCollector.translateToLocal("gui.sime:current"), 10, ybase+16, 4210752);
+        fontRendererObj.drawString(I18n.translateToLocal("gui.sime:current"), 10, ybase+16, 4210752);
         fontRendererObj.drawString(SEUnitHelper.getCurrentStringWithUnit(container.current), 10, ybase+24, 4210752);
         fontRendererObj.drawString("Ron = " + String.format("%.3f", container.resistance) + " \u03a9", 10, ybase+32, 4210752);
     }
@@ -84,7 +86,7 @@ public final class GuiSwitch extends SEGuiContainer<ContainerSwitch>{
     private static int switchX = 115;
     private static int switchY = 48;
     @Override
-    public void mouseClicked(int x, int y, int button) {
+    public void mouseClicked(int x, int y, int button) throws IOException {
         super.mouseClicked(x, y, button);
         
         if (x >= guiLeft+switchX && y >= guiTop+switchY && x < guiLeft+switchX+switchSize && y < guiTop+switchY+switchSize)

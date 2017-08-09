@@ -2,15 +2,15 @@ package simelectricity.essential.utils.client;
 
 import org.lwjgl.opengl.GL11;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import simelectricity.essential.Essential;
 import simelectricity.essential.utils.SEMathHelper;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.util.IIcon;
-import net.minecraft.util.MathHelper;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.math.MathHelper;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 /**
  * double[index][dimension]: each double[index] contains a 3D double array. double[index][0] - xCoord, double[index][1] - yCoord, double[index][2] - zCoord
@@ -23,7 +23,7 @@ public class SERenderHelper {
 		return new ResourceLocation(Essential.modID, path);
 	}
 	
-	public static void rotateUpwardCoordSysTo(ForgeDirection direction){
+	public static void rotateUpwardCoordSysTo(EnumFacing direction){
 		switch (direction){
 		case DOWN:
 			GL11.glRotatef(180, 1, 0, 0);
@@ -75,106 +75,8 @@ public class SERenderHelper {
         
         return vertexes;
 	}
-	
-	public static void addCubeToTessellator(double[][] cubeVertexes, IIcon icon, int lightValue){
-		addCubeToTessellator(cubeVertexes, createTextureArray(icon), new int[]{lightValue, lightValue, lightValue, lightValue, lightValue, lightValue});
-	}
-	
-	public static void addCubeToTessellator(double[][] cubeVertexes, IIcon[] icons, int lightValue){
-		addCubeToTessellator(cubeVertexes, icons, new int[]{lightValue, lightValue, lightValue, lightValue, lightValue, lightValue});
-	}
-	
-	public static void addCubeToTessellator(double[][] cubeVertexes, IIcon[] icons, int[] lightValue){
-		Tessellator tessellator = Tessellator.instance;    
-		
-		double uMin, uMax, vMin, vMax;
-		
-        //Down - Yneg
-		if (icons[0] != null){
-	        uMin = icons[0].getMinU();
-	        uMax = icons[0].getMaxU();
-	        vMin = icons[0].getMinV();
-	        vMax = icons[0].getMaxV();
-	        Tessellator.instance.setBrightness(lightValue[0]);
-	        Tessellator.instance.setColorOpaque_F(0.5F, 0.5F, 0.5F);
-			tessellator.addVertexWithUV(cubeVertexes[7][0], cubeVertexes[7][1], cubeVertexes[7][2], uMin, vMax);
-	        tessellator.addVertexWithUV(cubeVertexes[6][0], cubeVertexes[6][1], cubeVertexes[6][2], uMin, vMin);
-	        tessellator.addVertexWithUV(cubeVertexes[5][0], cubeVertexes[5][1], cubeVertexes[5][2], uMax, vMin);
-	        tessellator.addVertexWithUV(cubeVertexes[4][0], cubeVertexes[4][1], cubeVertexes[4][2], uMax, vMax);
-		}
-        
-		//Up - Ypos
-		if (icons[1] != null){
-	        uMin = icons[1].getMinU();
-	        uMax = icons[1].getMaxU();
-	        vMin = icons[1].getMinV();
-	        vMax = icons[1].getMaxV();
-	        Tessellator.instance.setBrightness(lightValue[1]);
-	        Tessellator.instance.setColorOpaque_F(1F, 1F, 1F);
-			tessellator.addVertexWithUV(cubeVertexes[0][0], cubeVertexes[0][1], cubeVertexes[0][2], uMax, vMax);
-	        tessellator.addVertexWithUV(cubeVertexes[1][0], cubeVertexes[1][1], cubeVertexes[1][2], uMax, vMin);
-	        tessellator.addVertexWithUV(cubeVertexes[2][0], cubeVertexes[2][1], cubeVertexes[2][2], uMin, vMin);
-	        tessellator.addVertexWithUV(cubeVertexes[3][0], cubeVertexes[3][1], cubeVertexes[3][2], uMin, vMax);
-		}
-        
-        //North - Zneg
-		if (icons[2] != null){
-	        uMin = icons[2].getMinU();
-	        uMax = icons[2].getMaxU();
-	        vMin = icons[2].getMinV();
-	        vMax = icons[2].getMaxV();
-	        Tessellator.instance.setBrightness(lightValue[3]);
-	        Tessellator.instance.setColorOpaque_F(0.8F, 0.8F, 0.8F);
-	        tessellator.addVertexWithUV(cubeVertexes[2][0], cubeVertexes[2][1], cubeVertexes[2][2], uMax, vMin);
-	        tessellator.addVertexWithUV(cubeVertexes[1][0], cubeVertexes[1][1], cubeVertexes[1][2], uMin, vMin);
-	        tessellator.addVertexWithUV(cubeVertexes[5][0], cubeVertexes[5][1], cubeVertexes[5][2], uMin, vMax);
-	        tessellator.addVertexWithUV(cubeVertexes[6][0], cubeVertexes[6][1], cubeVertexes[6][2], uMax, vMax);
-		}
-        
-        //South - Zpos
-		if (icons[3] != null){
-	        uMin = icons[3].getMinU();
-	        uMax = icons[3].getMaxU();
-	        vMin = icons[3].getMinV();
-	        vMax = icons[3].getMaxV();
-	        Tessellator.instance.setBrightness(lightValue[3]);
-	        Tessellator.instance.setColorOpaque_F(0.8F, 0.8F, 0.8F);
-	        tessellator.addVertexWithUV(cubeVertexes[3][0], cubeVertexes[3][1], cubeVertexes[3][2], uMin, vMin);
-	        tessellator.addVertexWithUV(cubeVertexes[7][0], cubeVertexes[7][1], cubeVertexes[7][2], uMin, vMax);
-	        tessellator.addVertexWithUV(cubeVertexes[4][0], cubeVertexes[4][1], cubeVertexes[4][2], uMax, vMax);
-	        tessellator.addVertexWithUV(cubeVertexes[0][0], cubeVertexes[0][1], cubeVertexes[0][2], uMax, vMin);
-		}
-	        
-        //West - Xneg
-		if (icons[4] != null){
-	        uMin = icons[4].getMinU();
-	        uMax = icons[4].getMaxU();
-	        vMin = icons[4].getMinV();
-	        vMax = icons[4].getMaxV();
-	        Tessellator.instance.setBrightness(lightValue[4]);
-	        Tessellator.instance.setColorOpaque_F(0.6F, 0.6F, 0.6F);
-	        tessellator.addVertexWithUV(cubeVertexes[3][0], cubeVertexes[3][1], cubeVertexes[3][2], uMax, vMin);
-	        tessellator.addVertexWithUV(cubeVertexes[2][0], cubeVertexes[2][1], cubeVertexes[2][2], uMin, vMin);
-	        tessellator.addVertexWithUV(cubeVertexes[6][0], cubeVertexes[6][1], cubeVertexes[6][2], uMin, vMax);
-	        tessellator.addVertexWithUV(cubeVertexes[7][0], cubeVertexes[7][1], cubeVertexes[7][2], uMax, vMax);
-		}
 
-        //East - Xpos
-		if (icons[5] != null){
-	        uMin = icons[5].getMinU();
-	        uMax = icons[5].getMaxU();
-	        vMin = icons[5].getMinV();
-	        vMax = icons[5].getMaxV();
-	        Tessellator.instance.setBrightness(lightValue[5]);
-	        Tessellator.instance.setColorOpaque_F(0.6F, 0.6F, 0.6F);
-	        tessellator.addVertexWithUV(cubeVertexes[1][0], cubeVertexes[1][1], cubeVertexes[1][2], uMax, vMin);
-	        tessellator.addVertexWithUV(cubeVertexes[0][0], cubeVertexes[0][1], cubeVertexes[0][2], uMin, vMin);
-	        tessellator.addVertexWithUV(cubeVertexes[4][0], cubeVertexes[4][1], cubeVertexes[4][2], uMin, vMax);
-	        tessellator.addVertexWithUV(cubeVertexes[5][0], cubeVertexes[5][1], cubeVertexes[5][2], uMax, vMax);
-		}
-	}
-
-    public static void rotateCubeToDirection(double[][] cubeVertexes, ForgeDirection direction){
+    public static void rotateCubeToDirection(double[][] cubeVertexes, EnumFacing direction){
 		switch (direction){
 		case DOWN:
 			SERenderHelper.rotateAroundX(cubeVertexes, 180);
@@ -293,7 +195,8 @@ public class SERenderHelper {
     	}
     }
 
-    public static IIcon[] createTextureArray(IIcon icon){
-    	return new IIcon[]{icon, icon, icon, icon, icon, icon};
-    }
+	public static TextureAtlasSprite[] createTextureArray(
+			TextureAtlasSprite texture) {
+		return new TextureAtlasSprite[]{texture, texture, texture, texture, texture, texture};
+	}
 }

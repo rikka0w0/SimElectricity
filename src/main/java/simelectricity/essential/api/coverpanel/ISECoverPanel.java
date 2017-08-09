@@ -1,11 +1,11 @@
 package simelectricity.essential.api.coverpanel;
 
 import simelectricity.essential.api.client.ISECoverPanelRender;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public interface ISECoverPanel {
 	public static final double thickness = 0.05;	//Constant
@@ -30,5 +30,5 @@ public interface ISECoverPanel {
 	 * @param hostTileEntity
 	 * @param side
 	 */
-	void setHost(TileEntity hostTileEntity, ForgeDirection side);
+	void setHost(TileEntity hostTileEntity, EnumFacing side);
 }

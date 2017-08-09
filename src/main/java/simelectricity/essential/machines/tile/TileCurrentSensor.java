@@ -1,9 +1,9 @@
 package simelectricity.essential.machines.tile;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import simelectricity.api.IEnergyNetUpdateHandler;
 import simelectricity.api.SEAPI;
 import simelectricity.api.components.ISESwitch;
@@ -34,13 +34,13 @@ public class TileCurrentSensor extends SETwoPortMachine implements ISESwitch, IE
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound tagCompound) {
-        super.writeToNBT(tagCompound);
-
+    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
         tagCompound.setDouble("resistance", resistance);
         tagCompound.setDouble("thresholdCurrent", thresholdCurrent);
         tagCompound.setBoolean("absMode", absMode);
         tagCompound.setBoolean("inverted", inverted);
+        
+        return super.writeToNBT(tagCompound);
     }
     
 	/////////////////////////////////////////////////////////
@@ -71,7 +71,7 @@ public class TileCurrentSensor extends SETwoPortMachine implements ISESwitch, IE
     ///////////////////////////////////
 	@Override
 	@SideOnly(Side.CLIENT)
-	public int getSocketIconIndex(ForgeDirection side) {
+	public int getSocketIconIndex(EnumFacing side) {
 		if (side == inputSide)
 			return 2;
 		else if (side == outputSide)
@@ -84,7 +84,7 @@ public class TileCurrentSensor extends SETwoPortMachine implements ISESwitch, IE
 	private boolean setRedstone(boolean status){
 		if (emitRedstoneSignal != status){
 			emitRedstoneSignal = status;
-			worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, this.getBlockType());
+			world.notifyNeighborsOfStateChange(getPos(), this.getBlockType(), false);
 			return true;
 		}
 		return false;

@@ -1,7 +1,7 @@
 package simelectricity.api.tile;
 
+import net.minecraft.util.EnumFacing;
 import simelectricity.api.node.ISESubComponent;
-import net.minecraftforge.common.util.ForgeDirection;
 
 /**
  * ISETile is a container, it is able to support up to 6 ISESubComponent. TileEntities implement this interface
@@ -12,7 +12,7 @@ public interface ISETile{
 	/**
 	 * @return An array of directions that can be used to connect to {link}ISESubComponent
 	 */
-	//public ForgeDirection[] getValidDirections();
+	//public EnumFacing[] getValidDirections();
 	
-	public ISESubComponent getComponent(ForgeDirection side);
+	public ISESubComponent getComponent(EnumFacing side);
 }

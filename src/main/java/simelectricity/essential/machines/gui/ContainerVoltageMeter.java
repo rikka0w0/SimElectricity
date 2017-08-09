@@ -2,11 +2,11 @@ package simelectricity.essential.machines.gui;
 
 import java.util.Iterator;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.inventory.ICrafting;
+import net.minecraft.inventory.IContainerListener;
 import net.minecraft.tileentity.TileEntity;
 import simelectricity.essential.common.ContainerNoInventory;
 import simelectricity.essential.machines.tile.TileVoltageMeter;
@@ -31,9 +31,9 @@ public class ContainerVoltageMeter extends ContainerNoInventory<TileVoltageMeter
 		this.voltage = voltage;
 		
 		//Send change to all crafter
-    	Iterator<ICrafting> iterator = this.crafters.iterator();
+    	Iterator<IContainerListener> iterator = this.listeners.iterator();
     	while (iterator.hasNext()) {
-    		ICrafting crafter = iterator.next();
+    		IContainerListener crafter = iterator.next();
     		
     		if (crafter instanceof EntityPlayerMP){
     			MessageContainerSync.sendToClient((EntityPlayerMP)crafter, voltage);

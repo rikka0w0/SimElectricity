@@ -24,7 +24,7 @@ public class SEItemBlock extends ItemBlock{
     @Override
     public final String getUnlocalizedName(ItemStack itemstack) {
     	if (this.getHasSubtypes()){
-        	SEBlock seBlock = (SEBlock)this.field_150939_a;
+        	SEBlock seBlock = (SEBlock)this.getBlock();
         	String[] subBlockUnlocalizedNames = ((ISESubBlock)seBlock).getSubBlockUnlocalizedNames();
             return super.getUnlocalizedName() + "." + subBlockUnlocalizedNames[itemstack.getItemDamage()];
     	}

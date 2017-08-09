@@ -8,12 +8,13 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.MathHelper;
-import net.minecraft.util.StatCollector;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
 
 public class Utils {
 	/**
@@ -32,61 +33,61 @@ public class Utils {
 	 * @param ignoreVertical If set to true, possible results are NESW, else the result can also be up or down/
 	 * @return the direction where the player/entity is looking at
 	 */
-    public static final ForgeDirection getPlayerSight(EntityLivingBase player) {
-        int heading = MathHelper.floor_double(player.rotationYaw * 4.0F / 360.0F + 0.5D) & 3;
+    public static final EnumFacing getPlayerSight(EntityLivingBase player) {
+        int heading = MathHelper.floor(player.rotationYaw * 4.0F / 360.0F + 0.5D) & 3;
         int pitch = Math.round(player.rotationPitch);
         
         if (pitch >= 65)
-            return ForgeDirection.DOWN;  //1
+            return EnumFacing.DOWN;  //1
 
         if (pitch <= -65)
-        	return ForgeDirection.UP;    //0
+        	return EnumFacing.UP;    //0
         
         switch (heading) {
             case 0:
-                return ForgeDirection.SOUTH; //2
+                return EnumFacing.SOUTH; //2
             case 1:
-                return ForgeDirection.WEST;  //5
+                return EnumFacing.WEST;  //5
             case 2:
-                return ForgeDirection.NORTH; //3
+                return EnumFacing.NORTH; //3
             case 3:
-                return ForgeDirection.EAST;  //4
+                return EnumFacing.EAST;  //4
             default:
-                return ForgeDirection.UNKNOWN;
+                return null;
         }
     }
     
-    public static final ForgeDirection getPlayerSightHorizontal(EntityLivingBase player) {
-        int heading = MathHelper.floor_double(player.rotationYaw * 4.0F / 360.0F + 0.5D) & 3;
+    public static final EnumFacing getPlayerSightHorizontal(EntityLivingBase player) {
+        int heading = MathHelper.floor(player.rotationYaw * 4.0F / 360.0F + 0.5D) & 3;
         
         switch (heading) {
             case 0:
-                return ForgeDirection.SOUTH; //2
+                return EnumFacing.SOUTH; //2
             case 1:
-                return ForgeDirection.WEST;  //5
+                return EnumFacing.WEST;  //5
             case 2:
-                return ForgeDirection.NORTH; //3
+                return EnumFacing.NORTH; //3
             case 3:
-                return ForgeDirection.EAST;  //4
+                return EnumFacing.EAST;  //4
             default:
-                return ForgeDirection.UNKNOWN;
+                return null;
         }
     }
     
     /**
      * Drop items inside the inventory
      */
-    public static final void dropItemIntoWorld(World world, int x, int y, int z, ItemStack item) {
+    public static final void dropItemIntoWorld(World world, BlockPos pos, ItemStack item) {
         Random rand = new Random();
 
-        if (item != null && item.stackSize > 0) {
+        if (item != null && item.getCount() > 0) {
             float rx = rand.nextFloat() * 0.8F + 0.1F;
             float ry = rand.nextFloat() * 0.8F + 0.1F;
             float rz = rand.nextFloat() * 0.8F + 0.1F;
 
             EntityItem entityItem = new EntityItem(world,
-                    x + rx, y + ry, z + rz,
-                    new ItemStack(item.getItem(), item.stackSize, item.getItemDamage()));
+                    pos.getX() + rx, pos.getY() + ry, pos.getZ() + rz,
+                    new ItemStack(item.getItem(), item.getCount(), item.getItemDamage()));
 
             if (item.hasTagCompound()) {
                 entityItem.getEntityItem().setTagCompound((NBTTagCompound) item.getTagCompound().copy());
@@ -96,40 +97,32 @@ public class Utils {
             entityItem.motionX = rand.nextGaussian() * factor;
             entityItem.motionY = rand.nextGaussian() * factor + 0.2F;
             entityItem.motionZ = rand.nextGaussian() * factor;
-            world.spawnEntityInWorld(entityItem);
-            item.stackSize = 0;
+            world.spawnEntity(entityItem);
+            item.setCount(0);
         }
     }
-    
-	public static final void addCollisionBoxToList(int x, int y, int z, AxisAlignedBB addCollisionBoxToList, List collidingBoxes,
-			double minX, double minY, double minZ, double maxX, double maxY, double maxZ){
-		AxisAlignedBB axisalignedbb1 = AxisAlignedBB.getBoundingBox(x + minX, y + minY, z + minZ, x + maxX, y + maxY, z + maxZ);
-	
-        if (axisalignedbb1 != null && addCollisionBoxToList.intersectsWith(axisalignedbb1))
-        	collidingBoxes.add(axisalignedbb1);
-	}
-	
+    	
 	public static void chat(EntityPlayer player, String text) {
-        player.addChatMessage(new ChatComponentText(text));
+		player.sendMessage(new TextComponentString(text));
     }
 	
 	public static void chatWithLocalization(EntityPlayer player, String text) {
-        player.addChatMessage(new ChatComponentText(StatCollector.translateToLocal(text)));
+        player.sendMessage(new TextComponentString(I18n.translateToLocal(text)));
     }
 	
-	public static ForgeDirection getDirectionFromRedstoneSide(int iSide){
+	public static EnumFacing getDirectionFromRedstoneSide(int iSide){
 		switch (iSide){
 		case -1:
-			return ForgeDirection.UP;
+			return EnumFacing.UP;
 		case 0:
-			return ForgeDirection.NORTH;
+			return EnumFacing.NORTH;
 		case 1:
-			return ForgeDirection.EAST;
+			return EnumFacing.EAST;
 		case 2:
-			return ForgeDirection.SOUTH;
+			return EnumFacing.SOUTH;
 		case 3:
-			return ForgeDirection.WEST;
+			return EnumFacing.WEST;
 		}
-		return ForgeDirection.UNKNOWN;
+		return null;
 	}
 }

@@ -2,8 +2,8 @@ package simelectricity.essential.utils.client;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.util.ForgeDirection;
 
 public class GuiDirectionSelector {
 	public final static class GuiDirectionSelectorButton extends Gui{
@@ -31,13 +31,13 @@ public class GuiDirectionSelector {
 			vList[STATE_GREEN] = new int[]{0,3,3,11};
 		}
 
-		protected final ForgeDirection actualDirection;
+		protected final EnumFacing actualDirection;
 		protected final byte type;
 		protected final int xPos, yPos, width, height;
 		protected boolean enabled, visible;
 		protected byte state;
 		
-		protected GuiDirectionSelectorButton(int xPos, int yPos, byte type, ForgeDirection actualDirection){
+		protected GuiDirectionSelectorButton(int xPos, int yPos, byte type, EnumFacing actualDirection){
 			this.xPos = xPos;
 			this.yPos = yPos;
 			this.width = this.widthList[type];
@@ -74,29 +74,29 @@ public class GuiDirectionSelector {
     };
 	
 	private final GuiDirectionSelectorButton[] buttons;
-	public GuiDirectionSelector(int x, int y, ForgeDirection playerSight){
+	public GuiDirectionSelector(int x, int y, EnumFacing playerSight){
 		int sight;
 		if (playerSight == null)
 			sight = 4;
-		else if (	playerSight == ForgeDirection.NORTH ||
-					playerSight == ForgeDirection.SOUTH ||
-					playerSight == ForgeDirection.WEST ||
-					playerSight == ForgeDirection.EAST)
+		else if (	playerSight == EnumFacing.NORTH ||
+					playerSight == EnumFacing.SOUTH ||
+					playerSight == EnumFacing.WEST ||
+					playerSight == EnumFacing.EAST)
 			sight = (playerSight.ordinal() - 2)&3;
 		else
 			sight = 4;
 		
 		this.buttons = new GuiDirectionSelectorButton[6];
 		
-		buttons[0] = new GuiDirectionSelectorButton(x+23, y+6, GuiDirectionSelectorButton.TYPE_DOWN, ForgeDirection.DOWN);		//D
-		buttons[1] = new GuiDirectionSelectorButton(x+6, y+6, GuiDirectionSelectorButton.TYPE_UP, ForgeDirection.UP);			//U
-		buttons[2] = new GuiDirectionSelectorButton(x + 3, y, GuiDirectionSelectorButton.TYPE_HORIZONTAL, ForgeDirection.getOrientation(rotationMatrix[sight][0]));	//N
-		buttons[3] = new GuiDirectionSelectorButton(x + 3, y+17, GuiDirectionSelectorButton.TYPE_HORIZONTAL, ForgeDirection.getOrientation(rotationMatrix[sight][1]));	//S
-		buttons[4] = new GuiDirectionSelectorButton(x, y+3, GuiDirectionSelectorButton.TYPE_VERTICAL, ForgeDirection.getOrientation(rotationMatrix[sight][2]));	//W
-		buttons[5] = new GuiDirectionSelectorButton(x+17, y+3, GuiDirectionSelectorButton.TYPE_VERTICAL, ForgeDirection.getOrientation(rotationMatrix[sight][3]));	//E	
+		buttons[0] = new GuiDirectionSelectorButton(x+23, y+6, GuiDirectionSelectorButton.TYPE_DOWN, EnumFacing.DOWN);		//D
+		buttons[1] = new GuiDirectionSelectorButton(x+6, y+6, GuiDirectionSelectorButton.TYPE_UP, EnumFacing.UP);			//U
+		buttons[2] = new GuiDirectionSelectorButton(x + 3, y, GuiDirectionSelectorButton.TYPE_HORIZONTAL, EnumFacing.getFront(rotationMatrix[sight][0]));	//N
+		buttons[3] = new GuiDirectionSelectorButton(x + 3, y+17, GuiDirectionSelectorButton.TYPE_HORIZONTAL, EnumFacing.getFront(rotationMatrix[sight][1]));	//S
+		buttons[4] = new GuiDirectionSelectorButton(x, y+3, GuiDirectionSelectorButton.TYPE_VERTICAL, EnumFacing.getFront(rotationMatrix[sight][2]));	//W
+		buttons[5] = new GuiDirectionSelectorButton(x+17, y+3, GuiDirectionSelectorButton.TYPE_VERTICAL, EnumFacing.getFront(rotationMatrix[sight][3]));	//E	
 	}
 	
-	public void draw(ForgeDirection red, ForgeDirection green){		
+	public void draw(EnumFacing red, EnumFacing green){		
 		for (int i=0; i<6; i++){
 			GuiDirectionSelectorButton button = buttons[i];
 			if (button.actualDirection == red)
@@ -109,12 +109,12 @@ public class GuiDirectionSelector {
 		}
 	}
 	
-	public ForgeDirection onMouseClick(int x, int y){
+	public EnumFacing onMouseClick(int x, int y){
 		for (int i=0; i<6; i++){
 			GuiDirectionSelectorButton button = buttons[i];
 			if (button.isMouseOver(x, y))
 				return button.actualDirection;
 		}
-		return ForgeDirection.UNKNOWN;
+		return null;
 	}
 }

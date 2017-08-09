@@ -2,7 +2,7 @@ package simelectricity.essential.api;
 
 import simelectricity.essential.api.coverpanel.ISECoverPanel;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 public interface ISECoverPanelHost {
 	/**
@@ -15,9 +15,9 @@ public interface ISECoverPanelHost {
 	 * @param side the side which is closest to the player
 	 * @return the side which the player is actually looking at, UNKNOWN - center
 	 */
-	ForgeDirection getSelectedSide(EntityPlayer player, ForgeDirection side);
+	EnumFacing getSelectedSide(EntityPlayer player, EnumFacing side);
 	
-	ISECoverPanel getCoverPanelOnSide(ForgeDirection side);
+	ISECoverPanel getCoverPanelOnSide(EnumFacing side);
 	
 	/**
 	 * Handle on SERVER side ONLY!
@@ -25,7 +25,7 @@ public interface ISECoverPanelHost {
 	 * @param coverPanel
 	 * @return
 	 */
-	void installCoverPanel(ForgeDirection side, ISECoverPanel coverPanel);
+	void installCoverPanel(EnumFacing side, ISECoverPanel coverPanel);
 	
-	boolean canInstallCoverPanelOnSide(ForgeDirection side, ISECoverPanel coverPanel);
+	boolean canInstallCoverPanelOnSide(EnumFacing side, ISECoverPanel coverPanel);
 }

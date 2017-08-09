@@ -1,7 +1,7 @@
 package simelectricity.energynet.components;
 
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import simelectricity.api.components.ISECable;
 import simelectricity.api.tile.ISECableTile;
 
@@ -36,7 +36,7 @@ public class Cable extends SEComponent.Tile<ISECable> implements ISECable{
 		this.shuntResistance = dataProvider.getShuntResistance();
 	
 		int i = 0;
-		for (ForgeDirection dir: ForgeDirection.VALID_DIRECTIONS){
+		for (EnumFacing dir: EnumFacing.VALUES){
 			this.canConnectOnSide[i] = dataProvider.canConnectOnSide(dir);
 			i++;
 		}
@@ -46,7 +46,7 @@ public class Cable extends SEComponent.Tile<ISECable> implements ISECable{
 	///ISECableParameter
 	/////////////////////////
 	@Override
-	public boolean canConnectOnSide(ForgeDirection direction){
+	public boolean canConnectOnSide(EnumFacing direction){
 		return this.canConnectOnSide[direction.ordinal()];
 	}
 

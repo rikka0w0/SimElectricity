@@ -1,9 +1,9 @@
 package simelectricity.essential.machines.tile;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import simelectricity.api.IEnergyNetUpdateHandler;
 import simelectricity.api.SEAPI;
 import simelectricity.api.components.ISESwitch;
@@ -30,12 +30,12 @@ public class TileSwitch extends SETwoPortMachine implements ISESwitch, IEnergyNe
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound tagCompound) {
-        super.writeToNBT(tagCompound);
-
+    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
         tagCompound.setDouble("resistance", resistance);
         tagCompound.setDouble("maxCurrent", maxCurrent);
         tagCompound.setBoolean("isOn", isOn);
+        
+        return super.writeToNBT(tagCompound);
     }
     
 	/////////////////////////////////////////////////////////
@@ -91,7 +91,7 @@ public class TileSwitch extends SETwoPortMachine implements ISESwitch, IEnergyNe
     ///////////////////////////////////
 	@Override
 	@SideOnly(Side.CLIENT)
-	public int getSocketIconIndex(ForgeDirection side) {
+	public int getSocketIconIndex(EnumFacing side) {
 		if (side == inputSide)
 			return 2;
 		else if (side == outputSide)

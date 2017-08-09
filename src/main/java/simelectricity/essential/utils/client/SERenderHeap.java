@@ -3,15 +3,14 @@ package simelectricity.essential.utils.client;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
-import net.minecraft.util.IIcon;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public class SERenderHeap {
 	private final LinkedList<double[][]> cubes = new LinkedList();
-	private final LinkedList<IIcon[]> textures = new LinkedList();
+	private final LinkedList<TextureAtlasSprite[]> textures = new LinkedList();
 	
 	@Override
 	public SERenderHeap clone(){
@@ -19,8 +18,8 @@ public class SERenderHeap {
 		for (double[][] cube: cubes)
 			ret.cubes.add(SERenderHelper.createSafeCopy(cube));
 		
-		for (IIcon[] textureArray: textures){
-			ret.textures.add(new IIcon[]{
+		for (TextureAtlasSprite[] textureArray: textures){
+			ret.textures.add(new TextureAtlasSprite[]{
 					textureArray[0],
 					textureArray[1],
 					textureArray[2],
@@ -38,13 +37,13 @@ public class SERenderHeap {
 		return this;
 	}
 	
-	public SERenderHeap addCube(double[][] cube, IIcon texture){
+	public SERenderHeap addCube(double[][] cube, TextureAtlasSprite texture){
 		this.cubes.add(cube);
 		this.textures.add(SERenderHelper.createTextureArray(texture));
 		return this;
 	}
 	
-	public SERenderHeap addCube(double[][] cube, IIcon[] textures){
+	public SERenderHeap addCube(double[][] cube, TextureAtlasSprite[] textures){
 		this.cubes.add(cube);
 		this.textures.add(textures);
 		return this;
@@ -101,11 +100,11 @@ public class SERenderHeap {
 	
 	public void applyToTessellator(int lightValue){
 		Iterator<double[][]> cubeIterator = cubes.iterator();
-		Iterator<IIcon[]> textureIterator = textures.iterator();
+		Iterator<TextureAtlasSprite[]> textureIterator = textures.iterator();
 		while (cubeIterator.hasNext()){
 			double[][] cube = cubeIterator.next();
-			IIcon[] textureArray = textureIterator.next();
-			SERenderHelper.addCubeToTessellator(cube, textureArray, lightValue);
+			TextureAtlasSprite[] textureArray = textureIterator.next();
+			//SERenderHelper.addCubeToTessellator(cube, textureArray, lightValue);
 		}
 	}
 }

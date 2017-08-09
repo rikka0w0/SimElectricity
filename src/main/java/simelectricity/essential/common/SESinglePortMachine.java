@@ -1,9 +1,9 @@
 package simelectricity.essential.common;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import simelectricity.api.ISEWrenchable;
 import simelectricity.api.ISidedFacing;
 import simelectricity.api.SEAPI;
@@ -12,8 +12,8 @@ import simelectricity.api.node.ISESubComponent;
 import simelectricity.api.tile.ISETile;
 
 public abstract class SESinglePortMachine extends SEEnergyTile implements ISidedFacing, ISEWrenchable, ISETile, ISEComponentParameter {
-	protected ForgeDirection functionalSide = ForgeDirection.SOUTH;
-	protected ForgeDirection facing = ForgeDirection.NORTH;
+	protected EnumFacing functionalSide = EnumFacing.SOUTH;
+	protected EnumFacing facing = EnumFacing.NORTH;
 	protected ISESubComponent circuit = SEAPI.energyNetAgent.newComponent(this, this);
 	
 	///////////////////////////////////
@@ -22,36 +22,35 @@ public abstract class SESinglePortMachine extends SEEnergyTile implements ISided
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
-
-        functionalSide = ForgeDirection.getOrientation(tagCompound.getByte("functionalSide"));
-        facing = ForgeDirection.getOrientation((tagCompound.getByte("facing")));
+        
+        functionalSide = EnumFacing.getFront(tagCompound.getByte("functionalSide"));
+        facing = EnumFacing.getFront((tagCompound.getByte("facing")));
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound tagCompound) {
-        super.writeToNBT(tagCompound);
-
+    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
         tagCompound.setByte("functionalSide", (byte) functionalSide.ordinal());
         tagCompound.setByte("facing", (byte) facing.ordinal());
+        return super.writeToNBT(tagCompound);
     }
 
     ///////////////////////////////////
     /// ISidedFacing
     ///////////////////////////////////
     @Override
-    public void setFacing(ForgeDirection newFacing) {
+    public void setFacing(EnumFacing newFacing) {
         facing = newFacing;
         
         this.markTileEntityForS2CSync();
     }
 
     @Override
-    public ForgeDirection getFacing() {
+    public EnumFacing getFacing() {
         return facing;
     }
 
     @Override
-    public boolean canSetFacing(ForgeDirection newFacing) {
+    public boolean canSetFacing(EnumFacing newFacing) {
         return true;
     }
     
@@ -60,12 +59,12 @@ public abstract class SESinglePortMachine extends SEEnergyTile implements ISided
     /// ISEWrenchable
     ///////////////////////////////////
     @Override
-    public void onWrenchAction(ForgeDirection side, boolean isCreativePlayer) {
+    public void onWrenchAction(EnumFacing side, boolean isCreativePlayer) {
     	SetFunctionalSide(side);
     }
 
     @Override
-    public boolean canWrenchBeUsed(ForgeDirection side) {
+    public boolean canWrenchBeUsed(EnumFacing side) {
         return true;
     }
     
@@ -83,8 +82,8 @@ public abstract class SESinglePortMachine extends SEEnergyTile implements ISided
     @SideOnly(value = Side.CLIENT)
 	@Override
 	public void onSyncDataFromServerArrived(NBTTagCompound nbt){
-		functionalSide = ForgeDirection.getOrientation(nbt.getByte("functionalSide"));
-		facing = ForgeDirection.getOrientation(nbt.getByte("facing"));
+		functionalSide = EnumFacing.getFront(nbt.getByte("functionalSide"));
+		facing = EnumFacing.getFront(nbt.getByte("facing"));
 		
 		// Flag 1 - update Rendering Only!
 		markForRenderUpdate();
@@ -96,18 +95,19 @@ public abstract class SESinglePortMachine extends SEEnergyTile implements ISided
 	///ISETile
 	/////////////////////////////////////////////////////////
 	@Override
-	public ISESubComponent getComponent(ForgeDirection side){
+	public ISESubComponent getComponent(EnumFacing side){
 		return side == functionalSide ? circuit : null;
 	}
 	
 	/////////////////////////////////////////////////////////
 	///Utils
 	/////////////////////////////////////////////////////////
-	public void SetFunctionalSide(ForgeDirection side) {
+	public void SetFunctionalSide(EnumFacing side) {
         functionalSide = side;
         
         this.markTileEntityForS2CSync();
-        this.worldObj.notifyBlockChange(xCoord, yCoord, zCoord, this.getBlockType());
+        //this.worldObj.notifyBlockChange(xCoord, yCoord, zCoord, this.getBlockType());
+        //TODO: QAQ!
         
         if (this.isAddedToEnergyNet)
         	SEAPI.energyNetAgent.updateTileConnection(this);

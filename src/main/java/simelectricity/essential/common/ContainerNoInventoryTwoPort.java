@@ -1,7 +1,7 @@
 package simelectricity.essential.common;
 
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import simelectricity.api.SEAPI;
 import simelectricity.essential.utils.network.ISEDirectionSelectorEventHandler;
 
@@ -11,8 +11,8 @@ public abstract class ContainerNoInventoryTwoPort<TYPE extends SETwoPortMachine>
 	}
 
 	@Override
-	public void onDirectionSelected(ForgeDirection direction, int mouseButton) {
-		ForgeDirection inputSide = tileEntity.inputSide, outputSide = tileEntity.outputSide;
+	public void onDirectionSelected(EnumFacing direction, int mouseButton) {
+		EnumFacing inputSide = tileEntity.inputSide, outputSide = tileEntity.outputSide;
 		
 	    if (mouseButton == 0) {        //Left key
 	        if (outputSide == direction)
