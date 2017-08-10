@@ -37,12 +37,12 @@ public class TileCable extends SEEnergyTile implements ISECrowbarTarget, ISEGene
     private double resistance = 10;
     private double voltage;
     
-	public byte lightLevel;
     public boolean emitRedstoneSignal;
 	
     /**
      * Accessible from client
      */
+    public byte lightLevel;
     private boolean[] connections = new boolean[6];
     private ISECoverPanel[] installedCoverPanels = new ISECoverPanel[6];
     
@@ -158,7 +158,6 @@ public class TileCable extends SEEnergyTile implements ISECrowbarTarget, ISEGene
         return bb;
     }
 
-
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
@@ -243,14 +242,14 @@ public class TileCable extends SEEnergyTile implements ISECrowbarTarget, ISEGene
 	@SideOnly(value = Side.CLIENT)
 	@Override
 	public void onSyncDataFromServerArrived(NBTTagCompound nbt){
-		byte bc = nbt.getByte("connections");
+		byte connectionsBinary = nbt.getByte("connections");
 		
-		connections[0] = (bc & 1) > 0;
-		connections[1] = (bc & 2) > 0;
-		connections[2] = (bc & 4) > 0;
-		connections[3] = (bc & 8) > 0;
-		connections[4] = (bc & 16) > 0;
-		connections[5] = (bc & 32) > 0;
+		this.connections[0] = (connectionsBinary & 1) > 0;
+		this.connections[1] = (connectionsBinary & 2) > 0;
+		this.connections[2] = (connectionsBinary & 4) > 0;
+		this.connections[3] = (connectionsBinary & 8) > 0;
+		this.connections[4] = (connectionsBinary & 16) > 0;
+		this.connections[5] = (connectionsBinary & 32) > 0;
 				
 		coverPanelsFromNBT(nbt.getTagList("coverPanels", Constants.NBT.TAG_COMPOUND));
 		

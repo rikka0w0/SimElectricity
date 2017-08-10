@@ -7,6 +7,9 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
+import net.minecraftforge.common.property.IExtendedBlockState;
+import net.minecraftforge.common.property.IUnlistedProperty;
+import net.minecraftforge.common.property.Properties;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -23,6 +26,7 @@ import simelectricity.essential.common.ISESubBlock;
 import simelectricity.essential.common.SEBlock;
 import simelectricity.essential.common.SEItemBlock;
 import simelectricity.essential.common.SEMetaBlock;
+import simelectricity.essential.common.semachine.ISESocketProvider;
 import simelectricity.essential.utils.MatrixTranformations;
 import simelectricity.essential.utils.Utils;
 
@@ -30,6 +34,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
@@ -69,7 +74,7 @@ public class BlockCable extends SEMetaBlock implements ITileEntityProvider, ISES
 	@Override
 	protected int getNumOfSubTypes(){
 		return 3;
-	}	
+	}
 	
 	///////////////////////////////
 	/// Cable Properties
@@ -155,6 +160,51 @@ public class BlockCable extends SEMetaBlock implements ITileEntityProvider, ISES
         }
         return 0;
     }
+    
+	///////////////////////////////
+	///BlockStates
+	///////////////////////////////
+    public final static IUnlistedProperty<Boolean> propertyDownConnected = 
+			new Properties.PropertyAdapter<Boolean>(PropertyBool.create("downconnected"));
+    public final static IUnlistedProperty<Boolean> propertyUpConnected = 
+			new Properties.PropertyAdapter<Boolean>(PropertyBool.create("upconnected"));
+    public final static IUnlistedProperty<Boolean> propertyNorthConnected = 
+			new Properties.PropertyAdapter<Boolean>(PropertyBool.create("northconnected"));
+    public final static IUnlistedProperty<Boolean> propertySouthConnected = 
+			new Properties.PropertyAdapter<Boolean>(PropertyBool.create("southconnected"));
+    public final static IUnlistedProperty<Boolean> propertyWestConnected = 
+			new Properties.PropertyAdapter<Boolean>(PropertyBool.create("westconnected"));
+    public final static IUnlistedProperty<Boolean> propertyEastConnected = 
+			new Properties.PropertyAdapter<Boolean>(PropertyBool.create("eastconnected"));
+    public final static IUnlistedProperty<Boolean>[] propertyConnections = 
+    		new IUnlistedProperty[]{propertyDownConnected, propertyUpConnected,
+    	propertyNorthConnected, propertySouthConnected, propertyWestConnected, propertyEastConnected};
+    
+	@Override
+	protected void createUnlistedProperties(ArrayList<IUnlistedProperty> properties){
+		for (IUnlistedProperty<Boolean> prop: propertyConnections)
+			properties.add(prop);
+	}
+    
+	@Override
+	public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
+		if (state instanceof IExtendedBlockState) {
+			IExtendedBlockState retval = (IExtendedBlockState)state;
+			
+			TileEntity te = world.getTileEntity(pos);
+			
+			if (te instanceof ISEGenericCable){
+				ISEGenericCable cable = (ISEGenericCable) te;
+				for (EnumFacing side: EnumFacing.VALUES){
+					IUnlistedProperty<Boolean> prop = propertyConnections[side.ordinal()];
+					retval = retval.withProperty(prop, cable.connectedOnSide(side));
+				}
+			}
+			
+			return retval;
+		}
+		return state;
+	}
 
     //////////////////////////////////
 	///CollisionBoxes
@@ -263,12 +313,12 @@ public class BlockCable extends SEMetaBlock implements ITileEntityProvider, ISES
 	@SideOnly(Side.CLIENT)
 	@Override
 	public AxisAlignedBB getSelectedBoundingBox(IBlockState state, World world, BlockPos pos) {
-		RayTraceResult trace = Minecraft.getMinecraft().objectMouseOver;	//TODO: not sure what this does!
+		//RayTraceResult trace = Minecraft.getMinecraft().objectMouseOver;	//TODO: not sure what this does!
 			
-		if (trace == null || trace.subHit < 0 || !pos.equals(trace.getBlockPos())) {
-            // Perhaps we aren't the object the mouse is over
-            return FULL_BLOCK_AABB;
-        }
+		//if (trace == null || trace.subHit < 0 || !pos.equals(trace.getBlockPos())) {
+        //    // Perhaps we aren't the object the mouse is over
+        //    return FULL_BLOCK_AABB;
+        //}
 		
 		TileEntity te = world.getTileEntity(pos);
 		
@@ -419,8 +469,8 @@ public class BlockCable extends SEMetaBlock implements ITileEntityProvider, ISES
 	public boolean canConnectRedstone(IBlockState state, IBlockAccess world, BlockPos pos, @Nullable EnumFacing side) {
 		TileEntity te = world.getTileEntity(pos);
 		
-		if (te instanceof TileCable){
-			TileCable cable = (TileCable) te;
+		if (te instanceof ISEGenericCable){
+			ISEGenericCable cable = (ISEGenericCable) te;
 			ISECoverPanel coverPanel = cable.getCoverPanelOnSide(side);
 			
 			return coverPanel instanceof ISERedstoneEmitterCoverPanel;
@@ -433,8 +483,8 @@ public class BlockCable extends SEMetaBlock implements ITileEntityProvider, ISES
 	public int getWeakPower(IBlockState blockState, IBlockAccess world, BlockPos pos, EnumFacing side) {
 		TileEntity te = world.getTileEntity(pos);
 		
-		if (te instanceof TileCable){
-			TileCable cable = (TileCable) te;
+		if (te instanceof ISEGenericCable){
+			ISEGenericCable cable = (ISEGenericCable) te;
 			ISECoverPanel coverPanel = cable.getCoverPanelOnSide(side);
 			
 			return 	coverPanel instanceof ISERedstoneEmitterCoverPanel 

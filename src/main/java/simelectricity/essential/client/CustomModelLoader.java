@@ -1,5 +1,6 @@
 package simelectricity.essential.client;
 
+import simelectricity.essential.client.cable.CableStateMapper;
 import simelectricity.essential.client.semachine.SEMachineStateMapper;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.resources.IResourceManager;
@@ -37,14 +38,15 @@ public class CustomModelLoader implements ICustomModelLoader{
 			return false;
 		
 		String resPath = modelLocation.getResourcePath();
-		if (resPath.startsWith(PATH_STI)){
+		if (resPath.startsWith(PATH_STI))
 			return true;	//SimpleTextureItem
-		}
 		
-		else if (SEMachineStateMapper.accepts(resPath)){
+		else if (SEMachineStateMapper.accepts(resPath))
 			return true;
-		}
 
+		else if (CableStateMapper.accepts(resPath))
+			return true;
+		
 		return false;
 	}
 	
@@ -63,6 +65,11 @@ public class CustomModelLoader implements ICustomModelLoader{
 		else if (SEMachineStateMapper.accepts(resPath)){
 			String variantStr = ((ModelResourceLocation)modelLocation).getVariant();
 			return SEMachineStateMapper.loadModel(domain, resPath, variantStr);
+		}
+		
+		else if (CableStateMapper.accepts(resPath)){
+			String variantStr = ((ModelResourceLocation)modelLocation).getVariant();
+			return CableStateMapper.loadModel(domain, resPath, variantStr);
 		}
 		
 		return null;
