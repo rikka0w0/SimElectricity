@@ -55,7 +55,7 @@ import net.minecraft.util.math.Vec3d;
  */
 public class BlockCable extends SEMetaBlock implements ITileEntityProvider, ISESubBlock{
 	public BlockCable() {
-		this("essential_cable", Material.GLASS, SEItemBlock.class, 
+		this("essential_cable", Material.GLASS, ItemBlockCable.class, 
 				new String[]{"copper_thin", "copper_medium", "copper_thick"},
 				new double[]{0.22, 0.32, 0.42},
 				new double[]{0.1, 0.01, 0.001},
@@ -69,7 +69,7 @@ public class BlockCable extends SEMetaBlock implements ITileEntityProvider, ISES
 	@Override
 	protected int getNumOfSubTypes(){
 		return 3;
-	}
+	}	
 	
 	///////////////////////////////
 	/// Cable Properties

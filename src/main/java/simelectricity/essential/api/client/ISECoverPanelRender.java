@@ -12,6 +12,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 public interface ISECoverPanelRender<TYPE extends ISECoverPanel> {
 	@SideOnly(Side.CLIENT)
-	void renderCoverPanel(	IBlockAccess world, int x, int y, int z, List<BakedQuad> renderer, int renderPass,
+	void renderCoverPanel(	IBlockAccess world, int x, int y, int z, List<BakedQuad> quads,
 							ISEGenericCable cable, TYPE coverPanel, EnumFacing side);
 }

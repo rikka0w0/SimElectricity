@@ -68,7 +68,7 @@ public class CustomModelLoader implements ICustomModelLoader{
 		return null;
 	}
 	
-	public void registerIconsFor(Item item) {
+	public void registerInventoryIcon(Item item) {
 		if (item instanceof ISESimpleTextureItem) {
 			ISESimpleTextureItem simpleTextureItem = (ISESimpleTextureItem) item;
 			

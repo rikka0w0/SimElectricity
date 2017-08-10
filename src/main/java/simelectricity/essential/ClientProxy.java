@@ -1,6 +1,7 @@
 package simelectricity.essential;
 
 import simelectricity.essential.client.CustomModelLoader;
+import simelectricity.essential.client.cable.CableStateMapper;
 import simelectricity.essential.client.semachine.SEMachineStateMapper;
 import simelectricity.essential.client.semachine.SocketRender;
 import simelectricity.essential.common.ISEGuiProvider;
@@ -46,14 +47,18 @@ public class ClientProxy extends CommonProxy{
 	@Override
 	public void registerModel(){
 		CustomModelLoader loader = new CustomModelLoader(Essential.modID);		
-		loader.registerIconsFor(ItemRegistry.itemHVCable);
-		loader.registerIconsFor(ItemRegistry.itemVitaTea);
-		loader.registerIconsFor(ItemRegistry.itemMisc);
-		loader.registerIconsFor(ItemRegistry.itemTools);
+		loader.registerInventoryIcon(ItemRegistry.itemHVCable);
+		loader.registerInventoryIcon(ItemRegistry.itemVitaTea);
+		loader.registerInventoryIcon(ItemRegistry.itemMisc);
+		loader.registerInventoryIcon(ItemRegistry.itemTools);
 		
-		SEMachineStateMapper SEMStateMapper = new SEMachineStateMapper(Essential.modID);
-		SEMStateMapper.register(BlockRegistry.blockElectronics);
-		SEMStateMapper.register(BlockRegistry.blockTwoPortElectronics);
+		SEMachineStateMapper semStateMapper = new SEMachineStateMapper(Essential.modID);
+		semStateMapper.register(BlockRegistry.blockElectronics);
+		semStateMapper.register(BlockRegistry.blockTwoPortElectronics);
+		
+		CableStateMapper cStateMapper = new CableStateMapper(Essential.modID);
+		cStateMapper.register(BlockRegistry.blockCable);
+		loader.registerInventoryIcon(BlockRegistry.blockCable.getItemBlock());
 		
 		//Initialize socket render
 		new SocketRender();

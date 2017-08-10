@@ -1,5 +1,7 @@
 package simelectricity.essential.common;
 
+import java.lang.reflect.Constructor;
+
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -15,7 +17,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 
 public abstract class SEBlock extends Block{
-	protected SEItemBlock itemBlock;
+	protected final SEItemBlock itemBlock;
 	
     public SEBlock(String unlocalizedName, Material material, Class<? extends SEItemBlock> itemBlockClass) {
         super(material);
@@ -25,8 +27,14 @@ public abstract class SEBlock extends Block{
         this.beforeRegister();
         
         GameRegistry.register(this);
-        itemBlock = new SEItemBlock(this);
-        GameRegistry.register(itemBlock, this.getRegistryName());
+        
+        try {
+			Constructor constructor = itemBlockClass.getConstructor(Block.class);
+			this.itemBlock = (SEItemBlock) constructor.newInstance(this);
+			GameRegistry.register(itemBlock, this.getRegistryName());
+		} catch (Exception e) {
+			throw new RuntimeException("Invalid ItemBlock constructor!");
+		}
     }
     
     @Override
