@@ -11,7 +11,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import simelectricity.essential.utils.SEUnitHelper;
-import simelectricity.essential.utils.client.SEGuiContainer;
+import simelectricity.essential.utils.client.gui.SEGuiContainer;
 
 @SideOnly(Side.CLIENT)
 public final class GuiQuantumGenerator extends SEGuiContainer<ContainerQuantumGenerator>{

@@ -2,6 +2,7 @@ package simelectricity.essential;
 
 import simelectricity.essential.client.CustomModelLoader;
 import simelectricity.essential.client.semachine.SEMachineStateMapper;
+import simelectricity.essential.client.semachine.SocketRender;
 import simelectricity.essential.common.ISEGuiProvider;
 import simelectricity.essential.machines.gui.GuiAdjustableResistor;
 import simelectricity.essential.machines.gui.GuiAdjustableTransformer;
@@ -52,6 +53,10 @@ public class ClientProxy extends CommonProxy{
 		
 		SEMachineStateMapper SEMStateMapper = new SEMachineStateMapper(Essential.modID);
 		SEMStateMapper.register(BlockRegistry.blockElectronics);
+		SEMStateMapper.register(BlockRegistry.blockTwoPortElectronics);
+		
+		//Initialize socket render
+		new SocketRender();
 	}
 	
 	@Override

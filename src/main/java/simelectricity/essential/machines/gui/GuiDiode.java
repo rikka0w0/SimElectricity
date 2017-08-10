@@ -11,8 +11,8 @@ import net.minecraft.util.text.translation.I18n;
 import simelectricity.essential.Essential;
 import simelectricity.essential.utils.SEUnitHelper;
 import simelectricity.essential.utils.Utils;
-import simelectricity.essential.utils.client.GuiDirectionSelector;
-import simelectricity.essential.utils.client.SEGuiContainer;
+import simelectricity.essential.utils.client.gui.GuiDirectionSelector;
+import simelectricity.essential.utils.client.gui.SEGuiContainer;
 
 @SideOnly(Side.CLIENT)
 public final class GuiDiode extends SEGuiContainer<ContainerDiode>{

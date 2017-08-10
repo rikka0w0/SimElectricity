@@ -1,5 +1,7 @@
 package simelectricity.essential.utils;
 
+import net.minecraft.util.math.MathHelper;
+
 public class SEMathHelper {	
 	/**
 	 * The dimension of Start and End must be the same 
@@ -38,6 +40,12 @@ public class SEMathHelper {
      */
     public static double distanceOf(double xStart, double yStart, double zStart, double xEnd, double yEnd, double zEnd) {
         return Math.sqrt((xStart - xEnd) * (xStart - xEnd) +
+                (yStart - yEnd) * (yStart - yEnd) +
+                (zStart - zEnd) * (zStart - zEnd));
+    }
+    
+    public static float distanceOf(float xStart, float yStart, float zStart, float xEnd, float yEnd, float zEnd) {
+        return MathHelper.sqrt((xStart - xEnd) * (xStart - xEnd) +
                 (yStart - yEnd) * (yStart - yEnd) +
                 (zStart - zEnd) * (zStart - zEnd));
     }

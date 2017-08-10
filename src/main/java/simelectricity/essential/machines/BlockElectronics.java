@@ -2,7 +2,6 @@ package simelectricity.essential.machines;
 
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -16,7 +15,6 @@ import net.minecraft.util.math.BlockPos;
 
 import simelectricity.essential.Essential;
 import simelectricity.essential.client.semachine.ISESidedTextureBlock;
-import simelectricity.essential.common.ISESubBlock;
 import simelectricity.essential.common.semachine.SEMachineBlock;
 import simelectricity.essential.common.semachine.SESinglePortMachine;
 import simelectricity.essential.machines.tile.TileAdjustableResistor;
@@ -26,7 +24,7 @@ import simelectricity.essential.machines.tile.TileSolarPanel;
 import simelectricity.essential.machines.tile.TileVoltageMeter;
 import simelectricity.essential.utils.Utils;
 
-public class BlockElectronics extends SEMachineBlock implements ITileEntityProvider, ISESubBlock, ISESidedTextureBlock{
+public class BlockElectronics extends SEMachineBlock implements ISESidedTextureBlock{
 	public static String subNames[] = new String[]{"voltage_meter", "quantum_generator", "adjustable_resistor", "incandescent_lamp", "solar_panel"};
 	///////////////////////////////
 	///Block Properties
@@ -38,13 +36,6 @@ public class BlockElectronics extends SEMachineBlock implements ITileEntityProvi
 	@Override
 	protected int getNumOfSubTypes() {
 		return subNames.length;
-	}
-	
-	@Override
-	@SideOnly(Side.CLIENT)
-	public String getModelNameFrom(IBlockState blockState) {
-		int meta = blockState.getValue(this.propertyMeta);
-		return "electronics_"+subNames[meta];
 	}
 	
 	@Override
@@ -64,6 +55,23 @@ public class BlockElectronics extends SEMachineBlock implements ITileEntityProvi
 		return null;
 	}
 	
+	///////////////////////////////
+	///ISESidedTextureBlock
+	///////////////////////////////
+	@Override
+	@SideOnly(Side.CLIENT)
+	public String getModelNameFrom(IBlockState blockState) {
+		int meta = blockState.getValue(this.propertyMeta);
+		return "electronics_"+subNames[meta];
+	}
+	
+	@Override
+	public boolean hasSecondState(IBlockState state){
+		int meta = this.getMetaFromState(state);
+
+		return meta == 3;
+	}
+	
 	//////////////////////////////////////
 	/////Item drops and Block activities
 	//////////////////////////////////////
@@ -72,13 +80,6 @@ public class BlockElectronics extends SEMachineBlock implements ITileEntityProvi
 		if (te instanceof TileIncandescentLamp && ((TileIncandescentLamp) te).lightLevel < 8)
 			return true;
 		return false;
-	}
-	
-	@Override
-	public boolean hasSecondState(IBlockState state){
-		int meta = this.getMetaFromState(state);
-
-		return meta == 3;
 	}
 	
     @Override

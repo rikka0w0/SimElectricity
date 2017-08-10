@@ -1,4 +1,4 @@
-package simelectricity.essential.utils.client;
+package simelectricity.essential.utils.client.gui;
 
 import java.io.IOException;
 

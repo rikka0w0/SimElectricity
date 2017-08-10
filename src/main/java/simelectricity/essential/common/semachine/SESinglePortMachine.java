@@ -107,6 +107,7 @@ public abstract class SESinglePortMachine extends SEEnergyTile implements ISided
         functionalSide = side;
         
         this.markTileEntityForS2CSync();
+        world.notifyNeighborsOfStateChange(pos, this.getBlockType(), true);
         //this.worldObj.notifyBlockChange(xCoord, yCoord, zCoord, this.getBlockType());
         //TODO: QAQ!
         

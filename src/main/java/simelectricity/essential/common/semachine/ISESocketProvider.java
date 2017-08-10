@@ -5,6 +5,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraft.util.EnumFacing;
 
 public interface ISESocketProvider {
+	public final static int numOfSockets = 5;
+	
 	/**
 	 * @return iconIndex: <0: nothing, 0: LV
 	 */

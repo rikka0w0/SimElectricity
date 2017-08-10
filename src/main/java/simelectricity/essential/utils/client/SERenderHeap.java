@@ -2,11 +2,14 @@ package simelectricity.essential.utils.client;
 
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 
+import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+@Deprecated
 @SideOnly(Side.CLIENT)
 public class SERenderHeap {
 	private final LinkedList<double[][]> cubes = new LinkedList();
@@ -98,13 +101,15 @@ public class SERenderHeap {
 		return this;
 	}
 	
-	public void applyToTessellator(int lightValue){
+	public void bake(List<BakedQuad> list){
 		Iterator<double[][]> cubeIterator = cubes.iterator();
 		Iterator<TextureAtlasSprite[]> textureIterator = textures.iterator();
 		while (cubeIterator.hasNext()){
 			double[][] cube = cubeIterator.next();
 			TextureAtlasSprite[] textureArray = textureIterator.next();
-			//SERenderHelper.addCubeToTessellator(cube, textureArray, lightValue);
+			
+			SERawQuadCube rawCube = new SERawQuadCube(cube, textureArray);
+			rawCube.bake(list);
 		}
 	}
 }

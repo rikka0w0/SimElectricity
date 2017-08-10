@@ -56,6 +56,24 @@ public class BlockTwoPortElectronics extends SEMachineBlock implements ISESidedT
 		return null;
 	}
 	
+	///////////////////////////////
+	///ISESidedTextureBlock
+	///////////////////////////////	
+	@Override
+	@SideOnly(Side.CLIENT)
+	public String getModelNameFrom(IBlockState blockState) {
+		int meta = blockState.getValue(this.propertyMeta);
+		return "electronics_"+subNames[meta];
+	}
+	
+	@Override
+	@SideOnly(Side.CLIENT)
+	public boolean hasSecondState(IBlockState state){
+		int meta = this.getMetaFromState(state);
+
+		return meta == 3;
+	}
+	
 	//////////////////////////////////////
 	/////Item drops and Block activities
 	//////////////////////////////////////
@@ -76,20 +94,7 @@ public class BlockTwoPortElectronics extends SEMachineBlock implements ISESidedT
 		return false;
 	}
 	
-	@Override
-	@SideOnly(Side.CLIENT)
-	public String getModelNameFrom(IBlockState blockState) {
-		int meta = blockState.getValue(this.propertyMeta);
-		return "electronics_"+subNames[meta];
-	}
-	
-	@Override
-	@SideOnly(Side.CLIENT)
-	public boolean hasSecondState(IBlockState state){
-		int meta = this.getMetaFromState(state);
 
-		return meta == 3;
-	}
 	
 	@Override
 	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ){

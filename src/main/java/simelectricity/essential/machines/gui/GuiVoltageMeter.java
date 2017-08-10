@@ -3,7 +3,7 @@ package simelectricity.essential.machines.gui;
 import org.lwjgl.opengl.GL11;
 
 import simelectricity.essential.utils.SEUnitHelper;
-import simelectricity.essential.utils.client.SEGuiContainer;
+import simelectricity.essential.utils.client.gui.SEGuiContainer;
 
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;

@@ -2,9 +2,9 @@ package simelectricity.essential.utils.client;
 
 import org.lwjgl.opengl.GL11;
 
+
 import simelectricity.essential.Essential;
 import simelectricity.essential.utils.SEMathHelper;
-import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
@@ -56,6 +56,7 @@ public class SERenderHelper {
     ////////////////////////////////////////////////////////////
     /// Cube-Based model generation, double[8][3] cubeVertexes
     ////////////////////////////////////////////////////////////
+	@Deprecated
 	public static double[][] createCubeVertexes(double maxX, double maxY, double maxZ){
 		double[][] vertexes = new double[8][];
 		double x = maxX / 2.0D;
@@ -76,6 +77,7 @@ public class SERenderHelper {
         return vertexes;
 	}
 
+	@Deprecated
     public static void rotateCubeToDirection(double[][] cubeVertexes, EnumFacing direction){
 		switch (direction){
 		case DOWN:
@@ -105,6 +107,7 @@ public class SERenderHelper {
     /////////////////////////////////////////////////////////////
     /// Utilities, double[i][3] vertexes, i can be any numbers
     /////////////////////////////////////////////////////////////
+	@Deprecated
     public static double[][] createSafeCopy(double[][] vertexes){
     	double[][] ret = new double[vertexes.length][];
     	for (int i=0; i<vertexes.length; i++){
@@ -116,6 +119,7 @@ public class SERenderHelper {
     	return ret;
     }
     
+	@Deprecated
 	public static void translateCoord(double[][] vertexes, double x, double y, double z){
 		for (int i=0; i<vertexes.length; i++){
 			vertexes[i][0] += x;
@@ -124,6 +128,7 @@ public class SERenderHelper {
 		}
 	}
 	
+	@Deprecated
 	public static void rotateAroundX(double[][] vertexes, float angle){
         float f1 = MathHelper.cos(-angle * 0.01745329252F);
         float f2 = MathHelper.sin(-angle * 0.01745329252F);
@@ -138,6 +143,7 @@ public class SERenderHelper {
         }
 	}
 
+	@Deprecated
 	public static void rotateAroundY(double[][] vertexes, float angle){
         float f1 = MathHelper.cos(angle * 0.01745329252F);
         float f2 = MathHelper.sin(angle * 0.01745329252F);
@@ -152,6 +158,7 @@ public class SERenderHelper {
         }
 	}
 	
+	@Deprecated
     public static void rotateAroundZ(double[][] vertexes, float angle)
     {
         float f1 = MathHelper.cos(-angle * 0.01745329252F);
@@ -168,12 +175,14 @@ public class SERenderHelper {
 	    }
     }
     
+	@Deprecated
     public static void rotateToVec(double[][] vertexes, double xStart, double yStart, double zStart, double xEnd, double yEnd, double zEnd){
         double distance = SEMathHelper.distanceOf(xStart, yStart, zStart, xEnd, yEnd, zEnd);
         rotateAroundY(vertexes, (float)(Math.atan2(zStart - zEnd, xEnd - xStart) * 180 / Math.PI));
         rotateAroundVector(vertexes, (float) (Math.acos((yEnd - yStart) / distance) * 180 / Math.PI), (zEnd - zStart) / distance, 0, (xStart - xEnd) / distance);
     }
     
+	@Deprecated
     public static void rotateAroundVector(double[][] vertexes, float angle, double x, double y, double z){
     	//Normalize the axis vector
     	double length = Math.sqrt(x*x + y*y + z*z);
@@ -194,9 +203,9 @@ public class SERenderHelper {
     		vertexes[i][2] = d2;
     	}
     }
-
-	public static TextureAtlasSprite[] createTextureArray(
-			TextureAtlasSprite texture) {
+    
+	@Deprecated
+	public static TextureAtlasSprite[] createTextureArray(TextureAtlasSprite texture) {
 		return new TextureAtlasSprite[]{texture, texture, texture, texture, texture, texture};
 	}
 }

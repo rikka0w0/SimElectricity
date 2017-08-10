@@ -1,6 +1,7 @@
 package simelectricity.essential.client.semachine;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.annotation.Nullable;
@@ -11,6 +12,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import simelectricity.essential.common.semachine.ExtendedProperties;
 
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
@@ -22,6 +24,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.client.model.IPerspectiveAwareModel;
 import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.common.property.IExtendedBlockState;
+import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -33,25 +36,6 @@ public class SEMachineModel implements IPerspectiveAwareModel {
 		this.firstState = firstState;
 		this.secondState = secondState;
 		this.hasSecondState = secondState != null;
-	}
-	@Override
-	public List<BakedQuad> getQuads(@Nullable IBlockState blockState, @Nullable EnumFacing side, long rand) {
-	    if (!(blockState instanceof IExtendedBlockState))
-	    	//Normally this should not happen, just in case, to prevent crashing
-	    	return firstState[2].getQuads(blockState, side, rand);
-				
-		IExtendedBlockState exBlockState = (IExtendedBlockState)blockState;
-		EnumFacing facing = exBlockState.getValue(ExtendedProperties.propertyFacing);
-	    boolean is2State = exBlockState.getValue(ExtendedProperties.propertIs2State);
-		
-		if (facing == null)
-			return firstState[2].getQuads(blockState, side, rand);
-	    
-		List<BakedQuad> selectedModel = is2State ? 
-				secondState[facing.ordinal()].getQuads(blockState, side, rand) :
-				firstState[facing.ordinal()].getQuads(blockState, side, rand);
-		
-		return selectedModel;
 	}
 	
 	@Override
@@ -104,4 +88,44 @@ public class SEMachineModel implements IPerspectiveAwareModel {
 	      return Pair.of(this, mat);
 	    }
 	}
+	
+	private int[] getSocketIconArray(IExtendedBlockState exBlockState){
+		int[] ret = new int[6];
+		int i = 0;
+		for (IUnlistedProperty<Integer> prop: ExtendedProperties.propertySockets){
+			int val = exBlockState.getValue(prop);
+			ret[i] = val - 1;	//-1: no socket icon
+			i++;
+		}
+		return ret;
+	}
+	
+	@Override
+	public List<BakedQuad> getQuads(@Nullable IBlockState blockState, @Nullable EnumFacing side, long rand) {
+	    if (!(blockState instanceof IExtendedBlockState))
+	    	//Normally this should not happen, just in case, to prevent crashing
+	    	return firstState[2].getQuads(blockState, side, rand);
+				
+		IExtendedBlockState exBlockState = (IExtendedBlockState)blockState;
+		EnumFacing facing = exBlockState.getValue(ExtendedProperties.propertyFacing);
+	    boolean is2State = exBlockState.getValue(ExtendedProperties.propertIs2State);
+	    int[] socketIcon = getSocketIconArray(exBlockState);
+	    
+		if (facing == null)
+			return firstState[2].getQuads(blockState, side, rand);
+	    
+		List<BakedQuad> selectedModel = is2State ? 
+				secondState[facing.ordinal()].getQuads(blockState, side, rand) :
+				firstState[facing.ordinal()].getQuads(blockState, side, rand);
+		
+		List<BakedQuad> quads = new LinkedList<BakedQuad>();
+		quads.addAll(selectedModel);
+        
+        SocketRender.getBaked(quads, socketIcon);
+        
+		return quads;
+	}
+	
+	private final TextureAtlasSprite texture = Minecraft.getMinecraft().getTextureMapBlocks()
+            .getAtlasSprite("minecraft:blocks/diamond_block");
 }

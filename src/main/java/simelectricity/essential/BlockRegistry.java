@@ -36,10 +36,10 @@ public class BlockRegistry {
 	//public static BlockTransmissionTower2 transmissionTower2;
 	
 	public static BlockElectronics blockElectronics;
-	//public static BlockTwoPortElectronics blockTwoPortElectronics;
+	public static BlockTwoPortElectronics blockTwoPortElectronics;
 	
 	public static void registerBlocks(){
-		//blockCable = new BlockCable();
+		blockCable = new BlockCable();
 		
 		//transmissionTowerTop = new BlockTransmissionTowerTop();
 		//transmissionTowerBottom = new BlockTransmissionTowerBottom();
@@ -48,7 +48,7 @@ public class BlockRegistry {
 		//transmissionTower2 = new BlockTransmissionTower2();
 		
 		blockElectronics = new BlockElectronics();
-		//blockTwoPortElectronics = new BlockTwoPortElectronics();
+		blockTwoPortElectronics = new BlockTwoPortElectronics();
 	}
 	
 	public static void registerTileEntities(){

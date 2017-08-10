@@ -7,7 +7,7 @@ import net.minecraft.inventory.Container;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.translation.I18n;
 import simelectricity.essential.utils.SEUnitHelper;
-import simelectricity.essential.utils.client.SEGuiContainer;
+import simelectricity.essential.utils.client.gui.SEGuiContainer;
 
 public class GuiVoltageSensor extends SEGuiContainer<ContainerVoltageSensor>{
 	public GuiVoltageSensor(Container container) {
