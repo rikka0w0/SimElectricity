@@ -104,6 +104,7 @@ public class SETwoPortMachine extends SEEnergyTile implements ISidedFacing, ISET
 		this.outputSide = output;
 		
         this.markTileEntityForS2CSync();
+        world.notifyNeighborsOfStateChange(pos, this.getBlockType(), true);
         //this.worldObj.notifyBlockChange(xCoord, yCoord, zCoord, this.getBlockType());
         
         if (this.isAddedToEnergyNet)

@@ -24,7 +24,6 @@ import net.minecraftforge.common.config.ConfigElement;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.client.config.GuiConfig;
 import simelectricity.SimElectricity;
-import simelectricity.common.SEUtils;
 import simelectricity.common.ConfigManager;
 
 public class SimEGuiConfig extends GuiConfig {

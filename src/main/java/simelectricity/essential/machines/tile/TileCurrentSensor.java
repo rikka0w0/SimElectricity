@@ -4,6 +4,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.world.WorldServer;
 import simelectricity.api.IEnergyNetUpdateHandler;
 import simelectricity.api.SEAPI;
 import simelectricity.api.components.ISESwitch;
@@ -50,7 +51,13 @@ public class TileCurrentSensor extends SETwoPortMachine implements ISESwitch, IE
     public void onEnergyNetUpdate() {
     	current = SEAPI.energyNetAgent.getCurrentMagnitude(this.input);
     	
-    	checkRedstoneStatus();
+    	WorldServer world = (WorldServer) this.world;
+    	world.addScheduledTask(new Runnable(){
+			@Override
+			public void run() {
+				checkRedstoneStatus();	//Update the world from the server thread
+			}
+    	});
     }
     
 	/////////////////////////////////////////////////////////
@@ -84,7 +91,7 @@ public class TileCurrentSensor extends SETwoPortMachine implements ISESwitch, IE
 	private boolean setRedstone(boolean status){
 		if (emitRedstoneSignal != status){
 			emitRedstoneSignal = status;
-			world.notifyNeighborsOfStateChange(getPos(), this.getBlockType(), false);
+			world.notifyNeighborsOfStateChange(getPos(), getBlockType(), true);
 			return true;
 		}
 		return false;

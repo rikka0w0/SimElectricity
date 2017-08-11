@@ -3,6 +3,7 @@ package simelectricity.essential.cable;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import simelectricity.essential.api.ISEIuminousCoverPanelHost;
@@ -52,8 +53,16 @@ public class LedPanel implements ISEElectricalLoadCoverPanel, ISEIuminousCoverPa
 			//If light value changes, send a sync. packet to client
 			this.lightLevel = lightLevel;
 			
-			if (hostTileEntity instanceof ISEIuminousCoverPanelHost)
-				((ISEIuminousCoverPanelHost) hostTileEntity).onLightValueUpdated();
+			if (hostTileEntity instanceof ISEIuminousCoverPanelHost){
+				WorldServer world = (WorldServer) hostTileEntity.getWorld();
+				world.addScheduledTask(new Runnable(){
+					@Override
+					public void run() {
+						((ISEIuminousCoverPanelHost) hostTileEntity).onLightValueUpdated();
+					}
+				});
+			}
+				
 		}	
 	}
 

@@ -20,7 +20,7 @@
 package simelectricity.energynet;
 
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 import simelectricity.api.IEnergyNetUpdateHandler;
 import simelectricity.api.node.ISESimulatable;
 import simelectricity.common.ConfigManager;
@@ -35,7 +35,8 @@ import simelectricity.energynet.matrix.IMatrixResolver;
 
 import java.util.*;
 
-public final class EnergyNet extends EnergyNetSimulator implements Runnable{	
+public final class EnergyNet extends EnergyNetSimulator implements Runnable{
+	private final WorldServer world;
 	///////////////////////////////////////////////////////
 	///Event Queue
 	///////////////////////////////////////////////////////
@@ -157,11 +158,12 @@ public final class EnergyNet extends EnergyNetSimulator implements Runnable{
     //////////////////////////
     /// Constructor
     //////////////////////////
-    public EnergyNet(World world) { 
+    public EnergyNet(WorldServer world) { 
     	super(	Math.pow(10, -ConfigManager.precision),
     			1.0D/ConfigManager.shuntPN,
     			IMatrixResolver.MatrixHelper.newSolver(ConfigManager.matrixSolver),
     			EnergyNetDataProvider.get(world));
+    	this.world = world;
     	
     	//Initialize thread
     	this.thread = new Thread(this, "SEEnergyNet_DIM" + String.valueOf(world.provider.getDimension()));

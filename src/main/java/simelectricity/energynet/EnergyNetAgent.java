@@ -23,6 +23,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 
 import java.util.Map;
 import java.util.WeakHashMap;
@@ -57,18 +58,19 @@ public class EnergyNetAgent implements IEnergyNetAgent{
     public static Map<World, EnergyNet> mapping = new WeakHashMap();
 
     /**
-     * Return the instance of energyNet for a specific world
+     * Return the instance of energyNet for a specific world,
+     * note that only server worlds can have energynet
      * <p/>
      * If target not exist, it will automatically be created
      */
     public static EnergyNet getEnergyNetForWorld(World world) {
-        if (world == null)
-            throw new IllegalArgumentException("world is null");
+        if (!(world instanceof WorldServer))
+            throw new IllegalArgumentException("worlid is not an instanceof WorldServer!");
 
         EnergyNet ret = mapping.get(world);
 
         if (ret == null) {
-        	ret = new EnergyNet(world);
+        	ret = new EnergyNet((WorldServer) world);
             mapping.put(world, ret);
         }
 
@@ -132,7 +134,7 @@ public class EnergyNetAgent implements IEnergyNetAgent{
     }
     
 	@Override
-	public ISESubComponent newComponent(ISEComponentParameter dataProvider, TileEntity parent) {
+	public ISESubComponent newComponent(ISEComponentParameter dataProvider, TileEntity parent) {		
 		if (dataProvider instanceof ISEDiode)
 			//Create a pair of DiodeInput and DiodeOutput at the same time
 			return new DiodeInput((ISEDiode) dataProvider, parent);
@@ -148,7 +150,7 @@ public class EnergyNetAgent implements IEnergyNetAgent{
 	}
 	
 	@Override
-	public ISESimulatable newCable(TileEntity dataProviderTileEntity, boolean isGridInterConnectionPoint){
+	public ISESimulatable newCable(TileEntity dataProviderTileEntity, boolean isGridInterConnectionPoint){		
 		if (dataProviderTileEntity instanceof ISECableTile)
 			return new Cable((ISECableTile) dataProviderTileEntity, dataProviderTileEntity, isGridInterConnectionPoint);
 		return null;

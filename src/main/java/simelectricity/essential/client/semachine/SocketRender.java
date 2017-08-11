@@ -45,7 +45,7 @@ public class SocketRender {
 			textures[side] = i<0 ? null : icons[i];
 		}
 		
-		SERawQuadCube cube = new SERawQuadCube(1.0001F, 1.0001F, 1.0001F, textures);
+		SERawQuadCube cube = new SERawQuadCube(1.001F, 1.001F, 1.001F, textures);
 		cube.translateCoord(0.5F, 0, 0.5F);
 		cube.bake(list);
 	}

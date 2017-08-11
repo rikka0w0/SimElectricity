@@ -28,6 +28,7 @@ import simelectricity.essential.common.SEItemBlock;
 import simelectricity.essential.common.SEMetaBlock;
 import simelectricity.essential.common.semachine.ISESocketProvider;
 import simelectricity.essential.utils.MatrixTranformations;
+import simelectricity.essential.utils.RayTraceHelper;
 import simelectricity.essential.utils.Utils;
 
 import net.minecraft.block.Block;
@@ -62,8 +63,8 @@ public class BlockCable extends SEMetaBlock implements ITileEntityProvider, ISES
 	public BlockCable() {
 		this("essential_cable", Material.GLASS, ItemBlockCable.class, 
 				new String[]{"copper_thin", "copper_medium", "copper_thick"},
-				new double[]{0.22, 0.32, 0.42},
-				new double[]{0.1, 0.01, 0.001},
+				new float[]{0.22F, 0.32F, 0.42F},
+				new float[]{0.1F, 0.01F, 0.001F},
 				TileCable.class);
 		setHardness(0.2F);		
 	}
@@ -80,8 +81,8 @@ public class BlockCable extends SEMetaBlock implements ITileEntityProvider, ISES
 	/// Cable Properties
 	///////////////////////////////
 	public final String[] subNames;
-	public final double[] thickness;
-	public final double[] resistances;
+	public final float[] thickness;
+	public final float[] resistances;
 	
 	private final Class<? extends TileCable> tileEntityClass;
 	
@@ -89,7 +90,7 @@ public class BlockCable extends SEMetaBlock implements ITileEntityProvider, ISES
 	///Block Properties
 	///////////////////////////////
 	protected BlockCable(String name, Material material, Class<? extends SEItemBlock> itemBlockClass,
-							String[] cableTypes, double[] thicknessList, double[] resistanceList, Class<? extends TileCable> tileEntityClass) {
+							String[] cableTypes, float[] thicknessList, float[] resistanceList, Class<? extends TileCable> tileEntityClass) {
 		super(name, material, itemBlockClass);
 		this.subNames = cableTypes;
 		this.thickness = thicknessList;
@@ -119,19 +120,21 @@ public class BlockCable extends SEMetaBlock implements ITileEntityProvider, ISES
 	}
 	
 	@Override
-	public String[] getSubBlockUnlocalizedNames() {
-		return subNames;
-	}
+	public String[] getSubBlockUnlocalizedNames() {return subNames;}
     
 	@Override
-	public boolean isOpaqueCube(IBlockState state) {
-		return false;
-	}
+    public boolean isFullCube(IBlockState state) {return false;}
 	
 	@Override
-	public boolean isNormalCube(IBlockState state) {
-		return false;
-	}
+    public boolean isFullBlock(IBlockState state) {return false;}
+	
+	@Override
+	public boolean isOpaqueCube(IBlockState state) {return false;}
+	
+	@Override
+	public boolean isNormalCube(IBlockState state) {return false;}
+	
+
 	
 	@Override
     @Deprecated
@@ -254,6 +257,57 @@ public class BlockCable extends SEMetaBlock implements ITileEntityProvider, ISES
 
 	//TODO: Custom Raytrace!!!!
 	@Override
+    @Nullable
+    public RayTraceResult collisionRayTrace(IBlockState state, World world, BlockPos pos, Vec3d start, Vec3d end) {
+        return rayTrace(world, pos, start, end);
+    }
+	
+	@Nullable
+    public RayTraceResult rayTrace(World world, BlockPos pos, EntityPlayer player) {
+        Vec3d start = player.getPositionVector().addVector(0, player.getEyeHeight(), 0);
+        double reachDistance = 5;
+        if (player instanceof EntityPlayerMP)
+            reachDistance = ((EntityPlayerMP) player).interactionManager.getBlockReachDistance();
+        
+        Vec3d end = start.add(player.getLookVec().normalize().scale(reachDistance));
+        return rayTrace(world, pos, start, end);
+    }
+	
+    @Nullable
+    public RayTraceResult rayTrace(World world, BlockPos pos, Vec3d start, Vec3d end) {
+        TileEntity tile = world.getTileEntity(pos);
+        if (!(tile instanceof ISEGenericCable))
+            return RayTraceHelper.computeTrace(null, pos, start, end, Block.FULL_BLOCK_AABB, 400);
+        
+        ISEGenericCable cable = (ISEGenericCable) tile;
+        int meta = world.getBlockState(pos).getValue(propertyMeta);
+        
+        RayTraceResult best = null;
+        //Cable center & branches
+        //Start form center
+        best = RayTraceHelper.computeTrace(best, pos, start, end, getCableBoundingBox(null, thickness[meta]), 0);
+        for (EnumFacing side : EnumFacing.VALUES) {
+            if (cable.connectedOnSide(side))
+                best = RayTraceHelper.computeTrace(best, pos, start, end, getCableBoundingBox(side, thickness[meta]), side.ordinal() + 1);
+        }
+        
+        //CoverPanel
+        for (EnumFacing side : EnumFacing.VALUES) {
+            ISECoverPanel coverPanel = cable.getCoverPanelOnSide(side);
+            if (coverPanel != null) {
+                best = RayTraceHelper.computeTrace(best, pos, start, end, getCoverPanelBoundingBox(side), side.ordinal() + 1 + 6);
+            }
+        }
+
+        //if (best == null) {
+        //    return RayTraceHelper.computeTrace(null, pos, start, end, Block.FULL_BLOCK_AABB, 400);
+        //}
+        
+        //subhit: 0: center, 123456 branches, 789 10 11 12 coverpanel 
+        return best;
+    }
+	
+	@Override
     public void addCollisionBoxToList(IBlockState state, World world, BlockPos pos, AxisAlignedBB axisAlignedBB,
                                       List<AxisAlignedBB> collidingBoxes, Entity entityIn, boolean isPistonMoving) {
 		
@@ -313,17 +367,21 @@ public class BlockCable extends SEMetaBlock implements ITileEntityProvider, ISES
 	@SideOnly(Side.CLIENT)
 	@Override
 	public AxisAlignedBB getSelectedBoundingBox(IBlockState state, World world, BlockPos pos) {
-		//RayTraceResult trace = Minecraft.getMinecraft().objectMouseOver;	//TODO: not sure what this does!
-			
-		//if (trace == null || trace.subHit < 0 || !pos.equals(trace.getBlockPos())) {
-        //    // Perhaps we aren't the object the mouse is over
-        //    return FULL_BLOCK_AABB;
-        //}
-		
 		TileEntity te = world.getTileEntity(pos);
+		if (!(te instanceof ISEGenericCable))
+			return FULL_BLOCK_AABB; 		//This should never happen but just in case
 		
-		if (te instanceof ISEGenericCable){
-			int meta = state.getBlock().getMetaFromState(state);
+		RayTraceResult trace = Minecraft.getMinecraft().objectMouseOver;	//Not sure what this does!
+		//trace = rayTrace(world, pos, Minecraft.getMinecraft().player);	//Was
+		if (trace == null || trace.subHit < 0 || !pos.equals(trace.getBlockPos())) {
+            // Perhaps we aren't the object the mouse is over
+            return FULL_BLOCK_AABB;
+        }
+		
+		if (trace.subHit > 6 && trace.subHit<13){	//CoverPanel
+			return getCoverPanelBoundingBox(EnumFacing.getFront(trace.subHit - 7)).offset(pos).expand(0.01, 0.01, 0.01);
+		}else if (trace.subHit > -1 && trace.subHit<7){	//Center or branches
+			int meta = state.getValue(propertyMeta);
 			ISEGenericCable cable = (ISEGenericCable)te;
 			
 			double x1,y1,z1, x2,y2,z2;
@@ -358,33 +416,34 @@ public class BlockCable extends SEMetaBlock implements ITileEntityProvider, ISES
 		return null;
 	}
 	
+	
 	//////////////////////////////////////
 	/////Item drops and Block activities
 	////////////////////////////////////// 
 	private boolean openGui(World world, BlockPos pos, EntityPlayer player, EnumFacing side){
-		RayTraceResult trace = Minecraft.getMinecraft().objectMouseOver;	//TODO: not sure what this does!
+		RayTraceResult trace = rayTrace(world, pos, Minecraft.getMinecraft().player);	//Was
 		
-		/*
+		
 		if (trace == null)
-			return false; //This is not suppose to happen, but just in case!
+			return false; 	//This is not suppose to happen, but just in case!
 			
-		if (trace.hitCenter)
-			return false;
+		if (trace.subHit<7)
+			return false;	//The player is looking at the cable
 		
-		if (trace.sideHit == EnumFacing.UNKNOWN)
-			return false;
+		if (trace.subHit>12)
+			return false;	//The player is looking at somewhere else
 		
-		TileEntity te = world.getTileEntity(x, y, z);
+		TileEntity te = world.getTileEntity(pos);
 		if (te instanceof ISECoverPanelHost){
 			ISECoverPanelHost host = (ISECoverPanelHost) te;
-			ISECoverPanel coverPanel = host.getCoverPanelOnSide(result.sideHit);
+			EnumFacing panelSide = EnumFacing.getFront(trace.subHit-7);
+			ISECoverPanel coverPanel = host.getCoverPanelOnSide(panelSide);
 			
 			if (coverPanel instanceof ISEGuiCoverPanel){
-				player.openGui(Essential.instance, result.sideHit.ordinal(), world, x, y, z);
+				player.openGui(Essential.instance, panelSide.ordinal(), world, pos.getX(), pos.getY(), pos.getZ());
 				return true;
 			}
 		}
-		*/
 		return false;	//TODO: need to be fixed!
 	}
 	
@@ -471,7 +530,7 @@ public class BlockCable extends SEMetaBlock implements ITileEntityProvider, ISES
 		
 		if (te instanceof ISEGenericCable){
 			ISEGenericCable cable = (ISEGenericCable) te;
-			ISECoverPanel coverPanel = cable.getCoverPanelOnSide(side);
+			ISECoverPanel coverPanel = cable.getCoverPanelOnSide(side.getOpposite());
 			
 			return coverPanel instanceof ISERedstoneEmitterCoverPanel;
 		}
@@ -485,7 +544,7 @@ public class BlockCable extends SEMetaBlock implements ITileEntityProvider, ISES
 		
 		if (te instanceof ISEGenericCable){
 			ISEGenericCable cable = (ISEGenericCable) te;
-			ISECoverPanel coverPanel = cable.getCoverPanelOnSide(side);
+			ISECoverPanel coverPanel = cable.getCoverPanelOnSide(side.getOpposite());
 			
 			return 	coverPanel instanceof ISERedstoneEmitterCoverPanel 
 					?	(((ISERedstoneEmitterCoverPanel) coverPanel).isProvidingWeakPower()?15:0) 

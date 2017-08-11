@@ -5,6 +5,7 @@ import net.minecraft.inventory.Container;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import simelectricity.essential.api.client.ISECoverPanelRender;
@@ -93,7 +94,13 @@ public class VoltageSensorPanel implements ISEElectricalCoverPanel, ISERedstoneE
 	public void onEnergyNetUpdate(double voltage) {
 		this.voltage = voltage;
 		
-		checkRedStoneSignal();
+		WorldServer world = (WorldServer) hostTileEntity.getWorld();
+		world.addScheduledTask(new Runnable(){
+			@Override
+			public void run() {
+				checkRedStoneSignal();
+			}
+		});
 	}
 	
 	/**
@@ -106,9 +113,9 @@ public class VoltageSensorPanel implements ISEElectricalCoverPanel, ISERedstoneE
 		
 		if (emitRedStoneSignal != this.emitRedStoneSignal){
 			this.emitRedStoneSignal = emitRedStoneSignal;
-			
 			//Notify neighbor blocks if redstone signal polarity changes
-			hostTileEntity.getWorld().neighborChanged(hostTileEntity.getPos().offset(installedSide.getOpposite()), hostTileEntity.getBlockType(), hostTileEntity.getPos());
+			hostTileEntity.getWorld().neighborChanged(hostTileEntity.getPos().offset(installedSide), hostTileEntity.getBlockType(), hostTileEntity.getPos());
+			
 			return true;
 		}
 		

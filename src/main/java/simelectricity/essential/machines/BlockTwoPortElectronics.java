@@ -137,7 +137,13 @@ public class BlockTwoPortElectronics extends SEMachineBlock implements ISESidedT
     
 	///////////////////////
 	///Redstone
-	///////////////////////	
+	///////////////////////
+    @Override
+    public boolean canProvidePower(IBlockState state){
+    	int meta = this.getMetaFromState(state);
+    	return meta == 1;
+    }
+    
     @Override
     public boolean shouldCheckWeakPower(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side){
 		TileEntity te = world.getTileEntity(pos);
@@ -161,7 +167,7 @@ public class BlockTwoPortElectronics extends SEMachineBlock implements ISESidedT
 	@Override
 	public int getWeakPower(IBlockState blockState, IBlockAccess world, BlockPos pos, EnumFacing side) {
 		TileEntity te = world.getTileEntity(pos);
-		
+
 		if (te instanceof TileCurrentSensor)
 			return ((TileCurrentSensor) te).emitRedstoneSignal ? 15 : 0;
 		

@@ -72,8 +72,6 @@ public class ContainerSwitch extends ContainerNoInventoryTwoPort<TileSwitch> imp
 		this.current = (Double) data[3];
 		this.inputSide = (EnumFacing) data[4];
 		this.outputSide = (EnumFacing) data[5];
-		
-		System.out.println(isOn);
 	}
 
 	@Override
