@@ -2,18 +2,21 @@ package simelectricity.essential.cable;
 
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.inventory.Container;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import simelectricity.essential.ItemRegistry;
 import simelectricity.essential.api.client.ISECoverPanelRender;
 import simelectricity.essential.api.coverpanel.ISEElectricalCoverPanel;
 import simelectricity.essential.api.coverpanel.ISEGuiCoverPanel;
 import simelectricity.essential.api.coverpanel.ISERedstoneEmitterCoverPanel;
 import simelectricity.essential.cable.gui.ContainerVoltageSensor;
 import simelectricity.essential.cable.gui.GuiVoltageSensor;
+import simelectricity.essential.client.coverpanel.VoltageSensorRender;
 
 public class VoltageSensorPanel implements ISEElectricalCoverPanel, ISERedstoneEmitterCoverPanel, ISEGuiCoverPanel{
 	public boolean emitRedStoneSignal = false;
@@ -58,13 +61,18 @@ public class VoltageSensorPanel implements ISEElectricalCoverPanel, ISERedstoneE
 	@Override
 	@SideOnly(Side.CLIENT)
 	public ISECoverPanelRender getCoverPanelRender() {
-		return null;	//TODO: Missing Render
+		return VoltageSensorRender.instance;
 	}
 
 	@Override
 	public void setHost(TileEntity hostTileEntity, EnumFacing side) {
 		this.hostTileEntity = hostTileEntity;
 		this.installedSide = side;
+	}
+	
+	@Override
+	public ItemStack getDroppedItemStack() {
+		return new ItemStack(ItemRegistry.itemMisc, 1, 1);
 	}
 	
 	@Override

@@ -54,7 +54,7 @@ public class SERawQuadCube implements ISERawElement<SERawQuadCube>{
     	}
 	}
 	
-	private SERawQuadCube(float[][] vertexes, TextureAtlasSprite[] icons){
+	public SERawQuadCube(float[][] vertexes, TextureAtlasSprite[] icons){
 		this.icons = icons;
 		this.vertexes = new float[vertexes.length][];
 		

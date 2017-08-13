@@ -1,7 +1,6 @@
 package simelectricity.essential.machines.tile;
 
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.util.EnumFacing;
 import simelectricity.api.IEnergyNetUpdateHandler;
 import simelectricity.api.SEAPI;

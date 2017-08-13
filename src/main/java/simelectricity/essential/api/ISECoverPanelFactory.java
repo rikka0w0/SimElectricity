@@ -10,10 +10,4 @@ public interface ISECoverPanelFactory{
 	
 	boolean acceptNBT(NBTTagCompound nbt);
 	ISECoverPanel fromNBT(NBTTagCompound nbt);
-	
-	boolean acceptCoverPanel(ISECoverPanel coverPanel);
-	/**
-	 * @return a safe copy of the ItemStack, stack size always 1
-	 */
-	ItemStack getItemStack(ISECoverPanel coverPanel);
 }

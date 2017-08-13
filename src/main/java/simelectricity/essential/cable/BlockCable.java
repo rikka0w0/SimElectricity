@@ -35,6 +35,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockAccess;
@@ -456,7 +457,9 @@ public class BlockCable extends SEMetaBlock implements ITileEntityProvider, ISES
         	
         	if (!world.isRemote){	//Handle on server side
         		cable.installCoverPanel(side, coverPanel);
-        		world.notifyBlockUpdate(pos, state, state, 0x3);
+        		
+        		if (!coverPanel.isHollow())
+        			world.neighborChanged(pos.offset(side), this, pos);
         	}
         	return true;
     	}
@@ -490,6 +493,9 @@ public class BlockCable extends SEMetaBlock implements ITileEntityProvider, ISES
         cable.onCableRenderingUpdateRequested();
     }
     
+	///////////////////////
+	/// Item drops
+	///////////////////////	
     @Override
     public boolean removedByPlayer(IBlockState state, World world, BlockPos pos, EntityPlayer player,
         boolean willHarvest) {
@@ -518,6 +524,25 @@ public class BlockCable extends SEMetaBlock implements ITileEntityProvider, ISES
         	
         	return super.removedByPlayer(state, world, pos, player, willHarvest);
         }        
+    }
+    
+    @Override
+    public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player) {
+        TileEntity te = world.getTileEntity(pos);
+        if (!(te instanceof ISEGenericCable)) 
+        	return ItemStack.EMPTY;
+    	
+    	ISEGenericCable cable = (ISEGenericCable) te;
+    	
+    	RayTraceResult trace = rayTrace(world, pos, player);
+    	
+    	if (trace.subHit>6 && trace.subHit<13) {
+        	EnumFacing side = EnumFacing.getFront(trace.subHit-7);
+        	ISECoverPanel coverPanel = cable.getCoverPanelOnSide(side);
+    		return coverPanel.getDroppedItemStack();
+    	}else {
+    		return new ItemStack(Item.getItemFromBlock(this), 1, this.damageDropped(state));
+    	}
     }
 	///////////////////////
 	///Redstone

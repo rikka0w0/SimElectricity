@@ -9,5 +9,4 @@ public interface ISECoverPanelRegistry {
 	void registerCoverPanelFactory(ISECoverPanelFactory factory);
 	ISECoverPanel fromItemStack(ItemStack itemStack);
 	ISECoverPanel fromNBT(NBTTagCompound nbt);
-	ItemStack toItemStack(ISECoverPanel coverPanel);
 }

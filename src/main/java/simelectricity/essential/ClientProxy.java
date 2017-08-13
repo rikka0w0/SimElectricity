@@ -3,6 +3,8 @@ package simelectricity.essential;
 import simelectricity.essential.api.SEEAPI;
 import simelectricity.essential.client.CustomModelLoader;
 import simelectricity.essential.client.cable.CableStateMapper;
+import simelectricity.essential.client.coverpanel.LedPanelRender;
+import simelectricity.essential.client.coverpanel.VoltageSensorRender;
 import simelectricity.essential.client.semachine.SEMachineStateMapper;
 import simelectricity.essential.client.semachine.SocketRender;
 import simelectricity.essential.common.ISEGuiProvider;
@@ -70,6 +72,10 @@ public class ClientProxy extends CommonProxy{
 		
 		//Initialize socket render
 		new SocketRender();
+		
+		//Initialize coverpanel render
+		new VoltageSensorRender();
+		new LedPanelRender();
 	}
 	
 	@Override

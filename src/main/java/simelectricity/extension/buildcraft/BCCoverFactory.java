@@ -58,15 +58,4 @@ public class BCCoverFactory implements ISECoverPanelFactory{
 	public ISECoverPanel fromNBT(NBTTagCompound nbt) {
 		return new BCFacadePanel(nbt);
 	}
-
-	@Override
-	public boolean acceptCoverPanel(ISECoverPanel coverPanel) {
-		return coverPanel instanceof BCFacadePanel;
-	}
-
-	@Override
-	public ItemStack getItemStack(ISECoverPanel coverPanel) {
-		BCFacadePanel facadePanel = (BCFacadePanel) coverPanel;
-		return facadePanel.getItemStack();
-	}
 }

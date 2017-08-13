@@ -44,8 +44,6 @@ public class BCFacadePanel implements ISECoverPanel{
 	
 	public IBlockState getBlockState() {return blockState;}
 	
-	public ItemStack getItemStack() {return itemStack.copy();}
-	
 	@Override
 	public boolean isHollow() {return isHollow;}
 
@@ -72,4 +70,9 @@ public class BCFacadePanel implements ISECoverPanel{
 
 	@Override
 	public void setHost(TileEntity hostTileEntity, EnumFacing side) {}
+
+	@Override
+	public ItemStack getDroppedItemStack() {
+		return itemStack.copy();
+	}
 }

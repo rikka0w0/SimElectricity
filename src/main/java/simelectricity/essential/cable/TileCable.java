@@ -6,7 +6,6 @@ import net.minecraft.block.Block;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants;
@@ -155,19 +154,17 @@ public class TileCable extends SEEnergyTile implements ISEGenericCable, ISEIumin
 			return false;
 		
 		//Look for that panel and remove it
-		boolean success = false;
-		for (EnumFacing side: EnumFacing.VALUES) {
-			if (installedCoverPanels[side.ordinal()] == coverPanel) {
-				//Remove the panel
-				installedCoverPanels[side.ordinal()] = null;
-				success = true;
-			}
+		EnumFacing side = null;
+		for (EnumFacing facing: EnumFacing.VALUES) {
+			if (installedCoverPanels[facing.ordinal()] == coverPanel)
+				side = facing;
 		}
 		
-		if (!success)
+		if (side == null)
 			return false;
 		
-
+		//Remove the panel
+		installedCoverPanels[side.ordinal()] = null;
 		
 		if (coverPanel instanceof ISEElectricalLoadCoverPanel)
 			SEAPI.energyNetAgent.updateTileConnection(this);
@@ -178,14 +175,14 @@ public class TileCable extends SEEnergyTile implements ISEGenericCable, ISEIumin
 		if (coverPanel instanceof ISERedstoneEmitterCoverPanel)
 			world.notifyNeighborsOfStateChange(pos, blockType, false);
 		
-		
 		onCableRenderingUpdateRequested();
 		
+		if (!coverPanel.isHollow())
+			world.neighborChanged(pos.offset(side), this.getBlockType(), pos);
+		
 		//Spawn an item entity for player to pick up
-		if (dropItem) {
-			ItemStack itemToDrop = SEEAPI.coverPanelRegistry.toItemStack(coverPanel);
-			Utils.dropItemIntoWorld(world, pos, itemToDrop);
-		}
+		if (dropItem)
+			Utils.dropItemIntoWorld(world, pos, coverPanel.getDroppedItemStack());
 		
 		return true;
 	}
