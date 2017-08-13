@@ -4,6 +4,7 @@ import simelectricity.essential.common.ISEGuiProvider;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.IThreadListener;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.IGuiHandler;
@@ -17,15 +18,15 @@ public class CommonProxy implements IGuiHandler{
 		return null;
 	}
 
-	public Object getClientThread() {
+	public IThreadListener getClientThread() {
 		return null;
 	}
 	
-	public void registerModel(){}
+	public void preInit(){}
 	
-	public void registerRenders() {
-
-	}
+	public void init() {}
+	
+	public void postInit() {}
 
 	@Override
 	public final Object getServerGuiElement(int ID, EntityPlayer player, World world,

@@ -44,7 +44,7 @@ public class Essential {
         networkChannel.registerMessage(MessageContainerSync.Handler.class, MessageContainerSync.class, 0, Side.CLIENT);
         networkChannel.registerMessage(MessageContainerSync.Handler.class, MessageContainerSync.class, 1, Side.SERVER);
         
-        proxy.registerModel();
+        proxy.preInit();
     }
     
     /**
@@ -54,7 +54,7 @@ public class Essential {
     public void init(FMLInitializationEvent event) {
     	BlockRegistry.registerTileEntities();
     	
-    	proxy.registerRenders();
+    	proxy.init();
     	
     	MinecraftForge.EVENT_BUS.register(new CableWatchEventHandler());
     	

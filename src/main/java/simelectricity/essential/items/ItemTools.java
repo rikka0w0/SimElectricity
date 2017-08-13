@@ -23,6 +23,7 @@ import simelectricity.api.tile.ISEGridTile;
 import simelectricity.api.tile.ISETile;
 import simelectricity.essential.api.ISECoverPanelHost;
 import simelectricity.essential.api.ISENodeDelegateBlock;
+import simelectricity.essential.api.coverpanel.ISECoverPanel;
 import simelectricity.essential.client.ISESimpleTextureItem;
 import simelectricity.essential.common.SEItem;
 import simelectricity.essential.utils.SEUnitHelper;
@@ -53,7 +54,7 @@ public class ItemTools extends SEItem implements ISESimpleTextureItem{
 	}
 	
     @Override
-    public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+    public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
         ItemStack itemStack = player.getItemStackFromSlot(EntityEquipmentSlot.MAINHAND);
     	
         if (itemStack.getItem() != this){
@@ -66,35 +67,52 @@ public class ItemTools extends SEItem implements ISESimpleTextureItem{
     	
     	switch (itemStack.getItemDamage()){
     	case 0:
-    		return useCrowbar(te, player, facing);
+    		return useCrowbar(te, player, side);
     	case 1:
-    		return useWrench(te, player, facing);
+    		return useWrench(te, player, side);
     	case 2:
-    		return useGlove(te, player, facing);
+    		return useGlove(te, player, side);
     	case 3:
-    		return useMultimeter(world, pos, player, facing);
+    		return useMultimeter(world, pos, player, side);
     	}
     	
-    	return EnumActionResult.FAIL;
+    	return EnumActionResult.PASS;
     }
     
     public static EnumActionResult useCrowbar(TileEntity te, EntityPlayer player, EnumFacing side){
-    	if (te instanceof ISECrowbarTarget){
+		if (te instanceof ISECoverPanelHost) {
+			ISECoverPanel coverPanel = ((ISECoverPanelHost) te).getSelectedCoverPanel(player);
+			
+			if (coverPanel == null)
+				return EnumActionResult.FAIL;
+			
+			if (te.getWorld().isRemote) {
+				return EnumActionResult.PASS;
+			} else {
+				boolean ret = ((ISECoverPanelHost) te).removeCoverPanel(coverPanel, !player.capabilities.isCreativeMode);
+				return ret? EnumActionResult.PASS: EnumActionResult.FAIL;
+			}
+		}
+		
+		else if (te instanceof ISECrowbarTarget){
     		ISECrowbarTarget crowbarTarget = (ISECrowbarTarget) te;
     		
     		EnumFacing selectedDirection = side;
-    		if (te instanceof ISECoverPanelHost)
-    			selectedDirection = ((ISECoverPanelHost) te).getSelectedSide(player, side);
     		
     		if (crowbarTarget.canCrowbarBeUsed(selectedDirection)){
-    			if (!te.getWorld().isRemote)
-    				crowbarTarget.onCrowbarAction(selectedDirection, player.capabilities.isCreativeMode);
-    			
-    			return EnumActionResult.SUCCESS;
+    			if (te.getWorld().isRemote) {
+    				return EnumActionResult.PASS;
+    			} else {
+    				crowbarTarget.onCrowbarAction(selectedDirection, player.capabilities.isCreativeMode);        			
+        			return EnumActionResult.PASS;
+    			}
+    				
     		}
+    		
+    		return EnumActionResult.FAIL;
     	}
-    	
-    	return EnumActionResult.FAIL;
+		
+		return EnumActionResult.FAIL;
     }
     
     public static EnumActionResult useWrench(TileEntity te, EntityPlayer player, EnumFacing side){
@@ -102,14 +120,17 @@ public class ItemTools extends SEItem implements ISESimpleTextureItem{
     		ISEWrenchable wrenchTarget = (ISEWrenchable) te;
     		
     		if (wrenchTarget.canWrenchBeUsed(side)){
-    			if (!te.getWorld().isRemote)
+    			if (te.getWorld().isRemote) {
+    				return EnumActionResult.PASS;
+    			} else {
     				wrenchTarget.onWrenchAction(side, player.capabilities.isCreativeMode);
-    			
-    			return EnumActionResult.SUCCESS;
+    				return EnumActionResult.PASS;
+    			}
     		}
+    		return EnumActionResult.FAIL;
     	}
-    	
-    	return EnumActionResult.FAIL;
+		
+		return EnumActionResult.FAIL;
     }
     
     public static EnumActionResult useGlove(TileEntity te, EntityPlayer player, EnumFacing side){
@@ -117,13 +138,17 @@ public class ItemTools extends SEItem implements ISESimpleTextureItem{
     		ISidedFacing target = (ISidedFacing) te;
     		
     		if (target.canSetFacing(side)) {
-    			if (!te.getWorld().isRemote)
+    			if (te.getWorld().isRemote) {
+    				return EnumActionResult.PASS;
+    			} else {
     				target.setFacing(side);
-    			
-    			return EnumActionResult.SUCCESS;
+    				return EnumActionResult.PASS;
+    			}
     		}
+    		return EnumActionResult.FAIL;
     	}
-    	return EnumActionResult.FAIL;
+		
+		return EnumActionResult.FAIL;
     }
     
     public static EnumActionResult useMultimeter(World world, BlockPos pos, EntityPlayer player, EnumFacing side){
@@ -131,16 +156,16 @@ public class ItemTools extends SEItem implements ISESimpleTextureItem{
     	
     	if (te instanceof ISECableTile) {
             if (te.getWorld().isRemote)
-            	return EnumActionResult.SUCCESS;
+            	return EnumActionResult.PASS;
             
             Utils.chat(player, "------------------");
     		ISESimulatable node = ((ISECableTile) te).getNode();
     		printVI(node, player);
         		
-    		return EnumActionResult.SUCCESS;
+    		return EnumActionResult.PASS;
     	}else if (te instanceof ISETile){
             if (te.getWorld().isRemote)
-            	return EnumActionResult.SUCCESS;
+            	return EnumActionResult.PASS;
     		
             Utils.chat(player, "------------------");   
             
@@ -155,31 +180,31 @@ public class ItemTools extends SEItem implements ISESimpleTextureItem{
         		}
         	}
         	
-        	return EnumActionResult.SUCCESS;
+        	return EnumActionResult.PASS;
     	}else if (te instanceof ISEGridTile){
             if (te.getWorld().isRemote)
-            	return EnumActionResult.SUCCESS;
+            	return EnumActionResult.PASS;
     		
             Utils.chat(player, "------------------");  
     		ISEGridNode node = ((ISEGridTile) te).getGridNode();
     		printVI(node, player);
     		
-    		return EnumActionResult.SUCCESS;
+    		return EnumActionResult.PASS;
     	}else{
     		Block block = world.getBlockState(pos).getBlock();
     		if (block instanceof ISENodeDelegateBlock){
     			if (world.isRemote)
-    				return EnumActionResult.SUCCESS;
+    				return EnumActionResult.PASS;
     			
     			Utils.chat(player, "------------------"); 
     			ISESimulatable node = ((ISENodeDelegateBlock) block).getNode(world, pos);
     			printVI(node, player);
     			
-    			return EnumActionResult.SUCCESS;
+    			return EnumActionResult.PASS;
     		}
     	}
     	
-    	return EnumActionResult.FAIL;
+    	return EnumActionResult.PASS;
     }
     
     public static void printVI(ISESimulatable node, EntityPlayer player){

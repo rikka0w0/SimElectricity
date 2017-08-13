@@ -5,7 +5,7 @@ import java.util.Iterator;
 import simelectricity.essential.Essential;
 
 import io.netty.buffer.ByteBuf;
-import net.minecraft.client.Minecraft;
+
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.Container;
 import net.minecraft.server.MinecraftServer;
@@ -173,7 +173,7 @@ public class MessageContainerSync implements IMessage{
 				final Object[] payload = message.data;
 				
 				//Client
-				Minecraft.getMinecraft().addScheduledTask(new Runnable()
+				Essential.proxy.getClientThread().addScheduledTask(new Runnable()
 				{
 					  public void run() {
 						  Container invContainer = Essential.proxy.getClientPlayer().openContainer;

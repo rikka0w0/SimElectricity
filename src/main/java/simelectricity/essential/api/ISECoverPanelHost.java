@@ -12,10 +12,10 @@ public interface ISECoverPanelHost {
 	 * @param y
 	 * @param z
 	 * @param player
-	 * @param side the side which is closest to the player
-	 * @return the side which the player is actually looking at, UNKNOWN - center
-	 */
-	EnumFacing getSelectedSide(EntityPlayer player, EnumFacing side);
+	 * @param side the closest side to the player
+	 * @return the side which the player is actually looking at, null - center
+	 */	
+	ISECoverPanel getSelectedCoverPanel(EntityPlayer player);
 	
 	ISECoverPanel getCoverPanelOnSide(EnumFacing side);
 	
@@ -28,4 +28,12 @@ public interface ISECoverPanelHost {
 	void installCoverPanel(EnumFacing side, ISECoverPanel coverPanel);
 	
 	boolean canInstallCoverPanelOnSide(EnumFacing side, ISECoverPanel coverPanel);
+	
+	/**
+	 * Handle on SERVER side ONLY!
+	 * @param coverPanel
+	 * @param dropItem
+	 * @return true if success
+	 */
+	boolean removeCoverPanel(ISECoverPanel coverPanel, boolean dropItem);
 }

@@ -6,14 +6,15 @@ import net.minecraft.block.Block;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.RayTraceResult;
 
 import simelectricity.api.IEnergyNetUpdateHandler;
-import simelectricity.api.ISECrowbarTarget;
 import simelectricity.api.SEAPI;
 import simelectricity.api.node.ISESimulatable;
 import simelectricity.api.tile.ISECableTile;
@@ -30,7 +31,7 @@ import simelectricity.essential.common.ISEGuiProvider;
 import simelectricity.essential.common.SEEnergyTile;
 import simelectricity.essential.utils.Utils;
 
-public class TileCable extends SEEnergyTile implements ISECrowbarTarget, ISEGenericCable, ISEIuminousCoverPanelHost, ISECableTile, IEnergyNetUpdateHandler, ISEGuiProvider{
+public class TileCable extends SEEnergyTile implements ISEGenericCable, ISEIuminousCoverPanelHost, ISECableTile, IEnergyNetUpdateHandler, ISEGuiProvider{
 	private ISESimulatable node = SEAPI.energyNetAgent.newCable(this, false);
     private int color = 0;
     private double resistance = 10;
@@ -104,16 +105,18 @@ public class TileCable extends SEEnergyTile implements ISECrowbarTarget, ISEGene
 	}
 	
 	@Override
-	public EnumFacing getSelectedSide(EntityPlayer player, EnumFacing side){
-		EnumFacing selectedDirection = side;
+	public ISECoverPanel getSelectedCoverPanel(EntityPlayer player) {
 		Block block = getBlockType();
 		if (block instanceof BlockCable){
-			//RaytraceResult result = ((BlockCable) block).doRayTrace(world, pos, player);
-			//return result.hitCenter ? null : result.sideHit;
-			return selectedDirection;	//TODO: need to be fixed!
+			RayTraceResult result = ((BlockCable) block).rayTrace(world, pos, player);
+			
+			if (result.subHit<7 || result.subHit>12)
+				return null;	//The player is not looking at anyinstalled cover panel
+			
+			EnumFacing side = EnumFacing.getFront(result.subHit - 7);
+			return installedCoverPanels[side.ordinal()]; 
 		}
-		
-		return selectedDirection;
+		return null;
 	}
 	
 	@Override
@@ -146,6 +149,46 @@ public class TileCable extends SEEnergyTile implements ISECrowbarTarget, ISEGene
 		onCableRenderingUpdateRequested();
 	}
 
+	@Override
+	public boolean removeCoverPanel(ISECoverPanel coverPanel, boolean dropItem) {
+		if (coverPanel == null)
+			return false;
+		
+		//Look for that panel and remove it
+		boolean success = false;
+		for (EnumFacing side: EnumFacing.VALUES) {
+			if (installedCoverPanels[side.ordinal()] == coverPanel) {
+				//Remove the panel
+				installedCoverPanels[side.ordinal()] = null;
+				success = true;
+			}
+		}
+		
+		if (!success)
+			return false;
+		
+
+		
+		if (coverPanel instanceof ISEElectricalLoadCoverPanel)
+			SEAPI.energyNetAgent.updateTileConnection(this);
+		
+		onLightValueUpdated();
+		
+		//Notify neighbor block that this side no longer emits redstone signal
+		if (coverPanel instanceof ISERedstoneEmitterCoverPanel)
+			world.notifyNeighborsOfStateChange(pos, blockType, false);
+		
+		
+		onCableRenderingUpdateRequested();
+		
+		//Spawn an item entity for player to pick up
+		if (dropItem) {
+			ItemStack itemToDrop = SEEAPI.coverPanelRegistry.toItemStack(coverPanel);
+			Utils.dropItemIntoWorld(world, pos, itemToDrop);
+		}
+		
+		return true;
+	}
 	///////////////////////////////////////
 	///TileEntity
 	///////////////////////////////////////
@@ -275,48 +318,6 @@ public class TileCable extends SEEnergyTile implements ISECrowbarTarget, ISEGene
 			if (coverPanel instanceof ISEElectricalCoverPanel)
 				((ISEElectricalCoverPanel) coverPanel).onEnergyNetUpdate(voltage);
 		}
-	}
-
-	////////////////////////////////////////
-	//ISECrowbarTarget
-	////////////////////////////////////////	
-	@Override
-	public boolean canCrowbarBeUsed(EnumFacing side) {
-		if (side == null)
-			return false;
-		
-		ISECoverPanel coverPanel = installedCoverPanels[side.ordinal()];
-		return coverPanel != null;
-	}
-	
-	@Override
-	public void onCrowbarAction(EnumFacing side, boolean isCreativePlayer) {
-		if (side == null)
-			return;
-		
-		ISECoverPanel coverPanel = installedCoverPanels[side.ordinal()];
-		if (coverPanel == null)
-			return;
-		
-		//Remove the panel
-		installedCoverPanels[side.ordinal()] = null;
-		
-		if (coverPanel instanceof ISEElectricalLoadCoverPanel)
-			SEAPI.energyNetAgent.updateTileConnection(this);
-		
-		onLightValueUpdated();
-		
-		//Notify neighbor block that this side no longer emits redstone signal
-		if (coverPanel instanceof ISERedstoneEmitterCoverPanel)
-			world.notifyNeighborsOfStateChange(pos, blockType, false);
-		
-		
-		onCableRenderingUpdateRequested();
-		
-		//Spawn an item entity for player to pick up
-		if (!isCreativePlayer)
-			Utils.dropItemIntoWorld(world, pos, 
-					SEEAPI.coverPanelRegistry.toItemStack(coverPanel));
 	}
 	
 	///////////////////////

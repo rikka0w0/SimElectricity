@@ -1,5 +1,6 @@
 package simelectricity.essential;
 
+import simelectricity.essential.api.SEEAPI;
 import simelectricity.essential.client.CustomModelLoader;
 import simelectricity.essential.client.cable.CableStateMapper;
 import simelectricity.essential.client.semachine.SEMachineStateMapper;
@@ -20,11 +21,15 @@ import simelectricity.essential.machines.tile.TileQuantumGenerator;
 import simelectricity.essential.machines.tile.TileSwitch;
 import simelectricity.essential.machines.tile.TileVoltageMeter;
 
+import java.util.LinkedList;
+
+import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.IThreadListener;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -40,12 +45,15 @@ public class ClientProxy extends CommonProxy{
 	}
 	
 	@Override
-	public Object getClientThread() {
+	public IThreadListener getClientThread() {
 		return Minecraft.getMinecraft();
 	}
 	
 	@Override
-	public void registerModel(){
+	public void preInit(){
+		//Initialize the client-side API
+		SEEAPI.coloredBlocks = new LinkedList<Block>();
+		
 		CustomModelLoader loader = new CustomModelLoader(Essential.modID);		
 		loader.registerInventoryIcon(ItemRegistry.itemHVCable);
 		loader.registerInventoryIcon(ItemRegistry.itemVitaTea);
@@ -65,7 +73,12 @@ public class ClientProxy extends CommonProxy{
 	}
 	
 	@Override
-	public void registerRenders() {
+	public void init() {
+		SEEAPI.coloredBlocks.add(BlockRegistry.blockCable);
+	}
+	
+	@Override
+	public void postInit() {
 
 	}
 

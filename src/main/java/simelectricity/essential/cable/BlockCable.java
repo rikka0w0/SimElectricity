@@ -1,20 +1,17 @@
 package simelectricity.essential.cable;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 
 import javax.annotation.Nullable;
 
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
-import net.minecraftforge.common.property.Properties;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import simelectricity.api.SEAPI;
-import simelectricity.essential.BlockRegistry;
 import simelectricity.essential.Essential;
 import simelectricity.essential.api.ISECoverPanelHost;
 import simelectricity.essential.api.ISEGenericCable;
@@ -23,21 +20,15 @@ import simelectricity.essential.api.coverpanel.ISECoverPanel;
 import simelectricity.essential.api.coverpanel.ISEGuiCoverPanel;
 import simelectricity.essential.api.coverpanel.ISERedstoneEmitterCoverPanel;
 import simelectricity.essential.common.ISESubBlock;
-import simelectricity.essential.common.SEBlock;
 import simelectricity.essential.common.SEItemBlock;
 import simelectricity.essential.common.SEMetaBlock;
-import simelectricity.essential.common.semachine.ISESocketProvider;
+import simelectricity.essential.common.UnlistedNonNullProperty;
 import simelectricity.essential.utils.MatrixTranformations;
 import simelectricity.essential.utils.RayTraceHelper;
-import simelectricity.essential.utils.Utils;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.IProperty;
-import net.minecraft.block.properties.PropertyBool;
-import net.minecraft.block.properties.PropertyInteger;
-import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
@@ -48,6 +39,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -56,7 +48,7 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 
 /**
- * The collision & ray trace is inspired by BuildCraft
+ * RayTrace is inspired by BuildCraft
  * @author Rikka0_0
  */
 public class BlockCable extends SEMetaBlock implements ITileEntityProvider, ISESubBlock{
@@ -134,6 +126,11 @@ public class BlockCable extends SEMetaBlock implements ITileEntityProvider, ISES
 	@Override
 	public boolean isNormalCube(IBlockState state) {return false;}
 	
+    @Override
+    @SideOnly(Side.CLIENT)
+    public boolean canRenderInLayer(IBlockState state, BlockRenderLayer layer) {
+        return true;
+    }
 
 	
 	@Override
@@ -166,27 +163,12 @@ public class BlockCable extends SEMetaBlock implements ITileEntityProvider, ISES
     
 	///////////////////////////////
 	///BlockStates
-	///////////////////////////////
-    public final static IUnlistedProperty<Boolean> propertyDownConnected = 
-			new Properties.PropertyAdapter<Boolean>(PropertyBool.create("downconnected"));
-    public final static IUnlistedProperty<Boolean> propertyUpConnected = 
-			new Properties.PropertyAdapter<Boolean>(PropertyBool.create("upconnected"));
-    public final static IUnlistedProperty<Boolean> propertyNorthConnected = 
-			new Properties.PropertyAdapter<Boolean>(PropertyBool.create("northconnected"));
-    public final static IUnlistedProperty<Boolean> propertySouthConnected = 
-			new Properties.PropertyAdapter<Boolean>(PropertyBool.create("southconnected"));
-    public final static IUnlistedProperty<Boolean> propertyWestConnected = 
-			new Properties.PropertyAdapter<Boolean>(PropertyBool.create("westconnected"));
-    public final static IUnlistedProperty<Boolean> propertyEastConnected = 
-			new Properties.PropertyAdapter<Boolean>(PropertyBool.create("eastconnected"));
-    public final static IUnlistedProperty<Boolean>[] propertyConnections = 
-    		new IUnlistedProperty[]{propertyDownConnected, propertyUpConnected,
-    	propertyNorthConnected, propertySouthConnected, propertyWestConnected, propertyEastConnected};
+	///////////////////////////////   
+    public static final IUnlistedProperty<WeakReference<ISEGenericCable>> propertyTile = new UnlistedNonNullProperty<>("tile");
     
 	@Override
 	protected void createUnlistedProperties(ArrayList<IUnlistedProperty> properties){
-		for (IUnlistedProperty<Boolean> prop: propertyConnections)
-			properties.add(prop);
+			properties.add(propertyTile);
 	}
     
 	@Override
@@ -197,11 +179,7 @@ public class BlockCable extends SEMetaBlock implements ITileEntityProvider, ISES
 			TileEntity te = world.getTileEntity(pos);
 			
 			if (te instanceof ISEGenericCable){
-				ISEGenericCable cable = (ISEGenericCable) te;
-				for (EnumFacing side: EnumFacing.VALUES){
-					IUnlistedProperty<Boolean> prop = propertyConnections[side.ordinal()];
-					retval = retval.withProperty(prop, cable.connectedOnSide(side));
-				}
+				retval = retval.withProperty(propertyTile, new WeakReference<>((ISEGenericCable) te));
 			}
 			
 			return retval;
@@ -255,7 +233,6 @@ public class BlockCable extends SEMetaBlock implements ITileEntityProvider, ISES
 		return new AxisAlignedBB(bounds[0][0], bounds[1][0], bounds[2][0], bounds[0][1], bounds[1][1], bounds[2][1]);
 	}
 
-	//TODO: Custom Raytrace!!!!
 	@Override
     @Nullable
     public RayTraceResult collisionRayTrace(IBlockState state, World world, BlockPos pos, Vec3d start, Vec3d end) {
@@ -420,8 +397,11 @@ public class BlockCable extends SEMetaBlock implements ITileEntityProvider, ISES
 	//////////////////////////////////////
 	/////Item drops and Block activities
 	////////////////////////////////////// 
-	private boolean openGui(World world, BlockPos pos, EntityPlayer player, EnumFacing side){
-		RayTraceResult trace = rayTrace(world, pos, Minecraft.getMinecraft().player);	//Was
+	private boolean attemptOpenCoverPanelGui(World world, BlockPos pos, EntityPlayer player){
+        if (player.isSneaking())
+            return false;
+		
+		RayTraceResult trace = rayTrace(world, pos, player);
 		
 		
 		if (trace == null)
@@ -444,7 +424,7 @@ public class BlockCable extends SEMetaBlock implements ITileEntityProvider, ISES
 				return true;
 			}
 		}
-		return false;	//TODO: need to be fixed!
+		return false;
 	}
 	
 	@Override
@@ -454,25 +434,24 @@ public class BlockCable extends SEMetaBlock implements ITileEntityProvider, ISES
         
         if (!(te instanceof ISEGenericCable))
         	return false;		//Normally this could not happen, but just in case!
-               
+        
         ItemStack itemStack = player.getHeldItemMainhand();
         if (itemStack == null)
-        	return openGui(world, pos, player, side);
+        	return attemptOpenCoverPanelGui(world, pos, player);
         
         if (itemStack.isEmpty())
-        	return openGui(world, pos, player, side);
+        	return attemptOpenCoverPanelGui(world, pos, player);
     
         ISEGenericCable cable = (ISEGenericCable) te;
                 
         ISECoverPanel coverPanel = SEEAPI.coverPanelRegistry.fromItemStack(itemStack);
         if (coverPanel == null)
-        	return openGui(world, pos, player, side);
+        	return attemptOpenCoverPanelGui(world, pos, player);
         
+        //Attempt to install cover panel
     	if (cable.canInstallCoverPanelOnSide(side, coverPanel)){
         	if (!player.capabilities.isCreativeMode){
 	        	itemStack.shrink(1);
-	        	if (itemStack.isEmpty())
-	        		itemStack = null;
         	}
         	
         	if (!world.isRemote){	//Handle on server side
@@ -482,7 +461,7 @@ public class BlockCable extends SEMetaBlock implements ITileEntityProvider, ISES
         	return true;
     	}
         
-    	return openGui(world, pos, player, side);
+    	return attemptOpenCoverPanelGui(world, pos, player);
     }
 	
     @Override
@@ -514,13 +493,32 @@ public class BlockCable extends SEMetaBlock implements ITileEntityProvider, ISES
     @Override
     public boolean removedByPlayer(IBlockState state, World world, BlockPos pos, EntityPlayer player,
         boolean willHarvest) {
-        //if (world.isRemote) {
-        //    return false;
-    	// }
-        	//TODO:
-        return super.removedByPlayer(state, world, pos, player, willHarvest);
+        if (world.isRemote) {
+            return false;
+    	}
+        
+        TileEntity te = world.getTileEntity(pos);
+        if (!(te instanceof ISEGenericCable)) 
+        	return super.removedByPlayer(state, world, pos, player, willHarvest);
+    	
+    	ISEGenericCable cable = (ISEGenericCable) te;
+        
+        RayTraceResult trace = rayTrace(world, pos, player);
+        if (trace.subHit>6 && trace.subHit<13) {
+        	//Remove the selected cover panel
+        	EnumFacing side = EnumFacing.getFront(trace.subHit-7);
+        	ISECoverPanel coverPanel = cable.getCoverPanelOnSide(side);
+        	cable.removeCoverPanel(coverPanel, !player.capabilities.isCreativeMode);
+        	return false;
+        }else {
+        	for (EnumFacing side: EnumFacing.VALUES) {
+            	ISECoverPanel coverPanel = cable.getCoverPanelOnSide(side);
+            	cable.removeCoverPanel(coverPanel, !player.capabilities.isCreativeMode);
+        	}
+        	
+        	return super.removedByPlayer(state, world, pos, player, willHarvest);
+        }        
     }
-	
 	///////////////////////
 	///Redstone
 	///////////////////////	

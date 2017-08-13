@@ -1,6 +1,6 @@
 package simelectricity.essential.client.cable;
 
-import java.util.ArrayList;
+import java.lang.ref.WeakReference;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -9,6 +9,11 @@ import javax.vecmath.Matrix4f;
 
 import org.apache.commons.lang3.tuple.Pair;
 
+import com.google.common.collect.ImmutableList;
+
+import simelectricity.essential.api.ISEGenericCable;
+import simelectricity.essential.api.client.ISECoverPanelRender;
+import simelectricity.essential.api.coverpanel.ISECoverPanel;
 import simelectricity.essential.cable.BlockCable;
 import simelectricity.essential.utils.client.SERawQuadCube;
 
@@ -16,11 +21,12 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
-import net.minecraft.client.renderer.block.model.ItemOverride;
 import net.minecraft.client.renderer.block.model.ItemOverrideList;
 import net.minecraft.client.renderer.block.model.ItemTransformVec3f;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
+import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.client.model.IPerspectiveAwareModel;
 import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.common.property.IExtendedBlockState;
@@ -117,10 +123,9 @@ public class CableModel implements IPerspectiveAwareModel {
 		return ItemCameraTransforms.DEFAULT;
 	}
 	
-	private final ItemOverrideList overrideList = new ItemOverrideList(new ArrayList<ItemOverride>(0));
 	@Override
 	public ItemOverrideList getOverrides() {
-		return overrideList;	//I'm not sure what this thing does QAQ, only know this prevents crashing 233
+		return ItemOverrideList.NONE;	//I'm not sure what this thing does QAQ, only know this prevents crashing 233
 	}
 
 	@Override
@@ -144,39 +149,62 @@ public class CableModel implements IPerspectiveAwareModel {
 
 	@Override
 	public List<BakedQuad> getQuads(@Nullable IBlockState blockState,
-			@Nullable EnumFacing side, long rand) {
+			@Nullable EnumFacing uselessside, long rand) {
 
 		List<BakedQuad> quads = new LinkedList<BakedQuad>();
 		
 	    if (!(blockState instanceof IExtendedBlockState))
 	    	//Normally this should not happen, just in case, to prevent crashing
-	    	return branches[0];
-		
-	    byte numOfCon = 0;
-	    EnumFacing conSide = EnumFacing.DOWN;
+	    	return ImmutableList.of();
 	    
-	    TextureAtlasSprite[] centerTexture = new TextureAtlasSprite[]
-	    		{insulatorTexture, insulatorTexture,
-	    		insulatorTexture, insulatorTexture, 
-	    		insulatorTexture, insulatorTexture};
-		IExtendedBlockState exBlockState = (IExtendedBlockState)blockState;
-		for (EnumFacing direction: EnumFacing.VALUES){
-			if (exBlockState.getValue(BlockCable.propertyConnections[direction.ordinal()])){
-				quads.addAll(branches[direction.ordinal()]);
-				centerTexture[direction.ordinal()] = null;
-				conSide = direction;
-				numOfCon++;
+	    IExtendedBlockState exBlockState = (IExtendedBlockState)blockState;
+	    WeakReference<ISEGenericCable> ref = exBlockState.getValue(BlockCable.propertyTile);
+        ISEGenericCable cable = ref==null ? null : ref.get();
+        
+        if (cable == null)
+        	return ImmutableList.of();
+		
+		BlockRenderLayer layer = MinecraftForgeClient.getRenderLayer();
+		
+		//Render center & branches in SOLID layer
+		if (layer == BlockRenderLayer.SOLID) {
+		    byte numOfCon = 0;
+		    EnumFacing conSide = EnumFacing.DOWN;
+		    
+		    TextureAtlasSprite[] centerTexture = new TextureAtlasSprite[]
+		    		{insulatorTexture, insulatorTexture,
+		    		insulatorTexture, insulatorTexture, 
+		    		insulatorTexture, insulatorTexture};
+			
+			for (EnumFacing direction: EnumFacing.VALUES){
+				if (cable.connectedOnSide(direction)){
+					quads.addAll(branches[direction.ordinal()]);
+					centerTexture[direction.ordinal()] = null;
+					conSide = direction;
+					numOfCon++;
+				}
 			}
+			
+			if (numOfCon == 1){
+				centerTexture[conSide.getOpposite().ordinal()] = conductorTexture;
+			}
+			
+			SERawQuadCube cube = new SERawQuadCube(thickness, thickness, thickness, centerTexture);
+			cube.translateCoord(0.5F, 0.5F-thickness/2, 0.5F);
+			cube.bake(quads);
 		}
-		
-		if (numOfCon == 1){
-			centerTexture[conSide.getOpposite().ordinal()] = conductorTexture;
+
+		//CoverPanel can be rendered in any layer
+		for (EnumFacing side: EnumFacing.VALUES){
+			ISECoverPanel coverPanel = cable.getCoverPanelOnSide(side);
+			if (coverPanel != null) {
+				ISECoverPanelRender render = coverPanel.getCoverPanelRender();
+				if (render != null)
+					render.renderCoverPanel(coverPanel, side, quads);
+			}
+				
 		}
-		
-		SERawQuadCube cube = new SERawQuadCube(thickness, thickness, thickness, centerTexture);
-		cube.translateCoord(0.5F, 0.5F-thickness/2, 0.5F);
-		cube.bake(quads);
-		
+				
 		return quads;
 	}
 }

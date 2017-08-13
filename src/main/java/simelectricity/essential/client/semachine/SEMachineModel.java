@@ -1,6 +1,5 @@
 package simelectricity.essential.client.semachine;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -16,7 +15,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
-import net.minecraft.client.renderer.block.model.ItemOverride;
 import net.minecraft.client.renderer.block.model.ItemOverrideList;
 import net.minecraft.client.renderer.block.model.ItemTransformVec3f;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -60,10 +58,9 @@ public class SEMachineModel implements IPerspectiveAwareModel {
 		return firstState[2].getItemCameraTransforms();
 	}
 	
-	private final ItemOverrideList overrideList = new ItemOverrideList(new ArrayList<ItemOverride>(0));
 	@Override
 	public ItemOverrideList getOverrides() {
-		return overrideList;	//I'm not sure what this thing does QAQ, only know this prevents crashing 233
+		return ItemOverrideList.NONE;	//I'm not sure what this thing does QAQ, only know this prevents crashing 233
 	}
 
 	@Override
