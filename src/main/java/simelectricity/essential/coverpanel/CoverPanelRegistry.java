@@ -1,4 +1,4 @@
-package simelectricity.essential.cable;
+package simelectricity.essential.coverpanel;
 
 import java.util.LinkedList;
 

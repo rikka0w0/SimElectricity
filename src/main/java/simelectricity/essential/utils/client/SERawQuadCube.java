@@ -134,6 +134,32 @@ public class SERawQuadCube implements ISERawElement<SERawQuadCube>{
     }
     
 	@Override
+    public void rotateToDirection(EnumFacing direction){
+		switch (direction){
+		case DOWN:
+			rotateAroundX(180);
+			break;
+		case NORTH:
+			rotateAroundY(180);
+			rotateAroundX(270);
+			break;
+		case SOUTH:
+			rotateAroundX(90);
+			break;
+		case WEST:
+			rotateAroundY(270);
+			rotateAroundZ(90);
+			break;
+		case EAST:
+			rotateAroundY(90);
+			rotateAroundZ(270);
+			break;
+		default:
+			break;
+		}
+    }
+	
+	@Override
     public void rotateAroundVector(float angle, float x, float y, float z){
     	//Normalize the axis vector
     	float length = MathHelper.sqrt(x*x + y*y + z*z);
@@ -166,10 +192,10 @@ public class SERawQuadCube implements ISERawElement<SERawQuadCube>{
 	        vMin = 0;
 	        vMax = icons[0].getIconHeight();
 	        list.add(new BakedQuad(Ints.concat(
-	        		SEBakedQuadHelper.vertexToInts(vertexes[7][0], vertexes[7][1], vertexes[7][2], Color.WHITE.getRGB(), icons[0], uMin, vMax),
-	        		SEBakedQuadHelper.vertexToInts(vertexes[6][0], vertexes[6][1], vertexes[6][2], Color.WHITE.getRGB(), icons[0], uMin, vMin),
-	        		SEBakedQuadHelper.vertexToInts(vertexes[5][0], vertexes[5][1], vertexes[5][2], Color.WHITE.getRGB(), icons[0], uMax, vMin),
-	        		SEBakedQuadHelper.vertexToInts(vertexes[4][0], vertexes[4][1], vertexes[4][2], Color.WHITE.getRGB(), icons[0], uMax, vMax)
+	        		SEBakedQuadHelper.vertexToInts(vertexes[7][0], vertexes[7][1], vertexes[7][2], Color.WHITE.getRGB(), icons[0], uMin, vMin),	//uMin, vMax
+	        		SEBakedQuadHelper.vertexToInts(vertexes[6][0], vertexes[6][1], vertexes[6][2], Color.WHITE.getRGB(), icons[0], uMin, vMax),	//uMin, vMin
+	        		SEBakedQuadHelper.vertexToInts(vertexes[5][0], vertexes[5][1], vertexes[5][2], Color.WHITE.getRGB(), icons[0], uMax, vMax), //uMax, vMin
+	        		SEBakedQuadHelper.vertexToInts(vertexes[4][0], vertexes[4][1], vertexes[4][2], Color.WHITE.getRGB(), icons[0], uMax, vMin)	//uMax, vMax
 	                ),0, EnumFacing.DOWN, icons[0], true, net.minecraft.client.renderer.vertex.DefaultVertexFormats.ITEM));
 		}
         

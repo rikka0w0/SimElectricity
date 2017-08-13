@@ -4,6 +4,7 @@ import simelectricity.essential.api.SEEAPI;
 import simelectricity.essential.client.CustomModelLoader;
 import simelectricity.essential.client.cable.CableStateMapper;
 import simelectricity.essential.client.coverpanel.LedPanelRender;
+import simelectricity.essential.client.coverpanel.SupportRender;
 import simelectricity.essential.client.coverpanel.VoltageSensorRender;
 import simelectricity.essential.client.semachine.SEMachineStateMapper;
 import simelectricity.essential.client.semachine.SocketRender;
@@ -70,8 +71,9 @@ public class ClientProxy extends CommonProxy{
 		cStateMapper.register(BlockRegistry.blockCable);
 		loader.registerInventoryIcon(BlockRegistry.blockCable.getItemBlock());
 		
-		//Initialize socket render
+		//Initialize socket render and support render
 		new SocketRender();
+		new SupportRender();
 		
 		//Initialize coverpanel render
 		new VoltageSensorRender();

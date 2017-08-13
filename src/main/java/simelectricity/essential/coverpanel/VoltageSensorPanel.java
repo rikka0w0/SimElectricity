@@ -1,4 +1,4 @@
-package simelectricity.essential.cable;
+package simelectricity.essential.coverpanel;
 
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.inventory.Container;
@@ -14,8 +14,6 @@ import simelectricity.essential.api.client.ISECoverPanelRender;
 import simelectricity.essential.api.coverpanel.ISEElectricalCoverPanel;
 import simelectricity.essential.api.coverpanel.ISEGuiCoverPanel;
 import simelectricity.essential.api.coverpanel.ISERedstoneEmitterCoverPanel;
-import simelectricity.essential.cable.gui.ContainerVoltageSensor;
-import simelectricity.essential.cable.gui.GuiVoltageSensor;
 import simelectricity.essential.client.coverpanel.VoltageSensorRender;
 
 public class VoltageSensorPanel implements ISEElectricalCoverPanel, ISERedstoneEmitterCoverPanel, ISEGuiCoverPanel{

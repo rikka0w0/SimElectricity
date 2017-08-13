@@ -19,7 +19,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.client.MinecraftForgeClient;
 import simelectricity.essential.api.client.ISECoverPanelRender;
 import simelectricity.essential.api.coverpanel.ISECoverPanel;
-
+import simelectricity.essential.client.coverpanel.SupportRender;
 import buildcraft.lib.client.model.MutableVertex;
 import buildcraft.lib.client.model.MutableQuad;
 import buildcraft.lib.misc.VecUtil;
@@ -233,6 +233,8 @@ public class BCFacadeRender implements ISECoverPanelRender{
 	        List<BakedQuad> baked = new ArrayList<>();
 	        for (MutableQuad quad : mutableQuads)
 	        	quads.add(quad.toBakedItem());
+	        
+	        quads.addAll(SupportRender.forSide(side));
 		}
 	}
 }

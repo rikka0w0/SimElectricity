@@ -1,10 +1,9 @@
-package simelectricity.essential.cable.gui;
+package simelectricity.essential.coverpanel;
 
 import java.util.Iterator;
 
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import simelectricity.essential.cable.VoltageSensorPanel;
 import simelectricity.essential.utils.network.ISEButtonEventHandler;
 import simelectricity.essential.utils.network.ISEContainerUpdate;
 import simelectricity.essential.utils.network.MessageContainerSync;

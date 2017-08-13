@@ -13,8 +13,8 @@ import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
 import simelectricity.essential.api.SEEAPI;
 import simelectricity.essential.cable.CableWatchEventHandler;
-import simelectricity.essential.cable.CoverPanelRegistry;
-import simelectricity.essential.cable.SECoverPanelFactory;
+import simelectricity.essential.coverpanel.CoverPanelRegistry;
+import simelectricity.essential.coverpanel.SECoverPanelFactory;
 import simelectricity.essential.utils.network.MessageContainerSync;
 
 

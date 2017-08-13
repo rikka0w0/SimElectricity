@@ -135,5 +135,7 @@ public abstract class GenericCoverPanelRender<T extends ISECoverPanel> implement
 		}
 		
 		quads.addAll(bakedQuads[side.ordinal()]);
+		
+		quads.addAll(SupportRender.forSide(side));
 	}
 }

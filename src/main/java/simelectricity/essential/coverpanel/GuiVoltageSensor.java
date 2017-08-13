@@ -1,4 +1,4 @@
-package simelectricity.essential.cable.gui;
+package simelectricity.essential.coverpanel;
 
 import org.lwjgl.opengl.GL11;
 
