@@ -1,4 +1,4 @@
-package simelectricity.essential.grid.render;
+package simelectricity.essential.client.grid;
 
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;

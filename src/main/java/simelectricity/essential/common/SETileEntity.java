@@ -37,6 +37,13 @@ public abstract class SETileEntity extends TileEntity{
 		world.notifyBlockUpdate(getPos(), world.getBlockState(getPos()), world.getBlockState(getPos()), 1);
 	}
 	
+	
+	
+	// When the world loads from disk, the server needs to send the TileEntity information to the client
+	//  it uses getUpdatePacket(), getUpdateTag(), onDataPacket(), and handleUpdateTag() to do this:
+	//  getUpdatePacket() and onDataPacket() are used for one-at-a-time TileEntity updates
+	//  getUpdateTag() and handleUpdateTag() are used by vanilla to collate together into a single chunk update packet
+	
 	//Sync
 	public void prepareS2CPacketData(NBTTagCompound nbt) {}
 	

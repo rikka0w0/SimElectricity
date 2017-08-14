@@ -3,7 +3,7 @@ package simelectricity.essential.grid;
 
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import simelectricity.essential.grid.render.TransmissionTowerRenderHelper;
+import simelectricity.essential.client.grid.TransmissionTowerRenderHelper;
 
 public interface ISETransmissionTower {
 	@SideOnly(Side.CLIENT)

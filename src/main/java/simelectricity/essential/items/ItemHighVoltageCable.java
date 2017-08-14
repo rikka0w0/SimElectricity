@@ -99,9 +99,9 @@ public class ItemHighVoltageCable extends SEItem implements ISESimpleTextureItem
             		Utils.chatWithLocalization(player, I18n.translateToLocal("chat.sime_essential:tranmission_tower_last_selection_invalid"));
             	}else{
             		double distance = node1.getPos().distanceSq(node2.getPos());
-                    if (distance < 5) {
+                    if (distance < 5*5) {
                     	Utils.chatWithLocalization(player, I18n.translateToLocal("chat.sime_essential:tranmission_tower_too_close"));
-                    }else if (distance > 200){
+                    }else if (distance > 200*200){
                     	Utils.chatWithLocalization(player, I18n.translateToLocal("chat.sime_essential:tranmission_tower_too_far"));
                     }else{
                     	double resistance = distance * resistivityList[itemStack.getItemDamage()];	//Calculate the resistance

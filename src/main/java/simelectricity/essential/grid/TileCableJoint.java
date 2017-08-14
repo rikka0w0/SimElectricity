@@ -12,8 +12,8 @@ import simelectricity.api.node.ISEGridNode;
 import simelectricity.api.node.ISESimulatable;
 import simelectricity.api.tile.ISECableTile;
 import simelectricity.api.tile.ISEGridTile;
+import simelectricity.essential.client.grid.TransmissionTowerRenderHelper;
 import simelectricity.essential.common.SEEnergyTile;
-import simelectricity.essential.grid.render.TransmissionTowerRenderHelper;
 import simelectricity.essential.utils.Utils;
 
 public class TileCableJoint extends SEEnergyTile implements ISECableTile, ISEGridTile, ISETransmissionTower{
@@ -29,7 +29,7 @@ public class TileCableJoint extends SEEnergyTile implements ISECableTile, ISEGri
     @Override
     public double getMaxRenderDistanceSquared()
     {
-        return 100000;
+        return 10000;
     }
 	
 	@SideOnly(Side.CLIENT)
