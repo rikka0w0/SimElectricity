@@ -188,9 +188,9 @@ public class SERawQuadCube implements ISERawElement<SERawQuadCube>{
         //Down - Yneg
 		if (icons[0] != null){
 	        uMin = 0;
-	        uMax = icons[0].getIconWidth();
+	        uMax = 16;	//For 32x32 64x64 textures, this number is still 16 !!!!!
 	        vMin = 0;
-	        vMax = icons[0].getIconHeight();
+	        vMax = 16;
 	        list.add(new BakedQuad(Ints.concat(
 	        		SEBakedQuadHelper.vertexToInts(vertexes[7][0], vertexes[7][1], vertexes[7][2], Color.WHITE.getRGB(), icons[0], uMin, vMin),	//uMin, vMax
 	        		SEBakedQuadHelper.vertexToInts(vertexes[6][0], vertexes[6][1], vertexes[6][2], Color.WHITE.getRGB(), icons[0], uMin, vMax),	//uMin, vMin
@@ -202,9 +202,9 @@ public class SERawQuadCube implements ISERawElement<SERawQuadCube>{
 		//Up - Ypos
 		if (icons[1] != null){
 	        uMin = 0;
-	        uMax = icons[1].getIconWidth();
+	        uMax = 16;
 	        vMin = 0;
-	        vMax = icons[1].getIconHeight();
+	        vMax = 16;
 	        list.add(new BakedQuad(Ints.concat(
 	        		SEBakedQuadHelper.vertexToInts(vertexes[0][0], vertexes[0][1], vertexes[0][2], Color.WHITE.getRGB(), icons[1], uMax, vMax),
 	        		SEBakedQuadHelper.vertexToInts(vertexes[1][0], vertexes[1][1], vertexes[1][2], Color.WHITE.getRGB(), icons[1], uMax, vMin),
@@ -216,9 +216,9 @@ public class SERawQuadCube implements ISERawElement<SERawQuadCube>{
         //North - Zneg
 		if (icons[2] != null){
 	        uMin = 0;
-	        uMax = icons[2].getIconWidth();
+	        uMax = 16;
 	        vMin = 0;
-	        vMax = icons[2].getIconHeight();
+	        vMax = 16;
 	        list.add(new BakedQuad(Ints.concat(
 	        		SEBakedQuadHelper.vertexToInts(vertexes[2][0], vertexes[2][1], vertexes[2][2], Color.WHITE.getRGB(), icons[2], uMax, vMin),
 	        		SEBakedQuadHelper.vertexToInts(vertexes[1][0], vertexes[1][1], vertexes[1][2], Color.WHITE.getRGB(), icons[2], uMin, vMin),
@@ -230,9 +230,9 @@ public class SERawQuadCube implements ISERawElement<SERawQuadCube>{
         //South - Zpos
 		if (icons[3] != null){
 	        uMin = 0;
-	        uMax = icons[3].getIconWidth();
+	        uMax = 16;
 	        vMin = 0;
-	        vMax = icons[3].getIconHeight();
+	        vMax = 16;
 	        list.add(new BakedQuad(Ints.concat(
 	        		SEBakedQuadHelper.vertexToInts(vertexes[3][0], vertexes[3][1], vertexes[3][2], Color.WHITE.getRGB(), icons[3], uMin, vMin),
 	        		SEBakedQuadHelper.vertexToInts(vertexes[7][0], vertexes[7][1], vertexes[7][2], Color.WHITE.getRGB(), icons[3], uMin, vMax),
@@ -244,9 +244,9 @@ public class SERawQuadCube implements ISERawElement<SERawQuadCube>{
         //West - Xneg
 		if (icons[4] != null){
 	        uMin = 0;
-	        uMax = icons[4].getIconWidth();
+	        uMax = 16;
 	        vMin = 0;
-	        vMax = icons[4].getIconHeight();
+	        vMax = 16;
 	        list.add(new BakedQuad(Ints.concat(
 	        		SEBakedQuadHelper.vertexToInts(vertexes[3][0], vertexes[3][1], vertexes[3][2], Color.WHITE.getRGB(), icons[4], uMax, vMin),
 	        		SEBakedQuadHelper.vertexToInts(vertexes[2][0], vertexes[2][1], vertexes[2][2], Color.WHITE.getRGB(), icons[4], uMin, vMin),
@@ -258,9 +258,9 @@ public class SERawQuadCube implements ISERawElement<SERawQuadCube>{
         //East - Xpos
 		if (icons[5] != null){
 	        uMin = 0;
-	        uMax = icons[5].getIconWidth();
+	        uMax = 16;
 	        vMin = 0;
-	        vMax = icons[5].getIconHeight();
+	        vMax = 16;
 	        list.add(new BakedQuad(Ints.concat(
 	        		SEBakedQuadHelper.vertexToInts(vertexes[1][0], vertexes[1][1], vertexes[1][2], Color.WHITE.getRGB(), icons[5], uMax, vMin),
 	        		SEBakedQuadHelper.vertexToInts(vertexes[0][0], vertexes[0][1], vertexes[0][2], Color.WHITE.getRGB(), icons[5], uMin, vMin),

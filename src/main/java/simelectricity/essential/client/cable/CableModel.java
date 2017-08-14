@@ -5,33 +5,25 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.annotation.Nullable;
-import javax.vecmath.Matrix4f;
-
-import org.apache.commons.lang3.tuple.Pair;
 
 import com.google.common.collect.ImmutableList;
 
 import simelectricity.essential.api.ISEGenericCable;
 import simelectricity.essential.api.client.ISECoverPanelRender;
 import simelectricity.essential.api.coverpanel.ISECoverPanel;
-import simelectricity.essential.cable.BlockCable;
+import simelectricity.essential.client.BlockRenderModel;
+import simelectricity.essential.common.UnlistedNonNullProperty;
 import simelectricity.essential.utils.client.SERawQuadCube;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.IBakedModel;
-import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
-import net.minecraft.client.renderer.block.model.ItemOverrideList;
-import net.minecraft.client.renderer.block.model.ItemTransformVec3f;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.client.MinecraftForgeClient;
-import net.minecraftforge.client.model.IPerspectiveAwareModel;
-import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.common.property.IExtendedBlockState;
 
-public class CableModel implements IPerspectiveAwareModel {
+public class CableModel extends BlockRenderModel {
 	private final TextureAtlasSprite insulatorTexture, conductorTexture;
 	private final float thickness;
 	
@@ -100,52 +92,9 @@ public class CableModel implements IPerspectiveAwareModel {
 		branches[4] = branchWest;
 		branches[5] = branchEast;
 	}
-
-	@Override
-	public boolean isAmbientOcclusion() {
-		return false;
-	}
-	@Override
-	public boolean isGui3d() {
-		return false;
-	}
-	@Override
-	public boolean isBuiltInRenderer() {
-		return false;
-	}
-	@Override
-	public TextureAtlasSprite getParticleTexture() {
-		return conductorTexture;
-	}
-	@Override
-	@Deprecated
-	public ItemCameraTransforms getItemCameraTransforms() {
-		return ItemCameraTransforms.DEFAULT;
-	}
 	
 	@Override
-	public ItemOverrideList getOverrides() {
-		return ItemOverrideList.NONE;	//I'm not sure what this thing does QAQ, only know this prevents crashing 233
-	}
-
-	@Override
-	public Pair<? extends IBakedModel, Matrix4f> handlePerspective(ItemCameraTransforms.TransformType cameraTransformType) {
-		// If the parent model isn't an IPerspectiveAware, we'll need to generate the correct matrix ourselves using the
-	    //  ItemCameraTransforms.
-
-	    ItemCameraTransforms itemCameraTransforms = this.getItemCameraTransforms();
-	    ItemTransformVec3f itemTransformVec3f = itemCameraTransforms.getTransform(cameraTransformType);
-	    TRSRTransformation tr = new TRSRTransformation(itemTransformVec3f);
-	    Matrix4f mat = null;
-	    if (tr != null) { // && tr != TRSRTransformation.identity()) {
-	    	mat = tr.getMatrix();
-	    }
-	    
-	    // The TRSRTransformation for vanilla items have blockCenterToCorner() applied, however handlePerspective
-	    //  reverses it back again with blockCornerToCenter().  So we don't need to apply it here.
-
-	    return Pair.of(this, mat);
-	}
+	public TextureAtlasSprite getParticleTexture() {return conductorTexture;}
 
 	@Override
 	public List<BakedQuad> getQuads(@Nullable IBlockState blockState,
@@ -158,7 +107,7 @@ public class CableModel implements IPerspectiveAwareModel {
 	    	return ImmutableList.of();
 	    
 	    IExtendedBlockState exBlockState = (IExtendedBlockState)blockState;
-	    WeakReference<ISEGenericCable> ref = exBlockState.getValue(BlockCable.propertyTile);
+	    WeakReference<ISEGenericCable> ref = exBlockState.getValue(UnlistedNonNullProperty.propertyCable);
         ISEGenericCable cable = ref==null ? null : ref.get();
         
         if (cable == null)

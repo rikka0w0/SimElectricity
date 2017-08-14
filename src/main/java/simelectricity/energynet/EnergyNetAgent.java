@@ -190,21 +190,17 @@ public class EnergyNetAgent implements IEnergyNetAgent{
             return;
         }
         
-        World world = te.getWorld();
-        EnergyNet energyNet = EnergyNetAgent.getEnergyNetForWorld(world);
-        if (te instanceof ISEGridTile) {
-        	energyNet.addEvent(new TileEvent.GridTilePresent(te));
-        	
+        if (te instanceof ISETile || te instanceof ISECableTile) {
+	        if (ConfigManager.showEnergyNetInfo)
+	            SEUtils.logInfo("Tileentity " + te + " has attached to the energy network!", SEUtils.energyNet);        
+        }
+        
+        if (te instanceof ISEGridTile) {        	
         	if (ConfigManager.showEnergyNetInfo)
         		SEUtils.logInfo("GridTile linked with GridObject at "+te.getPos().toString(), SEUtils.energyNet);
         }
         
-        if (te instanceof ISETile || te instanceof ISECableTile) {
-	        energyNet.addEvent(new TileEvent.Attach(te));
-	
-	        if (ConfigManager.showEnergyNetInfo)
-	            SEUtils.logInfo("Tileentity " + te + " has attached to the energy network!", SEUtils.energyNet);        
-        }
+        EnergyNetAgent.getEnergyNetForWorld(te.getWorld()).addEvent(new TileEvent.Attach(te));
     }
 
 	@Override
@@ -227,20 +223,17 @@ public class EnergyNetAgent implements IEnergyNetAgent{
             return;
         }
 
-        World world = te.getWorld();
-        EnergyNet energyNet = EnergyNetAgent.getEnergyNetForWorld(world);
         if (te instanceof ISEGridTile) {
-        	energyNet.addEvent(new TileEvent.GridTileInvalidate(te)); 
-        	
         	if (ConfigManager.showEnergyNetInfo)
         		SEUtils.logInfo("GridTile destroyed at"+te.getPos().toString(), SEUtils.energyNet);
         }
         
-        if (te instanceof ISETile || te instanceof ISECableTile) {
-	        energyNet.addEvent(new TileEvent.Detach(te));     	
+        if (te instanceof ISETile || te instanceof ISECableTile) { 	
 	        if (ConfigManager.showEnergyNetInfo)
 	            SEUtils.logInfo("Tileentity " + te + " has detached from the energy network!", SEUtils.energyNet);
         }
+        
+        EnergyNetAgent.getEnergyNetForWorld(te.getWorld()).addEvent(new TileEvent.Detach(te));    
     }
 
 	@Override
@@ -260,7 +253,7 @@ public class EnergyNetAgent implements IEnergyNetAgent{
 	
 	@Override
     public void attachGridObject(World world, ISEGridNode node) {
-    	EnergyNetAgent.getEnergyNetForWorld(world).addEvent(new GridEvent.AppendNode(world, node));
+    	EnergyNetAgent.getEnergyNetForWorld(world).addEvent(new GridEvent.AppendNode(node));
     	
     	/*if (energyNet.addGridNode(x, y, z, type)){
     		if (ConfigManager.showEnergyNetInfo)
@@ -273,7 +266,7 @@ public class EnergyNetAgent implements IEnergyNetAgent{
     
 	@Override
     public void detachGridObject(World world, ISEGridNode node) {
-    	EnergyNetAgent.getEnergyNetForWorld(world).addEvent(new GridEvent.RemoveNode(world, node));
+    	EnergyNetAgent.getEnergyNetForWorld(world).addEvent(new GridEvent.RemoveNode(node));
     	/*if (energyNet.removeGridNode(x, y, z)){
     		if (ConfigManager.showEnergyNetInfo)
     			SEUtils.logInfo("GridObject detached at "+String.valueOf(x)+":"+String.valueOf(y)+":"+String.valueOf(z));
@@ -285,7 +278,7 @@ public class EnergyNetAgent implements IEnergyNetAgent{
     
 	@Override
     public void connectGridNode(World world, ISEGridNode node1, ISEGridNode node2, double resistance) {
-    	EnergyNetAgent.getEnergyNetForWorld(world).addEvent(new GridEvent.Connect(world, node1, node2, resistance));
+    	EnergyNetAgent.getEnergyNetForWorld(world).addEvent(new GridEvent.Connect(node1, node2, resistance));
     	/*if (energyNet.addGridConnection(x1, y1, z1, x2, y2, z2, resistance)){
     		if (ConfigManager.showEnergyNetInfo)
     			SEUtils.logInfo("Grid connection built between " +String.valueOf(x1)+":"+String.valueOf(y1)+":"+String.valueOf(z1)+" and "
@@ -299,7 +292,7 @@ public class EnergyNetAgent implements IEnergyNetAgent{
     
     @Override
 	public void breakGridConnection(World world, ISEGridNode node1, ISEGridNode node2) {
-    	EnergyNetAgent.getEnergyNetForWorld(world).addEvent(new GridEvent.BreakConnection(world, node1, node2));
+    	EnergyNetAgent.getEnergyNetForWorld(world).addEvent(new GridEvent.BreakConnection(node1, node2));
     	/*if (energyNet.removeGridConnection(x1, y1, z1, x2, y2, z2)){
     		if (ConfigManager.showEnergyNetInfo)
     			SEUtils.logInfo("Grid connection removed between " +String.valueOf(x1)+","+String.valueOf(y1)+","+String.valueOf(z1)+" and "
@@ -313,11 +306,11 @@ public class EnergyNetAgent implements IEnergyNetAgent{
 
 	@Override
 	public void makeTransformer(World world, ISEGridNode primary, ISEGridNode secondary, double resistance, double ratio) {
-		EnergyNetAgent.getEnergyNetForWorld(world).addEvent(new GridEvent.MakeTransformer(world, primary, secondary, resistance, ratio));
+		EnergyNetAgent.getEnergyNetForWorld(world).addEvent(new GridEvent.MakeTransformer(primary, secondary, resistance, ratio));
 	}
 
 	@Override
 	public void breakTransformer(World world, ISEGridNode node) {
-		EnergyNetAgent.getEnergyNetForWorld(world).addEvent(new GridEvent.BreakTranformer(world, node));
+		EnergyNetAgent.getEnergyNetForWorld(world).addEvent(new GridEvent.BreakTranformer(node));
 	}
 }

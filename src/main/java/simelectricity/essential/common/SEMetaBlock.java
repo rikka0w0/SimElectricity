@@ -23,7 +23,7 @@ public abstract class SEMetaBlock extends SEBlock{
 	/**
 	 * @return when implementing your own cable, please make sure to return correct number!
 	 */
-	protected abstract int getNumOfSubTypes();
+	protected abstract int getMetaUpperBound();
 	
 	///////////////////////////////
 	///BlockStates
@@ -35,7 +35,7 @@ public abstract class SEMetaBlock extends SEBlock{
 		createUnlistedProperties(unlisted);
 		
 		IProperty[] propertyArray = new IProperty[] {
-				PropertyInteger.create("meta", 0 , getNumOfSubTypes()-1)
+				PropertyInteger.create("meta", 0 , getMetaUpperBound()-1)
 				};
 		IUnlistedProperty[] unlistedArray = unlisted.toArray(new IUnlistedProperty[unlisted.size()]);
 		

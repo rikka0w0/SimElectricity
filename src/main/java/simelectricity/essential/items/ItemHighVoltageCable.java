@@ -22,13 +22,13 @@ import simelectricity.essential.utils.Utils;
 
 public class ItemHighVoltageCable extends SEItem implements ISESimpleTextureItem{
 	private final static String[] subNames = new String[]{"copper", "aluminum"};
-	private final Map<EntityPlayer, int[]> lastCoordinates;
+	private final Map<EntityPlayer, BlockPos> lastCoordinates;
 	
 	private final static double[] resistivityList = new double[]{0.1, 0.2};
 	
 	public ItemHighVoltageCable() {
 		super("essential_hv_cable", true);
-		this.lastCoordinates = new HashMap<EntityPlayer, int[]>();
+		this.lastCoordinates = new HashMap<EntityPlayer, BlockPos>();
 	}
 
 	@Override
@@ -70,32 +70,32 @@ public class ItemHighVoltageCable extends SEItem implements ISESimpleTextureItem
         ISEHVCableConnector connector1 = (ISEHVCableConnector) block;
         
     	if (!lastCoordinates.containsKey(player))
-            lastCoordinates.put(player, new int[] { 0, -1, 0 });
+            lastCoordinates.put(player, null);
 
-        int[] lastCoordinate = lastCoordinates.get(player);
+    	BlockPos lastCoordinate = lastCoordinates.get(player);
 
-        if (lastCoordinate[1] == -1) {	//First selection
-        	if (connector1.canHVCableConnect(world, x, y, z)){
-                lastCoordinate[0] = x;
-                lastCoordinate[1] = y;
-                lastCoordinate[2] = z;
+        if (lastCoordinate == null) {	//First selection
+        	if (connector1.canHVCableConnect(world, pos)){
+        		lastCoordinate = new BlockPos(pos);
                 Utils.chatWithLocalization(player, "chat.sime_essential:tranmission_tower_selected");
         	}else{
         		Utils.chatWithLocalization(player, "chat.sime_essential:tranmission_tower_too_many_connection");
         	}
+        	
+        	lastCoordinates.put(player, lastCoordinate);
         }else{
-        	Block neighbor = world.getBlockState(new BlockPos(lastCoordinate[0], lastCoordinate[1], lastCoordinate[2])).getBlock();
+        	Block neighbor = world.getBlockState(lastCoordinate).getBlock();
         	
         	if (neighbor instanceof ISEHVCableConnector){
         		ISEHVCableConnector connector2 = (ISEHVCableConnector) neighbor;
             	ISEGridNode node1 = (ISEGridNode) connector1.getNode(world, pos);
-            	ISEGridNode node2 = (ISEGridNode) connector2.getNode(world, new BlockPos(lastCoordinate[0], lastCoordinate[1], lastCoordinate[2]));
+            	ISEGridNode node2 = (ISEGridNode) connector2.getNode(world, new BlockPos(lastCoordinate));
         		
             	if (node1 == node2){
             		Utils.chatWithLocalization(player, I18n.translateToLocal("chat.sime_essential:tranmission_tower_recursive_connection"));
-            	}else if (!connector1.canHVCableConnect(world, x, y, z)){
+            	}else if (!connector1.canHVCableConnect(world, pos)){
             		Utils.chatWithLocalization(player, I18n.translateToLocal("chat.sime_essential:tranmission_tower_current_selection_invalid"));
-            	}else if (!connector2.canHVCableConnect(world, lastCoordinate[0], lastCoordinate[1], lastCoordinate[2])){
+            	}else if (!connector2.canHVCableConnect(world, lastCoordinate)){
             		Utils.chatWithLocalization(player, I18n.translateToLocal("chat.sime_essential:tranmission_tower_last_selection_invalid"));
             	}else{
             		double distance = node1.getPos().distanceSq(node2.getPos());
@@ -118,10 +118,7 @@ public class ItemHighVoltageCable extends SEItem implements ISESimpleTextureItem
         		Utils.chatWithLocalization(player, I18n.translateToLocal("chat.sime_essential:tranmission_tower_current_selection_invalid"));
         	}
         	
-            lastCoordinate[0] = 0;
-            lastCoordinate[1] = -1;
-            lastCoordinate[2] = 0;
-            lastCoordinates.put(player, lastCoordinate);
+            lastCoordinates.put(player, null);
         }
     	
         return EnumActionResult.SUCCESS;        	

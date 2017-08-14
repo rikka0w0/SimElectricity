@@ -6,6 +6,8 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import simelectricity.essential.cable.BlockCable;
 import simelectricity.essential.cable.TileCable;
+import simelectricity.essential.grid.BlockCableJoint;
+import simelectricity.essential.grid.TileCableJoint;
 import simelectricity.essential.machines.BlockElectronics;
 import simelectricity.essential.machines.BlockTwoPortElectronics;
 import simelectricity.essential.machines.gui.ContainerAdjustableResistor;
@@ -32,7 +34,7 @@ public class BlockRegistry {
 	//public static BlockTransmissionTowerTop transmissionTowerTop;
 	//public static BlockTransmissionTowerBottom transmissionTowerBottom;
 	//public static BlockTransmissionTowerCollisionBox transmissionTowerCollisionBox;
-	//public static BlockCableJoint cableJoint;
+	public static BlockCableJoint cableJoint;
 	//public static BlockTransmissionTower2 transmissionTower2;
 	
 	public static BlockElectronics blockElectronics;
@@ -44,7 +46,7 @@ public class BlockRegistry {
 		//transmissionTowerTop = new BlockTransmissionTowerTop();
 		//transmissionTowerBottom = new BlockTransmissionTowerBottom();
 		//transmissionTowerCollisionBox = new BlockTransmissionTowerCollisionBox();
-		//cableJoint = new BlockCableJoint();
+		cableJoint = new BlockCableJoint();
 		//transmissionTower2 = new BlockTransmissionTower2();
 		
 		blockElectronics = new BlockElectronics();
@@ -54,7 +56,7 @@ public class BlockRegistry {
 	public static void registerTileEntities(){
 		GameRegistry.registerTileEntity(TileCable.class, "SEECable");
 		//GameRegistry.registerTileEntity(TileTransmissionTower.class, "SEETransmissionTower");
-		//GameRegistry.registerTileEntity(TileCableJoint.class, "SEECableJoint");
+		GameRegistry.registerTileEntity(TileCableJoint.class, "SEECableJoint");
 		//GameRegistry.registerTileEntity(TileTransmissionTower2.class, "SEETransmissionTower2");
 		
 		GameRegistry.registerTileEntity(TileVoltageMeter.class, "SEEVoltageMeter");

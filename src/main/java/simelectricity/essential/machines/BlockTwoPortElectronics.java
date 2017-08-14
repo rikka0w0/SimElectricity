@@ -37,7 +37,7 @@ public class BlockTwoPortElectronics extends SEMachineBlock implements ISESidedT
 	}
 	
 	@Override
-	protected int getNumOfSubTypes() {
+	protected int getMetaUpperBound() {
 		return subNames.length;
 	}
 

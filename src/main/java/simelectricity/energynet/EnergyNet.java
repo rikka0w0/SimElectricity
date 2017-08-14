@@ -25,11 +25,6 @@ import simelectricity.api.IEnergyNetUpdateHandler;
 import simelectricity.api.node.ISESimulatable;
 import simelectricity.common.ConfigManager;
 import simelectricity.common.SEUtils;
-import simelectricity.energynet.GridEvent.AppendNode;
-import simelectricity.energynet.GridEvent.BreakTranformer;
-import simelectricity.energynet.GridEvent.MakeTransformer;
-import simelectricity.energynet.GridEvent.RemoveNode;
-import simelectricity.energynet.components.GridNode;
 import simelectricity.energynet.components.SEComponent;
 import simelectricity.energynet.matrix.IMatrixResolver;
 
@@ -40,10 +35,10 @@ public final class EnergyNet extends EnergyNetSimulator implements Runnable{
 	///////////////////////////////////////////////////////
 	///Event Queue
 	///////////////////////////////////////////////////////
-	private LinkedList<IEnergyNetEvent> cachedEvents = new LinkedList<IEnergyNetEvent>();
+	private LinkedList<EnergyEventBase> cachedEvents = new LinkedList<EnergyEventBase>();
 	private boolean scheduledRefresh = false;
 	
-	public synchronized void addEvent(IEnergyNetEvent event){
+	public synchronized void addEvent(EnergyEventBase event){
 		this.cachedEvents.add(event);
 	}
 	
@@ -61,6 +56,9 @@ public final class EnergyNet extends EnergyNetSimulator implements Runnable{
 				}
 		}
 		
+		if (cachedEvents.isEmpty())
+			return;
+		
 		boolean needOptimize = false;	//Due to connection changes
 		boolean calc = false;			//Perform simulation
 		
@@ -69,78 +67,35 @@ public final class EnergyNet extends EnergyNetSimulator implements Runnable{
 			needOptimize = true;
 			scheduledRefresh = false;
 		}
-			
-
-		Iterator<IEnergyNetEvent> iterator = cachedEvents.iterator();
 		
-		//Process EventQueue
-		while (iterator.hasNext()){
-			IEnergyNetEvent event = iterator.next();
+		/* Events MUST be processed in the following order:
+		 * Event Name					|Priority
+		 * GridEvent.AppendNode			|1
+		 * GridEvent.Connect			|2
+		 * GridEvent.MakeTransformer	|2
+		 * GridEvent.BreakTranformer	|2
+		 * GridEvent.BreakConnection	|2
+		 * GridEvent.RemoveNode			|1
+		 * TileEvent.Attach				|3
+		 * TileEvent.ConnectionChanged	|4
+		 * TileEvent.ParamChanged		|4
+		 * TileEvent.Detach				|3
+		 */
+		for (int priority = 1; priority <= EnergyEventBase.numOfPriority; priority++) {
+			Iterator<EnergyEventBase> iterator = cachedEvents.iterator();
 			
-			
-			//Process event, update graph
-			if (event instanceof TileEvent){
-				TileEvent tileEvent = (TileEvent) event; 
+			//Process EventQueue
+			while (iterator.hasNext()){
+				EnergyEventBase event = iterator.next();
 				
-				if (event instanceof TileEvent.Attach){
-					needOptimize = true;
-					calc = true;
-					dataProvider.registerTile(tileEvent.te);
-					dataProvider.updateTileParam(tileEvent.te);
-				}else if (event instanceof TileEvent.Detach){
-					needOptimize = true;
-					calc = true;
-					dataProvider.unregisterTile(tileEvent.te);
-					dataProvider.updateTileParam(tileEvent.te);
-				}else if (event instanceof TileEvent.ConnectionChanged){
-					needOptimize = true;
-					calc = true;
-					dataProvider.unregisterTile(tileEvent.te);
-					dataProvider.registerTile(tileEvent.te);
-					dataProvider.updateTileParam(tileEvent.te);
-				}else if (event instanceof TileEvent.ParamChanged){
-					calc = true;
-					dataProvider.updateTileParam(tileEvent.te);
-				}else if (event instanceof TileEvent.GridTilePresent){
-					dataProvider.onGridTilePresent(tileEvent.te);
-				}else if (event instanceof TileEvent.GridTileInvalidate){
-					dataProvider.onGridTileInvalidate(tileEvent.te);
+				//Process event
+				if (event.priority == priority) {
+					event.process(dataProvider);
+					calc |= event.needUpdate;
+					needOptimize |= event.changedStructure;
+					iterator.remove(); //Remove from the queue
 				}
 			}
-
-			if (event instanceof GridEvent){
-				GridEvent gridEvent = (GridEvent) event;
-				if (event instanceof GridEvent.AppendNode){
-					GridEvent.AppendNode appendEvent = (AppendNode) event;
-					needOptimize = true;
-					calc = true;
-					dataProvider.addGridNode((GridNode) appendEvent.node);
-				}else if (event instanceof GridEvent.RemoveNode){
-					GridEvent.RemoveNode removeEvent = (RemoveNode) event;
-			    	needOptimize = true;
-					calc = true;
-			    	dataProvider.removeGridNode((GridNode) removeEvent.node);
-				}else if (event instanceof GridEvent.Connect){
-					GridEvent.Connect connectEvent = ((GridEvent.Connect)event);
-			    	needOptimize = true;
-					calc = true;
-			    	dataProvider.addGridConnection((GridNode) connectEvent.node1, (GridNode) connectEvent.node2, connectEvent.resistance);
-				}else if (event instanceof GridEvent.BreakConnection){
-					GridEvent.BreakConnection breakConEvent = ((GridEvent.BreakConnection)event);
-			    	needOptimize = true;
-					calc = true;
-			    	dataProvider.removeGridConnection((GridNode) breakConEvent.node1, (GridNode) breakConEvent.node2);
-				}else if (event instanceof GridEvent.MakeTransformer){
-					GridEvent.MakeTransformer makeTranEvent = (MakeTransformer) event;
-					calc = true;
-			    	dataProvider.makeTransformer((GridNode) makeTranEvent.pri, (GridNode) makeTranEvent.sec, makeTranEvent.ratio, makeTranEvent.resistance);
-				}else if (event instanceof GridEvent.BreakTranformer){
-					GridEvent.BreakTranformer brkTranEvent = (BreakTranformer) event;
-					calc = true;
-					dataProvider.breakTransformer((GridNode) brkTranEvent.node);
-				}
-			}
-			
 		}
 		
 		cachedEvents.clear();

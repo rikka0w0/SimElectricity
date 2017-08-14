@@ -1,11 +1,19 @@
 package simelectricity.essential.common;
 
-import net.minecraftforge.common.property.IUnlistedProperty;
+import java.lang.ref.WeakReference;
 
+import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.common.property.IUnlistedProperty;
+import simelectricity.api.tile.ISEGridTile;
+import simelectricity.essential.api.ISEGenericCable;
 /**
  * @author BuildCraft Lib
  */
 public class UnlistedNonNullProperty<V> implements IUnlistedProperty<V> {
+	public static final IUnlistedProperty<WeakReference<TileEntity>> propertyTile = new UnlistedNonNullProperty<>("tile");
+    public static final IUnlistedProperty<WeakReference<ISEGenericCable>> propertyCable = new UnlistedNonNullProperty<>("tile");
+    public static final IUnlistedProperty<WeakReference<ISEGridTile>> propertyGridTile = new UnlistedNonNullProperty<>("tile");
+    
     public final String name;
 
     public UnlistedNonNullProperty(String name) {

@@ -19,6 +19,7 @@ import simelectricity.essential.api.SEEAPI;
 import simelectricity.essential.api.coverpanel.ISECoverPanel;
 import simelectricity.essential.api.coverpanel.ISEGuiCoverPanel;
 import simelectricity.essential.api.coverpanel.ISERedstoneEmitterCoverPanel;
+import simelectricity.essential.client.ISESimpleTextureItem;
 import simelectricity.essential.common.ISESubBlock;
 import simelectricity.essential.common.SEItemBlock;
 import simelectricity.essential.common.SEMetaBlock;
@@ -52,9 +53,9 @@ import net.minecraft.util.math.Vec3d;
  * RayTrace is inspired by BuildCraft
  * @author Rikka0_0
  */
-public class BlockCable extends SEMetaBlock implements ITileEntityProvider, ISESubBlock{
+public class BlockCable extends SEMetaBlock implements ITileEntityProvider, ISESubBlock, ISESimpleTextureItem{
 	public BlockCable() {
-		this("essential_cable", Material.GLASS, ItemBlockCable.class, 
+		this("essential_cable", Material.GLASS, SEItemBlock.class, 
 				new String[]{"copper_thin", "copper_medium", "copper_thick"},
 				new float[]{0.22F, 0.32F, 0.42F},
 				new float[]{0.1F, 0.01F, 0.001F},
@@ -66,8 +67,14 @@ public class BlockCable extends SEMetaBlock implements ITileEntityProvider, ISES
 	 * @return when implementing your own cable, please make sure to return correct number!
 	 */
 	@Override
-	protected int getNumOfSubTypes(){
+	protected int getMetaUpperBound(){
 		return 3;
+	}
+	
+	@Override
+	@SideOnly(Side.CLIENT)
+	public String getIconName(int damage) {
+		return "essential_cable_" + subNames[damage] + "_inventory";
 	}
 	
 	///////////////////////////////
@@ -164,12 +171,10 @@ public class BlockCable extends SEMetaBlock implements ITileEntityProvider, ISES
     
 	///////////////////////////////
 	///BlockStates
-	///////////////////////////////   
-    public static final IUnlistedProperty<WeakReference<ISEGenericCable>> propertyTile = new UnlistedNonNullProperty<>("tile");
-    
+	///////////////////////////////       
 	@Override
 	protected void createUnlistedProperties(ArrayList<IUnlistedProperty> properties){
-			properties.add(propertyTile);
+			properties.add(UnlistedNonNullProperty.propertyCable);
 	}
     
 	@Override
@@ -180,7 +185,7 @@ public class BlockCable extends SEMetaBlock implements ITileEntityProvider, ISES
 			TileEntity te = world.getTileEntity(pos);
 			
 			if (te instanceof ISEGenericCable){
-				retval = retval.withProperty(propertyTile, new WeakReference<>((ISEGenericCable) te));
+				retval = retval.withProperty(UnlistedNonNullProperty.propertyCable, new WeakReference<>((ISEGenericCable) te));
 			}
 			
 			return retval;

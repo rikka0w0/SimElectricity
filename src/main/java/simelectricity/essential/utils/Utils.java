@@ -96,4 +96,27 @@ public class Utils {
 	public static void chatWithLocalization(EntityPlayer player, String text) {
         player.sendMessage(new TextComponentString(I18n.translateToLocal(text)));
     }
+	
+	public static void saveToNbt(NBTTagCompound nbt, String prefix, BlockPos pos) {
+		if (pos == null)
+			return;
+		
+		nbt.setInteger(prefix+"X", pos.getX());
+		nbt.setInteger(prefix+"Y", pos.getY());
+		nbt.setInteger(prefix+"Z", pos.getZ());
+	}
+	
+	public static BlockPos posFromNbt(NBTTagCompound nbt, String prefix) {
+		if (!nbt.hasKey(prefix+"Y"))
+			return null;
+		
+		int x = nbt.getInteger(prefix+"X");
+		int y = nbt.getInteger(prefix+"Y");
+		int z = nbt.getInteger(prefix+"Z");
+		
+		if (y < 0)
+			return null;
+		
+		return new BlockPos(x, y, z);
+	}
 }

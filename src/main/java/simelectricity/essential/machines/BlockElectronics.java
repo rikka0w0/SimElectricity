@@ -34,7 +34,7 @@ public class BlockElectronics extends SEMachineBlock implements ISESidedTextureB
 	}
 	
 	@Override
-	protected int getNumOfSubTypes() {
+	protected int getMetaUpperBound() {
 		return subNames.length;
 	}
 	

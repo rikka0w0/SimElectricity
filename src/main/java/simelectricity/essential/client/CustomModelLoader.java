@@ -1,10 +1,13 @@
 package simelectricity.essential.client;
 
 import simelectricity.essential.client.cable.CableStateMapper;
+import simelectricity.essential.client.grid.GridStateMapper;
 import simelectricity.essential.client.semachine.SEMachineStateMapper;
+import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
@@ -47,6 +50,9 @@ public class CustomModelLoader implements ICustomModelLoader{
 		else if (CableStateMapper.accepts(resPath))
 			return true;
 		
+		else if (GridStateMapper.accepts(resPath))
+			return true;
+		
 		return false;
 	}
 	
@@ -72,6 +78,11 @@ public class CustomModelLoader implements ICustomModelLoader{
 			return CableStateMapper.loadModel(domain, resPath, variantStr);
 		}
 		
+		else if (GridStateMapper.accepts(resPath)) {
+			String variantStr = ((ModelResourceLocation)modelLocation).getVariant();
+			return GridStateMapper.loadModel(domain, resPath, variantStr);
+		}
+		
 		return null;
 	}
 	
@@ -87,6 +98,22 @@ public class CustomModelLoader implements ICustomModelLoader{
 				ModelResourceLocation res = new ModelResourceLocation(
 						this.domain + ":" + PATH_STI + textureName, "inventory");
 				ModelLoader.setCustomModelResourceLocation(item, damage, res);
+			}
+		}
+		else if (item instanceof ItemBlock) {
+			Block block = ((ItemBlock) item).getBlock();
+			if (block instanceof ISESimpleTextureItem) {
+				ISESimpleTextureItem simpleTextureItem = (ISESimpleTextureItem) block;
+				
+				NonNullList<ItemStack> itemStacks = NonNullList.create();
+				item.getSubItems(item, null, itemStacks);
+				for (ItemStack itemStack : itemStacks){
+					int damage = itemStack.getItemDamage();
+					String textureName = simpleTextureItem.getIconName(damage);
+					ModelResourceLocation res = new ModelResourceLocation(
+							this.domain + ":" + PATH_STI + textureName, "inventory");
+					ModelLoader.setCustomModelResourceLocation(item, damage, res);
+				}
 			}
 		}
 	}

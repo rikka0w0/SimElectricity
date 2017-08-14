@@ -1,69 +1,99 @@
 package simelectricity.energynet;
 
 import simelectricity.api.node.ISEGridNode;
-import net.minecraft.world.World;
+import simelectricity.energynet.components.GridNode;
 
-public abstract class GridEvent implements IEnergyNetEvent{
-	protected World world;
-
+public abstract class GridEvent extends EnergyEventBase{
+	protected final ISEGridNode node1;
 	
-	public GridEvent(World world){
-		this.world = world;
+	private GridEvent(int priority, ISEGridNode node1){
+		super(priority);
+		this.node1 = node1;
 	}
 	
 	public static class AppendNode extends GridEvent{
-		protected ISEGridNode node;
-		public AppendNode(World world, ISEGridNode node) {
-			super(world);
-			this.node = node;
+		public AppendNode(ISEGridNode node) {
+			super(1, node);
+		}
+
+		@Override
+		public void process(EnergyNetDataProvider dataProvider) {
+			needUpdate = true;
+			changedStructure = true;
+			dataProvider.addGridNode((GridNode) node1);
 		}
 	}
 	
 	public static class RemoveNode extends GridEvent{
-		protected ISEGridNode node;
-		public RemoveNode(World world, ISEGridNode node) {
-			super(world);
-			this.node = node;
+		public RemoveNode(ISEGridNode node) {
+			super(1, node);
+		}
+
+		@Override
+		public void process(EnergyNetDataProvider dataProvider) {
+			needUpdate = true;
+			changedStructure = true;
+			dataProvider.removeGridNode((GridNode) node1);
 		}
 	}
 	
 	public static class Connect extends GridEvent{
-		protected ISEGridNode node1, node2;
-		protected double resistance;
-		public Connect(World world, ISEGridNode node1, ISEGridNode node2, double resistance) {
-			super(world);
-			this.node1 = node1;
+		protected final ISEGridNode node2;
+		protected final double resistance;
+		public Connect(ISEGridNode node1, ISEGridNode node2, double resistance) {
+			super(2, node1);
 			this.node2 = node2;
 			this.resistance = resistance;
 		}
+		
+		@Override
+		public void process(EnergyNetDataProvider dataProvider) {
+			needUpdate = true;
+			changedStructure = true;
+	    	dataProvider.addGridConnection((GridNode) node1, (GridNode) node2, resistance);
+		}
 	}
 	
-	/**
-	 * Coord1 - primary, Coord2 - secondary
-	 * ratio = Nsec/Npri, resistance refer to secondary side (Coord2)
-	 */
+	public static class BreakConnection extends GridEvent{
+		protected final ISEGridNode node2;
+		public BreakConnection(ISEGridNode node1, ISEGridNode node2) {
+			super(2, node1);
+			this.node2 = node2;
+		}
+		@Override
+		public void process(EnergyNetDataProvider dataProvider) {
+			needUpdate = true;
+			changedStructure = true;
+			dataProvider.removeGridConnection((GridNode) node1, (GridNode) node2);
+		}
+	}
+	
 	public static class MakeTransformer extends GridEvent{
-		protected ISEGridNode pri, sec;
-		protected double resistance, ratio;
-		public MakeTransformer(World world, ISEGridNode pri, ISEGridNode sec, double resistance, double ratio) {
-			super(world);
+		protected final ISEGridNode sec;
+		protected final double resistance, ratio;
+		public MakeTransformer(ISEGridNode pri, ISEGridNode sec, double resistance, double ratio) {
+			super(2, pri);
+			this.sec = sec;
 			this.resistance = resistance;
 			this.ratio = ratio;
+		}
+		@Override
+		public void process(EnergyNetDataProvider dataProvider) {
+			needUpdate = true;
+			dataProvider.makeTransformer((GridNode) node1, (GridNode) sec, ratio, resistance);
 		}
 	}
 	
 	public static class BreakTranformer extends GridEvent{
-		protected ISEGridNode node;
-		public BreakTranformer(World world, ISEGridNode node) {
-			super(world);
+		public BreakTranformer(ISEGridNode node) {
+			super(2, node);
 		}
-		
-	}
-	
-	public static class BreakConnection extends GridEvent{
-		protected ISEGridNode node1, node2;
-		public BreakConnection(World world, ISEGridNode node1, ISEGridNode node2) {
-			super(world);
+
+		@Override
+		public void process(EnergyNetDataProvider dataProvider) {
+			needUpdate = true;
+			dataProvider.breakTransformer((GridNode) node1);
 		}
 	}
+
 }
