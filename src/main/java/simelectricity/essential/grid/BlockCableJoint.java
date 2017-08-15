@@ -6,7 +6,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
-import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
@@ -53,7 +52,7 @@ public class BlockCableJoint extends SEBlock implements ITileEntityProvider, ISE
 		public boolean placeBlockAt(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, IBlockState newState) {
 			int facing = 8 - MathHelper.floor((player.rotationYaw) * 8.0F / 360.0F + 0.5D) & 7;
 			
-			newState = newState.withProperty(propertyFacing, facing);
+			newState = newState.withProperty(Properties.propertyFacing, facing);
 			
 			return super.placeBlockAt(stack, player, world, pos, side, hitX, hitY, hitZ, newState);
 		}
@@ -62,30 +61,22 @@ public class BlockCableJoint extends SEBlock implements ITileEntityProvider, ISE
 	///////////////////////////////
 	///BlockStates
 	///////////////////////////////
-	
-	public final static IProperty<Integer> propertyFacing = PropertyInteger.create("facing", 0 , 7);
 	@Override
 	protected final BlockStateContainer createBlockState(){
 		return new ExtendedBlockState(this, 
-				new IProperty[] {propertyFacing},
+				new IProperty[] {Properties.propertyFacing},
 				new IUnlistedProperty[] {UnlistedNonNullProperty.propertyGridTile});
 	}
 	
 	@Override
     public final IBlockState getStateFromMeta(int meta){		
-        return super.getDefaultState().withProperty(propertyFacing, meta & 7);
+        return super.getDefaultState().withProperty(Properties.propertyFacing, meta & 7);
     }
 	
 	@Override
     public final int getMetaFromState(IBlockState state){
-		int meta = state.getValue(propertyFacing);
-		meta = meta & 7;
-		return meta;
-    }
-	
-	@Override
-    public IBlockState getActualState(IBlockState state, IBlockAccess worldIn, BlockPos pos) {
-        return state;
+		int facing = state.getValue(Properties.propertyFacing);
+		return facing;
     }
 	
 	@Override
@@ -103,11 +94,6 @@ public class BlockCableJoint extends SEBlock implements ITileEntityProvider, ISE
 		}
 		return state;
 	}
-	
-	@Override
-    public int damageDropped(IBlockState state){
-        return 0;
-    }
 
 	///////////////////
 	/// Initialize
@@ -147,12 +133,17 @@ public class BlockCableJoint extends SEBlock implements ITileEntityProvider, ISE
 	//////////////////////////////////////
 	/////Item drops and Block activities
 	//////////////////////////////////////
+	@Override
+    public int damageDropped(IBlockState state){
+        return 0;
+    }
+	
     @Override
     public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
         if (world.isRemote)
             return; 
         
-        TileEntity te = world.getTileEntity(pos);	//Do this before the tileEntity is removed!
+        TileEntity te = world.getTileEntity(pos);
         if (te instanceof ISEGridTile)
         	SEAPI.energyNetAgent.attachGridObject(world, SEAPI.energyNetAgent.newGridNode(pos));     
     }

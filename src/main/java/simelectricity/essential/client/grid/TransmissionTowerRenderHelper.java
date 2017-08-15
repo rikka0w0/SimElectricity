@@ -2,9 +2,9 @@ package simelectricity.essential.client.grid;
 
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3i;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import simelectricity.essential.grid.ISETransmissionTower;
 import simelectricity.essential.utils.SEMathHelper;
 
 @SideOnly(Side.CLIENT)
@@ -56,6 +56,8 @@ public class TransmissionTowerRenderHelper{
 	public double[] getInsulatorPositionArray(){return insulatorPositionArray;}
 	
 	public double getInsulatorLength(){return insulatorLength;}
+	
+	public Vec3i getPosOffset() {	return te.getPos();}
 	
 	/////////////////////////////////////////////////////
     public TransmissionTowerRenderHelper(TileEntity te, double insulatorLength, double[] insulatorPositionArray){

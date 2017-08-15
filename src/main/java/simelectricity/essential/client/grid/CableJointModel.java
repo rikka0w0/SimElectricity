@@ -11,8 +11,11 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.client.MinecraftForgeClient;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import simelectricity.essential.client.BlockRenderModel;
 
+@SideOnly(Side.CLIENT)
 public class CableJointModel extends BlockRenderModel {
 	private final TextureAtlasSprite[] textures;
 	private final LinkedList<BakedQuad> quads;

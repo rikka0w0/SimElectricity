@@ -8,7 +8,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 
 import simelectricity.api.node.ISEGridNode;
-import simelectricity.api.node.ISESimulatable;
 import simelectricity.energynet.SEGraph;
 
 public class GridNode extends SEComponent implements ISEGridNode{
@@ -141,10 +140,12 @@ public class GridNode extends SEComponent implements ISEGridNode{
 	
 	//ISEGridObject -----------------------------
 	@Override
-	public LinkedList<ISESimulatable> getNeighborList(){
-		LinkedList<ISESimulatable> ret = new LinkedList<ISESimulatable>();
-		for (ISESimulatable obj : this.neighbors){
-			ret.add(obj);
+	public ISEGridNode[] getNeighborList(){
+		ISEGridNode[] ret = new ISEGridNode[this.neighbors.size()];
+		int i = 0; 
+		for (SEComponent neighbor : this.neighbors){
+			ret[i] = (ISEGridNode) neighbor;
+			i++;
 		}
 		return ret;
 	}

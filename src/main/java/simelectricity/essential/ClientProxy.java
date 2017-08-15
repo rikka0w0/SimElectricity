@@ -8,10 +8,12 @@ import simelectricity.essential.client.coverpanel.SupportRender;
 import simelectricity.essential.client.coverpanel.VoltageSensorRender;
 import simelectricity.essential.client.grid.GridStateMapper;
 import simelectricity.essential.client.grid.TileRenderTranmissionTowerBase;
+import simelectricity.essential.client.grid.TileRenderTransmissionTower;
 import simelectricity.essential.client.semachine.SEMachineStateMapper;
 import simelectricity.essential.client.semachine.SocketRender;
 import simelectricity.essential.common.ISEGuiProvider;
 import simelectricity.essential.grid.TileCableJoint;
+import simelectricity.essential.grid.TileTransmissionTower;
 import simelectricity.essential.machines.gui.GuiAdjustableResistor;
 import simelectricity.essential.machines.gui.GuiAdjustableTransformer;
 import simelectricity.essential.machines.gui.GuiCurrentSensor;
@@ -78,6 +80,9 @@ public class ClientProxy extends CommonProxy{
 		GridStateMapper gStateMapper = new GridStateMapper(Essential.modID);
 		gStateMapper.register(BlockRegistry.cableJoint);
 		loader.registerInventoryIcon(BlockRegistry.cableJoint.getItemBlock());
+		gStateMapper.register(BlockRegistry.transmissionTowerBottom);
+		gStateMapper.register(BlockRegistry.transmissionTowerTop);
+		loader.registerInventoryIcon(BlockRegistry.transmissionTowerTop.getItemBlock());
 		
 		//Initialize socket render and support render
 		new SocketRender();
@@ -93,6 +98,7 @@ public class ClientProxy extends CommonProxy{
 		SEEAPI.coloredBlocks.add(BlockRegistry.blockCable);
 		
 		ClientRegistry.bindTileEntitySpecialRenderer(TileCableJoint.class, new TileRenderTranmissionTowerBase());
+		ClientRegistry.bindTileEntitySpecialRenderer(TileTransmissionTower.class, new TileRenderTransmissionTower());
 	}
 	
 	@Override

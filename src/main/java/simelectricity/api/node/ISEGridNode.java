@@ -1,7 +1,5 @@
 package simelectricity.api.node;
 
-import java.util.LinkedList;
-
 import net.minecraft.util.math.BlockPos;
 
 /**
@@ -22,5 +20,5 @@ public interface ISEGridNode extends ISESimulatable{
     /**
      * Returns a list of neighbors
      */
-	LinkedList<ISESimulatable> getNeighborList();
+	ISEGridNode[] getNeighborList();
 }

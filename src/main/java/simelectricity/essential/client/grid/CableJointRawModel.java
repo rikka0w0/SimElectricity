@@ -14,12 +14,9 @@ public class CableJointRawModel extends TextureLoaderModel{
 	private final int facing;
 	
 	public CableJointRawModel(int facing) {
-		this.textures[0] = new ResourceLocation("sime_essential:render/transmission/essential_cable_joint_texture_updown");
-    	this.textures[1] = new ResourceLocation("sime_essential:render/transmission/essential_cable_joint_texture_metal");
-    	this.textures[2] = new ResourceLocation("sime_essential:render/transmission/essential_cable_joint_texture_side");
-    	super.textures.add(textures[0]);
-    	super.textures.add(textures[1]);
-    	super.textures.add(textures[2]);
+		this.textures[0] = registerTexture("sime_essential:render/transmission/essential_cable_joint_texture_updown");
+    	this.textures[1] = registerTexture("sime_essential:render/transmission/essential_cable_joint_texture_metal");
+    	this.textures[2] = registerTexture("sime_essential:render/transmission/essential_cable_joint_texture_side");
     	
     	this.facing = facing;
 	}

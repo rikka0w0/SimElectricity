@@ -11,13 +11,22 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.TRSRTransformation;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 /**
  * Load nothing from JSON model files, only tell MineCraft to load custom textures, for dynamic quad generating
  *
  */
+@SideOnly(Side.CLIENT)
 public abstract class TextureLoaderModel implements IModel {
-	protected final Set<ResourceLocation> textures = Sets.newHashSet();
+	protected ResourceLocation registerTexture(String texture) {
+		ResourceLocation resLoc = new ResourceLocation(texture);
+		textures.add(resLoc);
+		return resLoc;
+	}
+	
+	private final Set<ResourceLocation> textures = Sets.newHashSet();
 		
 	@Override
 	public final Collection<ResourceLocation> getDependencies() {

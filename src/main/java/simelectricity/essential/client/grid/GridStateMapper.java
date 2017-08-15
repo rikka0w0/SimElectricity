@@ -6,7 +6,7 @@ import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.StateMapperBase;
 import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.ModelLoader;
-import simelectricity.essential.grid.BlockCableJoint;
+import simelectricity.essential.grid.Properties;
 
 public class GridStateMapper extends StateMapperBase{
 	public final static String VPATH = "virtual/blockstates/grid";
@@ -22,10 +22,22 @@ public class GridStateMapper extends StateMapperBase{
 		String name = block.getRegistryName().getResourcePath();
 		String varStr = name;
 		
+		//Hard code everything
+		int type;
+		int facing;
 		switch (name) {
 		case "essential_cable_joint":
-			int facing = state.getValue(BlockCableJoint.propertyFacing);
+			facing = state.getValue(Properties.propertyFacing);
 			varStr = name + "," + facing;
+			break;
+		case "essential_transmission_tower_bottom":
+			facing = state.getValue(Properties.propertyFacing);
+			varStr = name + "," + facing;
+			break;
+		case "essential_transmission_tower":
+			type = state.getValue(Properties.propertyType);
+			facing = state.getValue(Properties.propertyFacing);
+			varStr = name + "," + facing + "," + type;
 			break;
 		}
 		ModelResourceLocation res = new ModelResourceLocation(this.domain + ":" + VPATH, varStr);
@@ -36,10 +48,20 @@ public class GridStateMapper extends StateMapperBase{
 		String[] splited = variantStr.split(",");
 		String name = splited[0];
 		
+		//Hard code everything
+		int type;
+		int facing;
 		switch (name) {
 		case "essential_cable_joint":
-			int facing = Integer.parseInt(splited[1]);
+			facing = Integer.parseInt(splited[1]);
 			return new CableJointRawModel(facing);
+		case "essential_transmission_tower_bottom":
+			facing = Integer.parseInt(splited[1]);
+			return new TransmissionTowerBottomRawModel(facing);
+		case "essential_transmission_tower":
+			facing = Integer.parseInt(splited[1]);
+			type = Integer.parseInt(splited[2]);
+			return new TransmissionTowerTopRawModel(facing, type);
 		}
 		
 		return null;

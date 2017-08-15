@@ -12,6 +12,7 @@ import simelectricity.api.node.ISEGridNode;
 import simelectricity.api.node.ISESimulatable;
 import simelectricity.api.tile.ISECableTile;
 import simelectricity.api.tile.ISEGridTile;
+import simelectricity.essential.client.grid.ISETransmissionTower;
 import simelectricity.essential.client.grid.TransmissionTowerRenderHelper;
 import simelectricity.essential.common.SEEnergyTile;
 import simelectricity.essential.utils.Utils;
@@ -150,6 +151,6 @@ public class TileCableJoint extends SEEnergyTile implements ISECableTile, ISEGri
 	
 	@Override
 	public int getRotation() {
-		return world.getBlockState(pos).getValue(BlockCableJoint.propertyFacing);
+		return world.getBlockState(pos).getValue(Properties.propertyFacing);
 	}
 }

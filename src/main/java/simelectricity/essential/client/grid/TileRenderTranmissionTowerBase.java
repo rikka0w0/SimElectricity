@@ -5,7 +5,6 @@ import org.lwjgl.opengl.GL11;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
-import simelectricity.essential.grid.ISETransmissionTower;
 
 public class TileRenderTranmissionTowerBase extends TileEntitySpecialRenderer implements ITextureProvider{
 	protected double[] from1, to1;
@@ -19,10 +18,10 @@ public class TileRenderTranmissionTowerBase extends TileEntitySpecialRenderer im
 	protected boolean render1, render2;
 	
 	protected double rotation;
-    public boolean isGlobalRenderer(TileEntity te)
-    {
-        return true;
-    }
+	
+	@Override
+    public boolean isGlobalRenderer(TileEntity te) {return true;}
+    
 	@Override
 	public void renderTileEntityAt(TileEntity tileEntity, double x, double y, double z, float partialTicks, int destroyStage) {
 		TransmissionTowerRenderHelper helper = ((ISETransmissionTower) tileEntity).getRenderHelper();
