@@ -35,4 +35,9 @@ public abstract class SEModelBlock extends SEBlock {
 	public boolean isNormalCube(IBlockState state) {
 		return false;
 	}
+	
+	@Override
+    public boolean isFullCube(IBlockState state) {
+        return false;
+    }
 }

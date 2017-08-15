@@ -119,7 +119,6 @@ public class BlockTransmissionTowerTop extends SEModelBlock implements ITileEnti
 	///////////////////////////////
 	///BlockStates
 	///////////////////////////////
-
 	@Override
 	protected final BlockStateContainer createBlockState(){
 		return new ExtendedBlockState(this, 
@@ -244,7 +243,6 @@ public class BlockTransmissionTowerTop extends SEModelBlock implements ITileEnti
 		
 		return list;
 	}
-	
 
 	//////////////////////////////////////
 	/////Item drops and Block activities

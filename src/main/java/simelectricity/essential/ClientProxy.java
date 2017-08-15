@@ -9,11 +9,13 @@ import simelectricity.essential.client.coverpanel.VoltageSensorRender;
 import simelectricity.essential.client.grid.GridStateMapper;
 import simelectricity.essential.client.grid.TileRenderTranmissionTowerBase;
 import simelectricity.essential.client.grid.TileRenderTransmissionTower;
+import simelectricity.essential.client.grid.TileRenderTransmissionTower2;
 import simelectricity.essential.client.semachine.SEMachineStateMapper;
 import simelectricity.essential.client.semachine.SocketRender;
 import simelectricity.essential.common.ISEGuiProvider;
 import simelectricity.essential.grid.TileCableJoint;
 import simelectricity.essential.grid.TileTransmissionTower;
+import simelectricity.essential.grid.TileTransmissionTower2;
 import simelectricity.essential.machines.gui.GuiAdjustableResistor;
 import simelectricity.essential.machines.gui.GuiAdjustableTransformer;
 import simelectricity.essential.machines.gui.GuiCurrentSensor;
@@ -81,8 +83,14 @@ public class ClientProxy extends CommonProxy{
 		gStateMapper.register(BlockRegistry.cableJoint);
 		loader.registerInventoryIcon(BlockRegistry.cableJoint.getItemBlock());
 		gStateMapper.register(BlockRegistry.transmissionTowerBottom);
+		loader.registerInventoryIcon(BlockRegistry.transmissionTowerBottom.getItemBlock());
+		gStateMapper.register(BlockRegistry.transmissionTowerCollisionBox);
+		loader.registerInventoryIcon(BlockRegistry.transmissionTowerCollisionBox.getItemBlock());
 		gStateMapper.register(BlockRegistry.transmissionTowerTop);
 		loader.registerInventoryIcon(BlockRegistry.transmissionTowerTop.getItemBlock());
+		gStateMapper.register(BlockRegistry.transmissionTower2);
+		loader.registerInventoryIcon(BlockRegistry.transmissionTower2.getItemBlock());
+		
 		
 		//Initialize socket render and support render
 		new SocketRender();
@@ -99,6 +107,7 @@ public class ClientProxy extends CommonProxy{
 		
 		ClientRegistry.bindTileEntitySpecialRenderer(TileCableJoint.class, new TileRenderTranmissionTowerBase());
 		ClientRegistry.bindTileEntitySpecialRenderer(TileTransmissionTower.class, new TileRenderTransmissionTower());
+		ClientRegistry.bindTileEntitySpecialRenderer(TileTransmissionTower2.class, new TileRenderTransmissionTower2());
 	}
 	
 	@Override

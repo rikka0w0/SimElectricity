@@ -24,6 +24,7 @@ public class GridStateMapper extends StateMapperBase{
 		
 		//Hard code everything
 		int type;
+		boolean isRod;
 		int facing;
 		switch (name) {
 		case "essential_cable_joint":
@@ -39,6 +40,15 @@ public class GridStateMapper extends StateMapperBase{
 			facing = state.getValue(Properties.propertyFacing);
 			varStr = name + "," + facing + "," + type;
 			break;
+		case "essential_transmission_tower_collision_box":
+			varStr = name;
+			break;
+		case "essential_transmission_tower2":
+			type = state.getValue(Properties.propertyType);
+			isRod = state.getValue(Properties.propertyIsRod);
+			facing = state.getValue(Properties.propertyFacing2);
+			varStr = name + "," + facing + "," + type + "," + isRod;
+			break;
 		}
 		ModelResourceLocation res = new ModelResourceLocation(this.domain + ":" + VPATH, varStr);
 		return res;
@@ -50,6 +60,7 @@ public class GridStateMapper extends StateMapperBase{
 		
 		//Hard code everything
 		int type;
+		boolean isRod;
 		int facing;
 		switch (name) {
 		case "essential_cable_joint":
@@ -62,6 +73,13 @@ public class GridStateMapper extends StateMapperBase{
 			facing = Integer.parseInt(splited[1]);
 			type = Integer.parseInt(splited[2]);
 			return new TransmissionTowerTopRawModel(facing, type);
+		case "essential_transmission_tower_collision_box":
+			return new GhostModel();
+		case "essential_transmission_tower2":
+			facing = Integer.parseInt(splited[1]);
+			type = Integer.parseInt(splited[2]);
+			isRod = Boolean.parseBoolean(splited[3]);
+			return new TransmissionTower2RawModel(facing, type, isRod);		
 		}
 		
 		return null;

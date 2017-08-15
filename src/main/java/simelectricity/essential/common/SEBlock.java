@@ -39,7 +39,7 @@ public abstract class SEBlock extends Block{
     
     @Override
     @SideOnly(Side.CLIENT)
-    public final void getSubBlocks(Item itemIn, CreativeTabs tab, NonNullList<ItemStack> subItems){
+    public void getSubBlocks(Item itemIn, CreativeTabs tab, NonNullList<ItemStack> subItems){
     	if (itemBlock.getHasSubtypes()){
             for (int ix = 0; ix < ((ISESubBlock)this).getSubBlockUnlocalizedNames().length; ix++)
                 subItems.add(new ItemStack(this, 1, ix));

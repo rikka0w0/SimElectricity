@@ -3,7 +3,10 @@ package simelectricity.essential.client.grid;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
+@SideOnly(Side.CLIENT)
 public class TileRenderTransmissionTower extends TileRenderTranmissionTowerBase{
 	@Override
 	public void renderTileEntityAt(TileEntity tileEntity, double x, double y, double z, float partialTicks, int destroyStage) {

@@ -12,15 +12,22 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import simelectricity.essential.client.ISESimpleTextureItem;
 import simelectricity.essential.common.SEItemBlock;
 
-public class BlockTransmissionTowerCollisionBox extends SEModelBlock{
+public class BlockTransmissionTowerCollisionBox extends SEModelBlock implements ISESimpleTextureItem{
 	public BlockTransmissionTowerCollisionBox() {
 		super("essential_transmission_tower_collision_box", Material.ROCK, SEItemBlock.class);
 		this.setBlockUnbreakable();
 	}
     
+	@Override
+	@SideOnly(Side.CLIENT)
+	public String getIconName(int damage) {
+		return "essential_transmission_tower_0";	//There's no way to obtain this block, so just return a existing texture
+	}
 	///////////////////////////////
 	///BlockStates
 	///////////////////////////////

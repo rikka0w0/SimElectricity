@@ -14,13 +14,16 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import simelectricity.api.node.ISEGridNode;
 import simelectricity.api.tile.ISEGridTile;
 import simelectricity.essential.BlockRegistry;
 import simelectricity.essential.api.ISEHVCableConnector;
+import simelectricity.essential.client.ISESimpleTextureItem;
 import simelectricity.essential.common.SEItemBlock;
 
-public class BlockTransmissionTowerBottom extends SEModelBlock implements ISEHVCableConnector{
+public class BlockTransmissionTowerBottom extends SEModelBlock implements ISEHVCableConnector, ISESimpleTextureItem {
 	///////////////////
 	/// Initialize
 	///////////////////
@@ -28,6 +31,11 @@ public class BlockTransmissionTowerBottom extends SEModelBlock implements ISEHVC
 		super("essential_transmission_tower_bottom", Material.GLASS, SEItemBlock.class);
 	}
 	
+	@Override
+	@SideOnly(Side.CLIENT)
+	public String getIconName(int damage) {
+		return "essential_transmission_tower_0";	//There's no way to obtain this block, so just return a existing texture
+	}
 	///////////////////////////////
 	///BlockStates
 	///////////////////////////////
