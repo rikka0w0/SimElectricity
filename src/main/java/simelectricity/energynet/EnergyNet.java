@@ -99,6 +99,7 @@ public final class EnergyNet extends EnergyNetSimulator implements Runnable{
 		}
 		
 		cachedEvents.clear();
+		dataProvider.fireGridTileUpdateEvent();
 		
 		if (calc){
 			this.needOptimize = needOptimize;

@@ -4,9 +4,11 @@
 package simelectricity.energynet;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import simelectricity.SimElectricity;
 import simelectricity.api.node.ISESubComponent;
@@ -201,7 +203,7 @@ public class EnergyNetDataProvider extends WorldSavedData{
 		for (GridNode affectedNeighbors: tileEntityGraph.removeGridVertex(gridNode)){
 			TileEntity te = affectedNeighbors.te;
 			if (te instanceof ISEGridTile)
-				((ISEGridTile)te).onGridNeighborUpdated();
+				updatedGridTile.add((ISEGridTile)te);
 		}
 
 		gridNodeMap.remove(gridNode.getPos());
@@ -218,9 +220,9 @@ public class EnergyNetDataProvider extends WorldSavedData{
 		TileEntity te2 = node2.te;
 		
 		if (te1 instanceof ISEGridTile)
-			((ISEGridTile)te1).onGridNeighborUpdated();
+			updatedGridTile.add((ISEGridTile)te1);
 		if (te2 instanceof ISEGridTile)
-			((ISEGridTile)te2).onGridNeighborUpdated();
+			updatedGridTile.add((ISEGridTile)te2);
 		
 		this.markDirty();
 	}
@@ -235,9 +237,9 @@ public class EnergyNetDataProvider extends WorldSavedData{
 		TileEntity te2 = node2.te;
 		
 		if (te1 instanceof ISEGridTile)
-			((ISEGridTile)te1).onGridNeighborUpdated();
+			updatedGridTile.add((ISEGridTile)te1);
 		if (te2 instanceof ISEGridTile)
-			((ISEGridTile)te2).onGridNeighborUpdated();
+			updatedGridTile.add((ISEGridTile)te2);
 		
 		this.markDirty();
 	}
@@ -252,9 +254,9 @@ public class EnergyNetDataProvider extends WorldSavedData{
 		TileEntity te2 = secondary.te;
 		
 		if (te1 instanceof ISEGridTile)
-			((ISEGridTile)te1).onGridNeighborUpdated();
+			updatedGridTile.add((ISEGridTile)te1);
 		if (te2 instanceof ISEGridTile)
-			((ISEGridTile)te2).onGridNeighborUpdated();
+			updatedGridTile.add((ISEGridTile)te2);
 		
 		this.markDirty();
 	}
@@ -268,7 +270,7 @@ public class EnergyNetDataProvider extends WorldSavedData{
 		TileEntity te = node.te;
 		
 		if (te instanceof ISEGridTile)
-			((ISEGridTile)te).onGridNeighborUpdated();
+			updatedGridTile.add((ISEGridTile)te);
 		
 		this.markDirty();
 	}
@@ -281,7 +283,7 @@ public class EnergyNetDataProvider extends WorldSavedData{
 		loadedGridTiles.add(te);
 		gridObject.te = te;
 		gridTile.setGridNode(gridObject);
-		gridTile.onGridNeighborUpdated();
+		updatedGridTile.add(gridTile);
 	}
 	
 	public void onGridTileInvalidate(TileEntity te){
@@ -376,5 +378,18 @@ public class EnergyNetDataProvider extends WorldSavedData{
 		nbt.setTag("Objects", NBTNodes);
 		
 		return nbt;
+	}
+	
+	//-----------------------------------------------------------------------------------------------------------
+	///////////////////////////////////////
+	/// GridTile update notification
+	///////////////////////////////////////
+	private final Set<ISEGridTile> updatedGridTile = new HashSet();
+	
+	public void fireGridTileUpdateEvent() {
+		for (ISEGridTile gridTile: updatedGridTile) {
+			gridTile.onGridNeighborUpdated();
+		}
+		updatedGridTile.clear();
 	}
 }
