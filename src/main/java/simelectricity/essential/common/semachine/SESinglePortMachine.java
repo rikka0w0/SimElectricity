@@ -11,6 +11,7 @@ import simelectricity.api.components.ISEComponentParameter;
 import simelectricity.api.node.ISESubComponent;
 import simelectricity.api.tile.ISETile;
 import simelectricity.essential.common.SEEnergyTile;
+import simelectricity.essential.utils.Utils;
 
 public abstract class SESinglePortMachine extends SEEnergyTile implements ISidedFacing, ISEWrenchable, ISETile, ISEComponentParameter {
 	protected EnumFacing functionalSide = EnumFacing.SOUTH;
@@ -24,8 +25,8 @@ public abstract class SESinglePortMachine extends SEEnergyTile implements ISided
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
         
-        functionalSide = EnumFacing.getFront(tagCompound.getByte("functionalSide"));
-        facing = EnumFacing.getFront((tagCompound.getByte("facing")));
+        functionalSide = Utils.facingFromNbt(tagCompound, "functionalSide");
+        facing = Utils.facingFromNbt(tagCompound, "facing");
     }
 
     @Override

@@ -97,6 +97,20 @@ public class Utils {
         player.sendMessage(new TextComponentString(I18n.translateToLocal(text)));
     }
 	
+	public static void saveToNbt(NBTTagCompound nbt, String name, EnumFacing facing) {
+		if (facing == null)
+			return;
+		
+		nbt.setByte(name, (byte) facing.ordinal());
+	}
+	
+	public static EnumFacing facingFromNbt(NBTTagCompound nbt, String name) {
+		if (!nbt.hasKey(name))
+			return null;
+		
+		return EnumFacing.getFront(nbt.getByte(name));
+	}
+	
 	public static void saveToNbt(NBTTagCompound nbt, String prefix, BlockPos pos) {
 		if (pos == null)
 			return;

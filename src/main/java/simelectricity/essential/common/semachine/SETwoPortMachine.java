@@ -10,6 +10,7 @@ import simelectricity.api.components.ISEComponentParameter;
 import simelectricity.api.node.ISESubComponent;
 import simelectricity.api.tile.ISETile;
 import simelectricity.essential.common.SEEnergyTile;
+import simelectricity.essential.utils.Utils;
 
 public class SETwoPortMachine extends SEEnergyTile implements ISidedFacing, ISETile, ISEComponentParameter {
 	public EnumFacing inputSide = EnumFacing.SOUTH;
@@ -24,9 +25,9 @@ public class SETwoPortMachine extends SEEnergyTile implements ISidedFacing, ISET
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
 
-        inputSide = EnumFacing.getFront(tagCompound.getByte("inputSide"));
-        outputSide = EnumFacing.getFront((tagCompound.getByte("outputSide")));
-        facing = EnumFacing.getFront((tagCompound.getByte("facing")));
+        inputSide = Utils.facingFromNbt(tagCompound, "inputSide");
+        outputSide = Utils.facingFromNbt(tagCompound, "outputSide");
+        facing = Utils.facingFromNbt(tagCompound, "facing");
     }
 
     @Override
