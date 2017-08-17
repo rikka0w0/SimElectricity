@@ -11,7 +11,6 @@ import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.Vec3i;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.fml.relauncher.Side;
@@ -97,30 +96,22 @@ public class TransmissionTowerTopModel extends BlockRenderModel {
 		    	//Normally this should not happen, just in case, to prevent crashing
 		    	return ImmutableList.of();
 		    
-		    TransmissionTowerRenderHelper helper = ((ISETransmissionTower)gridTile).getRenderHelper();
-			if (helper.render1())
-				renderInsulators(helper.getPosOffset(), helper.from1(), helper.to1(), helper.angle1(), modelInsulator, quads);
-			if (helper.render2())
-				renderInsulators(helper.getPosOffset(),helper.from2(), helper.to2(), helper.angle2(), modelInsulator, quads);
 		    
-			if (helper.render1() & helper.render2()){
+		    TransmissionLineRenderHelper helper = ((ISETransmissionTower)gridTile).getRenderHelper();
+		    for (TransmissionLineRenderHelper.ConnectionInfo[] connections: helper.connectionInfo) {
+		    	for (TransmissionLineRenderHelper.ConnectionInfo connection: connections) {
+		    		Models.renderInsulators(helper.pos, connection.from, connection.fixedTo, connection.insulatorAngle, modelInsulator, quads);
+		    	}
+		    }
+			
+			if (helper.connectionInfo.size() > 1)
 				quads.addAll(insulator);
-			}
+				
 			return quads;
 		}
 		
 		return ImmutableList.of();
 	}
 	
-	public static void renderInsulators(Vec3i pos, double[] from, double[] to, double[] angle, SERenderHeap modelInsulator, LinkedList<BakedQuad> quads){
-		for (int i=0; i<3; i++){
-			SERenderHeap insulator = modelInsulator.clone();
-			
-			insulator.rotateAroundZ((float) (angle[i]/Math.PI*180));
-			insulator.rotateToVec(from[3*i],from[3*i+1],from[3*i+2], to[3*i],from[3*i+1],to[3*i+2]);
-			insulator.transform(from[3*i], from[3*i+1],from[3*i+2]);
-			insulator.transform(-pos.getX(), -pos.getY(), -pos.getZ());
-			insulator.bake(quads);
-		}
-	}
+
 }

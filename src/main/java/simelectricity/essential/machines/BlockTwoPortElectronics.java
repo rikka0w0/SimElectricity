@@ -7,12 +7,14 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 
@@ -105,6 +107,11 @@ public class BlockTwoPortElectronics extends SEMachineBlock implements ISESidedT
         if (te instanceof TileSwitch){
         	TileSwitch tileSwitch = (TileSwitch) te;
         	if (tileSwitch.getFacing() == facing){
+        		if (tileSwitch.isOn) {
+        			world.playSound(player, pos, SoundEvents.BLOCK_STONE_BUTTON_CLICK_OFF, SoundCategory.BLOCKS, 0.3F, 0.5F);
+        		}else {
+        			world.playSound(player, pos, SoundEvents.BLOCK_STONE_BUTTON_CLICK_ON, SoundCategory.BLOCKS, 0.3F, 0.6F);
+        		}
                 if (!world.isRemote)
                 	tileSwitch.setSwitchStatus(!tileSwitch.isOn);
         		return true;

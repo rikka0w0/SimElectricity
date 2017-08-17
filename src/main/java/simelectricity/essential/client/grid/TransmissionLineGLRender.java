@@ -2,56 +2,54 @@ package simelectricity.essential.client.grid;
 
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import org.lwjgl.opengl.GL11;
 
 import simelectricity.common.ConfigManager;
 import simelectricity.essential.utils.SEMathHelper;
+import simelectricity.essential.utils.Vec3f;
 
-public class CableGLRender {
+@SideOnly(Side.CLIENT)
+public class TransmissionLineGLRender {
+	/**
+	 * Provides texture for custom render
+	 *
+	 * @author rikka0w0
+	 */
+	@SideOnly(Side.CLIENT)
+	public static interface ITextureProvider {
+	    /**
+	     * Do bindTexture(ResourceLocation) here!
+	     *
+	     * @param index Which cube is being rendered
+	     * @param side  The side of the cube
+	     */
+	    void bindTexture(int index, int side);
+	}
+
+	
     /**
      * Render parabolic cable between two points
      * </p> coordinates are MineCraft coordinates, the cable will start from current openGL reference point
-     *
-     * @param xStart       Start X coordinate
-     * @param yStart       Start Y coordinate
-     * @param zStart       Start Z coordinate
-     * @param xEnd         End X coordinate
-     * @param yEnd         End Y coordinate
-     * @param zEnd         End Z coordinate
      * @param thickness    Thickness of the cable
      * @param textureIndex The index of texture
      */
-    public static void renderParabolicCable(double xStart, double yStart, double zStart, double xEnd, double yEnd, double zEnd, double thickness, double tension, ITextureProvider textureProvider, int textureIndex) {
-        double distance = SEMathHelper.distanceOf(xStart, yStart, zStart, xEnd, yEnd, zEnd);
-        p2pRotation(xStart, yStart, zStart, xEnd, yEnd, zEnd);
-        render_parabola(distance, false, tension, ConfigManager.parabolaRenderSteps, thickness, textureProvider, textureIndex);
-    }
-
-    /**
-     * Render parabolic cable between two points (Half)
-     * </p> coordinates are MineCraft coordinates, the cable will start from current openGL reference point
-     *
-     * @param xStart       Start X coordinate
-     * @param yStart       Start Y coordinate
-     * @param zStart       Start Z coordinate
-     * @param xEnd         End X coordinate
-     * @param yEnd         End Y coordinate
-     * @param zEnd         End Z coordinate
-     * @param thickness    Thickness of the cable
-     * @param textureIndex The index of texture
-     */
-    public static void renderHalfParabolicCable(double xStart, double yStart, double zStart, double xEnd, double yEnd, double zEnd, double thickness, double tension, ITextureProvider textureProvider, int textureIndex) {
-        double distance = SEMathHelper.distanceOf(xStart, yStart, zStart, xEnd, yEnd, zEnd);
-        p2pRotation(xStart, yStart, zStart, xEnd, yEnd, zEnd);
-        render_parabola(distance, true, tension, ConfigManager.parabolaRenderSteps, thickness, textureProvider, textureIndex);
+    public static void renderParabolicCable(Vec3f from, Vec3f to, boolean half, float thickness, float tension, ITextureProvider textureProvider, int textureIndex) {
+    	GL11.glPushMatrix();
+    	GL11.glTranslatef(from.xCoord, from.yCoord, from.zCoord);
+    	float distance = from.distanceTo(to);
+        p2pRotation(from.xCoord, from.yCoord, from.zCoord, to.xCoord, to.yCoord, to.zCoord);
+        render_parabola(distance, half, tension, ConfigManager.parabolaRenderSteps, thickness, textureProvider, textureIndex);
+        GL11.glPopMatrix();
     }
     
-    public static void startDrawingQuads() {
+    private static void startDrawingQuads() {
     	Tessellator.getInstance().getBuffer().begin(7, DefaultVertexFormats.POSITION_TEX);
     }
     
-    public static void addVertexWithUV(double x, double y, double z, double u, double v) {
+    private static void addVertexWithUV(double x, double y, double z, double u, double v) {
     	Tessellator.getInstance().getBuffer().pos(x, y, z).tex(u, v).endVertex();
     }
     
@@ -62,7 +60,7 @@ public class CableGLRender {
      * @param maxY Size of y
      * @param maxZ Size of z
      */
-    public static void renderCube(double maxX, double maxY, double maxZ, ITextureProvider textureProvider, int textureIndex) {
+    private static void renderCube(double maxX, double maxY, double maxZ, ITextureProvider textureProvider, int textureIndex) {
     	Tessellator t = Tessellator.getInstance();
         GL11.glPushMatrix();
 
@@ -159,7 +157,7 @@ public class CableGLRender {
      * @param yEnd   End Y coordinate
      * @param zEnd   End Z coordinate
      */
-    public static void p2pRotation(double xStart, double yStart, double zStart, double xEnd, double yEnd, double zEnd) {
+    private static void p2pRotation(double xStart, double yStart, double zStart, double xEnd, double yEnd, double zEnd) {
         double distance = SEMathHelper.distanceOf(xStart, yStart, zStart, xEnd, yEnd, zEnd);
         GL11.glRotated(Math.acos((yEnd - yStart) / distance) * 180 / Math.PI, (zEnd - zStart) / distance, 0, (xStart - xEnd) / distance);
         GL11.glRotated(Math.atan2(zStart - zEnd, xEnd - xStart) * 180 / Math.PI, 0, 1, 0);

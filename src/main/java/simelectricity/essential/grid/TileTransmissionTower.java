@@ -1,23 +1,27 @@
 package simelectricity.essential.grid;
 
+import org.apache.commons.lang3.tuple.Pair;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import simelectricity.api.node.ISEGridNode;
 import simelectricity.api.tile.ISEGridTile;
 import simelectricity.essential.client.grid.ISETransmissionTower;
-import simelectricity.essential.client.grid.TransmissionTowerRenderHelper;
+import simelectricity.essential.client.grid.TransmissionLineRenderHelper;
 import simelectricity.essential.common.SEEnergyTile;
 import simelectricity.essential.utils.Utils;
+import simelectricity.essential.utils.Vec3f;
 
 
 public class TileTransmissionTower extends SEEnergyTile implements ISEGridTile, ISETransmissionTower{
 	private BlockPos neighbor1, neighbor2;
-	private TransmissionTowerRenderHelper renderHelper;
+	private TransmissionLineRenderHelper renderHelper;
 	
 	@SideOnly(Side.CLIENT)
 	protected int getTypeFromMeta(){
@@ -25,15 +29,61 @@ public class TileTransmissionTower extends SEEnergyTile implements ISEGridTile, 
 	}
 	
 	@SideOnly(Side.CLIENT)
-	protected TransmissionTowerRenderHelper createRenderHelper(){
-		return new TransmissionTowerRenderHelper(this,2,
-				getTypeFromMeta() == 0
-				?
-				new double[]{-1, 18-18.0, -4.5, -0.7, 23-18.0, 0, -1, 18-18.0, 4.5,
-								1, 18-18.0, -4.5, 0.7, 23-18.0, 0, 1, 18-18.0, 4.5}
-				:
-				new double[]{0, 16-18.0, -4.9, 0, 23-18.0, 3.95, 0, 16-18.0, 4.9}
-				);
+	protected TransmissionLineRenderHelper createRenderHelper(){
+		TransmissionLineRenderHelper helper;
+		int rotation = getBlockMetadata() & 7;
+		
+		if (getTypeFromMeta() == 0) {
+			helper = new TransmissionLineRenderHelper(world, pos, rotation, 2, 3) {
+				@Override
+				public void updateRenderData(BlockPos... neighborPosList) {
+					super.updateRenderData(neighborPosList);
+					
+					if (connectionInfo.size() < 2)
+						return;
+					
+		    		ConnectionInfo[] connection1 = this.connectionInfo.getFirst();
+		    		ConnectionInfo[] connection2 = this.connectionInfo.getLast();
+		    		
+		    		Vec3f pos = new Vec3f(
+		    		3.95F * MathHelper.sin(this.rotation/180F*TransmissionLineRenderHelper.pi) + 0.5F + this.pos.getX(),
+		    		this.pos.getY() + 23 -18,
+		    		3.95F * MathHelper.cos(this.rotation/180F*TransmissionLineRenderHelper.pi) + 0.5F + this.pos.getZ()
+		    		);
+		    		
+		    		extraWires.add(Pair.of(connection1[1].fixedFrom, pos));
+		    		extraWires.add(Pair.of(pos, connection2[1].fixedFrom));
+		    		if (TransmissionLineRenderHelper.hasIntersection(
+		    				connection1[0].fixedFrom, connection2[0].fixedFrom,
+		    				connection1[2].fixedFrom, connection2[2].fixedFrom)) {
+		    			extraWires.add(Pair.of(connection1[0].fixedFrom, connection2[2].fixedFrom));
+		    			extraWires.add(Pair.of(connection1[2].fixedFrom, connection2[0].fixedFrom));
+		    		}else {
+		    			extraWires.add(Pair.of(connection1[0].fixedFrom, connection2[0].fixedFrom));
+		    			extraWires.add(Pair.of(connection1[2].fixedFrom, connection2[2].fixedFrom));
+		    		}
+				}
+			};
+			helper.addInsulatorGroup(-0.7F, 5, 0,
+					helper.createInsulator(2, -1, 0, -4.5F),
+					helper.createInsulator(2, -0.7F, 5, 0),
+					helper.createInsulator(2, -1, 0, 4.5F)
+					);
+			helper.addInsulatorGroup(0.7F, 5, 0,
+					helper.createInsulator(2, 1, 0, -4.5F),
+					helper.createInsulator(2, 0.7F, 5, 0),
+					helper.createInsulator(2, 1, 0, 4.5F)
+					);
+		}else {
+			helper = new TransmissionLineRenderHelper(world, pos, rotation, 1, 3);
+			helper.addInsulatorGroup(0, 5, 3.95F,
+					helper.createInsulator(0, 0, -2, -4.9F),
+					helper.createInsulator(0, 0, 5, 3.95F),
+					helper.createInsulator(0, 0, -2, 4.9F)
+					);
+		}
+
+		return helper;
 	}
 	
 	//////////////////////////////
@@ -49,7 +99,7 @@ public class TileTransmissionTower extends SEEnergyTile implements ISEGridTile, 
 	
 	@SideOnly(Side.CLIENT)
 	@Override
-	public TransmissionTowerRenderHelper getRenderHelper() {
+	public TransmissionLineRenderHelper getRenderHelper() {
         //Create renderHelper on client side
         if (world.isRemote){
 			if (renderHelper == null)
@@ -58,12 +108,6 @@ public class TileTransmissionTower extends SEEnergyTile implements ISEGridTile, 
         }else{
         	return null;
         }
-	}
-
-	@SideOnly(Side.CLIENT)
-	@Override
-	public int getRotation() {
-		return getBlockMetadata() & 7;
 	}
 	
 	//////////////////////////////

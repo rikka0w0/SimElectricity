@@ -8,8 +8,6 @@ import simelectricity.essential.client.coverpanel.SupportRender;
 import simelectricity.essential.client.coverpanel.VoltageSensorRender;
 import simelectricity.essential.client.grid.GridStateMapper;
 import simelectricity.essential.client.grid.TileRenderTranmissionTowerBase;
-import simelectricity.essential.client.grid.TileRenderTransmissionTower;
-import simelectricity.essential.client.grid.TileRenderTransmissionTower2;
 import simelectricity.essential.client.semachine.SEMachineStateMapper;
 import simelectricity.essential.client.semachine.SocketRender;
 import simelectricity.essential.common.ISEGuiProvider;
@@ -106,8 +104,8 @@ public class ClientProxy extends CommonProxy{
 		SEEAPI.coloredBlocks.add(BlockRegistry.blockCable);
 		
 		ClientRegistry.bindTileEntitySpecialRenderer(TileCableJoint.class, new TileRenderTranmissionTowerBase());
-		ClientRegistry.bindTileEntitySpecialRenderer(TileTransmissionTower.class, new TileRenderTransmissionTower());
-		ClientRegistry.bindTileEntitySpecialRenderer(TileTransmissionTower2.class, new TileRenderTransmissionTower2());
+		ClientRegistry.bindTileEntitySpecialRenderer(TileTransmissionTower.class, new TileRenderTranmissionTowerBase());
+		ClientRegistry.bindTileEntitySpecialRenderer(TileTransmissionTower2.class, new TileRenderTranmissionTowerBase());
 	}
 	
 	@Override

@@ -109,11 +109,12 @@ public class TransmissionTower2Model extends BlockRenderModel {
 		    	//Normally this should not happen, just in case, to prevent crashing
 		    	return ImmutableList.of();
 		    
-		    TransmissionTowerRenderHelper helper = ((ISETransmissionTower)gridTile).getRenderHelper();
-			if (helper.render1())
-				TransmissionTowerTopModel.renderInsulators(helper.getPosOffset(), helper.from1(), helper.to1(), helper.angle1(), modelInsulator, quads);
-			if (helper.render2())
-				TransmissionTowerTopModel.renderInsulators(helper.getPosOffset(),helper.from2(), helper.to2(), helper.angle2(), modelInsulator, quads);
+		    TransmissionLineRenderHelper helper = ((ISETransmissionTower)gridTile).getRenderHelper();
+		    for (TransmissionLineRenderHelper.ConnectionInfo[] connections: helper.connectionInfo) {
+		    	for (TransmissionLineRenderHelper.ConnectionInfo connection: connections) {
+		    		Models.renderInsulators(helper.pos, connection.from, connection.fixedTo, connection.insulatorAngle, modelInsulator, quads);
+		    	}
+		    }
 		    
 		    return quads;
 		}

@@ -1,10 +1,27 @@
 package simelectricity.essential.client.grid;
 
+import java.util.LinkedList;
+
+import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.util.math.Vec3i;
+import simelectricity.essential.utils.Vec3f;
 import simelectricity.essential.utils.client.SERenderHeap;
 import simelectricity.essential.utils.client.SERenderHelper;
 
-public class Models {    
+public class Models {
+	public static void renderInsulators(Vec3i pos, Vec3f from, Vec3f to, double angle, SERenderHeap modelInsulator, LinkedList<BakedQuad> quads){
+		for (int i=0; i<3; i++){
+			SERenderHeap insulator = modelInsulator.clone();
+			
+			insulator.rotateAroundZ((float) (angle/Math.PI*180));
+			insulator.rotateToVec(from.xCoord,from.yCoord,from.zCoord, to.xCoord,from.yCoord,to.zCoord);
+			insulator.transform(from.xCoord, from.yCoord, from.zCoord);
+			insulator.transform(-pos.getX(), -pos.getY(), -pos.getZ());
+			insulator.bake(quads);
+		}
+	}
+	
     public static SERenderHeap renderInsulatorString(double length, TextureAtlasSprite insulatorTexture) {	
     	SERenderHeap h = new SERenderHeap();
 		double[][] insulator = SERenderHelper.createCubeVertexes(0.5, 0.05, 0.5);
