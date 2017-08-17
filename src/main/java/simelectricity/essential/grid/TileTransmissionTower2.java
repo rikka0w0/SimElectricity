@@ -5,7 +5,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import simelectricity.essential.client.grid.TransmissionLineRenderHelper;
-import simelectricity.essential.utils.Vec3f;
+import simelectricity.essential.utils.math.Vec3f;
 
 public class TileTransmissionTower2 extends TileTransmissionTower {
 	@Override

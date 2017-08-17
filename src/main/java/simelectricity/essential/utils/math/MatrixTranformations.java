@@ -1,4 +1,4 @@
-package simelectricity.essential.utils;
+package simelectricity.essential.utils.math;
 
 import net.minecraft.util.EnumFacing;
 

@@ -16,7 +16,7 @@ import simelectricity.essential.client.grid.ISETransmissionTower;
 import simelectricity.essential.client.grid.TransmissionLineRenderHelper;
 import simelectricity.essential.common.SEEnergyTile;
 import simelectricity.essential.utils.Utils;
-import simelectricity.essential.utils.Vec3f;
+import simelectricity.essential.utils.math.Vec3f;
 
 
 public class TileTransmissionTower extends SEEnergyTile implements ISEGridTile, ISETransmissionTower{

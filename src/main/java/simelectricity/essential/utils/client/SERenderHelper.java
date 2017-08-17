@@ -4,7 +4,7 @@ import org.lwjgl.opengl.GL11;
 
 
 import simelectricity.essential.Essential;
-import simelectricity.essential.utils.SEMathHelper;
+import simelectricity.essential.utils.math.SEMathHelper;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;

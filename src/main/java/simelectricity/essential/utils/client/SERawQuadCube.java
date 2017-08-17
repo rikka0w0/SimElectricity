@@ -5,11 +5,11 @@ import java.util.List;
 
 import com.google.common.primitives.Ints;
 
-import simelectricity.essential.utils.SEMathHelper;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.MathHelper;
+import simelectricity.essential.utils.math.SEMathHelper;
 
 /**
  * Represent a 'raw' cube

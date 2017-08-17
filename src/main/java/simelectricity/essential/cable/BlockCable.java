@@ -24,9 +24,8 @@ import simelectricity.essential.common.ISESubBlock;
 import simelectricity.essential.common.SEItemBlock;
 import simelectricity.essential.common.SEMetaBlock;
 import simelectricity.essential.common.UnlistedNonNullProperty;
-import simelectricity.essential.utils.MatrixTranformations;
 import simelectricity.essential.utils.RayTraceHelper;
-
+import simelectricity.essential.utils.math.MatrixTranformations;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;

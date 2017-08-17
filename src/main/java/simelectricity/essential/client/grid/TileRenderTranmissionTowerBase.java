@@ -12,7 +12,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import simelectricity.essential.client.grid.TransmissionLineGLRender.ITextureProvider;
 import simelectricity.essential.client.grid.TransmissionLineRenderHelper.ConnectionInfo;
-import simelectricity.essential.utils.Vec3f;
+import simelectricity.essential.utils.math.Vec3f;
 
 @SideOnly(Side.CLIENT)
 public class TileRenderTranmissionTowerBase extends TileEntitySpecialRenderer implements ITextureProvider{	
