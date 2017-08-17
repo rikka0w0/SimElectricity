@@ -37,6 +37,7 @@ chat.sime_essential:tranmission_tower_too_many_connection=不能连接更多的�
 chat.sime_essential:tranmission_tower_connected=已连接!
 chat.sime_essential:tranmission_tower_current_selection_invalid=当前选择的输电塔是无效的!
 chat.sime_essential:tranmission_tower_last_selection_invalid=之前选择的输电塔已经无效了!
+chat.sime_essential:tranmission_tower_type_mismatch=两个电线杆的导线数量不一致!
 
 # Gui
 gui.sime_essential:redstone_toggle_behavior=反转行为

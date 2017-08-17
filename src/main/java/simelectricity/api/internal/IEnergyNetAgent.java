@@ -28,7 +28,7 @@ public interface IEnergyNetAgent {
 	
 	ISESimulatable newCable(TileEntity dataProviderTileEntity, boolean isGridInterConnectionPoint);
 	
-	ISEGridNode newGridNode(BlockPos pos);
+	ISEGridNode newGridNode(BlockPos pos, int numOfParallelConductor);
 	
 	ISEGridNode getGridNodeAt(World world, BlockPos pos);
 

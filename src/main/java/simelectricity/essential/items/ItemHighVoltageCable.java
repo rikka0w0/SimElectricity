@@ -46,6 +46,12 @@ public class ItemHighVoltageCable extends SEItem implements ISESimpleTextureItem
 		return "hvcable_" + subNames[damage];
 	}
 	
+	private static boolean numberOfConductorMatched(ISEGridNode node1, ISEGridNode node2) {
+		if (node1.numOfParallelConductor() == 0 || node2.numOfParallelConductor() == 0)
+			return true;
+		return node1.numOfParallelConductor() == node2.numOfParallelConductor();
+	}
+	
     @Override
     public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
         ItemStack itemStack = player.getItemStackFromSlot(EntityEquipmentSlot.MAINHAND);
@@ -97,6 +103,8 @@ public class ItemHighVoltageCable extends SEItem implements ISESimpleTextureItem
             		Utils.chatWithLocalization(player, I18n.translateToLocal("chat.sime_essential:tranmission_tower_current_selection_invalid"));
             	}else if (!connector2.canHVCableConnect(world, lastCoordinate)){
             		Utils.chatWithLocalization(player, I18n.translateToLocal("chat.sime_essential:tranmission_tower_last_selection_invalid"));
+            	}else if (!numberOfConductorMatched(node1, node2)) {
+            		Utils.chatWithLocalization(player, I18n.translateToLocal("chat.sime_essential:tranmission_tower_type_mismatch"));
             	}else{
             		double distance = node1.getPos().distanceSq(node2.getPos());
                     if (distance < 5*5) {

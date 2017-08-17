@@ -259,7 +259,7 @@ public class BlockTransmissionTowerTop extends SEModelBlock implements ITileEnti
         
         TileEntity te = world.getTileEntity(pos);
         if (te instanceof ISEGridTile)
-        	SEAPI.energyNetAgent.attachGridObject(world, SEAPI.energyNetAgent.newGridNode(pos));     
+        	SEAPI.energyNetAgent.attachGridObject(world, SEAPI.energyNetAgent.newGridNode(pos, 3));     
     }
     
     @Override

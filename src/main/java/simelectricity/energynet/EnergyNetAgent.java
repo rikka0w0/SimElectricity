@@ -157,8 +157,8 @@ public class EnergyNetAgent implements IEnergyNetAgent{
 	}
 
 	@Override
-	public ISEGridNode newGridNode(BlockPos pos){
-		return new GridNode(pos);
+	public ISEGridNode newGridNode(BlockPos pos, int numOfParallelConductor){
+		return new GridNode(pos, (byte) numOfParallelConductor);
 	}
 	
 	@Override

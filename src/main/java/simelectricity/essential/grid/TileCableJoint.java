@@ -30,7 +30,7 @@ public class TileCableJoint extends SEEnergyTile implements ISECableTile, ISEGri
     @Override
     public double getMaxRenderDistanceSquared()
     {
-        return 10000;
+        return 100000;
     }
 	
 	@SideOnly(Side.CLIENT)
@@ -100,7 +100,7 @@ public class TileCableJoint extends SEEnergyTile implements ISECableTile, ISEGri
 		
 		this.markTileEntityForS2CSync();
 	}
-	
+
 	public boolean canConnect() {
 		return neighbor == null;
 	}

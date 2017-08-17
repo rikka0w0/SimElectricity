@@ -156,7 +156,7 @@ public class TileTransmissionTower extends SEEnergyTile implements ISEGridTile, 
     @Override
     public double getMaxRenderDistanceSquared()
     {
-        return 10000;
+        return 100000;
     }
 	
 	@SideOnly(Side.CLIENT)

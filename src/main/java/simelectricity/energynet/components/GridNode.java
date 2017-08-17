@@ -15,9 +15,11 @@ public class GridNode extends SEComponent implements ISEGridNode{
 	
 	//0 - transmission line 1 - transformer primary 2 - transformer secondary
 	public byte type;
+	private byte numOfParallelConductor;
 	//Transformer secondary/primary
 	public GridNode complement;
 	public double ratio, resistance;
+	
 	
 	//Only stores resistances between GridNodes!
 	public LinkedList<Double> neighborR = new LinkedList<Double>();
@@ -32,9 +34,10 @@ public class GridNode extends SEComponent implements ISEGridNode{
 	private double[] resistancesBuf;
 	private int complementX, complementY, complementZ;
 		
-	public GridNode(BlockPos pos){
+	public GridNode(BlockPos pos, byte numOfParallelConductor){
 		this.pos = pos;
 		this.type = ISEGridNode.ISEGridNode_Wire;
+		this.numOfParallelConductor = numOfParallelConductor;;
 	}
 	
 	///////////////////////
@@ -48,6 +51,8 @@ public class GridNode extends SEComponent implements ISEGridNode{
 				nbt.getInteger("z")
 				);
 		this.type = nbt.getByte("type");
+		this.numOfParallelConductor = nbt.getByte("numOfParallelConductor");
+		
 		this.neighborX = nbt.getIntArray("neigborX");
 		this.neighborY = nbt.getIntArray("neigborY");
 		this.neighborZ = nbt.getIntArray("neigborZ");
@@ -81,12 +86,13 @@ public class GridNode extends SEComponent implements ISEGridNode{
 	///////////////////////
 	/// Save to NBT
 	///////////////////////
-	public void writeToNBT(NBTTagCompound nbt) {	
-		nbt.setByte("type", type);
+	public void writeToNBT(NBTTagCompound nbt) {
 		nbt.setInteger("x", pos.getX());
 		nbt.setInteger("y", pos.getY());
 		nbt.setInteger("z", pos.getZ());
-		
+		nbt.setByte("type", type);
+		nbt.setByte("numOfParallelConductor", numOfParallelConductor);
+
 		int length = 0;
 		for (SEComponent neighbor : neighbors){
 			if (neighbor instanceof GridNode)
@@ -138,7 +144,9 @@ public class GridNode extends SEComponent implements ISEGridNode{
 		return Double.NaN;
 	}
 	
-	//ISEGridObject -----------------------------
+	///////////////////////////////
+	///ISEGridNode
+	///////////////////////////////
 	@Override
 	public ISEGridNode[] getNeighborList(){
 		ISEGridNode[] ret = new ISEGridNode[this.neighbors.size()];
@@ -158,5 +166,10 @@ public class GridNode extends SEComponent implements ISEGridNode{
 	@Override
 	public int getType() {
 		return this.type;
+	}
+
+	@Override
+	public byte numOfParallelConductor() {
+		return numOfParallelConductor;
 	}
 }

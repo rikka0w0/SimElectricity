@@ -37,6 +37,7 @@ chat.sime_essential:tranmission_tower_too_many_connection=Too many connection!
 chat.sime_essential:tranmission_tower_connected=Connected!
 chat.sime_essential:tranmission_tower_current_selection_invalid=Current selection is invalid!
 chat.sime_essential:tranmission_tower_last_selection_invalid=Previous selected tower has been removed!
+chat.sime_essential:tranmission_tower_type_mismatch=Number of conductor doesn't match!
 
 # Gui
 gui.sime_essential:redstone_toggle_behavior=Toggle Behavior
