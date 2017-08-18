@@ -34,7 +34,7 @@ public class SingleTextureModel implements IModel{
 	public SingleTextureModel(String domain, String texture, boolean isBlock) throws Exception{
 		String resPath = domain + ":" + (isBlock ? "blocks/":"items/") + texture;
 		
-		Variant variant = new SimpleTextureVariant(resPath, false);
+		Variant variant = new SimpleTextureVariant(resPath, isBlock);
 		ResourceLocation loc = variant.getModelLocation();
         locations.add(loc);
         

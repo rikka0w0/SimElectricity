@@ -58,7 +58,7 @@ public class SEMachineStateMapper extends StateMapperBase{
 	public void register(SEMachineBlock block){
 		ModelLoader.setCustomStateMapper(block, this);
 		
-		ItemBlock itemBlock = block.getItemBlock();
+		ItemBlock itemBlock = block.itemBlock;
 		for (int meta: block.propertyMeta.getAllowedValues()){
 			IBlockState blockState = block.getStateFromMeta(meta);
 			ModelResourceLocation res = this.getModelResourceLocation(blockState);

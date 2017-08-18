@@ -11,7 +11,6 @@ import org.apache.commons.lang3.tuple.Pair;
 import simelectricity.essential.common.semachine.ExtendedProperties;
 
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
@@ -100,8 +99,7 @@ public class SEMachineModel implements IPerspectiveAwareModel {
 	@Override
 	public List<BakedQuad> getQuads(@Nullable IBlockState blockState, @Nullable EnumFacing side, long rand) {
 	    if (!(blockState instanceof IExtendedBlockState))
-	    	//Normally this should not happen, just in case, to prevent crashing
-	    	return firstState[2].getQuads(blockState, side, rand);
+	    	return firstState[2].getQuads(blockState, side, rand);	//Item Model
 				
 		IExtendedBlockState exBlockState = (IExtendedBlockState)blockState;
 		EnumFacing facing = exBlockState.getValue(ExtendedProperties.propertyFacing);
@@ -122,7 +120,4 @@ public class SEMachineModel implements IPerspectiveAwareModel {
         
 		return quads;
 	}
-	
-	private final TextureAtlasSprite texture = Minecraft.getMinecraft().getTextureMapBlocks()
-            .getAtlasSprite("minecraft:blocks/diamond_block");
 }

@@ -75,19 +75,19 @@ public class ClientProxy extends CommonProxy{
 		
 		CableStateMapper cStateMapper = new CableStateMapper(Essential.modID);
 		cStateMapper.register(BlockRegistry.blockCable);
-		loader.registerInventoryIcon(BlockRegistry.blockCable.getItemBlock());
+		loader.registerInventoryIcon(BlockRegistry.blockCable.itemBlock);
 		
 		GridStateMapper gStateMapper = new GridStateMapper(Essential.modID);
 		gStateMapper.register(BlockRegistry.cableJoint);
-		loader.registerInventoryIcon(BlockRegistry.cableJoint.getItemBlock());
+		loader.registerInventoryIcon(BlockRegistry.cableJoint.itemBlock);
 		gStateMapper.register(BlockRegistry.transmissionTowerBottom);
-		loader.registerInventoryIcon(BlockRegistry.transmissionTowerBottom.getItemBlock());
+		loader.registerInventoryIcon(BlockRegistry.transmissionTowerBottom.itemBlock);
 		gStateMapper.register(BlockRegistry.transmissionTowerCollisionBox);
-		loader.registerInventoryIcon(BlockRegistry.transmissionTowerCollisionBox.getItemBlock());
+		loader.registerInventoryIcon(BlockRegistry.transmissionTowerCollisionBox.itemBlock);
 		gStateMapper.register(BlockRegistry.transmissionTowerTop);
-		loader.registerInventoryIcon(BlockRegistry.transmissionTowerTop.getItemBlock());
+		loader.registerInventoryIcon(BlockRegistry.transmissionTowerTop.itemBlock);
 		gStateMapper.register(BlockRegistry.transmissionTower2);
-		loader.registerInventoryIcon(BlockRegistry.transmissionTower2.getItemBlock());
+		loader.registerInventoryIcon(BlockRegistry.transmissionTower2.itemBlock);
 		
 		
 		//Initialize socket render and support render

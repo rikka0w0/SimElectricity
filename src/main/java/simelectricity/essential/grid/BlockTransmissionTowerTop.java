@@ -88,10 +88,6 @@ public class BlockTransmissionTowerTop extends SEModelBlock implements ITileEnti
 		
 	    @Override
 	    public boolean placeBlockAt(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, IBlockState newState){
-	    	int facing = 8 - MathHelper.floor((player.rotationYaw) * 8.0F / 360.0F + 0.5D) & 7;
-	    	int type = stack.getItemDamage();
-	    	newState = newState.withProperty(Properties.propertyType, type).withProperty(Properties.propertyFacing, facing);
-	    	
 	    	//Place center block
 	    	BlockPos centerPos = pos.add(0, 18, 0);  	
 	    	
@@ -250,6 +246,14 @@ public class BlockTransmissionTowerTop extends SEModelBlock implements ITileEnti
 	@Override
 	public int damageDropped(IBlockState state){
 		return state.getValue(Properties.propertyType);
+	}
+	
+	@Override
+	public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int damage, EntityLivingBase placer) {
+		IBlockState state = super.getStateForPlacement(world, pos, facing, hitX, hitY, hitZ, damage, placer);
+		int facingInt = 8 - MathHelper.floor((placer.rotationYaw) * 8.0F / 360.0F + 0.5D) & 7;
+    	int type = damage;
+    	return state.withProperty(Properties.propertyType, type).withProperty(Properties.propertyFacing, facingInt);
 	}
 	
     @Override

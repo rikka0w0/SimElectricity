@@ -17,7 +17,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 
 public abstract class SEBlock extends Block{
-	protected final SEItemBlock itemBlock;
+	public final SEItemBlock itemBlock;
 	
     public SEBlock(String unlocalizedName, Material material, Class<? extends SEItemBlock> itemBlockClass) {
         super(material);
@@ -46,10 +46,6 @@ public abstract class SEBlock extends Block{
     	}else{
     		super.getSubBlocks(itemIn, tab, subItems);
     	}
-    }
-    
-    public final SEItemBlock getItemBlock(){
-    	return this.itemBlock;
     }
     
     protected void beforeRegister(){}

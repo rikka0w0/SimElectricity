@@ -66,11 +66,7 @@ public class BlockTransmissionTower2 extends SEModelBlock implements ITileEntity
 		
 	    @Override
 	    public boolean placeBlockAt(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, IBlockState newState){
-	    	int facing = 4 - MathHelper.floor((player.rotationYaw) * 4.0F / 360.0F + 0.5D) & 3;
-	    	int type = stack.getItemDamage();
-	    	newState = newState.withProperty(Properties.propertyType, type)
-	    			.withProperty(Properties.propertyIsRod, false)
-	    			.withProperty(Properties.propertyFacing2, facing);
+	    	int facing = newState.getValue(Properties.propertyFacing2);
 	    	
 	    	for (BlockInfo blockInfo: getRodBlockOffsets(newState))
 	    		world.setBlockState(blockInfo.getRealPos(pos), BlockRegistry.transmissionTower2.getStateFromMeta(blockInfo.part));
@@ -147,6 +143,16 @@ public class BlockTransmissionTower2 extends SEModelBlock implements ITileEntity
 		return state.getValue(Properties.propertyType);
 	}
     
+	@Override
+	public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int damage, EntityLivingBase placer) {
+		IBlockState state = super.getStateForPlacement(world, pos, facing, hitX, hitY, hitZ, damage, placer);
+    	int facingInt = 4 - MathHelper.floor((placer.rotationYaw) * 4.0F / 360.0F + 0.5D) & 3;
+    	int type = damage;
+    	return state.withProperty(Properties.propertyType, type)
+    			.withProperty(Properties.propertyIsRod, false)
+    			.withProperty(Properties.propertyFacing2, facingInt);
+	}
+	
 	@Override
 	public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player){
 		TileEntity te = getCenterTileFromRodPos(world, pos);
