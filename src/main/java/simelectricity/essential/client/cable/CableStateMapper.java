@@ -1,6 +1,7 @@
 package simelectricity.essential.client.cable;
 
 import simelectricity.essential.cable.BlockCable;
+import simelectricity.essential.client.ISEModelLoader;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -11,7 +12,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
-public class CableStateMapper extends StateMapperBase{
+public class CableStateMapper extends StateMapperBase implements ISEModelLoader {
 	public final static String VPATH = "virtual/blockstates/standardcable";
 	public final String domain;
 	
@@ -44,11 +45,13 @@ public class CableStateMapper extends StateMapperBase{
 		return null;
 	}
 
-	public static boolean accepts(String resPath){
+	@Override
+	public boolean accepts(String resPath){
 		return resPath.startsWith(VPATH);
 	}
 	
-	public static IModel loadModel(String domain, String resPath, String variantStr) throws Exception {
+	@Override
+	public IModel loadModel(String domain, String resPath, String variantStr) throws Exception {
 		String[] splited = variantStr.split(",");
 		String name = splited[0];
 		float thickness = Float.parseFloat(splited[1]);

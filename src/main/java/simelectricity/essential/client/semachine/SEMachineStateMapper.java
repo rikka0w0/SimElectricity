@@ -1,5 +1,6 @@
 package simelectricity.essential.client.semachine;
 
+import simelectricity.essential.client.ISEModelLoader;
 import simelectricity.essential.common.semachine.SEMachineBlock;
 
 import net.minecraft.block.Block;
@@ -13,7 +14,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
-public class SEMachineStateMapper extends StateMapperBase{
+public class SEMachineStateMapper extends StateMapperBase implements ISEModelLoader {
 	public final static String VPATH = "virtual/blockstates/semachine";
 	public final String domain;
 	
@@ -44,11 +45,13 @@ public class SEMachineStateMapper extends StateMapperBase{
 		return null;
 	}
 
-	public static boolean accepts(String resPath){
+	@Override
+	public boolean accepts(String resPath){
 		return resPath.startsWith(VPATH);
 	}
 	
-	public static IModel loadModel(String domain, String resPath, String variantStr) throws Exception {
+	@Override
+	public IModel loadModel(String domain, String resPath, String variantStr) throws Exception {
 		boolean has2State = variantStr.startsWith("2");
 		variantStr = variantStr.substring(1);
 		IModel model = new SEMachineRawModel(domain, variantStr, has2State);

@@ -70,14 +70,17 @@ public class ClientProxy extends CommonProxy{
 		loader.registerInventoryIcon(ItemRegistry.itemTools);
 		
 		SEMachineStateMapper semStateMapper = new SEMachineStateMapper(Essential.modID);
+		loader.registerModelLoader(semStateMapper);
 		semStateMapper.register(BlockRegistry.blockElectronics);
 		semStateMapper.register(BlockRegistry.blockTwoPortElectronics);
 		
 		CableStateMapper cStateMapper = new CableStateMapper(Essential.modID);
+		loader.registerModelLoader(cStateMapper);
 		cStateMapper.register(BlockRegistry.blockCable);
 		loader.registerInventoryIcon(BlockRegistry.blockCable.itemBlock);
 		
 		GridStateMapper gStateMapper = new GridStateMapper(Essential.modID);
+		loader.registerModelLoader(gStateMapper);
 		gStateMapper.register(BlockRegistry.cableJoint);
 		loader.registerInventoryIcon(BlockRegistry.cableJoint.itemBlock);
 		gStateMapper.register(BlockRegistry.powerPoleBottom);
@@ -88,6 +91,9 @@ public class ClientProxy extends CommonProxy{
 		loader.registerInventoryIcon(BlockRegistry.powerPoleTop.itemBlock);
 		gStateMapper.register(BlockRegistry.powerPole2);
 		loader.registerInventoryIcon(BlockRegistry.powerPole2.itemBlock);
+		gStateMapper.register(BlockRegistry.powerTransformer);
+		//loader.registerInventoryIcon(BlockRegistry.powerTransformer.itemBlock);
+		
 		
 		
 		//Initialize socket render and support render

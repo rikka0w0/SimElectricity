@@ -1,8 +1,8 @@
 package simelectricity.essential.client;
 
-import simelectricity.essential.client.cable.CableStateMapper;
-import simelectricity.essential.client.grid.GridStateMapper;
-import simelectricity.essential.client.semachine.SEMachineStateMapper;
+import java.util.HashSet;
+import java.util.Set;
+
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.resources.IResourceManager;
@@ -22,6 +22,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class CustomModelLoader implements ICustomModelLoader{
 	public final static String PATH_STI = "virtual/sti/";
 	
+	private final Set<ISEModelLoader> registeredLoaders = new HashSet();
 	public final String domain;
 	public CustomModelLoader(String domain){
 		this.domain = domain;
@@ -41,18 +42,14 @@ public class CustomModelLoader implements ICustomModelLoader{
 			return false;
 		
 		String resPath = modelLocation.getResourcePath();
-		if (resPath.startsWith(PATH_STI))
+		if (resPath.startsWith(PATH_STI)) {
 			return true;	//SimpleTextureItem
-		
-		else if (SEMachineStateMapper.accepts(resPath))
-			return true;
+		} else {
+			for (ISEModelLoader loader: registeredLoaders)
+				if (loader.accepts(resPath))
+					return true;
+		}
 
-		else if (CableStateMapper.accepts(resPath))
-			return true;
-		
-		else if (GridStateMapper.accepts(resPath))
-			return true;
-		
 		return false;
 	}
 	
@@ -66,24 +63,19 @@ public class CustomModelLoader implements ICustomModelLoader{
 		if (resPath.startsWith(PATH_STI)){
 			resPath = resPath.substring(PATH_STI.length());
 			return new SingleTextureModel(this.domain, resPath, false);	//SimpleTextureItem
-		}
-		
-		else if (SEMachineStateMapper.accepts(resPath)){
-			String variantStr = ((ModelResourceLocation)modelLocation).getVariant();
-			return SEMachineStateMapper.loadModel(domain, resPath, variantStr);
-		}
-		
-		else if (CableStateMapper.accepts(resPath)){
-			String variantStr = ((ModelResourceLocation)modelLocation).getVariant();
-			return CableStateMapper.loadModel(domain, resPath, variantStr);
-		}
-		
-		else if (GridStateMapper.accepts(resPath)) {
-			String variantStr = ((ModelResourceLocation)modelLocation).getVariant();
-			return GridStateMapper.loadModel(domain, resPath, variantStr);
+		} else {
+			for (ISEModelLoader loader: registeredLoaders)
+				if (loader.accepts(resPath)) {
+					String variantStr = ((ModelResourceLocation)modelLocation).getVariant();
+					return loader.loadModel(domain, resPath, variantStr);
+				}
 		}
 		
 		return null;
+	}
+	
+	public void registerModelLoader(ISEModelLoader loader) {
+		registeredLoaders.add(loader);
 	}
 	
 	public void registerInventoryIcon(Item item) {

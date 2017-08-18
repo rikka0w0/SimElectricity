@@ -4,11 +4,16 @@ import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.StateMapperBase;
+import net.minecraft.item.ItemBlock;
 import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.ModelLoader;
+import simelectricity.essential.client.ISEModelLoader;
+import simelectricity.essential.client.SingleTextureModel;
 import simelectricity.essential.grid.Properties;
+import simelectricity.essential.grid.transformer.BlockPowerTransformer;
+import simelectricity.essential.grid.transformer.EnumBlockType;
 
-public class GridStateMapper extends StateMapperBase{
+public class GridStateMapper extends StateMapperBase implements ISEModelLoader {
 	public final static String VPATH = "virtual/blockstates/grid";
 	public final String domain;
 	
@@ -49,12 +54,17 @@ public class GridStateMapper extends StateMapperBase{
 			facing = state.getValue(Properties.propertyFacing2);
 			varStr = name + "," + facing + "," + type + "," + isRod;
 			break;
+		case "essential_powertransformer":
+			type = state.getValue(EnumBlockType.property).ordinal();
+			varStr = name + "," + type;
+			break;
 		}
 		ModelResourceLocation res = new ModelResourceLocation(this.domain + ":" + VPATH, varStr);
 		return res;
 	}
 	
-	public static IModel loadModel(String domain, String resPath, String variantStr) throws Exception {
+	@Override
+	public IModel loadModel(String domain, String resPath, String variantStr) throws Exception {
 		String[] splited = variantStr.split(",");
 		String name = splited[0];
 		
@@ -62,6 +72,7 @@ public class GridStateMapper extends StateMapperBase{
 		int type;
 		boolean isRod;
 		int facing;
+		EnumBlockType blockType;
 		switch (name) {
 		case "essential_cable_joint":
 			facing = Integer.parseInt(splited[1]);
@@ -80,16 +91,32 @@ public class GridStateMapper extends StateMapperBase{
 			type = Integer.parseInt(splited[2]);
 			isRod = Boolean.parseBoolean(splited[3]);
 			return new PowerPole2RawModel(facing, type, isRod);		
+		case "essential_powertransformer":
+			type = Integer.parseInt(splited[1]);
+			blockType = EnumBlockType.fromInt(type);
+			return new SingleTextureModel(domain, "powertransformer_"+blockType.getName(), true);
 		}
 		
 		return null;
 	}
 	
-	public static boolean accepts(String resPath){
+	@Override
+	public boolean accepts(String resPath){
 		return resPath.startsWith(VPATH);
 	}
 	
 	public void register(Block block){
 		ModelLoader.setCustomStateMapper(block, this);
+		
+		if (block instanceof BlockPowerTransformer) {
+			ItemBlock itemBlock = ((BlockPowerTransformer)block).itemBlock;
+			for (EnumBlockType blockType: EnumBlockType.values){
+				IBlockState blockState = ((BlockPowerTransformer)block).stateFromType(blockType);
+				int meta = block.getMetaFromState(blockState);
+				ModelResourceLocation res = this.getModelResourceLocation(blockState);
+				//Also register inventory variants here
+				ModelLoader.setCustomModelResourceLocation(itemBlock, meta, res);
+			}
+		}
 	}
 }

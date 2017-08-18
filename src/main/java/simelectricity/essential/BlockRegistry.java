@@ -14,6 +14,7 @@ import simelectricity.essential.grid.BlockPowerPoleTop;
 import simelectricity.essential.grid.TileCableJoint;
 import simelectricity.essential.grid.TilePowerPole;
 import simelectricity.essential.grid.TilePowerPole2;
+import simelectricity.essential.grid.transformer.BlockPowerTransformer;
 import simelectricity.essential.machines.BlockElectronics;
 import simelectricity.essential.machines.BlockTwoPortElectronics;
 import simelectricity.essential.machines.gui.ContainerAdjustableResistor;
@@ -42,6 +43,7 @@ public class BlockRegistry {
 	public static BlockPowerPoleCollisionBox powerPoleCollisionBox;
 	public static BlockCableJoint cableJoint;
 	public static BlockPowerPole2 powerPole2;
+	public static BlockPowerTransformer powerTransformer;
 	
 	public static BlockElectronics blockElectronics;
 	public static BlockTwoPortElectronics blockTwoPortElectronics;
@@ -54,6 +56,7 @@ public class BlockRegistry {
 		powerPoleCollisionBox = new BlockPowerPoleCollisionBox();
 		cableJoint = new BlockCableJoint();
 		powerPole2 = new BlockPowerPole2();
+		powerTransformer = new BlockPowerTransformer();
 		
 		blockElectronics = new BlockElectronics();
 		blockTwoPortElectronics = new BlockTwoPortElectronics();
