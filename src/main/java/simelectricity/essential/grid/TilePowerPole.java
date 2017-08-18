@@ -12,16 +12,18 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import simelectricity.api.node.ISEGridNode;
 import simelectricity.api.tile.ISEGridTile;
-import simelectricity.essential.client.grid.ISETransmissionTower;
-import simelectricity.essential.client.grid.TransmissionLineRenderHelper;
+import simelectricity.essential.client.grid.ISEPowerPole;
+import simelectricity.essential.client.grid.PowerPoleRenderHelper;
 import simelectricity.essential.common.SEEnergyTile;
 import simelectricity.essential.utils.Utils;
+import simelectricity.essential.utils.math.SEMathHelper;
 import simelectricity.essential.utils.math.Vec3f;
 
 
-public class TileTransmissionTower extends SEEnergyTile implements ISEGridTile, ISETransmissionTower{
+public class TilePowerPole extends SEEnergyTile implements ISEGridTile, ISEPowerPole{
 	private BlockPos neighbor1, neighbor2;
-	private TransmissionLineRenderHelper renderHelper;
+	@SideOnly(Side.CLIENT)
+    private PowerPoleRenderHelper renderHelper;
 	
 	@SideOnly(Side.CLIENT)
 	protected int getTypeFromMeta(){
@@ -29,12 +31,12 @@ public class TileTransmissionTower extends SEEnergyTile implements ISEGridTile, 
 	}
 	
 	@SideOnly(Side.CLIENT)
-	protected TransmissionLineRenderHelper createRenderHelper(){
-		TransmissionLineRenderHelper helper;
+	protected PowerPoleRenderHelper createRenderHelper(){
+		PowerPoleRenderHelper helper;
 		int rotation = getBlockMetadata() & 7;
 		
 		if (getTypeFromMeta() == 0) {
-			helper = new TransmissionLineRenderHelper(world, pos, rotation, 2, 3) {
+			helper = new PowerPoleRenderHelper(world, pos, rotation, 2, 3) {
 				@Override
 				public void updateRenderData(BlockPos... neighborPosList) {
 					super.updateRenderData(neighborPosList);
@@ -46,14 +48,14 @@ public class TileTransmissionTower extends SEEnergyTile implements ISEGridTile, 
 		    		ConnectionInfo[] connection2 = this.connectionInfo.getLast();
 		    		
 		    		Vec3f pos = new Vec3f(
-		    		3.95F * MathHelper.sin(this.rotation/180F*TransmissionLineRenderHelper.pi) + 0.5F + this.pos.getX(),
+		    		3.95F * MathHelper.sin(this.rotation/180F*SEMathHelper.PI) + 0.5F + this.pos.getX(),
 		    		this.pos.getY() + 23 -18,
-		    		3.95F * MathHelper.cos(this.rotation/180F*TransmissionLineRenderHelper.pi) + 0.5F + this.pos.getZ()
+		    		3.95F * MathHelper.cos(this.rotation/180F*SEMathHelper.PI) + 0.5F + this.pos.getZ()
 		    		);
 		    		
 		    		extraWires.add(Pair.of(connection1[1].fixedFrom, pos));
 		    		extraWires.add(Pair.of(pos, connection2[1].fixedFrom));
-		    		if (TransmissionLineRenderHelper.hasIntersection(
+		    		if (PowerPoleRenderHelper.hasIntersection(
 		    				connection1[0].fixedFrom, connection2[0].fixedFrom,
 		    				connection1[2].fixedFrom, connection2[2].fixedFrom)) {
 		    			extraWires.add(Pair.of(connection1[0].fixedFrom, connection2[2].fixedFrom));
@@ -75,7 +77,7 @@ public class TileTransmissionTower extends SEEnergyTile implements ISEGridTile, 
 					helper.createInsulator(2, 1, 0, 4.5F)
 					);
 		}else {
-			helper = new TransmissionLineRenderHelper(world, pos, rotation, 1, 3);
+			helper = new PowerPoleRenderHelper(world, pos, rotation, 1, 3);
 			helper.addInsulatorGroup(0, 5, 3.95F,
 					helper.createInsulator(0, 0, -2, -4.9F),
 					helper.createInsulator(0, 0, 5, 3.95F),
@@ -99,7 +101,7 @@ public class TileTransmissionTower extends SEEnergyTile implements ISEGridTile, 
 	
 	@SideOnly(Side.CLIENT)
 	@Override
-	public TransmissionLineRenderHelper getRenderHelper() {
+	public PowerPoleRenderHelper getRenderHelper() {
         //Create renderHelper on client side
         if (world.isRemote){
 			if (renderHelper == null)
@@ -194,7 +196,7 @@ public class TileTransmissionTower extends SEEnergyTile implements ISEGridTile, 
 			return;
 		
 		TileEntity neighbor = world.getTileEntity(neighborPos);
-		if (neighbor instanceof ISETransmissionTower)
-			((ISETransmissionTower)neighbor).updateRenderInfo();
+		if (neighbor instanceof ISEPowerPole)
+			((ISEPowerPole)neighbor).updateRenderInfo();
 	}
 }

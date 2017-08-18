@@ -43,11 +43,11 @@ import simelectricity.essential.common.ISESubBlock;
 import simelectricity.essential.common.SEItemBlock;
 import simelectricity.essential.common.UnlistedNonNullProperty;
 
-public class BlockTransmissionTower2 extends SEModelBlock implements ITileEntityProvider, ISESubBlock, ISEHVCableConnector{
+public class BlockPowerPole2 extends SEModelBlock implements ITileEntityProvider, ISESubBlock, ISEHVCableConnector{
 	public static final String[] subNames = {"0" , "1"};
 	
-	public BlockTransmissionTower2() {
-		super("essential_transmission_tower2", Material.GLASS, ItemBlock.class);
+	public BlockPowerPole2() {
+		super("essential_powerpole2", Material.GLASS, ItemBlock.class);
 	}
 
 	@Override
@@ -61,7 +61,7 @@ public class BlockTransmissionTower2 extends SEModelBlock implements ITileEntity
 		@Override
 		@SideOnly(Side.CLIENT)
 		public String getIconName(int damage) {
-			return "essential_transmission_tower2_" + damage;
+			return "essential_powerpole2_" + damage;
 		}
 		
 	    @Override
@@ -69,11 +69,11 @@ public class BlockTransmissionTower2 extends SEModelBlock implements ITileEntity
 	    	int facing = newState.getValue(Properties.propertyFacing2);
 	    	
 	    	for (BlockInfo blockInfo: getRodBlockOffsets(newState))
-	    		world.setBlockState(blockInfo.getRealPos(pos), BlockRegistry.transmissionTower2.getStateFromMeta(blockInfo.part));
+	    		world.setBlockState(blockInfo.getRealPos(pos), BlockRegistry.powerPole2.getStateFromMeta(blockInfo.part));
 	    	
 			int cbtype = (facing == 0 || facing == 2) ? 9 : 10;
 	    	for (Vec3i posXZOffset: getCollisionBoxBlockXZOffsets(newState))
-	    		world.setBlockState(pos.up(11).add(posXZOffset), BlockRegistry.transmissionTowerCollisionBox.getStateFromMeta(cbtype));
+	    		world.setBlockState(pos.up(11).add(posXZOffset), BlockRegistry.powerPoleCollisionBox.getStateFromMeta(cbtype));
 	    	
 	    	//metedata [type][isRod][rotation]
 	    	return super.placeBlockAt(stack, player, world, pos.up(11), side, hitX, hitY, hitZ, newState);
@@ -156,7 +156,7 @@ public class BlockTransmissionTower2 extends SEModelBlock implements ITileEntity
 	@Override
 	public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player){
 		TileEntity te = getCenterTileFromRodPos(world, pos);
-		if (te instanceof TileTransmissionTower2)
+		if (te instanceof TilePowerPole)
 			return new ItemStack(itemBlock, 1, damageDropped(world.getBlockState(te.getPos())));
 		
 		return null;
@@ -206,7 +206,7 @@ public class BlockTransmissionTower2 extends SEModelBlock implements ITileEntity
 	    	for (Vec3i posXZOffset: getCollisionBoxBlockXZOffsets(state)){
 	    		BlockPos cbPos = pos.add(posXZOffset);
 	    		IBlockState cbState = world.getBlockState(cbPos);
-	    		if (cbState.getBlock() == BlockRegistry.transmissionTowerCollisionBox)
+	    		if (cbState.getBlock() == BlockRegistry.powerPoleCollisionBox)
 	    			world.setBlockToAir(cbPos);
 	    	}
 		}
@@ -218,7 +218,7 @@ public class BlockTransmissionTower2 extends SEModelBlock implements ITileEntity
 	@Override
 	public TileEntity createNewTileEntity(World world, int meta) {
 		if (!this.getStateFromMeta(meta).getValue(Properties.propertyIsRod))
-			return new TileTransmissionTower2();
+			return new TilePowerPole2();
 		return null;
 	}
 	
@@ -382,8 +382,8 @@ public class BlockTransmissionTower2 extends SEModelBlock implements ITileEntity
 	public boolean canHVCableConnect(World world, BlockPos pos) {
 		TileEntity te = getCenterTileFromRodPos(world, pos);
 		
-		if (te instanceof TileTransmissionTower2)
-			return ((TileTransmissionTower2) te).canConnect();
+		if (te instanceof TilePowerPole)
+			return ((TilePowerPole) te).canConnect();
 		else
 			return false;
 	}

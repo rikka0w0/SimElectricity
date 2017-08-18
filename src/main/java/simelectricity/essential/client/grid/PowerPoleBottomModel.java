@@ -13,12 +13,12 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.Vec3i;
 import net.minecraftforge.client.MinecraftForgeClient;
 import simelectricity.essential.client.BlockRenderModel;
-import simelectricity.essential.grid.BlockTransmissionTowerBottom;
+import simelectricity.essential.grid.BlockPowerPoleBottom;
 
-public class TransmissionTowerBottomModel extends BlockRenderModel {
+public class PowerPoleBottomModel extends BlockRenderModel {
 	private final TextureAtlasSprite texture;
 	private final LinkedList<BakedQuad> quads;
-	public TransmissionTowerBottomModel(int facing, TextureAtlasSprite texture) {
+	public PowerPoleBottomModel(int facing, TextureAtlasSprite texture) {
 		this.texture = texture;
 		this.quads = new LinkedList();
 	
@@ -51,7 +51,7 @@ public class TransmissionTowerBottomModel extends BlockRenderModel {
 			break;	
 		}
 		
-		Vec3i offset = BlockTransmissionTowerBottom.getCenterBoxOffset(facing);
+		Vec3i offset = BlockPowerPoleBottom.getCenterBoxOffset(facing);
 		Models.renderTower0Bottom(texture).rotateAroundY(rotation).transform(0.5+offset.getX(), 0, 0.5+offset.getZ()).bake(quads);
 	}
 

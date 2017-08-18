@@ -51,14 +51,14 @@ import simelectricity.essential.common.ISESubBlock;
 import simelectricity.essential.common.SEItemBlock;
 import simelectricity.essential.common.UnlistedNonNullProperty;
 
-public class BlockTransmissionTowerTop extends SEModelBlock implements ITileEntityProvider, ISESubBlock{
+public class BlockPowerPoleTop extends SEModelBlock implements ITileEntityProvider, ISESubBlock{
 	public static final String[] subNames = {"0","1"};
 	
 	///////////////////
 	/// Initialize
 	///////////////////
-	public BlockTransmissionTowerTop() {
-		super("essential_transmission_tower", Material.GLASS, ItemBlock.class);
+	public BlockPowerPoleTop() {
+		super("essential_powerpole", Material.GLASS, ItemBlock.class);
 	}
 
 	@Override
@@ -74,7 +74,7 @@ public class BlockTransmissionTowerTop extends SEModelBlock implements ITileEnti
 
     @Override
     public TileEntity createNewTileEntity(World world, int meta) {
-        return new TileTransmissionTower();
+        return new TilePowerPole();
     }
 	
 	public static class ItemBlock extends SEItemBlock implements ISESimpleTextureItem{
@@ -83,7 +83,7 @@ public class BlockTransmissionTowerTop extends SEModelBlock implements ITileEnti
 		@Override
 		@SideOnly(Side.CLIENT)
 		public String getIconName(int damage) {
-			return "essential_transmission_tower_" + damage;
+			return "essential_powerpole_" + damage;
 		}
 		
 	    @Override
@@ -93,15 +93,15 @@ public class BlockTransmissionTowerTop extends SEModelBlock implements ITileEnti
 	    	
 			for (BlockInfo info: getCollisionBoxBlockOffsets(newState)){
 				BlockPos realPos = info.getRealPos(centerPos);
-				world.setBlockState(realPos, BlockRegistry.transmissionTowerCollisionBox.getStateFromMeta(info.part));
+				world.setBlockState(realPos, BlockRegistry.powerPoleCollisionBox.getStateFromMeta(info.part));
 			}
 	    	
 	    	boolean ret = super.placeBlockAt(stack, player, world, centerPos, side, hitX, hitY, hitZ, newState);
 	    	
 	    	//Place base blocks
-	    	for (BlockInfo info: BlockTransmissionTowerBottom.getBaseBlockCoordOffsets(newState)){
+	    	for (BlockInfo info: BlockPowerPoleBottom.getBaseBlockCoordOffsets(newState)){
 	    		BlockPos realPos = info.getRealPos(pos);
-	    		world.setBlockState(realPos, BlockRegistry.transmissionTowerBottom.getStateFromMeta(info.part));
+	    		world.setBlockState(realPos, BlockRegistry.powerPoleBottom.getStateFromMeta(info.part));
 	    	}
 	    	
 	    	return ret;
@@ -164,7 +164,7 @@ public class BlockTransmissionTowerTop extends SEModelBlock implements ITileEnti
 	};
 	
 	private static BlockInfo createCollisionBoxCoordOffset(int facing, int x, int y, int z, int part) {
-		return new BlockInfo(BlockTransmissionTowerBottom.rotateCoord(facing, x, y, z), collisionBoxCoordOffsetMatrix[facing][part]);
+		return new BlockInfo(BlockPowerPoleBottom.rotateCoord(facing, x, y, z), collisionBoxCoordOffsetMatrix[facing][part]);
 	}
 	
 	public static LinkedList<BlockInfo> getCollisionBoxBlockOffsets(IBlockState state){
@@ -274,14 +274,14 @@ public class BlockTransmissionTowerTop extends SEModelBlock implements ITileEnti
     	
     	for (BlockInfo info: list){
     		BlockPos realPos = info.getRealPos(pos);
-    		if (world.getBlockState(realPos).getBlock() == BlockRegistry.transmissionTowerCollisionBox)
+    		if (world.getBlockState(realPos).getBlock() == BlockRegistry.powerPoleCollisionBox)
     			world.setBlockToAir(realPos);
     	}
     	
-    	list = BlockTransmissionTowerBottom.getBaseBlockCoordOffsets(state);
+    	list = BlockPowerPoleBottom.getBaseBlockCoordOffsets(state);
     	for (BlockInfo info: list){
     		BlockPos realPos = info.getRealPos(pos).add(0, -18, 0);
-    		if (world.getBlockState(realPos).getBlock() == BlockRegistry.transmissionTowerBottom)
+    		if (world.getBlockState(realPos).getBlock() == BlockRegistry.powerPoleBottom)
     			world.setBlockToAir(realPos);
     	}
     	

@@ -7,13 +7,13 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import simelectricity.essential.cable.BlockCable;
 import simelectricity.essential.cable.TileCable;
 import simelectricity.essential.grid.BlockCableJoint;
-import simelectricity.essential.grid.BlockTransmissionTower2;
-import simelectricity.essential.grid.BlockTransmissionTowerBottom;
-import simelectricity.essential.grid.BlockTransmissionTowerCollisionBox;
-import simelectricity.essential.grid.BlockTransmissionTowerTop;
+import simelectricity.essential.grid.BlockPowerPole2;
+import simelectricity.essential.grid.BlockPowerPoleBottom;
+import simelectricity.essential.grid.BlockPowerPoleCollisionBox;
+import simelectricity.essential.grid.BlockPowerPoleTop;
 import simelectricity.essential.grid.TileCableJoint;
-import simelectricity.essential.grid.TileTransmissionTower;
-import simelectricity.essential.grid.TileTransmissionTower2;
+import simelectricity.essential.grid.TilePowerPole;
+import simelectricity.essential.grid.TilePowerPole2;
 import simelectricity.essential.machines.BlockElectronics;
 import simelectricity.essential.machines.BlockTwoPortElectronics;
 import simelectricity.essential.machines.gui.ContainerAdjustableResistor;
@@ -37,11 +37,11 @@ import simelectricity.essential.machines.tile.TileVoltageMeter;
 public class BlockRegistry {
 	public static BlockCable blockCable;
 	
-	public static BlockTransmissionTowerTop transmissionTowerTop;
-	public static BlockTransmissionTowerBottom transmissionTowerBottom;
-	public static BlockTransmissionTowerCollisionBox transmissionTowerCollisionBox;
+	public static BlockPowerPoleTop powerPoleTop;
+	public static BlockPowerPoleBottom powerPoleBottom;
+	public static BlockPowerPoleCollisionBox powerPoleCollisionBox;
 	public static BlockCableJoint cableJoint;
-	public static BlockTransmissionTower2 transmissionTower2;
+	public static BlockPowerPole2 powerPole2;
 	
 	public static BlockElectronics blockElectronics;
 	public static BlockTwoPortElectronics blockTwoPortElectronics;
@@ -49,11 +49,11 @@ public class BlockRegistry {
 	public static void registerBlocks(){
 		blockCable = new BlockCable();
 		
-		transmissionTowerTop = new BlockTransmissionTowerTop();
-		transmissionTowerBottom = new BlockTransmissionTowerBottom();
-		transmissionTowerCollisionBox = new BlockTransmissionTowerCollisionBox();
+		powerPoleTop = new BlockPowerPoleTop();
+		powerPoleBottom = new BlockPowerPoleBottom();
+		powerPoleCollisionBox = new BlockPowerPoleCollisionBox();
 		cableJoint = new BlockCableJoint();
-		transmissionTower2 = new BlockTransmissionTower2();
+		powerPole2 = new BlockPowerPole2();
 		
 		blockElectronics = new BlockElectronics();
 		blockTwoPortElectronics = new BlockTwoPortElectronics();
@@ -61,9 +61,9 @@ public class BlockRegistry {
 	
 	public static void registerTileEntities(){
 		GameRegistry.registerTileEntity(TileCable.class, "SEECable");
-		GameRegistry.registerTileEntity(TileTransmissionTower.class, "SEETransmissionTower");
+		GameRegistry.registerTileEntity(TilePowerPole.class, "SEEPowerPole");
 		GameRegistry.registerTileEntity(TileCableJoint.class, "SEECableJoint");
-		GameRegistry.registerTileEntity(TileTransmissionTower2.class, "SEETransmissionTower2");
+		GameRegistry.registerTileEntity(TilePowerPole2.class, "SEEPowerPole2");
 		
 		GameRegistry.registerTileEntity(TileVoltageMeter.class, "SEEVoltageMeter");
 		GameRegistry.registerTileEntity(TileQuantumGenerator.class, "SEEQuantumGenerator");

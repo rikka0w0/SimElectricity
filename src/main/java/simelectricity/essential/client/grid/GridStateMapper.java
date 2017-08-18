@@ -31,19 +31,19 @@ public class GridStateMapper extends StateMapperBase{
 			facing = state.getValue(Properties.propertyFacing);
 			varStr = name + "," + facing;
 			break;
-		case "essential_transmission_tower_bottom":
+		case "essential_powerpole_bottom":
 			facing = state.getValue(Properties.propertyFacing);
 			varStr = name + "," + facing;
 			break;
-		case "essential_transmission_tower":
+		case "essential_powerpole":
 			type = state.getValue(Properties.propertyType);
 			facing = state.getValue(Properties.propertyFacing);
 			varStr = name + "," + facing + "," + type;
 			break;
-		case "essential_transmission_tower_collision_box":
+		case "essential_powerpole_collision_box":
 			varStr = name;
 			break;
-		case "essential_transmission_tower2":
+		case "essential_powerpole2":
 			type = state.getValue(Properties.propertyType);
 			isRod = state.getValue(Properties.propertyIsRod);
 			facing = state.getValue(Properties.propertyFacing2);
@@ -66,20 +66,20 @@ public class GridStateMapper extends StateMapperBase{
 		case "essential_cable_joint":
 			facing = Integer.parseInt(splited[1]);
 			return new CableJointRawModel(facing);
-		case "essential_transmission_tower_bottom":
+		case "essential_powerpole_bottom":
 			facing = Integer.parseInt(splited[1]);
-			return new TransmissionTowerBottomRawModel(facing);
-		case "essential_transmission_tower":
+			return new PowerPoleBottomRawModel(facing);
+		case "essential_powerpole":
 			facing = Integer.parseInt(splited[1]);
 			type = Integer.parseInt(splited[2]);
-			return new TransmissionTowerTopRawModel(facing, type);
-		case "essential_transmission_tower_collision_box":
+			return new PowerPoleTopRawModel(facing, type);
+		case "essential_powerpole_collision_box":
 			return new GhostModel();
-		case "essential_transmission_tower2":
+		case "essential_powerpole2":
 			facing = Integer.parseInt(splited[1]);
 			type = Integer.parseInt(splited[2]);
 			isRod = Boolean.parseBoolean(splited[3]);
-			return new TransmissionTower2RawModel(facing, type, isRod);		
+			return new PowerPole2RawModel(facing, type, isRod);		
 		}
 		
 		return null;

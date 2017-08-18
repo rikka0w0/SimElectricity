@@ -23,18 +23,18 @@ import simelectricity.essential.api.ISEHVCableConnector;
 import simelectricity.essential.client.ISESimpleTextureItem;
 import simelectricity.essential.common.SEItemBlock;
 
-public class BlockTransmissionTowerBottom extends SEModelBlock implements ISEHVCableConnector, ISESimpleTextureItem {
+public class BlockPowerPoleBottom extends SEModelBlock implements ISEHVCableConnector, ISESimpleTextureItem {
 	///////////////////
 	/// Initialize
 	///////////////////
-	public BlockTransmissionTowerBottom() {
-		super("essential_transmission_tower_bottom", Material.GLASS, SEItemBlock.class);
+	public BlockPowerPoleBottom() {
+		super("essential_powerpole_bottom", Material.GLASS, SEItemBlock.class);
 	}
 	
 	@Override
 	@SideOnly(Side.CLIENT)
 	public String getIconName(int damage) {
-		return "essential_transmission_tower_0";	//There's no way to obtain this block, so just return a existing texture
+		return "essential_powerpole_0";	//There's no way to obtain this block, so just return a existing texture
 	}
 	///////////////////////////////
 	///BlockStates
@@ -160,8 +160,8 @@ public class BlockTransmissionTowerBottom extends SEModelBlock implements ISEHVC
 		BlockPos centerPos = getCenterBoxCoord(pos, state);
 		IBlockState centerState = world.getBlockState(centerPos);
     	
-    	if (centerState.getBlock() == BlockRegistry.transmissionTowerTop)
-    		return BlockRegistry.transmissionTowerTop.getPickBlock(centerState, null, world, centerPos, player);
+    	if (centerState.getBlock() == BlockRegistry.powerPoleTop)
+    		return BlockRegistry.powerPoleTop.getPickBlock(centerState, null, world, centerPos, player);
     	
     	return null;
 	}
@@ -176,7 +176,7 @@ public class BlockTransmissionTowerBottom extends SEModelBlock implements ISEHVC
 		BlockPos centerPos = getCenterBoxCoord(pos, state);
     	Block centerBlock = world.getBlockState(centerPos).getBlock();
     	
-    	if (centerBlock == BlockRegistry.transmissionTowerTop)
+    	if (centerBlock == BlockRegistry.powerPoleTop)
     		world.setBlockToAir(centerPos);
     	
     	super.breakBlock(world, pos, state);
@@ -190,8 +190,8 @@ public class BlockTransmissionTowerBottom extends SEModelBlock implements ISEHVC
 		IBlockState state = world.getBlockState(pos);
 		BlockPos centerPos = getCenterBoxCoord(pos, state);
 		TileEntity te = world.getTileEntity(centerPos);
-		if (te instanceof TileTransmissionTower)
-			return ((TileTransmissionTower) te).canConnect();
+		if (te instanceof TilePowerPole)
+			return ((TilePowerPole) te).canConnect();
 		else
 			return false;
 	}

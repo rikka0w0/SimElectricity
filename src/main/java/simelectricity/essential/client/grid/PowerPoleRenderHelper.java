@@ -11,12 +11,11 @@ import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import simelectricity.essential.utils.math.SEMathHelper;
 import simelectricity.essential.utils.math.Vec3f;
 
 @SideOnly(Side.CLIENT)
-public class TransmissionLineRenderHelper {
-	public final static float pi = (float) Math.PI;
-	
+public class PowerPoleRenderHelper {	
 	private final IBlockAccess world;
 	public final BlockPos pos;	//Real MC pos
 	public final int rotation;
@@ -30,7 +29,7 @@ public class TransmissionLineRenderHelper {
 	public LinkedList<ConnectionInfo[]> connectionInfo = new LinkedList();
 	public LinkedList<Pair<Vec3f, Vec3f>> extraWires = new LinkedList();
 	
-	public TransmissionLineRenderHelper(IBlockAccess world, BlockPos pos, int rotationMC, int numOfGroup, int insulatorPerGroup) {
+	public PowerPoleRenderHelper(IBlockAccess world, BlockPos pos, int rotationMC, int numOfGroup, int insulatorPerGroup) {
 		this.world = world;
 		this.pos = pos;
 		this.rotation = rotationMC*45 - 90;
@@ -40,8 +39,8 @@ public class TransmissionLineRenderHelper {
 	}
 	
 	public Insulator createInsulator(float length, float offsetX, float offsetY, float offsetZ) {
-		float rotatedX = offsetZ * MathHelper.sin(rotation/180F*pi) + offsetX * MathHelper.cos(rotation/180F*pi) + 0.5F;
-		float rotatedZ = offsetZ * MathHelper.cos(rotation/180F*pi) - offsetX * MathHelper.sin(rotation/180F*pi) + 0.5F;
+		float rotatedX = offsetZ * MathHelper.sin(rotation/180F*SEMathHelper.PI) + offsetX * MathHelper.cos(rotation/180F*SEMathHelper.PI) + 0.5F;
+		float rotatedZ = offsetZ * MathHelper.cos(rotation/180F*SEMathHelper.PI) - offsetX * MathHelper.sin(rotation/180F*SEMathHelper.PI) + 0.5F;
 		
 		return new Insulator(this, length, rotatedX, offsetY, rotatedZ);
 	}
@@ -53,8 +52,8 @@ public class TransmissionLineRenderHelper {
 		if (insulators.length != insulatorPerGroup)
 			return;
 		
-		float rotatedX = centerZ * MathHelper.sin(this.rotation/180F*pi) + centerX * MathHelper.cos(this.rotation/180F*pi) + 0.5F;
-		float rotatedZ = centerZ * MathHelper.cos(this.rotation/180F*pi) - centerX * MathHelper.sin(this.rotation/180F*pi) + 0.5F;
+		float rotatedX = centerZ * MathHelper.sin(this.rotation/180F*SEMathHelper.PI) + centerX * MathHelper.cos(this.rotation/180F*SEMathHelper.PI) + 0.5F;
+		float rotatedZ = centerZ * MathHelper.cos(this.rotation/180F*SEMathHelper.PI) - centerX * MathHelper.sin(this.rotation/180F*SEMathHelper.PI) + 0.5F;
 		
 		groups[addedGroup] = new Group(this, rotatedX, centerY, rotatedZ, insulators);
 		addedGroup++;
@@ -68,8 +67,8 @@ public class TransmissionLineRenderHelper {
 				continue;
 			
 			TileEntity te = world.getTileEntity(neighborPos);
-			if (te instanceof ISETransmissionTower) {
-				this.findConnection(((ISETransmissionTower) te).getRenderHelper());
+			if (te instanceof ISEPowerPole) {
+				this.findConnection(((ISEPowerPole) te).getRenderHelper());
 			}
 		}
 	}
@@ -151,7 +150,7 @@ public class TransmissionLineRenderHelper {
         return from.add(lcos * MathHelper.sin(atan), insulatorLength * MathHelper.sin(angle), - lcos * MathHelper.cos(atan));
     }
     
-	private void findConnection(TransmissionLineRenderHelper neighbor) {
+	private void findConnection(PowerPoleRenderHelper neighbor) {
 		Group group1 = null;
 		Group group2 = null;
 		float minDistance = Float.MAX_VALUE;
@@ -183,14 +182,14 @@ public class TransmissionLineRenderHelper {
 	}
 	
 	public static class Insulator {
-		public final TransmissionLineRenderHelper parent;
+		public final PowerPoleRenderHelper parent;
 		/**
 		 * Rotated offsets
 		 */
 		public final float length, offsetX, offsetY, offsetZ;
 		public final Vec3f realPos;
 		
-		private Insulator(TransmissionLineRenderHelper parent, float length, float offsetX, float offsetY, float offsetZ) {
+		private Insulator(PowerPoleRenderHelper parent, float length, float offsetX, float offsetY, float offsetZ) {
 			this.parent = parent;
 			this.length = length;
 			this.offsetX = offsetX;
@@ -201,13 +200,13 @@ public class TransmissionLineRenderHelper {
 	}
 	
 	public static class Group{
-		public final TransmissionLineRenderHelper parent;
+		public final PowerPoleRenderHelper parent;
 		/**
 		 * Center offsets, XZ respect to Block center, rotated
 		 */
 		public final float centerX, centerY, centerZ;
 		public final Insulator[] insulators;
-		private Group(TransmissionLineRenderHelper parent, float centerX, float centerY, float centerZ, Insulator... insulators) {
+		private Group(PowerPoleRenderHelper parent, float centerX, float centerY, float centerZ, Insulator... insulators) {
 			this.parent = parent;
 			this.centerX = centerX;
 			this.centerY = centerY;

@@ -12,15 +12,16 @@ import simelectricity.api.node.ISEGridNode;
 import simelectricity.api.node.ISESimulatable;
 import simelectricity.api.tile.ISECableTile;
 import simelectricity.api.tile.ISEGridTile;
-import simelectricity.essential.client.grid.ISETransmissionTower;
-import simelectricity.essential.client.grid.TransmissionLineRenderHelper;
+import simelectricity.essential.client.grid.ISEPowerPole;
+import simelectricity.essential.client.grid.PowerPoleRenderHelper;
 import simelectricity.essential.common.SEEnergyTile;
 import simelectricity.essential.utils.Utils;
 
-public class TileCableJoint extends SEEnergyTile implements ISECableTile, ISEGridTile, ISETransmissionTower{
+public class TileCableJoint extends SEEnergyTile implements ISECableTile, ISEGridTile, ISEPowerPole{
 	private ISESimulatable cableNode = SEAPI.energyNetAgent.newCable(this, true);
     
-    private TransmissionLineRenderHelper renderHelper;
+	@SideOnly(Side.CLIENT)
+    private PowerPoleRenderHelper renderHelper;
     private BlockPos neighbor;
     
 	//////////////////////////////
@@ -122,8 +123,8 @@ public class TileCableJoint extends SEEnergyTile implements ISECableTile, ISEGri
 		
 		if (neighbor != null) {
 			TileEntity neighborTile = world.getTileEntity(this.neighbor);
-			if (neighborTile instanceof ISETransmissionTower)
-				((ISETransmissionTower)neighborTile).updateRenderInfo();
+			if (neighborTile instanceof ISEPowerPole)
+				((ISEPowerPole)neighborTile).updateRenderInfo();
 		}
 
 		super.onSyncDataFromServerArrived(nbt);
@@ -140,12 +141,12 @@ public class TileCableJoint extends SEEnergyTile implements ISECableTile, ISEGri
 	
 	@Override
 	@SideOnly(Side.CLIENT)
-	public TransmissionLineRenderHelper getRenderHelper() {
+	public PowerPoleRenderHelper getRenderHelper() {
         //Create renderHelper on client side
         if (world.isRemote){
 			if (renderHelper == null) {
 				int rotation = world.getBlockState(pos).getValue(Properties.propertyFacing);
-				renderHelper = new TransmissionLineRenderHelper(world, pos, rotation, 1, 3);
+				renderHelper = new PowerPoleRenderHelper(world, pos, rotation, 1, 3);
 				renderHelper.addInsulatorGroup(0.6F, 1.45F, 0F, 
 						renderHelper.createInsulator(0, -0.3F, 1.17F, -0.95F),
 						renderHelper.createInsulator(0, 0.6F, 1.45F, 0F),

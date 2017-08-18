@@ -7,13 +7,13 @@ import simelectricity.essential.client.coverpanel.LedPanelRender;
 import simelectricity.essential.client.coverpanel.SupportRender;
 import simelectricity.essential.client.coverpanel.VoltageSensorRender;
 import simelectricity.essential.client.grid.GridStateMapper;
-import simelectricity.essential.client.grid.TileRenderTranmissionTowerBase;
+import simelectricity.essential.client.grid.TileRenderPowerPole;
 import simelectricity.essential.client.semachine.SEMachineStateMapper;
 import simelectricity.essential.client.semachine.SocketRender;
 import simelectricity.essential.common.ISEGuiProvider;
 import simelectricity.essential.grid.TileCableJoint;
-import simelectricity.essential.grid.TileTransmissionTower;
-import simelectricity.essential.grid.TileTransmissionTower2;
+import simelectricity.essential.grid.TilePowerPole;
+import simelectricity.essential.grid.TilePowerPole2;
 import simelectricity.essential.machines.gui.GuiAdjustableResistor;
 import simelectricity.essential.machines.gui.GuiAdjustableTransformer;
 import simelectricity.essential.machines.gui.GuiCurrentSensor;
@@ -80,14 +80,14 @@ public class ClientProxy extends CommonProxy{
 		GridStateMapper gStateMapper = new GridStateMapper(Essential.modID);
 		gStateMapper.register(BlockRegistry.cableJoint);
 		loader.registerInventoryIcon(BlockRegistry.cableJoint.itemBlock);
-		gStateMapper.register(BlockRegistry.transmissionTowerBottom);
-		loader.registerInventoryIcon(BlockRegistry.transmissionTowerBottom.itemBlock);
-		gStateMapper.register(BlockRegistry.transmissionTowerCollisionBox);
-		loader.registerInventoryIcon(BlockRegistry.transmissionTowerCollisionBox.itemBlock);
-		gStateMapper.register(BlockRegistry.transmissionTowerTop);
-		loader.registerInventoryIcon(BlockRegistry.transmissionTowerTop.itemBlock);
-		gStateMapper.register(BlockRegistry.transmissionTower2);
-		loader.registerInventoryIcon(BlockRegistry.transmissionTower2.itemBlock);
+		gStateMapper.register(BlockRegistry.powerPoleBottom);
+		loader.registerInventoryIcon(BlockRegistry.powerPoleBottom.itemBlock);
+		gStateMapper.register(BlockRegistry.powerPoleCollisionBox);
+		loader.registerInventoryIcon(BlockRegistry.powerPoleCollisionBox.itemBlock);
+		gStateMapper.register(BlockRegistry.powerPoleTop);
+		loader.registerInventoryIcon(BlockRegistry.powerPoleTop.itemBlock);
+		gStateMapper.register(BlockRegistry.powerPole2);
+		loader.registerInventoryIcon(BlockRegistry.powerPole2.itemBlock);
 		
 		
 		//Initialize socket render and support render
@@ -103,9 +103,9 @@ public class ClientProxy extends CommonProxy{
 	public void init() {
 		SEEAPI.coloredBlocks.add(BlockRegistry.blockCable);
 		
-		ClientRegistry.bindTileEntitySpecialRenderer(TileCableJoint.class, new TileRenderTranmissionTowerBase());
-		ClientRegistry.bindTileEntitySpecialRenderer(TileTransmissionTower.class, new TileRenderTranmissionTowerBase());
-		ClientRegistry.bindTileEntitySpecialRenderer(TileTransmissionTower2.class, new TileRenderTranmissionTowerBase());
+		ClientRegistry.bindTileEntitySpecialRenderer(TileCableJoint.class, new TileRenderPowerPole());
+		ClientRegistry.bindTileEntitySpecialRenderer(TilePowerPole.class, new TileRenderPowerPole());
+		ClientRegistry.bindTileEntitySpecialRenderer(TilePowerPole2.class, new TileRenderPowerPole());
 	}
 	
 	@Override

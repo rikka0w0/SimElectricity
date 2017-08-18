@@ -12,12 +12,12 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import simelectricity.essential.client.TextureLoaderModel;
 
 @SideOnly(Side.CLIENT)
-public class TransmissionTowerTopRawModel extends TextureLoaderModel{
+public class PowerPoleTopRawModel extends TextureLoaderModel{
 	private final ResourceLocation textureMetal, textureInsulator;
 	private final int facing;
 	private final int type;
 	
-	public TransmissionTowerTopRawModel(int facing, int type) {
+	public PowerPoleTopRawModel(int facing, int type) {
 		textureMetal = registerTexture("sime_essential:render/transmission/metal");
 		textureInsulator = registerTexture("sime_essential:render/transmission/glass_insulator");
 		this.facing = facing;
@@ -27,6 +27,6 @@ public class TransmissionTowerTopRawModel extends TextureLoaderModel{
 	@Override
 	public IBakedModel bake(IModelState state, VertexFormat format,
 			Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter) {
-		return new TransmissionTowerTopModel(facing, type, bakedTextureGetter.apply(textureMetal), bakedTextureGetter.apply(textureInsulator));
+		return new PowerPoleTopModel(facing, type, bakedTextureGetter.apply(textureMetal), bakedTextureGetter.apply(textureInsulator));
 	}
 }
