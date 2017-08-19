@@ -56,8 +56,6 @@ public final class EnergyNet extends EnergyNetSimulator implements Runnable{
 				}
 		}
 		
-		if (cachedEvents.isEmpty())
-			return;
 		
 		boolean needOptimize = false;	//Due to connection changes
 		boolean calc = false;			//Perform simulation

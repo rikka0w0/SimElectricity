@@ -3,6 +3,7 @@ package simelectricity.essential.common.multiblock;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3i;
 import simelectricity.essential.utils.Utils;
 
 public class MultiBlockTileInfo {
@@ -53,4 +54,10 @@ public class MultiBlockTileInfo {
 	}
 	
 	public boolean formed;
+	
+	public BlockPos getPartPos(Vec3i offsetPos) {
+		int[] offset = MultiBlockStructure.offsetFromOrigin(facing.ordinal()-2, mirrored,
+				offsetPos.getX(), offsetPos.getY(), offsetPos.getZ());
+		return origin.add(offset[0], offset[1], offset[2]);
+	}
 }

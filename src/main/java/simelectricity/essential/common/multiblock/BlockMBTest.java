@@ -54,7 +54,7 @@ public class BlockMBTest extends SEBlock implements ITileEntityProvider, ISESide
 
     @Override
     public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
-		MultiBlockStructure.Result ret = qaq.check(world, pos);
+		MultiBlockStructure.Result ret = qaq.attempToBuild(world, pos);
 		if (ret != null){
 			ret.createStructure();
 		}

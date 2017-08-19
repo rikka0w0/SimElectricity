@@ -51,15 +51,15 @@ public interface IEnergyNetAgent {
 
     void updateTileConnection(TileEntity te);
     
-    void attachGridObject(World world, ISEGridNode node);
+    void attachGridNode(World world, ISEGridNode node);
     
-    void detachGridObject(World world, ISEGridNode node);
+    void detachGridNode(World world, ISEGridNode node);
     
     void connectGridNode(World world, ISEGridNode node1, ISEGridNode node2, double resistance);
     
     void breakGridConnection(World world, ISEGridNode node1, ISEGridNode node2);
     
-    void makeTransformer(World world, ISEGridNode primary, ISEGridNode secondary, double ratio, double resistance);
+    void makeTransformer(World world, ISEGridNode primary, ISEGridNode secondary, double resistance, double ratio);
     
     void breakTransformer(World world, ISEGridNode node);
 }

@@ -135,14 +135,14 @@ public class BlockCableJoint extends SEBlock implements ITileEntityProvider, ISE
         
         TileEntity te = world.getTileEntity(pos);
         if (te instanceof ISEGridTile)
-        	SEAPI.energyNetAgent.attachGridObject(world, SEAPI.energyNetAgent.newGridNode(pos, 3));     
+        	SEAPI.energyNetAgent.attachGridNode(world, SEAPI.energyNetAgent.newGridNode(pos, 3));     
     }
     
     @Override
     public void breakBlock(World world, BlockPos pos, IBlockState state) {
     	TileEntity te = world.getTileEntity(pos);	//Do this before the tileEntity is removed!
     	if (te instanceof ISEGridTile)
-    		SEAPI.energyNetAgent.detachGridObject(world, ((ISEGridTile) te).getGridNode());
+    		SEAPI.energyNetAgent.detachGridNode(world, ((ISEGridTile) te).getGridNode());
     	
         super.breakBlock(world, pos, state);
     }

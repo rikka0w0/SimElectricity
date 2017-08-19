@@ -167,7 +167,7 @@ public class BlockPowerPole2 extends SEModelBlock implements ITileEntityProvider
         if (world.isRemote)
             return; 
 
-        SEAPI.energyNetAgent.attachGridObject(world, SEAPI.energyNetAgent.newGridNode(pos, 3));
+        SEAPI.energyNetAgent.attachGridNode(world, SEAPI.energyNetAgent.newGridNode(pos, 3));
     }
     
     @Override
@@ -193,7 +193,7 @@ public class BlockPowerPole2 extends SEModelBlock implements ITileEntityProvider
 			//Center Block
 	    	TileEntity te = world.getTileEntity(pos);	//Do this before the tileEntity is removed!
 	    	if (te instanceof ISEGridTile)
-	    		SEAPI.energyNetAgent.detachGridObject(world, ((ISEGridTile) te).getGridNode());
+	    		SEAPI.energyNetAgent.detachGridNode(world, ((ISEGridTile) te).getGridNode());
 	    	
 	    	for (BlockInfo blockInfo: getRodBlockOffsets(state)){
 	    		BlockPos rodPos = blockInfo.getRealPos(pos).down(11);

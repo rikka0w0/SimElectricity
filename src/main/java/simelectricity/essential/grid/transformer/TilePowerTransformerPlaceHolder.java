@@ -1,9 +1,11 @@
-package simelectricity.essential.common.multiblock;
+package simelectricity.essential.grid.transformer;
 
 import net.minecraft.nbt.NBTTagCompound;
 import simelectricity.essential.common.SETileEntity;
+import simelectricity.essential.common.multiblock.ISEMultiBlockTile;
+import simelectricity.essential.common.multiblock.MultiBlockTileInfo;
 
-public class TileMBTest extends SETileEntity implements ISEMultiBlockTile{
+public class TilePowerTransformerPlaceHolder extends SETileEntity implements ISEMultiBlockTile{
 	private MultiBlockTileInfo mbInfo;
 	
 	@Override
@@ -19,24 +21,23 @@ public class TileMBTest extends SETileEntity implements ISEMultiBlockTile{
 	}
 
 	@Override
+	public MultiBlockTileInfo getMultiBlockTileInfo() {
+		return this.mbInfo;
+	}
+	
+	@Override
 	public void onStructureCreating(MultiBlockTileInfo mbInfo) {
 		this.mbInfo = mbInfo;
 		this.markDirty();
 	}
 
 	@Override
-	public MultiBlockTileInfo getMultiBlockTileInfo() {
-		return this.mbInfo;
+	public void onStructureCreated() {
+		
 	}
 
 	@Override
 	public void onStructureRemoved() {
-		System.out.println("Structure Removed");
-	}
-
-	@Override
-	public void onStructureCreated() {
-		// TODO Auto-generated method stub
 		
 	}
 }

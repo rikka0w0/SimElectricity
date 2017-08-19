@@ -1,5 +1,8 @@
 package simelectricity.essential.common.multiblock;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
@@ -20,10 +23,6 @@ public class MultiBlockStructure {
 	
 	private final int height;
 	private final int searchAreaSize;
-	
-	public MultiBlockStructure(){
-		this(null);
-	}
 	
 	/**
 	 * @param config y,z,x facing NORTH(Z-), do not change 
@@ -120,7 +119,7 @@ public class MultiBlockStructure {
 		return null;
 	}
 	
-	public MultiBlockStructure.Result check(World world, BlockPos start){
+	public MultiBlockStructure.Result attempToBuild(World world, BlockPos start){
 		int xStart = start.getX(), yStart = start.getY(), zStart=start.getZ();
 		//XYZ
 		IBlockState[][][] states = new IBlockState[searchAreaSize*2-1][height*2-1][searchAreaSize*2-1];
@@ -166,6 +165,8 @@ public class MultiBlockStructure {
 			if (!mbInfo.formed)
 				return;
 			
+			Set<ISEMultiBlockTile> removedTile = new HashSet();
+			
 			World world = te.getWorld();
 
 			int rotation = mbInfo.facing.ordinal() - 2;
@@ -185,7 +186,7 @@ public class MultiBlockStructure {
 						
 						if (blockInfo != null){
 							//Traverse the structure
-							int[] offset = offsetFromOrigin(configuration, rotation, mirrored, blockInfo.x, blockInfo.y, blockInfo.z);
+							int[] offset = offsetFromOrigin(rotation, mirrored, blockInfo.x, blockInfo.y, blockInfo.z);
 							
 							IBlockState theState;
 							
@@ -200,6 +201,8 @@ public class MultiBlockStructure {
 									TileEntity te2 = world.getTileEntity(pos);
 									((ISEMultiBlockTile)te2).getMultiBlockTileInfo().formed = false;
 									
+									removedTile.add((ISEMultiBlockTile)te2);
+									world.setBlockToAir(pos);	//world.removeTileEntity(pos);
 									world.setBlockState(pos, blockInfo.state);
 								}
 							}
@@ -211,11 +214,15 @@ public class MultiBlockStructure {
 				}
 			}
 			
-			((ISEMultiBlockTile) te).onStructureRemoved();
+			removedTile.add((ISEMultiBlockTile) te);
+			
+			for (ISEMultiBlockTile tile: removedTile) {
+				tile.onStructureRemoved();
+			}
 		}
 	}
 	
-	public static int[] offsetFromOrigin(BlockInfo[][][] configuration, int rotation, boolean mirrored, int x, int y, int z){
+	public static int[] offsetFromOrigin(int rotation, boolean mirrored, int x, int y, int z){
 		int[] ret = new int[3];
 		
 		switch(rotation){
@@ -298,7 +305,7 @@ public class MultiBlockStructure {
 		/** Actual location in the world */
 		public final int xOriginActual, yOriginActual, zOriginActual;
 		
-		public Result(MultiBlockStructure structure, int rotation, boolean mirrored,
+		private Result(MultiBlockStructure structure, int rotation, boolean mirrored,
 				World world, int xOrigin, int yOrigin, int zOrigin){
 			this.structure = structure;
 			this.rotation = rotation;
@@ -366,10 +373,12 @@ public class MultiBlockStructure {
 		 * @return XYZ
 		 */
 		public int[] getOffsetFromActualOrigin(int x, int y, int z){
-			return offsetFromOrigin(configuration, rotation, mirrored, x, y ,z);
+			return offsetFromOrigin(rotation, mirrored, x, y ,z);
 		}
 
 		public void createStructure(){
+			Set<ISEMultiBlockTile> createdTile = new HashSet();
+			
 			for (int i=0; i<structure.height; i++){
 				for (int j=0; j<zSize; j++){
 					for (int k=0; k<xSize; k++){
@@ -382,6 +391,7 @@ public class MultiBlockStructure {
 							
 							BlockPos pos = new BlockPos(xOriginActual + offset[0], yOriginActual + offset[1], zOriginActual + offset[2]);
 							world.setBlockState(pos, blockInfo.state2);
+							//world.removeTileEntity(pos);	//Remove the incorrect TileEntity
 							TileEntity te = world.getTileEntity(pos);
 							
 							if (te instanceof ISEMultiBlockTile){
@@ -389,12 +399,16 @@ public class MultiBlockStructure {
 										facing, mirrored, offset[0], offset[1], offset[2], xOriginActual, yOriginActual, zOriginActual
 										);
 								((ISEMultiBlockTile) te).onStructureCreating(mbInfo);
+								createdTile.add((ISEMultiBlockTile) te);
 							}
 						}
 					
 					}
 				}
 			}
+			
+			for (ISEMultiBlockTile tile: createdTile)
+				tile.onStructureCreated();
 		}
 	}
 }

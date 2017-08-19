@@ -237,7 +237,7 @@ public class SEGraph {
 		primary.ratio = ratio;
 		primary.resistance = resistance;
 		
-		primary.type = GridNode.ISEGridNode_TransformerSecondary;
+		secondary.type = GridNode.ISEGridNode_TransformerSecondary;
 		secondary.complement = primary;
 		secondary.ratio = ratio;
 		secondary.resistance = resistance;
@@ -272,10 +272,8 @@ public class SEGraph {
 	private static boolean isWire(SEComponent node){
 		if (node instanceof Cable)
 			return true;
-		if (node instanceof GridNode){
-			if(((GridNode)node).getType() == GridNode.ISEGridNode_Wire)
-				return true;
-		}
+		if (node instanceof GridNode)
+			return true;
 		return false;
 	}
 	
@@ -286,6 +284,9 @@ public class SEGraph {
 			return true;
 		
 		if ((node instanceof Cable) && ((Cable)node).hasShuntResistance)
+			return true;
+		
+		if ((node instanceof GridNode) && ((GridNode)node).type != GridNode.ISEGridNode_Wire)
 			return true;
 		
 		return false;

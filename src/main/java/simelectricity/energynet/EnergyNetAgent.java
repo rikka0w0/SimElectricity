@@ -252,7 +252,7 @@ public class EnergyNetAgent implements IEnergyNetAgent{
 	
 	
 	@Override
-    public void attachGridObject(World world, ISEGridNode node) {
+    public void attachGridNode(World world, ISEGridNode node) {
     	EnergyNetAgent.getEnergyNetForWorld(world).addEvent(new GridEvent.AppendNode(node));
     	
     	/*if (energyNet.addGridNode(x, y, z, type)){
@@ -265,7 +265,7 @@ public class EnergyNetAgent implements IEnergyNetAgent{
     }
     
 	@Override
-    public void detachGridObject(World world, ISEGridNode node) {
+    public void detachGridNode(World world, ISEGridNode node) {
     	EnergyNetAgent.getEnergyNetForWorld(world).addEvent(new GridEvent.RemoveNode(node));
     	/*if (energyNet.removeGridNode(x, y, z)){
     		if (ConfigManager.showEnergyNetInfo)

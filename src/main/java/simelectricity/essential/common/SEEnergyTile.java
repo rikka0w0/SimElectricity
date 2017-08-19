@@ -6,7 +6,8 @@ public abstract class SEEnergyTile extends SETileEntity{
     protected boolean isAddedToEnergyNet;
     
     /**
-     * Called just before joining the energyNet, do some initialization here
+     * Called just before joining the energyNet, do some initialization here </p>
+     * Should not use onLoad() in client anyway!
      */
     public void onLoad() {
         if (!world.isRemote && !isAddedToEnergyNet) {

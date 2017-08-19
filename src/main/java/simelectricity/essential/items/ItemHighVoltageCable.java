@@ -85,7 +85,7 @@ public class ItemHighVoltageCable extends SEItem implements ISESimpleTextureItem
         		lastCoordinate = new BlockPos(pos);
                 Utils.chatWithLocalization(player, "chat.sime_essential:tranmission_tower_selected");
         	}else{
-        		Utils.chatWithLocalization(player, "chat.sime_essential:tranmission_tower_too_many_connection");
+        		Utils.chatWithLocalization(player, "chat.sime_essential:tranmission_tower_connection_not_allowed");
         	}
         	
         	lastCoordinates.put(player, lastCoordinate);

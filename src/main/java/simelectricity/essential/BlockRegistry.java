@@ -15,6 +15,9 @@ import simelectricity.essential.grid.TileCableJoint;
 import simelectricity.essential.grid.TilePowerPole;
 import simelectricity.essential.grid.TilePowerPole2;
 import simelectricity.essential.grid.transformer.BlockPowerTransformer;
+import simelectricity.essential.grid.transformer.TilePowerTransformerPlaceHolder;
+import simelectricity.essential.grid.transformer.TilePowerTransformerPrimary;
+import simelectricity.essential.grid.transformer.TilePowerTransformerSecondary;
 import simelectricity.essential.machines.BlockElectronics;
 import simelectricity.essential.machines.BlockTwoPortElectronics;
 import simelectricity.essential.machines.gui.ContainerAdjustableResistor;
@@ -63,21 +66,24 @@ public class BlockRegistry {
 	}
 	
 	public static void registerTileEntities(){
-		GameRegistry.registerTileEntity(TileCable.class, "SEECable");
-		GameRegistry.registerTileEntity(TilePowerPole.class, "SEEPowerPole");
-		GameRegistry.registerTileEntity(TileCableJoint.class, "SEECableJoint");
-		GameRegistry.registerTileEntity(TilePowerPole2.class, "SEEPowerPole2");
+		registerTile(TileCable.class);
+		registerTile(TilePowerPole.class);
+		registerTile(TileCableJoint.class);
+		registerTile(TilePowerPole2.class);
+		registerTile(TilePowerTransformerPlaceHolder.class);
+		registerTile(TilePowerTransformerPrimary.class);
+		registerTile(TilePowerTransformerSecondary.class);
 		
-		GameRegistry.registerTileEntity(TileVoltageMeter.class, "SEEVoltageMeter");
-		GameRegistry.registerTileEntity(TileQuantumGenerator.class, "SEEQuantumGenerator");
-		GameRegistry.registerTileEntity(TileAdjustableResistor.class, "SEEAdjustableResistor");
-		GameRegistry.registerTileEntity(TileIncandescentLamp.class, "SEEIncandescentLamp");
-		GameRegistry.registerTileEntity(TileSolarPanel.class, "SEESolarPanel");
+		registerTile(TileVoltageMeter.class);
+		registerTile(TileQuantumGenerator.class);
+		registerTile(TileAdjustableResistor.class);
+		registerTile(TileIncandescentLamp.class);
+		registerTile(TileSolarPanel.class);
 		
-		GameRegistry.registerTileEntity(TileAdjustableTransformer.class, "SEEAdjustableTransformer");
-		GameRegistry.registerTileEntity(TileCurrentSensor.class, "SEECurrentSensor");
-		GameRegistry.registerTileEntity(TileDiode.class, "SEEDiode");
-		GameRegistry.registerTileEntity(TileSwitch.class, "SEESwitch");
+		registerTile(TileAdjustableTransformer.class);
+		registerTile(TileCurrentSensor.class);
+		registerTile(TileDiode.class);
+		registerTile(TileSwitch.class);
 	}
 	
 	public static Container getContainer(TileEntity te, EntityPlayer player){
@@ -98,5 +104,12 @@ public class BlockRegistry {
 			return new ContainerSwitch(te);
 		
 		return null;
+	}
+	
+	private static void registerTile(Class<? extends TileEntity> teClass) {
+		String registryName = teClass.getName();
+		registryName = registryName.substring(registryName.lastIndexOf(".")+1);
+		registryName = Essential.modID + ":" + registryName;
+		GameRegistry.registerTileEntity(teClass, registryName);
 	}
 }

@@ -1,16 +1,22 @@
 package simelectricity.essential.common.multiblock;
 
 public interface ISEMultiBlockTile {
+	MultiBlockTileInfo getMultiBlockTileInfo();
+	
 	/**
-	 * Called when a structure is created by a player
+	 * Called when a structure is being created (by a player), all tileEntity will receive this
 	 * @param mbInfo
 	 */
 	void onStructureCreating(MultiBlockTileInfo mbInfo);
 	
-	MultiBlockTileInfo getMultiBlockTileInfo();
+	/**
+	 * Called when a structure is created by a player, all tileEntity will receive this
+	 * @param mbInfo
+	 */
+	void onStructureCreated();
 	
 	/**
-	 * Only the tileEntity which is directly removed by the player can receive this event
+	 * Fired when the structure is destroyed (player/ explosion...)
 	 */
 	void onStructureRemoved();
 }

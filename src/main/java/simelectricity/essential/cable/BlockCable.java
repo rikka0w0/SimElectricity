@@ -514,6 +514,9 @@ public class BlockCable extends SEMetaBlock implements ITileEntityProvider, ISES
     	ISEGenericCable cable = (ISEGenericCable) te;
         
         RayTraceResult trace = rayTrace(world, pos, player);
+        if (trace == null)
+        	return super.removedByPlayer(state, world, pos, player, willHarvest);
+        
         if (trace.subHit>6 && trace.subHit<13) {
         	//Remove the selected cover panel
         	EnumFacing side = EnumFacing.getFront(trace.subHit-7);

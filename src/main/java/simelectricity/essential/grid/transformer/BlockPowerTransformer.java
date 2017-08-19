@@ -17,6 +17,9 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import simelectricity.api.SEAPI;
+import simelectricity.api.node.ISESimulatable;
+import simelectricity.api.tile.ISEGridTile;
+import simelectricity.essential.api.ISEHVCableConnector;
 import simelectricity.essential.client.ISESimpleTextureItem;
 import simelectricity.essential.common.ISESubBlock;
 import simelectricity.essential.common.SEItemBlock;
@@ -24,7 +27,7 @@ import simelectricity.essential.common.multiblock.MultiBlockStructure;
 import simelectricity.essential.common.multiblock.MultiBlockStructure.BlockInfo;
 import simelectricity.essential.grid.SEModelBlock;
 
-public class BlockPowerTransformer extends SEModelBlock implements ITileEntityProvider, ISESubBlock, ISESimpleTextureItem {
+public class BlockPowerTransformer extends SEModelBlock implements ITileEntityProvider, ISESubBlock, ISESimpleTextureItem, ISEHVCableConnector {
 	public static final String[] subNames = EnumBlockType.getRawStructureNames();
 	
 	public final MultiBlockStructure structureTemplate;
@@ -53,7 +56,29 @@ public class BlockPowerTransformer extends SEModelBlock implements ITileEntityPr
 	
 	@Override
 	public TileEntity createNewTileEntity(World world, int meta) {
-		return null;
+		EnumBlockType blockType = EnumBlockType.fromInt(meta);
+		
+		if (!blockType.formed)
+			return null;
+		
+		switch (blockType) {
+		case Placeholder:
+			return new TilePowerTransformerPlaceHolder();
+		case PlaceholderPrimary:
+			break;
+		case PlaceholderSecondary:
+			break;
+		case Primary:
+			return new TilePowerTransformerPrimary();
+		case Render:
+			break;
+		case Secondary:
+			return new TilePowerTransformerSecondary();
+		default:
+			break;
+		}
+		
+		return new TilePowerTransformerPlaceHolder();
 	}
 	
 	///////////////////////////////
@@ -89,7 +114,10 @@ public class BlockPowerTransformer extends SEModelBlock implements ITileEntityPr
 	///////////////////////////////
     @Override
     public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
-		MultiBlockStructure.Result ret = structureTemplate.check(world, pos);
+		if (world.isRemote)
+			return;
+    	
+    	MultiBlockStructure.Result ret = structureTemplate.attempToBuild(world, pos);
 		if (ret != null){
 			ret.createStructure();
 		}
@@ -107,6 +135,10 @@ public class BlockPowerTransformer extends SEModelBlock implements ITileEntityPr
     
 	@Override
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ){
+		TileEntity te = world.getTileEntity(pos);
+		
+		if (!world.isRemote && te != null)
+			System.out.println(te.getClass().toString());
 		return false;
 	}
 	
@@ -172,5 +204,25 @@ public class BlockPowerTransformer extends SEModelBlock implements ITileEntityPr
 		};
 		
 		return new MultiBlockStructure(configuration);
+	}
+
+	@Override
+	public ISESimulatable getNode(World world, BlockPos pos) {
+		TileEntity te = world.getTileEntity(pos);
+		if (te instanceof ISEGridTile) {
+			return ((ISEGridTile) te).getGridNode();
+		}
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean canHVCableConnect(World world, BlockPos pos) {
+		TileEntity te = world.getTileEntity(pos);
+		if (te instanceof ISEGridTile) {
+			return true;
+		}
+		// TODO Auto-generated method stub
+		return false;
 	}
 }
