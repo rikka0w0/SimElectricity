@@ -1,17 +1,47 @@
 package simelectricity.essential.grid.transformer;
 
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import simelectricity.api.SEAPI;
 import simelectricity.api.node.ISEGridNode;
 import simelectricity.api.node.ISESimulatable;
 import simelectricity.api.tile.ISEGridTile;
+import simelectricity.essential.client.grid.ISEPowerPole;
+import simelectricity.essential.client.grid.PowerPoleRenderHelper;
 import simelectricity.essential.common.SEEnergyTile;
 import simelectricity.essential.common.multiblock.ISEMultiBlockTile;
 import simelectricity.essential.common.multiblock.MultiBlockTileInfo;
+import simelectricity.essential.utils.Utils;
 
-public abstract class TilePowerTransformerWinding extends SEEnergyTile implements ISEMultiBlockTile, ISEGridTile{
+public abstract class TilePowerTransformerWinding extends SEEnergyTile implements ISEMultiBlockTile, ISEGridTile, ISEPowerPole{
 	protected MultiBlockTileInfo mbInfo;
+	
+	@SideOnly(Side.CLIENT)
+	private int rotation;
+	@SideOnly(Side.CLIENT)
+    private PowerPoleRenderHelper renderHelper;
+    private BlockPos neighbor = null;
+    
+	//////////////////////////////
+	/////TileEntity
+	//////////////////////////////
+	@SideOnly(Side.CLIENT)
+    @Override
+    public double getMaxRenderDistanceSquared()
+    {
+        return 100000;
+    }
+	
+	@SideOnly(Side.CLIENT)
+	@Override
+    public AxisAlignedBB getRenderBoundingBox(){
+    	return INFINITE_EXTENT_AABB;
+    }
 	
 	@Override
 	public void readFromNBT(NBTTagCompound nbt){
@@ -23,6 +53,48 @@ public abstract class TilePowerTransformerWinding extends SEEnergyTile implement
 	public NBTTagCompound writeToNBT(NBTTagCompound nbt){
 		mbInfo.saveToNBT(nbt);
 		return super.writeToNBT(nbt);
+	}
+	
+	/////////////////////////////////////////////////////////
+	///Sync
+	/////////////////////////////////////////////////////////
+	@Override
+	public void prepareS2CPacketData(NBTTagCompound nbt) {
+		Utils.saveToNbt(nbt, "neighbor", neighbor);
+		Utils.saveToNbt(nbt, "facing", mbInfo.facing);
+	}
+	
+	@Override
+	@SideOnly(value = Side.CLIENT)
+	public void onSyncDataFromServerArrived(NBTTagCompound nbt) {
+		this.neighbor = Utils.posFromNbt(nbt, "neighbor");
+		EnumFacing facing = Utils.facingFromNbt(nbt, "facing");
+		
+		switch (facing) {
+		case SOUTH:
+			this.rotation = 0;
+			break;
+		case WEST:
+			this.rotation = 2;
+			break;
+		case NORTH:
+			this.rotation = 4;
+			break;
+		case EAST:
+			this.rotation = 6;
+			break;
+		default:
+			break;
+		}
+		this.updateRenderInfo();
+		
+		if (neighbor != null) {
+			TileEntity neighborTile = world.getTileEntity(this.neighbor);
+			if (neighborTile instanceof ISEPowerPole)
+				((ISEPowerPole)neighborTile).updateRenderInfo();
+		}
+
+		super.onSyncDataFromServerArrived(nbt);
 	}
 	
 	//////////////////////////////
@@ -53,9 +125,7 @@ public abstract class TilePowerTransformerWinding extends SEEnergyTile implement
 	//////////////////////////////
 	/////ISEGridTile
 	//////////////////////////////
-    private ISEGridNode gridNode = null;
-    private BlockPos neighbor = null;
-    
+    private ISEGridNode gridNode = null;    
 	@Override
 	public void setGridNode(ISEGridNode gridObj) {this.gridNode = gridObj;}
 
@@ -78,6 +148,33 @@ public abstract class TilePowerTransformerWinding extends SEEnergyTile implement
 	
 	public boolean canConnect() {
 		return neighbor == null;
+	}
+	
+	/////////////////////////////////////////////////////////
+	///ITransmissionTower
+	/////////////////////////////////////////////////////////
+	@Override
+	@SideOnly(Side.CLIENT)
+	public void updateRenderInfo() {
+		getRenderHelper().updateRenderData(neighbor);
+	}
+	
+	@Override
+	@SideOnly(Side.CLIENT)
+	public PowerPoleRenderHelper getRenderHelper() {
+        //Create renderHelper on client side
+        if (world.isRemote){
+			if (renderHelper == null) {
+				renderHelper = new PowerPoleRenderHelper(world, pos, rotation, 1, 3);
+				renderHelper.addInsulatorGroup(0.6F, 1.45F, 0F, 
+						renderHelper.createInsulator(0, 0, 1.17F, 1),
+						renderHelper.createInsulator(0, 0, 1.3F, 0),
+						renderHelper.createInsulator(0, 0, 1.17F, -2));
+			}
+        	return renderHelper;
+        }else{
+        	return null;
+        }
 	}
 	
 	public static class Primary extends TilePowerTransformerWinding {

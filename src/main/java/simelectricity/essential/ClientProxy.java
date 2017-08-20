@@ -15,6 +15,7 @@ import simelectricity.essential.common.ISEGuiProvider;
 import simelectricity.essential.grid.TileCableJoint;
 import simelectricity.essential.grid.TilePowerPole;
 import simelectricity.essential.grid.TilePowerPole2;
+import simelectricity.essential.grid.transformer.TilePowerTransformerWinding;
 import simelectricity.essential.machines.gui.GuiAdjustableResistor;
 import simelectricity.essential.machines.gui.GuiAdjustableTransformer;
 import simelectricity.essential.machines.gui.GuiCurrentSensor;
@@ -113,6 +114,8 @@ public class ClientProxy extends CommonProxy{
 		ClientRegistry.bindTileEntitySpecialRenderer(TileCableJoint.class, new TileRenderPowerPole());
 		ClientRegistry.bindTileEntitySpecialRenderer(TilePowerPole.class, new TileRenderPowerPole());
 		ClientRegistry.bindTileEntitySpecialRenderer(TilePowerPole2.class, new TileRenderPowerPole());
+		ClientRegistry.bindTileEntitySpecialRenderer(TilePowerTransformerWinding.Primary.class, new TileRenderPowerPole());
+		ClientRegistry.bindTileEntitySpecialRenderer(TilePowerTransformerWinding.Secondary.class, new TileRenderPowerPole());
 	}
 	
 	@Override

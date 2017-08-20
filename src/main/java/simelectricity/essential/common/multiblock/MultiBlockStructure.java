@@ -199,11 +199,13 @@ public class MultiBlockStructure {
 								
 								if (theState.getBlock() != Blocks.AIR && !blockInfo.isDifferent2(theState)){
 									TileEntity te2 = world.getTileEntity(pos);
+
 									if (te2 != null) {
 										((ISEMultiBlockTile)te2).getMultiBlockTileInfo().formed = false;
 										removedTile.add((ISEMultiBlockTile)te2);
 									}
-									world.setBlockToAir(pos);	//world.removeTileEntity(pos);
+									
+									world.destroyBlock(pos, false);
 									world.setBlockState(pos, blockInfo.state);
 								}
 							}
