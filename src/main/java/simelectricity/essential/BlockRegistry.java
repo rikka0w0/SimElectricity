@@ -16,8 +16,7 @@ import simelectricity.essential.grid.TilePowerPole;
 import simelectricity.essential.grid.TilePowerPole2;
 import simelectricity.essential.grid.transformer.BlockPowerTransformer;
 import simelectricity.essential.grid.transformer.TilePowerTransformerPlaceHolder;
-import simelectricity.essential.grid.transformer.TilePowerTransformerPrimary;
-import simelectricity.essential.grid.transformer.TilePowerTransformerSecondary;
+import simelectricity.essential.grid.transformer.TilePowerTransformerWinding;
 import simelectricity.essential.machines.BlockElectronics;
 import simelectricity.essential.machines.BlockTwoPortElectronics;
 import simelectricity.essential.machines.gui.ContainerAdjustableResistor;
@@ -71,8 +70,10 @@ public class BlockRegistry {
 		registerTile(TileCableJoint.class);
 		registerTile(TilePowerPole2.class);
 		registerTile(TilePowerTransformerPlaceHolder.class);
-		registerTile(TilePowerTransformerPrimary.class);
-		registerTile(TilePowerTransformerSecondary.class);
+		registerTile(TilePowerTransformerPlaceHolder.Primary.class);
+		registerTile(TilePowerTransformerPlaceHolder.Secondary.class);
+		registerTile(TilePowerTransformerWinding.Primary.class);
+		registerTile(TilePowerTransformerWinding.Secondary.class);
 		
 		registerTile(TileVoltageMeter.class);
 		registerTile(TileQuantumGenerator.class);

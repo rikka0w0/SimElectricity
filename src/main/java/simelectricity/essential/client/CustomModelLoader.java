@@ -31,9 +31,7 @@ public class CustomModelLoader implements ICustomModelLoader{
 	}
 	
 	@Override
-	public void onResourceManagerReload(IResourceManager resourceManager) {
-		// TODO Do nothing?
-	}
+	public void onResourceManagerReload(IResourceManager resourceManager) {}
 	
 	@Override
 	public boolean accepts(ResourceLocation modelLocation) {

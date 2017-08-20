@@ -18,7 +18,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import simelectricity.api.SEAPI;
 import simelectricity.api.node.ISESimulatable;
-import simelectricity.api.tile.ISEGridTile;
 import simelectricity.essential.api.ISEHVCableConnector;
 import simelectricity.essential.client.ISESimpleTextureItem;
 import simelectricity.essential.common.ISESubBlock;
@@ -65,20 +64,18 @@ public class BlockPowerTransformer extends SEModelBlock implements ITileEntityPr
 		case Placeholder:
 			return new TilePowerTransformerPlaceHolder();
 		case PlaceholderPrimary:
-			break;
+			return new TilePowerTransformerPlaceHolder.Primary();
 		case PlaceholderSecondary:
-			break;
+			return new TilePowerTransformerPlaceHolder.Secondary();
 		case Primary:
-			return new TilePowerTransformerPrimary();
-		case Render:
-			break;
+			return new TilePowerTransformerWinding.Primary();
 		case Secondary:
-			return new TilePowerTransformerSecondary();
+			return new TilePowerTransformerWinding.Secondary();
+		case Render:
+			return null;
 		default:
-			break;
-		}
-		
-		return new TilePowerTransformerPlaceHolder();
+			return null;
+		}		
 	}
 	
 	///////////////////////////////
@@ -209,20 +206,28 @@ public class BlockPowerTransformer extends SEModelBlock implements ITileEntityPr
 	@Override
 	public ISESimulatable getNode(World world, BlockPos pos) {
 		TileEntity te = world.getTileEntity(pos);
-		if (te instanceof ISEGridTile) {
-			return ((ISEGridTile) te).getGridNode();
-		}
-		// TODO Auto-generated method stub
+
+		if (te instanceof TilePowerTransformerPlaceHolder.Primary)
+			return ((TilePowerTransformerPlaceHolder.Primary) te).getPrimaryTile();
+		else if (te instanceof TilePowerTransformerPlaceHolder.Secondary)
+			return ((TilePowerTransformerPlaceHolder.Secondary) te).getSecondaryTile();
+		else if (te instanceof TilePowerTransformerWinding)
+			return ((TilePowerTransformerWinding) te).getGridNode();
+
 		return null;
 	}
 
 	@Override
 	public boolean canHVCableConnect(World world, BlockPos pos) {
 		TileEntity te = world.getTileEntity(pos);
-		if (te instanceof ISEGridTile) {
-			return true;
-		}
-		// TODO Auto-generated method stub
+		
+		if (te instanceof TilePowerTransformerPlaceHolder.Primary)
+			return ((TilePowerTransformerPlaceHolder.Primary) te).canConnect();
+		else if (te instanceof TilePowerTransformerPlaceHolder.Secondary)
+			return ((TilePowerTransformerPlaceHolder.Secondary) te).canConnect();
+		else if (te instanceof TilePowerTransformerWinding)
+			return ((TilePowerTransformerWinding) te).canConnect();
+		
 		return false;
 	}
 }

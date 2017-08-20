@@ -198,7 +198,8 @@ public class ItemTools extends SEItem implements ISESimpleTextureItem{
     			
     			Utils.chat(player, "------------------"); 
     			ISESimulatable node = ((ISENodeDelegateBlock) block).getNode(world, pos);
-    			printVI(node, player);
+    			if (node != null)
+    				printVI(node, player);
     			
     			return EnumActionResult.PASS;
     		}

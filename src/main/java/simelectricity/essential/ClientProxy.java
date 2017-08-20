@@ -8,6 +8,7 @@ import simelectricity.essential.client.coverpanel.SupportRender;
 import simelectricity.essential.client.coverpanel.VoltageSensorRender;
 import simelectricity.essential.client.grid.GridStateMapper;
 import simelectricity.essential.client.grid.TileRenderPowerPole;
+import simelectricity.essential.client.grid.transformer.PowerTransformerStateMapper;
 import simelectricity.essential.client.semachine.SEMachineStateMapper;
 import simelectricity.essential.client.semachine.SocketRender;
 import simelectricity.essential.common.ISEGuiProvider;
@@ -91,10 +92,10 @@ public class ClientProxy extends CommonProxy{
 		loader.registerInventoryIcon(BlockRegistry.powerPoleTop.itemBlock);
 		gStateMapper.register(BlockRegistry.powerPole2);
 		loader.registerInventoryIcon(BlockRegistry.powerPole2.itemBlock);
-		gStateMapper.register(BlockRegistry.powerTransformer);
-		//loader.registerInventoryIcon(BlockRegistry.powerTransformer.itemBlock);
 		
-		
+		PowerTransformerStateMapper ptStateMapper = new PowerTransformerStateMapper(Essential.modID);
+		loader.registerModelLoader(ptStateMapper);
+		ptStateMapper.register(BlockRegistry.powerTransformer);
 		
 		//Initialize socket render and support render
 		new SocketRender();
