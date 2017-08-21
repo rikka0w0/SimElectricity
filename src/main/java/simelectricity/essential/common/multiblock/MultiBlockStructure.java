@@ -163,7 +163,7 @@ public class MultiBlockStructure {
 		if (te instanceof ISEMultiBlockTile){			
 			MultiBlockTileInfo mbInfo = ((ISEMultiBlockTile) te).getMultiBlockTileInfo();
 			if (!mbInfo.formed)
-				return;
+				return;	//Avoid circulation, improve performance
 			
 			Set<ISEMultiBlockTile> removedTile = new HashSet();
 			

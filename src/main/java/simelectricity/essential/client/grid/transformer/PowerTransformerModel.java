@@ -8,6 +8,7 @@ import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.EnumFacing;
 import simelectricity.essential.client.BlockRenderModel;
+import simelectricity.essential.grid.Properties;
 
 public class PowerTransformerModel extends BlockRenderModel {
 	private final IBakedModel[] unmirrored;
@@ -23,6 +24,7 @@ public class PowerTransformerModel extends BlockRenderModel {
 	
 	@Override
 	public List<BakedQuad> getQuads(IBlockState state, EnumFacing side, long rand) {
-		return unmirrored[1].getQuads(state, side, rand);
+		int facing = state.getValue(Properties.propertyFacing2);
+		return unmirrored[facing].getQuads(state, side, rand);
 	}
 }

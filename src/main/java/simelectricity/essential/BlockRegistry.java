@@ -72,6 +72,7 @@ public class BlockRegistry {
 		registerTile(TilePowerTransformerPlaceHolder.class);
 		registerTile(TilePowerTransformerPlaceHolder.Primary.class);
 		registerTile(TilePowerTransformerPlaceHolder.Secondary.class);
+		registerTile(TilePowerTransformerPlaceHolder.Render.class);
 		registerTile(TilePowerTransformerWinding.Primary.class);
 		registerTile(TilePowerTransformerWinding.Secondary.class);
 		

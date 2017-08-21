@@ -136,25 +136,22 @@ public class TileCableJoint extends SEEnergyTile implements ISECableTile, ISEGri
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void updateRenderInfo() {
-		getRenderHelper().updateRenderData(neighbor);
+		if (renderHelper == null) {
+			//Create renderHelper on client side
+			int rotation = world.getBlockState(pos).getValue(Properties.propertyFacing);
+			renderHelper = new PowerPoleRenderHelper(world, pos, rotation, 1, 3);
+			renderHelper.addInsulatorGroup(0.6F, 1.45F, 0F, 
+					renderHelper.createInsulator(0, -0.3F, 1.17F, -0.95F),
+					renderHelper.createInsulator(0, 0.6F, 1.45F, 0F),
+					renderHelper.createInsulator(0, -0.3F, 1.17F, 0.95F));
+		}
+		
+		renderHelper.updateRenderData(neighbor);
 	}
 	
 	@Override
 	@SideOnly(Side.CLIENT)
 	public PowerPoleRenderHelper getRenderHelper() {
-        //Create renderHelper on client side
-        if (world.isRemote){
-			if (renderHelper == null) {
-				int rotation = world.getBlockState(pos).getValue(Properties.propertyFacing);
-				renderHelper = new PowerPoleRenderHelper(world, pos, rotation, 1, 3);
-				renderHelper.addInsulatorGroup(0.6F, 1.45F, 0F, 
-						renderHelper.createInsulator(0, -0.3F, 1.17F, -0.95F),
-						renderHelper.createInsulator(0, 0.6F, 1.45F, 0F),
-						renderHelper.createInsulator(0, -0.3F, 1.17F, 0.95F));
-			}
-        	return renderHelper;
-        }else{
-        	return null;
-        }
+		return renderHelper;
 	}
 }

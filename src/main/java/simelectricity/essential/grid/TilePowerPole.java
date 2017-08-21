@@ -94,6 +94,10 @@ public class TilePowerPole extends SEEnergyTile implements ISEGridTile, ISEPower
 	@SideOnly(Side.CLIENT)
 	@Override
 	public void updateRenderInfo() {
+		if (renderHelper == null)
+			//Create renderHelper on client side
+			renderHelper = createRenderHelper();
+		
 		getRenderHelper().updateRenderData(neighbor1, neighbor2);
 		if (getTypeFromMeta() == 0)
 			this.markForRenderUpdate();
@@ -102,14 +106,7 @@ public class TilePowerPole extends SEEnergyTile implements ISEGridTile, ISEPower
 	@SideOnly(Side.CLIENT)
 	@Override
 	public PowerPoleRenderHelper getRenderHelper() {
-        //Create renderHelper on client side
-        if (world.isRemote){
-			if (renderHelper == null)
-				renderHelper = createRenderHelper();
-        	return renderHelper;
-        }else{
-        	return null;
-        }
+        return renderHelper;
 	}
 	
 	//////////////////////////////

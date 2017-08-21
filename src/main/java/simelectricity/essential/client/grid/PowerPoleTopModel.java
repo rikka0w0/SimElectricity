@@ -98,6 +98,10 @@ public class PowerPoleTopModel extends BlockRenderModel {
 		    
 		    
 		    PowerPoleRenderHelper helper = ((ISEPowerPole)gridTile).getRenderHelper();
+		    
+		    if (helper == null)
+		    	return quads;	//Before the new placed block receiving the update packet from server;
+		    
 		    for (PowerPoleRenderHelper.ConnectionInfo[] connections: helper.connectionInfo) {
 		    	for (PowerPoleRenderHelper.ConnectionInfo connection: connections) {
 		    		Models.renderInsulators(helper.pos, connection.from, connection.fixedTo, connection.insulatorAngle, modelInsulator, quads);

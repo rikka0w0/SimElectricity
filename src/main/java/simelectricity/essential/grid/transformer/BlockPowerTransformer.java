@@ -24,6 +24,7 @@ import simelectricity.essential.common.ISESubBlock;
 import simelectricity.essential.common.SEItemBlock;
 import simelectricity.essential.common.multiblock.MultiBlockStructure;
 import simelectricity.essential.common.multiblock.MultiBlockStructure.BlockInfo;
+import simelectricity.essential.grid.Properties;
 import simelectricity.essential.grid.SEModelBlock;
 
 public class BlockPowerTransformer extends SEModelBlock implements ITileEntityProvider, ISESubBlock, ISESimpleTextureItem, ISEHVCableConnector {
@@ -72,7 +73,7 @@ public class BlockPowerTransformer extends SEModelBlock implements ITileEntityPr
 		case Secondary:
 			return new TilePowerTransformerWinding.Secondary();
 		case Render:
-			return new TilePowerTransformerPlaceHolder();
+			return new TilePowerTransformerPlaceHolder.Render();
 		default:
 			return null;
 		}		
@@ -83,7 +84,7 @@ public class BlockPowerTransformer extends SEModelBlock implements ITileEntityPr
 	///////////////////////////////
 	@Override
 	protected final BlockStateContainer createBlockState(){
-		return new BlockStateContainer(this, new IProperty[] {EnumBlockType.property});
+		return new BlockStateContainer(this, new IProperty[] {EnumBlockType.property, Properties.propertyFacing2});
 	}
 	
 	@Override
@@ -98,6 +99,16 @@ public class BlockPowerTransformer extends SEModelBlock implements ITileEntityPr
 	
 	public IBlockState stateFromType(EnumBlockType blockType) {
 		return super.getDefaultState().withProperty(EnumBlockType.property, blockType);
+	}
+	
+	@Override
+	public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
+		TileEntity te = world.getTileEntity(pos);
+		if (te instanceof TilePowerTransformerPlaceHolder.Render) {
+			EnumFacing facing = ((TilePowerTransformerPlaceHolder.Render) te).getFacing();
+			state = state.withProperty(Properties.propertyFacing2, (facing.ordinal() - 2) & 3);
+		}
+		return state;
 	}
 	
     @Override
@@ -133,6 +144,26 @@ public class BlockPowerTransformer extends SEModelBlock implements ITileEntityPr
 	}
     
 	@Override
+	public int damageDropped(IBlockState state) {
+		EnumBlockType blockType = state.getValue(EnumBlockType.property);
+		
+		if (blockType.formed)
+			return 0;
+		
+		return getMetaFromState(state);
+	}
+	
+	@Override
+	public ItemStack getItem(World worldIn, BlockPos pos, IBlockState state) {
+		EnumBlockType blockType = state.getValue(EnumBlockType.property);
+		
+		if (blockType.formed)
+			return ItemStack.EMPTY;
+		
+		return new ItemStack(itemBlock, 1, damageDropped(state));
+	}
+	
+	@Override
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ){
 		return false;
 	}
@@ -167,7 +198,7 @@ public class BlockPowerTransformer extends SEModelBlock implements ITileEntityPr
 		};
 		
 		configuration[1] = new BlockInfo[][]{
-			{null			,casing2PHpri	,casing2PHpri	,null		,casing2PHpri	,casing2PHpri,	null},
+			{null			,casing2PHpri	,casing2PHpri	,casing2PHpri	,casing2PHpri	,casing2PHpri,	null},
 			{casing2PHpri	,coil2PH		,coil2PH		,coil2PH		,coil2PH		,coil2PH	,	casing2PHpri},
 			{casing2PH		,coil2PH		,core2PH		,core2PH		,core2PH		,coil2PH	,	casing2PH},
 			{casing2PHsec	,coil2PH		,coil2PH		,coil2PH		,coil2PH		,coil2PH	,	casing2PHsec},
@@ -175,7 +206,7 @@ public class BlockPowerTransformer extends SEModelBlock implements ITileEntityPr
 		};
 		
 		configuration[2] = new BlockInfo[][]{
-			{null			,casing2PHpri	,casing2PHpri	,null		,casing2PHpri	,casing2PHpri,	null},
+			{null			,casing2PHpri	,casing2PHpri	,null			,casing2PHpri	,casing2PHpri,	null},
 			{casing2PHpri	,casing2PHpri	,casing2PHpri	,casing2pri		,casing2PHpri	,casing2PHpri,	casing2PHpri},
 			{casing2PH		,casing2PH		,casing2PH		,casing2render	,casing2PH		,casing2PH	,	casing2PH},
 			{casing2PHsec	,casing2PHsec	,casing2PHsec	,casing2PHsec	,casing2sec		,casing2PHsec,	casing2PHsec},
@@ -201,6 +232,9 @@ public class BlockPowerTransformer extends SEModelBlock implements ITileEntityPr
 		return new MultiBlockStructure(configuration);
 	}
 
+	//////////////////////////////////////
+	/// ISEHVCableConnector
+	//////////////////////////////////////
 	@Override
 	public ISESimulatable getNode(World world, BlockPos pos) {
 		TileEntity te = world.getTileEntity(pos);
