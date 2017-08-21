@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import org.apache.commons.lang3.tuple.Pair;
 
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3i;
@@ -18,6 +19,7 @@ import simelectricity.essential.utils.math.Vec3f;
 public class PowerPoleRenderHelper {	
 	private final IBlockAccess world;
 	public final BlockPos pos;	//Real MC pos
+	public final boolean mirroredAboutZ;
 	public final int rotation;
 	public final Group[] groups;
 	public final int insulatorPerGroup;
@@ -30,19 +32,46 @@ public class PowerPoleRenderHelper {
 	public LinkedList<Pair<Vec3f, Vec3f>> extraWires = new LinkedList();
 	
 	public PowerPoleRenderHelper(IBlockAccess world, BlockPos pos, int rotationMC, int numOfGroup, int insulatorPerGroup) {
+		this(world, pos, rotationMC, false, numOfGroup, insulatorPerGroup);
+	}
+	
+	public static int facing2rotation(EnumFacing facing) {
+		switch (facing) {
+		case SOUTH:
+			return 0;
+		case WEST:
+			return 6;
+		case NORTH:
+			return 4;
+		case EAST:
+			return 2;
+		default:
+			return 0;
+		}
+	}
+
+	public PowerPoleRenderHelper(IBlockAccess world, BlockPos pos, EnumFacing facing, boolean mirroredAboutZ, int numOfGroup, int insulatorPerGroup) {
+		this(world, pos, facing2rotation(facing), mirroredAboutZ, numOfGroup, insulatorPerGroup);
+	}
+	
+	public PowerPoleRenderHelper(IBlockAccess world, BlockPos pos, int rotationMC, boolean mirroredAboutZ, int numOfGroup, int insulatorPerGroup) {
 		this.world = world;
 		this.pos = pos;
 		this.rotation = rotationMC*45 - 90;
+		this.mirroredAboutZ = mirroredAboutZ;
 		this.groups = new Group[numOfGroup];
 		this.insulatorPerGroup = insulatorPerGroup;
 		this.addedGroup = 0;
 	}
 	
-	public Insulator createInsulator(float length, float offsetX, float offsetY, float offsetZ) {
-		float rotatedX = offsetZ * MathHelper.sin(rotation/180F*SEMathHelper.PI) + offsetX * MathHelper.cos(rotation/180F*SEMathHelper.PI) + 0.5F;
-		float rotatedZ = offsetZ * MathHelper.cos(rotation/180F*SEMathHelper.PI) - offsetX * MathHelper.sin(rotation/180F*SEMathHelper.PI) + 0.5F;
+	public Insulator createInsulator(float length, float offsetX, float offsetY, float offsetZ) {	
+		float rotatedX = offsetZ * MathHelper.sin(rotation/180F*SEMathHelper.PI) + offsetX * MathHelper.cos(rotation/180F*SEMathHelper.PI);
+		float rotatedZ = offsetZ * MathHelper.cos(rotation/180F*SEMathHelper.PI) - offsetX * MathHelper.sin(rotation/180F*SEMathHelper.PI);
 		
-		return new Insulator(this, length, rotatedX, offsetY, rotatedZ);
+		if (this.mirroredAboutZ)
+			rotatedX = -rotatedX;
+		
+		return new Insulator(this, length, rotatedX + 0.5F, offsetY, rotatedZ + 0.5F);
 	}
 	
 	public void addInsulatorGroup(float centerX, float centerY, float centerZ, Insulator... insulators) {

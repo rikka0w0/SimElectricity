@@ -72,7 +72,7 @@ public class BlockPowerTransformer extends SEModelBlock implements ITileEntityPr
 		case Secondary:
 			return new TilePowerTransformerWinding.Secondary();
 		case Render:
-			return null;
+			return new TilePowerTransformerPlaceHolder();
 		default:
 			return null;
 		}		
@@ -103,7 +103,9 @@ public class BlockPowerTransformer extends SEModelBlock implements ITileEntityPr
     @Override
     @SideOnly(Side.CLIENT)
     public boolean shouldSideBeRendered(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side) {
-        return true;
+    	EnumBlockType blockType = blockState.getValue(EnumBlockType.property);
+        return !blockType.formed;
+    	//return true;
     }
 	
 	///////////////////////////////
@@ -157,7 +159,7 @@ public class BlockPowerTransformer extends SEModelBlock implements ITileEntityPr
 		// \|/
 		//  z+ (South)
 		configuration[0] = new BlockInfo[][]{
-			{null			,casing2PHpri	,casing2PHpri	,casing2PHpri	,casing2PHpri	,casing2PHpri,	null},
+			{null			,casing2PHpri	,casing2PHpri	,null			,casing2PHpri	,casing2PHpri,	null},
 			{casing2PHpri	,casing2PHpri	,casing2PHpri	,casing2PHpri	,casing2PHpri	,casing2PHpri,	casing2PHpri},
 			{casing2PH		,casing2PH		,casing2PH		,casing2PH		,casing2PH		,casing2PH	,	casing2PH},
 			{casing2PHsec	,casing2PHsec	,casing2PHsec	,casing2PHsec	,casing2PHsec	,casing2PHsec,	casing2PHsec},
@@ -165,7 +167,7 @@ public class BlockPowerTransformer extends SEModelBlock implements ITileEntityPr
 		};
 		
 		configuration[1] = new BlockInfo[][]{
-			{null			,casing2PHpri	,casing2PHpri	,casing2PHpri	,casing2PHpri	,casing2PHpri,	null},
+			{null			,casing2PHpri	,casing2PHpri	,null		,casing2PHpri	,casing2PHpri,	null},
 			{casing2PHpri	,coil2PH		,coil2PH		,coil2PH		,coil2PH		,coil2PH	,	casing2PHpri},
 			{casing2PH		,coil2PH		,core2PH		,core2PH		,core2PH		,coil2PH	,	casing2PH},
 			{casing2PHsec	,coil2PH		,coil2PH		,coil2PH		,coil2PH		,coil2PH	,	casing2PHsec},
@@ -173,7 +175,7 @@ public class BlockPowerTransformer extends SEModelBlock implements ITileEntityPr
 		};
 		
 		configuration[2] = new BlockInfo[][]{
-			{null			,casing2PHpri	,casing2PHpri	,casing2PHpri	,casing2PHpri	,casing2PHpri,	null},
+			{null			,casing2PHpri	,casing2PHpri	,null		,casing2PHpri	,casing2PHpri,	null},
 			{casing2PHpri	,casing2PHpri	,casing2PHpri	,casing2pri		,casing2PHpri	,casing2PHpri,	casing2PHpri},
 			{casing2PH		,casing2PH		,casing2PH		,casing2render	,casing2PH		,casing2PH	,	casing2PH},
 			{casing2PHsec	,casing2PHsec	,casing2PHsec	,casing2PHsec	,casing2sec		,casing2PHsec,	casing2PHsec},

@@ -7,6 +7,7 @@ import net.minecraft.client.renderer.block.statemap.StateMapperBase;
 import net.minecraft.item.ItemBlock;
 import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.client.model.obj.OBJLoader;
 import simelectricity.essential.BlockRegistry;
 import simelectricity.essential.client.ISEModelLoader;
 import simelectricity.essential.client.SingleTextureModel;
@@ -19,6 +20,8 @@ public class PowerTransformerStateMapper extends StateMapperBase implements ISEM
 	
 	public PowerTransformerStateMapper(String domain) {
 		this.domain = domain;
+		
+		OBJLoader.INSTANCE.addDomain(domain);
 	}
 	
 	@Override
@@ -52,7 +55,11 @@ public class PowerTransformerStateMapper extends StateMapperBase implements ISEM
 		
 		if (block == BlockRegistry.powerTransformer) {
 			EnumBlockType blockType  = EnumBlockType.fromInt(Integer.parseInt(splited[2]));
-			return new SingleTextureModel(domain, "powertransformer_"+blockType.getName(), true);
+			
+			if (blockType == EnumBlockType.Render)
+				return new PowerTransformerRawModel();
+			else
+				return new SingleTextureModel(domain, "powertransformer_"+blockType.getName(), true);
 		}
 		
 		return null;

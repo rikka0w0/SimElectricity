@@ -22,7 +22,9 @@ public abstract class TilePowerTransformerWinding extends SEEnergyTile implement
 	protected MultiBlockTileInfo mbInfo;
 	
 	@SideOnly(Side.CLIENT)
-	private int rotation;
+	private EnumFacing facing;
+	@SideOnly(Side.CLIENT)
+	private boolean mirrored;
 	@SideOnly(Side.CLIENT)
     private PowerPoleRenderHelper renderHelper;
     private BlockPos neighbor = null;
@@ -62,30 +64,16 @@ public abstract class TilePowerTransformerWinding extends SEEnergyTile implement
 	public void prepareS2CPacketData(NBTTagCompound nbt) {
 		Utils.saveToNbt(nbt, "neighbor", neighbor);
 		Utils.saveToNbt(nbt, "facing", mbInfo.facing);
+		nbt.setBoolean("mirrored", mbInfo.mirrored);
 	}
 	
 	@Override
 	@SideOnly(value = Side.CLIENT)
 	public void onSyncDataFromServerArrived(NBTTagCompound nbt) {
 		this.neighbor = Utils.posFromNbt(nbt, "neighbor");
-		EnumFacing facing = Utils.facingFromNbt(nbt, "facing");
-		
-		switch (facing) {
-		case SOUTH:
-			this.rotation = 0;
-			break;
-		case WEST:
-			this.rotation = 2;
-			break;
-		case NORTH:
-			this.rotation = 4;
-			break;
-		case EAST:
-			this.rotation = 6;
-			break;
-		default:
-			break;
-		}
+		this.facing = Utils.facingFromNbt(nbt, "facing");
+		this.mirrored = nbt.getBoolean("mirrored");
+
 		this.updateRenderInfo();
 		
 		if (neighbor != null) {
@@ -165,11 +153,11 @@ public abstract class TilePowerTransformerWinding extends SEEnergyTile implement
         //Create renderHelper on client side
         if (world.isRemote){
 			if (renderHelper == null) {
-				renderHelper = new PowerPoleRenderHelper(world, pos, rotation, 1, 3);
+				renderHelper = new PowerPoleRenderHelper(world, pos, facing, mirrored, 1, 3);
 				renderHelper.addInsulatorGroup(0.6F, 1.45F, 0F, 
-						renderHelper.createInsulator(0, 0, 1.17F, 1),
-						renderHelper.createInsulator(0, 0, 1.3F, 0),
-						renderHelper.createInsulator(0, 0, 1.17F, -2));
+						renderHelper.createInsulator(0, 1, 1.17F, 1),
+						renderHelper.createInsulator(0, 1, 1.3F, 0),
+						renderHelper.createInsulator(0, 1, 1.17F, -2));
 			}
         	return renderHelper;
         }else{

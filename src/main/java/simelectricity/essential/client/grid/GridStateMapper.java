@@ -75,7 +75,7 @@ public class GridStateMapper extends StateMapperBase implements ISEModelLoader {
 		} else if (block == BlockRegistry.powerPole2) {
 			int facing = Integer.parseInt(splited[2]);
 			int type = Integer.parseInt(splited[3]);
-			boolean isRod = Boolean.parseBoolean(splited[3]);
+			boolean isRod = Boolean.parseBoolean(splited[4]);
 			return new PowerPole2RawModel(facing, type, isRod);		
 		}
 		
