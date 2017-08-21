@@ -18,6 +18,7 @@ import net.minecraft.client.renderer.block.model.ModelRotation;
 import net.minecraft.client.renderer.block.model.Variant;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
@@ -32,54 +33,62 @@ public class SEMachineRawModel implements IModel{
     private final Set<ResourceLocation> textures = Sets.newHashSet();
     
     private final boolean hasSecondState;
-    private final IModel[] models;
+    private final IModel model;
+    private final IModel model2;
     private final IModelState defaultState;
 	
-	public SEMachineRawModel(String domain, String modelName, boolean hasSecondState) throws Exception {
+    private static ModelRotation[] rotationMatrix = new ModelRotation[] {
+    		 ModelRotation.X270_Y0, //Down
+    		 ModelRotation.X90_Y0,	//Up
+    		 ModelRotation.X0_Y180,	//North
+    		 ModelRotation.X0_Y0,	//South
+    		 ModelRotation.X0_Y90,	//West
+    		 ModelRotation.X0_Y270	//East
+    };
+    
+	public SEMachineRawModel(String domain, String modelName, EnumFacing facing, boolean hasSecondState) throws Exception {
 		String firstStateModelName = domain + ":block/" + modelName;
 		ImmutableList.Builder<Pair<IModel, IModelState>> builder = ImmutableList.builder();
 		LinkedList<Variant> variants = new LinkedList<Variant>();
 		boolean uvLock = false;
 		
-		this.models = new IModel[hasSecondState ? 12 : 6];
 		//First state
-		variants.add(new Variant(new ResourceLocation(firstStateModelName), ModelRotation.X270_Y0, uvLock, 1));	//Down
-		variants.add(new Variant(new ResourceLocation(firstStateModelName), ModelRotation.X90_Y0, uvLock, 1));	//Up
-		variants.add(new Variant(new ResourceLocation(firstStateModelName), ModelRotation.X0_Y180, uvLock, 1));	//North
-		variants.add(new Variant(new ResourceLocation(firstStateModelName), ModelRotation.X0_Y0, uvLock, 1));	//South
-		variants.add(new Variant(new ResourceLocation(firstStateModelName), ModelRotation.X0_Y90, uvLock, 1));	//West
-		variants.add(new Variant(new ResourceLocation(firstStateModelName), ModelRotation.X0_Y270, uvLock, 1));	//East
+		Variant var1 = new Variant(new ResourceLocation(firstStateModelName), rotationMatrix[facing.ordinal()], uvLock, 1);
+		//First
+		ResourceLocation loc = var1.getModelLocation();
+		if (!this.dependencies.contains(loc))
+			this.dependencies.add(loc);
+		
+		IModel preModel = ModelLoaderRegistry.getModel(loc);
+		IModel model = var1.process(preModel);
+		
+        for(ResourceLocation location : model.getDependencies())
+            ModelLoaderRegistry.getModelOrMissing(location);
+        
+        this.textures.addAll(model.getTextures()); // Kick this, just in case.
+        this.model = model;
+        builder.add(Pair.of(model, var1.getState()));
+        
 		
 		if (hasSecondState){
 			String secondStateModelName = firstStateModelName + "_2";
-			variants.add(new Variant(new ResourceLocation(secondStateModelName), ModelRotation.X270_Y0, uvLock, 1));	//Down
-			variants.add(new Variant(new ResourceLocation(secondStateModelName), ModelRotation.X90_Y0, uvLock, 1));	//Up
-			variants.add(new Variant(new ResourceLocation(secondStateModelName), ModelRotation.X0_Y180, uvLock, 1));	//North
-			variants.add(new Variant(new ResourceLocation(secondStateModelName), ModelRotation.X0_Y0, uvLock, 1));	//South
-			variants.add(new Variant(new ResourceLocation(secondStateModelName), ModelRotation.X0_Y90, uvLock, 1));	//West
-			variants.add(new Variant(new ResourceLocation(secondStateModelName), ModelRotation.X0_Y270, uvLock, 1));	//East
-		}
-		
-		
-		int i = 0;
-		for (Variant variant: variants){
-			ResourceLocation loc = variant.getModelLocation();
+			Variant var2 = new Variant(new ResourceLocation(secondStateModelName), rotationMatrix[facing.ordinal()], uvLock, 1);	//Down
+			
+			loc = var2.getModelLocation();
 			if (!this.dependencies.contains(loc))
 				this.dependencies.add(loc);
 			
-			IModel preModel = ModelLoaderRegistry.getModel(loc);
-			IModel model = variant.process(preModel);
+			preModel = ModelLoaderRegistry.getModel(loc);
+			model = var2.process(preModel);
 			
 	        for(ResourceLocation location : model.getDependencies())
-	        {
 	            ModelLoaderRegistry.getModelOrMissing(location);
-	        }
 	        
 	        this.textures.addAll(model.getTextures()); // Kick this, just in case.
-			
-	        this.models[i] = model;
-	        i++;
-	        builder.add(Pair.of(model, variant.getState()));
+	        this.model2 = model;
+	        builder.add(Pair.of(model, var2.getState()));
+		}else {
+			this.model2 = null;
 		}
 		
 		this.defaultState = new MultiModelState(builder.build());
@@ -104,25 +113,18 @@ public class SEMachineRawModel implements IModel{
 	@Override
 	public IBakedModel bake(IModelState state, VertexFormat format,
 			Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter) {
-		IBakedModel[] firstStateModel = new IBakedModel[6];
-		for (int i=0; i<6; i++){
-			IModel model = this.models[i];
-			IModelState actualState = MultiModelState.getPartState(state, model, i);
-			IBakedModel bakedModel = model.bake(actualState, format, bakedTextureGetter);
-			firstStateModel[i] = bakedModel;
-		}
+		IModelState actualState = MultiModelState.getPartState(state, model, 0);
+		IBakedModel bakedModel = model.bake(actualState, format, bakedTextureGetter);
 		
-		IBakedModel[] secondStateModel = null;
+		IModelState actualState2 = null;
+		IBakedModel bakedModel2 = null;
+		
 		if (this.hasSecondState){
-			secondStateModel = new IBakedModel[6];
-			for (int i=6; i<12; i++){
-				IModel model = this.models[i];
-				IModelState actualState = MultiModelState.getPartState(state, model, i);
-				IBakedModel bakedModel = model.bake(actualState, format, bakedTextureGetter);
-				secondStateModel[i-6] = bakedModel;
-			}
+			actualState2 = MultiModelState.getPartState(state, model, 1);
+			bakedModel2 = model2.bake(actualState2, format, bakedTextureGetter);
 		}
+
 		
-		return new SEMachineModel(firstStateModel, secondStateModel);
+		return new SEMachineModel(bakedModel, bakedModel2);
 	}
 }

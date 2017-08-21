@@ -28,13 +28,12 @@ public abstract class SEMetaBlock extends SEBlock{
 	///////////////////////////////
 	@Override
 	protected final BlockStateContainer createBlockState(){
+		ArrayList<IProperty> properties = new ArrayList();
 		ArrayList<IUnlistedProperty> unlisted = new ArrayList();
 		
-		createUnlistedProperties(unlisted);
+		createProperties(properties, unlisted);
 		
-		IProperty[] propertyArray = new IProperty[] {
-				PropertyInteger.create("meta", 0 , getMetaUpperBound()-1)
-				};
+		IProperty[] propertyArray = properties.toArray(new IProperty[properties.size()]);
 		IUnlistedProperty[] unlistedArray = unlisted.toArray(new IUnlistedProperty[unlisted.size()]);
 		
 		if (unlisted.isEmpty()){
@@ -43,12 +42,13 @@ public abstract class SEMetaBlock extends SEBlock{
 			return new ExtendedBlockState(this, propertyArray, unlistedArray);
 		}
 	}
-
 	/**
-	 * Override this to add more unlisted properties
+	 * Override this to add more normal/unlisted properties
 	 * @param properties
 	 */
-	protected void createUnlistedProperties(ArrayList<IUnlistedProperty> properties){}
+	protected void createProperties(ArrayList<IProperty> properties, ArrayList<IUnlistedProperty> unlisted){
+		properties.add(PropertyInteger.create("meta", 0 , getMetaUpperBound()-1));
+	}
 	
 	public final IProperty<Integer> propertyMeta;
 	
@@ -70,22 +70,16 @@ public abstract class SEMetaBlock extends SEBlock{
 	 * This gets called before during the initialization, propertyMeta is not ready yet
 	 */
 	@Override
-    public final IBlockState getStateFromMeta(int meta){		
+    public IBlockState getStateFromMeta(int meta){		
         return super.getDefaultState().withProperty(getPropertyMeta(), meta & 15);
     }
 	
 	@Override
-    public final int getMetaFromState(IBlockState state){
+    public int getMetaFromState(IBlockState state){
 		int meta = state.getValue(getPropertyMeta());
 		meta = meta & 15;
 		return meta;
     }
-	
-	//@Override
-    //public IBlockState getActualState(IBlockState state, IBlockAccess worldIn, BlockPos pos){		
-	//	int meta = this.getMetaFromState(state);
-	//	return state.withProperty(propertyMeta, meta);
-    //}
 	
 	@Override
     public int damageDropped(IBlockState state){

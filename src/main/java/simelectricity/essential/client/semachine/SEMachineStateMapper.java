@@ -1,6 +1,7 @@
 package simelectricity.essential.client.semachine;
 
 import simelectricity.essential.client.ISEModelLoader;
+import simelectricity.essential.common.semachine.ExtendedProperties;
 import simelectricity.essential.common.semachine.SEMachineBlock;
 
 import net.minecraft.block.Block;
@@ -8,6 +9,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.StateMapperBase;
 import net.minecraft.item.ItemBlock;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
@@ -30,9 +32,10 @@ public class SEMachineStateMapper extends StateMapperBase implements ISEModelLoa
 			ISESidedTextureBlock stBlock = (ISESidedTextureBlock) block;
 			
 			String modelName = stBlock.getModelNameFrom(state);
+			EnumFacing facing = state.getValue(ExtendedProperties.propertyFacing);
 			boolean has2State = stBlock.hasSecondState(state);
 			
-			String varStr = (has2State ? "2" : "1") + modelName;
+			String varStr = modelName +","+ facing.ordinal() +","+ has2State;
 			
 			ModelResourceLocation res = new ModelResourceLocation(
 					this.domain + ":" + VPATH,
@@ -40,7 +43,6 @@ public class SEMachineStateMapper extends StateMapperBase implements ISEModelLoa
 					);
 			return res;
 		}
-		
 		
 		return null;
 	}
@@ -52,9 +54,12 @@ public class SEMachineStateMapper extends StateMapperBase implements ISEModelLoa
 	
 	@Override
 	public IModel loadModel(String domain, String resPath, String variantStr) throws Exception {
-		boolean has2State = variantStr.startsWith("2");
-		variantStr = variantStr.substring(1);
-		IModel model = new SEMachineRawModel(domain, variantStr, has2State);
+		String[] splited = variantStr.split(",");
+		String blockName = splited[0];
+		int facing = Integer.parseInt(splited[1]);
+		boolean has2State = Boolean.parseBoolean(splited[2]);
+		
+		IModel model = new SEMachineRawModel(domain, blockName, EnumFacing.getFront(facing), has2State);
 		return model;
 	}
 	

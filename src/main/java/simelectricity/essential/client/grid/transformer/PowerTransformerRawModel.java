@@ -33,6 +33,13 @@ public class PowerTransformerRawModel implements IModel{
     private final IModel[] models;
     private final IModelState defaultState;
     
+    private final static ModelRotation[] rotationMatrix  = new ModelRotation[]{
+    		ModelRotation.X0_Y270,
+    		ModelRotation.X0_Y90,
+    		ModelRotation.X0_Y180,
+    		ModelRotation.X0_Y0
+    };
+    
     public PowerTransformerRawModel() throws Exception {
     	String modelName = "sime_essential:powertransformer.obj";	//Sketch Up --*.dae--> Blender --> *.obj & *.mtl
 		ImmutableList.Builder<Pair<IModel, IModelState>> builder = ImmutableList.builder();

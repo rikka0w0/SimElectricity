@@ -29,6 +29,7 @@ import simelectricity.essential.utils.math.MatrixTranformations;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
@@ -172,8 +173,9 @@ public class BlockCable extends SEMetaBlock implements ITileEntityProvider, ISES
 	///BlockStates
 	///////////////////////////////       
 	@Override
-	protected void createUnlistedProperties(ArrayList<IUnlistedProperty> properties){
-			properties.add(UnlistedNonNullProperty.propertyCable);
+	protected void createProperties(ArrayList<IProperty> properties, ArrayList<IUnlistedProperty> unlisted){
+		super.createProperties(properties, unlisted);
+		unlisted.add(UnlistedNonNullProperty.propertyCable);
 	}
     
 	@Override

@@ -13,6 +13,7 @@ import simelectricity.essential.common.SEItemBlock;
 import simelectricity.essential.common.SEMetaBlock;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -73,16 +74,31 @@ public abstract class SEMachineBlock extends SEMetaBlock implements ITileEntityP
 	///BlockStates
 	///////////////////////////////
 	@Override
-	protected void createUnlistedProperties(ArrayList<IUnlistedProperty> properties){
+	protected void createProperties(ArrayList<IProperty> properties, ArrayList<IUnlistedProperty> unlisted){
+		super.createProperties(properties, unlisted);
 		properties.add(ExtendedProperties.propertyFacing);
-		properties.add(ExtendedProperties.propertIs2State);
+		properties.add(ExtendedProperties.propertyIs2state);
 		
-		properties.add(ExtendedProperties.propertyDownSocket);
-		properties.add(ExtendedProperties.propertyUpSocket);
-		properties.add(ExtendedProperties.propertyNorthSocket);
-		properties.add(ExtendedProperties.propertySouthSocket);
-		properties.add(ExtendedProperties.propertyWestSocket);
-		properties.add(ExtendedProperties.propertyEastSocket);
+		unlisted.add(ExtendedProperties.propertyDownSocket);
+		unlisted.add(ExtendedProperties.propertyUpSocket);
+		unlisted.add(ExtendedProperties.propertyNorthSocket);
+		unlisted.add(ExtendedProperties.propertySouthSocket);
+		unlisted.add(ExtendedProperties.propertyWestSocket);
+		unlisted.add(ExtendedProperties.propertyEastSocket);
+	}
+	
+	@Override
+    public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos){		
+		TileEntity te = world.getTileEntity(pos);
+		
+		if (te instanceof ISidedFacing) {
+			EnumFacing facing = ((ISidedFacing) te).getFacing();
+			state = state.withProperty(ExtendedProperties.propertyFacing, facing);
+		}
+		
+		state = state.withProperty(ExtendedProperties.propertyIs2state, isSecondState(te));
+		
+		return state;
 	}
 	
 	@Override
@@ -91,12 +107,6 @@ public abstract class SEMachineBlock extends SEMetaBlock implements ITileEntityP
 			IExtendedBlockState retval = (IExtendedBlockState)state;
 			
 			TileEntity te = world.getTileEntity(pos);
-			if (te instanceof ISidedFacing){
-				EnumFacing facing = ((ISidedFacing) te).getFacing();
-				retval = retval.withProperty(ExtendedProperties.propertyFacing, facing);
-			}
-			
-			retval = retval.withProperty(ExtendedProperties.propertIs2State, isSecondState(te));
 			
 			if (te instanceof ISESocketProvider){
 				for (EnumFacing facing: EnumFacing.VALUES){
