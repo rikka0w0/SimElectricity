@@ -21,19 +21,19 @@ import simelectricity.api.node.ISESimulatable;
 import simelectricity.essential.api.ISEHVCableConnector;
 import simelectricity.essential.client.ISESimpleTextureItem;
 import simelectricity.essential.common.ISESubBlock;
+import simelectricity.essential.common.SEBlock;
 import simelectricity.essential.common.SEItemBlock;
 import simelectricity.essential.common.multiblock.MultiBlockStructure;
 import simelectricity.essential.common.multiblock.MultiBlockStructure.BlockInfo;
 import simelectricity.essential.grid.Properties;
-import simelectricity.essential.grid.SEModelBlock;
 
-public class BlockPowerTransformer extends SEModelBlock implements ITileEntityProvider, ISESubBlock, ISESimpleTextureItem, ISEHVCableConnector {
+public class BlockPowerTransformer extends SEBlock implements ITileEntityProvider, ISESubBlock, ISESimpleTextureItem, ISEHVCableConnector {
 	public static final String[] subNames = EnumBlockType.getRawStructureNames();
 	
 	public final MultiBlockStructure structureTemplate;
 	
 	public BlockPowerTransformer() {
-		super("essential_powertransformer", Material.GLASS, SEItemBlock.class);
+		super("essential_powertransformer", Material.IRON, SEItemBlock.class);
 		
 		this.structureTemplate = createStructureTemplate();
 	}
@@ -110,15 +110,7 @@ public class BlockPowerTransformer extends SEModelBlock implements ITileEntityPr
 		}
 		return state;
 	}
-	
-    @Override
-    @SideOnly(Side.CLIENT)
-    public boolean shouldSideBeRendered(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side) {
-    	EnumBlockType blockType = blockState.getValue(EnumBlockType.property);
-        return !blockType.formed;
-    	//return true;
-    }
-	
+		
 	///////////////////////////////
 	/// Block activities
 	///////////////////////////////
@@ -262,4 +254,32 @@ public class BlockPowerTransformer extends SEModelBlock implements ITileEntityPr
 		
 		return false;
 	}
+	
+	////////////////////////////////////
+	/// Rendering
+	////////////////////////////////////
+    //This will tell minecraft not to render any side of our cube.
+    @Override
+    @SideOnly(Side.CLIENT)
+    public boolean shouldSideBeRendered(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side) {
+    	EnumBlockType blockType = blockState.getValue(EnumBlockType.property);
+        return !blockType.formed;
+    	//return true;
+    }
+
+    //And this tell it that you can see through this block, and neighbor blocks should be rendered.
+	@Override
+	public boolean isOpaqueCube(IBlockState state) {
+		return false;
+	}
+	
+	@Override
+	public boolean isNormalCube(IBlockState state) {
+		return true;
+	}
+	
+	@Override
+    public boolean isFullCube(IBlockState state) {
+        return false;
+    }
 }

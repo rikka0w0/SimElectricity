@@ -48,10 +48,11 @@ import simelectricity.api.tile.ISEGridTile;
 import simelectricity.essential.BlockRegistry;
 import simelectricity.essential.client.ISESimpleTextureItem;
 import simelectricity.essential.common.ISESubBlock;
+import simelectricity.essential.common.SEBlock;
 import simelectricity.essential.common.SEItemBlock;
 import simelectricity.essential.common.UnlistedNonNullProperty;
 
-public class BlockPowerPoleTop extends SEModelBlock implements ITileEntityProvider, ISESubBlock{
+public class BlockPowerPoleTop extends SEBlock implements ITileEntityProvider, ISESubBlock{
 	public static final String[] subNames = {"0","1"};
 	
 	///////////////////
@@ -290,5 +291,31 @@ public class BlockPowerPoleTop extends SEModelBlock implements ITileEntityProvid
     		SEAPI.energyNetAgent.detachGridNode(world, ((ISEGridTile) te).getGridNode());
     	
     	super.breakBlock(world, pos, state);
+    }
+    
+	////////////////////////////////////
+	/// Rendering
+	////////////////////////////////////
+    //This will tell minecraft not to render any side of our cube.
+    @Override
+    @SideOnly(Side.CLIENT)
+    public boolean shouldSideBeRendered(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side) {
+        return false;
+    }
+
+    //And this tell it that you can see through this block, and neighbor blocks should be rendered.
+	@Override
+	public boolean isOpaqueCube(IBlockState state) {
+		return false;
+	}
+	
+	@Override
+	public boolean isNormalCube(IBlockState state) {
+		return false;
+	}
+	
+	@Override
+    public boolean isFullCube(IBlockState state) {
+        return false;
     }
 }

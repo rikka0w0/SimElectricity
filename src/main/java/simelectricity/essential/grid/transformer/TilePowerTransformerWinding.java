@@ -22,12 +22,12 @@ public abstract class TilePowerTransformerWinding extends SEEnergyTile implement
 	protected MultiBlockTileInfo mbInfo;
 	
 	@SideOnly(Side.CLIENT)
-	private EnumFacing facing;
+	protected EnumFacing facing;
 	@SideOnly(Side.CLIENT)
-	private boolean mirrored;
+	protected boolean mirrored;
 	@SideOnly(Side.CLIENT)
-    private PowerPoleRenderHelper renderHelper;
-    private BlockPos neighbor = null;
+    protected PowerPoleRenderHelper renderHelper;
+	protected BlockPos neighbor = null;
     
 	//////////////////////////////
 	/////TileEntity
@@ -140,22 +140,7 @@ public abstract class TilePowerTransformerWinding extends SEEnergyTile implement
 	
 	/////////////////////////////////////////////////////////
 	///ITransmissionTower
-	/////////////////////////////////////////////////////////
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void updateRenderInfo() {
-		if (renderHelper == null) {
-	        //Create renderHelper on client side
-			renderHelper = new PowerPoleRenderHelper(world, pos, facing, mirrored, 1, 3);
-			renderHelper.addInsulatorGroup(0.6F, 1.45F, 0F, 
-					renderHelper.createInsulator(0, 1, 1.17F, 1),
-					renderHelper.createInsulator(0, 1, 1.3F, 0),
-					renderHelper.createInsulator(0, 1, 1.17F, -2));
-		}
-		
-        renderHelper.updateRenderData(neighbor);
-	}
-	
+	/////////////////////////////////////////////////////////	
 	@Override
 	@SideOnly(Side.CLIENT)
 	public PowerPoleRenderHelper getRenderHelper() {
@@ -163,6 +148,21 @@ public abstract class TilePowerTransformerWinding extends SEEnergyTile implement
 	}
 	
 	public static class Primary extends TilePowerTransformerWinding {
+		@Override
+		@SideOnly(Side.CLIENT)
+		public void updateRenderInfo() {
+			if (renderHelper == null) {
+		        //Create renderHelper on client side
+				renderHelper = new PowerPoleRenderHelper(world, pos, facing, mirrored, 1, 3);
+				renderHelper.addInsulatorGroup(0F, 2.8F, 0F, 
+						renderHelper.createInsulator(0, 0, 2.8F, 1.5F),
+						renderHelper.createInsulator(0, 0, 2.8F, 0),
+						renderHelper.createInsulator(0, 0, 2.8F, -1.5F));
+			}
+			
+	        renderHelper.updateRenderData(neighbor);
+		}
+		
 		@Override
 		public void onStructureCreated() {
 			super.onStructureCreated();
@@ -173,6 +173,19 @@ public abstract class TilePowerTransformerWinding extends SEEnergyTile implement
 	}
 	
 	public static class Secondary extends TilePowerTransformerWinding {
-
+		@Override
+		@SideOnly(Side.CLIENT)
+		public void updateRenderInfo() {
+			if (renderHelper == null) {
+		        //Create renderHelper on client side
+				renderHelper = new PowerPoleRenderHelper(world, pos, facing, mirrored, 1, 3);
+				renderHelper.addInsulatorGroup(0, 1.8F, 0, 
+						renderHelper.createInsulator(0, 0, 2.1F, 0.8F),
+						renderHelper.createInsulator(0, 0, 2.1F, 0),
+						renderHelper.createInsulator(0, 0, 2.1F, -0.8F));
+			}
+			
+	        renderHelper.updateRenderData(neighbor);
+		}
 	}
 }

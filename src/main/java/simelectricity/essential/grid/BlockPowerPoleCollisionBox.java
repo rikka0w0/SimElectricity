@@ -7,6 +7,7 @@ import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -15,9 +16,10 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import simelectricity.essential.client.ISESimpleTextureItem;
+import simelectricity.essential.common.SEBlock;
 import simelectricity.essential.common.SEItemBlock;
 
-public class BlockPowerPoleCollisionBox extends SEModelBlock implements ISESimpleTextureItem{
+public class BlockPowerPoleCollisionBox extends SEBlock implements ISESimpleTextureItem{
 	public BlockPowerPoleCollisionBox() {
 		super("essential_powerpole_collision_box", Material.ROCK, SEItemBlock.class);
 		this.setBlockUnbreakable();
@@ -89,4 +91,30 @@ public class BlockPowerPoleCollisionBox extends SEModelBlock implements ISESimpl
 	public ItemStack getItem(World worldIn, BlockPos pos, IBlockState state) {
 		return ItemStack.EMPTY; //Player can not get this block anyway!
 	}
+	
+	////////////////////////////////////
+	/// Rendering
+	////////////////////////////////////
+    //This will tell minecraft not to render any side of our cube.
+    @Override
+    @SideOnly(Side.CLIENT)
+    public boolean shouldSideBeRendered(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side) {
+        return false;
+    }
+
+    //And this tell it that you can see through this block, and neighbor blocks should be rendered.
+	@Override
+	public boolean isOpaqueCube(IBlockState state) {
+		return false;
+	}
+	
+	@Override
+	public boolean isNormalCube(IBlockState state) {
+		return false;
+	}
+	
+	@Override
+    public boolean isFullCube(IBlockState state) {
+        return false;
+    }
 }

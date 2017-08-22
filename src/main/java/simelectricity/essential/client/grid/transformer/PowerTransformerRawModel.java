@@ -33,6 +33,11 @@ public class PowerTransformerRawModel implements IModel{
     private final IModel model;
     private final IModelState defaultState;
     
+	private final int facing;
+	private final boolean mirrored;
+	
+	private final ResourceLocation textureMetal, textureInsulator;
+    
     private final static ModelRotation[] rotationMatrix  = new ModelRotation[]{
     		ModelRotation.X0_Y270,
     		ModelRotation.X0_Y90,
@@ -65,6 +70,15 @@ public class PowerTransformerRawModel implements IModel{
         builder.add(Pair.of(model, variant.getState()));
 		
 		this.defaultState = new MultiModelState(builder.build());
+		
+		this.facing = facing;
+		this.mirrored = mirrored;
+		
+		//Custom texture
+		this.textureMetal = new ResourceLocation("sime_essential:render/transmission/metal");
+		this.textureInsulator = new ResourceLocation("sime_essential:render/transmission/glass_insulator");
+		this.textures.add(this.textureMetal);
+		this.textures.add(this.textureInsulator);
     }
     
 	@Override
@@ -88,6 +102,8 @@ public class PowerTransformerRawModel implements IModel{
 		IModelState actualState = MultiModelState.getPartState(state, model, 0);
 		IBakedModel bakedModel = model.bake(actualState, format, bakedTextureGetter);
 		
-		return new PowerTransformerModel(bakedModel);
+		return new PowerTransformerModel(facing, mirrored, bakedModel,
+				bakedTextureGetter.apply(textureMetal),
+				bakedTextureGetter.apply(textureInsulator));
 	}
 }
