@@ -3,6 +3,7 @@ package simelectricity.essential.grid.transformer;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
@@ -82,9 +83,11 @@ public class BlockPowerTransformer extends SEBlock implements ITileEntityProvide
 	///////////////////////////////
 	///BlockStates
 	///////////////////////////////
+	public final static IProperty<Boolean> propertyMirrored = PropertyBool.create("mirrored");
+	
 	@Override
 	protected final BlockStateContainer createBlockState(){
-		return new BlockStateContainer(this, new IProperty[] {EnumBlockType.property, Properties.propertyFacing2});
+		return new BlockStateContainer(this, new IProperty[] {EnumBlockType.property, Properties.propertyFacing2, propertyMirrored});
 	}
 	
 	@Override
@@ -105,8 +108,11 @@ public class BlockPowerTransformer extends SEBlock implements ITileEntityProvide
 	public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
 		TileEntity te = world.getTileEntity(pos);
 		if (te instanceof TilePowerTransformerPlaceHolder.Render) {
-			EnumFacing facing = ((TilePowerTransformerPlaceHolder.Render) te).getFacing();
-			state = state.withProperty(Properties.propertyFacing2, (facing.ordinal() - 2) & 3);
+			TilePowerTransformerPlaceHolder.Render render = (TilePowerTransformerPlaceHolder.Render) te;
+			EnumFacing facing = render.getFacing();
+			boolean mirrored = render.isMirrored();
+			state = state.withProperty(Properties.propertyFacing2, (facing.ordinal() - 2) & 3)
+					.withProperty(propertyMirrored, mirrored);
 		}
 		return state;
 	}

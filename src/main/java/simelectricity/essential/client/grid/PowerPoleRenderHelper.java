@@ -97,7 +97,10 @@ public class PowerPoleRenderHelper {
 			
 			TileEntity te = world.getTileEntity(neighborPos);
 			if (te instanceof ISEPowerPole) {
-				this.findConnection(((ISEPowerPole) te).getRenderHelper());
+				PowerPoleRenderHelper helper = ((ISEPowerPole) te).getRenderHelper();
+				if (helper == null)
+					continue;//TODO: helper might be null, double check this! (far future)
+				this.findConnection(helper);
 			}
 		}
 	}

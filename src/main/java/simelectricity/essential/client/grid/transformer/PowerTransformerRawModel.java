@@ -6,6 +6,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import javax.vecmath.Matrix4f;
+
 import org.apache.commons.lang3.tuple.Pair;
 
 import com.google.common.base.Function;
@@ -23,6 +25,7 @@ import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.client.model.MultiModelState;
 import net.minecraftforge.common.model.IModelState;
+import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -99,8 +102,41 @@ public class PowerTransformerRawModel implements IModel{
 	@Override
 	public IBakedModel bake(IModelState state, VertexFormat format,
 			Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter) {
-		IModelState actualState = MultiModelState.getPartState(state, model, 0);
-		IBakedModel bakedModel = model.bake(actualState, format, bakedTextureGetter);
+		//IModelState actualState = MultiModelState.getPartState(state, model, 0);
+		//IBakedModel bakedModel = model.bake(rotationMatrix[facing], format, bakedTextureGetter);
+		ModelRotation rotationState = rotationMatrix[facing];
+		IModelState transformation;
+		
+		//Handle mirror
+		if (mirrored) {
+	        Matrix4f offsetMatrix1 = new Matrix4f();
+	        offsetMatrix1.setIdentity();
+	        offsetMatrix1.m03 = 0.5F;
+	        offsetMatrix1.m23 = 0.5F;
+	        
+	        Matrix4f refXMatrix = new Matrix4f();
+	        refXMatrix.setIdentity();
+	        if (facing > 1)
+	        	refXMatrix.m00 = -1F;
+	        else
+	        	refXMatrix.m22 = -1F;
+	        
+	        Matrix4f offsetMatrix2 = new Matrix4f();
+	        offsetMatrix2.setIdentity();
+	        offsetMatrix2.m03 = -0.5F;
+	        offsetMatrix2.m23 = -0.5F;
+	        
+	        Matrix4f ret = new Matrix4f();
+	        ret.mul(rotationState.getMatrix(), offsetMatrix1);
+	        ret.mul(ret, refXMatrix);
+	        ret.mul(ret, offsetMatrix2);
+	        
+	        transformation = new TRSRTransformation(ret);
+		} else {
+			transformation = rotationState;
+		}
+		
+		IBakedModel bakedModel = model.bake(transformation, format, bakedTextureGetter);
 		
 		return new PowerTransformerModel(facing, mirrored, bakedModel,
 				bakedTextureGetter.apply(textureMetal),

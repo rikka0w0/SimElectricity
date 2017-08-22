@@ -43,7 +43,8 @@ public class PowerTransformerStateMapper extends StateMapperBase implements ISEM
 			
 			if (blockType == EnumBlockType.Render) {
 				int facing = state.getValue(Properties.propertyFacing2);
-				varStr = state.getValue(EnumBlockType.property).ordinal() +","+ facing;
+				boolean mirrored = state.getValue(BlockPowerTransformer.propertyMirrored);
+				varStr = state.getValue(EnumBlockType.property).ordinal() +","+ facing +","+ mirrored;
 			}else {
 				varStr = "" + state.getValue(EnumBlockType.property).ordinal();
 			}
@@ -66,7 +67,8 @@ public class PowerTransformerStateMapper extends StateMapperBase implements ISEM
 			
 			if (blockType == EnumBlockType.Render) {
 				int facing = Integer.parseInt(splited[3]);
-				return new PowerTransformerRawModel(facing, false);
+				boolean mirrored = Boolean.parseBoolean(splited[4]);
+				return new PowerTransformerRawModel(facing, mirrored);
 			} else {
 				return new SingleTextureModel(domain, "powertransformer_"+blockType.getName(), true);
 			}
