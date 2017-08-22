@@ -30,7 +30,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class PowerTransformerRawModel implements IModel{
 	private final List<ResourceLocation> dependencies = new ArrayList<ResourceLocation>();
     private final Set<ResourceLocation> textures = Sets.newHashSet();
-    private final IModel[] models;
+    private final IModel model;
     private final IModelState defaultState;
     
     private final static ModelRotation[] rotationMatrix  = new ModelRotation[]{
@@ -40,38 +40,29 @@ public class PowerTransformerRawModel implements IModel{
     		ModelRotation.X0_Y0
     };
     
-    public PowerTransformerRawModel() throws Exception {
+    public PowerTransformerRawModel(int facing, boolean mirrored) throws Exception {
     	String modelName = "sime_essential:powertransformer.obj";	//Sketch Up --*.dae--> Blender --> *.obj & *.mtl
 		ImmutableList.Builder<Pair<IModel, IModelState>> builder = ImmutableList.builder();
 		LinkedList<Variant> variants = new LinkedList<Variant>();
 		boolean uvLock = false;
 		
-		variants.add(new Variant(new ResourceLocation(modelName), ModelRotation.X0_Y270, uvLock, 1));	//North
-		variants.add(new Variant(new ResourceLocation(modelName), ModelRotation.X0_Y90, uvLock, 1));	//South
-		variants.add(new Variant(new ResourceLocation(modelName), ModelRotation.X0_Y180, uvLock, 1));	//West
-		variants.add(new Variant(new ResourceLocation(modelName), ModelRotation.X0_Y0, uvLock, 1));		//East
+		Variant variant = new Variant(new ResourceLocation(modelName), rotationMatrix[facing], uvLock, 1);
 		
-		this.models = new IModel[4];
-		int i = 0;
-		for (Variant variant: variants){
-			ResourceLocation loc = variant.getModelLocation();
-			if (!this.dependencies.contains(loc))
-				this.dependencies.add(loc);
-			
-			IModel preModel = ModelLoaderRegistry.getModel(loc);
-			IModel model = variant.process(preModel);
-			
-	        for(ResourceLocation location : model.getDependencies())
-	        {
-	            ModelLoaderRegistry.getModelOrMissing(location);
-	        }
-	        
-	        this.textures.addAll(model.getTextures()); // Kick this, just in case.
-			
-	        this.models[i] = model;
-	        i++;
-	        builder.add(Pair.of(model, variant.getState()));
-		}
+		ResourceLocation loc = variant.getModelLocation();
+		if (!this.dependencies.contains(loc))
+			this.dependencies.add(loc);
+		
+		IModel preModel = ModelLoaderRegistry.getModel(loc);
+		IModel model = variant.process(preModel);
+		
+        for(ResourceLocation location : model.getDependencies())
+        {
+            ModelLoaderRegistry.getModelOrMissing(location);
+        }
+        
+        this.textures.addAll(model.getTextures()); // Kick this, just in case.
+        this.model = model;
+        builder.add(Pair.of(model, variant.getState()));
 		
 		this.defaultState = new MultiModelState(builder.build());
     }
@@ -94,14 +85,9 @@ public class PowerTransformerRawModel implements IModel{
 	@Override
 	public IBakedModel bake(IModelState state, VertexFormat format,
 			Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter) {
-		IBakedModel[] bakedModelList = new IBakedModel[4];
-		for (int i=0; i<4; i++){
-			IModel model = this.models[i];
-			IModelState actualState = MultiModelState.getPartState(state, model, i);
-			IBakedModel bakedModel = model.bake(actualState, format, bakedTextureGetter);
-			bakedModelList[i] = bakedModel;
-		}
+		IModelState actualState = MultiModelState.getPartState(state, model, 0);
+		IBakedModel bakedModel = model.bake(actualState, format, bakedTextureGetter);
 		
-		return new PowerTransformerModel(bakedModelList);
+		return new PowerTransformerModel(bakedModel);
 	}
 }

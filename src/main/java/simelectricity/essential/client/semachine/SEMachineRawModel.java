@@ -32,9 +32,7 @@ public class SEMachineRawModel implements IModel{
 	private final List<ResourceLocation> dependencies = new ArrayList<ResourceLocation>();
     private final Set<ResourceLocation> textures = Sets.newHashSet();
     
-    private final boolean hasSecondState;
     private final IModel model;
-    private final IModel model2;
     private final IModelState defaultState;
 	
     private static ModelRotation[] rotationMatrix = new ModelRotation[] {
@@ -46,15 +44,13 @@ public class SEMachineRawModel implements IModel{
     		 ModelRotation.X0_Y270	//East
     };
     
-	public SEMachineRawModel(String domain, String modelName, EnumFacing facing, boolean hasSecondState) throws Exception {
-		String firstStateModelName = domain + ":block/" + modelName;
+	public SEMachineRawModel(String domain, String modelName, EnumFacing facing, boolean is2State) throws Exception {
+		String firstStateModelName = domain + ":block/" + modelName + (is2State? "_2" : "");
 		ImmutableList.Builder<Pair<IModel, IModelState>> builder = ImmutableList.builder();
 		LinkedList<Variant> variants = new LinkedList<Variant>();
 		boolean uvLock = false;
 		
-		//First state
 		Variant var1 = new Variant(new ResourceLocation(firstStateModelName), rotationMatrix[facing.ordinal()], uvLock, 1);
-		//First
 		ResourceLocation loc = var1.getModelLocation();
 		if (!this.dependencies.contains(loc))
 			this.dependencies.add(loc);
@@ -68,31 +64,8 @@ public class SEMachineRawModel implements IModel{
         this.textures.addAll(model.getTextures()); // Kick this, just in case.
         this.model = model;
         builder.add(Pair.of(model, var1.getState()));
-        
-		
-		if (hasSecondState){
-			String secondStateModelName = firstStateModelName + "_2";
-			Variant var2 = new Variant(new ResourceLocation(secondStateModelName), rotationMatrix[facing.ordinal()], uvLock, 1);	//Down
-			
-			loc = var2.getModelLocation();
-			if (!this.dependencies.contains(loc))
-				this.dependencies.add(loc);
-			
-			preModel = ModelLoaderRegistry.getModel(loc);
-			model = var2.process(preModel);
-			
-	        for(ResourceLocation location : model.getDependencies())
-	            ModelLoaderRegistry.getModelOrMissing(location);
-	        
-	        this.textures.addAll(model.getTextures()); // Kick this, just in case.
-	        this.model2 = model;
-	        builder.add(Pair.of(model, var2.getState()));
-		}else {
-			this.model2 = null;
-		}
 		
 		this.defaultState = new MultiModelState(builder.build());
-        this.hasSecondState = hasSecondState;
 	}
 
 	@Override
@@ -116,15 +89,6 @@ public class SEMachineRawModel implements IModel{
 		IModelState actualState = MultiModelState.getPartState(state, model, 0);
 		IBakedModel bakedModel = model.bake(actualState, format, bakedTextureGetter);
 		
-		IModelState actualState2 = null;
-		IBakedModel bakedModel2 = null;
-		
-		if (this.hasSecondState){
-			actualState2 = MultiModelState.getPartState(state, model, 1);
-			bakedModel2 = model2.bake(actualState2, format, bakedTextureGetter);
-		}
-
-		
-		return new SEMachineModel(bakedModel, bakedModel2);
+		return new SEMachineModel(bakedModel);
 	}
 }

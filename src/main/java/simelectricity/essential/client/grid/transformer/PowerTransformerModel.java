@@ -11,20 +11,19 @@ import simelectricity.essential.client.BlockRenderModel;
 import simelectricity.essential.grid.Properties;
 
 public class PowerTransformerModel extends BlockRenderModel {
-	private final IBakedModel[] unmirrored;
+	private final IBakedModel unmirrored;
 	
-	public PowerTransformerModel(IBakedModel[] unmirrored) {
+	public PowerTransformerModel(IBakedModel unmirrored) {
 		this.unmirrored = unmirrored;
 	}
 	
 	@Override
 	public TextureAtlasSprite getParticleTexture() {
-		return unmirrored[0].getParticleTexture();
+		return unmirrored.getParticleTexture();
 	}
 	
 	@Override
 	public List<BakedQuad> getQuads(IBlockState state, EnumFacing side, long rand) {
-		int facing = state.getValue(Properties.propertyFacing2);
-		return unmirrored[facing].getQuads(state, side, rand);
+		return unmirrored.getQuads(state, side, rand);
 	}
 }

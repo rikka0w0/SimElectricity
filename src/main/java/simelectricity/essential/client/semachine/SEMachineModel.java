@@ -27,21 +27,18 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public class SEMachineModel implements IPerspectiveAwareModel {
-	private final IBakedModel firstState, secondState;
-	private final boolean hasSecondState;
-	public SEMachineModel(IBakedModel firstState, IBakedModel secondState){
-		this.firstState = firstState;
-		this.secondState = secondState;
-		this.hasSecondState = secondState != null;
+	private final IBakedModel bakedModel;
+	public SEMachineModel(IBakedModel bakedModel){
+		this.bakedModel = bakedModel;
 	}
 	
 	@Override
 	public boolean isAmbientOcclusion() {
-		return firstState.isAmbientOcclusion();
+		return bakedModel.isAmbientOcclusion();
 	}
 	@Override
 	public boolean isGui3d() {
-		return firstState.isGui3d();
+		return bakedModel.isGui3d();
 	}
 	@Override
 	public boolean isBuiltInRenderer() {
@@ -49,12 +46,12 @@ public class SEMachineModel implements IPerspectiveAwareModel {
 	}
 	@Override
 	public TextureAtlasSprite getParticleTexture() {
-		return firstState.getParticleTexture();
+		return bakedModel.getParticleTexture();
 	}
 	@Override
 	@Deprecated
 	public ItemCameraTransforms getItemCameraTransforms() {
-		return firstState.getItemCameraTransforms();
+		return bakedModel.getItemCameraTransforms();
 	}
 	
 	@Override
@@ -64,14 +61,14 @@ public class SEMachineModel implements IPerspectiveAwareModel {
 
 	@Override
 	public Pair<? extends IBakedModel, Matrix4f> handlePerspective(ItemCameraTransforms.TransformType cameraTransformType) {
-		if (firstState instanceof IPerspectiveAwareModel) {
-	      Matrix4f matrix4f = ((IPerspectiveAwareModel)firstState).handlePerspective(cameraTransformType).getRight();
+		if (bakedModel instanceof IPerspectiveAwareModel) {
+	      Matrix4f matrix4f = ((IPerspectiveAwareModel)bakedModel).handlePerspective(cameraTransformType).getRight();
 	      return Pair.of(this, matrix4f);
 	    } else {
 	      // If the parent model isn't an IPerspectiveAware, we'll need to generate the correct matrix ourselves using the
 	      //  ItemCameraTransforms.
 
-	      ItemCameraTransforms itemCameraTransforms = firstState.getItemCameraTransforms();
+	      ItemCameraTransforms itemCameraTransforms = bakedModel.getItemCameraTransforms();
 	      ItemTransformVec3f itemTransformVec3f = itemCameraTransforms.getTransform(cameraTransformType);
 	      TRSRTransformation tr = new TRSRTransformation(itemTransformVec3f);
 	      Matrix4f mat = null;
@@ -99,18 +96,14 @@ public class SEMachineModel implements IPerspectiveAwareModel {
 	@Override
 	public List<BakedQuad> getQuads(@Nullable IBlockState blockState, @Nullable EnumFacing side, long rand) {
 	    if (!(blockState instanceof IExtendedBlockState))
-	    	return firstState.getQuads(blockState, side, rand);	//Item Model
+	    	return bakedModel.getQuads(blockState, side, rand);	//Item Model
 				
 		IExtendedBlockState exBlockState = (IExtendedBlockState)blockState;
-	    boolean is2State = blockState.getValue(ExtendedProperties.propertyIs2state);
 	    int[] socketIcon = getSocketIconArray(exBlockState);
 	    
-		List<BakedQuad> selectedModel = is2State ? 
-				secondState.getQuads(blockState, side, rand) :
-				firstState.getQuads(blockState, side, rand);
-		
+	    
 		List<BakedQuad> quads = new LinkedList<BakedQuad>();
-		quads.addAll(selectedModel);
+		quads.addAll(bakedModel.getQuads(blockState, side, rand));
         
         SocketRender.getBaked(quads, socketIcon);
         

@@ -33,14 +33,14 @@ public class SEMachineStateMapper extends StateMapperBase implements ISEModelLoa
 			
 			String modelName = stBlock.getModelNameFrom(state);
 			EnumFacing facing = state.getValue(ExtendedProperties.propertyFacing);
-			boolean has2State = stBlock.hasSecondState(state);
+			boolean is2State = state.getValue(ExtendedProperties.propertyIs2state);
 			
-			String varStr = modelName +","+ facing.ordinal() +","+ has2State;
+			if (!stBlock.hasSecondState(state))
+				is2State = false;
 			
-			ModelResourceLocation res = new ModelResourceLocation(
-					this.domain + ":" + VPATH,
-					varStr
-					);
+			String varStr = modelName +","+ facing.ordinal() +","+ is2State;
+			
+			ModelResourceLocation res = new ModelResourceLocation(this.domain + ":" + VPATH, varStr);
 			return res;
 		}
 		
@@ -57,9 +57,9 @@ public class SEMachineStateMapper extends StateMapperBase implements ISEModelLoa
 		String[] splited = variantStr.split(",");
 		String blockName = splited[0];
 		int facing = Integer.parseInt(splited[1]);
-		boolean has2State = Boolean.parseBoolean(splited[2]);
+		boolean is2State = Boolean.parseBoolean(splited[2]);
 		
-		IModel model = new SEMachineRawModel(domain, blockName, EnumFacing.getFront(facing), has2State);
+		IModel model = new SEMachineRawModel(domain, blockName, EnumFacing.getFront(facing), is2State);
 		return model;
 	}
 	
@@ -69,6 +69,7 @@ public class SEMachineStateMapper extends StateMapperBase implements ISEModelLoa
 		ItemBlock itemBlock = block.itemBlock;
 		for (int meta: block.propertyMeta.getAllowedValues()){
 			IBlockState blockState = block.getStateFromMeta(meta);
+			blockState = blockState.withProperty(ExtendedProperties.propertyFacing, EnumFacing.NORTH);
 			ModelResourceLocation res = this.getModelResourceLocation(blockState);
 			//Also register inventory variants here
 			ModelLoader.setCustomModelResourceLocation(itemBlock, meta, res);

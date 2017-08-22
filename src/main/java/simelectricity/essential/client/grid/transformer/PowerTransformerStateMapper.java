@@ -11,6 +11,7 @@ import net.minecraftforge.client.model.obj.OBJLoader;
 import simelectricity.essential.BlockRegistry;
 import simelectricity.essential.client.ISEModelLoader;
 import simelectricity.essential.client.SingleTextureModel;
+import simelectricity.essential.grid.Properties;
 import simelectricity.essential.grid.transformer.BlockPowerTransformer;
 import simelectricity.essential.grid.transformer.EnumBlockType;
 
@@ -38,7 +39,14 @@ public class PowerTransformerStateMapper extends StateMapperBase implements ISEM
 		String varStr = "";
 		
 		if (block == BlockRegistry.powerTransformer) {
-			varStr = "" + state.getValue(EnumBlockType.property).ordinal();
+			EnumBlockType blockType = state.getValue(EnumBlockType.property);
+			
+			if (blockType == EnumBlockType.Render) {
+				int facing = state.getValue(Properties.propertyFacing2);
+				varStr = state.getValue(EnumBlockType.property).ordinal() +","+ facing;
+			}else {
+				varStr = "" + state.getValue(EnumBlockType.property).ordinal();
+			}
 		}
 		
 		ModelResourceLocation res = new ModelResourceLocation(this.domain + ":" + VPATH, 
@@ -54,12 +62,14 @@ public class PowerTransformerStateMapper extends StateMapperBase implements ISEM
 		Block block = Block.getBlockFromName(blockDomain + ":" + blockName);
 		
 		if (block == BlockRegistry.powerTransformer) {
-			EnumBlockType blockType  = EnumBlockType.fromInt(Integer.parseInt(splited[2]));
+			EnumBlockType blockType = EnumBlockType.fromInt(Integer.parseInt(splited[2]));
 			
-			if (blockType == EnumBlockType.Render)
-				return new PowerTransformerRawModel();
-			else
+			if (blockType == EnumBlockType.Render) {
+				int facing = Integer.parseInt(splited[3]);
+				return new PowerTransformerRawModel(facing, false);
+			} else {
 				return new SingleTextureModel(domain, "powertransformer_"+blockType.getName(), true);
+			}
 		}
 		
 		return null;
