@@ -51,6 +51,10 @@ public class MultiBlockStructure {
 		this.unmirrored[3] = new BlockInfo[height][xSize][zSize];	//East, Unmirrored
 		this.unmirrored[1] = new BlockInfo[height][zSize][xSize]; 	//South, Unmirrored
 		this.unmirrored[2] = new BlockInfo[height][xSize][zSize];	//West, Unmirrored
+		this.mirroredAboutZ[0] = new BlockInfo[height][zSize][xSize]; 	//North
+		this.mirroredAboutZ[3] = new BlockInfo[height][xSize][zSize];	//East
+		this.mirroredAboutZ[1] = new BlockInfo[height][zSize][xSize]; 	//South
+		this.mirroredAboutZ[2] = new BlockInfo[height][xSize][zSize];	//West
 		for (int y=0; y<height; y++){
 			for (int z=0; z<configuration[y].length; z++){
 				for (int x=0; x<configuration[y][z].length; x++){
@@ -65,23 +69,23 @@ public class MultiBlockStructure {
 					this.unmirrored[3][y][x][zSize-1-z] = blockInfo;			//East, newX = zSize-1 - oldZ, newZ = oldX
 					this.unmirrored[1][y][zSize-1-z][xSize-1-x] = blockInfo;	//South, newX = xSize-1 -newX, newZ = zSize-1 - newZ
 					this.unmirrored[2][y][xSize-1-x][z] = blockInfo;			//West, newX = oldZ, newZ = xSize-1 - oldX;
+					
+					this.mirroredAboutZ[0][y][z][xSize-1-x] = blockInfo;
 				}
 			}
 		}
 		
-		for (int dir=0; dir<4; dir++){
-			int zDim = this.unmirrored[dir][0].length;
-			int xDim = this.unmirrored[dir][0][0].length;
-			
-			this.mirroredAboutZ[dir] = new BlockInfo[height][zDim][xDim];
-			for (int y=0; y<height; y++){
-				for (int z=0; z<zDim; z++){
-					for (int x=0; x<xDim; x++){
-						this.mirroredAboutZ[dir][y][z][xDim-1-x] = this.unmirrored[dir][y][z][x];	//newX = xDim-1 -oldX, newZ = oldZ
-					}
+		for (int y=0; y<height; y++){
+			for (int z=0; z<zSize; z++){
+				for (int x=0; x<xSize; x++){
+					BlockInfo blockInfo = this.mirroredAboutZ[0][y][z][x];
+					
+					this.mirroredAboutZ[3][y][x][zSize-1-z] = blockInfo;			//East, newX = zSize-1 - oldZ, newZ = oldX
+					this.mirroredAboutZ[1][y][zSize-1-z][xSize-1-x] = blockInfo;	//South, newX = xSize-1 -newX, newZ = zSize-1 - newZ
+					this.mirroredAboutZ[2][y][xSize-1-x][z] = blockInfo;			//West, newX = oldZ, newZ = xSize-1 - oldX;
 				}
 			}
-		}
+		}		
 	}
 	
 	private boolean check(IBlockState[][][] states, BlockInfo[][][] configuration, int xOrigin, int yOrigin, int zOrigin){
@@ -228,6 +232,9 @@ public class MultiBlockStructure {
 	public static int[] offsetFromOrigin(int rotation, boolean mirrored, int x, int y, int z){
 		int[] ret = new int[3];
 		
+		if (mirrored)
+			x = -x;
+		
 		switch(rotation){
 		case 0:	//North
 			ret =  new int[]{x,y,z};
@@ -248,9 +255,6 @@ public class MultiBlockStructure {
 		
 		if (ret == null)
 			return null;
-		
-		if (mirrored)
-			ret[0] = -ret[0];
 		
 		return ret;
 	}
@@ -343,18 +347,19 @@ public class MultiBlockStructure {
 			case 3: //East, newX = zSize-1 - oldZ, newZ = oldX
 				xOriginActual += this.xSize - 1;
 				if (mirrored)
-					xOriginActual = xOriginActual - this.xSize+1;
+					zOriginActual += this.zSize - 1;
 				break;
 			case 1:	//South, newX = xSize-1 -newX, newZ = zSize-1 - newZ
-				xOriginActual += this.xSize - 1;
-				zOriginActual += this.zSize - 1;
-				if (mirrored)
-					xOriginActual = xOriginActual - this.xSize+1;
+				if (mirrored) {
+					zOriginActual += this.zSize - 1;
+				} else {
+					xOriginActual += this.xSize - 1;
+					zOriginActual += this.zSize - 1;
+				}
 				break;
 			case 2: //West, newX = oldZ, newZ = xSize-1 - oldX;
-				if (mirrored)
-					xOriginActual = xOriginActual + this.xSize-1;
-				zOriginActual += this.zSize - 1;
+				if (!mirrored)
+					zOriginActual += this.zSize - 1;
 				break;
 			default:
 				xOriginActual = -1;
@@ -366,6 +371,8 @@ public class MultiBlockStructure {
 			this.xOriginActual = xOriginActual;
 			this.yOriginActual = yOriginActual;
 			this.zOriginActual = zOriginActual;
+			
+			world.setBlockState(new BlockPos(xOriginActual, yOriginActual+1, zOriginActual), Blocks.ANVIL.getDefaultState());
 		}
 		
 		/**

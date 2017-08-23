@@ -4,7 +4,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import simelectricity.essential.common.SETileEntity;
 
 public class TileMBTest extends SETileEntity implements ISEMultiBlockTile{
-	private MultiBlockTileInfo mbInfo;
+	public MultiBlockTileInfo mbInfo;
 	
 	@Override
 	public void readFromNBT(NBTTagCompound nbt){

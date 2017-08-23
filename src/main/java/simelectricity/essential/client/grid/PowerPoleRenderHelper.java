@@ -65,11 +65,12 @@ public class PowerPoleRenderHelper {
 	}
 	
 	public Insulator createInsulator(float length, float offsetX, float offsetY, float offsetZ) {	
+		if (this.mirroredAboutZ)
+			offsetX = -offsetX;
+		
 		float rotatedX = offsetZ * MathHelper.sin(rotation/180F*SEMathHelper.PI) + offsetX * MathHelper.cos(rotation/180F*SEMathHelper.PI);
 		float rotatedZ = offsetZ * MathHelper.cos(rotation/180F*SEMathHelper.PI) - offsetX * MathHelper.sin(rotation/180F*SEMathHelper.PI);
 		
-		if (this.mirroredAboutZ)
-			rotatedX = -rotatedX;
 		
 		return new Insulator(this, length, rotatedX + 0.5F, offsetY, rotatedZ + 0.5F);
 	}

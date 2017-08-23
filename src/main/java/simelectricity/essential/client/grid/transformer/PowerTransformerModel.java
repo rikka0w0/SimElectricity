@@ -31,15 +31,10 @@ public class PowerTransformerModel extends BlockRenderModel {
 		this.textureInsulator = textureInsulator;
 		
 		//Rotation is done first (with the .obj loader), so we need to figure out the reflection axis
-		int[] xf = new int[] {1,1,-1,-1};
-		int[] zf = new int[] {-1,-1,1, 1};
-		int a = 1;
 		int b = 1;
 		
-		if (mirrored) {
-			a = xf[facing];
-			b = zf[facing];
-		}
+		if (mirrored) 
+			b = -1;
 		
 		SERenderHeap model = new SERenderHeap();
 		SERenderHeap insulator = Models.renderInsulatorString(1.4, textureInsulator);
@@ -47,18 +42,18 @@ public class PowerTransformerModel extends BlockRenderModel {
 		SERenderHelper.translateCoord(rod, 0, -0.1, 0);
 		insulator.addCube(rod, textureMetal);
 		insulator.transform(0, 0.1, 0);
-		model.appendHeap(insulator.clone()	.transform(a,1,-1.5*b));
-		model.appendHeap(insulator.clone()	.transform(a,1,0*b));
-		model.appendHeap(insulator			.transform(a,1,1.5*b));
+		model.appendHeap(insulator.clone()	.transform(1,1,-1.5*b));
+		model.appendHeap(insulator.clone()	.transform(1,1,0*b));
+		model.appendHeap(insulator			.transform(1,1,1.5*b));
 		
 		insulator = Models.renderInsulatorString(0.7, textureInsulator);
 		rod = SERenderHelper.createCubeVertexes(0.1, 1.1, 0.1);
 		SERenderHelper.translateCoord(rod, 0, -0.1, 0);
 		insulator.addCube(rod, textureMetal);
 		insulator.transform(0, 0.1, 0);
-		model.appendHeap(insulator.clone()	.transform(-a,1,0.2*b));
-		model.appendHeap(insulator.clone()	.transform(-a,1,1*b));
-		model.appendHeap(insulator			.transform(-a,1,1.8*b));
+		model.appendHeap(insulator.clone()	.transform(-1,1,0.2*b));
+		model.appendHeap(insulator.clone()	.transform(-1,1,1*b));
+		model.appendHeap(insulator			.transform(-1,1,1.8*b));
 		model.rotateAroundY(rotation).transform(0.5, 0, 0.5).bake(this.insulator);
 	}
 	

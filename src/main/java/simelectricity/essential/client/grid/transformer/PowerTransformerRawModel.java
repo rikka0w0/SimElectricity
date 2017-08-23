@@ -116,10 +116,7 @@ public class PowerTransformerRawModel implements IModel{
 	        
 	        Matrix4f refXMatrix = new Matrix4f();
 	        refXMatrix.setIdentity();
-	        if (facing > 1)
-	        	refXMatrix.m00 = -1F;
-	        else
-	        	refXMatrix.m22 = -1F;
+	        refXMatrix.m22 = -1F;
 	        
 	        Matrix4f offsetMatrix2 = new Matrix4f();
 	        offsetMatrix2.setIdentity();

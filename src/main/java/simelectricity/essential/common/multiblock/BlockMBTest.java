@@ -3,6 +3,7 @@ package simelectricity.essential.common.multiblock;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
@@ -19,6 +20,7 @@ import simelectricity.essential.client.semachine.ISESidedTextureBlock;
 import simelectricity.essential.common.SEBlock;
 import simelectricity.essential.common.SEItemBlock;
 import simelectricity.essential.grid.Properties;
+import simelectricity.essential.utils.Utils;
 
 public class BlockMBTest extends SEBlock implements ITileEntityProvider, ISESidedTextureBlock{
 	public static MultiBlockStructure qaq;
@@ -37,19 +39,21 @@ public class BlockMBTest extends SEBlock implements ITileEntityProvider, ISESide
 	///////////////////////////////
 	///BlockStates
 	///////////////////////////////
+	public final static IProperty<Boolean> propertyFormed = PropertyBool.create("formed");
+	
 	@Override
 	protected final BlockStateContainer createBlockState(){
-		return new BlockStateContainer(this, new IProperty[] {Properties.propertyIsRod});
+		return new BlockStateContainer(this, new IProperty[] {propertyFormed});
 	}
 	
 	@Override
     public final IBlockState getStateFromMeta(int meta){
-        return super.getDefaultState().withProperty(Properties.propertyIsRod, meta>0);
+        return super.getDefaultState().withProperty(propertyFormed, meta>0);
     }
 	
 	@Override
     public final int getMetaFromState(IBlockState state){
-		return state.getValue(Properties.propertyIsRod)?1:0;
+		return state.getValue(propertyFormed)?1:0;
     }
 
     @Override
@@ -72,6 +76,14 @@ public class BlockMBTest extends SEBlock implements ITileEntityProvider, ISESide
     
 	@Override
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ){
+		if (!world.isRemote) {
+			TileEntity te = world.getTileEntity(pos);
+			
+			if (te instanceof TileMBTest) {
+				Utils.chat(player, ((TileMBTest) te).mbInfo.facing + "," + ((TileMBTest) te).mbInfo.mirrored);
+			}
+			
+		}
 		return false;
 	}
     
@@ -97,7 +109,7 @@ public class BlockMBTest extends SEBlock implements ITileEntityProvider, ISESide
 
 	@Override
 	public String getModelNameFrom(IBlockState blockState) {
-		boolean formed = blockState.getValue(Properties.propertyIsRod);
+		boolean formed = blockState.getValue(propertyFormed);
 		return formed ? "electronics_solar_panel" : "electronics_voltage_meter";
 	}
 
