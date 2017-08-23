@@ -93,11 +93,7 @@ public class TilePowerPole extends SEEnergyTile implements ISEGridTile, ISEPower
 	//////////////////////////////
 	@SideOnly(Side.CLIENT)
 	@Override
-	public void updateRenderInfo() {
-		if (renderHelper == null)
-			//Create renderHelper on client side
-			renderHelper = createRenderHelper();
-		
+	public void updateRenderInfo() {		
 		getRenderHelper().updateRenderData(neighbor1, neighbor2);
 		if (getTypeFromMeta() == 0)
 			this.markForRenderUpdate();
@@ -179,7 +175,11 @@ public class TilePowerPole extends SEEnergyTile implements ISEGridTile, ISEPower
 		neighbor1 = Utils.posFromNbt(nbt, "neighbor1");
 		neighbor2 = Utils.posFromNbt(nbt, "neighbor2");
 
-		this.updateRenderInfo();
+		if (renderHelper == null)
+			renderHelper = createRenderHelper();
+		
+		PowerPoleRenderHelper.notifyChanged(this);
+		//this.updateRenderInfo();
 		
 		updateRenderInfo(neighbor1);
 		updateRenderInfo(neighbor2);
@@ -194,6 +194,9 @@ public class TilePowerPole extends SEEnergyTile implements ISEGridTile, ISEPower
 		
 		TileEntity neighbor = world.getTileEntity(neighborPos);
 		if (neighbor instanceof ISEPowerPole)
-			((ISEPowerPole)neighbor).updateRenderInfo();
+			PowerPoleRenderHelper.notifyChanged((ISEPowerPole)neighbor);
+			//((ISEPowerPole)neighbor).updateRenderInfo();
 	}
+	
+	
 }

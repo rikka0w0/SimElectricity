@@ -6,8 +6,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import simelectricity.essential.cable.BlockCable;
 import simelectricity.essential.cable.TileCable;
-import simelectricity.essential.common.multiblock.BlockMBTest;
-import simelectricity.essential.common.multiblock.TileMBTest;
 import simelectricity.essential.grid.BlockCableJoint;
 import simelectricity.essential.grid.BlockPowerPole2;
 import simelectricity.essential.grid.BlockPowerPoleBottom;
@@ -52,11 +50,7 @@ public class BlockRegistry {
 	public static BlockElectronics blockElectronics;
 	public static BlockTwoPortElectronics blockTwoPortElectronics;
 	
-	
-	public static BlockMBTest blockTest;
 	public static void registerBlocks(){
-		blockTest = new BlockMBTest();
-		
 		blockCable = new BlockCable();
 		
 		powerPoleTop = new BlockPowerPoleTop();
@@ -70,7 +64,7 @@ public class BlockRegistry {
 		blockTwoPortElectronics = new BlockTwoPortElectronics();
 	}
 	
-	public static void registerTileEntities(){registerTile(TileMBTest.class);
+	public static void registerTileEntities(){
 		registerTile(TileCable.class);
 		registerTile(TilePowerPole.class);
 		registerTile(TileCableJoint.class);

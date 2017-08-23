@@ -1,4 +1,4 @@
-package simelectricity.essential.client.grid;
+package simelectricity.essential.client;
 
 import java.util.List;
 
@@ -10,7 +10,6 @@ import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import simelectricity.essential.client.CodeBasedModel;
 
 /**
  * An invisible model

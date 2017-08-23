@@ -19,7 +19,6 @@ import simelectricity.api.SEAPI;
 import simelectricity.essential.client.semachine.ISESidedTextureBlock;
 import simelectricity.essential.common.SEBlock;
 import simelectricity.essential.common.SEItemBlock;
-import simelectricity.essential.grid.Properties;
 import simelectricity.essential.utils.Utils;
 
 public class BlockMBTest extends SEBlock implements ITileEntityProvider, ISESidedTextureBlock{

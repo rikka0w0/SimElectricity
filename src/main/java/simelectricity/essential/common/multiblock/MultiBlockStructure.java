@@ -372,7 +372,7 @@ public class MultiBlockStructure {
 			this.yOriginActual = yOriginActual;
 			this.zOriginActual = zOriginActual;
 			
-			world.setBlockState(new BlockPos(xOriginActual, yOriginActual+1, zOriginActual), Blocks.ANVIL.getDefaultState());
+			//world.setBlockState(new BlockPos(xOriginActual, yOriginActual+1, zOriginActual), Blocks.ANVIL.getDefaultState());
 		}
 		
 		/**

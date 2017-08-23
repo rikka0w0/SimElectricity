@@ -7,7 +7,12 @@ import net.minecraft.client.renderer.block.statemap.StateMapperBase;
 import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.ModelLoader;
 import simelectricity.essential.BlockRegistry;
+import simelectricity.essential.client.GhostModel;
 import simelectricity.essential.client.ISEModelLoader;
+import simelectricity.essential.client.grid.pole.CableJointRawModel;
+import simelectricity.essential.client.grid.pole.PowerPole2RawModel;
+import simelectricity.essential.client.grid.pole.PowerPoleBottomRawModel;
+import simelectricity.essential.client.grid.pole.PowerPoleTopRawModel;
 import simelectricity.essential.grid.Properties;
 
 public class GridStateMapper extends StateMapperBase implements ISEModelLoader {

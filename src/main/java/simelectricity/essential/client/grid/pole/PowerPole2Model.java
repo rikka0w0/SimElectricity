@@ -1,4 +1,4 @@
-package simelectricity.essential.client.grid;
+package simelectricity.essential.client.grid.pole;
 
 import java.lang.ref.WeakReference;
 import java.util.LinkedList;
@@ -18,6 +18,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import simelectricity.api.tile.ISEGridTile;
 
 import simelectricity.essential.client.BlockRenderModel;
+import simelectricity.essential.client.grid.ISEPowerPole;
+import simelectricity.essential.client.grid.PowerPoleRenderHelper;
 import simelectricity.essential.common.UnlistedNonNullProperty;
 import simelectricity.essential.utils.client.SERawQuadCube;
 import simelectricity.essential.utils.client.SERenderHeap;

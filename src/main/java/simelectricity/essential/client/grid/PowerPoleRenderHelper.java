@@ -285,4 +285,8 @@ public class PowerPoleRenderHelper {
     		this.insulatorAngle = angle;
     	}
     }
+    
+    public static void notifyChanged(ISEPowerPole... list) {
+    	GridRenderMonitor.instance.notifyChanged(list);
+    }
 }

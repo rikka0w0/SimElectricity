@@ -9,9 +9,8 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-
-import simelectricity.essential.client.grid.TransmissionLineGLRender.ITextureProvider;
 import simelectricity.essential.client.grid.PowerPoleRenderHelper.ConnectionInfo;
+import simelectricity.essential.client.grid.TransmissionLineGLRender.ITextureProvider;
 import simelectricity.essential.utils.math.Vec3f;
 
 @SideOnly(Side.CLIENT)

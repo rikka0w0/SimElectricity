@@ -111,6 +111,9 @@ public class BlockPowerTransformer extends SEBlock implements ITileEntityProvide
 			TilePowerTransformerPlaceHolder.Render render = (TilePowerTransformerPlaceHolder.Render) te;
 			EnumFacing facing = render.getFacing();
 			boolean mirrored = render.isMirrored();
+			if (facing == null)
+				return state; //Prevent crashing!
+			
 			state = state.withProperty(Properties.propertyFacing2, (facing.ordinal() - 2) & 3)
 					.withProperty(propertyMirrored, mirrored);
 		}

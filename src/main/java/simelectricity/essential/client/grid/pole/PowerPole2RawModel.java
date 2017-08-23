@@ -1,4 +1,4 @@
-package simelectricity.essential.client.grid;
+package simelectricity.essential.client.grid.pole;
 
 import com.google.common.base.Function;
 
@@ -12,19 +12,23 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import simelectricity.essential.client.TextureLoaderModel;
 
 @SideOnly(Side.CLIENT)
-public class PowerPoleBottomRawModel extends TextureLoaderModel{
-	private final ResourceLocation texture;
+public class PowerPole2RawModel extends TextureLoaderModel{
+	private final ResourceLocation textureMetal, textureInsulator;
 	private final int facing;
+	private final int type;
+	private final boolean isRod;
 	
-	public PowerPoleBottomRawModel(int facing) {
-		this.texture = registerTexture("sime_essential:render/transmission/metal");
+	public PowerPole2RawModel(int facing, int type, boolean isRod) {
+		textureMetal = registerTexture("sime_essential:render/transmission/metal");
+		textureInsulator = registerTexture("sime_essential:render/transmission/glass_insulator");
 		this.facing = facing;
+		this.type = type;
+		this.isRod = isRod;
 	}
-	
+
 	@Override
 	public IBakedModel bake(IModelState state, VertexFormat format,
 			Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter) {
-		return new PowerPoleBottomModel(facing, bakedTextureGetter.apply(texture));
+		return new PowerPole2Model(facing, type, isRod, bakedTextureGetter.apply(textureMetal), bakedTextureGetter.apply(textureInsulator));
 	}
-
 }

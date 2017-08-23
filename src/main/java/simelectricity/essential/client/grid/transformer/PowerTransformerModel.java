@@ -9,7 +9,7 @@ import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.EnumFacing;
 import simelectricity.essential.client.BlockRenderModel;
-import simelectricity.essential.client.grid.Models;
+import simelectricity.essential.client.grid.pole.Models;
 import simelectricity.essential.utils.client.SERenderHeap;
 import simelectricity.essential.utils.client.SERenderHelper;
 

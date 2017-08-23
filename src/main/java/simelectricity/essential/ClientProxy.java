@@ -6,6 +6,7 @@ import simelectricity.essential.client.cable.CableStateMapper;
 import simelectricity.essential.client.coverpanel.LedPanelRender;
 import simelectricity.essential.client.coverpanel.SupportRender;
 import simelectricity.essential.client.coverpanel.VoltageSensorRender;
+import simelectricity.essential.client.grid.GridRenderMonitor;
 import simelectricity.essential.client.grid.GridStateMapper;
 import simelectricity.essential.client.grid.TileRenderPowerPole;
 import simelectricity.essential.client.grid.transformer.PowerTransformerStateMapper;
@@ -42,6 +43,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IThreadListener;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 
 public class ClientProxy extends CommonProxy{
@@ -109,6 +111,8 @@ public class ClientProxy extends CommonProxy{
 	
 	@Override
 	public void init() {
+		MinecraftForge.EVENT_BUS.register(new GridRenderMonitor());
+		
 		SEEAPI.coloredBlocks.add(BlockRegistry.blockCable);
 		
 		ClientRegistry.bindTileEntitySpecialRenderer(TileCableJoint.class, new TileRenderPowerPole());

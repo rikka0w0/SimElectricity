@@ -1,4 +1,4 @@
-package simelectricity.essential.client.grid;
+package simelectricity.essential.client.grid.pole;
 
 import java.util.LinkedList;
 import java.util.List;

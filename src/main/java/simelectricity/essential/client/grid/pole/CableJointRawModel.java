@@ -1,4 +1,4 @@
-package simelectricity.essential.client.grid;
+package simelectricity.essential.client.grid.pole;
 
 import com.google.common.base.Function;
 
