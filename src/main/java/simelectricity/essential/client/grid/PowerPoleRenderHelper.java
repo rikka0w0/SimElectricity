@@ -64,7 +64,7 @@ public class PowerPoleRenderHelper {
 		this.addedGroup = 0;
 	}
 	
-	public Insulator createInsulator(float length, float offsetX, float offsetY, float offsetZ) {	
+	public Insulator createInsulator(float length, float tension, float offsetX, float offsetY, float offsetZ) {	
 		if (this.mirroredAboutZ)
 			offsetX = -offsetX;
 		
@@ -72,7 +72,7 @@ public class PowerPoleRenderHelper {
 		float rotatedZ = offsetZ * MathHelper.cos(rotation/180F*SEMathHelper.PI) - offsetX * MathHelper.sin(rotation/180F*SEMathHelper.PI);
 		
 		
-		return new Insulator(this, length, rotatedX + 0.5F, offsetY, rotatedZ + 0.5F);
+		return new Insulator(this, length, tension, rotatedX + 0.5F, offsetY, rotatedZ + 0.5F);
 	}
 	
 	public void addInsulatorGroup(float centerX, float centerY, float centerZ, Insulator... insulators) {
@@ -219,12 +219,13 @@ public class PowerPoleRenderHelper {
 		/**
 		 * Rotated offsets
 		 */
-		public final float length, offsetX, offsetY, offsetZ;
+		public final float length, tension, offsetX, offsetY, offsetZ;
 		public final Vec3f realPos;
 		
-		private Insulator(PowerPoleRenderHelper parent, float length, float offsetX, float offsetY, float offsetZ) {
+		private Insulator(PowerPoleRenderHelper parent, float length, float tension, float offsetX, float offsetY, float offsetZ) {
 			this.parent = parent;
 			this.length = length;
+			this.tension = tension;
 			this.offsetX = offsetX;
 			this.offsetY = offsetY;
 			this.offsetZ = offsetZ;
@@ -266,10 +267,13 @@ public class PowerPoleRenderHelper {
     public static class ConnectionInfo {
     	public final Vec3f from, to;
     	public final Vec3f fixedFrom, fixedTo;
-    	public final float insulatorAngle;
+    	public final float insulatorAngle, tension;
     	
     	private ConnectionInfo(Pair<Insulator, Insulator> connection) {
-    		float tension = 3;
+    		float tension = connection.getLeft().tension;
+    		float tension2 = connection.getRight().tension;
+    		tension = tension<tension2 ? tension:tension2;
+    		
     		this.from = connection.getLeft().realPos;
     		this.to = connection.getRight().realPos;
     		
@@ -283,6 +287,7 @@ public class PowerPoleRenderHelper {
     		this.fixedFrom = fixedFrom;
     		this.fixedTo = fixedTo;
     		this.insulatorAngle = angle;
+    		this.tension = tension;
     	}
     }
     

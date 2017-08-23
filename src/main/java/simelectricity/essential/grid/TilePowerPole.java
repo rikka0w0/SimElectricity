@@ -67,21 +67,21 @@ public class TilePowerPole extends SEEnergyTile implements ISEGridTile, ISEPower
 				}
 			};
 			helper.addInsulatorGroup(-0.7F, 5, 0,
-					helper.createInsulator(2, -1, 0, -4.5F),
-					helper.createInsulator(2, -0.7F, 5, 0),
-					helper.createInsulator(2, -1, 0, 4.5F)
+					helper.createInsulator(2, 3, -1, 0, -4.5F),
+					helper.createInsulator(2, 3, -0.7F, 5, 0),
+					helper.createInsulator(2, 3, -1, 0, 4.5F)
 					);
 			helper.addInsulatorGroup(0.7F, 5, 0,
-					helper.createInsulator(2, 1, 0, -4.5F),
-					helper.createInsulator(2, 0.7F, 5, 0),
-					helper.createInsulator(2, 1, 0, 4.5F)
+					helper.createInsulator(2, 3, 1, 0, -4.5F),
+					helper.createInsulator(2, 3, 0.7F, 5, 0),
+					helper.createInsulator(2, 3, 1, 0, 4.5F)
 					);
 		}else {
 			helper = new PowerPoleRenderHelper(world, pos, rotation, 1, 3);
 			helper.addInsulatorGroup(0, 5, 3.95F,
-					helper.createInsulator(0, 0, -2, -4.9F),
-					helper.createInsulator(0, 0, 5, 3.95F),
-					helper.createInsulator(0, 0, -2, 4.9F)
+					helper.createInsulator(0, 3, 0, -2, -4.9F),
+					helper.createInsulator(0, 3, 0, 5, 3.95F),
+					helper.createInsulator(0, 3, 0, -2, 4.9F)
 					);
 		}
 

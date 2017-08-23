@@ -29,7 +29,7 @@ public class TileRenderPowerPole extends TileEntitySpecialRenderer implements IT
         GL11.glTranslated(x-helper.pos.getX(), y-helper.pos.getY(), z-helper.pos.getZ());
 		for (ConnectionInfo[] connections: helper.connectionInfo) {
 			for (ConnectionInfo info: connections) {
-				TransmissionLineGLRender.renderParabolicCable(info.fixedFrom, info.fixedTo, true, 0.075F, 3, this, 1);
+				TransmissionLineGLRender.renderParabolicCable(info.fixedFrom, info.fixedTo, true, 0.075F, info.tension, this, 1);
 			}
 		}
 		

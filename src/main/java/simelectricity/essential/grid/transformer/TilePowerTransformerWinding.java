@@ -175,9 +175,9 @@ public abstract class TilePowerTransformerWinding extends SEEnergyTile implement
 	        //Create renderHelper on client side
 			PowerPoleRenderHelper renderHelper = new PowerPoleRenderHelper(world, pos, facing, mirrored, 1, 3);
 			renderHelper.addInsulatorGroup(0F, 2.8F, 0F, 
-					renderHelper.createInsulator(0, 0, 2.8F, 1.5F),
-					renderHelper.createInsulator(0, 0, 2.8F, 0),
-					renderHelper.createInsulator(0, 0, 2.8F, -1.5F));
+					renderHelper.createInsulator(0, 2, 0, 2.8F, 1.5F),
+					renderHelper.createInsulator(0, 2, 0, 2.8F, 0),
+					renderHelper.createInsulator(0, 2, 0, 2.8F, -1.5F));
 			return renderHelper;
 		}
 	}
@@ -188,9 +188,9 @@ public abstract class TilePowerTransformerWinding extends SEEnergyTile implement
 			//Create renderHelper on client side
 			PowerPoleRenderHelper renderHelper = new PowerPoleRenderHelper(world, pos, facing, mirrored, 1, 3);
 			renderHelper.addInsulatorGroup(0, 1.8F, 0, 
-					renderHelper.createInsulator(0, 0, 2.1F, 0.8F),
-					renderHelper.createInsulator(0, 0, 2.1F, 0),
-					renderHelper.createInsulator(0, 0, 2.1F, -0.8F));
+					renderHelper.createInsulator(0, 0.5F, 0, 2.1F, 0.8F),
+					renderHelper.createInsulator(0, 0.5F, 0, 2.1F, 0),
+					renderHelper.createInsulator(0, 0.5F, 0, 2.1F, -0.8F));
 			return renderHelper;
 		}
 	}

@@ -156,9 +156,9 @@ public class TileCableJoint extends SEEnergyTile implements ISECableTile, ISEGri
 		int rotation = world.getBlockState(pos).getValue(Properties.propertyFacing);
 		PowerPoleRenderHelper renderHelper = new PowerPoleRenderHelper(world, pos, rotation, 1, 3);
 		renderHelper.addInsulatorGroup(0.6F, 1.45F, 0F, 
-				renderHelper.createInsulator(0, -0.3F, 1.17F, -0.95F),
-				renderHelper.createInsulator(0, 0.6F, 1.45F, 0F),
-				renderHelper.createInsulator(0, -0.3F, 1.17F, 0.95F));
+				renderHelper.createInsulator(0, 2, -0.3F, 1.17F, -0.95F),
+				renderHelper.createInsulator(0, 2, 0.6F, 1.45F, 0F),
+				renderHelper.createInsulator(0, 2, -0.3F, 1.17F, 0.95F));
 		
 		return renderHelper;
 	}
