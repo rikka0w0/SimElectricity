@@ -83,9 +83,9 @@ public class ItemHighVoltageCable extends SEItem implements ISESimpleTextureItem
         if (lastCoordinate == null) {	//First selection
         	if (connector1.canHVCableConnect(world, pos)){
         		lastCoordinate = new BlockPos(pos);
-                Utils.chatWithLocalization(player, "chat.sime_essential:tranmission_tower_selected");
+                Utils.chatWithLocalization(player, "chat.sime_essential:powerpole_selected");
         	}else{
-        		Utils.chatWithLocalization(player, "chat.sime_essential:tranmission_tower_connection_not_allowed");
+        		Utils.chatWithLocalization(player, "chat.sime_essential:powerpole_connection_denied");
         	}
         	
         	lastCoordinates.put(player, lastCoordinate);
@@ -98,19 +98,19 @@ public class ItemHighVoltageCable extends SEItem implements ISESimpleTextureItem
             	ISEGridNode node2 = (ISEGridNode) connector2.getNode(world, new BlockPos(lastCoordinate));
         		
             	if (node1 == node2){
-            		Utils.chatWithLocalization(player, I18n.translateToLocal("chat.sime_essential:tranmission_tower_recursive_connection"));
+            		Utils.chatWithLocalization(player, I18n.translateToLocal("chat.sime_essential:powerpole_recursive_connection"));
             	}else if (!connector1.canHVCableConnect(world, pos)){
-            		Utils.chatWithLocalization(player, I18n.translateToLocal("chat.sime_essential:tranmission_tower_current_selection_invalid"));
+            		Utils.chatWithLocalization(player, I18n.translateToLocal("chat.sime_essential:powerpole_current_selection_invalid"));
             	}else if (!connector2.canHVCableConnect(world, lastCoordinate)){
-            		Utils.chatWithLocalization(player, I18n.translateToLocal("chat.sime_essential:tranmission_tower_last_selection_invalid"));
+            		Utils.chatWithLocalization(player, I18n.translateToLocal("chat.sime_essential:powerpole_last_selection_invalid"));
             	}else if (!numberOfConductorMatched(node1, node2)) {
-            		Utils.chatWithLocalization(player, I18n.translateToLocal("chat.sime_essential:tranmission_tower_type_mismatch"));
+            		Utils.chatWithLocalization(player, I18n.translateToLocal("chat.sime_essential:powerpole_type_mismatch"));
             	}else{
             		double distance = node1.getPos().distanceSq(node2.getPos());
                     if (distance < 5*5) {
-                    	Utils.chatWithLocalization(player, I18n.translateToLocal("chat.sime_essential:tranmission_tower_too_close"));
+                    	Utils.chatWithLocalization(player, I18n.translateToLocal("chat.sime_essential:powerpole_too_close"));
                     }else if (distance > 200*200){
-                    	Utils.chatWithLocalization(player, I18n.translateToLocal("chat.sime_essential:tranmission_tower_too_far"));
+                    	Utils.chatWithLocalization(player, I18n.translateToLocal("chat.sime_essential:powerpole_too_far"));
                     }else{
                     	double resistance = distance * resistivityList[itemStack.getItemDamage()];	//Calculate the resistance
                     	if (node1 != null && node2 != null &&
@@ -118,12 +118,11 @@ public class ItemHighVoltageCable extends SEItem implements ISESimpleTextureItem
                         	SEAPI.energyNetAgent.isNodeValid(world, node2)){
                         		
                         		SEAPI.energyNetAgent.connectGridNode(world, node1, node2, resistance);
-                        		Utils.chatWithLocalization(player, I18n.translateToLocal("chat.sime_essential:tranmission_tower_connected"));
                         	}
                     }
             	}
         	}else{
-        		Utils.chatWithLocalization(player, I18n.translateToLocal("chat.sime_essential:tranmission_tower_current_selection_invalid"));
+        		Utils.chatWithLocalization(player, I18n.translateToLocal("chat.sime_essential:powerpole_current_selection_invalid"));
         	}
         	
             lastCoordinates.put(player, null);

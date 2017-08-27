@@ -33,7 +33,7 @@ public class PowerPole3Model extends BlockRenderModel implements IPerspectiveAwa
 	private final int rotation;
 	private final List<BakedQuad> quads = new LinkedList();
 	
-	private static SERawQuadGroup insulator10Kv;
+	private final SERawQuadGroup insulator;
 		
 	public PowerPole3Model(EnumBlockTypePole3 blockType, int rotation, TextureAtlasSprite textureMetal, TextureAtlasSprite textureInsulator, TextureAtlasSprite textureConcrete) {
 		this.textureMetal = textureMetal;
@@ -46,30 +46,47 @@ public class PowerPole3Model extends BlockRenderModel implements IPerspectiveAwa
 		cube.translateCoord(0.5F, 0, 0.5F);
 		cube.bake(quads);
 		
+		SERawQuadGroup insulator = null;
 		//Build the insulator model
-		if (insulator10Kv == null) {
-			insulator10Kv = new SERawQuadGroup();
-			insulator10Kv.add(new SERawQuadCube(0.08F, 0.5F, 0.08F, textureMetal));
-			insulator10Kv.add((new SERawQuadCube(0.5F, 0.05F, 0.5F, textureInsulator)).translateCoord(0,0.15F,0));
-			insulator10Kv.add((new SERawQuadCube(0.5F, 0.05F, 0.5F, textureInsulator)).translateCoord(0,0.225F,0));
-			insulator10Kv.add((new SERawQuadCube(0.5F, 0.05F, 0.5F, textureInsulator)).translateCoord(0,0.3F,0));
-		}
-
-		
-		SERawQuadGroup model = new SERawQuadGroup();
-
-		
 		switch (blockType) {
 		case Pole:
-			return;
-		case Crossarm10KvT0:
-			model.add(new SERawQuadCube(0.15F, 0.1F, 1.6F, textureMetal));
-			model.merge(insulator10Kv.clone().translateCoord(0, 0.05F, -0.74F));
-			model.merge(insulator10Kv.clone().translateCoord(0, 0.05F, 0.74F));
-			model.merge(insulator10Kv.clone().translateCoord(0, 1F, 0));
 			break;
-		case Crossarm10KvT1:
+		case Crossarm10kVT0:
+		case Crossarm10kVT1:
+			insulator = new SERawQuadGroup();
+			insulator.add(new SERawQuadCube(0.08F, 0.5F, 0.08F, textureMetal));
+			insulator.add((new SERawQuadCube(0.5F, 0.05F, 0.5F, textureInsulator)).translateCoord(0,0.15F,0));
+			insulator.add((new SERawQuadCube(0.5F, 0.05F, 0.5F, textureInsulator)).translateCoord(0,0.225F,0));
+			insulator.add((new SERawQuadCube(0.5F, 0.05F, 0.5F, textureInsulator)).translateCoord(0,0.3F,0));
+			break;
+		case Crossarm415VT0:
+			insulator = new SERawQuadGroup();
+			insulator.add(new SERawQuadCube(0.08F, 0.25F, 0.08F, textureMetal));
+			insulator.add((new SERawQuadCube(0.25F, 0.05F, 0.25F, textureInsulator)).translateCoord(0,0.15F,0));
+			break;
+		}
+		this.insulator = insulator;
+		
+		
+		SERawQuadGroup model = new SERawQuadGroup();
+		switch (blockType) {
+		case Pole:
+			break;
+		case Crossarm10kVT0:
+			model.add(new SERawQuadCube(0.15F, 0.1F, 1.6F, textureMetal));
+			model.merge(insulator.clone().translateCoord(0, 0.05F, -0.74F));
+			model.merge(insulator.clone().translateCoord(0, 0.05F, 0.74F));
+			model.merge(insulator.clone().translateCoord(0, 1F, 0));
+			break;
+		case Crossarm10kVT1:
 			model.add((new SERawQuadCube(0.15F, 0.08F, 1.6F, textureMetal)).translateCoord(0, 0.05F, 0));
+			break;
+		case Crossarm415VT0:
+			model.add(new SERawQuadCube(0.15F, 0.1F, 1.94F, textureMetal));
+			model.merge(insulator.clone().translateCoord(0, 0.05F, -0.9F));
+			model.merge(insulator.clone().translateCoord(0, 0.05F, -0.45F));
+			model.merge(insulator.clone().translateCoord(0, 0.05F, 0.45F));
+			model.merge(insulator.clone().translateCoord(0, 0.05F, 0.9F));
 			break;
 		}
 		
@@ -83,7 +100,7 @@ public class PowerPole3Model extends BlockRenderModel implements IPerspectiveAwa
 	
 	@Override
 	public List<BakedQuad> getQuads(IBlockState blockState, EnumFacing side, long rand) {
-		if (blockType == EnumBlockTypePole3.Crossarm10KvT1) {
+		if (blockType == EnumBlockTypePole3.Crossarm10kVT1) {
 		    PowerPoleRenderHelper helper = PowerPoleRenderHelper.fromState(blockState);
 		    
 		    if (helper == null)
@@ -91,10 +108,10 @@ public class PowerPole3Model extends BlockRenderModel implements IPerspectiveAwa
 		    
 			LinkedList<BakedQuad> quads = new LinkedList();
 			quads.addAll(this.quads);
-		    helper.renderInsulator(insulator10Kv, quads);
+		    helper.renderInsulator(insulator, quads);
 		    
 		    if (helper.connectionInfo.size() == 2) {
-		    	insulator10Kv.clone().translateCoord(0.5F, 1F, 0.5F).bake(quads);
+		    	insulator.clone().translateCoord(0.5F, 1F, 0.5F).bake(quads);
 		    }
 		    
 		    return quads;

@@ -13,6 +13,7 @@ import simelectricity.essential.common.multiblock.MultiBlockTileInfo;
 import simelectricity.essential.utils.Utils;
 
 public class TilePowerTransformerPlaceHolder extends SETileEntity implements ISEMultiBlockTile{
+	//To minimize network usage, mbInfo will not be send to blocks other than the Render block
 	protected MultiBlockTileInfo mbInfo;
 	
 	@Override

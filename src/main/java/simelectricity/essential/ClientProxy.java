@@ -123,6 +123,7 @@ public class ClientProxy extends CommonProxy{
 		TileRenderPowerPole.register(TilePowerTransformerWinding.Secondary.class);
 		TileRenderPowerPole.register(TilePowerPole3.Pole10KvType0.class);
 		TileRenderPowerPole.register(TilePowerPole3.Pole10KvType1.class);
+		TileRenderPowerPole.register(TilePowerPole3.Pole415vType0.class);
 	}
 	
 	@Override
