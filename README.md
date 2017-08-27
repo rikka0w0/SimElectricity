@@ -9,14 +9,13 @@ BuildCraft Extension:
 Install BuildCraft facade to SimElectricity cable
 https://github.com/RoyalAliceAcademyOfSciences/SimElectricity_BuildCraft_Extension
 
-## Deploy the development environment:
-###When using eclipse as your IDE, you need set Java Compiler to ver 1.8. in current
-forge(1.11.2 - 13.20.1.2386) default Java Build Path is ver 1.6
-1. follow the steps 1~5 in forge website https://mcforge.readthedocs.io/en/latest/gettingstarted/ , to step 4 if you don't using Eclipse as IDE.
-2. remove the `/src/main/java/com/example/` directory.
-3. `git init`
-4. `git remote add -f -t master -m master origin https://github.com/RoyalAliceAcademyOfSciences/SimElectricity.git`
-5. `git checkout master --force`
+## Test The Source Code (Eclipse):
+### You MUST set the compatibility level of Java compiler to 1.8. By default, Minecraft Forge(1.11.2 - 13.20.1.2386) sets the compatibility level to 1.6. To do this, modify `sourceCompatibility = targetCompatibility = "1.6"` in build.gradle to `sourceCompatibility = targetCompatibility = "1.8"`.
+1. Deploy the forge MDK, detailed tutorial can be found on forge's website: https://mcforge.readthedocs.io/en/latest/gettingstarted/
+2. Navigate to the forge MKD folder, Delete `/src/main/java/com/example/` .
+3. Download the source code as a Zip file
+4. Extract the `src` folder in the Zip file to the forge MDK directory
+5. Launch Eclipse and then run Minecraft, all done
 
 ## Special Thanks To:
 

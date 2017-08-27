@@ -26,7 +26,7 @@ group = "simElectricity" // http://maven.apache.org/guides/mini/guide-naming-con
 archivesBaseName = "SimElectricity"
 
 minecraft {
-    version = "1.7.10-10.13.4.1614-1.7.10"
+    version = "1.11.2-13.20.1.2425"
 }
 processResources {
     // replace stuff in mcmod.info, nothing else
@@ -43,7 +43,7 @@ processResources {
     }
 
     dependencies {
-        compile fileTree(dir: 'lib', includes: ['*.jar'])
+        compile fileTree(dir: 'libs', includes: ['*.jar'])
     }
 }
 
