@@ -24,30 +24,26 @@
 
 package edu.emory.mathcs.csparsej.tdouble;
 
-import edu.emory.mathcs.csparsej.tdouble.Dcs_common.Dcs;
-
 /**
  * Maximum transveral (permutation for zero-free diagonal).
- * 
+ *
  * @author Piotr Wendykier (piotr.wendykier@gmail.com)
- * 
  */
 public class Dcs_maxtrans {
     /* find an augmenting path starting at column k and extend the match if found */
-    private static void cs_augment(int k, Dcs A, int[] jmatch, int jmatch_offset, int[] cheap, int cheap_offset,
-            int[] w, int w_offset, int[] js, int js_offset, int[] is, int is_offset, int[] ps, int ps_offset) {
+    private static void cs_augment(int k, Dcs_common.Dcs A, int[] jmatch, int jmatch_offset, int[] cheap, int cheap_offset,
+                                   int[] w, int w_offset, int[] js, int js_offset, int[] is, int is_offset, int[] ps, int ps_offset) {
         int p, i = -1, Ap[] = A.p, Ai[] = A.i, head = 0, j;
         boolean found = false;
         js[js_offset + 0] = k; /* start with just node k in jstack */
         while (head >= 0) {
             /* --- Start (or continue) depth-first-search at node j ------------- */
             j = js[js_offset + head]; /* get j from top of jstack */
-            if (w[w_offset + j] != k) /* 1st time j visited for kth path */
-            {
+            if (w[w_offset + j] != k) /* 1st time j visited for kth path */ {
                 w[w_offset + j] = k; /* mark j as visited for kth path */
                 for (p = cheap[cheap_offset + j]; p < Ap[j + 1] && !found; p++) {
                     i = Ai[p]; /* try a cheap assignment (i,j) */
-                    found = (jmatch[jmatch_offset + i] == -1);
+                    found = jmatch[jmatch_offset + i] == -1;
                 }
                 cheap[cheap_offset + j] = p; /* start here next time j is traversed*/
                 if (found) {
@@ -63,7 +59,7 @@ public class Dcs_maxtrans {
                     continue; /* skip jmatch [i] if marked */
                 ps[ps_offset + head] = p + 1; /* pause dfs of node j */
                 is[is_offset + head] = i; /* i will be matched with j if found */
-                js[js_offset + (++head)] = jmatch[jmatch_offset + i]; /* start dfs at column jmatch [i] */
+                js[js_offset + ++head] = jmatch[jmatch_offset + i]; /* start dfs at column jmatch [i] */
                 break;
             }
             if (p == Ap[j + 1])
@@ -77,26 +73,22 @@ public class Dcs_maxtrans {
     /**
      * Find a maximum transveral (zero-free diagonal). Seed optionally selects a
      * randomized algorithm.
-     * 
-     * @param A
-     *            column-compressed matrix
-     * @param seed
-     *            0: natural, -1: reverse, randomized otherwise
+     *
+     * @param A    column-compressed matrix
+     * @param seed 0: natural, -1: reverse, randomized otherwise
      * @return row and column matching, size m+n
      */
-    public static int[] cs_maxtrans(Dcs A, int seed) /*[jmatch [0..m-1]; imatch [0..n-1]]*/
-    {
+    public static int[] cs_maxtrans(Dcs_common.Dcs A, int seed) /*[jmatch [0..m-1]; imatch [0..n-1]]*/ {
         int i, j, k, n, m, p, n2 = 0, m2 = 0, Ap[], jimatch[], w[], cheap[], js[], is[], ps[], Ai[], Cp[], jmatch[], imatch[], q[];
-        Dcs C;
+        Dcs_common.Dcs C;
         if (!Dcs_util.CS_CSC(A))
-            return (null); /* check inputs */
+            return null; /* check inputs */
         n = A.n;
         m = A.m;
         Ap = A.p;
         Ai = A.i;
         w = jimatch = new int[m + n]; /* allocate result */
-        for (k = 0, j = 0; j < n; j++) /* count nonempty rows and columns */
-        {
+        for (k = 0, j = 0; j < n; j++) /* count nonempty rows and columns */ {
             if (Ap[j] < Ap[j + 1])
                 n2++;
             for (p = Ap[j]; p < Ap[j + 1]; p++) {
@@ -105,8 +97,7 @@ public class Dcs_maxtrans {
                     k++; /* count entries already on diagonal */
             }
         }
-        if (k == Math.min(m, n)) /* quick return if diagonal zero-free */
-        {
+        if (k == Math.min(m, n)) /* quick return if diagonal zero-free */ {
             jmatch = jimatch;
             imatch = jimatch;
             int imatch_offset = m;
@@ -122,7 +113,7 @@ public class Dcs_maxtrans {
         }
         for (i = 0; i < m; i++)
             m2 += w[i];
-        C = (m2 < n2) ? Dcs_transpose.cs_transpose(A, false) : A; /* transpose if needed */
+        C = m2 < n2 ? Dcs_transpose.cs_transpose(A, false) : A; /* transpose if needed */
         if (C == null)
             return null;
         n = C.n;
@@ -153,9 +144,8 @@ public class Dcs_maxtrans {
         for (i = 0; i < m; i++)
             jmatch[jmatch_offset + i] = -1; /* nothing matched yet */
         q = Dcs_randperm.cs_randperm(n, seed); /* q = random permutation */
-        for (k = 0; k < n; k++) /* augment, starting at column q[k] */
-        {
-            cs_augment(q != null ? q[k] : k, C, jmatch, jmatch_offset, cheap, cheap_offset, w, 0, js, js_offset, is,
+        for (k = 0; k < n; k++) /* augment, starting at column q[k] */ {
+            Dcs_maxtrans.cs_augment(q != null ? q[k] : k, C, jmatch, jmatch_offset, cheap, cheap_offset, w, 0, js, js_offset, is,
                     is_offset, ps, ps_offset);
         }
         q = null;

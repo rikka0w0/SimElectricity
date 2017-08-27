@@ -10,28 +10,28 @@ package simelectricity.api.components;
  * <p/>
  * See SimElectricity wikipedia for circuit models and more informations
  */
-public interface ISEConstantPowerLoad extends ISEComponentParameter{
-	/**
-	 * Returns the desired power that is consumed by this component
-	 */
-	double getRatedPower();
-	
-	/**
-	 * Returns the minimum resistance allowed
-	 * <p/>
-	 * Usually equals the square of the minimum allow working voltage on the rated power
-	 */
-	double getMinimumResistance();
-	
-	/**
-	 * Returns the maximum resistance allowed
-	 * <p/>
-	 * Usually equals the square of the maximum allow working voltage on the rated power
-	 */
-	double getMaximumResistance();
-	
-	/**
-	 * If return false, the load will be ignored during simulation
-	 */	
-	boolean isEnabled();
+public interface ISEConstantPowerLoad extends ISEComponentParameter {
+    /**
+     * Returns the desired power that is consumed by this component
+     */
+    double getRatedPower();
+
+    /**
+     * Returns the minimum resistance allowed
+     * <p/>
+     * Usually equals the square of the minimum allow working voltage on the rated power
+     */
+    double getMinimumResistance();
+
+    /**
+     * Returns the maximum resistance allowed
+     * <p/>
+     * Usually equals the square of the maximum allow working voltage on the rated power
+     */
+    double getMaximumResistance();
+
+    /**
+     * If return false, the load will be ignored during simulation
+     */
+    boolean isEnabled();
 }

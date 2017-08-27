@@ -19,7 +19,7 @@
 
 package simelectricity.energynet.matrix;
 
-public class Gaussian implements IMatrixResolver{
+public class Gaussian implements IMatrixResolver {
     public static final double EPSILON = 1e-10;
 
     private double[][] matrix;
@@ -27,56 +27,11 @@ public class Gaussian implements IMatrixResolver{
     private int currentColumn;
     private int nZ;
     private int size;
-    
-	@Override
-	public void newMatrix(int size) {
-		this.size = size;
-		matrix = new double[size][size];
-		currentRow = 0;
-		currentColumn = 0;
-		nZ = 0;
-	}
-	
-	@Override
-	public void setElementValue(int column, int row, double value) {
-		matrix[column][row] = value;
-	}
 
-	@Override
-	public void finishEditing() {
-		
-	}
-
-	@Override
-	public void print(String[] header) {
-		for (int r = 0; r<size; r++){
-			for (int c = 0; c<size; c++){
-				System.out.print(matrix[c][r]);
-				System.out.print(" ");
-			}
-			System.out.println();
-		}
-	}
-	
-	@Override
-	public boolean solve(double[] b) {
-		double[][] A = new double[b.length][b.length];
-		for (int i=0;i<b.length;i++)
-			for (int j=0;j<b.length;j++)
-				A[i][j] = matrix[i][j];
-		
-		double[] x = lsolve(A,b);
-		if (x == null)
-			return false;
-		for (int i=0;i<b.length;i++)
-			b[i] = x[i];
-		return true;
-	}
-    
     // Gaussian elimination with partial pivoting
     public static double[] lsolve(double[][] A, double[] b) {
         int N = b.length;
-        
+
         for (int p = 0; p < N; p++) {
 
             // find pivot row and swap
@@ -94,8 +49,8 @@ public class Gaussian implements IMatrixResolver{
             b[max] = t;
 
             // singular or nearly singular
-            if (Math.abs(A[p][p]) <= EPSILON) {
-            	return null;
+            if (Math.abs(A[p][p]) <= Gaussian.EPSILON) {
+                return null;
                 //throw new RuntimeException(	"Matrix is singular or nearly singular");
             }
 
@@ -124,14 +79,59 @@ public class Gaussian implements IMatrixResolver{
         }
         return x;
     }
-    
-	@Override
-	public int getTotalNonZeros(){
-		return nZ;
-	}
-	
-	@Override
-	public int getMatrixSize() {
-		return size;
-	}
+
+    @Override
+    public void newMatrix(int size) {
+        this.size = size;
+        this.matrix = new double[size][size];
+        this.currentRow = 0;
+        this.currentColumn = 0;
+        this.nZ = 0;
+    }
+
+    @Override
+    public void setElementValue(int column, int row, double value) {
+        this.matrix[column][row] = value;
+    }
+
+    @Override
+    public void finishEditing() {
+
+    }
+
+    @Override
+    public void print(String[] header) {
+        for (int r = 0; r < this.size; r++) {
+            for (int c = 0; c < this.size; c++) {
+                System.out.print(this.matrix[c][r]);
+                System.out.print(" ");
+            }
+            System.out.println();
+        }
+    }
+
+    @Override
+    public boolean solve(double[] b) {
+        double[][] A = new double[b.length][b.length];
+        for (int i = 0; i < b.length; i++)
+            for (int j = 0; j < b.length; j++)
+                A[i][j] = this.matrix[i][j];
+
+        double[] x = Gaussian.lsolve(A, b);
+        if (x == null)
+            return false;
+        for (int i = 0; i < b.length; i++)
+            b[i] = x[i];
+        return true;
+    }
+
+    @Override
+    public int getTotalNonZeros() {
+        return this.nZ;
+    }
+
+    @Override
+    public int getMatrixSize() {
+        return this.size;
+    }
 }

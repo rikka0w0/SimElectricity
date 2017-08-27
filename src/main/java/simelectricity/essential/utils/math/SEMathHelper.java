@@ -3,8 +3,8 @@ package simelectricity.essential.utils.math;
 import net.minecraft.util.math.MathHelper;
 
 public class SEMathHelper {
-	public final static float PI = (float) Math.PI;
-	
+    public static final float PI = (float) Math.PI;
+
     /**
      * Calculate the distance between two points (3d)
      *
@@ -20,7 +20,7 @@ public class SEMathHelper {
                 (yStart - yEnd) * (yStart - yEnd) +
                 (zStart - zEnd) * (zStart - zEnd));
     }
-    
+
     public static float distanceOf(float xStart, float yStart, float zStart, float xEnd, float yEnd, float zEnd) {
         return MathHelper.sqrt((xStart - xEnd) * (xStart - xEnd) +
                 (yStart - yEnd) * (yStart - yEnd) +

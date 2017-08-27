@@ -24,57 +24,44 @@
 
 package edu.emory.mathcs.csparsej.tdouble;
 
-import edu.emory.mathcs.csparsej.tdouble.Dcs_common.Dcs;
-
 /**
  * Approximate minimum degree ordering.
  *
  * @author Piotr Wendykier (piotr.wendykier@gmail.com)
- *
  */
 public class Dcs_amd {
 
     /* clear w */
     private static int cs_wclear(int mark, int lemax, int[] w, int w_offset, int n) {
         int k;
-        if (mark < 2 || (mark + lemax < 0)) {
+        if (mark < 2 || mark + lemax < 0) {
             for (k = 0; k < n; k++)
                 if (w[w_offset + k] != 0)
                     w[w_offset + k] = 1;
             mark = 2;
         }
-        return (mark); /* at this point, w [0..n-1] < mark holds */
-    }
-
-    /* keep off-diagonal entries; drop diagonal entries */
-    private static class Cs_diag implements Dcs_ifkeep {
-        @Override
-		public boolean fkeep(int i, int j, double aij, Object other) {
-            return (i != j);
-        }
+        return mark; /* at this point, w [0..n-1] < mark holds */
     }
 
     /**
      * Minimum degree ordering of A+A' (if A is symmetric) or A'A.
      *
-     * @param order
-     *            0:natural, 1:Chol, 2:LU, 3:QR
-     * @param A
-     *            column-compressed matrix
+     * @param order 0:natural, 1:Chol, 2:LU, 3:QR
+     * @param A     column-compressed matrix
      * @return amd(A+A') if A is symmetric, or amd(A'A) otherwise, null on error
-     *         or for natural ordering
+     * or for natural ordering
      */
-    public static int[] cs_amd(int order, Dcs A) {
-        Dcs C, A2, AT;
+    public static int[] cs_amd(int order, Dcs_common.Dcs A) {
+        Dcs_common.Dcs C, A2, AT;
         int Cp[], Ci[], last[], W[], len[], nv[], next[], P[], head[], elen[], degree[], w[], hhead[], ATp[], ATi[], d, dk, dext, lemax = 0, e, elenk, eln, i, j, k, k1, k2, k3, jlast, ln, dense, nzmax, mindeg = 0, nvi, nvj, nvk, mark, wnvi, cnz, nel = 0, p, p1, p2, p3, p4, pj, pk, pk1, pk2, pn, q, n, m, t;
         int h;
         boolean ok;
         /* --- Construct matrix C ----------------------------------------------- */
         if (!Dcs_util.CS_CSC(A) || order <= 0 || order > 3)
-            return (null); /* check */
+            return null; /* check */
         AT = Dcs_transpose.cs_transpose(A, false); /* compute A' */
         if (AT == null)
-            return (null);
+            return null;
         m = A.m;
         n = A.n;
         dense = Math.max(16, 10 * (int) Math.sqrt(n)); /* find dense threshold */
@@ -94,15 +81,15 @@ public class Dcs_amd {
             }
             ATp[m] = p2; /* finalize AT */
             A2 = Dcs_transpose.cs_transpose(AT, false); /* A2 = AT' */
-            C = (A2 != null) ? Dcs_multiply.cs_multiply(AT, A2) : null; /* C=A'*A with no dense rows */
+            C = A2 != null ? Dcs_multiply.cs_multiply(AT, A2) : null; /* C=A'*A with no dense rows */
             A2 = null;
         } else {
             C = Dcs_multiply.cs_multiply(AT, A); /* C=A'*A */
         }
         AT = null;
         if (C == null)
-            return (null);
-        Dcs_fkeep.cs_fkeep(C, new Cs_diag(), null); /* drop diagonal entries */
+            return null;
+        Dcs_fkeep.cs_fkeep(C, new Dcs_amd.Cs_diag(), null); /* drop diagonal entries */
         Cp = C.p;
         cnz = Cp[n];
         P = new int[n + 1]; /* allocate result */
@@ -141,21 +128,19 @@ public class Dcs_amd {
             elen[elen_offset + i] = 0; /* Ek of node i is empty */
             degree[degree_offset + i] = len[i]; /* degree of node i */
         }
-        mark = cs_wclear(0, 0, w, w_offset, n); /* clear w */
+        mark = Dcs_amd.cs_wclear(0, 0, w, w_offset, n); /* clear w */
         elen[elen_offset + n] = -2; /* n is a dead element */
         Cp[n] = -1; /* n is a root of assembly tree */
         w[w_offset + n] = 0; /* n is a dead element */
         /* --- Initialize degree lists ------------------------------------------ */
         for (i = 0; i < n; i++) {
             d = degree[degree_offset + i];
-            if (d == 0) /* node i is empty */
-            {
+            if (d == 0) /* node i is empty */ {
                 elen[elen_offset + i] = -2; /* element i is dead */
                 nel++;
                 Cp[i] = -1; /* i is a root of assembly tree */
                 w[w_offset + i] = 0;
-            } else if (d > dense) /* node i is dense */
-            {
+            } else if (d > dense) /* node i is dense */ {
                 nv[nv_offset + i] = 0; /* absorb i into element n */
                 elen[elen_offset + i] = -1; /* node i is dead */
                 nel++;
@@ -168,8 +153,7 @@ public class Dcs_amd {
                 head[head_offset + d] = i;
             }
         }
-        while (nel < n) /* while (selecting pivots) do */
-        {
+        while (nel < n) /* while (selecting pivots) do */ {
             /* --- Select node of minimum approximate degree -------------------- */
             for (k = -1; mindeg < n && (k = head[head_offset + mindeg]) == -1; mindeg++)
                 ;
@@ -182,16 +166,13 @@ public class Dcs_amd {
             /* --- Garbage collection ------------------------------------------- */
             if (elenk > 0 && cnz + mindeg >= nzmax) {
                 for (j = 0; j < n; j++) {
-                    if ((p = Cp[j]) >= 0) /* j is a live node or element */
-                    {
+                    if ((p = Cp[j]) >= 0) /* j is a live node or element */ {
                         Cp[j] = Ci[p]; /* save first entry of object */
                         Ci[p] = Dcs_util.CS_FLIP(j); /* first entry is now CS_FLIP(j) */
                     }
                 }
-                for (q = 0, p = 0; p < cnz;) /* scan all of memory */
-                {
-                    if ((j = Dcs_util.CS_FLIP(Ci[p++])) >= 0) /* found object j */
-                    {
+                for (q = 0, p = 0; p < cnz; ) /* scan all of memory */ {
+                    if ((j = Dcs_util.CS_FLIP(Ci[p++])) >= 0) /* found object j */ {
                         Ci[q] = Cp[j]; /* restore first entry of object */
                         Cp[j] = q++; /* new pointer to object j */
                         for (k3 = 0; k3 < len[j] - 1; k3++)
@@ -204,7 +185,7 @@ public class Dcs_amd {
             dk = 0;
             nv[nv_offset + k] = -nvk; /* flag k as in Lk */
             p = Cp[k];
-            pk1 = (elenk == 0) ? p : cnz; /* do in place if elen[elen_offset+k] == 0 */
+            pk1 = elenk == 0 ? p : cnz; /* do in place if elen[elen_offset+k] == 0 */
             pk2 = pk1;
             for (k1 = 1; k1 <= elenk + 1; k1++) {
                 if (k1 > elenk) {
@@ -225,8 +206,7 @@ public class Dcs_amd {
                     Ci[pk2++] = i; /* place i in Lk */
                     if (next[next_offset + i] != -1)
                         last[next[next_offset + i]] = last[i];
-                    if (last[i] != -1) /* remove i from degree list */
-                    {
+                    if (last[i] != -1) /* remove i from degree list */ {
                         next[next_offset + last[i]] = next[next_offset + i];
                     } else {
                         head[head_offset + degree[degree_offset + i]] = next[next_offset + i];
@@ -244,37 +224,31 @@ public class Dcs_amd {
             len[k] = pk2 - pk1;
             elen[elen_offset + k] = -2; /* k is now an element */
             /* --- Find set differences ----------------------------------------- */
-            mark = cs_wclear(mark, lemax, w, w_offset, n); /* clear w if necessary */
-            for (pk = pk1; pk < pk2; pk++) /* scan 1: find |Le\Lk| */
-            {
+            mark = Dcs_amd.cs_wclear(mark, lemax, w, w_offset, n); /* clear w if necessary */
+            for (pk = pk1; pk < pk2; pk++) /* scan 1: find |Le\Lk| */ {
                 i = Ci[pk];
                 if ((eln = elen[elen_offset + i]) <= 0)
                     continue;/* skip if elen[elen_offset+i] empty */
                 nvi = -nv[nv_offset + i]; /* nv [i] was negated */
                 wnvi = mark - nvi;
-                for (p = Cp[i]; p <= Cp[i] + eln - 1; p++) /* scan Ei */
-                {
+                for (p = Cp[i]; p <= Cp[i] + eln - 1; p++) /* scan Ei */ {
                     e = Ci[p];
                     if (w[w_offset + e] >= mark) {
                         w[w_offset + e] -= nvi; /* decrement |Le\Lk| */
-                    } else if (w[w_offset + e] != 0) /* ensure e is a live element */
-                    {
+                    } else if (w[w_offset + e] != 0) /* ensure e is a live element */ {
                         w[w_offset + e] = degree[degree_offset + e] + wnvi; /* 1st time e seen in scan 1 */
                     }
                 }
             }
             /* --- Degree update ------------------------------------------------ */
-            for (pk = pk1; pk < pk2; pk++) /* scan2: degree update */
-            {
+            for (pk = pk1; pk < pk2; pk++) /* scan2: degree update */ {
                 i = Ci[pk]; /* consider node i in Lk */
                 p1 = Cp[i];
                 p2 = p1 + elen[elen_offset + i] - 1;
                 pn = p1;
-                for (h = 0, d = 0, p = p1; p <= p2; p++) /* scan Ei */
-                {
+                for (h = 0, d = 0, p = p1; p <= p2; p++) /* scan Ei */ {
                     e = Ci[p];
-                    if (w[w_offset + e] != 0) /* e is an unabsorbed element */
-                    {
+                    if (w[w_offset + e] != 0) /* e is an unabsorbed element */ {
                         dext = w[w_offset + e] - mark; /* dext = |Le\Lk| */
                         if (dext > 0) {
                             d += dext; /* sum up the set differences */
@@ -289,8 +263,7 @@ public class Dcs_amd {
                 elen[elen_offset + i] = pn - p1 + 1; /* elen[elen_offset+i] = |Ei| */
                 p3 = pn;
                 p4 = p1 + len[i];
-                for (p = p2 + 1; p < p4; p++) /* prune edges in Ai */
-                {
+                for (p = p2 + 1; p < p4; p++) /* prune edges in Ai */ {
                     j = Ci[p];
                     if ((nvj = nv[nv_offset + j]) <= 0)
                         continue; /* node j dead or in Lk */
@@ -298,8 +271,7 @@ public class Dcs_amd {
                     Ci[pn++] = j; /* place j in node list of i */
                     h += j; /* compute hash for node i */
                 }
-                if (d == 0) /* check for mass elimination */
-                {
+                if (d == 0) /* check for mass elimination */ {
                     Cp[i] = Dcs_util.CS_FLIP(k); /* absorb i into k */
                     nvi = -nv[nv_offset + i];
                     dk -= nvi; /* |Lk| -= |i| */
@@ -321,7 +293,7 @@ public class Dcs_amd {
             } /* scan2 is done */
             degree[degree_offset + k] = dk; /* finalize |Lk| */
             lemax = Math.max(lemax, dk);
-            mark = cs_wclear(mark + lemax, lemax, w, w_offset, n); /* clear w */
+            mark = Dcs_amd.cs_wclear(mark + lemax, lemax, w, w_offset, n); /* clear w */
             /* --- Supernode detection ------------------------------------------ */
             for (pk = pk1; pk < pk2; pk++) {
                 i = Ci[pk];
@@ -336,15 +308,13 @@ public class Dcs_amd {
                     for (p = Cp[i] + 1; p <= Cp[i] + ln - 1; p++)
                         w[w_offset + Ci[p]] = mark;
                     jlast = i;
-                    for (j = next[next_offset + i]; j != -1;) /* compare i with all j */
-                    {
-                        ok = (len[j] == ln) && (elen[elen_offset + j] == eln);
+                    for (j = next[next_offset + i]; j != -1; ) /* compare i with all j */ {
+                        ok = len[j] == ln && elen[elen_offset + j] == eln;
                         for (p = Cp[j] + 1; ok && p <= Cp[j] + ln - 1; p++) {
                             if (w[w_offset + Ci[p]] != mark)
                                 ok = false; /* compare i and j*/
                         }
-                        if (ok) /* i and j are identical */
-                        {
+                        if (ok) /* i and j are identical */ {
                             Cp[j] = Dcs_util.CS_FLIP(i); /* absorb j into i */
                             nv[nv_offset + i] += nv[nv_offset + j];
                             nv[nv_offset + j] = 0;
@@ -359,8 +329,7 @@ public class Dcs_amd {
                 }
             }
             /* --- Finalize new element------------------------------------------ */
-            for (p = pk1, pk = pk1; pk < pk2; pk++) /* finalize Lk */
-            {
+            for (p = pk1, pk = pk1; pk < pk2; pk++) /* finalize Lk */ {
                 i = Ci[pk];
                 if ((nvi = -nv[nv_offset + i]) <= 0)
                     continue;/* skip if i is dead */
@@ -377,8 +346,7 @@ public class Dcs_amd {
                 Ci[p++] = i; /* place i in Lk */
             }
             nv[nv_offset + k] = nvk; /* # nodes absorbed into k */
-            if ((len[k] = p - pk1) == 0) /* length of adj list of element k*/
-            {
+            if ((len[k] = p - pk1) == 0) /* length of adj list of element k*/ {
                 Cp[k] = -1; /* k is a root of the tree */
                 w[w_offset + k] = 0; /* k is now a dead element */
             }
@@ -390,15 +358,13 @@ public class Dcs_amd {
             Cp[i] = Dcs_util.CS_FLIP(Cp[i]);/* fix assembly tree */
         for (j = 0; j <= n; j++)
             head[head_offset + j] = -1;
-        for (j = n; j >= 0; j--) /* place unordered nodes in lists */
-        {
+        for (j = n; j >= 0; j--) /* place unordered nodes in lists */ {
             if (nv[nv_offset + j] > 0)
                 continue; /* skip if j is an element */
             next[next_offset + j] = head[head_offset + Cp[j]]; /* place j in list of its parent */
             head[head_offset + Cp[j]] = j;
         }
-        for (e = n; e >= 0; e--) /* place elements in lists */
-        {
+        for (e = n; e >= 0; e--) /* place elements in lists */ {
             if (nv[nv_offset + e] <= 0)
                 continue; /* skip unless e is an element */
             if (Cp[e] != -1) {
@@ -406,11 +372,18 @@ public class Dcs_amd {
                 head[head_offset + Cp[e]] = e;
             }
         }
-        for (k = 0, i = 0; i <= n; i++) /* postorder the assembly tree */
-        {
+        for (k = 0, i = 0; i <= n; i++) /* postorder the assembly tree */ {
             if (Cp[i] == -1)
                 k = Dcs_tdfs.cs_tdfs(i, k, head, head_offset, next, next_offset, P, 0, w, w_offset);
         }
         return P;
+    }
+
+    /* keep off-diagonal entries; drop diagonal entries */
+    private static class Cs_diag implements Dcs_ifkeep {
+        @Override
+        public boolean fkeep(int i, int j, double aij, Object other) {
+            return i != j;
+        }
     }
 }

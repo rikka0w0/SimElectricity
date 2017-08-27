@@ -25,34 +25,30 @@
 package edu.emory.mathcs.csparsej.tdouble;
 
 import edu.emory.mathcs.csparsej.tdouble.Dcs_common.Dcs;
-import edu.emory.mathcs.csparsej.tdouble.Dcs_common.Dcsn;
 import edu.emory.mathcs.csparsej.tdouble.Dcs_common.Dcss;
 
 /**
  * Sparse Cholesky.
- * 
+ *
  * @author Piotr Wendykier (piotr.wendykier@gmail.com)
- * 
  */
 public class Dcs_chol {
     /**
      * Numeric Cholesky factorization LL=PAP'.
-     * 
-     * @param A
-     *            column-compressed matrix, only upper triangular part is used
-     * @param S
-     *            symbolic Cholesky analysis, pinv is optional
+     *
+     * @param A column-compressed matrix, only upper triangular part is used
+     * @param S symbolic Cholesky analysis, pinv is optional
      * @return numeric Cholesky factorization, null on error
      */
-    public static Dcsn cs_chol(Dcs A, Dcss S) {
+    public static Dcs_common.Dcsn cs_chol(Dcs A, Dcss S) {
         double d, lki, Lx[], x[], Cx[];
         int top, i, p, k, n, Li[], Lp[], cp[], pinv[], s[], c[], parent[], Cp[], Ci[];
         Dcs L, C;
-        Dcsn N;
+        Dcs_common.Dcsn N;
         if (!Dcs_util.CS_CSC(A) || S == null || S.cp == null || S.parent == null)
-            return (null);
+            return null;
         n = A.n;
-        N = new Dcsn(); /* allocate result */
+        N = new Dcs_common.Dcsn(); /* allocate result */
         c = new int[2 * n]; /* get int workspace */
         x = new double[n]; /* get double workspace */
         cp = S.cp;
@@ -70,21 +66,18 @@ public class Dcs_chol {
         Lx = L.x;
         for (k = 0; k < n; k++)
             Lp[k] = c[k] = cp[k];
-        for (k = 0; k < n; k++) /* compute L(k,:) for L*L' = C */
-        {
+        for (k = 0; k < n; k++) /* compute L(k,:) for L*L' = C */ {
             /* --- Nonzero pattern of L(k,:) ------------------------------------ */
             top = Dcs_ereach.cs_ereach(C, k, parent, s, s_offset, c); /* find pattern of L(k,:) */
             x[k] = 0; /* x (0:k) is now zero */
-            for (p = Cp[k]; p < Cp[k + 1]; p++) /* x = full(triu(C(:,k))) */
-            {
+            for (p = Cp[k]; p < Cp[k + 1]; p++) /* x = full(triu(C(:,k))) */ {
                 if (Ci[p] <= k)
                     x[Ci[p]] = Cx[p];
             }
             d = x[k]; /* d = C(k,k) */
             x[k] = 0; /* clear x for k+1st iteration */
             /* --- Triangular solve --------------------------------------------- */
-            for (; top < n; top++) /* solve L(0:k-1,0:k-1) * x = C(:,k) */
-            {
+            for (; top < n; top++) /* solve L(0:k-1,0:k-1) * x = C(:,k) */ {
                 i = s[s_offset + top]; /* s [top..n-1] is pattern of L(k,:) */
                 lki = x[i] / Lx[Lp[i]]; /* L(k,i) = x (i) / L(i,i) */
                 x[i] = 0; /* clear x for k+1st iteration */

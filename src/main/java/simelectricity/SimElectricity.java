@@ -23,20 +23,16 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.Mod.EventHandler;
-import net.minecraftforge.fml.common.Mod.Instance;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-
 import simelectricity.api.SEAPI;
-
-import simelectricity.common.ItemSEMgrTool;
-import simelectricity.common.SEUtils;
 import simelectricity.common.CommandSimE;
 import simelectricity.common.ConfigManager;
+import simelectricity.common.ItemSEMgrTool;
+import simelectricity.common.SEUtils;
 import simelectricity.energynet.EnergyNetAgent;
 import simelectricity.energynet.EnergyNetEventHandler;
 
@@ -44,22 +40,22 @@ import simelectricity.energynet.EnergyNetEventHandler;
 public class SimElectricity {
     public static final String MODID = "simelectricity";
     public static final String NAME = "SimElectricity";
-	public static final String version = "1.0.0";
+    public static final String version = "1.0.0";
 
-	@SidedProxy(clientSide="simelectricity.ClientProxy", serverSide="simelectricity.CommonProxy")
-	public static CommonProxy proxy;
-	
-    @Instance(SimElectricity.MODID)
+    @SidedProxy(clientSide = "simelectricity.ClientProxy", serverSide = "simelectricity.CommonProxy")
+    public static CommonProxy proxy;
+
+    @Mod.Instance(SimElectricity.SimElectricity.MODID)
     public static SimElectricity instance;
-   
+
     /**
      * PreInitialize
      */
-    @EventHandler
-    public void preInit(FMLPreInitializationEvent event) {    	
-    	//Initialize utility functions
-    	SEAPI.isSELoaded = true;
-    	SEAPI.energyNetAgent = new EnergyNetAgent();
+    @Mod.EventHandler
+    public void preInit(FMLPreInitializationEvent event) {
+        //Initialize utility functions
+        SEAPI.isSELoaded = true;
+        SEAPI.energyNetAgent = new EnergyNetAgent();
 
         //Load configurations
         FMLCommonHandler.instance().bus().register(new ConfigManager());
@@ -69,25 +65,25 @@ public class SimElectricity {
         new EnergyNetEventHandler();
 
         //Register creative tabs
-        SEAPI.SETab = new CreativeTabs(SimElectricity.MODID) {
+        SEAPI.SETab = new CreativeTabs(SimElectricity.SimElectricity.MODID) {
             @Override
             @SideOnly(Side.CLIENT)
             public ItemStack getTabIconItem() {
                 return new ItemStack(SEAPI.managementToolItem);
             }
         };
-        
-        
+
+
         //Register items
         SEAPI.managementToolItem = new ItemSEMgrTool();
-        
+
         //Register renders
         proxy.registerRender();
     }
-    
-    @EventHandler
-    public void serverStart(FMLServerStartingEvent event){
-    	event.registerServerCommand(new CommandSimE());
-    	SEUtils.logInfo("Server command registered", SEUtils.loader);
+
+    @Mod.EventHandler
+    public void serverStart(FMLServerStartingEvent event) {
+        event.registerServerCommand(new CommandSimE());
+        SEUtils.logInfo("Server command registered", SEUtils.loader);
     }
 }

@@ -7,25 +7,25 @@ import simelectricity.api.SEAPI;
 import simelectricity.essential.client.ISESimpleTextureItem;
 import simelectricity.essential.common.SEItem;
 
-public class ItemVitaTea extends SEItem implements ISESimpleTextureItem{
-	public ItemVitaTea() {
-		super("cell_vita", false);
+public class ItemVitaTea extends SEItem implements ISESimpleTextureItem {
+    public ItemVitaTea() {
+        super("cell_vita", false);
 
-	}
+    }
 
-	@Override
-	public void beforeRegister() {
-		this.setCreativeTab(SEAPI.SETab);
-	}
+    @Override
+    public void beforeRegister() {
+        setCreativeTab(SEAPI.SETab);
+    }
 
-	@Override
-	public String getIconName(int damage) {
-		return "cell_vita";
-	}
-	
+    @Override
+    public String getIconName(int damage) {
+        return "cell_vita";
+    }
+
+    @Override
     @SideOnly(Side.CLIENT)
-    public boolean hasEffect(ItemStack stack)
-    {
-    	return true;
+    public boolean hasEffect(ItemStack stack) {
+        return true;
     }
 }

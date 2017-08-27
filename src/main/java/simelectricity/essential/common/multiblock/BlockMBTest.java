@@ -14,106 +14,107 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-
 import simelectricity.api.SEAPI;
 import simelectricity.essential.client.semachine.ISESidedTextureBlock;
 import simelectricity.essential.common.SEBlock;
 import simelectricity.essential.common.SEItemBlock;
+import simelectricity.essential.common.multiblock.MultiBlockStructure.BlockInfo;
+import simelectricity.essential.common.multiblock.MultiBlockStructure.Result;
 import simelectricity.essential.utils.Utils;
 
-public class BlockMBTest extends SEBlock implements ITileEntityProvider, ISESidedTextureBlock{
-	public static MultiBlockStructure qaq;
-	public BlockMBTest() {
-		super("essential_mbtest", Material.ROCK, SEItemBlock.class);
-		
-		qaq = new MultiBlockStructure(generateConfiguration());
-	}
+public class BlockMBTest extends SEBlock implements ITileEntityProvider, ISESidedTextureBlock {
+    ///////////////////////////////
+    ///BlockStates
+    ///////////////////////////////
+    public static final IProperty<Boolean> propertyFormed = PropertyBool.create("formed");
+    public static MultiBlockStructure qaq;
 
-	@Override
-	public void beforeRegister() {
-		this.isBlockContainer = true;
-		this.setCreativeTab(SEAPI.SETab);
-	}
-	
-	///////////////////////////////
-	///BlockStates
-	///////////////////////////////
-	public final static IProperty<Boolean> propertyFormed = PropertyBool.create("formed");
-	
-	@Override
-	protected final BlockStateContainer createBlockState(){
-		return new BlockStateContainer(this, new IProperty[] {propertyFormed});
-	}
-	
-	@Override
-    public final IBlockState getStateFromMeta(int meta){
-        return super.getDefaultState().withProperty(propertyFormed, meta>0);
+    public BlockMBTest() {
+        super("essential_mbtest", Material.ROCK, SEItemBlock.class);
+
+        BlockMBTest.qaq = new MultiBlockStructure(this.generateConfiguration());
     }
-	
-	@Override
-    public final int getMetaFromState(IBlockState state){
-		return state.getValue(propertyFormed)?1:0;
+
+    @Override
+    public void beforeRegister() {
+        isBlockContainer = true;
+        setCreativeTab(SEAPI.SETab);
+    }
+
+    @Override
+    protected final BlockStateContainer createBlockState() {
+        return new BlockStateContainer(this, BlockMBTest.propertyFormed);
+    }
+
+    @Override
+    public final IBlockState getStateFromMeta(int meta) {
+        return getDefaultState().withProperty(BlockMBTest.propertyFormed, meta > 0);
+    }
+
+    @Override
+    public final int getMetaFromState(IBlockState state) {
+        return state.getValue(BlockMBTest.propertyFormed) ? 1 : 0;
     }
 
     @Override
     public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
-		MultiBlockStructure.Result ret = qaq.attempToBuild(world, pos);
-		if (ret != null){
-			ret.createStructure();
-		}
-    	return;
+        Result ret = BlockMBTest.qaq.attempToBuild(world, pos);
+        if (ret != null) {
+            ret.createStructure();
+        }
+        return;
     }
-   	
-	@Override
-	public void breakBlock(World world, BlockPos pos, IBlockState state) {
-		TileEntity te = world.getTileEntity(pos);
-		if (te != null)
-			qaq.restoreStructure(te, state);
-		
-		super.breakBlock(world, pos, state);
-	}
-    
-	@Override
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ){
-		if (!world.isRemote) {
-			TileEntity te = world.getTileEntity(pos);
-			
-			if (te instanceof TileMBTest) {
-				Utils.chat(player, ((TileMBTest) te).mbInfo.facing + "," + ((TileMBTest) te).mbInfo.mirrored);
-			}
-			
-		}
-		return false;
-	}
-    
-	private MultiBlockStructure.BlockInfo[][][] generateConfiguration(){
-		MultiBlockStructure.BlockInfo x = new MultiBlockStructure.BlockInfo(this, 0, this, 1);
-		MultiBlockStructure.BlockInfo[][][] configuration = new MultiBlockStructure.BlockInfo[1][][];
-		
-		configuration[0] = new MultiBlockStructure.BlockInfo[][]{
-				{x,null,x},
-				{x,x,x,x,x}
-		};
-		
-		return configuration;
-	}
-	
-	@Override
-	public TileEntity createNewTileEntity(World world, int meta) {
-		if (meta == 1){
-			return new TileMBTest();
-		}
-		return null;
-	}
 
-	@Override
-	public String getModelNameFrom(IBlockState blockState) {
-		boolean formed = blockState.getValue(propertyFormed);
-		return formed ? "electronics_solar_panel" : "electronics_voltage_meter";
-	}
+    @Override
+    public void breakBlock(World world, BlockPos pos, IBlockState state) {
+        TileEntity te = world.getTileEntity(pos);
+        if (te != null)
+            BlockMBTest.qaq.restoreStructure(te, state);
 
-	@Override
-	public boolean hasSecondState(IBlockState state) {
-		return false;
-	}
+        super.breakBlock(world, pos, state);
+    }
+
+    @Override
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+        if (!world.isRemote) {
+            TileEntity te = world.getTileEntity(pos);
+
+            if (te instanceof TileMBTest) {
+                Utils.chat(player, ((TileMBTest) te).mbInfo.facing + "," + ((TileMBTest) te).mbInfo.mirrored);
+            }
+
+        }
+        return false;
+    }
+
+    private BlockInfo[][][] generateConfiguration() {
+        BlockInfo x = new BlockInfo(this, 0, this, 1);
+        BlockInfo[][][] configuration = new BlockInfo[1][][];
+
+        configuration[0] = new BlockInfo[][]{
+                {x, null, x},
+                {x, x, x, x, x}
+        };
+
+        return configuration;
+    }
+
+    @Override
+    public TileEntity createNewTileEntity(World world, int meta) {
+        if (meta == 1) {
+            return new TileMBTest();
+        }
+        return null;
+    }
+
+    @Override
+    public String getModelNameFrom(IBlockState blockState) {
+        boolean formed = blockState.getValue(BlockMBTest.propertyFormed);
+        return formed ? "electronics_solar_panel" : "electronics_voltage_meter";
+    }
+
+    @Override
+    public boolean hasSecondState(IBlockState state) {
+        return false;
+    }
 }

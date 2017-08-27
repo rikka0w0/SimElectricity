@@ -28,7 +28,7 @@ public interface ISidedFacing {
     /**
      * Return the facing(Should have a line of "{@code private EnumFacing facing = EnumFacing.NORTH;} in the tile entity class)
      */
-	EnumFacing getFacing();
+    EnumFacing getFacing();
 
     /**
      * Usually contains a line of

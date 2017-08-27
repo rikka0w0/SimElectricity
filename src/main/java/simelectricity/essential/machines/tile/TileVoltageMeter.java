@@ -9,10 +9,10 @@ import simelectricity.api.components.ISEVoltageSource;
 import simelectricity.essential.common.semachine.ISESocketProvider;
 import simelectricity.essential.common.semachine.SESinglePortMachine;
 
-public class TileVoltageMeter extends SESinglePortMachine implements ISEVoltageSource, IEnergyNetUpdateHandler, ISESocketProvider{
-    public double voltage = 0;
-	
-	@Override
+public class TileVoltageMeter extends SESinglePortMachine implements ISEVoltageSource, IEnergyNetUpdateHandler, ISESocketProvider {
+    public double voltage;
+
+    @Override
     public double getResistance() {
         return 1e6F;
     }
@@ -22,14 +22,14 @@ public class TileVoltageMeter extends SESinglePortMachine implements ISEVoltageS
         return 0;
     }
 
-	@Override
-	public void onEnergyNetUpdate() {
-		voltage = SEAPI.energyNetAgent.getVoltage(this.circuit);
-	}
+    @Override
+    public void onEnergyNetUpdate() {
+        this.voltage = SEAPI.energyNetAgent.getVoltage(circuit);
+    }
 
-	@Override
-	@SideOnly(Side.CLIENT)
-	public int getSocketIconIndex(EnumFacing side) {
-		return side == this.functionalSide ? 0 : -1;
-	}
+    @Override
+    @SideOnly(Side.CLIENT)
+    public int getSocketIconIndex(EnumFacing side) {
+        return side == functionalSide ? 0 : -1;
+    }
 }

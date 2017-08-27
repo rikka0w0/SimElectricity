@@ -8,18 +8,28 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public abstract class BlockRenderModel implements IBakedModel {
-	@Override
-	public boolean isAmbientOcclusion() {return false;}
-	
-	@Override
-	public boolean isGui3d() {return false;}
-	
-	@Override
-	public boolean isBuiltInRenderer() {return false;}
-	
-	@Override
-	public ItemCameraTransforms getItemCameraTransforms() {return ItemCameraTransforms.DEFAULT;}
-	
-	@Override
-	public ItemOverrideList getOverrides() {return ItemOverrideList.NONE;}
+    @Override
+    public boolean isAmbientOcclusion() {
+        return false;
+    }
+
+    @Override
+    public boolean isGui3d() {
+        return false;
+    }
+
+    @Override
+    public boolean isBuiltInRenderer() {
+        return false;
+    }
+
+    @Override
+    public ItemCameraTransforms getItemCameraTransforms() {
+        return ItemCameraTransforms.DEFAULT;
+    }
+
+    @Override
+    public ItemOverrideList getOverrides() {
+        return ItemOverrideList.NONE;
+    }
 }

@@ -33,7 +33,7 @@ compileJava {
 minecraft {
     version = "1.11.2-13.20.1.2425"
     runDir = "run"
-    mappings = "snapshot_20161220"
+    mappings = "stable_32"
 }
 processResources {
     // this will ensure that this task is redone when the versions change.

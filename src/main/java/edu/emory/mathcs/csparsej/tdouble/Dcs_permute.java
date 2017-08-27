@@ -24,34 +24,27 @@
 
 package edu.emory.mathcs.csparsej.tdouble;
 
-import edu.emory.mathcs.csparsej.tdouble.Dcs_common.Dcs;
-
 /**
  * Permute a sparse matrix.
- * 
+ *
  * @author Piotr Wendykier (piotr.wendykier@gmail.com)
- * 
  */
 public class Dcs_permute {
     /**
      * Permutes a sparse matrix, C = PAQ.
-     * 
-     * @param A
-     *            m-by-n, column-compressed matrix
-     * @param pinv
-     *            a permutation vector of length m
-     * @param q
-     *            a permutation vector of length n
-     * @param values
-     *            allocate pattern only if false, values and pattern otherwise
+     *
+     * @param A      m-by-n, column-compressed matrix
+     * @param pinv   a permutation vector of length m
+     * @param q      a permutation vector of length n
+     * @param values allocate pattern only if false, values and pattern otherwise
      * @return C = PAQ, null on error
      */
-    public static Dcs cs_permute(Dcs A, int[] pinv, int[] q, boolean values) {
+    public static Dcs_common.Dcs cs_permute(Dcs_common.Dcs A, int[] pinv, int[] q, boolean values) {
         int t, j, k, nz = 0, m, n, Ap[], Ai[], Cp[], Ci[];
         double Cx[], Ax[];
-        Dcs C;
+        Dcs_common.Dcs C;
         if (!Dcs_util.CS_CSC(A))
-            return (null); /* check inputs */
+            return null; /* check inputs */
         m = A.m;
         n = A.n;
         Ap = A.p;
@@ -63,11 +56,11 @@ public class Dcs_permute {
         Cx = C.x;
         for (k = 0; k < n; k++) {
             Cp[k] = nz; /* column k of C is column q[k] of A */
-            j = q != null ? (q[k]) : k;
+            j = q != null ? q[k] : k;
             for (t = Ap[j]; t < Ap[j + 1]; t++) {
                 if (Cx != null)
                     Cx[nz] = Ax[t]; /* row i of A is row pinv[i] of C */
-                Ci[nz++] = pinv != null ? (pinv[Ai[t]]) : Ai[t];
+                Ci[nz++] = pinv != null ? pinv[Ai[t]] : Ai[t];
             }
         }
         Cp[n] = nz; /* finalize the last column of C */

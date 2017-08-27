@@ -7,7 +7,7 @@ import net.minecraft.util.EnumFacing;
  */
 public interface ISEWrenchable {
     boolean canWrenchBeUsed(EnumFacing side);
-    
+
     /**
      * Called when the functional side is going to be set by the wrench, DONT use this when placing the block!
      * </p>

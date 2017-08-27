@@ -14,71 +14,74 @@ import simelectricity.essential.api.coverpanel.ISEElectricalLoadCoverPanel;
 import simelectricity.essential.api.coverpanel.ISEIuminousCoverPanel;
 import simelectricity.essential.client.coverpanel.LedPanelRender;
 
-public class LedPanel implements ISEElectricalLoadCoverPanel, ISEIuminousCoverPanel{
-	private byte lightLevel;
-	private TileEntity hostTileEntity;
-	
-	@Override
-	public boolean isHollow() {	return false;}
+public class LedPanel implements ISEElectricalLoadCoverPanel, ISEIuminousCoverPanel {
+    private byte lightLevel;
+    private TileEntity hostTileEntity;
 
-	@Override
-	public void toNBT(NBTTagCompound nbt) {
-		nbt.setString("coverPanelType", "LedPanel");
-	}
+    @Override
+    public boolean isHollow() {
+        return false;
+    }
 
-	@Override
-	@SideOnly(Side.CLIENT)
-	public ISECoverPanelRender getCoverPanelRender() {
-		return LedPanelRender.instance;
-	}
+    @Override
+    public void toNBT(NBTTagCompound nbt) {
+        nbt.setString("coverPanelType", "LedPanel");
+    }
 
-	@Override
-	public void setHost(TileEntity hostTileEntity, EnumFacing side) {
-		this.hostTileEntity = hostTileEntity;
-	}
-	
-	@Override
-	public ItemStack getDroppedItemStack() {
-		return new ItemStack(ItemRegistry.itemMisc, 1, 0);
-	}
-	
-	@Override
-	public void onPlaced(double voltage) {}
+    @Override
+    @SideOnly(Side.CLIENT)
+    public ISECoverPanelRender getCoverPanelRender() {
+        return LedPanelRender.instance;
+    }
 
-	@Override
-	public double getResistance(){
-		return 9900;
-	}
-	
-	@Override
-	public void onEnergyNetUpdate(double voltage) {
-		double power = voltage*voltage/getResistance() / 0.3;
-		if (power > 15)
-			power = 15;
-		byte lightLevel = (byte) power;
-		
-		if (this.lightLevel != lightLevel){
-			//If light value changes, send a sync. packet to client
-			this.lightLevel = lightLevel;
-			
-			if (hostTileEntity instanceof ISEIuminousCoverPanelHost){
-				WorldServer world = (WorldServer) hostTileEntity.getWorld();
-				world.addScheduledTask(new Runnable(){
-					@Override
-					public void run() {
-						((ISEIuminousCoverPanelHost) hostTileEntity).onLightValueUpdated();
-					}
-				});
-			}
-				
-		}	
-	}
+    @Override
+    public void setHost(TileEntity hostTileEntity, EnumFacing side) {
+        this.hostTileEntity = hostTileEntity;
+    }
 
-	/////////////////////////
-	///ISEIuminousCoverPanel
-	/////////////////////////
-	@Override
-	public byte getLightValue() {
-		return this.lightLevel;
-	}
+    @Override
+    public ItemStack getDroppedItemStack() {
+        return new ItemStack(ItemRegistry.itemMisc, 1, 0);
+    }
+
+    @Override
+    public void onPlaced(double voltage) {
+    }
+
+    @Override
+    public double getResistance() {
+        return 9900;
+    }
+
+    @Override
+    public void onEnergyNetUpdate(double voltage) {
+        double power = voltage * voltage / this.getResistance() / 0.3;
+        if (power > 15)
+            power = 15;
+        byte lightLevel = (byte) power;
+
+        if (this.lightLevel != lightLevel) {
+            //If light value changes, send a sync. packet to client
+            this.lightLevel = lightLevel;
+
+            if (this.hostTileEntity instanceof ISEIuminousCoverPanelHost) {
+                WorldServer world = (WorldServer) this.hostTileEntity.getWorld();
+                world.addScheduledTask(new Runnable() {
+                    @Override
+                    public void run() {
+                        ((ISEIuminousCoverPanelHost) LedPanel.this.hostTileEntity).onLightValueUpdated();
+                    }
+                });
+            }
+
+        }
+    }
+
+    /////////////////////////
+    ///ISEIuminousCoverPanel
+    /////////////////////////
+    @Override
+    public byte getLightValue() {
+        return lightLevel;
+    }
 }

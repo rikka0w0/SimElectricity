@@ -1,8 +1,5 @@
 package simelectricity.essential.items;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
@@ -20,114 +17,116 @@ import simelectricity.essential.client.ISESimpleTextureItem;
 import simelectricity.essential.common.SEItem;
 import simelectricity.essential.utils.Utils;
 
-public class ItemHighVoltageCable extends SEItem implements ISESimpleTextureItem{
-	private final static String[] subNames = new String[]{"copper", "aluminum"};
-	private final Map<EntityPlayer, BlockPos> lastCoordinates;
-	
-	private final static double[] resistivityList = new double[]{0.1, 0.2};
-	
-	public ItemHighVoltageCable() {
-		super("essential_hv_cable", true);
-		this.lastCoordinates = new HashMap<EntityPlayer, BlockPos>();
-	}
+import java.util.HashMap;
+import java.util.Map;
 
-	@Override
-	public void beforeRegister() {
-		this.setCreativeTab(SEAPI.SETab);
-	}
-	
-	@Override
-	public String[] getSubItemUnlocalizedNames(){
-		return subNames;
-	}
-	
-	@Override
-	public String getIconName(int damage) {
-		return "hvcable_" + subNames[damage];
-	}
-	
-	private static boolean numberOfConductorMatched(ISEGridNode node1, ISEGridNode node2) {
-		if (node1.numOfParallelConductor() == 0 || node2.numOfParallelConductor() == 0)
-			return true;
-		return node1.numOfParallelConductor() == node2.numOfParallelConductor();
-	}
-	
+public class ItemHighVoltageCable extends SEItem implements ISESimpleTextureItem {
+    private static final String[] subNames = {"copper", "aluminum"};
+    private static final double[] resistivityList = {0.1, 0.2};
+    private final Map<EntityPlayer, BlockPos> lastCoordinates;
+
+    public ItemHighVoltageCable() {
+        super("essential_hv_cable", true);
+        lastCoordinates = new HashMap<EntityPlayer, BlockPos>();
+    }
+
+    private static boolean numberOfConductorMatched(ISEGridNode node1, ISEGridNode node2) {
+        if (node1.numOfParallelConductor() == 0 || node2.numOfParallelConductor() == 0)
+            return true;
+        return node1.numOfParallelConductor() == node2.numOfParallelConductor();
+    }
+
+    @Override
+    public void beforeRegister() {
+        setCreativeTab(SEAPI.SETab);
+    }
+
+    @Override
+    public String[] getSubItemUnlocalizedNames() {
+        return ItemHighVoltageCable.subNames;
+    }
+
+    @Override
+    public String getIconName(int damage) {
+        return "hvcable_" + ItemHighVoltageCable.subNames[damage];
+    }
+
     @Override
     public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
         ItemStack itemStack = player.getItemStackFromSlot(EntityEquipmentSlot.MAINHAND);
-    	
-        if (itemStack.getItem() != this){
-        	itemStack = player.getItemStackFromSlot(EntityEquipmentSlot.OFFHAND);
-        	if (itemStack.getItem() != this)
-        		return EnumActionResult.FAIL;
+
+        if (itemStack.getItem() != this) {
+            itemStack = player.getItemStackFromSlot(EntityEquipmentSlot.OFFHAND);
+            if (itemStack.getItem() != this)
+                return EnumActionResult.FAIL;
         }
-        
-    	if (world.isRemote)
-        	return EnumActionResult.SUCCESS;
-    	
+
+        if (world.isRemote)
+            return EnumActionResult.SUCCESS;
+
         int x = pos.getX();
         int y = pos.getY();
         int z = pos.getZ();
         Block block = world.getBlockState(pos).getBlock();
-        
+
         if (!(block instanceof ISEHVCableConnector))
-        	return EnumActionResult.SUCCESS;
-        
+            return EnumActionResult.SUCCESS;
+
         ISEHVCableConnector connector1 = (ISEHVCableConnector) block;
-        
-    	if (!lastCoordinates.containsKey(player))
-            lastCoordinates.put(player, null);
 
-    	BlockPos lastCoordinate = lastCoordinates.get(player);
+        if (!this.lastCoordinates.containsKey(player))
+            this.lastCoordinates.put(player, null);
 
-        if (lastCoordinate == null) {	//First selection
-        	if (connector1.canHVCableConnect(world, pos)){
-        		lastCoordinate = new BlockPos(pos);
+        BlockPos lastCoordinate = this.lastCoordinates.get(player);
+
+        if (lastCoordinate == null) {    //First selection
+            if (connector1.canHVCableConnect(world, pos)) {
+                lastCoordinate = new BlockPos(pos);
                 Utils.chatWithLocalization(player, "chat.sime_essential:powerpole_selected");
-        	}else{
-        		Utils.chatWithLocalization(player, "chat.sime_essential:powerpole_connection_denied");
-        	}
-        	
-        	lastCoordinates.put(player, lastCoordinate);
-        }else{
-        	Block neighbor = world.getBlockState(lastCoordinate).getBlock();
-        	
-        	if (neighbor instanceof ISEHVCableConnector){
-        		ISEHVCableConnector connector2 = (ISEHVCableConnector) neighbor;
-            	ISEGridNode node1 = (ISEGridNode) connector1.getNode(world, pos);
-            	ISEGridNode node2 = (ISEGridNode) connector2.getNode(world, new BlockPos(lastCoordinate));
-        		
-            	if (node1 == node2){
-            		Utils.chatWithLocalization(player, I18n.translateToLocal("chat.sime_essential:powerpole_recursive_connection"));
-            	}else if (!connector1.canHVCableConnect(world, pos)){
-            		Utils.chatWithLocalization(player, I18n.translateToLocal("chat.sime_essential:powerpole_current_selection_invalid"));
-            	}else if (!connector2.canHVCableConnect(world, lastCoordinate)){
-            		Utils.chatWithLocalization(player, I18n.translateToLocal("chat.sime_essential:powerpole_last_selection_invalid"));
-            	}else if (!numberOfConductorMatched(node1, node2)) {
-            		Utils.chatWithLocalization(player, I18n.translateToLocal("chat.sime_essential:powerpole_type_mismatch"));
-            	}else{
-            		double distance = node1.getPos().distanceSq(node2.getPos());
-                    if (distance < 5*5) {
-                    	Utils.chatWithLocalization(player, I18n.translateToLocal("chat.sime_essential:powerpole_too_close"));
-                    }else if (distance > 200*200){
-                    	Utils.chatWithLocalization(player, I18n.translateToLocal("chat.sime_essential:powerpole_too_far"));
-                    }else{
-                    	double resistance = distance * resistivityList[itemStack.getItemDamage()];	//Calculate the resistance
-                    	if (node1 != null && node2 != null &&
-                        	SEAPI.energyNetAgent.isNodeValid(world, node1) &&
-                        	SEAPI.energyNetAgent.isNodeValid(world, node2)){
-                        		
-                        		SEAPI.energyNetAgent.connectGridNode(world, node1, node2, resistance);
-                        	}
+            } else {
+                Utils.chatWithLocalization(player, "chat.sime_essential:powerpole_connection_denied");
+            }
+
+            this.lastCoordinates.put(player, lastCoordinate);
+        } else {
+            Block neighbor = world.getBlockState(lastCoordinate).getBlock();
+
+            if (neighbor instanceof ISEHVCableConnector) {
+                ISEHVCableConnector connector2 = (ISEHVCableConnector) neighbor;
+                ISEGridNode node1 = (ISEGridNode) connector1.getNode(world, pos);
+                ISEGridNode node2 = (ISEGridNode) connector2.getNode(world, new BlockPos(lastCoordinate));
+
+                if (node1 == node2) {
+                    Utils.chatWithLocalization(player, I18n.translateToLocal("chat.sime_essential:powerpole_recursive_connection"));
+                } else if (!connector1.canHVCableConnect(world, pos)) {
+                    Utils.chatWithLocalization(player, I18n.translateToLocal("chat.sime_essential:powerpole_current_selection_invalid"));
+                } else if (!connector2.canHVCableConnect(world, lastCoordinate)) {
+                    Utils.chatWithLocalization(player, I18n.translateToLocal("chat.sime_essential:powerpole_last_selection_invalid"));
+                } else if (!ItemHighVoltageCable.numberOfConductorMatched(node1, node2)) {
+                    Utils.chatWithLocalization(player, I18n.translateToLocal("chat.sime_essential:powerpole_type_mismatch"));
+                } else {
+                    double distance = node1.getPos().distanceSq(node2.getPos());
+                    if (distance < 5 * 5) {
+                        Utils.chatWithLocalization(player, I18n.translateToLocal("chat.sime_essential:powerpole_too_close"));
+                    } else if (distance > 200 * 200) {
+                        Utils.chatWithLocalization(player, I18n.translateToLocal("chat.sime_essential:powerpole_too_far"));
+                    } else {
+                        double resistance = distance * ItemHighVoltageCable.resistivityList[itemStack.getItemDamage()];    //Calculate the resistance
+                        if (node1 != null && node2 != null &&
+                                SEAPI.energyNetAgent.isNodeValid(world, node1) &&
+                                SEAPI.energyNetAgent.isNodeValid(world, node2)) {
+
+                            SEAPI.energyNetAgent.connectGridNode(world, node1, node2, resistance);
+                        }
                     }
-            	}
-        	}else{
-        		Utils.chatWithLocalization(player, I18n.translateToLocal("chat.sime_essential:powerpole_current_selection_invalid"));
-        	}
-        	
-            lastCoordinates.put(player, null);
+                }
+            } else {
+                Utils.chatWithLocalization(player, I18n.translateToLocal("chat.sime_essential:powerpole_current_selection_invalid"));
+            }
+
+            this.lastCoordinates.put(player, null);
         }
-    	
-        return EnumActionResult.SUCCESS;        	
+
+        return EnumActionResult.SUCCESS;
     }
 }

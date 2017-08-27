@@ -6,26 +6,26 @@ import simelectricity.api.SEAPI;
 import simelectricity.essential.common.semachine.SETwoPortMachine;
 import simelectricity.essential.utils.network.ISEDirectionSelectorEventHandler;
 
-public abstract class ContainerNoInventoryTwoPort<TYPE extends SETwoPortMachine> extends ContainerNoInventory<TYPE> implements ISEDirectionSelectorEventHandler{
-	public ContainerNoInventoryTwoPort(TileEntity tileEntity) {
-		super(tileEntity);
-	}
+public abstract class ContainerNoInventoryTwoPort<TYPE extends SETwoPortMachine> extends ContainerNoInventory<TYPE> implements ISEDirectionSelectorEventHandler {
+    public ContainerNoInventoryTwoPort(TileEntity tileEntity) {
+        super(tileEntity);
+    }
 
-	@Override
-	public void onDirectionSelected(EnumFacing direction, int mouseButton) {
-		EnumFacing inputSide = tileEntity.inputSide, outputSide = tileEntity.outputSide;
-		
-	    if (mouseButton == 0) {        //Left key
-	        if (outputSide == direction)
-	            outputSide = inputSide;
-	        inputSide = direction;
-	    } else if (mouseButton == 1) { //Right key
-	        if (inputSide == direction)
-	            inputSide = outputSide;
-	        outputSide = direction;
+    @Override
+    public void onDirectionSelected(EnumFacing direction, int mouseButton) {
+        EnumFacing inputSide = this.tileEntity.inputSide, outputSide = this.tileEntity.outputSide;
+
+        if (mouseButton == 0) {        //Left key
+            if (outputSide == direction)
+                outputSide = inputSide;
+            inputSide = direction;
+        } else if (mouseButton == 1) { //Right key
+            if (inputSide == direction)
+                inputSide = outputSide;
+            outputSide = direction;
         }
-		
-	    SEAPI.energyNetAgent.updateTileConnection(tileEntity);
-	    tileEntity.setFunctionalSide(inputSide, outputSide);
-	}
+
+        SEAPI.energyNetAgent.updateTileConnection(this.tileEntity);
+        this.tileEntity.setFunctionalSide(inputSide, outputSide);
+    }
 }

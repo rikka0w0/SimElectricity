@@ -24,34 +24,27 @@
 
 package edu.emory.mathcs.csparsej.tdouble;
 
-import edu.emory.mathcs.csparsej.tdouble.Dcs_common.Dcs;
-
 /**
  * Add sparse matrices.
- * 
+ *
  * @author Piotr Wendykier (piotr.wendykier@gmail.com)
- * 
  */
 public class Dcs_add {
     /**
      * C = alpha*A + beta*B
-     * 
-     * @param A
-     *            column-compressed matrix
-     * @param B
-     *            column-compressed matrix
-     * @param alpha
-     *            scalar alpha
-     * @param beta
-     *            scalar beta
+     *
+     * @param A     column-compressed matrix
+     * @param B     column-compressed matrix
+     * @param alpha scalar alpha
+     * @param beta  scalar beta
      * @return C=alpha*A + beta*B, null on error
      */
-    public static Dcs cs_add(Dcs A, Dcs B, double alpha, double beta) {
+    public static Dcs_common.Dcs cs_add(Dcs_common.Dcs A, Dcs_common.Dcs B, double alpha, double beta) {
         int p, j, nz = 0, anz;
         int Cp[], Ci[], Bp[], m, n, bnz, w[];
         double x[], Bx[], Cx[];
         boolean values;
-        Dcs C;
+        Dcs_common.Dcs C;
         if (!Dcs_util.CS_CSC(A) || !Dcs_util.CS_CSC(B))
             return null; /* check inputs */
         if (A.m != B.m || A.n != B.n)
@@ -63,7 +56,7 @@ public class Dcs_add {
         Bx = B.x;
         bnz = Bp[n];
         w = new int[m]; /* get workspace */
-        values = (A.x != null) && (Bx != null);
+        values = A.x != null && Bx != null;
         x = values ? new double[m] : null; /* get workspace */
         C = Dcs_util.cs_spalloc(m, n, anz + bnz, values, false); /* allocate result*/
         Cp = C.p;

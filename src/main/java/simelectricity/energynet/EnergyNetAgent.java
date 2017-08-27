@@ -24,36 +24,32 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+import simelectricity.api.components.*;
+import simelectricity.api.internal.IEnergyNetAgent;
+import simelectricity.api.node.ISEGridNode;
+import simelectricity.api.node.ISESimulatable;
+import simelectricity.api.node.ISESubComponent;
+import simelectricity.api.tile.ISECableTile;
+import simelectricity.api.tile.ISEGridTile;
+import simelectricity.api.tile.ISETile;
+import simelectricity.common.ConfigManager;
+import simelectricity.common.SEUtils;
+import simelectricity.energynet.GridEvent.AppendNode;
+import simelectricity.energynet.GridEvent.BreakConnection;
+import simelectricity.energynet.GridEvent.BreakTranformer;
+import simelectricity.energynet.GridEvent.Connect;
+import simelectricity.energynet.GridEvent.MakeTransformer;
+import simelectricity.energynet.GridEvent.RemoveNode;
+import simelectricity.energynet.TileEvent.Attach;
+import simelectricity.energynet.TileEvent.ConnectionChanged;
+import simelectricity.energynet.TileEvent.Detach;
+import simelectricity.energynet.TileEvent.ParamChanged;
+import simelectricity.energynet.components.*;
 
 import java.util.Map;
 import java.util.WeakHashMap;
 
-import simelectricity.api.components.ISEComponentParameter;
-import simelectricity.api.components.ISEConstantPowerLoad;
-import simelectricity.api.components.ISEDiode;
-import simelectricity.api.components.ISESwitch;
-import simelectricity.api.components.ISETransformer;
-import simelectricity.api.components.ISEVoltageSource;
-import simelectricity.api.node.ISEGridNode;
-import simelectricity.api.node.ISESimulatable;
-import simelectricity.api.node.ISESubComponent;
-
-import simelectricity.common.ConfigManager;
-import simelectricity.common.SEUtils;
-import simelectricity.api.internal.IEnergyNetAgent;
-import simelectricity.api.tile.ISECableTile;
-import simelectricity.api.tile.ISEGridTile;
-import simelectricity.api.tile.ISETile;
-import simelectricity.energynet.components.Cable;
-import simelectricity.energynet.components.ConstantPowerLoad;
-import simelectricity.energynet.components.DiodeInput;
-import simelectricity.energynet.components.GridNode;
-import simelectricity.energynet.components.SEComponent;
-import simelectricity.energynet.components.SwitchA;
-import simelectricity.energynet.components.TransformerPrimary;
-import simelectricity.energynet.components.VoltageSource;
-
-public class EnergyNetAgent implements IEnergyNetAgent{
+public class EnergyNetAgent implements IEnergyNetAgent {
     @SuppressWarnings("unchecked")
     public static Map<World, EnergyNet> mapping = new WeakHashMap();
 
@@ -67,113 +63,111 @@ public class EnergyNetAgent implements IEnergyNetAgent{
         if (!(world instanceof WorldServer))
             throw new IllegalArgumentException("worlid is not an instanceof WorldServer!");
 
-        EnergyNet ret = mapping.get(world);
+        EnergyNet ret = EnergyNetAgent.mapping.get(world);
 
         if (ret == null) {
-        	ret = new EnergyNet((WorldServer) world);
-            mapping.put(world, ret);
+            ret = new EnergyNet((WorldServer) world);
+            EnergyNetAgent.mapping.put(world, ret);
         }
 
         return ret;
     }
 
     public static void onWorldUnload(World world) {
-    	if (world.isRemote)
-    		return;	//The energyNet is on server side, so ignore any client world!
-    	
-    	mapping.get(world).notifyServerShuttingdown();
-        mapping.remove(world);
+        if (world.isRemote)
+            return;    //The energyNet is on server side, so ignore any client world!
+
+        EnergyNetAgent.mapping.get(world).notifyServerShuttingdown();
+        EnergyNetAgent.mapping.remove(world);
     }
-    
+
     @Override
     public double getVoltage(ISESimulatable Tile) {
-    	SEComponent obj = (SEComponent) Tile;
-    	EnergyNet energyNet = EnergyNetAgent.getEnergyNetForWorld(obj.te.getWorld());
-    	
-        return energyNet.getVoltage(Tile);
+        SEComponent obj = (SEComponent) Tile;
+        EnergyNet energyNet = EnergyNetAgent.EnergyNetAgent.getEnergyNetForWorld(obj.te.getWorld());
+
+        return EnergyNetSimulator.getVoltage(Tile);
     }
-    
+
     @Override
-    public double getCurrentMagnitude(ISESimulatable Tile){
-    	SEComponent obj = (SEComponent) Tile;
-    	EnergyNet energyNet = EnergyNetAgent.getEnergyNetForWorld(obj.te.getWorld());
-    	
-        return EnergyNetAgent.getEnergyNetForWorld(obj.te.getWorld()).getCurrentMagnitude(Tile);
+    public double getCurrentMagnitude(ISESimulatable Tile) {
+        SEComponent obj = (SEComponent) Tile;
+        EnergyNet energyNet = EnergyNetAgent.EnergyNetAgent.getEnergyNetForWorld(obj.te.getWorld());
+
+        return EnergyNetAgent.EnergyNetAgent.getEnergyNetForWorld(obj.te.getWorld()).getCurrentMagnitude(Tile);
     }
-    
+
     @Override
-	public boolean canConnectTo(TileEntity tileEntity, EnumFacing direction) {
-		if (tileEntity instanceof ISECableTile){
-			ISECableTile cableTile = (ISECableTile) tileEntity;
-			TileEntity neighborTileEntity = SEUtils.getTileEntityOnDirection(tileEntity, direction);
-			
+    public boolean canConnectTo(TileEntity tileEntity, EnumFacing direction) {
+        if (tileEntity instanceof ISECableTile) {
+            ISECableTile cableTile = (ISECableTile) tileEntity;
+            TileEntity neighborTileEntity = SEUtils.getTileEntityOnDirection(tileEntity, direction);
+
             if (neighborTileEntity instanceof ISECableTile) {
-            	ISECableTile neighborCableTile = (ISECableTile) neighborTileEntity;
-				return 	(
-						cableTile.getColor() == 0 ||
-								neighborCableTile.getColor() == 0 ||
-	                 	cableTile.getColor() == neighborCableTile.getColor()
-						)&&(
-	            		cableTile.canConnectOnSide(direction) &&
-	            		neighborCableTile.canConnectOnSide(direction.getOpposite())
-						);
-            }else if (neighborTileEntity instanceof ISETile){
-            	return ((ISETile)neighborTileEntity).getComponent(direction.getOpposite()) != null;
+                ISECableTile neighborCableTile = (ISECableTile) neighborTileEntity;
+                return (
+                        cableTile.getColor() == 0 ||
+                                neighborCableTile.getColor() == 0 ||
+                                cableTile.getColor() == neighborCableTile.getColor()
+                ) && cableTile.canConnectOnSide(direction) &&
+                        neighborCableTile.canConnectOnSide(direction.getOpposite());
+            } else if (neighborTileEntity instanceof ISETile) {
+                return ((ISETile) neighborTileEntity).getComponent(direction.getOpposite()) != null;
             }
-		}else if (tileEntity instanceof ISETile){
-			ISETile tile = (ISETile)tileEntity;
-			TileEntity neighborTileEntity = SEUtils.getTileEntityOnDirection(tileEntity, direction);
-			
+        } else if (tileEntity instanceof ISETile) {
+            ISETile tile = (ISETile) tileEntity;
+            TileEntity neighborTileEntity = SEUtils.getTileEntityOnDirection(tileEntity, direction);
+
             if (neighborTileEntity instanceof ISECableTile)
-            	return ((Cable)((ISECableTile)neighborTileEntity).getNode()).canConnectOnSide(direction.getOpposite());
-		}else{
-			throw new RuntimeException("canConnectTo: input parameter \"tileEntity\" must implement either ISECableTile or ISETile");
-		}
-		
+                return ((Cable) ((ISECableTile) neighborTileEntity).getNode()).canConnectOnSide(direction.getOpposite());
+        } else {
+            throw new RuntimeException("canConnectTo: input parameter \"tileEntity\" must implement either ISECableTile or ISETile");
+        }
+
         return false;
     }
-    
-	@Override
-	public ISESubComponent newComponent(ISEComponentParameter dataProvider, TileEntity parent) {		
-		if (dataProvider instanceof ISEDiode)
-			//Create a pair of DiodeInput and DiodeOutput at the same time
-			return new DiodeInput((ISEDiode) dataProvider, parent);
-		else if (dataProvider instanceof ISETransformer)
-			return new TransformerPrimary((ISETransformer) dataProvider, parent);
-		else if (dataProvider instanceof ISEConstantPowerLoad)
-			return new ConstantPowerLoad((ISEConstantPowerLoad) dataProvider, parent);
-		else if (dataProvider instanceof ISEVoltageSource)
-			return new VoltageSource((ISEVoltageSource) dataProvider, parent);
-		else if (dataProvider instanceof ISESwitch)
-			return new SwitchA(((ISESwitch)dataProvider), parent);
-		return null;
-	}
-	
-	@Override
-	public ISESimulatable newCable(TileEntity dataProviderTileEntity, boolean isGridInterConnectionPoint){		
-		if (dataProviderTileEntity instanceof ISECableTile)
-			return new Cable((ISECableTile) dataProviderTileEntity, dataProviderTileEntity, isGridInterConnectionPoint);
-		return null;
-	}
 
-	@Override
-	public ISEGridNode newGridNode(BlockPos pos, int numOfParallelConductor){
-		return new GridNode(pos, (byte) numOfParallelConductor);
-	}
-	
-	@Override
-	public ISEGridNode getGridNodeAt(World world, BlockPos pos) {
-		EnergyNetAgent.getEnergyNetForWorld(world).dataProvider.getGridObjectAtCoord(pos);
-		return null;
-	}
-	
-	@Override
-	public boolean isNodeValid(World world, ISESimulatable node) {
-		return EnergyNetAgent.getEnergyNetForWorld(world).isNodeValid(node);
-	}
-	
-	
-	@Override
+    @Override
+    public ISESubComponent newComponent(ISEComponentParameter dataProvider, TileEntity parent) {
+        if (dataProvider instanceof ISEDiode)
+            //Create a pair of DiodeInput and DiodeOutput at the same time
+            return new DiodeInput((ISEDiode) dataProvider, parent);
+        else if (dataProvider instanceof ISETransformer)
+            return new TransformerPrimary((ISETransformer) dataProvider, parent);
+        else if (dataProvider instanceof ISEConstantPowerLoad)
+            return new ConstantPowerLoad((ISEConstantPowerLoad) dataProvider, parent);
+        else if (dataProvider instanceof ISEVoltageSource)
+            return new VoltageSource((ISEVoltageSource) dataProvider, parent);
+        else if (dataProvider instanceof ISESwitch)
+            return new SwitchA((ISESwitch) dataProvider, parent);
+        return null;
+    }
+
+    @Override
+    public ISESimulatable newCable(TileEntity dataProviderTileEntity, boolean isGridInterConnectionPoint) {
+        if (dataProviderTileEntity instanceof ISECableTile)
+            return new Cable((ISECableTile) dataProviderTileEntity, dataProviderTileEntity, isGridInterConnectionPoint);
+        return null;
+    }
+
+    @Override
+    public ISEGridNode newGridNode(BlockPos pos, int numOfParallelConductor) {
+        return new GridNode(pos, (byte) numOfParallelConductor);
+    }
+
+    @Override
+    public ISEGridNode getGridNodeAt(World world, BlockPos pos) {
+        EnergyNetAgent.EnergyNetAgent.getEnergyNetForWorld(world).dataProvider.getGridObjectAtCoord(pos);
+        return null;
+    }
+
+    @Override
+    public boolean isNodeValid(World world, ISESimulatable node) {
+        return EnergyNetAgent.EnergyNetAgent.getEnergyNetForWorld(world).isNodeValid(node);
+    }
+
+
+    @Override
     public void attachTile(TileEntity te) {
         if (!te.getWorld().isBlockLoaded(te.getPos())) {
             SEUtils.logInfo(te + " is added to the energy net too early!, abort!", SEUtils.energyNet);
@@ -184,39 +178,39 @@ public class EnergyNetAgent implements IEnergyNetAgent{
             SEUtils.logInfo("Invalid tileentity " + te + " is trying to attach to the energy network, aborting", SEUtils.energyNet);
             return;
         }
-        
+
         if (te.getWorld().isRemote) {
             SEUtils.logInfo("Client tileentity " + te + " is requesting, abort!", SEUtils.energyNet);
             return;
         }
-        
+
         if (te instanceof ISETile || te instanceof ISECableTile) {
-	        if (ConfigManager.showEnergyNetInfo)
-	            SEUtils.logInfo("Tileentity " + te + " has attached to the energy network!", SEUtils.energyNet);        
+            if (ConfigManager.showEnergyNetInfo)
+                SEUtils.logInfo("Tileentity " + te + " has attached to the energy network!", SEUtils.energyNet);
         }
-        
-        if (te instanceof ISEGridTile) {        	
-        	if (ConfigManager.showEnergyNetInfo)
-        		SEUtils.logInfo("GridTile linked with GridObject at "+te.getPos().toString(), SEUtils.energyNet);
+
+        if (te instanceof ISEGridTile) {
+            if (ConfigManager.showEnergyNetInfo)
+                SEUtils.logInfo("GridTile linked with GridObject at " + te.getPos(), SEUtils.energyNet);
         }
-        
-        EnergyNetAgent.getEnergyNetForWorld(te.getWorld()).addEvent(new TileEvent.Attach(te));
+
+        EnergyNetAgent.EnergyNetAgent.getEnergyNetForWorld(te.getWorld()).addEvent(new Attach(te));
     }
 
-	@Override
+    @Override
     public void updateTileParameter(TileEntity te) {
         if (te.getWorld().isRemote) {
             SEUtils.logInfo("Client tileentity " + te + " is requesting, aborting", SEUtils.energyNet);
             return;
         }
 
-        EnergyNetAgent.getEnergyNetForWorld(te.getWorld()).addEvent(new TileEvent.ParamChanged(te));
+        EnergyNetAgent.EnergyNetAgent.getEnergyNetForWorld(te.getWorld()).addEvent(new ParamChanged(te));
 
         if (ConfigManager.showEnergyNetInfo)
             SEUtils.logInfo("Tileentity " + te + " causes the energy network to update!", SEUtils.energyNet);
     }
-	
-	@Override
+
+    @Override
     public void detachTile(TileEntity te) {
         if (te.getWorld().isRemote) {
             SEUtils.logInfo("Client tileentity " + te + " is requesting, abort!", SEUtils.energyNet);
@@ -224,37 +218,35 @@ public class EnergyNetAgent implements IEnergyNetAgent{
         }
 
         if (te instanceof ISEGridTile) {
-        	if (ConfigManager.showEnergyNetInfo)
-        		SEUtils.logInfo("GridTile destroyed at"+te.getPos().toString(), SEUtils.energyNet);
+            if (ConfigManager.showEnergyNetInfo)
+                SEUtils.logInfo("GridTile destroyed at" + te.getPos(), SEUtils.energyNet);
         }
-        
-        if (te instanceof ISETile || te instanceof ISECableTile) { 	
-	        if (ConfigManager.showEnergyNetInfo)
-	            SEUtils.logInfo("Tileentity " + te + " has detached from the energy network!", SEUtils.energyNet);
+
+        if (te instanceof ISETile || te instanceof ISECableTile) {
+            if (ConfigManager.showEnergyNetInfo)
+                SEUtils.logInfo("Tileentity " + te + " has detached from the energy network!", SEUtils.energyNet);
         }
-        
-        EnergyNetAgent.getEnergyNetForWorld(te.getWorld()).addEvent(new TileEvent.Detach(te));    
+
+        EnergyNetAgent.EnergyNetAgent.getEnergyNetForWorld(te.getWorld()).addEvent(new Detach(te));
     }
 
-	@Override
+    @Override
     public void updateTileConnection(TileEntity te) {
         if (te.getWorld().isRemote) {
-        	throw new RuntimeException("Server-only API is called from client side!");
+            throw new RuntimeException("Server-only API is called from client side!");
         }
 
-        EnergyNetAgent.getEnergyNetForWorld(te.getWorld()).addEvent(new TileEvent.ConnectionChanged(te));
+        EnergyNetAgent.EnergyNetAgent.getEnergyNetForWorld(te.getWorld()).addEvent(new ConnectionChanged(te));
 
         if (ConfigManager.showEnergyNetInfo)
             SEUtils.logInfo("Tileentity " + te + " has rejoined the energy network!", SEUtils.energyNet);
     }
-    
-	
-	
-	
-	@Override
+
+
+    @Override
     public void attachGridNode(World world, ISEGridNode node) {
-    	EnergyNetAgent.getEnergyNetForWorld(world).addEvent(new GridEvent.AppendNode(node));
-    	
+        EnergyNetAgent.EnergyNetAgent.getEnergyNetForWorld(world).addEvent(new AppendNode(node));
+
     	/*if (energyNet.addGridNode(x, y, z, type)){
     		if (ConfigManager.showEnergyNetInfo)
     			SEUtils.logInfo("GridObject attached at " +String.valueOf(x)+":"+String.valueOf(y)+":"+String.valueOf(z));
@@ -263,10 +255,10 @@ public class EnergyNetAgent implements IEnergyNetAgent{
     			SEUtils.logInfo("Fail to attach gridObject at " +String.valueOf(x)+":"+String.valueOf(y)+":"+String.valueOf(z));
     	}*/
     }
-    
-	@Override
+
+    @Override
     public void detachGridNode(World world, ISEGridNode node) {
-    	EnergyNetAgent.getEnergyNetForWorld(world).addEvent(new GridEvent.RemoveNode(node));
+        EnergyNetAgent.EnergyNetAgent.getEnergyNetForWorld(world).addEvent(new RemoveNode(node));
     	/*if (energyNet.removeGridNode(x, y, z)){
     		if (ConfigManager.showEnergyNetInfo)
     			SEUtils.logInfo("GridObject detached at "+String.valueOf(x)+":"+String.valueOf(y)+":"+String.valueOf(z));
@@ -275,10 +267,10 @@ public class EnergyNetAgent implements IEnergyNetAgent{
     			SEUtils.logInfo("Fail to detach gridObject at " +String.valueOf(x)+":"+String.valueOf(y)+":"+String.valueOf(z));
     	}*/
     }
-    
-	@Override
+
+    @Override
     public void connectGridNode(World world, ISEGridNode node1, ISEGridNode node2, double resistance) {
-    	EnergyNetAgent.getEnergyNetForWorld(world).addEvent(new GridEvent.Connect(node1, node2, resistance));
+        EnergyNetAgent.EnergyNetAgent.getEnergyNetForWorld(world).addEvent(new Connect(node1, node2, resistance));
     	/*if (energyNet.addGridConnection(x1, y1, z1, x2, y2, z2, resistance)){
     		if (ConfigManager.showEnergyNetInfo)
     			SEUtils.logInfo("Grid connection built between " +String.valueOf(x1)+":"+String.valueOf(y1)+":"+String.valueOf(z1)+" and "
@@ -288,11 +280,11 @@ public class EnergyNetAgent implements IEnergyNetAgent{
     			SEUtils.logInfo("Fail to build grid connection between " +String.valueOf(x1)+":"+String.valueOf(y1)+":"+String.valueOf(z1)+" and "
 					+String.valueOf(x2)+":"+String.valueOf(y2)+":"+String.valueOf(z2));
     	}*/
-    }   
-    
+    }
+
     @Override
-	public void breakGridConnection(World world, ISEGridNode node1, ISEGridNode node2) {
-    	EnergyNetAgent.getEnergyNetForWorld(world).addEvent(new GridEvent.BreakConnection(node1, node2));
+    public void breakGridConnection(World world, ISEGridNode node1, ISEGridNode node2) {
+        EnergyNetAgent.EnergyNetAgent.getEnergyNetForWorld(world).addEvent(new BreakConnection(node1, node2));
     	/*if (energyNet.removeGridConnection(x1, y1, z1, x2, y2, z2)){
     		if (ConfigManager.showEnergyNetInfo)
     			SEUtils.logInfo("Grid connection removed between " +String.valueOf(x1)+","+String.valueOf(y1)+","+String.valueOf(z1)+" and "
@@ -304,13 +296,13 @@ public class EnergyNetAgent implements IEnergyNetAgent{
     	}*/
     }
 
-	@Override
-	public void makeTransformer(World world, ISEGridNode primary, ISEGridNode secondary, double resistance, double ratio) {
-		EnergyNetAgent.getEnergyNetForWorld(world).addEvent(new GridEvent.MakeTransformer(primary, secondary, resistance, ratio));
-	}
+    @Override
+    public void makeTransformer(World world, ISEGridNode primary, ISEGridNode secondary, double resistance, double ratio) {
+        EnergyNetAgent.EnergyNetAgent.getEnergyNetForWorld(world).addEvent(new MakeTransformer(primary, secondary, resistance, ratio));
+    }
 
-	@Override
-	public void breakTransformer(World world, ISEGridNode node) {
-		EnergyNetAgent.getEnergyNetForWorld(world).addEvent(new GridEvent.BreakTranformer(node));
-	}
+    @Override
+    public void breakTransformer(World world, ISEGridNode node) {
+        EnergyNetAgent.EnergyNetAgent.getEnergyNetForWorld(world).addEvent(new BreakTranformer(node));
+    }
 }

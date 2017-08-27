@@ -24,35 +24,28 @@
 
 package edu.emory.mathcs.csparsej.tdouble;
 
-import edu.emory.mathcs.csparsej.tdouble.Dcs_common.Dcs;
-
 /**
  * Sparse rank-1 Cholesky update/downate.
- * 
+ *
  * @author Piotr Wendykier (piotr.wendykier@gmail.com)
- * 
  */
 public class Dcs_updown {
 
     /**
      * Sparse Cholesky rank-1 update/downdate, L*L' + sigma*w*w' (sigma = +1 or
      * -1)
-     * 
-     * @param L
-     *            factorization to update/downdate
-     * @param sigma
-     *            +1 for update, -1 for downdate
-     * @param C
-     *            the vector c
-     * @param parent
-     *            the elimination tree of L
+     *
+     * @param L      factorization to update/downdate
+     * @param sigma  +1 for update, -1 for downdate
+     * @param C      the vector c
+     * @param parent the elimination tree of L
      * @return true if successful, false on error
      */
-    public static boolean cs_updown(Dcs L, int sigma, Dcs C, int[] parent) {
+    public static boolean cs_updown(Dcs_common.Dcs L, int sigma, Dcs_common.Dcs C, int[] parent) {
         int n, p, f, j, Lp[], Li[], Cp[], Ci[];
         double Lx[], Cx[], alpha, beta = 1, delta, gamma, w1, w2, w[], beta2 = 1;
         if (!Dcs_util.CS_CSC(L) || !Dcs_util.CS_CSC(C) || parent == null)
-            return (false); /* check inputs */
+            return false; /* check inputs */
         Lp = L.p;
         Li = L.i;
         Lx = L.x;
@@ -61,7 +54,7 @@ public class Dcs_updown {
         Ci = C.i;
         Cx = C.x;
         if ((p = Cp[0]) >= Cp[1])
-            return (true); /* return if C empty */
+            return true; /* return if C empty */
         w = new double[n]; /* get workspace */
         f = Ci[p];
         for (; p < Cp[1]; p++)
@@ -70,25 +63,24 @@ public class Dcs_updown {
             w[j] = 0; /* clear workspace w */
         for (p = Cp[0]; p < Cp[1]; p++)
             w[Ci[p]] = Cx[p]; /* w = C */
-        for (j = f; j != -1; j = parent[j]) /* walk path f up to root */
-        {
+        for (j = f; j != -1; j = parent[j]) /* walk path f up to root */ {
             p = Lp[j];
             alpha = w[j] / Lx[p]; /* alpha = w(j) / L(j,j) */
             beta2 = beta * beta + sigma * alpha * alpha;
             if (beta2 <= 0)
                 break; /* not positive definite */
             beta2 = Math.sqrt(beta2);
-            delta = (sigma > 0) ? (beta / beta2) : (beta2 / beta);
+            delta = sigma > 0 ? beta / beta2 : beta2 / beta;
             gamma = sigma * alpha / (beta2 * beta);
-            Lx[p] = delta * Lx[p] + ((sigma > 0) ? (gamma * w[j]) : 0);
+            Lx[p] = delta * Lx[p] + (sigma > 0 ? gamma * w[j] : 0);
             beta = beta2;
             for (p++; p < Lp[j + 1]; p++) {
                 w1 = w[Li[p]];
                 w[Li[p]] = w2 = w1 - alpha * Lx[p];
-                Lx[p] = delta * Lx[p] + gamma * ((sigma > 0) ? w1 : w2);
+                Lx[p] = delta * Lx[p] + gamma * (sigma > 0 ? w1 : w2);
             }
         }
-        return (beta2 > 0);
+        return beta2 > 0;
     }
 
 }

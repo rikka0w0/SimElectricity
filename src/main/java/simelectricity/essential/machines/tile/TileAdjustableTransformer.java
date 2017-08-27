@@ -1,73 +1,73 @@
 package simelectricity.essential.machines.tile;
 
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import simelectricity.api.IEnergyNetUpdateHandler;
 import simelectricity.api.SEAPI;
 import simelectricity.api.components.ISETransformer;
 import simelectricity.essential.common.semachine.ISESocketProvider;
 import simelectricity.essential.common.semachine.SETwoPortMachine;
 
-public class TileAdjustableTransformer extends SETwoPortMachine implements ISETransformer, IEnergyNetUpdateHandler, ISESocketProvider{
+public class TileAdjustableTransformer extends SETwoPortMachine implements ISETransformer, IEnergyNetUpdateHandler, ISESocketProvider {
     //Input - primary, output - secondary
     public double ratio = 10, outputResistance = 1;
-    
+
     public double vPri, vSec;
-    
-	/////////////////////////////////////////////////////////
-	///TileEntity
-	/////////////////////////////////////////////////////////
+
+    /////////////////////////////////////////////////////////
+    ///TileEntity
+    /////////////////////////////////////////////////////////
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
 
-        ratio = tagCompound.getDouble("ratio");
-        outputResistance = tagCompound.getDouble("outputResistance");
+		this.ratio = tagCompound.getDouble("ratio");
+		this.outputResistance = tagCompound.getDouble("outputResistance");
     }
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
-        tagCompound.setDouble("ratio", ratio);
-        tagCompound.setDouble("outputResistance", outputResistance);
-        
+        tagCompound.setDouble("ratio", this.ratio);
+        tagCompound.setDouble("outputResistance", this.outputResistance);
+
         return super.writeToNBT(tagCompound);
     }
-    
-	/////////////////////////////////////////////////////////
-	///IEnergyNetUpdateHandler
-	/////////////////////////////////////////////////////////
+
+    /////////////////////////////////////////////////////////
+    ///IEnergyNetUpdateHandler
+    /////////////////////////////////////////////////////////
     @Override
     public void onEnergyNetUpdate() {
-    	vPri = SEAPI.energyNetAgent.getVoltage(input);
-    	vSec = SEAPI.energyNetAgent.getVoltage(input.getComplement());
+		this.vPri = SEAPI.energyNetAgent.getVoltage(this.input);
+		this.vSec = SEAPI.energyNetAgent.getVoltage(this.input.getComplement());
     }
-    
-	/////////////////////////////////////////////////////////
-	///ISETransformerData
-	/////////////////////////////////////////////////////////
-	@Override
-	public double getRatio() {
-		return ratio;
-	}
 
-	@Override
-	public double getInternalResistance() {
-		return outputResistance;
-	}
-	
+    /////////////////////////////////////////////////////////
+    ///ISETransformerData
+    /////////////////////////////////////////////////////////
+    @Override
+    public double getRatio() {
+        return this.ratio;
+    }
+
+    @Override
+    public double getInternalResistance() {
+        return this.outputResistance;
+    }
+
     ///////////////////////////////////
     /// ISESocketProvider
     ///////////////////////////////////
-	@Override
-	@SideOnly(Side.CLIENT)
-	public int getSocketIconIndex(EnumFacing side) {
-		if (side == inputSide)
-			return 2;
-		else if (side == outputSide)
-			return 3;
-		else 
-			return -1;
-	}
+    @Override
+    @SideOnly(Side.CLIENT)
+    public int getSocketIconIndex(EnumFacing side) {
+        if (side == this.inputSide)
+            return 2;
+        else if (side == this.outputSide)
+            return 3;
+        else
+            return -1;
+    }
 }

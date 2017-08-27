@@ -1,7 +1,7 @@
 {
-    "parent": "block/cube_all",
-    "textures": {
-        "all": "sime_essential:blocks/machines/quantum_generator",
-        "particle": "sime_essential:blocks/machines/quantum_generator"
-    }
+  "parent": "block/cube_all",
+  "textures": {
+    "all": "sime_essential:blocks/machines/quantum_generator",
+    "particle": "sime_essential:blocks/machines/quantum_generator"
+  }
 }

@@ -24,44 +24,33 @@
 
 package edu.emory.mathcs.csparsej.tdouble;
 
-import edu.emory.mathcs.csparsej.tdouble.Dcs_common.Dcs;
-
 /**
  * Scatter a sparse vector.
- * 
+ *
  * @author Piotr Wendykier (piotr.wendykier@gmail.com)
- * 
  */
 public class Dcs_scatter {
 
     /**
      * Scatters and sums a sparse vector A(:,j) into a dense vector, x = x +
      * beta * A(:,j).
-     * 
-     * @param A
-     *            the sparse vector is A(:,j)
-     * @param j
-     *            the column of A to use
-     * @param beta
-     *            scalar multiplied by A(:,j)
-     * @param w
-     *            size m, node i is marked if w[i] = mark
-     * @param x
-     *            size m, ignored if null
-     * @param mark
-     *            mark value of w
-     * @param C
-     *            pattern of x accumulated in C.i
-     * @param nz
-     *            pattern of x placed in C starting at C.i[nz]
+     *
+     * @param A    the sparse vector is A(:,j)
+     * @param j    the column of A to use
+     * @param beta scalar multiplied by A(:,j)
+     * @param w    size m, node i is marked if w[i] = mark
+     * @param x    size m, ignored if null
+     * @param mark mark value of w
+     * @param C    pattern of x accumulated in C.i
+     * @param nz   pattern of x placed in C starting at C.i[nz]
      * @return new value of nz, -1 on error
      */
-    public static int cs_scatter(Dcs A, int j, double beta, int[] w, double[] x, int mark, Dcs C, int nz) {
+    public static int cs_scatter(Dcs_common.Dcs A, int j, double beta, int[] w, double[] x, int mark, Dcs_common.Dcs C, int nz) {
         int i, p;
         int Ap[], Ai[], Ci[];
         double[] Ax;
         if (!Dcs_util.CS_CSC(A) || w == null || !Dcs_util.CS_CSC(C))
-            return (-1); /* check inputs */
+            return -1; /* check inputs */
         Ap = A.p;
         Ai = A.i;
         Ax = A.x;

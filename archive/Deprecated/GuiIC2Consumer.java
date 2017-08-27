@@ -96,15 +96,15 @@ public class GuiIC2Consumer extends GuiContainer {
         //draw text and stuff here
         //the parameters for drawString are: string, x, y, color
 
-        fontRendererObj.drawString(StatCollector.translateToLocal("tile.sime:IC2Consumer.name"), 8, 6, 4210752);
+        fontRenderer.drawString(StatCollector.translateToLocal("tile.sime:IC2Consumer.name"), 8, 6, 4210752);
 
-        fontRendererObj.drawString("Vo_max = " + String.format("%.1f", tileentity.outputVoltage) + "V", 8, 24, 4210752);
-        fontRendererObj.drawString("Power In = " +  String.format("%.1f", tileentity.powerRate) + "Eu/Tick", 8, 43, 4210752);
-        fontRendererObj.drawString("Buffered = " +  String.format("%.1f", tileentity.bufferedEnergy) + "Eu", 8, 56, 4210752);
+        fontRenderer.drawString("Vo_max = " + String.format("%.1f", tileentity.outputVoltage) + "V", 8, 24, 4210752);
+        fontRenderer.drawString("Power In = " +  String.format("%.1f", tileentity.powerRate) + "Eu/Tick", 8, 43, 4210752);
+        fontRenderer.drawString("Buffered = " +  String.format("%.1f", tileentity.bufferedEnergy) + "Eu", 8, 56, 4210752);
         
         //draws "Inventory" or your regional equivalent
-        fontRendererObj.drawString(StatCollector.translateToLocal("container.inventory"), 8, ySize - 96, 4210752);
-        fontRendererObj.drawString(tileentity.getFunctionalSide().toString(), xSize - 38, ySize - 96, 4210752);
+        fontRenderer.drawString(StatCollector.translateToLocal("container.inventory"), 8, ySize - 96, 4210752);
+        fontRenderer.drawString(tileentity.getFunctionalSide().toString(), xSize - 38, ySize - 96, 4210752);
     }
 
     @Override

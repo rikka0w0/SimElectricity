@@ -24,28 +24,24 @@
 
 package edu.emory.mathcs.csparsej.tdouble;
 
-import edu.emory.mathcs.csparsej.tdouble.Dcs_common.Dcs;
-
 /**
  * Remove (and sum) duplicates.
- * 
+ *
  * @author Piotr Wendykier (piotr.wendykier@gmail.com)
- * 
  */
 public class Dcs_dupl {
 
     /**
      * Removes and sums duplicate entries in a sparse matrix.
-     * 
-     * @param A
-     *            column-compressed matrix
+     *
+     * @param A column-compressed matrix
      * @return true if successful, false on error
      */
-    public static boolean cs_dupl(Dcs A) {
+    public static boolean cs_dupl(Dcs_common.Dcs A) {
         int i, j, p, q, nz = 0, n, m, Ap[], Ai[], w[];
         double Ax[];
         if (!Dcs_util.CS_CSC(A))
-            return (false);
+            return false;
         /* check inputs */
         m = A.m;
         n = A.n;

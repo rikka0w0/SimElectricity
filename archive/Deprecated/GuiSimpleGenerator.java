@@ -44,15 +44,15 @@ public class GuiSimpleGenerator extends GuiContainer {
         //draw text and stuff here
         //the parameters for drawString are: string, x, y, color
 
-        fontRendererObj.drawString(StatCollector.translateToLocal("tile.sime:SimpleGenerator.name"), 8, 6, 4210752);
-        fontRendererObj.drawString(StatCollector.translateToLocal("sime.Output"), 115, 22, 4210752);
-        fontRendererObj.drawString(String.valueOf(tileentity.getOutputVoltage()) + "V", 115, 32, 4210752);
-        fontRendererObj.drawString(StatCollector.translateToLocal("sime.Impedance"), 115, 42, 4210752);
-        fontRendererObj.drawString(String.valueOf(tileentity.getResistance()) + "\u03a9", 115, 52, 4210752);
+        fontRenderer.drawString(StatCollector.translateToLocal("tile.sime:SimpleGenerator.name"), 8, 6, 4210752);
+        fontRenderer.drawString(StatCollector.translateToLocal("sime.Output"), 115, 22, 4210752);
+        fontRenderer.drawString(String.valueOf(tileentity.getOutputVoltage()) + "V", 115, 32, 4210752);
+        fontRenderer.drawString(StatCollector.translateToLocal("sime.Impedance"), 115, 42, 4210752);
+        fontRenderer.drawString(String.valueOf(tileentity.getResistance()) + "\u03a9", 115, 52, 4210752);
 
         //draws "Inventory" or your regional equivalent
-        fontRendererObj.drawString(StatCollector.translateToLocal("container.inventory"), 8, ySize - 96, 4210752);
-        fontRendererObj.drawString(String.valueOf(tileentity.progress) + "%", xSize - 90, ySize - 136, 4210752);
+        fontRenderer.drawString(StatCollector.translateToLocal("container.inventory"), 8, ySize - 96, 4210752);
+        fontRenderer.drawString(String.valueOf(tileentity.progress) + "%", xSize - 90, ySize - 136, 4210752);
     }
 
     @Override

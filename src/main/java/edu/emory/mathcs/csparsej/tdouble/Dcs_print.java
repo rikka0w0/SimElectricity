@@ -24,31 +24,26 @@
 
 package edu.emory.mathcs.csparsej.tdouble;
 
-import edu.emory.mathcs.csparsej.tdouble.Dcs_common.Dcs;
-
 /**
  * Print a sparse matrix.
- * 
+ *
  * @author Piotr Wendykier (piotr.wendykier@gmail.com)
- * 
  */
 public class Dcs_print {
 
     /**
      * Prints a sparse matrix.
-     * 
-     * @param A
-     *            sparse matrix (triplet ot column-compressed)
-     * @param brief
-     *            print all of A if false, a few entries otherwise
+     *
+     * @param A     sparse matrix (triplet ot column-compressed)
+     * @param brief print all of A if false, a few entries otherwise
      * @return true if successful, false on error
      */
-    public static boolean cs_print(Dcs A, boolean brief) {
+    public static boolean cs_print(Dcs_common.Dcs A, boolean brief) {
         int p, j, m, n, nzmax, nz, Ap[], Ai[];
         double Ax[];
         if (A == null) {
             System.out.print("(null)\n");
-            return (false);
+            return false;
         }
         m = A.m;
         n = A.n;
@@ -68,7 +63,7 @@ public class Dcs_print {
                     System.out.print(String.format("      %d : %g\n", Ai[p], Ax != null ? Ax[p] : 1));
                     if (brief && p > 20) {
                         System.out.print("  ...\n");
-                        return (true);
+                        return true;
                     }
                 }
             }
@@ -78,11 +73,11 @@ public class Dcs_print {
                 System.out.print(String.format("    %d %d : %g\n", Ai[p], Ap[p], Ax != null ? Ax[p] : 1));
                 if (brief && p > 20) {
                     System.out.print("  ...\n");
-                    return (true);
+                    return true;
                 }
             }
         }
-        return (true);
+        return true;
     }
 
 }

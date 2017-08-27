@@ -24,30 +24,26 @@
 
 package edu.emory.mathcs.csparsej.tdouble;
 
-import edu.emory.mathcs.csparsej.tdouble.Dcs_common.Dcs;
-
 /**
  * Convert a triplet form to compressed-column form.
- * 
+ *
  * @author Piotr Wendykier (piotr.wendykier@gmail.com)
- * 
  */
 public class Dcs_compress {
 
     /**
      * C = compressed-column form of a triplet matrix T. The columns of C are
      * not sorted, and duplicate entries may be present in C.
-     * 
-     * @param T
-     *            triplet matrix
+     *
+     * @param T triplet matrix
      * @return C if successful, null on error
      */
-    public static Dcs cs_compress(Dcs T) {
+    public static Dcs_common.Dcs cs_compress(Dcs_common.Dcs T) {
         int m, n, nz, p, k, Cp[], Ci[], w[], Ti[], Tj[];
         double Cx[], Tx[];
-        Dcs C;
+        Dcs_common.Dcs C;
         if (!Dcs_util.CS_TRIPLET(T))
-            return (null); /* check inputs */
+            return null; /* check inputs */
         m = T.m;
         n = T.n;
         Ti = T.i;

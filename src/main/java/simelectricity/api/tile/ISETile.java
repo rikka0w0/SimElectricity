@@ -8,11 +8,10 @@ import simelectricity.api.node.ISESubComponent;
  * <p/>
  * Can be used to make transformers, regulators, diodes, switches, generators and loads
  */
-public interface ISETile{
-	/**
-	 * @return An array of directions that can be used to connect to {link}ISESubComponent
-	 */
-	//public EnumFacing[] getValidDirections();
-	
-	public ISESubComponent getComponent(EnumFacing side);
+public interface ISETile {
+    /**
+     * @return An array of directions that can be used to connect to {link}ISESubComponent
+     */
+    //public EnumFacing[] getValidDirections();
+    ISESubComponent getComponent(EnumFacing side);
 }

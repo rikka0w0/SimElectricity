@@ -25,33 +25,29 @@
 package edu.emory.mathcs.csparsej.tdouble;
 
 import edu.emory.mathcs.csparsej.tdouble.Dcs_common.Dcs;
-import edu.emory.mathcs.csparsej.tdouble.Dcs_common.Dcsn;
 import edu.emory.mathcs.csparsej.tdouble.Dcs_common.Dcss;
 
 /**
  * Sparse QR factorization.
- * 
+ *
  * @author Piotr Wendykier (piotr.wendykier@gmail.com)
- * 
  */
 public class Dcs_qr {
-    
+
     /**
      * Sparse QR factorization of an m-by-n matrix A, A= Q*R
-     * 
-     * @param A
-     *            column-compressed matrix
-     * @param S
-     *            symbolic QR analysis
+     *
+     * @param A column-compressed matrix
+     * @param S symbolic QR analysis
      * @return numeric QR factorization, null on error
      */
-    public static Dcsn cs_qr(Dcs A, Dcss S) {
+    public static Dcs_common.Dcsn cs_qr(Dcs A, Dcss S) {
         double Rx[], Vx[], Ax[], x[], Beta[];
         int i, k, p, n, vnz, p1, top, m2, len, col, rnz, s[], leftmost[], Ap[], Ai[], parent[], Rp[], Ri[], Vp[], Vi[], w[], pinv[], q[];
         Dcs R, V;
-        Dcsn N;
+        Dcs_common.Dcsn N;
         if (!Dcs_util.CS_CSC(A) || S == null)
-            return (null);
+            return null;
         n = A.n;
         Ap = A.p;
         Ai = A.i;
@@ -65,7 +61,7 @@ public class Dcs_qr {
         leftmost = S.leftmost;
         w = new int[m2 + n]; /* get int workspace */
         x = new double[m2]; /* get double workspace */
-        N = new Dcsn(); /* allocate result */
+        N = new Dcs_common.Dcsn(); /* allocate result */
         s = w;
         int s_offset = m2; /* s is size n */
         for (k = 0; k < m2; k++)
@@ -83,34 +79,29 @@ public class Dcs_qr {
             w[i] = -1; /* clear w, to mark nodes */
         rnz = 0;
         vnz = 0;
-        for (k = 0; k < n; k++) /* compute V and R */
-        {
+        for (k = 0; k < n; k++) /* compute V and R */ {
             Rp[k] = rnz; /* R(:,k) starts here */
             Vp[k] = p1 = vnz; /* V(:,k) starts here */
             w[k] = k; /* add V(k,k) to pattern of V */
             Vi[vnz++] = k;
             top = n;
             col = q != null ? q[k] : k;
-            for (p = Ap[col]; p < Ap[col + 1]; p++) /* find R(:,k) pattern */
-            {
+            for (p = Ap[col]; p < Ap[col + 1]; p++) /* find R(:,k) pattern */ {
                 i = leftmost[Ai[p]]; /* i = min(find(A(i,q))) */
-                for (len = 0; w[i] != k; i = parent[i]) /* traverse up to k */
-                {
-                    s[s_offset + (len++)] = i;
+                for (len = 0; w[i] != k; i = parent[i]) /* traverse up to k */ {
+                    s[s_offset + len++] = i;
                     w[i] = k;
                 }
                 while (len > 0)
-                    s[s_offset + (--top)] = s[s_offset + (--len)]; /* push path on stack */
+                    s[s_offset + --top] = s[s_offset + --len]; /* push path on stack */
                 i = pinv[Ai[p]]; /* i = permuted row of A(:,col) */
                 x[i] = Ax[p]; /* x (i) = A(:,col) */
-                if (i > k && w[i] < k) /* pattern of V(:,k) = x (k+1:m) */
-                {
+                if (i > k && w[i] < k) /* pattern of V(:,k) = x (k+1:m) */ {
                     Vi[vnz++] = i; /* add i to pattern of V(:,k) */
                     w[i] = k;
                 }
             }
-            for (p = top; p < n; p++) /* for each i in pattern of R(:,k) */
-            {
+            for (p = top; p < n; p++) /* for each i in pattern of R(:,k) */ {
                 i = s[s_offset + p]; /* R(i,k) is nonzero */
                 Dcs_happly.cs_happly(V, i, Beta[i], x); /* apply (V(i),Beta(i)) to x */
                 Ri[rnz] = i; /* R(i,k) = x(i) */
@@ -119,8 +110,7 @@ public class Dcs_qr {
                 if (parent[i] == k)
                     vnz = Dcs_scatter.cs_scatter(V, i, 0, w, null, k, V, vnz);
             }
-            for (p = p1; p < vnz; p++) /* gather V(:,k) = x */
-            {
+            for (p = p1; p < vnz; p++) /* gather V(:,k) = x */ {
                 Vx[p] = x[Vi[p]];
                 x[Vi[p]] = 0;
             }

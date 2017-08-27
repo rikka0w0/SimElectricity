@@ -24,13 +24,10 @@
 
 package edu.emory.mathcs.csparsej.tdouble;
 
-import edu.emory.mathcs.csparsej.tdouble.Dcs_common.Dcs;
-
 /**
  * Column counts for Cholesky and QR.
- * 
+ *
  * @author Piotr Wendykier (piotr.wendykier@gmail.com)
- * 
  */
 public class Dcs_counts {
 
@@ -42,7 +39,7 @@ public class Dcs_counts {
         return ata ? next[next_offset + J] : -1;
     }
 
-    private static int[] init_ata(Dcs AT, int[] post, int[] w) {
+    private static int[] init_ata(Dcs_common.Dcs AT, int[] post, int[] w) {
         int i, k, p, m = AT.n, n = AT.m, ATp[] = AT.p, ATi[] = AT.i;
         int[] head = w;
         int head_offset = 4 * n;
@@ -56,33 +53,29 @@ public class Dcs_counts {
             next[next_offset + i] = head[head_offset + k]; /* place row i in linked list k */
             head[head_offset + k] = i;
         }
-        return new int[] { head_offset, next_offset };
+        return new int[]{head_offset, next_offset};
     }
 
     /**
      * Column counts of LL'=A or LL'=A'A, given parent & postordering
-     * 
-     * @param A
-     *            column-compressed matrix
-     * @param parent
-     *            elimination tree of A
-     * @param post
-     *            postordering of parent
-     * @param ata
-     *            analyze A if false, A'A otherwise
+     *
+     * @param A      column-compressed matrix
+     * @param parent elimination tree of A
+     * @param post   postordering of parent
+     * @param ata    analyze A if false, A'A otherwise
      * @return column counts of LL'=A or LL'=A'A, null on error
      */
-    public static int[] cs_counts(Dcs A, int[] parent, int[] post, boolean ata) {
+    public static int[] cs_counts(Dcs_common.Dcs A, int[] parent, int[] post, boolean ata) {
         int i, j, k, n, m, J, s, p, q, ATp[], ATi[], maxfirst[], prevleaf[], ancestor[], colcount[], w[], first[], delta[];
         int[] head = null, next = null;
         int[] jleaf = new int[1];
         int head_offset = 0, next_offset = 0;
-        Dcs AT;
+        Dcs_common.Dcs AT;
         if (!Dcs_util.CS_CSC(A) || parent == null || post == null)
-            return (null); /* check inputs */
+            return null; /* check inputs */
         m = A.m;
         n = A.n;
-        s = 4 * n + (ata ? (n + m + 1) : 0);
+        s = 4 * n + (ata ? n + m + 1 : 0);
         delta = colcount = new int[n]; /* allocate result */
         w = new int[s]; /* get workspace */
         AT = Dcs_transpose.cs_transpose(A, false); /* AT = A' */
@@ -95,17 +88,16 @@ public class Dcs_counts {
         int first_offset = 3 * n;
         for (k = 0; k < s; k++)
             w[k] = -1; /* clear workspace w [0..s-1] */
-        for (k = 0; k < n; k++) /* find first [j] */
-        {
+        for (k = 0; k < n; k++) /* find first [j] */ {
             j = post[k];
-            delta[j] = (first[first_offset + j] == -1) ? 1 : 0; /* delta[j]=1 if j is a leaf */
+            delta[j] = first[first_offset + j] == -1 ? 1 : 0; /* delta[j]=1 if j is a leaf */
             for (; j != -1 && first[first_offset + j] == -1; j = parent[j])
                 first[first_offset + j] = k;
         }
         ATp = AT.p;
         ATi = AT.i;
         if (ata) {
-            int[] offsets = init_ata(AT, post, w);
+            int[] offsets = Dcs_counts.init_ata(AT, post, w);
             head = w;
             head_offset = offsets[0];
             next = w;
@@ -117,8 +109,7 @@ public class Dcs_counts {
             j = post[k]; /* j is the kth node in postordered etree */
             if (parent[j] != -1)
                 delta[parent[j]]--; /* j is not a root */
-            for (J = HEAD(k, j, head, head_offset, ata); J != -1; J = NEXT(J, next, next_offset, ata)) /* J=j for LL'=A case */
-            {
+            for (J = Dcs_counts.HEAD(k, j, head, head_offset, ata); J != -1; J = Dcs_counts.NEXT(J, next, next_offset, ata)) /* J=j for LL'=A case */ {
                 for (p = ATp[J]; p < ATp[J + 1]; p++) {
                     i = ATi[p];
                     q = Dcs_leaf.cs_leaf(i, j, first, first_offset, maxfirst, maxfirst_offset, prevleaf,
@@ -132,8 +123,7 @@ public class Dcs_counts {
             if (parent[j] != -1)
                 ancestor[j] = parent[j];
         }
-        for (j = 0; j < n; j++) /* sum up delta's of each child */
-        {
+        for (j = 0; j < n; j++) /* sum up delta's of each child */ {
             if (parent[j] != -1)
                 colcount[parent[j]] += colcount[j];
         }

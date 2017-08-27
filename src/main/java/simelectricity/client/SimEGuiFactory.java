@@ -22,6 +22,7 @@ package simelectricity.client;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraftforge.fml.client.IModGuiFactory;
+import net.minecraftforge.fml.client.IModGuiFactory.RuntimeOptionGuiHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -39,22 +40,22 @@ public class SimEGuiFactory implements IModGuiFactory {
     }
 
     @Override
-    public Set<RuntimeOptionCategoryElement> runtimeGuiCategories() {
+    public Set<IModGuiFactory.RuntimeOptionCategoryElement> runtimeGuiCategories() {
         return null;
     }
 
     @Override
-    public RuntimeOptionGuiHandler getHandlerFor(RuntimeOptionCategoryElement element) {
+    public RuntimeOptionGuiHandler getHandlerFor(IModGuiFactory.RuntimeOptionCategoryElement element) {
         return null;
     }
 
-	@Override
-	public boolean hasConfigGui() {
-		return true;
-	}
+    @Override
+    public boolean hasConfigGui() {
+        return true;
+    }
 
-	@Override
-	public GuiScreen createConfigGui(GuiScreen parentScreen) {
-		return new SimEGuiConfig(parentScreen);
-	}
+    @Override
+    public GuiScreen createConfigGui(GuiScreen parentScreen) {
+        return new SimEGuiConfig(parentScreen);
+    }
 }

@@ -1,7 +1,5 @@
 package simelectricity.essential.utils;
 
-import java.util.Random;
-
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -14,22 +12,24 @@ import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
 
+import java.util.Random;
+
 public class Utils {
-	/**
-	 * @param player
-	 * @param ignoreVertical If set to true, possible results are NESW, else the result can also be up or down/
-	 * @return the direction where the player/entity is looking at
-	 */
+    /**
+     * @param player
+     * @param ignoreVertical If set to true, possible results are NESW, else the result can also be up or down/
+     * @return the direction where the player/entity is looking at
+     */
     public static final EnumFacing getPlayerSight(EntityLivingBase player) {
         int heading = MathHelper.floor(player.rotationYaw * 4.0F / 360.0F + 0.5D) & 3;
         int pitch = Math.round(player.rotationPitch);
-        
+
         if (pitch >= 65)
             return EnumFacing.DOWN;  //1
 
         if (pitch <= -65)
-        	return EnumFacing.UP;    //0
-        
+            return EnumFacing.UP;    //0
+
         switch (heading) {
             case 0:
                 return EnumFacing.SOUTH; //2
@@ -43,10 +43,10 @@ public class Utils {
                 return null;
         }
     }
-    
+
     public static final EnumFacing getPlayerSightHorizontal(EntityLivingBase player) {
         int heading = MathHelper.floor(player.rotationYaw * 4.0F / 360.0F + 0.5D) & 3;
-        
+
         switch (heading) {
             case 0:
                 return EnumFacing.SOUTH; //2
@@ -60,7 +60,7 @@ public class Utils {
                 return null;
         }
     }
-    
+
     /**
      * Drop items inside the inventory
      */
@@ -77,7 +77,7 @@ public class Utils {
                     new ItemStack(item.getItem(), item.getCount(), item.getItemDamage()));
 
             if (item.hasTagCompound()) {
-                entityItem.getEntityItem().setTagCompound((NBTTagCompound) item.getTagCompound().copy());
+                entityItem.getItem().setTagCompound(item.getTagCompound().copy());
             }
 
             float factor = 0.05F;
@@ -88,49 +88,49 @@ public class Utils {
             item.setCount(0);
         }
     }
-    	
-	public static void chat(EntityPlayer player, String text) {
-		player.sendMessage(new TextComponentString(text));
+
+    public static void chat(EntityPlayer player, String text) {
+        player.sendMessage(new TextComponentString(text));
     }
-	
-	public static void chatWithLocalization(EntityPlayer player, String text) {
+
+    public static void chatWithLocalization(EntityPlayer player, String text) {
         player.sendMessage(new TextComponentString(I18n.translateToLocal(text)));
     }
-	
-	public static void saveToNbt(NBTTagCompound nbt, String name, EnumFacing facing) {
-		if (facing == null)
-			return;
-		
-		nbt.setByte(name, (byte) facing.ordinal());
-	}
-	
-	public static EnumFacing facingFromNbt(NBTTagCompound nbt, String name) {
-		if (!nbt.hasKey(name))
-			return null;
-		
-		return EnumFacing.getFront(nbt.getByte(name));
-	}
-	
-	public static void saveToNbt(NBTTagCompound nbt, String prefix, BlockPos pos) {
-		if (pos == null)
-			return;
-		
-		nbt.setInteger(prefix+"X", pos.getX());
-		nbt.setInteger(prefix+"Y", pos.getY());
-		nbt.setInteger(prefix+"Z", pos.getZ());
-	}
-	
-	public static BlockPos posFromNbt(NBTTagCompound nbt, String prefix) {
-		if (!nbt.hasKey(prefix+"Y"))
-			return null;
-		
-		int x = nbt.getInteger(prefix+"X");
-		int y = nbt.getInteger(prefix+"Y");
-		int z = nbt.getInteger(prefix+"Z");
-		
-		if (y < 0)
-			return null;
-		
-		return new BlockPos(x, y, z);
-	}
+
+    public static void saveToNbt(NBTTagCompound nbt, String name, EnumFacing facing) {
+        if (facing == null)
+            return;
+
+        nbt.setByte(name, (byte) facing.ordinal());
+    }
+
+    public static EnumFacing facingFromNbt(NBTTagCompound nbt, String name) {
+        if (!nbt.hasKey(name))
+            return null;
+
+        return EnumFacing.getFront(nbt.getByte(name));
+    }
+
+    public static void saveToNbt(NBTTagCompound nbt, String prefix, BlockPos pos) {
+        if (pos == null)
+            return;
+
+        nbt.setInteger(prefix + "X", pos.getX());
+        nbt.setInteger(prefix + "Y", pos.getY());
+        nbt.setInteger(prefix + "Z", pos.getZ());
+    }
+
+    public static BlockPos posFromNbt(NBTTagCompound nbt, String prefix) {
+        if (!nbt.hasKey(prefix + "Y"))
+            return null;
+
+        int x = nbt.getInteger(prefix + "X");
+        int y = nbt.getInteger(prefix + "Y");
+        int z = nbt.getInteger(prefix + "Z");
+
+        if (y < 0)
+            return null;
+
+        return new BlockPos(x, y, z);
+    }
 }

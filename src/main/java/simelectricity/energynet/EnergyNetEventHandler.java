@@ -21,10 +21,10 @@ package simelectricity.energynet;
 
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.WorldEvent;
+import net.minecraftforge.event.world.WorldEvent.Unload;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
-import net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 
 
@@ -35,16 +35,16 @@ public class EnergyNetEventHandler {
     }
 
     @SubscribeEvent
-    public void onWorldUnload(WorldEvent.Unload event) {
-    	EnergyNetAgent.onWorldUnload(event.getWorld());
+    public void onWorldUnload(Unload event) {
+        EnergyNetAgent.onWorldUnload(event.getWorld());
     }
 
     //Pre -> Entities -> TileEntitis -> Post
     @SubscribeEvent
-    public void tick(WorldTickEvent event) {
+    public void tick(TickEvent.WorldTickEvent event) {
         if (event.side != Side.SERVER)
             return;
-        if (event.phase != Phase.START)
+        if (event.phase != TickEvent.Phase.START)
             return;
 
         EnergyNet energyNet = EnergyNetAgent.getEnergyNetForWorld(event.world);

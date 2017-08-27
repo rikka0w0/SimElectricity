@@ -21,15 +21,14 @@ package simelectricity.api;
 
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
-
 import simelectricity.api.internal.IEnergyNetAgent;
 
-public class SEAPI {   
-    public static boolean isSELoaded = false;
-    
-	public static IEnergyNetAgent energyNetAgent;
-	
+public class SEAPI {
+    public static boolean isSELoaded;
+
+    public static IEnergyNetAgent energyNetAgent;
+
     public static CreativeTabs SETab;
-    
+
     public static Item managementToolItem;
 }

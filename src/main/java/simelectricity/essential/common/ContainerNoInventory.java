@@ -7,22 +7,22 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 
 public abstract class ContainerNoInventory<TYPE extends TileEntity> extends Container {
-	protected TYPE tileEntity;
-	
-	@Override
-	public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, EntityPlayer player){
-		return ItemStack.EMPTY;
-	}
-	
-	public ContainerNoInventory(TileEntity tileEntity){
-		this.tileEntity = (TYPE) tileEntity;
-	}
-	
-	@Override
-	public boolean canInteractWith(EntityPlayer player) {
-		return true;
-	}
+    protected TYPE tileEntity;
 
-	@Override
-	public abstract void detectAndSendChanges();
+    public ContainerNoInventory(TileEntity tileEntity) {
+        this.tileEntity = (TYPE) tileEntity;
+    }
+
+    @Override
+    public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, EntityPlayer player) {
+        return ItemStack.EMPTY;
+    }
+
+    @Override
+    public boolean canInteractWith(EntityPlayer player) {
+        return true;
+    }
+
+    @Override
+    public abstract void detectAndSendChanges();
 }

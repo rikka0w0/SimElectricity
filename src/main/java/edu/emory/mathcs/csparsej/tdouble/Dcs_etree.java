@@ -24,29 +24,24 @@
 
 package edu.emory.mathcs.csparsej.tdouble;
 
-import edu.emory.mathcs.csparsej.tdouble.Dcs_common.Dcs;
-
 /**
  * Find elimination tree.
- * 
+ *
  * @author Piotr Wendykier (piotr.wendykier@gmail.com)
- * 
  */
 public class Dcs_etree {
 
     /**
      * Compute the elimination tree of A or A'A (without forming A'A).
-     * 
-     * @param A
-     *            column-compressed matrix
-     * @param ata
-     *            analyze A if false, A'A oterwise
+     *
+     * @param A   column-compressed matrix
+     * @param ata analyze A if false, A'A oterwise
      * @return elimination tree, null on error
      */
-    public static int[] cs_etree(Dcs A, boolean ata) {
+    public static int[] cs_etree(Dcs_common.Dcs A, boolean ata) {
         int i, k, p, m, n, inext, Ap[], Ai[], w[], parent[], ancestor[], prev[];
         if (!Dcs_util.CS_CSC(A))
-            return (null); /* check inputs */
+            return null; /* check inputs */
         m = A.m;
         n = A.n;
         Ap = A.p;
@@ -63,9 +58,8 @@ public class Dcs_etree {
             parent[k] = -1; /* node k has no parent yet */
             ancestor[k] = -1; /* nor does k have an ancestor */
             for (p = Ap[k]; p < Ap[k + 1]; p++) {
-                i = ata ? (prev[prev_offset + Ai[p]]) : (Ai[p]);
-                for (; i != -1 && i < k; i = inext) /* traverse from i to k */
-                {
+                i = ata ? prev[prev_offset + Ai[p]] : Ai[p];
+                for (; i != -1 && i < k; i = inext) /* traverse from i to k */ {
                     inext = ancestor[i]; /* inext = ancestor of i */
                     ancestor[i] = k; /* path compression */
                     if (inext == -1)

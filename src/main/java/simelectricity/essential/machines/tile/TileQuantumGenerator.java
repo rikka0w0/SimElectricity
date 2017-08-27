@@ -10,66 +10,66 @@ import simelectricity.api.components.ISEVoltageSource;
 import simelectricity.essential.common.semachine.ISESocketProvider;
 import simelectricity.essential.common.semachine.SESinglePortMachine;
 
-public class TileQuantumGenerator extends SESinglePortMachine implements ISEVoltageSource, IEnergyNetUpdateHandler, ISESocketProvider{
+public class TileQuantumGenerator extends SESinglePortMachine implements ISEVoltageSource, IEnergyNetUpdateHandler, ISESocketProvider {
     //Component parameters
-	public double internalVoltage = 230;
+    public double internalVoltage = 230;
     public double resistance = 0.1;
-    
+
     //Calculated values
     public double voltage;
     public double current;
-	
-	///////////////////////////////////
+
+    ///////////////////////////////////
     /// TileEntity
-	///////////////////////////////////
+    ///////////////////////////////////
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
-        
-        internalVoltage = tagCompound.getDouble("internalVoltage");
-        resistance = tagCompound.getDouble("resistance");
+
+        this.internalVoltage = tagCompound.getDouble("internalVoltage");
+        this.resistance = tagCompound.getDouble("resistance");
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {       
-        tagCompound.setDouble("internalVoltage", internalVoltage);
-        tagCompound.setDouble("resistance", resistance);
-        
+    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
+        tagCompound.setDouble("internalVoltage", this.internalVoltage);
+        tagCompound.setDouble("resistance", this.resistance);
+
         return super.writeToNBT(tagCompound);
     }
 
     ///////////////////////////////////
     /// ISEVoltageSource
     ///////////////////////////////////
-	@Override
-	public double getOutputVoltage() {
-		return internalVoltage;
-	}
+    @Override
+    public double getOutputVoltage() {
+        return this.internalVoltage;
+    }
 
-	@Override
-	public double getResistance() {
-		return resistance;
-	}
+    @Override
+    public double getResistance() {
+        return this.resistance;
+    }
 
     ///////////////////////////////////
     /// IEnergyNetUpdateHandler
     ///////////////////////////////////
-	@Override
-	public void onEnergyNetUpdate() {
-		voltage = SEAPI.energyNetAgent.getVoltage(this.circuit);
-		
-		//Get the resistance (in the state) when the voltage is calculated
-		double internalVoltage = ((ISEVoltageSource)this.circuit).getOutputVoltage();
-		double resistance = ((ISEVoltageSource)this.circuit).getResistance();
-		current = (internalVoltage - voltage)/resistance;
-	}	
-	
+    @Override
+    public void onEnergyNetUpdate() {
+        this.voltage = SEAPI.energyNetAgent.getVoltage(circuit);
+
+        //Get the resistance (in the state) when the voltage is calculated
+        double internalVoltage = ((ISEVoltageSource) circuit).getOutputVoltage();
+        double resistance = ((ISEVoltageSource) circuit).getResistance();
+        this.current = (internalVoltage - this.voltage) / resistance;
+    }
+
     ///////////////////////////////////
     /// ISESocketProvider
     ///////////////////////////////////
-	@Override
-	@SideOnly(Side.CLIENT)
-	public int getSocketIconIndex(EnumFacing side) {
-		return side == functionalSide ? 1 : -1;
-	}
+    @Override
+    @SideOnly(Side.CLIENT)
+    public int getSocketIconIndex(EnumFacing side) {
+        return side == this.functionalSide ? 1 : -1;
+    }
 }

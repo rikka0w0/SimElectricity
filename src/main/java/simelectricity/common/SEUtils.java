@@ -22,9 +22,7 @@ package simelectricity.common;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fml.common.FMLLog;
-
 import org.apache.logging.log4j.Level;
-
 import simelectricity.SimElectricity;
 
 /**
@@ -32,30 +30,24 @@ import simelectricity.SimElectricity;
  *
  * @author Meow J
  */
-public enum SEUtils{
-	//Info Sources
-	loader("ModLoader"),
-	general("General"),
-	simulator("Simulator"),
-	energyNet("EnergyNet");
-	
+public enum SEUtils {
+    //Info Sources
+    loader("ModLoader"),
+    general("General"),
+    simulator("Simulator"),
+    energyNet("EnergyNet");
 
 
-    private String text;
-    
-	SEUtils(String text) {
-		this.text = text;
-	}
-	
-	@Override
-	public String toString(){
-		return text;
-	}
+    private final String text;
+
+    SEUtils(String text) {
+        this.text = text;
+    }
 
     public static void logInfo(Object object, SEUtils source) {
-    	if (!ConfigManager.showEnergyNetInfo && (source == energyNet || source == simulator))
-    		return;
-    	
+        if (!ConfigManager.showEnergyNetInfo && (source == SEUtils.energyNet || source == SEUtils.simulator))
+            return;
+
         FMLLog.log(SimElectricity.NAME, Level.INFO, source + "|" + String.valueOf(object));
     }
 
@@ -70,9 +62,13 @@ public enum SEUtils{
     public static void logFatal(Object object, SEUtils source) {
         FMLLog.log(SimElectricity.NAME, Level.FATAL, source + "|" + String.valueOf(object));
     }
-    
-    
-	public static TileEntity getTileEntityOnDirection(TileEntity te, EnumFacing direction){
-    	return te.getWorld().getTileEntity(te.getPos().offset(direction));
-	}
+
+    public static TileEntity getTileEntityOnDirection(TileEntity te, EnumFacing direction) {
+        return te.getWorld().getTileEntity(te.getPos().offset(direction));
+    }
+
+    @Override
+    public String toString() {
+        return this.text;
+    }
 }

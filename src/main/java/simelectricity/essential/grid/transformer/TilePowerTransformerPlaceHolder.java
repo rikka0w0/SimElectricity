@@ -12,106 +12,106 @@ import simelectricity.essential.common.multiblock.ISEMultiBlockTile;
 import simelectricity.essential.common.multiblock.MultiBlockTileInfo;
 import simelectricity.essential.utils.Utils;
 
-public class TilePowerTransformerPlaceHolder extends SETileEntity implements ISEMultiBlockTile{
-	//To minimize network usage, mbInfo will not be send to blocks other than the Render block
-	protected MultiBlockTileInfo mbInfo;
-	
-	@Override
-	public void readFromNBT(NBTTagCompound nbt){
-		super.readFromNBT(nbt);
-		mbInfo = new MultiBlockTileInfo(nbt);
-	}
-	
-	@Override
-	public NBTTagCompound writeToNBT(NBTTagCompound nbt){
-		mbInfo.saveToNBT(nbt);
-		return super.writeToNBT(nbt);
-	}
+public class TilePowerTransformerPlaceHolder extends SETileEntity implements ISEMultiBlockTile {
+    //To minimize network usage, mbInfo will not be send to blocks other than the Render block
+    protected MultiBlockTileInfo mbInfo;
 
-	@Override
-	public MultiBlockTileInfo getMultiBlockTileInfo() {
-		return this.mbInfo;
-	}
-	
-	@Override
-	public void onStructureCreating(MultiBlockTileInfo mbInfo) {
-		this.mbInfo = mbInfo;
-		this.markDirty();
-	}
+    @Override
+    public void readFromNBT(NBTTagCompound nbt) {
+        super.readFromNBT(nbt);
+        this.mbInfo = new MultiBlockTileInfo(nbt);
+    }
 
-	@Override
-	public void onStructureCreated() {}
+    @Override
+    public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
+        this.mbInfo.saveToNBT(nbt);
+        return super.writeToNBT(nbt);
+    }
 
-	@Override
-	public void onStructureRemoved() {}
-	
-	public static class Primary extends TilePowerTransformerPlaceHolder{
-		public ISEGridNode getPrimaryTile() {
-			BlockPos pos = mbInfo.getPartPos(EnumBlockType.Primary.offset);
-			TileEntity te = world.getTileEntity(pos);
-			return (te instanceof TilePowerTransformerWinding.Primary) ?
-					((TilePowerTransformerWinding.Primary) te).getGridNode() : null;
-		}
-		
-		public boolean canConnect() {
-			BlockPos pos = mbInfo.getPartPos(EnumBlockType.Primary.offset);
-			TileEntity te = world.getTileEntity(pos);
-			return (te instanceof TilePowerTransformerWinding) ?
-					((TilePowerTransformerWinding) te).canConnect() : false;
-		}
-	}
-	
-	public static class Secondary extends TilePowerTransformerPlaceHolder{
-		public ISEGridNode getSecondaryTile() {
-			BlockPos pos = mbInfo.getPartPos(EnumBlockType.Secondary.offset);
-			TileEntity te = world.getTileEntity(pos);
-			return (te instanceof TilePowerTransformerWinding.Secondary) ?
-					((TilePowerTransformerWinding.Secondary) te).getGridNode() : null;
-		}
-		
-		public boolean canConnect() {
-			BlockPos pos = mbInfo.getPartPos(EnumBlockType.Secondary.offset);
-			TileEntity te = world.getTileEntity(pos);
-			return (te instanceof TilePowerTransformerWinding) ?
-					((TilePowerTransformerWinding) te).canConnect() : false;
-		}
-	}
-	
-	public static class Render extends TilePowerTransformerPlaceHolder{
-		@SideOnly(Side.CLIENT)
-		private EnumFacing facing;
-		@SideOnly(Side.CLIENT)
-		private boolean mirrored;
-		
-		@Override
-		public void prepareS2CPacketData(NBTTagCompound nbt) {
-			Utils.saveToNbt(nbt, "facing", mbInfo.facing);
-			nbt.setBoolean("mirrored", mbInfo.mirrored);
-		}
-		
-		@Override
-		@SideOnly(value = Side.CLIENT)
-		public void onSyncDataFromServerArrived(NBTTagCompound nbt) {
-			this.facing = Utils.facingFromNbt(nbt, "facing");
-			this.mirrored = nbt.getBoolean("mirrored");
-			
-			this.markForRenderUpdate();
-			
-			super.onSyncDataFromServerArrived(nbt);
-		}
-		
-		public EnumFacing getFacing() {
-			if (world.isRemote)
-				return facing;
-			else
-				return mbInfo.facing;
-		}
-		
-		public boolean isMirrored() {
-			if (world.isRemote)
-				return mirrored;
-			else
-				return mbInfo.mirrored;
-		}
-	}
+    @Override
+    public MultiBlockTileInfo getMultiBlockTileInfo() {
+        return mbInfo;
+    }
+
+    @Override
+    public void onStructureCreating(MultiBlockTileInfo mbInfo) {
+        this.mbInfo = mbInfo;
+        markDirty();
+    }
+
+    @Override
+    public void onStructureCreated() {
+    }
+
+    @Override
+    public void onStructureRemoved() {
+    }
+
+    public static class Primary extends TilePowerTransformerPlaceHolder {
+        public ISEGridNode getPrimaryTile() {
+            BlockPos pos = this.mbInfo.getPartPos(EnumBlockType.Primary.offset);
+            TileEntity te = this.world.getTileEntity(pos);
+            return te instanceof TilePowerTransformerWinding.Primary ?
+                    ((TilePowerTransformerWinding.Primary) te).getGridNode() : null;
+        }
+
+        public boolean canConnect() {
+            BlockPos pos = this.mbInfo.getPartPos(EnumBlockType.Primary.offset);
+            TileEntity te = this.world.getTileEntity(pos);
+            return te instanceof TilePowerTransformerWinding && ((TilePowerTransformerWinding) te).canConnect();
+        }
+    }
+
+    public static class Secondary extends TilePowerTransformerPlaceHolder {
+        public ISEGridNode getSecondaryTile() {
+            BlockPos pos = this.mbInfo.getPartPos(EnumBlockType.Secondary.offset);
+            TileEntity te = this.world.getTileEntity(pos);
+            return te instanceof TilePowerTransformerWinding.Secondary ?
+                    ((TilePowerTransformerWinding.Secondary) te).getGridNode() : null;
+        }
+
+        public boolean canConnect() {
+            BlockPos pos = this.mbInfo.getPartPos(EnumBlockType.Secondary.offset);
+            TileEntity te = this.world.getTileEntity(pos);
+            return te instanceof TilePowerTransformerWinding && ((TilePowerTransformerWinding) te).canConnect();
+        }
+    }
+
+    public static class Render extends TilePowerTransformerPlaceHolder {
+        @SideOnly(Side.CLIENT)
+        private EnumFacing facing;
+        @SideOnly(Side.CLIENT)
+        private boolean mirrored;
+
+        @Override
+        public void prepareS2CPacketData(NBTTagCompound nbt) {
+            Utils.saveToNbt(nbt, "facing", this.mbInfo.facing);
+            nbt.setBoolean("mirrored", this.mbInfo.mirrored);
+        }
+
+        @Override
+        @SideOnly(Side.CLIENT)
+        public void onSyncDataFromServerArrived(NBTTagCompound nbt) {
+            facing = Utils.facingFromNbt(nbt, "facing");
+            mirrored = nbt.getBoolean("mirrored");
+
+            markForRenderUpdate();
+
+            super.onSyncDataFromServerArrived(nbt);
+        }
+
+        public EnumFacing getFacing() {
+            if (this.world.isRemote)
+                return this.facing;
+            else
+                return this.mbInfo.facing;
+        }
+
+        public boolean isMirrored() {
+            if (this.world.isRemote)
+                return this.mirrored;
+            else
+                return this.mbInfo.mirrored;
+        }
+    }
 }

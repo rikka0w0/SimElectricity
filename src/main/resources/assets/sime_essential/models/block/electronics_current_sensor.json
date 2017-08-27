@@ -1,7 +1,7 @@
 {
-    "parent": "block/cube_all",
-    "textures": {
-        "all": "sime_essential:blocks/machines/current_sensor",
-        "particle": "sime_essential:blocks/machines/current_sensor"
-    }
+  "parent": "block/cube_all",
+  "textures": {
+    "all": "sime_essential:blocks/machines/current_sensor",
+    "particle": "sime_essential:blocks/machines/current_sensor"
+  }
 }

@@ -1,175 +1,170 @@
 package simelectricity.energynet.components;
 
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.math.BlockPos;
+import simelectricity.api.node.ISEGridNode;
+import simelectricity.energynet.SEGraph;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.math.BlockPos;
+public class GridNode extends SEComponent implements ISEGridNode {
+    private final BlockPos pos;
 
-import simelectricity.api.node.ISEGridNode;
-import simelectricity.energynet.SEGraph;
+    //0 - transmission line 1 - transformer primary 2 - transformer secondary
+    public byte type;
+    //Transformer secondary/primary
+    public GridNode complement;
+    public double ratio, resistance;
+    //Only stores resistances between GridNodes!
+    public LinkedList<Double> neighborR = new LinkedList<Double>();
+    //Simulation & Optimization
+    public Cable interConnection;
+    private final byte numOfParallelConductor;
+    //Only used for loading
+    private int[] neighborX;
+    private int[] neighborY;
+    private int[] neighborZ;
+    private double[] resistancesBuf;
+    private int complementX, complementY, complementZ;
 
-public class GridNode extends SEComponent implements ISEGridNode{
-	private final BlockPos pos;
-	
-	//0 - transmission line 1 - transformer primary 2 - transformer secondary
-	public byte type;
-	private byte numOfParallelConductor;
-	//Transformer secondary/primary
-	public GridNode complement;
-	public double ratio, resistance;
-	
-	
-	//Only stores resistances between GridNodes!
-	public LinkedList<Double> neighborR = new LinkedList<Double>();
-	
-	//Simulation & Optimization
-	public Cable interConnection = null;;
-	
-	//Only used for loading
-	private int[] neighborX;
-	private int[] neighborY;
-	private int[] neighborZ;
-	private double[] resistancesBuf;
-	private int complementX, complementY, complementZ;
-		
-	public GridNode(BlockPos pos, byte numOfParallelConductor){
-		this.pos = pos;
-		this.type = ISEGridNode.ISEGridNode_Wire;
-		this.numOfParallelConductor = numOfParallelConductor;;
-	}
-	
-	///////////////////////
-	/// Read from NBT
-	///////////////////////
-	
-	public GridNode(NBTTagCompound nbt){
-		this.pos = new BlockPos(
-				nbt.getInteger("x"),
-				nbt.getInteger("y"),
-				nbt.getInteger("z")
-				);
-		this.type = nbt.getByte("type");
-		this.numOfParallelConductor = nbt.getByte("numOfParallelConductor");
-		
-		this.neighborX = nbt.getIntArray("neigborX");
-		this.neighborY = nbt.getIntArray("neigborY");
-		this.neighborZ = nbt.getIntArray("neigborZ");
-		
-		this.complementY = nbt.getInteger("complementY");
-		if (complementY>0){
-			this.complementX = nbt.getInteger("complementX");
-			this.complementZ = nbt.getInteger("complementZ");
-			this.ratio = nbt.getDouble("ratio");
-			this.resistance = nbt.getDouble("resistance");
-		}
+    public GridNode(BlockPos pos, byte numOfParallelConductor) {
+        this.pos = pos;
+        type = ISEGridNode.ISEGridNode_Wire;
+        this.numOfParallelConductor = numOfParallelConductor;
+    }
 
-		
-		int numOfNeighbors = neighborX.length;
-		this.resistancesBuf = new double[numOfNeighbors];
-		for (int i=0; i<numOfNeighbors; i++){
-			resistancesBuf[i] = nbt.getDouble("R"+String.valueOf(i));
-		}
-	}
-	
-	public void buildNeighborConnection(HashMap<BlockPos, GridNode> gridNodeMap, SEGraph graph){
-		for (int i = 0; i<neighborX.length ; i++){
-			GridNode neighbor = gridNodeMap.get(new BlockPos(neighborX[i], neighborY[i], neighborZ[i]));
-			
-			graph.addGridEdge(this, neighbor, resistancesBuf[i]);
-		}
-		
-		this.complement = gridNodeMap.get(new BlockPos(complementX, complementY, complementZ));
-	}
-	
-	///////////////////////
-	/// Save to NBT
-	///////////////////////
-	public void writeToNBT(NBTTagCompound nbt) {
-		nbt.setInteger("x", pos.getX());
-		nbt.setInteger("y", pos.getY());
-		nbt.setInteger("z", pos.getZ());
-		nbt.setByte("type", type);
-		nbt.setByte("numOfParallelConductor", numOfParallelConductor);
+    ///////////////////////
+    /// Read from NBT
+    ///////////////////////
 
-		int length = 0;
-		for (SEComponent neighbor : neighbors){
-			if (neighbor instanceof GridNode)
-				length++;
-		}
-		
-		neighborX = new int[length];
-		neighborY = new int[length];
-		neighborZ = new int[length];
-		int i = 0;
-		Iterator<Double> iterator = neighborR.iterator();
-		for (SEComponent neighbor : neighbors){
-			if (neighbor instanceof GridNode){
-				GridNode gridNode = (GridNode)neighbor;
-				neighborX[i] = gridNode.pos.getX();
-				neighborY[i] = gridNode.pos.getY();
-				neighborZ[i] = gridNode.pos.getZ();
-				nbt.setDouble("R"+String.valueOf(i), iterator.next());
-				i++;
-			}
-		}
-		nbt.setIntArray("neigborX", neighborX);
-		nbt.setIntArray("neigborY", neighborY);
-		nbt.setIntArray("neigborZ", neighborZ);
-		
-		if (complement != null){
-			nbt.setInteger("complementX", complement.getPos().getX());
-			nbt.setInteger("complementY", complement.getPos().getY());
-			nbt.setInteger("complementZ", complement.getPos().getZ());
-		}else{
-			nbt.setInteger("complementY", -1);
-		}
-		nbt.setDouble("ratio", ratio);
-		nbt.setDouble("resistance", resistance);
-	}
-	
-	
-	public double getResistance(GridNode neighbor) {
-		Iterator<SEComponent> iterator1 = neighbors.iterator();
-		Iterator<Double> iterator2 = neighborR.iterator();
-		while(iterator1.hasNext()){
-			SEComponent cur = iterator1.next();
-			if (cur instanceof GridNode){
-				double res = iterator2.next();
-				if (cur == neighbor)
-					return res;
-			}
-		}
-		return Double.NaN;
-	}
-	
-	///////////////////////////////
-	///ISEGridNode
-	///////////////////////////////
-	@Override
-	public ISEGridNode[] getNeighborList(){
-		ISEGridNode[] ret = new ISEGridNode[this.neighbors.size()];
-		int i = 0; 
-		for (SEComponent neighbor : this.neighbors){
-			ret[i] = (ISEGridNode) neighbor;
-			i++;
-		}
-		return ret;
-	}
-	
-	@Override
-	public BlockPos getPos(){
-		return this.pos;
-	}
+    public GridNode(NBTTagCompound nbt) {
+        pos = new BlockPos(
+                nbt.getInteger("x"),
+                nbt.getInteger("y"),
+                nbt.getInteger("z")
+        );
+        type = nbt.getByte("type");
+        numOfParallelConductor = nbt.getByte("numOfParallelConductor");
 
-	@Override
-	public int getType() {
-		return this.type;
-	}
+        neighborX = nbt.getIntArray("neigborX");
+        neighborY = nbt.getIntArray("neigborY");
+        neighborZ = nbt.getIntArray("neigborZ");
 
-	@Override
-	public byte numOfParallelConductor() {
-		return numOfParallelConductor;
-	}
+        complementY = nbt.getInteger("complementY");
+        if (this.complementY > 0) {
+            complementX = nbt.getInteger("complementX");
+            complementZ = nbt.getInteger("complementZ");
+            ratio = nbt.getDouble("ratio");
+            resistance = nbt.getDouble("resistance");
+        }
+
+
+        int numOfNeighbors = this.neighborX.length;
+        resistancesBuf = new double[numOfNeighbors];
+        for (int i = 0; i < numOfNeighbors; i++) {
+            this.resistancesBuf[i] = nbt.getDouble("R" + String.valueOf(i));
+        }
+    }
+
+    public void buildNeighborConnection(HashMap<BlockPos, GridNode> gridNodeMap, SEGraph graph) {
+        for (int i = 0; i < this.neighborX.length; i++) {
+            GridNode neighbor = gridNodeMap.get(new BlockPos(this.neighborX[i], this.neighborY[i], this.neighborZ[i]));
+
+            graph.addGridEdge(this, neighbor, this.resistancesBuf[i]);
+        }
+
+        complement = gridNodeMap.get(new BlockPos(this.complementX, this.complementY, this.complementZ));
+    }
+
+    ///////////////////////
+    /// Save to NBT
+    ///////////////////////
+    public void writeToNBT(NBTTagCompound nbt) {
+        nbt.setInteger("x", this.pos.getX());
+        nbt.setInteger("y", this.pos.getY());
+        nbt.setInteger("z", this.pos.getZ());
+        nbt.setByte("type", this.type);
+        nbt.setByte("numOfParallelConductor", this.numOfParallelConductor);
+
+        int length = 0;
+        for (SEComponent neighbor : this.neighbors) {
+            if (neighbor instanceof GridNode)
+                length++;
+        }
+
+        this.neighborX = new int[length];
+        this.neighborY = new int[length];
+        this.neighborZ = new int[length];
+        int i = 0;
+        Iterator<Double> iterator = this.neighborR.iterator();
+        for (SEComponent neighbor : this.neighbors) {
+            if (neighbor instanceof GridNode) {
+                GridNode gridNode = (GridNode) neighbor;
+                this.neighborX[i] = gridNode.pos.getX();
+                this.neighborY[i] = gridNode.pos.getY();
+                this.neighborZ[i] = gridNode.pos.getZ();
+                nbt.setDouble("R" + String.valueOf(i), iterator.next());
+                i++;
+            }
+        }
+        nbt.setIntArray("neigborX", this.neighborX);
+        nbt.setIntArray("neigborY", this.neighborY);
+        nbt.setIntArray("neigborZ", this.neighborZ);
+
+        if (this.complement != null) {
+            nbt.setInteger("complementX", this.complement.getPos().getX());
+            nbt.setInteger("complementY", this.complement.getPos().getY());
+            nbt.setInteger("complementZ", this.complement.getPos().getZ());
+        } else {
+            nbt.setInteger("complementY", -1);
+        }
+        nbt.setDouble("ratio", this.ratio);
+        nbt.setDouble("resistance", this.resistance);
+    }
+
+
+    public double getResistance(GridNode neighbor) {
+        Iterator<SEComponent> iterator1 = this.neighbors.iterator();
+        Iterator<Double> iterator2 = this.neighborR.iterator();
+        while (iterator1.hasNext()) {
+            SEComponent cur = iterator1.next();
+            if (cur instanceof GridNode) {
+                double res = iterator2.next();
+                if (cur == neighbor)
+                    return res;
+            }
+        }
+        return Double.NaN;
+    }
+
+    ///////////////////////////////
+    ///ISEGridNode
+    ///////////////////////////////
+    @Override
+    public ISEGridNode[] getNeighborList() {
+        ISEGridNode[] ret = new ISEGridNode[neighbors.size()];
+        int i = 0;
+        for (SEComponent neighbor : neighbors) {
+            ret[i] = (ISEGridNode) neighbor;
+            i++;
+        }
+        return ret;
+    }
+
+    @Override
+    public BlockPos getPos() {
+        return pos;
+    }
+
+    @Override
+    public int getType() {
+        return type;
+    }
+
+    @Override
+    public byte numOfParallelConductor() {
+        return this.numOfParallelConductor;
+    }
 }

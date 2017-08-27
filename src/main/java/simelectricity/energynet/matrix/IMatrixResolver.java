@@ -4,7 +4,7 @@ import simelectricity.common.SEUtils;
 
 /**
  * A class that is designed to solve problem Ax=b
- * */
+ */
 public interface IMatrixResolver {
     /**
      * Initialize and create a size*size square matrix
@@ -27,16 +27,17 @@ public interface IMatrixResolver {
      * Solve the matrix, results will be stored in array b
      * <p/>
      * This function solves: Ax = b, A is the matrix that has been generated and stored within this class, b is the right hand side of the matrix, a vector, x is a vector containing the result
+     *
      * @param b is acting as both input and output, as an input parameter, b is the right hand side vector, after this function is executed, b will have the same content as x
-     * @return Return true if no error occurs during solving 
+     * @return Return true if no error occurs during solving
      */
     boolean solve(double[] b);
 
-	/**
-	 * Print the matrix, must be called after finishEditing()
-	 * */
-    public void print(String[] header);
-    
+    /**
+     * Print the matrix, must be called after finishEditing()
+     */
+    void print(String[] header);
+
     /**
      * Return the number of non-zero elements with in the matrix
      */
@@ -46,8 +47,8 @@ public interface IMatrixResolver {
      * Return the number of rows/columns of the matrix
      */
     int getMatrixSize();
-    
-    public static class MatrixHelper {
+
+    class MatrixHelper {
         public static IMatrixResolver newSolver(String name) {
             try {
                 return (IMatrixResolver) Class.forName("simelectricity.energynet.matrix." + name).newInstance();

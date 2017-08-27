@@ -26,9 +26,8 @@ package edu.emory.mathcs.csparsej.tdouble;
 
 /**
  * Common data structures.
- * 
+ *
  * @author Piotr Wendykier (piotr.wendykier@gmail.com)
- * 
  */
 public class Dcs_common {
 
@@ -39,9 +38,7 @@ public class Dcs_common {
     public static final String CS_COPYRIGHT = "Copyright (c) Timothy A. Davis, 2006-2009";
 
     /**
-     * 
      * Matrix in compressed-column or triplet form.
-     * 
      */
     public static class Dcs {
 
@@ -84,12 +81,10 @@ public class Dcs_common {
 
         }
 
-    };
+    }
 
     /**
-     * 
      * Output of symbolic Cholesky, LU, or QR analysis.
-     * 
      */
     public static class Dcss {
         /**
@@ -134,23 +129,21 @@ public class Dcs_common {
 
         public Dcss() {
         }
-    };
+    }
 
     /**
-     * 
      * Output of numeric Cholesky, LU, or QR factorization
-     * 
      */
     public static class Dcsn {
         /**
          * L for LU and Cholesky, V for QR
          */
-        public Dcs L;
+        public Dcs_common.Dcs L;
 
         /**
          * U for LU, R for QR, not used for Cholesky
          */
-        public Dcs U;
+        public Dcs_common.Dcs U;
 
         /**
          * partial pivoting for LU
@@ -165,12 +158,10 @@ public class Dcs_common {
         public Dcsn() {
         }
 
-    };
+    }
 
     /**
-     * 
      * Output of Dulmage-Mendelsohn decomposition.
-     * 
      */
     public static class Dcsd {
 
@@ -208,5 +199,6 @@ public class Dcs_common {
          * coarse column decomposition
          */
         public int[] cc;
-    };
+    }
+
 }
