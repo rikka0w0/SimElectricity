@@ -4,10 +4,11 @@ import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.util.IStringSerializable;
 
 public enum EnumBlockTypePole3 implements IStringSerializable {
-	Pole(0, "pole", true),
-	Crossarm10KvT0(1, "crossarm10kvt0", false),
-	Crossarm10KvT1(2, "crossarm10kvt1", false)
-	;
+	Pole(0, "pole", true, 0),
+	Crossarm10kVT0(1, "crossarm10kvt0", false, 3),
+	Crossarm10kVT1(2, "crossarm10kvt1", false, 3),
+	Crossarm415VT0(3, "crossarm415vt0", false, 4);
+	
 	public static final PropertyEnum<EnumBlockTypePole3> property = PropertyEnum.create("blocktype", EnumBlockTypePole3.class);
 	
 	public static final EnumBlockTypePole3[] values;
@@ -16,6 +17,7 @@ public enum EnumBlockTypePole3 implements IStringSerializable {
 	public final int index;
 	private final String name;
 	public final boolean ignoreFacing;
+	public final int numOfConductor;
 	
 	static {
 		values = new EnumBlockTypePole3[values().length];
@@ -27,10 +29,11 @@ public enum EnumBlockTypePole3 implements IStringSerializable {
 		}
 	}
 	
-	private EnumBlockTypePole3(int index, String name, boolean ignoreFacing) {
+	private EnumBlockTypePole3(int index, String name, boolean ignoreFacing, int numOfConductor) {
 		this.index = index;
 		this.name = name;
 		this.ignoreFacing = ignoreFacing;
+		this.numOfConductor = numOfConductor;
 	}
 	
 	@Override

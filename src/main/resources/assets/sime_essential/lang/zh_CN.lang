@@ -18,6 +18,10 @@ tile.sime_essential:essential_powerpole.0.name=35Kv输电塔0型
 tile.sime_essential:essential_powerpole.1.name=35Kv输电塔1型
 tile.sime_essential:essential_powerpole2.0.name=35Kv输电塔2型
 tile.sime_essential:essential_powerpole2.1.name=35Kv输电塔3型
+tile.sime_essential:essential_powerpole3.pole.name=电线杆
+tile.sime_essential:essential_powerpole3.crossarm10kvt0.name=支架(10kV, 0型)
+tile.sime_essential:essential_powerpole3.crossarm10kvt1.name=支架(10kV, 1型)
+tile.sime_essential:essential_powerpole3.crossarm415vt0.name=支架(415V, 0型)
 
 # Fluids
 fluid.vita_tea=扶她柠檬茶
@@ -35,15 +39,14 @@ item.sime_essential:essential_tools.glove.name=手套
 item.sime_essential:essential_tools.multimeter.name=万用表
 
 # Message
-chat.sime_essential:tranmission_tower_selected=你选择了一个输电塔
-chat.sime_essential:tranmission_tower_recursive_connection=不能把输电塔连接到本身上!
-chat.sime_essential:tranmission_tower_too_close=太近了!
-chat.sime_essential:tranmission_tower_too_far=太远了!
-chat.sime_essential:tranmission_tower_too_many_connection=不能连接更多的线路了!
-chat.sime_essential:tranmission_tower_connected=已连接!
-chat.sime_essential:tranmission_tower_current_selection_invalid=当前选择的输电塔是无效的!
-chat.sime_essential:tranmission_tower_last_selection_invalid=之前选择的输电塔已经无效了!
-chat.sime_essential:tranmission_tower_type_mismatch=两个电线杆的导线数量不一致!
+chat.sime_essential:powerpole_selected=你选择了一个输电塔
+chat.sime_essential:powerpole_connection_denied=连接被拒绝
+chat.sime_essential:powerpole_recursive_connection=不能把输电塔连接到本身上!
+chat.sime_essential:powerpole_too_close=太近了!
+chat.sime_essential:powerpole_too_far==太远了!
+chat.sime_essential:powerpole_current_selection_invalid=当前选择的输电塔是无效的!
+chat.sime_essential:powerpole_last_selection_invalid=前选择的输电塔已经无效了!
+chat.sime_essential:powerpole_type_mismatch=两个电线杆的导线数量不一致!
 
 # Gui
 gui.sime_essential:redstone_toggle_behavior=反转行为

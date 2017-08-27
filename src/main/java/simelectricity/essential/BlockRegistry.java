@@ -81,6 +81,7 @@ public class BlockRegistry {
 		registerTile(TilePowerTransformerWinding.Secondary.class);
 		registerTile(TilePowerPole3.Pole10KvType0.class);
 		registerTile(TilePowerPole3.Pole10KvType1.class);
+		registerTile(TilePowerPole3.Pole415vType0.class);
 		
 		registerTile(TileVoltageMeter.class);
 		registerTile(TileQuantumGenerator.class);

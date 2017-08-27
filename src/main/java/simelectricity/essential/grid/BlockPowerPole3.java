@@ -149,7 +149,7 @@ public class BlockPowerPole3 extends SEBlock implements ITileEntityProvider, ISE
 				
 				if (!world.isRemote) {
 					//TODO: CHECK!
-					SEAPI.energyNetAgent.attachGridNode(world, SEAPI.energyNetAgent.newGridNode(pos, 3));
+					SEAPI.energyNetAgent.attachGridNode(world, SEAPI.energyNetAgent.newGridNode(pos, blockType.numOfConductor));
 
 					world.notifyBlockUpdate(pos, state, state, 2);
 				}
@@ -183,10 +183,12 @@ public class BlockPowerPole3 extends SEBlock implements ITileEntityProvider, ISE
 		switch (blockType) {
 		case Pole:
 			return null;
-		case Crossarm10KvT0:
+		case Crossarm10kVT0:
 			return new TilePowerPole3.Pole10KvType0();
-		case Crossarm10KvT1:
+		case Crossarm10kVT1:
 			return new TilePowerPole3.Pole10KvType1();
+		case Crossarm415VT0:
+			return new TilePowerPole3.Pole415vType0();
 		}
 		return null;
 	}
