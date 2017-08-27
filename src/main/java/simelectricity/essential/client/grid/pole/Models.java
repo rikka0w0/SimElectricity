@@ -5,10 +5,13 @@ import java.util.LinkedList;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.math.Vec3i;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import simelectricity.essential.utils.client.SERenderHeap;
 import simelectricity.essential.utils.client.SERenderHelper;
 import simelectricity.essential.utils.math.Vec3f;
 
+@SideOnly(Side.CLIENT)
 public class Models {
 	public static void renderInsulators(Vec3i pos, Vec3f from, Vec3f to, double angle, SERenderHeap modelInsulator, LinkedList<BakedQuad> quads){
 		for (int i=0; i<3; i++){

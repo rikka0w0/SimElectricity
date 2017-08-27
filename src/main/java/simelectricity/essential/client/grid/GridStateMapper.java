@@ -4,17 +4,20 @@ import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.StateMapperBase;
+import net.minecraft.item.ItemBlock;
 import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import simelectricity.essential.BlockRegistry;
 import simelectricity.essential.client.GhostModel;
 import simelectricity.essential.client.ISEModelLoader;
-import simelectricity.essential.client.grid.pole.CableJointRawModel;
-import simelectricity.essential.client.grid.pole.PowerPole2RawModel;
-import simelectricity.essential.client.grid.pole.PowerPoleBottomRawModel;
-import simelectricity.essential.client.grid.pole.PowerPoleTopRawModel;
+import simelectricity.essential.client.grid.pole.*;
+import simelectricity.essential.grid.BlockPowerPole3;
+import simelectricity.essential.grid.EnumBlockTypePole3;
 import simelectricity.essential.grid.Properties;
 
+@SideOnly(Side.CLIENT)
 public class GridStateMapper extends StateMapperBase implements ISEModelLoader {
 	public final static String VPATH = "virtual/blockstates/grid";
 	public final String domain;
@@ -48,9 +51,18 @@ public class GridStateMapper extends StateMapperBase implements ISEModelLoader {
 			
 		} else if (block == BlockRegistry.powerPole2) {
 			int type = state.getValue(Properties.propertyType);
-			boolean isRod = state.getValue(Properties.propertyIsRod);
+			boolean isRod = state.getValue(Properties.propertyIsPole);
 			int facing = state.getValue(Properties.propertyFacing2);
 			varStr = facing + "," + type + "," + isRod;
+		} else if (block == BlockRegistry.powerPole3) {
+			EnumBlockTypePole3 blockType = state.getValue(EnumBlockTypePole3.property);
+			int type = blockType.ordinal();
+			int facing = state.getValue(Properties.propertyFacing);
+			
+			if (blockType.ignoreFacing)
+				facing = 0;
+			
+			varStr = facing + "," + type;
 		}
 		
 		ModelResourceLocation res = new ModelResourceLocation(this.domain + ":" + VPATH, 
@@ -82,6 +94,10 @@ public class GridStateMapper extends StateMapperBase implements ISEModelLoader {
 			int type = Integer.parseInt(splited[3]);
 			boolean isRod = Boolean.parseBoolean(splited[4]);
 			return new PowerPole2RawModel(facing, type, isRod);		
+		} else if (block == BlockRegistry.powerPole3) {
+			int facing = Integer.parseInt(splited[2]);
+			EnumBlockTypePole3 blockType = EnumBlockTypePole3.fromInt(Integer.parseInt(splited[3]));
+			return new PowerPole3RawModel(blockType, facing);
 		}
 		
 		return null;
@@ -89,5 +105,17 @@ public class GridStateMapper extends StateMapperBase implements ISEModelLoader {
 	
 	public void register(Block block){
 		ModelLoader.setCustomStateMapper(block, this);
+	}
+	
+	public void register(BlockPowerPole3 block){
+		ModelLoader.setCustomStateMapper(block, this);
+		
+		ItemBlock itemBlock = block.itemBlock;
+		for (EnumBlockTypePole3 blockType: EnumBlockTypePole3.values) {
+			ModelResourceLocation res = this.getModelResourceLocation(
+					block.getDefaultState().withProperty(EnumBlockTypePole3.property, blockType));
+			//Also register inventory variants here
+			ModelLoader.setCustomModelResourceLocation(itemBlock, blockType.ordinal(), res);
+		}
 	}
 }

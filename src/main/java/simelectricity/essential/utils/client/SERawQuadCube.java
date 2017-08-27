@@ -71,16 +71,18 @@ public class SERawQuadCube implements ISERawElement<SERawQuadCube>{
 	}
 	
 	@Override
-	public void translateCoord(float x, float y, float z){
+	public SERawQuadCube translateCoord(float x, float y, float z){
 		for (int i=0; i<vertexes.length; i++){
 			vertexes[i][0] += x;
 			vertexes[i][1] += y;
 			vertexes[i][2] += z;
-		}			
+		}
+		
+		return this;
 	}
 
 	@Override
-	public void rotateAroundX(float angle){
+	public SERawQuadCube rotateAroundX(float angle){
         float f1 = MathHelper.cos(-angle * 0.01745329252F);
         float f2 = MathHelper.sin(-angle * 0.01745329252F);
 
@@ -92,10 +94,12 @@ public class SERawQuadCube implements ISERawElement<SERawQuadCube>{
 	        vertexes[i][1] = d1;
 	        vertexes[i][2] = d2;
         }
+		
+		return this;
 	}
 
 	@Override
-	public void rotateAroundY(float angle){
+	public SERawQuadCube rotateAroundY(float angle){
         float f1 = MathHelper.cos(angle * 0.01745329252F);
         float f2 = MathHelper.sin(angle * 0.01745329252F);
         
@@ -107,10 +111,12 @@ public class SERawQuadCube implements ISERawElement<SERawQuadCube>{
             vertexes[i][1] = d1;
             vertexes[i][2] = d2;
         }
+		
+		return this;
 	}
 	
 	@Override
-    public void rotateAroundZ(float angle)
+    public SERawQuadCube rotateAroundZ(float angle)
     {
         float f1 = MathHelper.cos(-angle * 0.01745329252F);
         float f2 = MathHelper.sin(-angle * 0.01745329252F);
@@ -124,17 +130,21 @@ public class SERawQuadCube implements ISERawElement<SERawQuadCube>{
 	        vertexes[i][1] = d1;
 	        vertexes[i][2] = d2;
 	    }
+		
+		return this;
     }
 
 	@Override
-    public void rotateToVec(float xStart, float yStart, float zStart, float xEnd, float yEnd, float zEnd){
+    public SERawQuadCube rotateToVec(float xStart, float yStart, float zStart, float xEnd, float yEnd, float zEnd){
     	float distance = SEMathHelper.distanceOf(xStart, yStart, zStart, xEnd, yEnd, zEnd);
         rotateAroundY((float)(Math.atan2(zStart - zEnd, xEnd - xStart) * 180 / Math.PI));
         rotateAroundVector((float) (Math.acos((yEnd - yStart) / distance) * 180 / Math.PI), (zEnd - zStart) / distance, 0, (xStart - xEnd) / distance);
+		
+		return this;
     }
     
 	@Override
-    public void rotateToDirection(EnumFacing direction){
+    public SERawQuadCube rotateToDirection(EnumFacing direction){
 		switch (direction){
 		case DOWN:
 			rotateAroundX(180);
@@ -157,10 +167,12 @@ public class SERawQuadCube implements ISERawElement<SERawQuadCube>{
 		default:
 			break;
 		}
+		
+		return this;
     }
 	
 	@Override
-    public void rotateAroundVector(float angle, float x, float y, float z){
+    public SERawQuadCube rotateAroundVector(float angle, float x, float y, float z){
     	//Normalize the axis vector
     	float length = MathHelper.sqrt(x*x + y*y + z*z);
     	x = x/length;
@@ -179,6 +191,8 @@ public class SERawQuadCube implements ISERawElement<SERawQuadCube>{
     		vertexes[i][1] = d1;
     		vertexes[i][2] = d2;
     	}
+		
+		return this;
     }
 
 	@Override

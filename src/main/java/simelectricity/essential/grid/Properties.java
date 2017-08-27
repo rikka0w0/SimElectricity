@@ -9,5 +9,5 @@ public class Properties {
 	public final static IProperty<Integer> propertyFacing = PropertyInteger.create("facing", 0 , 7);	//bit3-bit0
 	
 	public final static IProperty<Integer> propertyFacing2 = PropertyInteger.create("facing", 0 , 3);	//bit2-bit0
-	public final static IProperty<Boolean> propertyIsRod = PropertyBool.create("isrod");				//bit3
+	public final static IProperty<Boolean> propertyIsPole = PropertyBool.create("ispole");				//bit3
 }

@@ -16,6 +16,7 @@ import simelectricity.essential.common.ISEGuiProvider;
 import simelectricity.essential.grid.TileCableJoint;
 import simelectricity.essential.grid.TilePowerPole;
 import simelectricity.essential.grid.TilePowerPole2;
+import simelectricity.essential.grid.TilePowerPole3;
 import simelectricity.essential.grid.transformer.TilePowerTransformerWinding;
 import simelectricity.essential.machines.gui.GuiAdjustableResistor;
 import simelectricity.essential.machines.gui.GuiAdjustableTransformer;
@@ -44,7 +45,6 @@ import net.minecraft.util.IThreadListener;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.client.registry.ClientRegistry;
 
 public class ClientProxy extends CommonProxy{
 	@Override
@@ -95,6 +95,7 @@ public class ClientProxy extends CommonProxy{
 		loader.registerInventoryIcon(BlockRegistry.powerPoleTop.itemBlock);
 		gStateMapper.register(BlockRegistry.powerPole2);
 		loader.registerInventoryIcon(BlockRegistry.powerPole2.itemBlock);
+		gStateMapper.register(BlockRegistry.powerPole3);
 		
 		PowerTransformerStateMapper ptStateMapper = new PowerTransformerStateMapper(Essential.modID);
 		loader.registerModelLoader(ptStateMapper);
@@ -115,11 +116,13 @@ public class ClientProxy extends CommonProxy{
 		
 		SEEAPI.coloredBlocks.add(BlockRegistry.blockCable);
 		
-		ClientRegistry.bindTileEntitySpecialRenderer(TileCableJoint.class, new TileRenderPowerPole());
-		ClientRegistry.bindTileEntitySpecialRenderer(TilePowerPole.class, new TileRenderPowerPole());
-		ClientRegistry.bindTileEntitySpecialRenderer(TilePowerPole2.class, new TileRenderPowerPole());
-		ClientRegistry.bindTileEntitySpecialRenderer(TilePowerTransformerWinding.Primary.class, new TileRenderPowerPole());
-		ClientRegistry.bindTileEntitySpecialRenderer(TilePowerTransformerWinding.Secondary.class, new TileRenderPowerPole());
+		TileRenderPowerPole.register(TileCableJoint.class);
+		TileRenderPowerPole.register(TilePowerPole.class);
+		TileRenderPowerPole.register(TilePowerPole2.class);
+		TileRenderPowerPole.register(TilePowerTransformerWinding.Primary.class);
+		TileRenderPowerPole.register(TilePowerTransformerWinding.Secondary.class);
+		TileRenderPowerPole.register(TilePowerPole3.Pole10KvType0.class);
+		TileRenderPowerPole.register(TilePowerPole3.Pole10KvType1.class);
 	}
 	
 	@Override

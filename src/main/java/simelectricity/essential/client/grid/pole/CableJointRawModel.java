@@ -7,8 +7,11 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.model.IModelState;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import simelectricity.essential.client.TextureLoaderModel;
 
+@SideOnly(Side.CLIENT)
 public class CableJointRawModel extends TextureLoaderModel{
 	private final ResourceLocation textures[] = new ResourceLocation[3];
 	private final int facing;

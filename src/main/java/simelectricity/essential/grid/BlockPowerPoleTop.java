@@ -59,7 +59,7 @@ public class BlockPowerPoleTop extends SEBlock implements ITileEntityProvider, I
 	/// Initialize
 	///////////////////
 	public BlockPowerPoleTop() {
-		super("essential_powerpole", Material.GLASS, ItemBlock.class);
+		super("essential_powerpole", Material.ROCK, ItemBlock.class);
 	}
 
 	@Override

@@ -12,9 +12,12 @@ import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.Vec3i;
 import net.minecraftforge.client.MinecraftForgeClient;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import simelectricity.essential.client.BlockRenderModel;
 import simelectricity.essential.grid.BlockPowerPoleBottom;
 
+@SideOnly(Side.CLIENT)
 public class PowerPoleBottomModel extends BlockRenderModel {
 	private final TextureAtlasSprite texture;
 	private final LinkedList<BakedQuad> quads;

@@ -1,17 +1,25 @@
 package simelectricity.essential.client.grid;
 
+import java.lang.ref.WeakReference;
 import java.util.LinkedList;
+import java.util.List;
 
 import org.apache.commons.lang3.tuple.Pair;
 
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.IBlockAccess;
+import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import simelectricity.api.tile.ISEGridTile;
+import simelectricity.essential.common.UnlistedNonNullProperty;
+import simelectricity.essential.utils.client.SERawQuadGroup;
 import simelectricity.essential.utils.math.SEMathHelper;
 import simelectricity.essential.utils.math.Vec3f;
 
@@ -29,7 +37,7 @@ public class PowerPoleRenderHelper {
 	 * Buffer
 	 */
 	public LinkedList<ConnectionInfo[]> connectionInfo = new LinkedList();
-	public LinkedList<Pair<Vec3f, Vec3f>> extraWires = new LinkedList();
+	public LinkedList<ExtraWireInfo> extraWires = new LinkedList();
 	
 	public PowerPoleRenderHelper(IBlockAccess world, BlockPos pos, int rotationMC, int numOfGroup, int insulatorPerGroup) {
 		this(world, pos, rotationMC, false, numOfGroup, insulatorPerGroup);
@@ -89,6 +97,10 @@ public class PowerPoleRenderHelper {
 		addedGroup++;
 	}
 	
+	/**
+	 * Override this to add extra wires, DO NOT forget to call super.updateRenderData() first!
+	 * @param neighborPosList
+	 */
 	public void updateRenderData(BlockPos... neighborPosList) {
 		this.connectionInfo.clear();
 		this.extraWires.clear();
@@ -104,6 +116,10 @@ public class PowerPoleRenderHelper {
 				this.findConnection(helper);
 			}
 		}
+	}
+	
+	public void addExtraWire(Vec3f from, Vec3f to, float tension) {
+		this.extraWires.add(new ExtraWireInfo(from, to, tension));
 	}
 	
 	public static Pair<Vec3f, Vec3f>[] swapIfIntersect(Pair<Vec3f, Vec3f>[] connections) {
@@ -291,7 +307,52 @@ public class PowerPoleRenderHelper {
     	}
     }
     
+    public static class ExtraWireInfo {
+    	public final Vec3f from, to;
+    	public final float tension;
+    	
+    	private ExtraWireInfo(Vec3f from, Vec3f to, float tension) {
+    		this.from = from;
+    		this.to = to;
+    		this.tension = tension;
+    	}
+    }
+    
+    ////////////////////////////
+    /// Utils
+    ////////////////////////////
     public static void notifyChanged(ISEPowerPole... list) {
     	GridRenderMonitor.instance.notifyChanged(list);
+    }
+    
+    public static PowerPoleRenderHelper fromState(IBlockState blockState) {
+    	if (!(blockState instanceof IExtendedBlockState))
+    		//Normally this should not happen, just in case, to prevent crashing
+		    return null;
+    	
+    	IExtendedBlockState exBlockState = (IExtendedBlockState)blockState;
+    	WeakReference<ISEGridTile> ref = exBlockState.getValue(UnlistedNonNullProperty.propertyGridTile);
+    	ISEGridTile gridTile = ref==null ? null : ref.get();
+    	
+    	if (!(gridTile instanceof ISEPowerPole))
+    		//Normally this should not happen, just in case, to prevent crashing
+    		return null;
+		    
+    	return ((ISEPowerPole)gridTile).getRenderHelper();
+    }
+    
+    public void renderInsulator(SERawQuadGroup insulatorModel, List<BakedQuad> quads) {
+	    for (PowerPoleRenderHelper.ConnectionInfo[] connections: connectionInfo) {
+	    	for (PowerPoleRenderHelper.ConnectionInfo connection: connections) {
+	        	SERawQuadGroup insulator = insulatorModel.clone();
+	    		
+	    		insulator.rotateAroundZ(connection.insulatorAngle / SEMathHelper.PI * 180F);
+	    		insulator.rotateToVec(connection.from.xCoord,connection.from.yCoord,connection.from.zCoord,
+	    				connection.fixedTo.xCoord,connection.from.yCoord,connection.fixedTo.zCoord);
+	    		insulator.translateCoord(connection.from.xCoord,connection.from.yCoord,connection.from.zCoord);
+	    		insulator.translateCoord(-pos.getX(), -pos.getY(), -pos.getZ());
+	    		insulator.bake(quads);
+	    	}
+	    }
     }
 }

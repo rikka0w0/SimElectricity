@@ -48,7 +48,7 @@ public class BlockPowerPole2 extends SEBlock implements ITileEntityProvider, ISE
 	public static final String[] subNames = {"0" , "1"};
 	
 	public BlockPowerPole2() {
-		super("essential_powerpole2", Material.GLASS, ItemBlock.class);
+		super("essential_powerpole2", Material.ROCK, ItemBlock.class);
 	}
 
 	@Override
@@ -99,7 +99,7 @@ public class BlockPowerPole2 extends SEBlock implements ITileEntityProvider, ISE
 	@Override
 	protected final BlockStateContainer createBlockState(){
 		return new ExtendedBlockState(this, 
-				new IProperty[] {Properties.propertyType, Properties.propertyIsRod, Properties.propertyFacing2},
+				new IProperty[] {Properties.propertyType, Properties.propertyIsPole, Properties.propertyFacing2},
 				new IUnlistedProperty[] {UnlistedNonNullProperty.propertyGridTile});
 	}
 	
@@ -107,14 +107,14 @@ public class BlockPowerPole2 extends SEBlock implements ITileEntityProvider, ISE
     public final IBlockState getStateFromMeta(int meta){
 		meta &= 15;
         return super.getDefaultState().withProperty(Properties.propertyType, meta>>3)
-        		.withProperty(Properties.propertyIsRod, (meta&4)>0)
+        		.withProperty(Properties.propertyIsPole, (meta&4)>0)
         		.withProperty(Properties.propertyFacing2, meta&3);
     }
 	
 	@Override
     public final int getMetaFromState(IBlockState state){
 		int type = state.getValue(Properties.propertyType);
-		boolean isRod = state.getValue(Properties.propertyIsRod);
+		boolean isRod = state.getValue(Properties.propertyIsPole);
 		int facing = state.getValue(Properties.propertyFacing2);
 		int meta = (type<<3) | (isRod?4:0) | facing;
 		return meta;
@@ -150,7 +150,7 @@ public class BlockPowerPole2 extends SEBlock implements ITileEntityProvider, ISE
     	int facingInt = 4 - MathHelper.floor((placer.rotationYaw) * 4.0F / 360.0F + 0.5D) & 3;
     	int type = damage;
     	return state.withProperty(Properties.propertyType, type)
-    			.withProperty(Properties.propertyIsRod, false)
+    			.withProperty(Properties.propertyIsPole, false)
     			.withProperty(Properties.propertyFacing2, facingInt);
 	}
 	
@@ -174,7 +174,7 @@ public class BlockPowerPole2 extends SEBlock implements ITileEntityProvider, ISE
     @Override
     public void breakBlock(World world, BlockPos pos, IBlockState state) {
 		int type = state.getValue(Properties.propertyType);
-		boolean isRod = state.getValue(Properties.propertyIsRod);
+		boolean isRod = state.getValue(Properties.propertyIsPole);
 		int facing = state.getValue(Properties.propertyFacing2);
 		
 		if (isRod){
@@ -188,7 +188,7 @@ public class BlockPowerPole2 extends SEBlock implements ITileEntityProvider, ISE
 			BlockPos centerPos = new BlockPos(pos.getX() + rodBlockOffsetMatrix[facing][0], yc, pos.getZ() + rodBlockOffsetMatrix[facing][1]);
 			IBlockState centerState = world.getBlockState(centerPos);
 			
-			if (centerState.getBlock() == this && !centerState.getValue(Properties.propertyIsRod))
+			if (centerState.getBlock() == this && !centerState.getValue(Properties.propertyIsPole))
 				world.setBlockToAir(centerPos);	//Sequentially everthing else will be removed
 		}else{
 			//Center Block
@@ -200,7 +200,7 @@ public class BlockPowerPole2 extends SEBlock implements ITileEntityProvider, ISE
 	    		BlockPos rodPos = blockInfo.getRealPos(pos).down(11);
 	    		IBlockState rodState = world.getBlockState(rodPos);
 	    		
-	    		if (rodState.getBlock() == this && rodState.getValue(Properties.propertyIsRod))
+	    		if (rodState.getBlock() == this && rodState.getValue(Properties.propertyIsPole))
 	    			world.setBlockToAir(rodPos);
 	    	}
 	    	
@@ -218,14 +218,17 @@ public class BlockPowerPole2 extends SEBlock implements ITileEntityProvider, ISE
 
 	@Override
 	public TileEntity createNewTileEntity(World world, int meta) {
-		if (!this.getStateFromMeta(meta).getValue(Properties.propertyIsRod))
+		if (!this.getStateFromMeta(meta).getValue(Properties.propertyIsPole))
 			return new TilePowerPole2();
 		return null;
 	}
 	
+	///////////////////
+	/// BoundingBox
+	///////////////////	
 	@Override
 	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
-		boolean isRod = state.getValue(Properties.propertyIsRod);
+		boolean isRod = state.getValue(Properties.propertyIsPole);
 		int facing = state.getValue(Properties.propertyFacing2);
 		
 		if (isRod){
@@ -233,7 +236,7 @@ public class BlockPowerPole2 extends SEBlock implements ITileEntityProvider, ISE
 			IBlockState centerState = source.getBlockState(centerPos);
 			
 			if (centerState.getBlock() == this){
-				if (!centerState.getValue(Properties.propertyIsRod))
+				if (!centerState.getValue(Properties.propertyIsPole))
 					if (facing == 0 || facing == 2){
 						return new AxisAlignedBB(0.125F, 0, 0, 0.875F, 1, 1);
 					}else{
@@ -253,8 +256,9 @@ public class BlockPowerPole2 extends SEBlock implements ITileEntityProvider, ISE
 		}
 	}
 	
+	@Override
 	public void addCollisionBoxToList(IBlockState state, World world, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes, @Nullable Entity entityIn, boolean magicBool){
-		boolean isRod = state.getValue(Properties.propertyIsRod);
+		boolean isRod = state.getValue(Properties.propertyIsPole);
 		int facing = state.getValue(Properties.propertyFacing2);
 
 		if (isRod){
@@ -264,7 +268,7 @@ public class BlockPowerPole2 extends SEBlock implements ITileEntityProvider, ISE
 			IBlockState centerState = world.getBlockState(centerPos);
 			
 			if (centerState.getBlock() == this){
-				if (!centerState.getValue(Properties.propertyIsRod)) {
+				if (!centerState.getValue(Properties.propertyIsPole)) {
 					if (facing == 0 || facing == 2)
 						Block.addCollisionBoxToList(pos, entityBox, collidingBoxes, new AxisAlignedBB(0, 0, 0.125F, 1, 0.25F, 0.875F));
 					else
@@ -313,7 +317,7 @@ public class BlockPowerPole2 extends SEBlock implements ITileEntityProvider, ISE
 			IBlockState state = world.getBlockState(pos);
 			Block block = state.getBlock();
 			
-			if (block == this && state.getValue(Properties.propertyIsRod) && state.getValue(Properties.propertyType) > 0)
+			if (block == this && state.getValue(Properties.propertyIsPole) && state.getValue(Properties.propertyType) > 0)
 				 return pos.getY();
 			
 			pos = pos.down();
@@ -353,7 +357,7 @@ public class BlockPowerPole2 extends SEBlock implements ITileEntityProvider, ISE
 	private TileEntity getCenterTileFromRodPos(IBlockAccess world, BlockPos pos){
 		IBlockState state = world.getBlockState(pos);
 		int type = state.getValue(Properties.propertyType);
-		boolean isRod = state.getValue(Properties.propertyIsRod);
+		boolean isRod = state.getValue(Properties.propertyIsPole);
 		int facing = state.getValue(Properties.propertyFacing2);
 		
 		if (isRod){
@@ -367,7 +371,7 @@ public class BlockPowerPole2 extends SEBlock implements ITileEntityProvider, ISE
 			BlockPos centerPos = new BlockPos(pos.getX() + rodBlockOffsetMatrix[facing][0], yc, pos.getZ() + rodBlockOffsetMatrix[facing][1]);
 			IBlockState centerState = world.getBlockState(centerPos);
 			
-			if (centerState.getBlock() == this && !centerState.getValue(Properties.propertyIsRod))
+			if (centerState.getBlock() == this && !centerState.getValue(Properties.propertyIsPole))
 				return world.getTileEntity(centerPos);
 			
 			return null;

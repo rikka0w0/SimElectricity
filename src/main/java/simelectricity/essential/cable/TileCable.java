@@ -73,7 +73,8 @@ public class TileCable extends SEEnergyTile implements ISEGenericCable, ISEIumin
             	ISECoverPanel coverPanel = SEEAPI.coverPanelRegistry.fromNBT(tag);
             	installedCoverPanels[side] = coverPanel;
             	
-            	coverPanel.setHost(this, EnumFacing.getFront(side));
+            	if (coverPanel != null)
+            		coverPanel.setHost(this, EnumFacing.getFront(side));
             }
         }
 	}

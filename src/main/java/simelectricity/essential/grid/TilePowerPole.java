@@ -1,7 +1,5 @@
 package simelectricity.essential.grid;
 
-import org.apache.commons.lang3.tuple.Pair;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -26,8 +24,12 @@ public class TilePowerPole extends SEEnergyTile implements ISEGridTile, ISEPower
     private PowerPoleRenderHelper renderHelper;
 	
 	@SideOnly(Side.CLIENT)
-	protected int getTypeFromMeta(){
-		return getBlockMetadata() >> 3;
+	protected boolean scheduleBlockRenderUpdateWhenChange(){
+		return isSpecial();
+	}
+	
+	protected boolean isSpecial() {
+		return (getBlockMetadata() >> 3) == 0;
 	}
 	
 	@SideOnly(Side.CLIENT)
@@ -35,7 +37,7 @@ public class TilePowerPole extends SEEnergyTile implements ISEGridTile, ISEPower
 		PowerPoleRenderHelper helper;
 		int rotation = getBlockMetadata() & 7;
 		
-		if (getTypeFromMeta() == 0) {
+		if (isSpecial()) {
 			helper = new PowerPoleRenderHelper(world, pos, rotation, 2, 3) {
 				@Override
 				public void updateRenderData(BlockPos... neighborPosList) {
@@ -53,16 +55,16 @@ public class TilePowerPole extends SEEnergyTile implements ISEGridTile, ISEPower
 		    		3.95F * MathHelper.cos(this.rotation/180F*SEMathHelper.PI) + 0.5F + this.pos.getZ()
 		    		);
 		    		
-		    		extraWires.add(Pair.of(connection1[1].fixedFrom, pos));
-		    		extraWires.add(Pair.of(pos, connection2[1].fixedFrom));
+		    		addExtraWire(connection1[1].fixedFrom, pos, 2.5F);
+		    		addExtraWire(pos, connection2[1].fixedFrom, 2.5F);
 		    		if (PowerPoleRenderHelper.hasIntersection(
 		    				connection1[0].fixedFrom, connection2[0].fixedFrom,
 		    				connection1[2].fixedFrom, connection2[2].fixedFrom)) {
-		    			extraWires.add(Pair.of(connection1[0].fixedFrom, connection2[2].fixedFrom));
-		    			extraWires.add(Pair.of(connection1[2].fixedFrom, connection2[0].fixedFrom));
+		    			addExtraWire(connection1[0].fixedFrom, connection2[2].fixedFrom, 2.5F);
+		    			addExtraWire(connection1[2].fixedFrom, connection2[0].fixedFrom, 2.5F);
 		    		}else {
-		    			extraWires.add(Pair.of(connection1[0].fixedFrom, connection2[0].fixedFrom));
-		    			extraWires.add(Pair.of(connection1[2].fixedFrom, connection2[2].fixedFrom));
+		    			addExtraWire(connection1[0].fixedFrom, connection2[0].fixedFrom, 2.5F);
+		    			addExtraWire(connection1[2].fixedFrom, connection2[2].fixedFrom, 2.5F);
 		    		}
 				}
 			};
@@ -95,7 +97,7 @@ public class TilePowerPole extends SEEnergyTile implements ISEGridTile, ISEPower
 	@Override
 	public void updateRenderInfo() {		
 		getRenderHelper().updateRenderData(neighbor1, neighbor2);
-		if (getTypeFromMeta() == 0)
+		if (scheduleBlockRenderUpdateWhenChange())
 			this.markForRenderUpdate();
 	}
 	
@@ -130,8 +132,8 @@ public class TilePowerPole extends SEEnergyTile implements ISEGridTile, ISEPower
 
 		this.markTileEntityForS2CSync();
 		
-		notifyNeighbor(neighbor1);
-		notifyNeighbor(neighbor2);
+		//notifyNeighbor(neighbor1);
+		//notifyNeighbor(neighbor2);
 	}
 
 	public boolean canConnect() {

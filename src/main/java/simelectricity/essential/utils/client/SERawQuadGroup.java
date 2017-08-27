@@ -34,46 +34,60 @@ public class SERawQuadGroup implements ISERawModel<SERawQuadGroup>{
 	}
 	
 	@Override
-	public void translateCoord(float x, float y, float z) {
+	public SERawQuadGroup translateCoord(float x, float y, float z) {
 		for (ISERawModel part: elements)
 			part.translateCoord(x, y, z);
+		
+		return this;
 	}
 
 	@Override
-	public void rotateAroundX(float angle) {
+	public SERawQuadGroup rotateAroundX(float angle) {
 		for (ISERawModel part: elements)
 			part.rotateAroundX(angle);
+		
+		return this;
 	}
 
 	@Override
-	public void rotateAroundY(float angle) {
+	public SERawQuadGroup rotateAroundY(float angle) {
 		for (ISERawModel part: elements)
 			part.rotateAroundY(angle);
+		
+		return this;
 	}
 
 	@Override
-	public void rotateAroundZ(float angle) {
+	public SERawQuadGroup rotateAroundZ(float angle) {
 		for (ISERawModel part: elements)
 			part.rotateAroundZ(angle);
+		
+		return this;
 	}
 
 	@Override
-	public void rotateToVec(float xStart, float yStart, float zStart,
+	public SERawQuadGroup rotateToVec(float xStart, float yStart, float zStart,
 			float xEnd, float yEnd, float zEnd) {
 		for (ISERawModel part: elements)
 			part.rotateToVec(xStart, yStart, zStart, xEnd, yEnd, zEnd);
+		
+		return this;
 	}
 
 	@Override
-    public void rotateToDirection(EnumFacing direction){
+    public SERawQuadGroup rotateToDirection(EnumFacing direction){
 		for (ISERawModel part: elements)
 			part.rotateToDirection(direction);
+		
+		return this;
 	}
 	
 	@Override
-	public void rotateAroundVector(float angle, float x, float y, float z) {
+	public SERawQuadGroup rotateAroundVector(float angle, float x, float y, float z) {
 		for (ISERawModel part: elements)
 			part.rotateAroundVector(angle, x, y, z);
+		
+		return this;
 	}
 
 	@Override

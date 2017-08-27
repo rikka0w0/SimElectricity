@@ -1,6 +1,5 @@
 package simelectricity.essential.client.grid.pole;
 
-import java.lang.ref.WeakReference;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -12,15 +11,11 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.client.MinecraftForgeClient;
-import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import simelectricity.api.tile.ISEGridTile;
 
 import simelectricity.essential.client.BlockRenderModel;
-import simelectricity.essential.client.grid.ISEPowerPole;
 import simelectricity.essential.client.grid.PowerPoleRenderHelper;
-import simelectricity.essential.common.UnlistedNonNullProperty;
 import simelectricity.essential.utils.client.SERawQuadCube;
 import simelectricity.essential.utils.client.SERenderHeap;
 import simelectricity.essential.utils.client.SERenderHelper;
@@ -98,20 +93,8 @@ public class PowerPole2Model extends BlockRenderModel {
 			
 			LinkedList<BakedQuad> quads = new LinkedList();
 			quads.addAll(this.quads);
-			
-		    if (!(blockState instanceof IExtendedBlockState))
-		    	//Normally this should not happen, just in case, to prevent crashing
-		    	return ImmutableList.of();
 		    
-		    IExtendedBlockState exBlockState = (IExtendedBlockState)blockState;
-		    WeakReference<ISEGridTile> ref = exBlockState.getValue(UnlistedNonNullProperty.propertyGridTile);
-		    ISEGridTile gridTile = ref==null ? null : ref.get();
-			
-		    if (!(gridTile instanceof ISEPowerPole))
-		    	//Normally this should not happen, just in case, to prevent crashing
-		    	return ImmutableList.of();
-		    
-		    PowerPoleRenderHelper helper = ((ISEPowerPole)gridTile).getRenderHelper();
+		    PowerPoleRenderHelper helper = PowerPoleRenderHelper.fromState(blockState);
 		    
 		    if (helper == null)
 		    	return quads;	//Before the new placed block receiving the update packet from server;

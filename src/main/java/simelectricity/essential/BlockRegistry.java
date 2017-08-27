@@ -8,12 +8,14 @@ import simelectricity.essential.cable.BlockCable;
 import simelectricity.essential.cable.TileCable;
 import simelectricity.essential.grid.BlockCableJoint;
 import simelectricity.essential.grid.BlockPowerPole2;
+import simelectricity.essential.grid.BlockPowerPole3;
 import simelectricity.essential.grid.BlockPowerPoleBottom;
 import simelectricity.essential.grid.BlockPowerPoleCollisionBox;
 import simelectricity.essential.grid.BlockPowerPoleTop;
 import simelectricity.essential.grid.TileCableJoint;
 import simelectricity.essential.grid.TilePowerPole;
 import simelectricity.essential.grid.TilePowerPole2;
+import simelectricity.essential.grid.TilePowerPole3;
 import simelectricity.essential.grid.transformer.BlockPowerTransformer;
 import simelectricity.essential.grid.transformer.TilePowerTransformerPlaceHolder;
 import simelectricity.essential.grid.transformer.TilePowerTransformerWinding;
@@ -45,6 +47,7 @@ public class BlockRegistry {
 	public static BlockPowerPoleCollisionBox powerPoleCollisionBox;
 	public static BlockCableJoint cableJoint;
 	public static BlockPowerPole2 powerPole2;
+	public static BlockPowerPole3 powerPole3;
 	public static BlockPowerTransformer powerTransformer;
 	
 	public static BlockElectronics blockElectronics;
@@ -58,6 +61,7 @@ public class BlockRegistry {
 		powerPoleCollisionBox = new BlockPowerPoleCollisionBox();
 		cableJoint = new BlockCableJoint();
 		powerPole2 = new BlockPowerPole2();
+		powerPole3 = new BlockPowerPole3();
 		powerTransformer = new BlockPowerTransformer();
 		
 		blockElectronics = new BlockElectronics();
@@ -75,6 +79,8 @@ public class BlockRegistry {
 		registerTile(TilePowerTransformerPlaceHolder.Render.class);
 		registerTile(TilePowerTransformerWinding.Primary.class);
 		registerTile(TilePowerTransformerWinding.Secondary.class);
+		registerTile(TilePowerPole3.Pole10KvType0.class);
+		registerTile(TilePowerPole3.Pole10KvType1.class);
 		
 		registerTile(TileVoltageMeter.class);
 		registerTile(TileQuantumGenerator.class);

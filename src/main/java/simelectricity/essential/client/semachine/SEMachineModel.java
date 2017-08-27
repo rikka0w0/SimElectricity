@@ -4,9 +4,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.annotation.Nullable;
-import javax.vecmath.Matrix4f;
-
-import org.apache.commons.lang3.tuple.Pair;
 
 import simelectricity.essential.common.semachine.ExtendedProperties;
 
@@ -15,18 +12,15 @@ import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.block.model.ItemOverrideList;
-import net.minecraft.client.renderer.block.model.ItemTransformVec3f;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.EnumFacing;
-import net.minecraftforge.client.model.IPerspectiveAwareModel;
-import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
-public class SEMachineModel implements IPerspectiveAwareModel {
+public class SEMachineModel implements IBakedModel {
 	private final IBakedModel bakedModel;
 	public SEMachineModel(IBakedModel bakedModel){
 		this.bakedModel = bakedModel;
@@ -57,29 +51,6 @@ public class SEMachineModel implements IPerspectiveAwareModel {
 	@Override
 	public ItemOverrideList getOverrides() {
 		return ItemOverrideList.NONE;	//I'm not sure what this thing does QAQ, only know this prevents crashing 233
-	}
-
-	@Override
-	public Pair<? extends IBakedModel, Matrix4f> handlePerspective(ItemCameraTransforms.TransformType cameraTransformType) {
-		if (bakedModel instanceof IPerspectiveAwareModel) {
-	      Matrix4f matrix4f = ((IPerspectiveAwareModel)bakedModel).handlePerspective(cameraTransformType).getRight();
-	      return Pair.of(this, matrix4f);
-	    } else {
-	      // If the parent model isn't an IPerspectiveAware, we'll need to generate the correct matrix ourselves using the
-	      //  ItemCameraTransforms.
-
-	      ItemCameraTransforms itemCameraTransforms = bakedModel.getItemCameraTransforms();
-	      ItemTransformVec3f itemTransformVec3f = itemCameraTransforms.getTransform(cameraTransformType);
-	      TRSRTransformation tr = new TRSRTransformation(itemTransformVec3f);
-	      Matrix4f mat = null;
-	      if (tr != null) { // && tr != TRSRTransformation.identity()) {
-	        mat = tr.getMatrix();
-	      }
-	      // The TRSRTransformation for vanilla items have blockCenterToCorner() applied, however handlePerspective
-	      //  reverses it back again with blockCornerToCenter().  So we don't need to apply it here.
-
-	      return Pair.of(this, mat);
-	    }
 	}
 	
 	private int[] getSocketIconArray(IExtendedBlockState exBlockState){
