@@ -45,7 +45,7 @@ public class SimElectricity {
     @SidedProxy(clientSide = "simelectricity.ClientProxy", serverSide = "simelectricity.CommonProxy")
     public static CommonProxy proxy;
 
-    @Mod.Instance(SimElectricity.SimElectricity.MODID)
+    @Mod.Instance(SimElectricity.MODID)
     public static SimElectricity instance;
 
     /**
@@ -65,7 +65,7 @@ public class SimElectricity {
         new EnergyNetEventHandler();
 
         //Register creative tabs
-        SEAPI.SETab = new CreativeTabs(SimElectricity.SimElectricity.MODID) {
+        SEAPI.SETab = new CreativeTabs(SimElectricity.MODID) {
             @Override
             @SideOnly(Side.CLIENT)
             public ItemStack getTabIconItem() {

@@ -90,8 +90,8 @@ public class GuiDirectionSelector {
         protected GuiDirectionSelectorButton(int xPos, int yPos, byte type, EnumFacing actualDirection) {
             this.xPos = xPos;
             this.yPos = yPos;
-            this.width = GuiDirectionSelector.GuiDirectionSelectorButton.GuiDirectionSelectorButton.widthList[type];
-            this.height = GuiDirectionSelector.GuiDirectionSelectorButton.GuiDirectionSelectorButton.heightList[type];
+            this.width = GuiDirectionSelector.GuiDirectionSelectorButton.widthList[type];
+            this.height = GuiDirectionSelector.GuiDirectionSelectorButton.heightList[type];
             this.type = type;
             this.actualDirection = actualDirection;
 

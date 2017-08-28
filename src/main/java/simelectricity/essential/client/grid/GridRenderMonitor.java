@@ -19,7 +19,7 @@ public class GridRenderMonitor {
 
     public GridRenderMonitor() {
         MinecraftForge.EVENT_BUS.register(this);
-        GridRenderMonitor.GridRenderMonitor.instance = this;
+        GridRenderMonitor.instance = this;
     }
 
     public void notifyChanged(ISEPowerPole... list) {

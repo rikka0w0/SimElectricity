@@ -16,12 +16,12 @@ import simelectricity.essential.utils.client.SERawQuadCube;
 import java.util.LinkedList;
 
 public class SupportRender {
-    private static final SupportRender instance = new SupportRender();
+    private static SupportRender instance = new SupportRender();
     private TextureAtlasSprite[] textures;
     private final LinkedList<BakedQuad>[] bakedQuads = new LinkedList[6];    //BakedQuads for all 6 directions
 
     public SupportRender() {
-        SupportRender.SupportRender.instance = this;
+        SupportRender.instance = this;
         MinecraftForge.EVENT_BUS.register(this);
     }
 

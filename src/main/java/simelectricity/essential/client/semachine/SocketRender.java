@@ -21,7 +21,7 @@ public class SocketRender {
     private static TextureAtlasSprite[] icons;
 
     public SocketRender() {
-        SocketRender.SocketRender.icons = new TextureAtlasSprite[ISESocketProvider.numOfSockets];
+        SocketRender.icons = new TextureAtlasSprite[ISESocketProvider.numOfSockets];
 
         MinecraftForge.EVENT_BUS.register(this);
     }

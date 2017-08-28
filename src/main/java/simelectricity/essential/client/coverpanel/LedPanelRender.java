@@ -10,6 +10,6 @@ public class LedPanelRender extends GenericCoverPanelRender {
 
     public LedPanelRender() {
         super("ledpanel");
-        LedPanelRender.LedPanelRender.instance = this;
+        LedPanelRender.instance = this;
     }
 }

@@ -74,22 +74,22 @@ public class SERenderHelper {
     public static void rotateCubeToDirection(double[][] cubeVertexes, EnumFacing direction) {
         switch (direction) {
             case DOWN:
-                SERenderHelper.SERenderHelper.rotateAroundX(cubeVertexes, 180);
+                SERenderHelper.rotateAroundX(cubeVertexes, 180);
                 break;
             case NORTH:
-                SERenderHelper.SERenderHelper.rotateAroundY(cubeVertexes, 180);
-                SERenderHelper.SERenderHelper.rotateAroundX(cubeVertexes, 270);
+                SERenderHelper.rotateAroundY(cubeVertexes, 180);
+                SERenderHelper.rotateAroundX(cubeVertexes, 270);
                 break;
             case SOUTH:
-                SERenderHelper.SERenderHelper.rotateAroundX(cubeVertexes, 90);
+                SERenderHelper.rotateAroundX(cubeVertexes, 90);
                 break;
             case WEST:
-                SERenderHelper.SERenderHelper.rotateAroundY(cubeVertexes, 270);
-                SERenderHelper.SERenderHelper.rotateAroundZ(cubeVertexes, 90);
+                SERenderHelper.rotateAroundY(cubeVertexes, 270);
+                SERenderHelper.rotateAroundZ(cubeVertexes, 90);
                 break;
             case EAST:
-                SERenderHelper.SERenderHelper.rotateAroundY(cubeVertexes, 90);
-                SERenderHelper.SERenderHelper.rotateAroundZ(cubeVertexes, 270);
+                SERenderHelper.rotateAroundY(cubeVertexes, 90);
+                SERenderHelper.rotateAroundZ(cubeVertexes, 270);
                 break;
             default:
                 break;

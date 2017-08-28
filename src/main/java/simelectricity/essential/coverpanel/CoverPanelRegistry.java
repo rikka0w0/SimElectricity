@@ -13,7 +13,7 @@ public class CoverPanelRegistry implements ISECoverPanelRegistry {
     private final LinkedList<ISECoverPanelFactory> factories = new LinkedList<ISECoverPanelFactory>();
 
     public CoverPanelRegistry() {
-        CoverPanelRegistry.CoverPanelRegistry.instance = this;
+        CoverPanelRegistry.instance = this;
     }
 
     @Override

@@ -66,12 +66,12 @@ public class Dcs_util {
         if (A == null)
             return false;
         if (nzmax <= 0)
-            nzmax = Dcs_util.Dcs_util.CS_CSC(A) ? A.p[A.n] : A.nz;
+            nzmax = Dcs_util.CS_CSC(A) ? A.p[A.n] : A.nz;
         int[] Ainew = new int[nzmax];
         int length = Math.min(nzmax, A.i.length);
         System.arraycopy(A.i, 0, Ainew, 0, length);
         A.i = Ainew;
-        if (Dcs_util.Dcs_util.CS_TRIPLET(A)) {
+        if (Dcs_util.CS_TRIPLET(A)) {
             int[] Apnew = new int[nzmax];
             length = Math.min(nzmax, A.p.length);
             System.arraycopy(A.p, 0, Apnew, 0, length);

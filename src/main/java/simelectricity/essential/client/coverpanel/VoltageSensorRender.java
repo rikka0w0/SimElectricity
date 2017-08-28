@@ -10,6 +10,6 @@ public class VoltageSensorRender extends GenericCoverPanelRender {
 
     public VoltageSensorRender() {
         super("voltagesensor");
-        VoltageSensorRender.VoltageSensorRender.instance = this;
+        VoltageSensorRender.instance = this;
     }
 }
