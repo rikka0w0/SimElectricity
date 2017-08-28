@@ -5,7 +5,7 @@ import net.minecraft.inventory.IContainerListener;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import simelectricity.essential.common.ContainerNoInventory;
+import rikka.librikka.container.ContainerNoInventory;
 import simelectricity.essential.machines.tile.TileVoltageMeter;
 import simelectricity.essential.utils.network.ISEContainerUpdate;
 import simelectricity.essential.utils.network.MessageContainerSync;

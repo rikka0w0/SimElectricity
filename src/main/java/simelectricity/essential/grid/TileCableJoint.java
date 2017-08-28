@@ -7,6 +7,8 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import rikka.librikka.Properties;
+import rikka.librikka.Utils;
 import simelectricity.api.SEAPI;
 import simelectricity.api.node.ISEGridNode;
 import simelectricity.api.node.ISESimulatable;
@@ -15,7 +17,6 @@ import simelectricity.api.tile.ISEGridTile;
 import simelectricity.essential.client.grid.ISEPowerPole;
 import simelectricity.essential.client.grid.PowerPoleRenderHelper;
 import simelectricity.essential.common.SEEnergyTile;
-import simelectricity.essential.utils.Utils;
 
 public class TileCableJoint extends SEEnergyTile implements ISECableTile, ISEGridTile, ISEPowerPole {
     private final ISESimulatable cableNode = SEAPI.energyNetAgent.newCable(this, true);
@@ -157,7 +158,7 @@ public class TileCableJoint extends SEEnergyTile implements ISECableTile, ISEGri
     @SideOnly(Side.CLIENT)
     protected PowerPoleRenderHelper createRenderHelper() {
         //Create renderHelper on client side
-        int rotation = this.world.getBlockState(this.pos).getValue(Properties.propertyFacing);
+        int rotation = this.world.getBlockState(this.pos).getValue(Properties.facing3bit);
         PowerPoleRenderHelper renderHelper = new PowerPoleRenderHelper(this.world, this.pos, rotation, 1, 3);
         renderHelper.addInsulatorGroup(0.6F, 1.45F, 0F,
                 renderHelper.createInsulator(0, 2, -0.3F, 1.17F, -0.95F),

@@ -4,8 +4,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import rikka.librikka.math.Vec3f;
 import simelectricity.essential.client.grid.PowerPoleRenderHelper;
-import simelectricity.essential.utils.math.Vec3f;
 
 public abstract class TilePowerPole3 extends TilePowerPole {
     public int facing;

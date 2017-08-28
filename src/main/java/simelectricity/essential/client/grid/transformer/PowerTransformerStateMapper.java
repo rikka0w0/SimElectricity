@@ -8,10 +8,10 @@ import net.minecraft.item.ItemBlock;
 import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.obj.OBJLoader;
+import rikka.librikka.Properties;
+import rikka.librikka.model.SingleTextureModel;
+import rikka.librikka.model.codebased.ISEModelLoader;
 import simelectricity.essential.BlockRegistry;
-import simelectricity.essential.client.ISEModelLoader;
-import simelectricity.essential.client.SingleTextureModel;
-import simelectricity.essential.grid.Properties;
 import simelectricity.essential.grid.transformer.BlockPowerTransformer;
 import simelectricity.essential.grid.transformer.EnumBlockType;
 
@@ -42,7 +42,7 @@ public class PowerTransformerStateMapper extends StateMapperBase implements ISEM
             EnumBlockType blockType = state.getValue(EnumBlockType.property);
 
             if (blockType == EnumBlockType.Render) {
-                int facing = state.getValue(Properties.propertyFacing2);
+                int facing = state.getValue(Properties.facing2bit);
                 boolean mirrored = state.getValue(BlockPowerTransformer.propertyMirrored);
                 varStr = state.getValue(EnumBlockType.property).ordinal() + "," + facing + "," + mirrored;
             } else {

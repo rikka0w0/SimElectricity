@@ -4,16 +4,17 @@ import com.google.common.collect.ImmutableList;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.common.property.IExtendedBlockState;
+import rikka.librikka.UnlistedPropertyRef;
+import rikka.librikka.model.codebased.BlockRenderModel;
+import rikka.librikka.model.quadbuilder.SERawQuadCube;
 import simelectricity.essential.api.ISEGenericCable;
 import simelectricity.essential.api.client.ISECoverPanelRender;
 import simelectricity.essential.api.coverpanel.ISECoverPanel;
-import simelectricity.essential.client.BlockRenderModel;
-import simelectricity.essential.common.UnlistedNonNullProperty;
-import simelectricity.essential.utils.client.SERawQuadCube;
 
 import javax.annotation.Nullable;
 import java.lang.ref.WeakReference;
@@ -106,11 +107,13 @@ public class CableModel extends BlockRenderModel {
             return ImmutableList.of();
 
         IExtendedBlockState exBlockState = (IExtendedBlockState) blockState;
-        WeakReference<ISEGenericCable> ref = exBlockState.getValue(UnlistedNonNullProperty.propertyCable);
-        ISEGenericCable cable = ref == null ? null : ref.get();
+        WeakReference<TileEntity> ref = exBlockState.getValue(UnlistedPropertyRef.propertyTile);
+        TileEntity te = ref == null ? null : ref.get();
 
-        if (cable == null)
+        if (!(te instanceof ISEGenericCable))
             return ImmutableList.of();
+        
+        ISEGenericCable cable = (ISEGenericCable) te;
 
         BlockRenderLayer layer = MinecraftForgeClient.getRenderLayer();
 

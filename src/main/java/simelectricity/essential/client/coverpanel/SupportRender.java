@@ -5,13 +5,12 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.event.TextureStitchEvent.Pre;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import rikka.librikka.model.quadbuilder.SERawQuadCube;
 import simelectricity.essential.Essential;
 import simelectricity.essential.api.coverpanel.ISECoverPanel;
-import simelectricity.essential.utils.client.SERawQuadCube;
 
 import java.util.LinkedList;
 

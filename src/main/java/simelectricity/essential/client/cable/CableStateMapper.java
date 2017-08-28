@@ -8,8 +8,8 @@ import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import rikka.librikka.model.codebased.ISEModelLoader;
 import simelectricity.essential.cable.BlockCable;
-import simelectricity.essential.client.ISEModelLoader;
 
 @SideOnly(Side.CLIENT)
 public class CableStateMapper extends StateMapperBase implements ISEModelLoader {

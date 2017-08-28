@@ -15,6 +15,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import rikka.librikka.Utils;
 import simelectricity.essential.Essential;
 import simelectricity.essential.client.semachine.ISESidedTextureBlock;
 import simelectricity.essential.common.semachine.SEMachineBlock;
@@ -23,7 +24,6 @@ import simelectricity.essential.machines.tile.TileAdjustableTransformer;
 import simelectricity.essential.machines.tile.TileCurrentSensor;
 import simelectricity.essential.machines.tile.TileDiode;
 import simelectricity.essential.machines.tile.TileSwitch;
-import simelectricity.essential.utils.Utils;
 
 import javax.annotation.Nullable;
 

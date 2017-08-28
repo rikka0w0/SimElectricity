@@ -11,12 +11,13 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import rikka.librikka.math.SEMathHelper;
+import rikka.librikka.math.Vec3f;
+import rikka.librikka.model.quadbuilder.SERawQuadGroup;
+
 import org.apache.commons.lang3.tuple.Pair;
 import simelectricity.api.tile.ISEGridTile;
-import simelectricity.essential.common.UnlistedNonNullProperty;
-import simelectricity.essential.utils.client.SERawQuadGroup;
-import simelectricity.essential.utils.math.SEMathHelper;
-import simelectricity.essential.utils.math.Vec3f;
+import simelectricity.essential.grid.UnlistedNonNullProperty;
 
 import java.lang.ref.WeakReference;
 import java.util.LinkedList;

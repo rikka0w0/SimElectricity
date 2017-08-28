@@ -7,7 +7,7 @@ import net.minecraft.util.IThreadListener;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.IGuiHandler;
-import simelectricity.essential.common.ISEGuiProvider;
+import rikka.librikka.tileentity.ISEGuiProvider;
 
 public class CommonProxy implements IGuiHandler {
     public EntityPlayer getClientPlayer() {

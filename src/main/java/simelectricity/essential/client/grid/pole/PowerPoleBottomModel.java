@@ -10,7 +10,7 @@ import net.minecraft.util.math.Vec3i;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import simelectricity.essential.client.BlockRenderModel;
+import rikka.librikka.model.codebased.BlockRenderModel;
 import simelectricity.essential.grid.BlockPowerPoleBottom;
 
 import java.util.LinkedList;

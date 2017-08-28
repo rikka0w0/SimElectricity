@@ -4,6 +4,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
@@ -23,16 +24,16 @@ import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import rikka.librikka.Properties;
+import rikka.librikka.block.ISESubBlock;
+import rikka.librikka.block.SEBlock;
+import rikka.librikka.item.ISESimpleTextureItem;
+import rikka.librikka.item.SEItemBlock;
 import simelectricity.api.SEAPI;
 import simelectricity.api.node.ISEGridNode;
 import simelectricity.api.tile.ISEGridTile;
 import simelectricity.essential.BlockRegistry;
 import simelectricity.essential.api.ISEHVCableConnector;
-import simelectricity.essential.client.ISESimpleTextureItem;
-import simelectricity.essential.common.ISESubBlock;
-import simelectricity.essential.common.SEBlock;
-import simelectricity.essential.common.SEItemBlock;
-import simelectricity.essential.common.UnlistedNonNullProperty;
 
 import javax.annotation.Nullable;
 import java.lang.ref.WeakReference;
@@ -64,7 +65,7 @@ public class BlockPowerPole2 extends SEBlock implements ITileEntityProvider, ISE
     private static LinkedList<BlockInfo> getRodBlockOffsets(IBlockState state) {
         LinkedList<BlockInfo> list = new LinkedList();
 
-        int facing = state.getValue(Properties.propertyFacing2);
+        int facing = state.getValue(Properties.facing2bit);
         int facing1 = facing - 1 & 3;
         int facing2 = facing + 1 & 3;
 
@@ -82,7 +83,7 @@ public class BlockPowerPole2 extends SEBlock implements ITileEntityProvider, ISE
     private static LinkedList<Vec3i> getCollisionBoxBlockXZOffsets(IBlockState state) {
         LinkedList<Vec3i> list = new LinkedList();
 
-        int facing = state.getValue(Properties.propertyFacing2);
+        int facing = state.getValue(Properties.facing2bit);
 
         int facing1 = facing - 1 & 3;
         int xoffset = BlockPowerPole2.cbOffsetMatrix[facing1][0];
@@ -121,26 +122,27 @@ public class BlockPowerPole2 extends SEBlock implements ITileEntityProvider, ISE
     ///////////////////////////////
     ///BlockStates
     ///////////////////////////////
+    public static final IProperty<Boolean> propertyIsPole = PropertyBool.create("ispole");                //bit3
     @Override
     protected final BlockStateContainer createBlockState() {
         return new ExtendedBlockState(this,
-                new IProperty[]{Properties.propertyType, Properties.propertyIsPole, Properties.propertyFacing2},
+                new IProperty[]{Properties.type1bit, propertyIsPole, Properties.facing2bit},
                 new IUnlistedProperty[]{UnlistedNonNullProperty.propertyGridTile});
     }
 
     @Override
     public final IBlockState getStateFromMeta(int meta) {
         meta &= 15;
-        return getDefaultState().withProperty(Properties.propertyType, meta >> 3)
-                .withProperty(Properties.propertyIsPole, (meta & 4) > 0)
-                .withProperty(Properties.propertyFacing2, meta & 3);
+        return getDefaultState().withProperty(Properties.type1bit, meta >> 3)
+                .withProperty(propertyIsPole, (meta & 4) > 0)
+                .withProperty(Properties.facing2bit, meta & 3);
     }
 
     @Override
     public final int getMetaFromState(IBlockState state) {
-        int type = state.getValue(Properties.propertyType);
-        boolean isRod = state.getValue(Properties.propertyIsPole);
-        int facing = state.getValue(Properties.propertyFacing2);
+        int type = state.getValue(Properties.type1bit);
+        boolean isRod = state.getValue(propertyIsPole);
+        int facing = state.getValue(Properties.facing2bit);
         int meta = type << 3 | (isRod ? 4 : 0) | facing;
         return meta;
     }
@@ -166,7 +168,7 @@ public class BlockPowerPole2 extends SEBlock implements ITileEntityProvider, ISE
     //////////////////////////////////////
     @Override
     public int damageDropped(IBlockState state) {
-        return state.getValue(Properties.propertyType);
+        return state.getValue(Properties.type1bit);
     }
 
     @Override
@@ -174,9 +176,9 @@ public class BlockPowerPole2 extends SEBlock implements ITileEntityProvider, ISE
         IBlockState state = super.getStateForPlacement(world, pos, facing, hitX, hitY, hitZ, damage, placer);
         int facingInt = 4 - MathHelper.floor(placer.rotationYaw * 4.0F / 360.0F + 0.5D) & 3;
         int type = damage;
-        return state.withProperty(Properties.propertyType, type)
-                .withProperty(Properties.propertyIsPole, false)
-                .withProperty(Properties.propertyFacing2, facingInt);
+        return state.withProperty(Properties.type1bit, type)
+                .withProperty(propertyIsPole, false)
+                .withProperty(Properties.facing2bit, facingInt);
     }
 
     @Override
@@ -198,13 +200,13 @@ public class BlockPowerPole2 extends SEBlock implements ITileEntityProvider, ISE
 
     @Override
     public void breakBlock(World world, BlockPos pos, IBlockState state) {
-        int type = state.getValue(Properties.propertyType);
-        boolean isRod = state.getValue(Properties.propertyIsPole);
-        int facing = state.getValue(Properties.propertyFacing2);
+        int type = state.getValue(Properties.type1bit);
+        boolean isRod = state.getValue(propertyIsPole);
+        int facing = state.getValue(Properties.facing2bit);
 
         if (isRod) {
             int yc;
-            if (state.getValue(Properties.propertyType) > 0) {
+            if (state.getValue(Properties.type1bit) > 0) {
                 yc = pos.getY() + 11;
             } else {
                 yc = this.getBottomRodY(world, pos) + 11;
@@ -213,7 +215,7 @@ public class BlockPowerPole2 extends SEBlock implements ITileEntityProvider, ISE
             BlockPos centerPos = new BlockPos(pos.getX() + BlockPowerPole2.rodBlockOffsetMatrix[facing][0], yc, pos.getZ() + BlockPowerPole2.rodBlockOffsetMatrix[facing][1]);
             IBlockState centerState = world.getBlockState(centerPos);
 
-            if (centerState.getBlock() == this && !centerState.getValue(Properties.propertyIsPole))
+            if (centerState.getBlock() == this && !centerState.getValue(propertyIsPole))
                 world.setBlockToAir(centerPos);    //Sequentially everthing else will be removed
         } else {
             //Center Block
@@ -225,7 +227,7 @@ public class BlockPowerPole2 extends SEBlock implements ITileEntityProvider, ISE
                 BlockPos rodPos = blockInfo.getRealPos(pos).down(11);
                 IBlockState rodState = world.getBlockState(rodPos);
 
-                if (rodState.getBlock() == this && rodState.getValue(Properties.propertyIsPole))
+                if (rodState.getBlock() == this && rodState.getValue(propertyIsPole))
                     world.setBlockToAir(rodPos);
             }
 
@@ -243,7 +245,7 @@ public class BlockPowerPole2 extends SEBlock implements ITileEntityProvider, ISE
 
     @Override
     public TileEntity createNewTileEntity(World world, int meta) {
-        if (!getStateFromMeta(meta).getValue(Properties.propertyIsPole))
+        if (!getStateFromMeta(meta).getValue(propertyIsPole))
             return new TilePowerPole2();
         return null;
     }
@@ -253,15 +255,15 @@ public class BlockPowerPole2 extends SEBlock implements ITileEntityProvider, ISE
     ///////////////////
     @Override
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
-        boolean isRod = state.getValue(Properties.propertyIsPole);
-        int facing = state.getValue(Properties.propertyFacing2);
+        boolean isRod = state.getValue(propertyIsPole);
+        int facing = state.getValue(Properties.facing2bit);
 
         if (isRod) {
             BlockPos centerPos = pos.add(BlockPowerPole2.rodBlockOffsetMatrix[facing][0], 0, BlockPowerPole2.rodBlockOffsetMatrix[facing][1]);
             IBlockState centerState = source.getBlockState(centerPos);
 
             if (centerState.getBlock() == this) {
-                if (!centerState.getValue(Properties.propertyIsPole))
+                if (!centerState.getValue(propertyIsPole))
                     if (facing == 0 || facing == 2) {
                         return new AxisAlignedBB(0.125F, 0, 0, 0.875F, 1, 1);
                     } else {
@@ -283,8 +285,8 @@ public class BlockPowerPole2 extends SEBlock implements ITileEntityProvider, ISE
 
     @Override
     public void addCollisionBoxToList(IBlockState state, World world, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes, @Nullable Entity entityIn, boolean magicBool) {
-        boolean isRod = state.getValue(Properties.propertyIsPole);
-        int facing = state.getValue(Properties.propertyFacing2);
+        boolean isRod = state.getValue(propertyIsPole);
+        int facing = state.getValue(Properties.facing2bit);
 
         if (isRod) {
             Block.addCollisionBoxToList(pos, entityBox, collidingBoxes, new AxisAlignedBB(0.375F, 0, 0.375F, 0.625F, 1, 0.625F));
@@ -293,7 +295,7 @@ public class BlockPowerPole2 extends SEBlock implements ITileEntityProvider, ISE
             IBlockState centerState = world.getBlockState(centerPos);
 
             if (centerState.getBlock() == this) {
-                if (!centerState.getValue(Properties.propertyIsPole)) {
+                if (!centerState.getValue(propertyIsPole)) {
                     if (facing == 0 || facing == 2)
                         Block.addCollisionBoxToList(pos, entityBox, collidingBoxes, new AxisAlignedBB(0, 0, 0.125F, 1, 0.25F, 0.875F));
                     else
@@ -314,7 +316,7 @@ public class BlockPowerPole2 extends SEBlock implements ITileEntityProvider, ISE
             IBlockState state = world.getBlockState(pos);
             Block block = state.getBlock();
 
-            if (block == this && state.getValue(Properties.propertyIsPole) && state.getValue(Properties.propertyType) > 0)
+            if (block == this && state.getValue(propertyIsPole) && state.getValue(Properties.type1bit) > 0)
                 return pos.getY();
 
             pos = pos.down();
@@ -325,13 +327,13 @@ public class BlockPowerPole2 extends SEBlock implements ITileEntityProvider, ISE
 
     private TileEntity getCenterTileFromRodPos(IBlockAccess world, BlockPos pos) {
         IBlockState state = world.getBlockState(pos);
-        int type = state.getValue(Properties.propertyType);
-        boolean isRod = state.getValue(Properties.propertyIsPole);
-        int facing = state.getValue(Properties.propertyFacing2);
+        int type = state.getValue(Properties.type1bit);
+        boolean isRod = state.getValue(propertyIsPole);
+        int facing = state.getValue(Properties.facing2bit);
 
         if (isRod) {
             int yc;
-            if (state.getValue(Properties.propertyType) > 0) {
+            if (state.getValue(Properties.type1bit) > 0) {
                 yc = pos.getY() + 11;
             } else {
                 yc = this.getBottomRodY(world, pos) + 11;
@@ -340,7 +342,7 @@ public class BlockPowerPole2 extends SEBlock implements ITileEntityProvider, ISE
             BlockPos centerPos = new BlockPos(pos.getX() + BlockPowerPole2.rodBlockOffsetMatrix[facing][0], yc, pos.getZ() + BlockPowerPole2.rodBlockOffsetMatrix[facing][1]);
             IBlockState centerState = world.getBlockState(centerPos);
 
-            if (centerState.getBlock() == this && !centerState.getValue(Properties.propertyIsPole))
+            if (centerState.getBlock() == this && !centerState.getValue(propertyIsPole))
                 return world.getTileEntity(centerPos);
 
             return null;
@@ -411,7 +413,7 @@ public class BlockPowerPole2 extends SEBlock implements ITileEntityProvider, ISE
 
         @Override
         public boolean placeBlockAt(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, IBlockState newState) {
-            int facing = newState.getValue(Properties.propertyFacing2);
+            int facing = newState.getValue(Properties.facing2bit);
 
             for (BlockInfo blockInfo : BlockPowerPole2.getRodBlockOffsets(newState))
                 world.setBlockState(blockInfo.getRealPos(pos), BlockRegistry.powerPole2.getStateFromMeta(blockInfo.part));

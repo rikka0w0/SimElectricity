@@ -3,9 +3,9 @@ package simelectricity.essential.items;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import rikka.librikka.item.ISESimpleTextureItem;
+import rikka.librikka.item.SEItem;
 import simelectricity.api.SEAPI;
-import simelectricity.essential.client.ISESimpleTextureItem;
-import simelectricity.essential.common.SEItem;
 
 public class ItemVitaTea extends SEItem implements ISESimpleTextureItem {
     public ItemVitaTea() {

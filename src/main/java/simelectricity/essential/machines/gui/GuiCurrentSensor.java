@@ -4,10 +4,11 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.inventory.Container;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.translation.I18n;
+import rikka.librikka.Utils;
+
 import org.lwjgl.opengl.GL11;
 import simelectricity.essential.Essential;
 import simelectricity.essential.utils.SEUnitHelper;
-import simelectricity.essential.utils.Utils;
 import simelectricity.essential.utils.client.gui.GuiDirectionSelector;
 import simelectricity.essential.utils.client.gui.SEGuiContainer;
 

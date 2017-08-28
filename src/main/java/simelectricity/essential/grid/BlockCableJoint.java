@@ -18,14 +18,14 @@ import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import rikka.librikka.Properties;
+import rikka.librikka.block.SEBlock;
+import rikka.librikka.item.ISESimpleTextureItem;
+import rikka.librikka.item.SEItemBlock;
 import simelectricity.api.SEAPI;
 import simelectricity.api.node.ISEGridNode;
 import simelectricity.api.tile.ISEGridTile;
 import simelectricity.essential.api.ISEHVCableConnector;
-import simelectricity.essential.client.ISESimpleTextureItem;
-import simelectricity.essential.common.SEBlock;
-import simelectricity.essential.common.SEItemBlock;
-import simelectricity.essential.common.UnlistedNonNullProperty;
 
 import java.lang.ref.WeakReference;
 
@@ -46,18 +46,18 @@ public class BlockCableJoint extends SEBlock implements ITileEntityProvider, ISE
     @Override
     protected final BlockStateContainer createBlockState() {
         return new ExtendedBlockState(this,
-                new IProperty[]{Properties.propertyFacing},
+                new IProperty[]{Properties.facing3bit},
                 new IUnlistedProperty[]{UnlistedNonNullProperty.propertyGridTile});
     }
 
     @Override
     public final IBlockState getStateFromMeta(int meta) {
-        return getDefaultState().withProperty(Properties.propertyFacing, meta & 7);
+        return getDefaultState().withProperty(Properties.facing3bit, meta & 7);
     }
 
     @Override
     public final int getMetaFromState(IBlockState state) {
-        int facing = state.getValue(Properties.propertyFacing);
+        int facing = state.getValue(Properties.facing3bit);
         return facing;
     }
 
@@ -124,7 +124,7 @@ public class BlockCableJoint extends SEBlock implements ITileEntityProvider, ISE
     public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
         IBlockState state = super.getStateForPlacement(world, pos, facing, hitX, hitY, hitZ, meta, placer);
         int facingInt = 8 - MathHelper.floor(placer.rotationYaw * 8.0F / 360.0F + 0.5D) & 7;
-        return state.withProperty(Properties.propertyFacing, facingInt);
+        return state.withProperty(Properties.facing3bit, facingInt);
     }
 
     @Override

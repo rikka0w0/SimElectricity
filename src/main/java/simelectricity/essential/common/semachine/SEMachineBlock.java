@@ -17,11 +17,11 @@ import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import rikka.librikka.block.ISESubBlock;
+import rikka.librikka.block.SEMetaBlock;
+import rikka.librikka.item.SEItemBlock;
 import simelectricity.api.ISidedFacing;
 import simelectricity.api.SEAPI;
-import simelectricity.essential.common.ISESubBlock;
-import simelectricity.essential.common.SEItemBlock;
-import simelectricity.essential.common.SEMetaBlock;
 
 import java.util.ArrayList;
 

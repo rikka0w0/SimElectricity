@@ -9,7 +9,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import simelectricity.essential.client.BlockRenderModel;
+import rikka.librikka.model.codebased.BlockRenderModel;
 
 import java.util.LinkedList;
 import java.util.List;

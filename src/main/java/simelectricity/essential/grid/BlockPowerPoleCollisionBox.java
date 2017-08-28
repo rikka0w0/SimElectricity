@@ -15,9 +15,9 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import simelectricity.essential.client.ISESimpleTextureItem;
-import simelectricity.essential.common.SEBlock;
-import simelectricity.essential.common.SEItemBlock;
+import rikka.librikka.block.SEBlock;
+import rikka.librikka.item.ISESimpleTextureItem;
+import rikka.librikka.item.SEItemBlock;
 
 public class BlockPowerPoleCollisionBox extends SEBlock implements ISESimpleTextureItem {
     ///////////////////////////////

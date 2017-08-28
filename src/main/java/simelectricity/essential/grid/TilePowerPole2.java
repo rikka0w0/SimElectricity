@@ -4,9 +4,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import rikka.librikka.math.SEMathHelper;
+import rikka.librikka.math.Vec3f;
 import simelectricity.essential.client.grid.PowerPoleRenderHelper;
-import simelectricity.essential.utils.math.SEMathHelper;
-import simelectricity.essential.utils.math.Vec3f;
 
 public class TilePowerPole2 extends TilePowerPole {
     @Override

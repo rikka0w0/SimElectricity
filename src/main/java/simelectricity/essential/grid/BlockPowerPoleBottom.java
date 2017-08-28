@@ -2,7 +2,6 @@ package simelectricity.essential.grid;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -16,13 +15,14 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import rikka.librikka.Properties;
+import rikka.librikka.block.SEBlock;
+import rikka.librikka.item.ISESimpleTextureItem;
+import rikka.librikka.item.SEItemBlock;
 import simelectricity.api.node.ISEGridNode;
 import simelectricity.api.tile.ISEGridTile;
 import simelectricity.essential.BlockRegistry;
 import simelectricity.essential.api.ISEHVCableConnector;
-import simelectricity.essential.client.ISESimpleTextureItem;
-import simelectricity.essential.common.SEBlock;
-import simelectricity.essential.common.SEItemBlock;
 
 import java.util.LinkedList;
 
@@ -76,7 +76,7 @@ public class BlockPowerPoleBottom extends SEBlock implements ISEHVCableConnector
     public static LinkedList<BlockInfo> getBaseBlockCoordOffsets(IBlockState state) {
         LinkedList<BlockInfo> list = new LinkedList();
 
-        int facing = state.getValue(Properties.propertyFacing);
+        int facing = state.getValue(Properties.facing3bit);
         if ((facing & 1) == 0) {    // 90 x n
             facing = facing >> 1;
             list.add(new BlockInfo(BlockPowerPoleBottom.rotateCoord(facing, -2, 0, -2), BlockPowerPoleBottom.baseCoordOffsetMatrix90[facing][0]));
@@ -126,7 +126,7 @@ public class BlockPowerPoleBottom extends SEBlock implements ISEHVCableConnector
      * @return coord of the center block
      */
     public static BlockPos getCenterBoxCoord(BlockPos basePos, IBlockState state) {
-        int facing = state.getValue(Properties.propertyFacing);
+        int facing = state.getValue(Properties.facing3bit);
         Vec3i offset = BlockPowerPoleBottom.getCenterBoxOffset(facing);
         return basePos.add(offset);
     }
@@ -142,17 +142,17 @@ public class BlockPowerPoleBottom extends SEBlock implements ISEHVCableConnector
     ///////////////////////////////
     @Override
     protected final BlockStateContainer createBlockState() {
-        return new BlockStateContainer(this, Properties.propertyFacing);
+        return new BlockStateContainer(this, Properties.facing3bit);
     }
 
     @Override
     public final IBlockState getStateFromMeta(int meta) {
-        return getDefaultState().withProperty(Properties.propertyFacing, meta & 7);
+        return getDefaultState().withProperty(Properties.facing3bit, meta & 7);
     }
 
     @Override
     public final int getMetaFromState(IBlockState state) {
-        return state.getValue(Properties.propertyFacing);
+        return state.getValue(Properties.facing3bit);
     }
 
     //////////////////////////////////////

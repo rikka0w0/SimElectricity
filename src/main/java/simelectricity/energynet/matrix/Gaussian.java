@@ -19,7 +19,7 @@
 
 package simelectricity.energynet.matrix;
 
-public class Gaussian implements IMatrixResolver {
+public class Gaussian implements IMatrixSolver {
     public static final double EPSILON = 1e-10;
 
     private double[][] matrix;

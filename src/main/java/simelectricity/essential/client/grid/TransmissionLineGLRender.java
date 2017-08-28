@@ -4,9 +4,10 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import rikka.librikka.math.Vec3f;
+
 import org.lwjgl.opengl.GL11;
 import simelectricity.common.ConfigManager;
-import simelectricity.essential.utils.math.Vec3f;
 
 @SideOnly(Side.CLIENT)
 public class TransmissionLineGLRender {

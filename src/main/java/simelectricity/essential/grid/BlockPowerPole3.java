@@ -23,14 +23,14 @@ import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import rikka.librikka.Properties;
+import rikka.librikka.block.ISESubBlock;
+import rikka.librikka.block.SEBlock;
+import rikka.librikka.item.SEItemBlock;
 import simelectricity.api.SEAPI;
 import simelectricity.api.node.ISEGridNode;
 import simelectricity.api.tile.ISEGridTile;
 import simelectricity.essential.api.ISEHVCableConnector;
-import simelectricity.essential.common.ISESubBlock;
-import simelectricity.essential.common.SEBlock;
-import simelectricity.essential.common.SEItemBlock;
-import simelectricity.essential.common.UnlistedNonNullProperty;
 import simelectricity.essential.grid.TilePowerPole3.Pole10KvType0;
 import simelectricity.essential.grid.TilePowerPole3.Pole10KvType1;
 import simelectricity.essential.grid.TilePowerPole3.Pole415vType0;
@@ -70,7 +70,7 @@ public class BlockPowerPole3 extends SEBlock implements ITileEntityProvider, ISE
     @Override
     protected final BlockStateContainer createBlockState() {
         return new ExtendedBlockState(this,
-                new IProperty[]{EnumBlockTypePole3.property, Properties.propertyFacing},
+                new IProperty[]{EnumBlockTypePole3.property, Properties.facing3bit},
                 new IUnlistedProperty[]{UnlistedNonNullProperty.propertyGridTile});
     }
 
@@ -91,7 +91,7 @@ public class BlockPowerPole3 extends SEBlock implements ITileEntityProvider, ISE
         if (!blockType.ignoreFacing) {
             TileEntity te = world.getTileEntity(pos);
             if (te != null) {
-                state = state.withProperty(Properties.propertyFacing, ((TilePowerPole3) te).facing);
+                state = state.withProperty(Properties.facing3bit, ((TilePowerPole3) te).facing);
             }
         }
         return state;

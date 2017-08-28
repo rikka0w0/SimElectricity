@@ -7,6 +7,9 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import rikka.librikka.Utils;
+import rikka.librikka.multiblock.ISEMultiBlockTile;
+import rikka.librikka.multiblock.MultiBlockTileInfo;
 import simelectricity.api.SEAPI;
 import simelectricity.api.node.ISEGridNode;
 import simelectricity.api.node.ISESimulatable;
@@ -14,9 +17,6 @@ import simelectricity.api.tile.ISEGridTile;
 import simelectricity.essential.client.grid.ISEPowerPole;
 import simelectricity.essential.client.grid.PowerPoleRenderHelper;
 import simelectricity.essential.common.SEEnergyTile;
-import simelectricity.essential.common.multiblock.ISEMultiBlockTile;
-import simelectricity.essential.common.multiblock.MultiBlockTileInfo;
-import simelectricity.essential.utils.Utils;
 
 public abstract class TilePowerTransformerWinding extends SEEnergyTile implements ISEMultiBlockTile, ISEGridTile, ISEPowerPole {
     protected MultiBlockTileInfo mbInfo;

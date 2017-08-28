@@ -8,7 +8,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import simelectricity.essential.client.TextureLoaderModel;
+import rikka.librikka.model.codebased.TextureLoaderModel;
 import simelectricity.essential.grid.EnumBlockTypePole3;
 
 @SideOnly(Side.CLIENT)

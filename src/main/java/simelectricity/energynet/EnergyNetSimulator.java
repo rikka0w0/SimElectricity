@@ -4,7 +4,7 @@ import simelectricity.api.node.ISESimulatable;
 import simelectricity.common.ConfigManager;
 import simelectricity.common.SEUtils;
 import simelectricity.energynet.components.*;
-import simelectricity.energynet.matrix.IMatrixResolver;
+import simelectricity.energynet.matrix.IMatrixSolver;
 
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -19,14 +19,14 @@ public class EnergyNetSimulator {
     protected final double Vt = 26e-6;
     protected final double Is = 1e-6;
     //Matrix solving algorithm used to solve the problem
-    protected final IMatrixResolver matrix;
+    protected final IMatrixSolver matrix;
     //Contains information about the grid
     protected final EnergyNetDataProvider dataProvider;
     //Records the number of iterations during last iterating process
     protected int iterations;
 
     protected EnergyNetSimulator(double epsilon, double Gpn,
-                                 IMatrixResolver matrixSolver, EnergyNetDataProvider dataProvider) {
+    		IMatrixSolver matrixSolver, EnergyNetDataProvider dataProvider) {
         this.epsilon = epsilon;
         this.Gpn = Gpn;
         matrix = matrixSolver;

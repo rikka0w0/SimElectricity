@@ -9,13 +9,14 @@ import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import rikka.librikka.Properties;
+import rikka.librikka.model.GhostModel;
+import rikka.librikka.model.codebased.ISEModelLoader;
 import simelectricity.essential.BlockRegistry;
-import simelectricity.essential.client.GhostModel;
-import simelectricity.essential.client.ISEModelLoader;
 import simelectricity.essential.client.grid.pole.*;
+import simelectricity.essential.grid.BlockPowerPole2;
 import simelectricity.essential.grid.BlockPowerPole3;
 import simelectricity.essential.grid.EnumBlockTypePole3;
-import simelectricity.essential.grid.Properties;
 
 @SideOnly(Side.CLIENT)
 public class GridStateMapper extends StateMapperBase implements ISEModelLoader {
@@ -40,24 +41,24 @@ public class GridStateMapper extends StateMapperBase implements ISEModelLoader {
         String varStr = "";
 
         if (block == BlockRegistry.cableJoint) {
-            varStr = "" + state.getValue(Properties.propertyFacing);
+            varStr = "" + state.getValue(Properties.facing3bit);
         } else if (block == BlockRegistry.powerPoleBottom) {
-            varStr = "" + state.getValue(Properties.propertyFacing);
+            varStr = "" + state.getValue(Properties.facing3bit);
         } else if (block == BlockRegistry.powerPoleTop) {
-            int type = state.getValue(Properties.propertyType);
-            int facing = state.getValue(Properties.propertyFacing);
+            int type = state.getValue(Properties.type1bit);
+            int facing = state.getValue(Properties.facing3bit);
             varStr = facing + "," + type;
         } else if (block == BlockRegistry.powerPoleCollisionBox) {
 
         } else if (block == BlockRegistry.powerPole2) {
-            int type = state.getValue(Properties.propertyType);
-            boolean isRod = state.getValue(Properties.propertyIsPole);
-            int facing = state.getValue(Properties.propertyFacing2);
+            int type = state.getValue(Properties.type1bit);
+            boolean isRod = state.getValue(BlockPowerPole2.propertyIsPole);
+            int facing = state.getValue(Properties.facing2bit);
             varStr = facing + "," + type + "," + isRod;
         } else if (block == BlockRegistry.powerPole3) {
             EnumBlockTypePole3 blockType = state.getValue(EnumBlockTypePole3.property);
             int type = blockType.ordinal();
-            int facing = state.getValue(Properties.propertyFacing);
+            int facing = state.getValue(Properties.facing3bit);
 
             if (blockType.ignoreFacing)
                 facing = 0;

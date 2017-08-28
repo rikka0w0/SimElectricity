@@ -10,10 +10,11 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import rikka.librikka.Utils;
+import rikka.librikka.tileentity.ISEGuiProvider;
 import simelectricity.api.IEnergyNetUpdateHandler;
 import simelectricity.api.SEAPI;
 import simelectricity.api.node.ISESimulatable;
@@ -22,9 +23,7 @@ import simelectricity.essential.api.ISEGenericCable;
 import simelectricity.essential.api.ISEIuminousCoverPanelHost;
 import simelectricity.essential.api.SEEAPI;
 import simelectricity.essential.api.coverpanel.*;
-import simelectricity.essential.common.ISEGuiProvider;
 import simelectricity.essential.common.SEEnergyTile;
-import simelectricity.essential.utils.Utils;
 
 public class TileCable extends SEEnergyTile implements ISEGenericCable, ISEIuminousCoverPanelHost, ISECableTile, IEnergyNetUpdateHandler, ISEGuiProvider {
     public boolean emitRedstoneSignal;

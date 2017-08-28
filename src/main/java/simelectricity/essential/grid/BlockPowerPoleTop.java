@@ -40,14 +40,14 @@ import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import rikka.librikka.Properties;
+import rikka.librikka.block.ISESubBlock;
+import rikka.librikka.block.SEBlock;
+import rikka.librikka.item.ISESimpleTextureItem;
+import rikka.librikka.item.SEItemBlock;
 import simelectricity.api.SEAPI;
 import simelectricity.api.tile.ISEGridTile;
 import simelectricity.essential.BlockRegistry;
-import simelectricity.essential.client.ISESimpleTextureItem;
-import simelectricity.essential.common.ISESubBlock;
-import simelectricity.essential.common.SEBlock;
-import simelectricity.essential.common.SEItemBlock;
-import simelectricity.essential.common.UnlistedNonNullProperty;
 
 import java.lang.ref.WeakReference;
 import java.util.LinkedList;
@@ -79,7 +79,7 @@ public class BlockPowerPoleTop extends SEBlock implements ITileEntityProvider, I
     public static LinkedList<BlockInfo> getCollisionBoxBlockOffsets(IBlockState state) {
         LinkedList<BlockInfo> list = new LinkedList();
 
-        int facing = state.getValue(Properties.propertyFacing);
+        int facing = state.getValue(Properties.facing3bit);
         if ((facing & 1) == 0) {    // 90 x n
             facing = facing >> 1;
 
@@ -176,20 +176,20 @@ public class BlockPowerPoleTop extends SEBlock implements ITileEntityProvider, I
     @Override
     protected final BlockStateContainer createBlockState() {
         return new ExtendedBlockState(this,
-                new IProperty[]{Properties.propertyType, Properties.propertyFacing},
+                new IProperty[]{Properties.type1bit, Properties.facing3bit},
                 new IUnlistedProperty[]{UnlistedNonNullProperty.propertyGridTile});
     }
 
     @Override
     public final IBlockState getStateFromMeta(int meta) {
         meta &= 15;
-        return getDefaultState().withProperty(Properties.propertyType, meta >> 3).withProperty(Properties.propertyFacing, meta & 7);
+        return getDefaultState().withProperty(Properties.type1bit, meta >> 3).withProperty(Properties.facing3bit, meta & 7);
     }
 
     @Override
     public final int getMetaFromState(IBlockState state) {
-        int type = state.getValue(Properties.propertyType);
-        int facing = state.getValue(Properties.propertyFacing);
+        int type = state.getValue(Properties.type1bit);
+        int facing = state.getValue(Properties.facing3bit);
         int meta = type << 3 | facing;
         return meta;
     }
@@ -215,7 +215,7 @@ public class BlockPowerPoleTop extends SEBlock implements ITileEntityProvider, I
     //////////////////////////////////////
     @Override
     public int damageDropped(IBlockState state) {
-        return state.getValue(Properties.propertyType);
+        return state.getValue(Properties.type1bit);
     }
 
     @Override
@@ -223,7 +223,7 @@ public class BlockPowerPoleTop extends SEBlock implements ITileEntityProvider, I
         IBlockState state = super.getStateForPlacement(world, pos, facing, hitX, hitY, hitZ, damage, placer);
         int facingInt = 8 - MathHelper.floor(placer.rotationYaw * 8.0F / 360.0F + 0.5D) & 7;
         int type = damage;
-        return state.withProperty(Properties.propertyType, type).withProperty(Properties.propertyFacing, facingInt);
+        return state.withProperty(Properties.type1bit, type).withProperty(Properties.facing3bit, facingInt);
     }
 
     @Override

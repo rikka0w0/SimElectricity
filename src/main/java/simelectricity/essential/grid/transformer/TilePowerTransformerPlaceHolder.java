@@ -6,11 +6,11 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import rikka.librikka.Utils;
+import rikka.librikka.multiblock.ISEMultiBlockTile;
+import rikka.librikka.multiblock.MultiBlockTileInfo;
+import rikka.librikka.tileentity.SETileEntity;
 import simelectricity.api.node.ISEGridNode;
-import simelectricity.essential.common.SETileEntity;
-import simelectricity.essential.common.multiblock.ISEMultiBlockTile;
-import simelectricity.essential.common.multiblock.MultiBlockTileInfo;
-import simelectricity.essential.utils.Utils;
 
 public class TilePowerTransformerPlaceHolder extends SETileEntity implements ISEMultiBlockTile {
     //To minimize network usage, mbInfo will not be send to blocks other than the Render block

@@ -11,13 +11,15 @@ import net.minecraftforge.client.model.IPerspectiveAwareModel;
 import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import rikka.librikka.model.codebased.BlockRenderModel;
+import rikka.librikka.model.quadbuilder.SERawQuadCube;
+import rikka.librikka.model.quadbuilder.SERawQuadGroup;
+
 import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.util.vector.Vector3f;
-import simelectricity.essential.client.BlockRenderModel;
+
 import simelectricity.essential.client.grid.PowerPoleRenderHelper;
 import simelectricity.essential.grid.EnumBlockTypePole3;
-import simelectricity.essential.utils.client.SERawQuadCube;
-import simelectricity.essential.utils.client.SERawQuadGroup;
 
 import javax.vecmath.Matrix4f;
 import java.util.LinkedList;

@@ -6,10 +6,11 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import rikka.librikka.Utils;
+
 import org.lwjgl.opengl.GL11;
 import simelectricity.essential.Essential;
 import simelectricity.essential.utils.SEUnitHelper;
-import simelectricity.essential.utils.Utils;
 import simelectricity.essential.utils.client.gui.GuiDirectionSelector;
 import simelectricity.essential.utils.client.gui.SEGuiContainer;
 

@@ -10,7 +10,7 @@ import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import simelectricity.essential.client.ISEModelLoader;
+import rikka.librikka.model.codebased.ISEModelLoader;
 import simelectricity.essential.common.semachine.ExtendedProperties;
 import simelectricity.essential.common.semachine.SEMachineBlock;
 

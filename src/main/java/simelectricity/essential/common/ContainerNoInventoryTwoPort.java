@@ -2,6 +2,7 @@ package simelectricity.essential.common;
 
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import rikka.librikka.container.ContainerNoInventory;
 import simelectricity.api.SEAPI;
 import simelectricity.essential.common.semachine.SETwoPortMachine;
 import simelectricity.essential.utils.network.ISEDirectionSelectorEventHandler;

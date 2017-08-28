@@ -6,9 +6,10 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import rikka.librikka.math.SEMathHelper;
+
 import org.lwjgl.opengl.GL11;
 import simelectricity.essential.Essential;
-import simelectricity.essential.utils.math.SEMathHelper;
 
 /**
  * double[index][dimension]: each double[index] contains a 3D double array. double[index][0] - xCoord, double[index][1] - yCoord, double[index][2] - zCoord

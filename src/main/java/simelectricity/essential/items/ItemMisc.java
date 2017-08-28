@@ -1,8 +1,8 @@
 package simelectricity.essential.items;
 
+import rikka.librikka.item.ISESimpleTextureItem;
+import rikka.librikka.item.SEItem;
 import simelectricity.api.SEAPI;
-import simelectricity.essential.client.ISESimpleTextureItem;
-import simelectricity.essential.common.SEItem;
 
 public class ItemMisc extends SEItem implements ISESimpleTextureItem {
     private static final String[] subNames = {"ledpanel", "voltagesensor"};

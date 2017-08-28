@@ -8,14 +8,14 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import rikka.librikka.Utils;
+import rikka.librikka.math.SEMathHelper;
+import rikka.librikka.math.Vec3f;
 import simelectricity.api.node.ISEGridNode;
 import simelectricity.api.tile.ISEGridTile;
 import simelectricity.essential.client.grid.ISEPowerPole;
 import simelectricity.essential.client.grid.PowerPoleRenderHelper;
 import simelectricity.essential.common.SEEnergyTile;
-import simelectricity.essential.utils.Utils;
-import simelectricity.essential.utils.math.SEMathHelper;
-import simelectricity.essential.utils.math.Vec3f;
 
 
 public class TilePowerPole extends SEEnergyTile implements ISEGridTile, ISEPowerPole {

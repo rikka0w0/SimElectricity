@@ -1,5 +1,6 @@
 package simelectricity.essential.common;
 
+import rikka.librikka.tileentity.SETileEntity;
 import simelectricity.api.SEAPI;
 
 public abstract class SEEnergyTile extends SETileEntity {

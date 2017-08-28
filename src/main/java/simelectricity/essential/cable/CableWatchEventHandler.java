@@ -1,7 +1,6 @@
 package simelectricity.essential.cable;
 
 import net.minecraft.world.chunk.Chunk;
-import net.minecraftforge.event.world.ChunkWatchEvent;
 import net.minecraftforge.event.world.ChunkWatchEvent.Watch;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import simelectricity.essential.api.ISEGenericCable;

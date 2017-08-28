@@ -10,12 +10,12 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
+import rikka.librikka.Utils;
+import rikka.librikka.item.ISESimpleTextureItem;
+import rikka.librikka.item.SEItem;
 import simelectricity.api.SEAPI;
 import simelectricity.api.node.ISEGridNode;
 import simelectricity.essential.api.ISEHVCableConnector;
-import simelectricity.essential.client.ISESimpleTextureItem;
-import simelectricity.essential.common.SEItem;
-import simelectricity.essential.utils.Utils;
 
 import java.util.HashMap;
 import java.util.Map;

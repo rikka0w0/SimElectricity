@@ -17,16 +17,16 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import rikka.librikka.Properties;
+import rikka.librikka.block.ISESubBlock;
+import rikka.librikka.block.SEBlock;
+import rikka.librikka.item.ISESimpleTextureItem;
+import rikka.librikka.item.SEItemBlock;
+import rikka.librikka.multiblock.MultiBlockStructure;
+import rikka.librikka.multiblock.MultiBlockStructure.Result;
 import simelectricity.api.SEAPI;
 import simelectricity.api.node.ISESimulatable;
 import simelectricity.essential.api.ISEHVCableConnector;
-import simelectricity.essential.client.ISESimpleTextureItem;
-import simelectricity.essential.common.ISESubBlock;
-import simelectricity.essential.common.SEBlock;
-import simelectricity.essential.common.SEItemBlock;
-import simelectricity.essential.common.multiblock.MultiBlockStructure;
-import simelectricity.essential.common.multiblock.MultiBlockStructure.Result;
-import simelectricity.essential.grid.Properties;
 import simelectricity.essential.grid.transformer.TilePowerTransformerPlaceHolder.Primary;
 import simelectricity.essential.grid.transformer.TilePowerTransformerPlaceHolder.Render;
 import simelectricity.essential.grid.transformer.TilePowerTransformerPlaceHolder.Secondary;
@@ -88,7 +88,7 @@ public class BlockPowerTransformer extends SEBlock implements ITileEntityProvide
 
     @Override
     protected final BlockStateContainer createBlockState() {
-        return new BlockStateContainer(this, EnumBlockType.property, Properties.propertyFacing2, BlockPowerTransformer.propertyMirrored);
+        return new BlockStateContainer(this, EnumBlockType.property, Properties.facing2bit, BlockPowerTransformer.propertyMirrored);
     }
 
     @Override
@@ -115,7 +115,7 @@ public class BlockPowerTransformer extends SEBlock implements ITileEntityProvide
             if (facing == null)
                 return state; //Prevent crashing!
 
-            state = state.withProperty(Properties.propertyFacing2, facing.ordinal() - 2 & 3)
+            state = state.withProperty(Properties.facing2bit, facing.ordinal() - 2 & 3)
                     .withProperty(BlockPowerTransformer.propertyMirrored, mirrored);
         }
         return state;

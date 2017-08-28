@@ -26,6 +26,12 @@ import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import rikka.librikka.RayTraceHelper;
+import rikka.librikka.UnlistedPropertyRef;
+import rikka.librikka.block.ISESubBlock;
+import rikka.librikka.block.SEMetaBlock;
+import rikka.librikka.item.ISESimpleTextureItem;
+import rikka.librikka.item.SEItemBlock;
 import simelectricity.api.SEAPI;
 import simelectricity.essential.Essential;
 import simelectricity.essential.api.ISECoverPanelHost;
@@ -34,12 +40,6 @@ import simelectricity.essential.api.SEEAPI;
 import simelectricity.essential.api.coverpanel.ISECoverPanel;
 import simelectricity.essential.api.coverpanel.ISEGuiCoverPanel;
 import simelectricity.essential.api.coverpanel.ISERedstoneEmitterCoverPanel;
-import simelectricity.essential.client.ISESimpleTextureItem;
-import simelectricity.essential.common.ISESubBlock;
-import simelectricity.essential.common.SEItemBlock;
-import simelectricity.essential.common.SEMetaBlock;
-import simelectricity.essential.common.UnlistedNonNullProperty;
-import simelectricity.essential.utils.RayTraceHelper;
 import simelectricity.essential.utils.math.MatrixTranformations;
 
 import javax.annotation.Nullable;
@@ -222,7 +222,7 @@ public class BlockCable extends SEMetaBlock implements ITileEntityProvider, ISES
     @Override
     protected void createProperties(ArrayList<IProperty> properties, ArrayList<IUnlistedProperty> unlisted) {
         super.createProperties(properties, unlisted);
-        unlisted.add(UnlistedNonNullProperty.propertyCable);
+        unlisted.add(UnlistedPropertyRef.propertyTile);
     }
 
     @Override
@@ -233,7 +233,7 @@ public class BlockCable extends SEMetaBlock implements ITileEntityProvider, ISES
             TileEntity te = world.getTileEntity(pos);
 
             if (te instanceof ISEGenericCable) {
-                retval = retval.withProperty(UnlistedNonNullProperty.propertyCable, new WeakReference<>((ISEGenericCable) te));
+                retval = retval.withProperty(UnlistedPropertyRef.propertyTile, new WeakReference<>(te));
             }
 
             return retval;

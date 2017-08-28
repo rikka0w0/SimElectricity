@@ -26,8 +26,7 @@ import simelectricity.api.node.ISESimulatable;
 import simelectricity.common.ConfigManager;
 import simelectricity.common.SEUtils;
 import simelectricity.energynet.components.SEComponent;
-import simelectricity.energynet.matrix.IMatrixResolver;
-import simelectricity.energynet.matrix.IMatrixResolver.MatrixHelper;
+import simelectricity.energynet.matrix.IMatrixSolver.MatrixHelper;
 
 import java.util.Iterator;
 import java.util.LinkedList;

@@ -10,12 +10,12 @@ import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import rikka.librikka.model.codebased.BlockRenderModel;
 import simelectricity.api.tile.ISEGridTile;
-import simelectricity.essential.client.BlockRenderModel;
 import simelectricity.essential.client.grid.ISEPowerPole;
 import simelectricity.essential.client.grid.PowerPoleRenderHelper;
 import simelectricity.essential.client.grid.PowerPoleRenderHelper.ConnectionInfo;
-import simelectricity.essential.common.UnlistedNonNullProperty;
+import simelectricity.essential.grid.UnlistedNonNullProperty;
 import simelectricity.essential.utils.client.SERenderHeap;
 import simelectricity.essential.utils.client.SERenderHelper;
 

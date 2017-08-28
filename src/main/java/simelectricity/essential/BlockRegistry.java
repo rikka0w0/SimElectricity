@@ -13,7 +13,6 @@ import simelectricity.essential.grid.TilePowerPole3.Pole415vType0;
 import simelectricity.essential.grid.transformer.BlockPowerTransformer;
 import simelectricity.essential.grid.transformer.TilePowerTransformerPlaceHolder;
 import simelectricity.essential.grid.transformer.TilePowerTransformerPlaceHolder.Render;
-import simelectricity.essential.grid.transformer.TilePowerTransformerWinding;
 import simelectricity.essential.grid.transformer.TilePowerTransformerWinding.Primary;
 import simelectricity.essential.grid.transformer.TilePowerTransformerWinding.Secondary;
 import simelectricity.essential.machines.BlockElectronics;

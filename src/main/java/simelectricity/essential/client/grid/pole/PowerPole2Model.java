@@ -9,10 +9,10 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import simelectricity.essential.client.BlockRenderModel;
+import rikka.librikka.model.codebased.BlockRenderModel;
+import rikka.librikka.model.quadbuilder.SERawQuadCube;
 import simelectricity.essential.client.grid.PowerPoleRenderHelper;
 import simelectricity.essential.client.grid.PowerPoleRenderHelper.ConnectionInfo;
-import simelectricity.essential.utils.client.SERawQuadCube;
 import simelectricity.essential.utils.client.SERenderHeap;
 import simelectricity.essential.utils.client.SERenderHelper;
 
