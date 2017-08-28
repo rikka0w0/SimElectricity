@@ -1,5 +1,6 @@
 language: java
 script:
+  chmod +x gradlew
   ./gradlew check
   ./gradlew setupCiWorkspace clean
   ./gradlew build jar
