@@ -1,7 +1,6 @@
 language: java
 before_install:
  - chmod +x gradlew
- - ./gradlew check
  - ./gradlew setupCiWorkspace clean
 script:
  - ./gradlew build jar
