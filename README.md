@@ -1,5 +1,8 @@
 # SimElectricity
 ==============
+
+[![Build Status](https://travis-ci.org/RoyalAliceAcademyOfSciences/SimElectricity.svg?branch=master)](https://travis-ci.org/RoyalAliceAcademyOfSciences/SimElectricity)
+
 A minecraft mod aiming to bring a real world electrical system into the minecraft world
 
 Presented by the Scientific MineCraft Mod Researching Institution of the People's Republic of China (SMRI)
