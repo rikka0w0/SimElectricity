@@ -2,5 +2,6 @@ language: java
 before_install:
  - chmod +x gradlew
  - ./gradlew setupDevWorkspace
+install: true
 script:
  - ./gradlew build jar
