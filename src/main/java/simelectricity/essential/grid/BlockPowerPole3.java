@@ -118,18 +118,13 @@ public class BlockPowerPole3 extends SEBlock implements ITileEntityProvider, ISE
     //////////////////////////////////////
     @Override
     public int damageDropped(IBlockState state) {
-        return 0;
+        return state.getValue(EnumBlockTypePole3.property).index;
     }
 
     @Override
     public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int damage, EntityLivingBase placer) {
         IBlockState state = super.getStateForPlacement(world, pos, facing, hitX, hitY, hitZ, damage, placer);
         return state;
-    }
-
-    @Override
-    public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player) {
-        return ItemStack.EMPTY;
     }
 
     @Override
