@@ -18,6 +18,7 @@ import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import rikka.librikka.block.SEBlock;
 import rikka.librikka.item.ISESimpleTextureItem;
 import rikka.librikka.model.SingleTextureModel;
 import rikka.librikka.model.codebased.ISEModelLoader;
@@ -93,6 +94,24 @@ public class AdvancedModelLoader implements ICustomModelLoader {
         this.registeredLoaders.add(loader);
     }
 
+    public void registerInventoryIcon(SEBlock block) {
+    	if (block instanceof ISESimpleTextureItem) {
+    		ISESimpleTextureItem simpleTextureItem = (ISESimpleTextureItem) block;
+
+            NonNullList<ItemStack> itemStacks = NonNullList.create();
+            block.itemBlock.getSubItems(block.itemBlock, null, itemStacks);
+            for (ItemStack itemStack : itemStacks) {
+                int damage = itemStack.getItemDamage();
+                String textureName = simpleTextureItem.getIconName(damage);
+                ModelResourceLocation res = new ModelResourceLocation(
+                        domain + ":" + PATH_STI + textureName, "inventory");
+                ModelLoader.setCustomModelResourceLocation(block.itemBlock, damage, res);
+            }
+    	} else {
+    		registerInventoryIcon(block.itemBlock);
+    	}
+    }
+    
     public void registerInventoryIcon(Item item) {
         if (item instanceof ISESimpleTextureItem) {
             ISESimpleTextureItem simpleTextureItem = (ISESimpleTextureItem) item;

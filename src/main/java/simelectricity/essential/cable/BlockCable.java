@@ -40,7 +40,6 @@ import simelectricity.essential.api.SEEAPI;
 import simelectricity.essential.api.coverpanel.ISECoverPanel;
 import simelectricity.essential.api.coverpanel.ISEGuiCoverPanel;
 import simelectricity.essential.api.coverpanel.ISERedstoneEmitterCoverPanel;
-import simelectricity.essential.utils.math.MatrixTranformations;
 
 import javax.annotation.Nullable;
 import java.lang.ref.WeakReference;
@@ -68,6 +67,20 @@ public class BlockCable extends SEMetaBlock implements ITileEntityProvider, ISES
                 TileCable.class);
 		this.setHardness(0.2F);
     }
+    
+    /**
+     * @return when implementing your own cable, please make sure to return correct number!
+     */
+    @Override
+    protected int getMetaUpperBound() {
+        return 3;
+    }
+    
+    @Override
+    @SideOnly(Side.CLIENT)
+    public String getIconName(int damage) {
+        return "essential_cable_" + this.subNames[damage] + "_inventory";
+    }
     ///////////////////////////////
     ///Block Properties
     ///////////////////////////////
@@ -78,66 +91,19 @@ public class BlockCable extends SEMetaBlock implements ITileEntityProvider, ISES
 		thickness = thicknessList;
 		resistances = resistanceList;
         this.tileEntityClass = tileEntityClass;
-    }
+        
+        //Calc. collision boxes and cache them
+        this.cableBoundingBoxes = new AxisAlignedBB[thicknessList.length][7];
+        for (int i=0; i<thicknessList.length; i++) {
+            float min = 0.5F - thicknessList[i] / 2F;
+            float max = 0.5F + thicknessList[i] / 2F;
 
-    //////////////////////////////////
-    ///CollisionBoxes
-    //////////////////////////////////
-    //Custom ray trace
-    private static AxisAlignedBB getCoverPanelBoundingBox(EnumFacing side) {
-        if (side == null)
-            return null;
-
-        float[][] bounds = new float[3][2];
-        // X START - END
-        bounds[0][0] = 0;
-        bounds[0][1] = 1;
-        // Y START - END
-        bounds[1][0] = 0;
-        bounds[1][1] = ISECoverPanel.thickness;
-        // Z START - END
-        bounds[2][0] = 0;
-        bounds[2][1] = 1;
-
-        MatrixTranformations.transform(bounds, side);
-        return new AxisAlignedBB(bounds[0][0], bounds[1][0], bounds[2][0], bounds[0][1], bounds[1][1], bounds[2][1]);
-    }
-
-    private static AxisAlignedBB getCableBoundingBox(EnumFacing side, float thickness) {
-        float min = 0.5F - thickness / 2;
-        float max = 0.5F + thickness / 2;
-
-        if (side == null) {
-            return new AxisAlignedBB(min, min, min, max, max, max);
+            for (EnumFacing side: EnumFacing.VALUES) {
+            	cableBoundingBoxes[i][side.ordinal()] = RayTraceHelper.createAABB(side, min, 0, min, max, min, max);
+            }
+            
+            cableBoundingBoxes[i][6] = new AxisAlignedBB(min, min, min, max, max, max);
         }
-
-        float[][] bounds = new float[3][2];
-        // X START - END
-        bounds[0][0] = min;
-        bounds[0][1] = max;
-        // Y START - END
-        bounds[1][0] = 0;
-        bounds[1][1] = min;
-        // Z START - END
-        bounds[2][0] = min;
-        bounds[2][1] = max;
-
-        MatrixTranformations.transform(bounds, side);
-        return new AxisAlignedBB(bounds[0][0], bounds[1][0], bounds[2][0], bounds[0][1], bounds[1][1], bounds[2][1]);
-    }
-
-    /**
-     * @return when implementing your own cable, please make sure to return correct number!
-     */
-    @Override
-    protected int getMetaUpperBound() {
-        return 3;
-    }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public String getIconName(int damage) {
-        return "essential_cable_" + this.subNames[damage] + "_inventory";
     }
 
     @Override
@@ -240,7 +206,28 @@ public class BlockCable extends SEMetaBlock implements ITileEntityProvider, ISES
         }
         return state;
     }
-
+    
+    //////////////////////////////////
+    ///CollisionBoxes
+    //////////////////////////////////
+    protected final static AxisAlignedBB[] coverPanelBoundingBoxes;
+    
+    static {
+    	coverPanelBoundingBoxes = new AxisAlignedBB[6];
+    	for (EnumFacing side: EnumFacing.VALUES){
+    		coverPanelBoundingBoxes[side.ordinal()] = RayTraceHelper.createAABB(side, 0, 0, 0, 1, ISECoverPanel.thickness, 1);
+    	}
+    }
+    
+    //Meta, side
+    protected final AxisAlignedBB[][] cableBoundingBoxes;
+    //Custom ray trace
+    protected AxisAlignedBB getCableBoundingBox(EnumFacing side, int meta) {
+    	return (side==null) ?
+    			cableBoundingBoxes[meta][6]:	//Center
+    			cableBoundingBoxes[meta][side.ordinal()];
+    }
+    
     @Override
     @Nullable
     public RayTraceResult collisionRayTrace(IBlockState state, World world, BlockPos pos, Vec3d start, Vec3d end) {
@@ -270,17 +257,17 @@ public class BlockCable extends SEMetaBlock implements ITileEntityProvider, ISES
         RayTraceResult best = null;
         //Cable center & branches
         //Start form center
-        best = RayTraceHelper.computeTrace(best, pos, start, end, BlockCable.getCableBoundingBox(null, this.thickness[meta]), 0);
+        best = RayTraceHelper.computeTrace(best, pos, start, end, getCableBoundingBox(null, meta), 0);
         for (EnumFacing side : EnumFacing.VALUES) {
             if (cable.connectedOnSide(side))
-                best = RayTraceHelper.computeTrace(best, pos, start, end, BlockCable.getCableBoundingBox(side, this.thickness[meta]), side.ordinal() + 1);
+                best = RayTraceHelper.computeTrace(best, pos, start, end, getCableBoundingBox(side, meta), side.ordinal() + 1);
         }
 
         //CoverPanel
         for (EnumFacing side : EnumFacing.VALUES) {
             ISECoverPanel coverPanel = cable.getCoverPanelOnSide(side);
             if (coverPanel != null) {
-                best = RayTraceHelper.computeTrace(best, pos, start, end, BlockCable.getCoverPanelBoundingBox(side), side.ordinal() + 1 + 6);
+                best = RayTraceHelper.computeTrace(best, pos, start, end, coverPanelBoundingBoxes[side.ordinal()], side.ordinal() + 1 + 6);
             }
         }
 
@@ -364,7 +351,7 @@ public class BlockCable extends SEMetaBlock implements ITileEntityProvider, ISES
         }
 
         if (trace.subHit > 6 && trace.subHit < 13) {    //CoverPanel
-            return BlockCable.getCoverPanelBoundingBox(EnumFacing.getFront(trace.subHit - 7)).offset(pos).expand(0.01, 0.01, 0.01);
+            return coverPanelBoundingBoxes[trace.subHit - 7].offset(pos).expand(0.01, 0.01, 0.01);
         } else if (trace.subHit > -1 && trace.subHit < 7) {    //Center or branches
             int meta = state.getValue(this.propertyMeta);
             ISEGenericCable cable = (ISEGenericCable) te;

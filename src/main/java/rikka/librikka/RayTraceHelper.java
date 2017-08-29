@@ -1,5 +1,6 @@
 package rikka.librikka;
 
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -51,5 +52,34 @@ public class RayTraceHelper {
         double distLast = lastBest.hitVec.squareDistanceTo(start);
         double distNext = next.hitVec.squareDistanceTo(start);
         return distLast > distNext ? next : lastBest;    //Return the closer one
+    }
+    
+    /**
+     * A helper function for creating collision boxes, default facing: upwards, origin: block center
+     * @param side
+     * @param xStart
+     * @param yStart
+     * @param zStart
+     * @param xEnd
+     * @param yEnd
+     * @param zEnd
+     * @return
+     */
+    public static AxisAlignedBB createAABB (EnumFacing side, float xStart, float yStart, float zStart, float xEnd, float yEnd, float zEnd) {
+        switch (side) {
+		case DOWN:
+			return new AxisAlignedBB(xStart, yStart, zStart, xEnd, yEnd, zEnd);
+		case UP:
+			return new AxisAlignedBB(xStart, 1-yEnd, zStart, xEnd, 1-yStart, zEnd);
+		case NORTH:
+			return new AxisAlignedBB(zStart, xStart, yStart, zEnd, xEnd, yEnd);
+		case SOUTH:
+			return new AxisAlignedBB(zStart, xStart, 1-yEnd, zEnd, xEnd, 1-yStart);
+		case WEST:
+			return new AxisAlignedBB(yStart, xStart, zStart, yEnd, xEnd, zEnd);
+		case EAST:
+			return new AxisAlignedBB(1-yEnd, xStart, zStart, 1-yStart, xEnd, zEnd);
+        }
+        return null;
     }
 }

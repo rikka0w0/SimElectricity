@@ -8,14 +8,12 @@ import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.property.ExtendedBlockState;
@@ -41,7 +39,7 @@ import java.util.List;
 
 public class BlockPowerPole3 extends SEBlock implements ITileEntityProvider, ISESubBlock, ISEHVCableConnector {
     public BlockPowerPole3() {
-        super("essential_powerpole3", Material.ROCK, BlockPowerPole3.ItemBlock.class);
+        super("essential_powerpole3", Material.ROCK, SEItemBlock.class);
 
 		setDefaultState(blockState.getBaseState());
     }
@@ -225,7 +223,7 @@ public class BlockPowerPole3 extends SEBlock implements ITileEntityProvider, ISE
     public boolean shouldSideBeRendered(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side) {
         return super.shouldSideBeRendered(blockState, blockAccess, pos, side);
     }
-
+    
     //And this tell it that you can see through this block, and neighbor blocks should be rendered.
     @Override
     public boolean isOpaqueCube(IBlockState state) {
@@ -242,9 +240,8 @@ public class BlockPowerPole3 extends SEBlock implements ITileEntityProvider, ISE
         return false;
     }
 
-    public static class ItemBlock extends SEItemBlock {
-        public ItemBlock(Block block) {
-            super(block);
-        }
+    @Override
+    public boolean isFullBlock(IBlockState state) {
+        return false;
     }
 }
