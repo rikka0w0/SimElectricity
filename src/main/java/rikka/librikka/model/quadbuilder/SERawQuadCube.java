@@ -195,6 +195,16 @@ public class SERawQuadCube implements ISERawElement<SERawQuadCube> {
 
         return this;
     }
+    
+	@Override
+	public ISERawModel scale(float scale) {
+		for (int i = 0; i < this.vertexes.length; i++) {
+            this.vertexes[i][0] *= scale;
+            this.vertexes[i][1] *= scale;
+            this.vertexes[i][2] *= scale;
+		}
+		return this;
+	}
 
     @Override
     public void bake(List<BakedQuad> list) {

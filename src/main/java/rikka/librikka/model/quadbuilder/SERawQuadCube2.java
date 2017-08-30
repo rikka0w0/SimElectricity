@@ -178,6 +178,16 @@ public class SERawQuadCube2 implements ISERawElement<SERawQuadCube2> {
     }
 
 	@Override
+	public ISERawModel scale(float scale) {
+		for (int i = 0; i < this.vertexes.length; i++) {
+            this.vertexes[i][0] *= scale;
+            this.vertexes[i][1] *= scale;
+            this.vertexes[i][2] *= scale;
+		}
+		return this;
+	}
+    
+	@Override
 	public SERawQuadCube2 clone() {
 		return new SERawQuadCube2(vertexes, texture, uv);
 	}

@@ -91,6 +91,13 @@ public class SERawQuadGroup implements ISERawModel<SERawQuadGroup> {
         return this;
     }
 
+	@Override
+	public ISERawModel scale(float scale) {
+		for (ISERawModel part : this.elements)
+			part.scale(scale);
+		return this;
+	}
+    
     @Override
     public void bake(List<BakedQuad> list) {
         for (ISERawModel part : this.elements)

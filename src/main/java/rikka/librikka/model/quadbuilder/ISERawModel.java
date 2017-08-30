@@ -22,6 +22,8 @@ public interface ISERawModel<T extends ISERawModel> {
 
     ISERawModel rotateAroundVector(float angle, float x, float y, float z);
 
+    ISERawModel scale(float scale);
+    
     /**
      * Convert vertex/texture data represented by this class to BakedQuads,
      * which can immediately be rendered by MineCraft
