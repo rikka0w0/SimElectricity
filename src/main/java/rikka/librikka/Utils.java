@@ -15,6 +15,8 @@ import net.minecraft.world.World;
 import java.util.Random;
 
 public class Utils {
+	public static final EnumFacing[] horizontalInverted = new EnumFacing[] {EnumFacing.SOUTH, EnumFacing.EAST, EnumFacing.NORTH, EnumFacing.WEST};
+	
     /**
      * @param player
      * @param ignoreVertical If set to true, possible results are NESW, else the result can also be up or down/

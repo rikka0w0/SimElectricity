@@ -17,6 +17,32 @@ public class SERawQuadCube2 implements ISERawElement<SERawQuadCube2> {
 	private final TextureAtlasSprite texture;
 	private final float[] uv;
 	
+	/**
+	 * Create a sign-like cube
+	 * @param width
+	 * @param height
+	 * @param depth
+	 * @param u
+	 * @param v
+	 * @param texture
+	 * @param textureSize
+	 * @param width2
+	 * @param height2
+	 * @param depth2
+	 */
+	public SERawQuadCube2(float width, float height, float depth, int u, int v, TextureAtlasSprite texture, int textureSize, int width2, int height2, int depth2) {
+		this(width, height, depth, texture, textureSize,
+				depth2+depth2+width2+u	, 0+v,		depth2+width2+depth2+width2+u	, depth2+v,
+				depth2+u				, 0+v,		depth2+width2+u					, depth2+v,
+				depth2+u				, depth2+v,	depth2+width2+u					, depth2+height2+v,	
+				depth2+depth2+width2+u	, depth2+v,	depth2+width2+depth2+width2+u	, depth2+height2+v,
+				u+depth2+width2			, depth2+v,	depth2+depth2+width2+u			, depth2+height2+v,
+				u						, depth2+v,	depth2+u						, depth2+height2+v		
+				);
+		
+		translateCoord(0, 0.5F - height/2F, 0.5F - depth/2F);
+	}
+	
 	public SERawQuadCube2(float maxX, float maxY, float maxZ, TextureAtlasSprite texture, int textureSize, float... uv) {
         this.texture = texture;
         this.vertexes = new float[8][];
