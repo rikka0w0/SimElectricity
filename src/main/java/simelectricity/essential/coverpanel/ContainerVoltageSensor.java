@@ -1,30 +1,37 @@
 package simelectricity.essential.coverpanel;
 
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IContainerListener;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import rikka.librikka.gui.ISEContainer;
 import simelectricity.essential.utils.network.ISEButtonEventHandler;
 import simelectricity.essential.utils.network.ISEContainerUpdate;
 import simelectricity.essential.utils.network.MessageContainerSync;
 
 import java.util.Iterator;
 
-public class ContainerVoltageSensor extends Container implements ISEContainerUpdate, ISEButtonEventHandler {
+public class ContainerVoltageSensor extends Container implements ISEContainerUpdate, ISEButtonEventHandler, ISEContainer {
     private final VoltageSensorPanel panel;
     public boolean emitRedstoneSignal;
     public boolean inverted;
     public double thresholdVoltage;
 
-    public ContainerVoltageSensor(VoltageSensorPanel panel, TileEntity te) {
+    public ContainerVoltageSensor(VoltageSensorPanel panel) {
         this.panel = panel;
     }
 
+	@Override
+	@SideOnly(Side.CLIENT)
+	public GuiScreen createGui() {
+		return new GuiVoltageSensor(this);
+	}
+    
     @Override
     public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, EntityPlayer player) {
         return null;

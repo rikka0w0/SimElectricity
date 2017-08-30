@@ -57,7 +57,7 @@ public class Essential {
         MinecraftForge.EVENT_BUS.register(new CableWatchEventHandler());
 
         //Register GUI handler
-        NetworkRegistry.INSTANCE.registerGuiHandler(instance, proxy);
+        NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());
     }
 
     /**

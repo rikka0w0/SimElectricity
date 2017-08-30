@@ -1,7 +1,6 @@
 package simelectricity.essential.cable;
 
 import net.minecraft.block.Block;
-import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.nbt.NBTTagCompound;
@@ -325,15 +324,9 @@ public class TileCable extends SEEnergyTile implements ISEGenericCable, ISEIumin
     ///ISEGuiProvider
     ///////////////////////
     @Override
-    public Container getServerContainer(EnumFacing side) {
+    public Container getContainer(EntityPlayer player, EnumFacing side) {
         ISECoverPanel coverPanel = this.installedCoverPanels[side.ordinal()];
-        return coverPanel instanceof ISEGuiCoverPanel ? ((ISEGuiCoverPanel) coverPanel).getServerContainer(this) : null;
-    }
-
-    @Override
-    public GuiContainer getClientGuiContainer(EnumFacing side) {
-        ISECoverPanel coverPanel = this.installedCoverPanels[side.ordinal()];
-        return coverPanel instanceof ISEGuiCoverPanel ? ((ISEGuiCoverPanel) coverPanel).getClientGuiContainer(this) : null;
+        return coverPanel instanceof ISEGuiCoverPanel ? ((ISEGuiCoverPanel) coverPanel).getContainer(player, this) : null;
     }
 
     /////////////////////////////////

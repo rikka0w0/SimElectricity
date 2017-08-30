@@ -3,16 +3,11 @@ package simelectricity.essential;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.Container;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IThreadListener;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 
 import rikka.librikka.model.loader.AdvancedModelLoader;
-import rikka.librikka.tileentity.ISEGuiProvider;
 
 import simelectricity.essential.api.SEEAPI;
 import simelectricity.essential.client.cable.CableStateMapper;
@@ -33,8 +28,6 @@ import simelectricity.essential.grid.TilePowerPole3.Pole10KvType1;
 import simelectricity.essential.grid.TilePowerPole3.Pole415vType0;
 import simelectricity.essential.grid.transformer.TilePowerTransformerWinding.Primary;
 import simelectricity.essential.grid.transformer.TilePowerTransformerWinding.Secondary;
-import simelectricity.essential.machines.gui.*;
-import simelectricity.essential.machines.tile.*;
 
 import java.util.LinkedList;
 
@@ -121,34 +114,5 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void postInit() {
 
-    }
-
-    @Override
-    public Object getClientGuiElement(int ID, EntityPlayer player, World world,
-                                      int x, int y, int z) {
-        TileEntity te = world.getTileEntity(new BlockPos(x, y, z));
-
-        if (te instanceof ISEGuiProvider)
-            return ((ISEGuiProvider) te).getClientGuiContainer(EnumFacing.getFront(ID));
-
-        Container container = BlockRegistry.getContainer(te, player);
-
-        if (te instanceof TileVoltageMeter)
-            return new GuiVoltageMeter(container);
-        if (te instanceof TileQuantumGenerator)
-            return new GuiQuantumGenerator(container);
-        if (te instanceof TileAdjustableResistor)
-            return new GuiAdjustableResistor(container);
-
-        if (te instanceof TileAdjustableTransformer)
-            return new GuiAdjustableTransformer(container);
-        if (te instanceof TileCurrentSensor)
-            return new GuiCurrentSensor(container);
-        if (te instanceof TileDiode)
-            return new GuiDiode(container);
-        if (te instanceof TileSwitch)
-            return new GuiSwitch(container);
-
-        return null;
     }
 }
