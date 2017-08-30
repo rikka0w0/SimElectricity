@@ -33,6 +33,9 @@ public class TechneModelPart {
 		 * @return an instance of a loaded texture sheet which is going to be used for the entire model
 		 */
 		TextureAtlasSprite getTexture();
+		
+		int getUOffset();
+		int getVOffset();
 	}
 	
 	private final TextureAtlasSprite texture;
@@ -55,8 +58,8 @@ public class TechneModelPart {
 	public TechneModelPart(TextureProvider textureProvider, int textureOffsetX, int textureOffsetY) {
 		this.texture = textureProvider.getTexture();
 		this.textureRelativeSize = textureProvider.getTextureRelativeSize();
-		this.textureOffsetX = textureOffsetX;
-		this.textureOffsetY = textureOffsetY;
+		this.textureOffsetX = textureOffsetX + textureProvider.getUOffset();
+		this.textureOffsetY = textureOffsetY + textureProvider.getVOffset();
 	}
 	
 	public TechneModelPart addBox(float offX, float offY, float offZ, int width, int height, int depth) {
