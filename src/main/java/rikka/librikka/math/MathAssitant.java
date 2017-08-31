@@ -2,7 +2,7 @@ package rikka.librikka.math;
 
 import net.minecraft.util.math.MathHelper;
 
-public class SEMathHelper {
+public class MathAssitant {
     public static final float PI = (float) Math.PI;
 
     /**

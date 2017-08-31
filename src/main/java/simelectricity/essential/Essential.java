@@ -9,6 +9,7 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
+import rikka.librikka.AutoGuiHandler;
 import simelectricity.essential.api.SEEAPI;
 import simelectricity.essential.cable.CableWatchEventHandler;
 import simelectricity.essential.coverpanel.CoverPanelRegistry;
@@ -57,7 +58,7 @@ public class Essential {
         MinecraftForge.EVENT_BUS.register(new CableWatchEventHandler());
 
         //Register GUI handler
-        NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());
+        NetworkRegistry.INSTANCE.registerGuiHandler(instance, new AutoGuiHandler());
     }
 
     /**

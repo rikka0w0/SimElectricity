@@ -1,6 +1,6 @@
 package rikka.librikka.multiblock;
 
-public interface ISEMultiBlockTile {
+public interface IMultiBlockTile {
     MultiBlockTileInfo getMultiBlockTileInfo();
 
     /**
@@ -13,7 +13,6 @@ public interface ISEMultiBlockTile {
     /**
      * Called when a structure is created by a player, all tileEntity will receive this
      *
-     * @param mbInfo
      */
     void onStructureCreated();
 

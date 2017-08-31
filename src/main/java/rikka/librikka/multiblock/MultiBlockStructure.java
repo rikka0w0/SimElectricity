@@ -6,6 +6,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.World;
 
 import java.util.HashSet;
@@ -28,7 +29,7 @@ public class MultiBlockStructure {
     private final int searchAreaSize;
 
     /**
-     * @param config y,z,x facing NORTH(Z-), do not change
+     * @param configuration y,z,x facing NORTH(Z-), do not change
      */
     public MultiBlockStructure(MultiBlockStructure.BlockInfo[][][] configuration) {
         height = configuration.length;
@@ -195,12 +196,12 @@ public class MultiBlockStructure {
     }
 
     public void restoreStructure(TileEntity te, IBlockState stateJustRemoved) {
-        if (te instanceof ISEMultiBlockTile) {
-            MultiBlockTileInfo mbInfo = ((ISEMultiBlockTile) te).getMultiBlockTileInfo();
+        if (te instanceof IMultiBlockTile) {
+            MultiBlockTileInfo mbInfo = ((IMultiBlockTile) te).getMultiBlockTileInfo();
             if (!mbInfo.formed)
                 return;    //Avoid circulation, improve performance
 
-            Set<ISEMultiBlockTile> removedTile = new HashSet();
+            Set<IMultiBlockTile> removedTile = new HashSet();
 
             World world = te.getWorld();
 
@@ -236,8 +237,8 @@ public class MultiBlockStructure {
                                     TileEntity te2 = world.getTileEntity(pos);
 
                                     if (te2 != null) {
-                                        ((ISEMultiBlockTile) te2).getMultiBlockTileInfo().formed = false;
-                                        removedTile.add((ISEMultiBlockTile) te2);
+                                        ((IMultiBlockTile) te2).getMultiBlockTileInfo().formed = false;
+                                        removedTile.add((IMultiBlockTile) te2);
                                     }
 
                                     world.destroyBlock(pos, false);
@@ -252,14 +253,25 @@ public class MultiBlockStructure {
                 }
             }
 
-            removedTile.add((ISEMultiBlockTile) te);
+            removedTile.add((IMultiBlockTile) te);
 
-            for (ISEMultiBlockTile tile : removedTile) {
+            for (IMultiBlockTile tile : removedTile) {
                 tile.onStructureRemoved();
             }
         }
     }
 
+    public BlockInfo getBlockInfo(int rotation, boolean mirrored, Vec3i pos) {
+    	BlockInfo[][][] configuration;
+        if (mirrored) {
+            configuration = mirroredAboutZ[rotation];
+        } else {
+            configuration = unmirrored[rotation];
+        }
+        
+        return configuration[pos.getY()][pos.getZ()][pos.getX()];
+    }
+    
     public static class BlockInfo {
         public final IBlockState state;
         public final IBlockState state2;
@@ -394,7 +406,7 @@ public class MultiBlockStructure {
         }
 
         public void createStructure() {
-            Set<ISEMultiBlockTile> createdTile = new HashSet();
+            Set<IMultiBlockTile> createdTile = new HashSet();
 
             for (int i = 0; i < this.structure.height; i++) {
                 for (int j = 0; j < this.zSize; j++) {
@@ -411,12 +423,12 @@ public class MultiBlockStructure {
                             //world.removeTileEntity(pos);	//Remove the incorrect TileEntity
                             TileEntity te = this.world.getTileEntity(pos);
 
-                            if (te instanceof ISEMultiBlockTile) {
+                            if (te instanceof IMultiBlockTile) {
                                 MultiBlockTileInfo mbInfo = new MultiBlockTileInfo(
                                         facing, this.mirrored, offset[0], offset[1], offset[2], this.xOriginActual, this.yOriginActual, this.zOriginActual
                                 );
-                                ((ISEMultiBlockTile) te).onStructureCreating(mbInfo);
-                                createdTile.add((ISEMultiBlockTile) te);
+                                ((IMultiBlockTile) te).onStructureCreating(mbInfo);
+                                createdTile.add((IMultiBlockTile) te);
                             }
                         }
 
@@ -424,7 +436,7 @@ public class MultiBlockStructure {
                 }
             }
 
-            for (ISEMultiBlockTile tile : createdTile)
+            for (IMultiBlockTile tile : createdTile)
                 tile.onStructureCreated();
         }
     }

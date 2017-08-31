@@ -1,11 +1,13 @@
 package simelectricity.essential.machines.gui;
 
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.IContainerListener;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import rikka.librikka.container.IContainerWithGui;
 import simelectricity.api.SEAPI;
 import simelectricity.essential.common.ContainerNoInventoryTwoPort;
 import simelectricity.essential.machines.tile.TileSwitch;
@@ -15,7 +17,7 @@ import simelectricity.essential.utils.network.MessageContainerSync;
 
 import java.util.Iterator;
 
-public class ContainerSwitch extends ContainerNoInventoryTwoPort<TileSwitch> implements ISEContainerUpdate, ISEButtonEventHandler {
+public class ContainerSwitch extends ContainerNoInventoryTwoPort<TileSwitch> implements ISEContainerUpdate, ISEButtonEventHandler, IContainerWithGui {
     public volatile double resistance;
     public volatile boolean isOn;
     public volatile double maxCurrent;
@@ -160,5 +162,11 @@ public class ContainerSwitch extends ContainerNoInventoryTwoPort<TileSwitch> imp
         } else {
             SEAPI.energyNetAgent.updateTileParameter(tileEntity);
         }
+    }
+    
+    @Override
+    @SideOnly(Side.CLIENT)
+    public GuiScreen createGui() {
+    	return new GuiSwitch(this);
     }
 }

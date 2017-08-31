@@ -25,10 +25,10 @@ import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import rikka.librikka.Properties;
-import rikka.librikka.block.ISESubBlock;
-import rikka.librikka.block.SEBlock;
-import rikka.librikka.item.ISESimpleTextureItem;
-import rikka.librikka.item.SEItemBlock;
+import rikka.librikka.block.ISubBlock;
+import rikka.librikka.block.BlockBase;
+import rikka.librikka.item.ISimpleTexture;
+import rikka.librikka.item.ItemBlockBase;
 import simelectricity.api.SEAPI;
 import simelectricity.api.node.ISEGridNode;
 import simelectricity.api.tile.ISEGridTile;
@@ -40,7 +40,7 @@ import java.lang.ref.WeakReference;
 import java.util.LinkedList;
 import java.util.List;
 
-public class BlockPowerPole2 extends SEBlock implements ITileEntityProvider, ISESubBlock, ISEHVCableConnector {
+public class BlockPowerPole2 extends BlockBase implements ITileEntityProvider, ISubBlock, ISEHVCableConnector {
     public static final String[] subNames = {"0", "1"};
     ///////////////////
     /// Utils
@@ -400,7 +400,7 @@ public class BlockPowerPole2 extends SEBlock implements ITileEntityProvider, ISE
         return false;
     }
 
-    public static class ItemBlock extends SEItemBlock implements ISESimpleTextureItem {
+    public static class ItemBlock extends ItemBlockBase implements ISimpleTexture {
         public ItemBlock(Block block) {
             super(block);
         }

@@ -12,7 +12,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import rikka.librikka.model.quadbuilder.SERawQuadCube;
+import rikka.librikka.model.quadbuilder.RawQuadCube;
 import simelectricity.essential.Essential;
 import simelectricity.essential.api.client.ISECoverPanelRender;
 import simelectricity.essential.api.coverpanel.ISECoverPanel;
@@ -55,7 +55,7 @@ public abstract class GenericCoverPanelRender<T extends ISECoverPanel> implement
         vertexes[6] = new float[]{0, 0, 0};
         vertexes[7] = new float[]{0, 0, 1};
         this.bakedQuads[0] = new LinkedList<BakedQuad>();
-        new SERawQuadCube(vertexes, textures).bake(this.bakedQuads[0]);
+        new RawQuadCube(vertexes, textures).bake(this.bakedQuads[0]);
 
 
         //Up
@@ -69,7 +69,7 @@ public abstract class GenericCoverPanelRender<T extends ISECoverPanel> implement
         vertexes[6] = new float[]{thickness, 1 - thickness, thickness};
         vertexes[7] = new float[]{thickness, 1 - thickness, 1 - thickness};
         this.bakedQuads[1] = new LinkedList<BakedQuad>();
-        new SERawQuadCube(vertexes, textures).bake(this.bakedQuads[1]);
+        new RawQuadCube(vertexes, textures).bake(this.bakedQuads[1]);
 
         //North
         vertexes = new float[8][];
@@ -82,7 +82,7 @@ public abstract class GenericCoverPanelRender<T extends ISECoverPanel> implement
         vertexes[6] = new float[]{0, 0, 0};
         vertexes[7] = new float[]{thickness, thickness, thickness};
         this.bakedQuads[2] = new LinkedList<BakedQuad>();
-        new SERawQuadCube(vertexes, textures).bake(this.bakedQuads[2]);
+        new RawQuadCube(vertexes, textures).bake(this.bakedQuads[2]);
 
         //South
         vertexes = new float[8][];
@@ -95,7 +95,7 @@ public abstract class GenericCoverPanelRender<T extends ISECoverPanel> implement
         vertexes[6] = new float[]{thickness, thickness, 1 - thickness};
         vertexes[7] = new float[]{0, 0, 1};
         this.bakedQuads[3] = new LinkedList<BakedQuad>();
-        new SERawQuadCube(vertexes, textures).bake(this.bakedQuads[3]);
+        new RawQuadCube(vertexes, textures).bake(this.bakedQuads[3]);
 
         //West
         vertexes = new float[8][];
@@ -108,7 +108,7 @@ public abstract class GenericCoverPanelRender<T extends ISECoverPanel> implement
         vertexes[6] = new float[]{0, 0, 0};
         vertexes[7] = new float[]{0, 0, 1};
         this.bakedQuads[4] = new LinkedList<BakedQuad>();
-        new SERawQuadCube(vertexes, textures).bake(this.bakedQuads[4]);
+        new RawQuadCube(vertexes, textures).bake(this.bakedQuads[4]);
 
         //East
         vertexes = new float[8][];
@@ -121,7 +121,7 @@ public abstract class GenericCoverPanelRender<T extends ISECoverPanel> implement
         vertexes[6] = new float[]{1 - thickness, thickness, thickness};
         vertexes[7] = new float[]{1 - thickness, thickness, 1 - thickness};
         this.bakedQuads[5] = new LinkedList<BakedQuad>();
-        new SERawQuadCube(vertexes, textures).bake(this.bakedQuads[5]);
+        new RawQuadCube(vertexes, textures).bake(this.bakedQuads[5]);
     }
 
     @Override

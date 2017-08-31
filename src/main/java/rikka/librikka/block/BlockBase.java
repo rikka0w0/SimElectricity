@@ -12,14 +12,14 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import rikka.librikka.item.SEItemBlock;
+import rikka.librikka.item.ItemBlockBase;
 
 import java.lang.reflect.Constructor;
 
-public abstract class SEBlock extends Block {
-    public final SEItemBlock itemBlock;
+public abstract class BlockBase extends Block {
+    public final ItemBlockBase itemBlock;
 
-    public SEBlock(String unlocalizedName, Material material, Class<? extends SEItemBlock> itemBlockClass) {
+    public BlockBase(String unlocalizedName, Material material, Class<? extends ItemBlockBase> itemBlockClass) {
         super(material);
         setUnlocalizedName(unlocalizedName);
         setRegistryName(unlocalizedName);                //Key!
@@ -30,7 +30,7 @@ public abstract class SEBlock extends Block {
 
         try {
             Constructor constructor = itemBlockClass.getConstructor(Block.class);
-            itemBlock = (SEItemBlock) constructor.newInstance(this);
+            itemBlock = (ItemBlockBase) constructor.newInstance(this);
             GameRegistry.register(this.itemBlock, getRegistryName());
         } catch (Exception e) {
             throw new RuntimeException("Invalid ItemBlock constructor!");
@@ -41,7 +41,7 @@ public abstract class SEBlock extends Block {
     @SideOnly(Side.CLIENT)
     public void getSubBlocks(Item itemIn, CreativeTabs tab, NonNullList<ItemStack> subItems) {
         if (this.itemBlock.getHasSubtypes()) {
-            for (int ix = 0; ix < ((ISESubBlock) this).getSubBlockUnlocalizedNames().length; ix++)
+            for (int ix = 0; ix < ((ISubBlock) this).getSubBlockUnlocalizedNames().length; ix++)
                 subItems.add(new ItemStack(this, 1, ix));
         } else {
             super.getSubBlocks(itemIn, tab, subItems);

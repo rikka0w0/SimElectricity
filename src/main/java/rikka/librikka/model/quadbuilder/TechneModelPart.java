@@ -6,7 +6,7 @@ import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import rikka.librikka.math.SEMathHelper;
+import rikka.librikka.math.MathAssitant;
 
 /**
  * Covert code-based model generated with Techne to BakedQuads, with rotation about Y axis </p>
@@ -79,9 +79,9 @@ public class TechneModelPart {
 	}
 	
 	public void setRotation(float x, float y, float z) {
-		this.rotateAngleX = x*180F/SEMathHelper.PI;
-		this.rotateAngleY = y*180F/SEMathHelper.PI;
-		this.rotateAngleZ = z*180F/SEMathHelper.PI;
+		this.rotateAngleX = x*180F/ MathAssitant.PI;
+		this.rotateAngleY = y*180F/ MathAssitant.PI;
+		this.rotateAngleZ = z*180F/ MathAssitant.PI;
 	}
 	
 	public void setTextureSize(int u, int v) {
@@ -96,15 +96,15 @@ public class TechneModelPart {
 	 * @param quads The list used to store compiled quads, must NOT be null
 	 */
 	public void bake(List<BakedQuad> quads, int rotation, float scale) {
-		SERawQuadCube2 cube = getRawCube(scale);
+		RawQuadCube2 cube = getRawCube(scale);
 		cube.rotateAroundY(rotation);
 		cube.translateCoord(0.5F, 1.5F, 0.5F);
 		cube.bake(quads);
 	}
 	
-	public SERawQuadCube2 getRawCube(float scale) {
+	public RawQuadCube2 getRawCube(float scale) {
 		//addBox
-		SERawQuadCube2 cube = new SERawQuadCube2(width, height, depth, texture, textureRelativeSize,
+		RawQuadCube2 cube = new RawQuadCube2(width, height, depth, texture, textureRelativeSize,
 				textureOffsetX+depth+width+width		, textureOffsetY+depth			,textureOffsetX+depth+width			, textureOffsetY		, 
 				textureOffsetX+depth+width				, textureOffsetY+depth			,textureOffsetX+depth				, textureOffsetY		,
 				textureOffsetX+depth+width				, textureOffsetY+depth+height 	,textureOffsetX+depth				, textureOffsetY+depth	,
@@ -144,8 +144,8 @@ public class TechneModelPart {
 	 * @param parts
 	 * @return
 	 */
-	public static SERawQuadGroup group(float scale, TechneModelPart... parts) {
-		SERawQuadGroup group = new SERawQuadGroup();
+	public static RawQuadGroup group(float scale, TechneModelPart... parts) {
+		RawQuadGroup group = new RawQuadGroup();
 		for (TechneModelPart part: parts)
 			group.add(part.getRawCube(scale));
 		return group;

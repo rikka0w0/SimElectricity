@@ -8,7 +8,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import rikka.librikka.Utils;
-import rikka.librikka.multiblock.ISEMultiBlockTile;
 import rikka.librikka.multiblock.MultiBlockTileInfo;
 import simelectricity.api.SEAPI;
 import simelectricity.api.node.ISEGridNode;
@@ -16,11 +15,8 @@ import simelectricity.api.node.ISESimulatable;
 import simelectricity.api.tile.ISEGridTile;
 import simelectricity.essential.client.grid.ISEPowerPole;
 import simelectricity.essential.client.grid.PowerPoleRenderHelper;
-import simelectricity.essential.common.SEEnergyTile;
 
-public abstract class TilePowerTransformerWinding extends SEEnergyTile implements ISEMultiBlockTile, ISEGridTile, ISEPowerPole {
-    protected MultiBlockTileInfo mbInfo;
-
+public abstract class TilePowerTransformerWinding extends TilePowerTransformer implements ISEGridTile, ISEPowerPole {
     @SideOnly(Side.CLIENT)
     protected EnumFacing facing;
     @SideOnly(Side.CLIENT)
@@ -46,18 +42,6 @@ public abstract class TilePowerTransformerWinding extends SEEnergyTile implement
     @Override
     public AxisAlignedBB getRenderBoundingBox() {
         return TileEntity.INFINITE_EXTENT_AABB;
-    }
-
-    @Override
-    public void readFromNBT(NBTTagCompound nbt) {
-        super.readFromNBT(nbt);
-        this.mbInfo = new MultiBlockTileInfo(nbt);
-    }
-
-    @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
-        this.mbInfo.saveToNBT(nbt);
-        return super.writeToNBT(nbt);
     }
 
     /////////////////////////////////////////////////////////
@@ -94,13 +78,8 @@ public abstract class TilePowerTransformerWinding extends SEEnergyTile implement
     }
 
     //////////////////////////////
-    /////ISEMultiBlockTile
+    /////IMultiBlockTile
     //////////////////////////////
-    @Override
-    public MultiBlockTileInfo getMultiBlockTileInfo() {
-        return mbInfo;
-    }
-
     @Override
     public void onStructureCreating(MultiBlockTileInfo mbInfo) {
         this.mbInfo = mbInfo;

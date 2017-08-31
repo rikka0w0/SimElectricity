@@ -8,12 +8,13 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public abstract class SEItem extends Item {
+public abstract class ItemBase extends Item {
     /**
      * @param name        Naming rules: lower case English letters and numbers only, words are separated by '_', e.g. "cooked_beef"
      * @param hasSubItems
      */
-    public SEItem(String name, boolean hasSubItems) {
+    public ItemBase(String name, boolean hasSubItems) {
+    	super();
         setUnlocalizedName(name);    //UnlocalizedName = "item." + name
         setRegistryName(name);
         setHasSubtypes(hasSubItems);

@@ -11,7 +11,7 @@ import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import rikka.librikka.UnlistedPropertyRef;
 import rikka.librikka.model.codebased.BlockRenderModel;
-import rikka.librikka.model.quadbuilder.SERawQuadCube;
+import rikka.librikka.model.quadbuilder.RawQuadCube;
 import simelectricity.essential.api.ISEGenericCable;
 import simelectricity.essential.api.client.ISECoverPanelRender;
 import simelectricity.essential.api.coverpanel.ISECoverPanel;
@@ -41,42 +41,42 @@ public class CableModel extends BlockRenderModel {
         List<BakedQuad> branchWest = new LinkedList<BakedQuad>();
         List<BakedQuad> branchEast = new LinkedList<BakedQuad>();
 
-        SERawQuadCube cube = new SERawQuadCube(thickness, 0.5F - thickness / 2, thickness,
+        RawQuadCube cube = new RawQuadCube(thickness, 0.5F - thickness / 2, thickness,
                 new TextureAtlasSprite[]{conductorTexture, null,
                         insulatorTexture, insulatorTexture, insulatorTexture, insulatorTexture});
         cube.translateCoord(0, -0.5F, 0);
         cube.translateCoord(0.5F, 0.5F, 0.5F);
         cube.bake(branchDown);
 
-        cube = new SERawQuadCube(thickness, 0.5F - thickness / 2, thickness,
+        cube = new RawQuadCube(thickness, 0.5F - thickness / 2, thickness,
                 new TextureAtlasSprite[]{null, conductorTexture,
                         insulatorTexture, insulatorTexture, insulatorTexture, insulatorTexture});
         cube.translateCoord(0, thickness / 2, 0);
         cube.translateCoord(0.5F, 0.5F, 0.5F);
         cube.bake(branchUp);
 
-        cube = new SERawQuadCube(thickness, thickness, 0.5F - thickness / 2,
+        cube = new RawQuadCube(thickness, thickness, 0.5F - thickness / 2,
                 new TextureAtlasSprite[]{insulatorTexture, insulatorTexture,
                         conductorTexture, null, insulatorTexture, insulatorTexture});
         cube.translateCoord(0, -thickness / 2, -0.25F - thickness / 4);
         cube.translateCoord(0.5F, 0.5F, 0.5F);
         cube.bake(branchNorth);
 
-        cube = new SERawQuadCube(thickness, thickness, 0.5F - thickness / 2,
+        cube = new RawQuadCube(thickness, thickness, 0.5F - thickness / 2,
                 new TextureAtlasSprite[]{insulatorTexture, insulatorTexture,
                         null, conductorTexture, insulatorTexture, insulatorTexture});
         cube.translateCoord(0, -thickness / 2, 0.25F + thickness / 4);
         cube.translateCoord(0.5F, 0.5F, 0.5F);
         cube.bake(branchSouth);
 
-        cube = new SERawQuadCube(0.5F - thickness / 2, thickness, thickness,
+        cube = new RawQuadCube(0.5F - thickness / 2, thickness, thickness,
                 new TextureAtlasSprite[]{insulatorTexture, insulatorTexture,
                         insulatorTexture, insulatorTexture, conductorTexture, null});
         cube.translateCoord(-0.25F - thickness / 4, -thickness / 2, 0);
         cube.translateCoord(0.5F, 0.5F, 0.5F);
         cube.bake(branchWest);
 
-        cube = new SERawQuadCube(0.5F - thickness / 2, thickness, thickness,
+        cube = new RawQuadCube(0.5F - thickness / 2, thickness, thickness,
                 new TextureAtlasSprite[]{insulatorTexture, insulatorTexture,
                         insulatorTexture, insulatorTexture, null, conductorTexture});
         cube.translateCoord(0.25F + thickness / 4, -thickness / 2, 0);
@@ -139,7 +139,7 @@ public class CableModel extends BlockRenderModel {
                 centerTexture[conSide.getOpposite().ordinal()] = this.conductorTexture;
             }
 
-            SERawQuadCube cube = new SERawQuadCube(this.thickness, this.thickness, this.thickness, centerTexture);
+            RawQuadCube cube = new RawQuadCube(this.thickness, this.thickness, this.thickness, centerTexture);
             cube.translateCoord(0.5F, 0.5F - this.thickness / 2, 0.5F);
             cube.bake(quads);
         }

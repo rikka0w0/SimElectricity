@@ -7,32 +7,10 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import rikka.librikka.Utils;
-import rikka.librikka.multiblock.ISEMultiBlockTile;
 import rikka.librikka.multiblock.MultiBlockTileInfo;
-import rikka.librikka.tileentity.SETileEntity;
 import simelectricity.api.node.ISEGridNode;
 
-public class TilePowerTransformerPlaceHolder extends SETileEntity implements ISEMultiBlockTile {
-    //To minimize network usage, mbInfo will not be send to blocks other than the Render block
-    protected MultiBlockTileInfo mbInfo;
-
-    @Override
-    public void readFromNBT(NBTTagCompound nbt) {
-        super.readFromNBT(nbt);
-        this.mbInfo = new MultiBlockTileInfo(nbt);
-    }
-
-    @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
-        this.mbInfo.saveToNBT(nbt);
-        return super.writeToNBT(nbt);
-    }
-
-    @Override
-    public MultiBlockTileInfo getMultiBlockTileInfo() {
-        return mbInfo;
-    }
-
+public class TilePowerTransformerPlaceHolder extends TilePowerTransformer {
     @Override
     public void onStructureCreating(MultiBlockTileInfo mbInfo) {
         this.mbInfo = mbInfo;
@@ -46,7 +24,7 @@ public class TilePowerTransformerPlaceHolder extends SETileEntity implements ISE
     @Override
     public void onStructureRemoved() {
     }
-
+	
     public static class Primary extends TilePowerTransformerPlaceHolder {
         public ISEGridNode getPrimaryTile() {
             BlockPos pos = this.mbInfo.getPartPos(EnumBlockType.Primary.offset);

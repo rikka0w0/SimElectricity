@@ -1,6 +1,7 @@
 package simelectricity.essential.grid;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
@@ -16,9 +17,9 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import rikka.librikka.Properties;
-import rikka.librikka.block.SEBlock;
-import rikka.librikka.item.ISESimpleTextureItem;
-import rikka.librikka.item.SEItemBlock;
+import rikka.librikka.block.BlockBase;
+import rikka.librikka.item.ISimpleTexture;
+import rikka.librikka.item.ItemBlockBase;
 import simelectricity.api.node.ISEGridNode;
 import simelectricity.api.tile.ISEGridTile;
 import simelectricity.essential.BlockRegistry;
@@ -26,7 +27,7 @@ import simelectricity.essential.api.ISEHVCableConnector;
 
 import java.util.LinkedList;
 
-public class BlockPowerPoleBottom extends SEBlock implements ISEHVCableConnector, ISESimpleTextureItem {
+public class BlockPowerPoleBottom extends BlockBase implements ISEHVCableConnector, ISimpleTexture {
     ///////////////////
     /// Utils
     ///////////////////
@@ -47,7 +48,11 @@ public class BlockPowerPoleBottom extends SEBlock implements ISEHVCableConnector
     /// Initialize
     ///////////////////
     public BlockPowerPoleBottom() {
-        super("essential_powerpole_bottom", Material.ROCK, SEItemBlock.class);
+        super("essential_powerpole_bottom", Material.ROCK, ItemBlockBase.class);
+        
+        setHardness(3.0F);
+        setResistance(10.0F);
+        setSoundType(SoundType.METAL);
     }
 
     /**
@@ -70,7 +75,7 @@ public class BlockPowerPoleBottom extends SEBlock implements ISEHVCableConnector
     }
 
     /**
-     * @param metadata facing/meta of the center block
+     * @param state blockstate which contains facing of the center block
      * @return offsets from center
      */
     public static LinkedList<BlockInfo> getBaseBlockCoordOffsets(IBlockState state) {
@@ -119,10 +124,8 @@ public class BlockPowerPoleBottom extends SEBlock implements ISEHVCableConnector
     }
 
     /**
-     * @param x    coord of the base block
-     * @param y
-     * @param z
-     * @param meta
+     * @param basePos    coord of the base block
+     * @param state
      * @return coord of the center block
      */
     public static BlockPos getCenterBoxCoord(BlockPos basePos, IBlockState state) {

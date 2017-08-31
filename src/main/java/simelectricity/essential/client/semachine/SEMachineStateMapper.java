@@ -10,12 +10,12 @@ import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import rikka.librikka.model.codebased.ISEModelLoader;
+import rikka.librikka.model.codebased.IModelLoader;
 import simelectricity.essential.common.semachine.ExtendedProperties;
 import simelectricity.essential.common.semachine.SEMachineBlock;
 
 @SideOnly(Side.CLIENT)
-public class SEMachineStateMapper extends StateMapperBase implements ISEModelLoader {
+public class SEMachineStateMapper extends StateMapperBase implements IModelLoader {
     public static final String VPATH = "virtual/blockstates/semachine";
     public final String domain;
 

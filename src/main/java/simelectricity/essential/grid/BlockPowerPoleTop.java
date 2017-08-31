@@ -21,6 +21,7 @@ package simelectricity.essential.grid;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
+import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.BlockStateContainer;
@@ -41,10 +42,10 @@ import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import rikka.librikka.Properties;
-import rikka.librikka.block.ISESubBlock;
-import rikka.librikka.block.SEBlock;
-import rikka.librikka.item.ISESimpleTextureItem;
-import rikka.librikka.item.SEItemBlock;
+import rikka.librikka.block.ISubBlock;
+import rikka.librikka.block.BlockBase;
+import rikka.librikka.item.ISimpleTexture;
+import rikka.librikka.item.ItemBlockBase;
 import simelectricity.api.SEAPI;
 import simelectricity.api.tile.ISEGridTile;
 import simelectricity.essential.BlockRegistry;
@@ -52,7 +53,7 @@ import simelectricity.essential.BlockRegistry;
 import java.lang.ref.WeakReference;
 import java.util.LinkedList;
 
-public class BlockPowerPoleTop extends SEBlock implements ITileEntityProvider, ISESubBlock {
+public class BlockPowerPoleTop extends BlockBase implements ITileEntityProvider, ISubBlock {
     public static final String[] subNames = {"0", "1"};
     ///////////////////////////////////////
     /// Utils
@@ -70,6 +71,10 @@ public class BlockPowerPoleTop extends SEBlock implements ITileEntityProvider, I
     ///////////////////
     public BlockPowerPoleTop() {
         super("essential_powerpole", Material.ROCK, BlockPowerPoleTop.ItemBlock.class);
+        
+        setHardness(3.0F);
+        setResistance(10.0F);
+        setSoundType(SoundType.METAL);
     }
 
     private static BlockInfo createCollisionBoxCoordOffset(int facing, int x, int y, int z, int part) {
@@ -288,7 +293,7 @@ public class BlockPowerPoleTop extends SEBlock implements ITileEntityProvider, I
         return false;
     }
 
-    public static class ItemBlock extends SEItemBlock implements ISESimpleTextureItem {
+    public static class ItemBlock extends ItemBlockBase implements ISimpleTexture {
         public ItemBlock(Block block) {
             super(block);
         }

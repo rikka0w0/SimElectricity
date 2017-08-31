@@ -11,8 +11,8 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import rikka.librikka.Utils;
-import rikka.librikka.item.ISESimpleTextureItem;
-import rikka.librikka.item.SEItem;
+import rikka.librikka.item.ISimpleTexture;
+import rikka.librikka.item.ItemBase;
 import simelectricity.api.ISECrowbarTarget;
 import simelectricity.api.ISEWrenchable;
 import simelectricity.api.ISidedFacing;
@@ -28,7 +28,7 @@ import simelectricity.essential.api.ISENodeDelegateBlock;
 import simelectricity.essential.api.coverpanel.ISECoverPanel;
 import simelectricity.essential.utils.SEUnitHelper;
 
-public class ItemTools extends SEItem implements ISESimpleTextureItem {
+public class ItemTools extends ItemBase implements ISimpleTexture {
     private static final String[] subNames = {"crowbar", "wrench", "glove", "multimeter"};
 
     public ItemTools() {

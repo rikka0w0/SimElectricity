@@ -2,6 +2,7 @@ package simelectricity.essential.cable;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
+import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
@@ -28,10 +29,10 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import rikka.librikka.RayTraceHelper;
 import rikka.librikka.UnlistedPropertyRef;
-import rikka.librikka.block.ISESubBlock;
-import rikka.librikka.block.SEMetaBlock;
-import rikka.librikka.item.ISESimpleTextureItem;
-import rikka.librikka.item.SEItemBlock;
+import rikka.librikka.block.ISubBlock;
+import rikka.librikka.block.MetaBlock;
+import rikka.librikka.item.ISimpleTexture;
+import rikka.librikka.item.ItemBlockBase;
 import simelectricity.api.SEAPI;
 import simelectricity.essential.Essential;
 import simelectricity.essential.api.ISECoverPanelHost;
@@ -51,7 +52,7 @@ import java.util.List;
  *
  * @author Rikka0_0
  */
-public class BlockCable extends SEMetaBlock implements ITileEntityProvider, ISESubBlock, ISESimpleTextureItem {
+public class BlockCable extends MetaBlock implements ITileEntityProvider, ISubBlock, ISimpleTexture {
     ///////////////////////////////
     /// Cable Properties
     ///////////////////////////////
@@ -60,12 +61,14 @@ public class BlockCable extends SEMetaBlock implements ITileEntityProvider, ISES
     public final float[] resistances;
     private final Class<? extends TileCable> tileEntityClass;
     public BlockCable() {
-        this("essential_cable", Material.GLASS, SEItemBlock.class,
+        this("essential_cable", Material.GLASS, ItemBlockBase.class,
                 new String[]{"copper_thin", "copper_medium", "copper_thick"},
                 new float[]{0.22F, 0.32F, 0.42F},
                 new float[]{0.1F, 0.01F, 0.001F},
                 TileCable.class);
-		this.setHardness(0.2F);
+		setHardness(0.2F);
+        setResistance(10.0F);
+        setSoundType(SoundType.METAL);
     }
     
     /**
@@ -84,7 +87,7 @@ public class BlockCable extends SEMetaBlock implements ITileEntityProvider, ISES
     ///////////////////////////////
     ///Block Properties
     ///////////////////////////////
-    protected BlockCable(String name, Material material, Class<? extends SEItemBlock> itemBlockClass,
+    protected BlockCable(String name, Material material, Class<? extends ItemBlockBase> itemBlockClass,
                          String[] cableTypes, float[] thicknessList, float[] resistanceList, Class<? extends TileCable> tileEntityClass) {
         super(name, material, itemBlockClass);
 		subNames = cableTypes;

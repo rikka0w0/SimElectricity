@@ -7,14 +7,14 @@ import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraftforge.common.property.ExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
-import rikka.librikka.item.SEItemBlock;
+import rikka.librikka.item.ItemBlockBase;
 
 import java.util.ArrayList;
 
-public abstract class SEMetaBlock extends SEBlock {
+public abstract class MetaBlock extends BlockBase {
     public final IProperty<Integer> propertyMeta;
 
-    public SEMetaBlock(String unlocalizedName, Material material, Class<? extends SEItemBlock> itemBlockClass) {
+    public MetaBlock(String unlocalizedName, Material material, Class<? extends ItemBlockBase> itemBlockClass) {
         super(unlocalizedName, material, itemBlockClass);
 
         this.propertyMeta = (IProperty<Integer>) getBlockState().getProperty("meta");

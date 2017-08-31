@@ -6,7 +6,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import rikka.librikka.math.SEMathHelper;
+import rikka.librikka.math.MathAssitant;
 
 import org.lwjgl.opengl.GL11;
 import simelectricity.essential.Essential;
@@ -164,7 +164,7 @@ public class SERenderHelper {
     }
 
     public static void rotateToVec(double[][] vertexes, double xStart, double yStart, double zStart, double xEnd, double yEnd, double zEnd) {
-        double distance = SEMathHelper.distanceOf(xStart, yStart, zStart, xEnd, yEnd, zEnd);
+        double distance = MathAssitant.distanceOf(xStart, yStart, zStart, xEnd, yEnd, zEnd);
         SERenderHelper.rotateAroundY(vertexes, (float) (Math.atan2(zStart - zEnd, xEnd - xStart) * 180 / Math.PI));
         SERenderHelper.rotateAroundVector(vertexes, (float) (Math.acos((yEnd - yStart) / distance) * 180 / Math.PI), (zEnd - zStart) / distance, 0, (xStart - xEnd) / distance);
     }

@@ -1,6 +1,7 @@
 package simelectricity.essential.common.semachine;
 
 import net.minecraft.block.ITileEntityProvider;
+import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
@@ -17,23 +18,27 @@ import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import rikka.librikka.block.ISESubBlock;
-import rikka.librikka.block.SEMetaBlock;
-import rikka.librikka.item.SEItemBlock;
+import rikka.librikka.block.ISubBlock;
+import rikka.librikka.block.MetaBlock;
+import rikka.librikka.item.ItemBlockBase;
 import simelectricity.api.ISidedFacing;
 import simelectricity.api.SEAPI;
 
 import java.util.ArrayList;
 
-public abstract class SEMachineBlock extends SEMetaBlock implements ITileEntityProvider, ISESubBlock {
+public abstract class SEMachineBlock extends MetaBlock implements ITileEntityProvider, ISubBlock {
     protected final String[] subNames;
 
     public SEMachineBlock(String unlocalizedName, String[] subNames) {
-        super(unlocalizedName, Material.ROCK, SEItemBlock.class);
+        super(unlocalizedName, Material.IRON, ItemBlockBase.class);
 
         this.subNames = new String[subNames.length];
         for (int i = 0; i < subNames.length; i++)
             this.subNames[i] = subNames[i];
+        
+        setHardness(3.0F);
+        setResistance(10.0F);
+        setSoundType(SoundType.METAL);
     }
 
     @Override

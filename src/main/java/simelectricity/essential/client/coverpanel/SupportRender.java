@@ -8,7 +8,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.TextureStitchEvent.Pre;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import rikka.librikka.model.quadbuilder.SERawQuadCube;
+import rikka.librikka.model.quadbuilder.RawQuadCube;
 import simelectricity.essential.Essential;
 import simelectricity.essential.api.coverpanel.ISECoverPanel;
 
@@ -28,7 +28,7 @@ public class SupportRender {
         int i = side.ordinal();
         if (SupportRender.instance.bakedQuads[i] == null) {
             SupportRender.instance.bakedQuads[i] = new LinkedList();
-            SERawQuadCube cube = new SERawQuadCube(0.1F, 0.5F - ISECoverPanel.thickness, 0.1F, SupportRender.instance.textures);
+            RawQuadCube cube = new RawQuadCube(0.1F, 0.5F - ISECoverPanel.thickness, 0.1F, SupportRender.instance.textures);
             cube.rotateToDirection(side);
             cube.translateCoord(0.5F, 0.5F, 0.5F);
             cube.bake(SupportRender.instance.bakedQuads[i]);

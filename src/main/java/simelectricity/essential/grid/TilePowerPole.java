@@ -9,7 +9,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import rikka.librikka.Utils;
-import rikka.librikka.math.SEMathHelper;
+import rikka.librikka.math.MathAssitant;
 import rikka.librikka.math.Vec3f;
 import simelectricity.api.node.ISEGridNode;
 import simelectricity.api.tile.ISEGridTile;
@@ -54,9 +54,9 @@ public class TilePowerPole extends SEEnergyTile implements ISEGridTile, ISEPower
                     PowerPoleRenderHelper.ConnectionInfo[] connection2 = connectionInfo.getLast();
 
                     Vec3f pos = new Vec3f(
-                            3.95F * MathHelper.sin(rotation / 180F * SEMathHelper.PI) + 0.5F + this.pos.getX(),
+                            3.95F * MathHelper.sin(rotation / 180F * MathAssitant.PI) + 0.5F + this.pos.getX(),
                             this.pos.getY() + 23 - 18,
-                            3.95F * MathHelper.cos(rotation / 180F * SEMathHelper.PI) + 0.5F + this.pos.getZ()
+                            3.95F * MathHelper.cos(rotation / 180F * MathAssitant.PI) + 0.5F + this.pos.getZ()
                     );
 
                     this.addExtraWire(connection1[1].fixedFrom, pos, 2.5F);

@@ -3,17 +3,17 @@ package rikka.librikka.item;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
-import rikka.librikka.block.ISESubBlock;
-import rikka.librikka.block.SEBlock;
+import rikka.librikka.block.BlockBase;
+import rikka.librikka.block.ISubBlock;
 
-public class SEItemBlock extends ItemBlock {
-    public SEItemBlock(Block block) {
+public class ItemBlockBase extends ItemBlock {
+    public ItemBlockBase(Block block) {
         super(block);
 
-        boolean hasSubBlocks = block instanceof ISESubBlock;
+        boolean hasSubBlocks = block instanceof ISubBlock;
 
-        if (!(block instanceof SEBlock))
-            throw new RuntimeException("SEItemBlock should be used with SEblock!");
+        if (!(block instanceof BlockBase))
+            throw new RuntimeException("ItemBlockBase should be used with BlockBase!");
 
 		this.setHasSubtypes(hasSubBlocks);
 
@@ -24,8 +24,8 @@ public class SEItemBlock extends ItemBlock {
     @Override
     public final String getUnlocalizedName(ItemStack itemstack) {
         if (getHasSubtypes()) {
-            SEBlock seBlock = (SEBlock) getBlock();
-            String[] subBlockUnlocalizedNames = ((ISESubBlock) seBlock).getSubBlockUnlocalizedNames();
+            BlockBase blockBase = (BlockBase) getBlock();
+            String[] subBlockUnlocalizedNames = ((ISubBlock) blockBase).getSubBlockUnlocalizedNames();
             return getUnlocalizedName() + "." + subBlockUnlocalizedNames[itemstack.getItemDamage()];
         } else {
             return getUnlocalizedName();

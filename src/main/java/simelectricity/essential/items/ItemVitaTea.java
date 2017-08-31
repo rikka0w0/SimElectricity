@@ -3,11 +3,11 @@ package simelectricity.essential.items;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import rikka.librikka.item.ISESimpleTextureItem;
-import rikka.librikka.item.SEItem;
+import rikka.librikka.item.ISimpleTexture;
+import rikka.librikka.item.ItemBase;
 import simelectricity.api.SEAPI;
 
-public class ItemVitaTea extends SEItem implements ISESimpleTextureItem {
+public class ItemVitaTea extends ItemBase implements ISimpleTexture {
     public ItemVitaTea() {
         super("cell_vita", false);
 

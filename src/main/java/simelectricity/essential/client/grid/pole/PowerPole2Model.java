@@ -10,7 +10,7 @@ import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import rikka.librikka.model.codebased.BlockRenderModel;
-import rikka.librikka.model.quadbuilder.SERawQuadCube;
+import rikka.librikka.model.quadbuilder.RawQuadCube;
 import simelectricity.essential.client.grid.PowerPoleRenderHelper;
 import simelectricity.essential.client.grid.PowerPoleRenderHelper.ConnectionInfo;
 import simelectricity.essential.utils.client.SERenderHeap;
@@ -42,7 +42,7 @@ public class PowerPole2Model extends BlockRenderModel {
         if (isRod) {
             modelInsulator = null;
 
-            SERawQuadCube cube = new SERawQuadCube(0.25F, 1, 0.25F, textureMetal);
+            RawQuadCube cube = new RawQuadCube(0.25F, 1, 0.25F, textureMetal);
             cube.translateCoord(0.5F, 0, 0.5F);
             cube.bake(this.quads);
         } else {

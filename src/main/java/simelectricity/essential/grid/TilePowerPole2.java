@@ -4,7 +4,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import rikka.librikka.math.SEMathHelper;
+import rikka.librikka.math.MathAssitant;
 import rikka.librikka.math.Vec3f;
 import simelectricity.essential.client.grid.PowerPoleRenderHelper;
 
@@ -28,9 +28,9 @@ public class TilePowerPole2 extends TilePowerPole {
                     PowerPoleRenderHelper.ConnectionInfo[] connection2 = connectionInfo.getLast();
 
                     Vec3f pos = new Vec3f(
-                            3.95F * MathHelper.sin(rotation / 180F * SEMathHelper.PI) + 0.5F + this.pos.getX(),
+                            3.95F * MathHelper.sin(rotation / 180F * MathAssitant.PI) + 0.5F + this.pos.getX(),
                             this.pos.getY() + 23 - 18,
-                            3.95F * MathHelper.cos(rotation / 180F * SEMathHelper.PI) + 0.5F + this.pos.getZ()
+                            3.95F * MathHelper.cos(rotation / 180F * MathAssitant.PI) + 0.5F + this.pos.getZ()
                     );
 
                     this.addExtraWire(connection1[1].fixedFrom, connection2[1].fixedFrom, 2.5F);

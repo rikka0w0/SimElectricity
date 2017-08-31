@@ -11,9 +11,9 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import rikka.librikka.math.SEMathHelper;
+import rikka.librikka.math.MathAssitant;
 import rikka.librikka.math.Vec3f;
-import rikka.librikka.model.quadbuilder.SERawQuadGroup;
+import rikka.librikka.model.quadbuilder.RawQuadGroup;
 
 import org.apache.commons.lang3.tuple.Pair;
 import simelectricity.api.tile.ISEGridTile;
@@ -174,8 +174,8 @@ public class PowerPoleRenderHelper {
         if (this.mirroredAboutZ)
             offsetX = -offsetX;
 
-        float rotatedX = offsetZ * MathHelper.sin(rotation / 180F * SEMathHelper.PI) + offsetX * MathHelper.cos(rotation / 180F * SEMathHelper.PI);
-        float rotatedZ = offsetZ * MathHelper.cos(rotation / 180F * SEMathHelper.PI) - offsetX * MathHelper.sin(rotation / 180F * SEMathHelper.PI);
+        float rotatedX = offsetZ * MathHelper.sin(rotation / 180F * MathAssitant.PI) + offsetX * MathHelper.cos(rotation / 180F * MathAssitant.PI);
+        float rotatedZ = offsetZ * MathHelper.cos(rotation / 180F * MathAssitant.PI) - offsetX * MathHelper.sin(rotation / 180F * MathAssitant.PI);
 
 
         return new PowerPoleRenderHelper.Insulator(this, length, tension, rotatedX + 0.5F, offsetY, rotatedZ + 0.5F);
@@ -188,8 +188,8 @@ public class PowerPoleRenderHelper {
         if (insulators.length != insulatorPerGroup)
             return;
 
-        float rotatedX = centerZ * MathHelper.sin(this.rotation / 180F * SEMathHelper.PI) + centerX * MathHelper.cos(this.rotation / 180F * SEMathHelper.PI) + 0.5F;
-        float rotatedZ = centerZ * MathHelper.cos(this.rotation / 180F * SEMathHelper.PI) - centerX * MathHelper.sin(this.rotation / 180F * SEMathHelper.PI) + 0.5F;
+        float rotatedX = centerZ * MathHelper.sin(this.rotation / 180F * MathAssitant.PI) + centerX * MathHelper.cos(this.rotation / 180F * MathAssitant.PI) + 0.5F;
+        float rotatedZ = centerZ * MathHelper.cos(this.rotation / 180F * MathAssitant.PI) - centerX * MathHelper.sin(this.rotation / 180F * MathAssitant.PI) + 0.5F;
 
         groups[addedGroup] = new PowerPoleRenderHelper.Group(this, rotatedX, centerY, rotatedZ, insulators);
         addedGroup++;
@@ -252,12 +252,12 @@ public class PowerPoleRenderHelper {
         this.connectionInfo.add(ret);
     }
 
-    public void renderInsulator(SERawQuadGroup insulatorModel, List<BakedQuad> quads) {
+    public void renderInsulator(RawQuadGroup insulatorModel, List<BakedQuad> quads) {
         for (PowerPoleRenderHelper.ConnectionInfo[] connections : connectionInfo) {
             for (PowerPoleRenderHelper.ConnectionInfo connection : connections) {
-                SERawQuadGroup insulator = insulatorModel.clone();
+                RawQuadGroup insulator = insulatorModel.clone();
 
-                insulator.rotateAroundZ(connection.insulatorAngle / SEMathHelper.PI * 180F);
+                insulator.rotateAroundZ(connection.insulatorAngle / MathAssitant.PI * 180F);
                 insulator.rotateToVec(connection.from.xCoord, connection.from.yCoord, connection.from.zCoord,
                         connection.fixedTo.xCoord, connection.from.yCoord, connection.fixedTo.zCoord);
                 insulator.translateCoord(connection.from.xCoord, connection.from.yCoord, connection.from.zCoord);

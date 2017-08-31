@@ -1,6 +1,7 @@
 package simelectricity.essential.grid.transformer;
 
 import net.minecraft.block.ITileEntityProvider;
+import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyBool;
@@ -18,12 +19,14 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import rikka.librikka.Properties;
-import rikka.librikka.block.ISESubBlock;
-import rikka.librikka.block.SEBlock;
-import rikka.librikka.item.ISESimpleTextureItem;
-import rikka.librikka.item.SEItemBlock;
+import rikka.librikka.block.ISubBlock;
+import rikka.librikka.block.BlockBase;
+import rikka.librikka.item.ISimpleTexture;
+import rikka.librikka.item.ItemBlockBase;
+import rikka.librikka.multiblock.IMultiBlockTile;
 import rikka.librikka.multiblock.MultiBlockStructure;
 import rikka.librikka.multiblock.MultiBlockStructure.Result;
+import rikka.librikka.multiblock.MultiBlockTileInfo;
 import simelectricity.api.SEAPI;
 import simelectricity.api.node.ISESimulatable;
 import simelectricity.essential.api.ISEHVCableConnector;
@@ -31,7 +34,7 @@ import simelectricity.essential.grid.transformer.TilePowerTransformerPlaceHolder
 import simelectricity.essential.grid.transformer.TilePowerTransformerPlaceHolder.Render;
 import simelectricity.essential.grid.transformer.TilePowerTransformerPlaceHolder.Secondary;
 
-public class BlockPowerTransformer extends SEBlock implements ITileEntityProvider, ISESubBlock, ISESimpleTextureItem, ISEHVCableConnector {
+public class BlockPowerTransformer extends BlockBase implements ITileEntityProvider, ISubBlock, ISimpleTexture, ISEHVCableConnector {
     public static final String[] subNames = EnumBlockType.getRawStructureNames();
     ///////////////////////////////
     ///BlockStates
@@ -40,9 +43,13 @@ public class BlockPowerTransformer extends SEBlock implements ITileEntityProvide
     public final MultiBlockStructure structureTemplate;
 
     public BlockPowerTransformer() {
-        super("essential_powertransformer", Material.IRON, SEItemBlock.class);
+        super("essential_powertransformer", Material.IRON, ItemBlockBase.class);
 
         structureTemplate = this.createStructureTemplate();
+        
+        setHardness(3.0F);
+        setResistance(10.0F);
+        setSoundType(SoundType.METAL);
     }
 
     @Override
@@ -156,12 +163,20 @@ public class BlockPowerTransformer extends SEBlock implements ITileEntityProvide
     }
 
     @Override
-    public ItemStack getItem(World worldIn, BlockPos pos, IBlockState state) {
+    public ItemStack getItem(World world, BlockPos pos, IBlockState state) {
         EnumBlockType blockType = state.getValue(EnumBlockType.property);
 
-        if (blockType.formed)
-            return ItemStack.EMPTY;
-
+        if (blockType.formed) {
+        	TileEntity te = world.getTileEntity(pos);
+        	if (te instanceof IMultiBlockTile) {
+        		MultiBlockTileInfo mbInfo = ((IMultiBlockTile) te).getMultiBlockTileInfo();
+        		if (mbInfo != null) {
+        			//TODO: No item drop
+        		}
+        	}
+        	return ItemStack.EMPTY;
+        }
+            
         return new ItemStack(this.itemBlock, 1, this.damageDropped(state));
     }
 

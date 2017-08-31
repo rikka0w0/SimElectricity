@@ -1,16 +1,20 @@
 package simelectricity.essential.machines.tile;
 
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.Container;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import rikka.librikka.tileentity.IGuiProviderTile;
 import simelectricity.api.IEnergyNetUpdateHandler;
 import simelectricity.api.SEAPI;
 import simelectricity.api.components.ISEVoltageSource;
 import simelectricity.essential.common.semachine.ISESocketProvider;
 import simelectricity.essential.common.semachine.SESinglePortMachine;
+import simelectricity.essential.machines.gui.ContainerQuantumGenerator;
 
-public class TileQuantumGenerator extends SESinglePortMachine implements ISEVoltageSource, IEnergyNetUpdateHandler, ISESocketProvider {
+public class TileQuantumGenerator extends SESinglePortMachine implements ISEVoltageSource, IEnergyNetUpdateHandler, ISESocketProvider, IGuiProviderTile {
     //Component parameters
     public double internalVoltage = 230;
     public double resistance = 0.1;
@@ -72,4 +76,12 @@ public class TileQuantumGenerator extends SESinglePortMachine implements ISEVolt
     public int getSocketIconIndex(EnumFacing side) {
         return side == this.functionalSide ? 1 : -1;
     }
+    
+    ///////////////////////////////////
+    /// IGuiProviderTile
+    ///////////////////////////////////
+	@Override
+	public Container getContainer(EntityPlayer player, EnumFacing side) {
+		return new ContainerQuantumGenerator(this);
+	}
 }

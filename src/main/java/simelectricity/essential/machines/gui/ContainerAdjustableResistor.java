@@ -1,11 +1,13 @@
 package simelectricity.essential.machines.gui;
 
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.IContainerListener;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import rikka.librikka.container.ContainerNoInventory;
+import rikka.librikka.container.IContainerWithGui;
 import simelectricity.api.SEAPI;
 import simelectricity.essential.machines.tile.TileAdjustableResistor;
 import simelectricity.essential.utils.network.ISEButtonEventHandler;
@@ -14,7 +16,7 @@ import simelectricity.essential.utils.network.MessageContainerSync;
 
 import java.util.Iterator;
 
-public class ContainerAdjustableResistor extends ContainerNoInventory<TileAdjustableResistor> implements ISEContainerUpdate, ISEButtonEventHandler {
+public class ContainerAdjustableResistor extends ContainerNoInventory<TileAdjustableResistor> implements ISEContainerUpdate, ISEButtonEventHandler, IContainerWithGui {
     public double resistance;
     public double voltage;
     public double current;
@@ -111,5 +113,11 @@ public class ContainerAdjustableResistor extends ContainerNoInventory<TileAdjust
         tileEntity.resistance = resistance;
 
         SEAPI.energyNetAgent.updateTileParameter(this.tileEntity);
+    }
+    
+    @Override
+    @SideOnly(Side.CLIENT)
+    public GuiScreen createGui() {
+    	return new GuiAdjustableResistor(this);
     }
 }

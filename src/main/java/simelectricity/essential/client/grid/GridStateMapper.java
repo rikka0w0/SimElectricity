@@ -11,7 +11,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import rikka.librikka.Properties;
 import rikka.librikka.model.GhostModel;
-import rikka.librikka.model.codebased.ISEModelLoader;
+import rikka.librikka.model.codebased.IModelLoader;
 import simelectricity.essential.BlockRegistry;
 import simelectricity.essential.client.grid.pole.*;
 import simelectricity.essential.grid.BlockPowerPole2;
@@ -19,7 +19,7 @@ import simelectricity.essential.grid.BlockPowerPole3;
 import simelectricity.essential.grid.EnumBlockTypePole3;
 
 @SideOnly(Side.CLIENT)
-public class GridStateMapper extends StateMapperBase implements ISEModelLoader {
+public class GridStateMapper extends StateMapperBase implements IModelLoader {
     public static final String VPATH = "virtual/blockstates/grid";
     public final String domain;
 

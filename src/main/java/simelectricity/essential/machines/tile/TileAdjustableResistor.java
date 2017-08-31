@@ -1,17 +1,21 @@
 package simelectricity.essential.machines.tile;
 
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.Container;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import rikka.librikka.tileentity.IGuiProviderTile;
 import simelectricity.api.IEnergyNetUpdateHandler;
 import simelectricity.api.SEAPI;
 import simelectricity.api.components.ISEVoltageSource;
 import simelectricity.essential.common.semachine.ISESocketProvider;
 import simelectricity.essential.common.semachine.SESinglePortMachine;
+import simelectricity.essential.machines.gui.ContainerAdjustableResistor;
 
-public class TileAdjustableResistor extends SESinglePortMachine implements ISEVoltageSource, IEnergyNetUpdateHandler, ISESocketProvider, ITickable {
+public class TileAdjustableResistor extends SESinglePortMachine implements ISEVoltageSource, IEnergyNetUpdateHandler, ISESocketProvider, ITickable, IGuiProviderTile {
     //Component parameters
     public double resistance = 100;
 
@@ -80,4 +84,12 @@ public class TileAdjustableResistor extends SESinglePortMachine implements ISEVo
     public int getSocketIconIndex(EnumFacing side) {
         return side == this.functionalSide ? 0 : -1;
     }
+    
+    ///////////////////////////////////
+    /// IGuiProviderTile
+    ///////////////////////////////////
+	@Override
+	public Container getContainer(EntityPlayer player, EnumFacing side) {
+		return new ContainerAdjustableResistor(this);
+	}
 }

@@ -10,12 +10,12 @@ import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.obj.OBJLoader;
 import rikka.librikka.Properties;
 import rikka.librikka.model.SingleTextureModel;
-import rikka.librikka.model.codebased.ISEModelLoader;
+import rikka.librikka.model.codebased.IModelLoader;
 import simelectricity.essential.BlockRegistry;
 import simelectricity.essential.grid.transformer.BlockPowerTransformer;
 import simelectricity.essential.grid.transformer.EnumBlockType;
 
-public class PowerTransformerStateMapper extends StateMapperBase implements ISEModelLoader {
+public class PowerTransformerStateMapper extends StateMapperBase implements IModelLoader {
     public static final String VPATH = "virtual/blockstates/powertransformer";
     public final String domain;
 

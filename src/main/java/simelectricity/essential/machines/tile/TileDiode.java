@@ -1,15 +1,19 @@
 package simelectricity.essential.machines.tile;
 
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.Container;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import rikka.librikka.tileentity.IGuiProviderTile;
 import simelectricity.api.IEnergyNetUpdateHandler;
 import simelectricity.api.SEAPI;
 import simelectricity.api.components.ISEDiode;
 import simelectricity.essential.common.semachine.ISESocketProvider;
 import simelectricity.essential.common.semachine.SETwoPortMachine;
+import simelectricity.essential.machines.gui.ContainerDiode;
 
-public class TileDiode extends SETwoPortMachine implements ISEDiode, IEnergyNetUpdateHandler, ISESocketProvider {
+public class TileDiode extends SETwoPortMachine implements ISEDiode, IEnergyNetUpdateHandler, ISESocketProvider, IGuiProviderTile {
     public double inputVoltage, outputVoltage;
 
     /////////////////////////////////////////////////////////
@@ -53,4 +57,12 @@ public class TileDiode extends SETwoPortMachine implements ISEDiode, IEnergyNetU
         else
             return -1;
     }
+    
+    ///////////////////////////////////
+    /// IGuiProviderTile
+    ///////////////////////////////////
+	@Override
+	public Container getContainer(EntityPlayer player, EnumFacing side) {
+		return new ContainerDiode(this);
+	}
 }

@@ -7,7 +7,7 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.MathHelper;
 
-import rikka.librikka.math.SEMathHelper;
+import rikka.librikka.math.MathAssitant;
 
 import java.awt.*;
 import java.util.List;
@@ -17,15 +17,15 @@ import java.util.List;
  *
  * @author Rikka0_0
  */
-public class SERawQuadCube implements ISERawElement<SERawQuadCube> {
+public class RawQuadCube implements IRawElement<RawQuadCube> {
     private final float[][] vertexes;
     private final TextureAtlasSprite[] icons;
 
-    public SERawQuadCube(float maxX, float maxY, float maxZ, TextureAtlasSprite icon) {
+    public RawQuadCube(float maxX, float maxY, float maxZ, TextureAtlasSprite icon) {
         this(maxX, maxY, maxZ, new TextureAtlasSprite[]{icon, icon, icon, icon, icon, icon});
     }
 
-    public SERawQuadCube(float maxX, float maxY, float maxZ, TextureAtlasSprite[] icons) {
+    public RawQuadCube(float maxX, float maxY, float maxZ, TextureAtlasSprite[] icons) {
         this.icons = icons;
         vertexes = new float[8][];
         float x = maxX / 2.0F;
@@ -45,7 +45,7 @@ public class SERawQuadCube implements ISERawElement<SERawQuadCube> {
     }
 
     @Deprecated
-    public SERawQuadCube(double[][] vertexes, TextureAtlasSprite[] icons) {
+    public RawQuadCube(double[][] vertexes, TextureAtlasSprite[] icons) {
         this.icons = icons;
         this.vertexes = new float[vertexes.length][];
 
@@ -56,7 +56,7 @@ public class SERawQuadCube implements ISERawElement<SERawQuadCube> {
         }
     }
 
-    public SERawQuadCube(float[][] vertexes, TextureAtlasSprite[] icons) {
+    public RawQuadCube(float[][] vertexes, TextureAtlasSprite[] icons) {
         this.icons = icons;
         this.vertexes = new float[vertexes.length][];
 
@@ -68,12 +68,12 @@ public class SERawQuadCube implements ISERawElement<SERawQuadCube> {
     }
 
     @Override
-    public SERawQuadCube clone() {
-        return new SERawQuadCube(this.vertexes, this.icons);
+    public RawQuadCube clone() {
+        return new RawQuadCube(this.vertexes, this.icons);
     }
 
     @Override
-    public SERawQuadCube translateCoord(float x, float y, float z) {
+    public RawQuadCube translateCoord(float x, float y, float z) {
         for (int i = 0; i < this.vertexes.length; i++) {
             this.vertexes[i][0] += x;
             this.vertexes[i][1] += y;
@@ -84,7 +84,7 @@ public class SERawQuadCube implements ISERawElement<SERawQuadCube> {
     }
 
     @Override
-    public SERawQuadCube rotateAroundX(float angle) {
+    public RawQuadCube rotateAroundX(float angle) {
         float f1 = MathHelper.cos(-angle * 0.01745329252F);
         float f2 = MathHelper.sin(-angle * 0.01745329252F);
 
@@ -101,7 +101,7 @@ public class SERawQuadCube implements ISERawElement<SERawQuadCube> {
     }
 
     @Override
-    public SERawQuadCube rotateAroundY(float angle) {
+    public RawQuadCube rotateAroundY(float angle) {
         float f1 = MathHelper.cos(angle * 0.01745329252F);
         float f2 = MathHelper.sin(angle * 0.01745329252F);
 
@@ -118,7 +118,7 @@ public class SERawQuadCube implements ISERawElement<SERawQuadCube> {
     }
 
     @Override
-    public SERawQuadCube rotateAroundZ(float angle) {
+    public RawQuadCube rotateAroundZ(float angle) {
         float f1 = MathHelper.cos(-angle * 0.01745329252F);
         float f2 = MathHelper.sin(-angle * 0.01745329252F);
 
@@ -136,8 +136,8 @@ public class SERawQuadCube implements ISERawElement<SERawQuadCube> {
     }
 
     @Override
-    public SERawQuadCube rotateToVec(float xStart, float yStart, float zStart, float xEnd, float yEnd, float zEnd) {
-        float distance = SEMathHelper.distanceOf(xStart, yStart, zStart, xEnd, yEnd, zEnd);
+    public RawQuadCube rotateToVec(float xStart, float yStart, float zStart, float xEnd, float yEnd, float zEnd) {
+        float distance = MathAssitant.distanceOf(xStart, yStart, zStart, xEnd, yEnd, zEnd);
         this.rotateAroundY((float) (Math.atan2(zStart - zEnd, xEnd - xStart) * 180 / Math.PI));
         this.rotateAroundVector((float) (Math.acos((yEnd - yStart) / distance) * 180 / Math.PI), (zEnd - zStart) / distance, 0, (xStart - xEnd) / distance);
 
@@ -145,7 +145,7 @@ public class SERawQuadCube implements ISERawElement<SERawQuadCube> {
     }
 
     @Override
-    public SERawQuadCube rotateToDirection(EnumFacing direction) {
+    public RawQuadCube rotateToDirection(EnumFacing direction) {
         switch (direction) {
             case DOWN:
                 this.rotateAroundX(180);
@@ -173,7 +173,7 @@ public class SERawQuadCube implements ISERawElement<SERawQuadCube> {
     }
 
     @Override
-    public SERawQuadCube rotateAroundVector(float angle, float x, float y, float z) {
+    public RawQuadCube rotateAroundVector(float angle, float x, float y, float z) {
         //Normalize the axis vector
         float length = MathHelper.sqrt(x * x + y * y + z * z);
         x = x / length;
@@ -197,7 +197,7 @@ public class SERawQuadCube implements ISERawElement<SERawQuadCube> {
     }
     
 	@Override
-	public ISERawModel scale(float scale) {
+	public IRawModel scale(float scale) {
 		for (int i = 0; i < this.vertexes.length; i++) {
             this.vertexes[i][0] *= scale;
             this.vertexes[i][1] *= scale;
@@ -217,10 +217,10 @@ public class SERawQuadCube implements ISERawElement<SERawQuadCube> {
             vMin = 0;
             vMax = 16;
             list.add(new BakedQuad(Ints.concat(
-                    SEBakedQuadHelper.vertexToInts(this.vertexes[7][0], this.vertexes[7][1], this.vertexes[7][2], Color.WHITE.getRGB(), this.icons[0], uMin, vMin),    //uMin, vMax
-                    SEBakedQuadHelper.vertexToInts(this.vertexes[6][0], this.vertexes[6][1], this.vertexes[6][2], Color.WHITE.getRGB(), this.icons[0], uMin, vMax),    //uMin, vMin
-                    SEBakedQuadHelper.vertexToInts(this.vertexes[5][0], this.vertexes[5][1], this.vertexes[5][2], Color.WHITE.getRGB(), this.icons[0], uMax, vMax), //uMax, vMin
-                    SEBakedQuadHelper.vertexToInts(this.vertexes[4][0], this.vertexes[4][1], this.vertexes[4][2], Color.WHITE.getRGB(), this.icons[0], uMax, vMin)    //uMax, vMax
+                    BakedQuadHelper.vertexToInts(this.vertexes[7][0], this.vertexes[7][1], this.vertexes[7][2], Color.WHITE.getRGB(), this.icons[0], uMin, vMin),    //uMin, vMax
+                    BakedQuadHelper.vertexToInts(this.vertexes[6][0], this.vertexes[6][1], this.vertexes[6][2], Color.WHITE.getRGB(), this.icons[0], uMin, vMax),    //uMin, vMin
+                    BakedQuadHelper.vertexToInts(this.vertexes[5][0], this.vertexes[5][1], this.vertexes[5][2], Color.WHITE.getRGB(), this.icons[0], uMax, vMax), //uMax, vMin
+                    BakedQuadHelper.vertexToInts(this.vertexes[4][0], this.vertexes[4][1], this.vertexes[4][2], Color.WHITE.getRGB(), this.icons[0], uMax, vMin)    //uMax, vMax
             ), 0, EnumFacing.DOWN, this.icons[0], true, DefaultVertexFormats.ITEM));
         }
 
@@ -231,10 +231,10 @@ public class SERawQuadCube implements ISERawElement<SERawQuadCube> {
             vMin = 0;
             vMax = 16;
             list.add(new BakedQuad(Ints.concat(
-                    SEBakedQuadHelper.vertexToInts(this.vertexes[0][0], this.vertexes[0][1], this.vertexes[0][2], Color.WHITE.getRGB(), this.icons[1], uMax, vMax),
-                    SEBakedQuadHelper.vertexToInts(this.vertexes[1][0], this.vertexes[1][1], this.vertexes[1][2], Color.WHITE.getRGB(), this.icons[1], uMax, vMin),
-                    SEBakedQuadHelper.vertexToInts(this.vertexes[2][0], this.vertexes[2][1], this.vertexes[2][2], Color.WHITE.getRGB(), this.icons[1], uMin, vMin),
-                    SEBakedQuadHelper.vertexToInts(this.vertexes[3][0], this.vertexes[3][1], this.vertexes[3][2], Color.WHITE.getRGB(), this.icons[1], uMin, vMax)
+                    BakedQuadHelper.vertexToInts(this.vertexes[0][0], this.vertexes[0][1], this.vertexes[0][2], Color.WHITE.getRGB(), this.icons[1], uMax, vMax),
+                    BakedQuadHelper.vertexToInts(this.vertexes[1][0], this.vertexes[1][1], this.vertexes[1][2], Color.WHITE.getRGB(), this.icons[1], uMax, vMin),
+                    BakedQuadHelper.vertexToInts(this.vertexes[2][0], this.vertexes[2][1], this.vertexes[2][2], Color.WHITE.getRGB(), this.icons[1], uMin, vMin),
+                    BakedQuadHelper.vertexToInts(this.vertexes[3][0], this.vertexes[3][1], this.vertexes[3][2], Color.WHITE.getRGB(), this.icons[1], uMin, vMax)
             ), 0, EnumFacing.UP, this.icons[1], true, DefaultVertexFormats.ITEM));
         }
 
@@ -245,10 +245,10 @@ public class SERawQuadCube implements ISERawElement<SERawQuadCube> {
             vMin = 0;
             vMax = 16;
             list.add(new BakedQuad(Ints.concat(
-                    SEBakedQuadHelper.vertexToInts(this.vertexes[2][0], this.vertexes[2][1], this.vertexes[2][2], Color.WHITE.getRGB(), this.icons[2], uMax, vMin),
-                    SEBakedQuadHelper.vertexToInts(this.vertexes[1][0], this.vertexes[1][1], this.vertexes[1][2], Color.WHITE.getRGB(), this.icons[2], uMin, vMin),
-                    SEBakedQuadHelper.vertexToInts(this.vertexes[5][0], this.vertexes[5][1], this.vertexes[5][2], Color.WHITE.getRGB(), this.icons[2], uMin, vMax),
-                    SEBakedQuadHelper.vertexToInts(this.vertexes[6][0], this.vertexes[6][1], this.vertexes[6][2], Color.WHITE.getRGB(), this.icons[2], uMax, vMax)
+                    BakedQuadHelper.vertexToInts(this.vertexes[2][0], this.vertexes[2][1], this.vertexes[2][2], Color.WHITE.getRGB(), this.icons[2], uMax, vMin),
+                    BakedQuadHelper.vertexToInts(this.vertexes[1][0], this.vertexes[1][1], this.vertexes[1][2], Color.WHITE.getRGB(), this.icons[2], uMin, vMin),
+                    BakedQuadHelper.vertexToInts(this.vertexes[5][0], this.vertexes[5][1], this.vertexes[5][2], Color.WHITE.getRGB(), this.icons[2], uMin, vMax),
+                    BakedQuadHelper.vertexToInts(this.vertexes[6][0], this.vertexes[6][1], this.vertexes[6][2], Color.WHITE.getRGB(), this.icons[2], uMax, vMax)
             ), 0, EnumFacing.NORTH, this.icons[2], true, DefaultVertexFormats.ITEM));
         }
 
@@ -259,10 +259,10 @@ public class SERawQuadCube implements ISERawElement<SERawQuadCube> {
             vMin = 0;
             vMax = 16;
             list.add(new BakedQuad(Ints.concat(
-                    SEBakedQuadHelper.vertexToInts(this.vertexes[3][0], this.vertexes[3][1], this.vertexes[3][2], Color.WHITE.getRGB(), this.icons[3], uMin, vMin),
-                    SEBakedQuadHelper.vertexToInts(this.vertexes[7][0], this.vertexes[7][1], this.vertexes[7][2], Color.WHITE.getRGB(), this.icons[3], uMin, vMax),
-                    SEBakedQuadHelper.vertexToInts(this.vertexes[4][0], this.vertexes[4][1], this.vertexes[4][2], Color.WHITE.getRGB(), this.icons[3], uMax, vMax),
-                    SEBakedQuadHelper.vertexToInts(this.vertexes[0][0], this.vertexes[0][1], this.vertexes[0][2], Color.WHITE.getRGB(), this.icons[3], uMax, vMin)
+                    BakedQuadHelper.vertexToInts(this.vertexes[3][0], this.vertexes[3][1], this.vertexes[3][2], Color.WHITE.getRGB(), this.icons[3], uMin, vMin),
+                    BakedQuadHelper.vertexToInts(this.vertexes[7][0], this.vertexes[7][1], this.vertexes[7][2], Color.WHITE.getRGB(), this.icons[3], uMin, vMax),
+                    BakedQuadHelper.vertexToInts(this.vertexes[4][0], this.vertexes[4][1], this.vertexes[4][2], Color.WHITE.getRGB(), this.icons[3], uMax, vMax),
+                    BakedQuadHelper.vertexToInts(this.vertexes[0][0], this.vertexes[0][1], this.vertexes[0][2], Color.WHITE.getRGB(), this.icons[3], uMax, vMin)
             ), 0, EnumFacing.SOUTH, this.icons[3], true, DefaultVertexFormats.ITEM));
         }
 
@@ -273,10 +273,10 @@ public class SERawQuadCube implements ISERawElement<SERawQuadCube> {
             vMin = 0;
             vMax = 16;
             list.add(new BakedQuad(Ints.concat(
-                    SEBakedQuadHelper.vertexToInts(this.vertexes[3][0], this.vertexes[3][1], this.vertexes[3][2], Color.WHITE.getRGB(), this.icons[4], uMax, vMin),
-                    SEBakedQuadHelper.vertexToInts(this.vertexes[2][0], this.vertexes[2][1], this.vertexes[2][2], Color.WHITE.getRGB(), this.icons[4], uMin, vMin),
-                    SEBakedQuadHelper.vertexToInts(this.vertexes[6][0], this.vertexes[6][1], this.vertexes[6][2], Color.WHITE.getRGB(), this.icons[4], uMin, vMax),
-                    SEBakedQuadHelper.vertexToInts(this.vertexes[7][0], this.vertexes[7][1], this.vertexes[7][2], Color.WHITE.getRGB(), this.icons[4], uMax, vMax)
+                    BakedQuadHelper.vertexToInts(this.vertexes[3][0], this.vertexes[3][1], this.vertexes[3][2], Color.WHITE.getRGB(), this.icons[4], uMax, vMin),
+                    BakedQuadHelper.vertexToInts(this.vertexes[2][0], this.vertexes[2][1], this.vertexes[2][2], Color.WHITE.getRGB(), this.icons[4], uMin, vMin),
+                    BakedQuadHelper.vertexToInts(this.vertexes[6][0], this.vertexes[6][1], this.vertexes[6][2], Color.WHITE.getRGB(), this.icons[4], uMin, vMax),
+                    BakedQuadHelper.vertexToInts(this.vertexes[7][0], this.vertexes[7][1], this.vertexes[7][2], Color.WHITE.getRGB(), this.icons[4], uMax, vMax)
             ), 0, EnumFacing.WEST, this.icons[4], true, DefaultVertexFormats.ITEM));
         }
 
@@ -287,10 +287,10 @@ public class SERawQuadCube implements ISERawElement<SERawQuadCube> {
             vMin = 0;
             vMax = 16;
             list.add(new BakedQuad(Ints.concat(
-                    SEBakedQuadHelper.vertexToInts(this.vertexes[1][0], this.vertexes[1][1], this.vertexes[1][2], Color.WHITE.getRGB(), this.icons[5], uMax, vMin),
-                    SEBakedQuadHelper.vertexToInts(this.vertexes[0][0], this.vertexes[0][1], this.vertexes[0][2], Color.WHITE.getRGB(), this.icons[5], uMin, vMin),
-                    SEBakedQuadHelper.vertexToInts(this.vertexes[4][0], this.vertexes[4][1], this.vertexes[4][2], Color.WHITE.getRGB(), this.icons[5], uMin, vMax),
-                    SEBakedQuadHelper.vertexToInts(this.vertexes[5][0], this.vertexes[5][1], this.vertexes[5][2], Color.WHITE.getRGB(), this.icons[5], uMax, vMax)
+                    BakedQuadHelper.vertexToInts(this.vertexes[1][0], this.vertexes[1][1], this.vertexes[1][2], Color.WHITE.getRGB(), this.icons[5], uMax, vMin),
+                    BakedQuadHelper.vertexToInts(this.vertexes[0][0], this.vertexes[0][1], this.vertexes[0][2], Color.WHITE.getRGB(), this.icons[5], uMin, vMin),
+                    BakedQuadHelper.vertexToInts(this.vertexes[4][0], this.vertexes[4][1], this.vertexes[4][2], Color.WHITE.getRGB(), this.icons[5], uMin, vMax),
+                    BakedQuadHelper.vertexToInts(this.vertexes[5][0], this.vertexes[5][1], this.vertexes[5][2], Color.WHITE.getRGB(), this.icons[5], uMax, vMax)
             ), 0, EnumFacing.EAST, this.icons[5], true, DefaultVertexFormats.ITEM));
         }
     }

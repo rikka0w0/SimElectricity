@@ -1,6 +1,6 @@
 package rikka.librikka.block;
 
-public interface ISESubBlock {
+public interface ISubBlock {
     /**
      * Only use for subBlocks
      *

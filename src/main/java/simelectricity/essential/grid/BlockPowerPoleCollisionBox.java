@@ -15,18 +15,18 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import rikka.librikka.block.SEBlock;
-import rikka.librikka.item.ISESimpleTextureItem;
-import rikka.librikka.item.SEItemBlock;
+import rikka.librikka.block.BlockBase;
+import rikka.librikka.item.ISimpleTexture;
+import rikka.librikka.item.ItemBlockBase;
 
-public class BlockPowerPoleCollisionBox extends SEBlock implements ISESimpleTextureItem {
+public class BlockPowerPoleCollisionBox extends BlockBase implements ISimpleTexture {
     ///////////////////////////////
     ///BlockStates
     ///////////////////////////////
     public static final IProperty<Integer> propertyPart = PropertyInteger.create("part", 0, 10);
 
     public BlockPowerPoleCollisionBox() {
-        super("essential_powerpole_collision_box", Material.ROCK, SEItemBlock.class);
+        super("essential_powerpole_collision_box", Material.ROCK, ItemBlockBase.class);
         setBlockUnbreakable();
     }
 

@@ -8,11 +8,11 @@ import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import rikka.librikka.model.codebased.ISEModelLoader;
+import rikka.librikka.model.codebased.IModelLoader;
 import simelectricity.essential.cable.BlockCable;
 
 @SideOnly(Side.CLIENT)
-public class CableStateMapper extends StateMapperBase implements ISEModelLoader {
+public class CableStateMapper extends StateMapperBase implements IModelLoader {
     public static final String VPATH = "virtual/blockstates/standardcable";
     public final String domain;
 

@@ -12,8 +12,8 @@ import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import rikka.librikka.model.codebased.BlockRenderModel;
-import rikka.librikka.model.quadbuilder.SERawQuadCube;
-import rikka.librikka.model.quadbuilder.SERawQuadGroup;
+import rikka.librikka.model.quadbuilder.RawQuadCube;
+import rikka.librikka.model.quadbuilder.RawQuadGroup;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.util.vector.Vector3f;
@@ -32,7 +32,7 @@ public class PowerPole3Model extends BlockRenderModel implements IPerspectiveAwa
     private final int rotation;
     private final List<BakedQuad> quads = new LinkedList();
 
-    private final SERawQuadGroup insulator;
+    private final RawQuadGroup insulator;
 
     public PowerPole3Model(EnumBlockTypePole3 blockType, int rotation, TextureAtlasSprite textureMetal, TextureAtlasSprite textureInsulator, TextureAtlasSprite textureConcrete) {
         this.textureMetal = textureMetal;
@@ -41,47 +41,47 @@ public class PowerPole3Model extends BlockRenderModel implements IPerspectiveAwa
         this.rotation = rotation;
         this.blockType = blockType;
 
-        SERawQuadCube cube = new SERawQuadCube(0.25F, 1, 0.25F, textureConcrete);
+        RawQuadCube cube = new RawQuadCube(0.25F, 1, 0.25F, textureConcrete);
         cube.translateCoord(0.5F, 0, 0.5F);
         cube.bake(this.quads);
 
-        SERawQuadGroup insulator = null;
+        RawQuadGroup insulator = null;
         //Build the insulator model
         switch (blockType) {
             case Pole:
                 break;
             case Crossarm10kVT0:
             case Crossarm10kVT1:
-                insulator = new SERawQuadGroup();
-                insulator.add(new SERawQuadCube(0.08F, 0.5F, 0.08F, textureMetal));
-                insulator.add(new SERawQuadCube(0.5F, 0.05F, 0.5F, textureInsulator).translateCoord(0, 0.15F, 0));
-                insulator.add(new SERawQuadCube(0.5F, 0.05F, 0.5F, textureInsulator).translateCoord(0, 0.225F, 0));
-                insulator.add(new SERawQuadCube(0.5F, 0.05F, 0.5F, textureInsulator).translateCoord(0, 0.3F, 0));
+                insulator = new RawQuadGroup();
+                insulator.add(new RawQuadCube(0.08F, 0.5F, 0.08F, textureMetal));
+                insulator.add(new RawQuadCube(0.5F, 0.05F, 0.5F, textureInsulator).translateCoord(0, 0.15F, 0));
+                insulator.add(new RawQuadCube(0.5F, 0.05F, 0.5F, textureInsulator).translateCoord(0, 0.225F, 0));
+                insulator.add(new RawQuadCube(0.5F, 0.05F, 0.5F, textureInsulator).translateCoord(0, 0.3F, 0));
                 break;
             case Crossarm415VT0:
-                insulator = new SERawQuadGroup();
-                insulator.add(new SERawQuadCube(0.08F, 0.25F, 0.08F, textureMetal));
-                insulator.add(new SERawQuadCube(0.25F, 0.05F, 0.25F, textureInsulator).translateCoord(0, 0.15F, 0));
+                insulator = new RawQuadGroup();
+                insulator.add(new RawQuadCube(0.08F, 0.25F, 0.08F, textureMetal));
+                insulator.add(new RawQuadCube(0.25F, 0.05F, 0.25F, textureInsulator).translateCoord(0, 0.15F, 0));
                 break;
         }
         this.insulator = insulator;
 
 
-        SERawQuadGroup model = new SERawQuadGroup();
+        RawQuadGroup model = new RawQuadGroup();
         switch (blockType) {
             case Pole:
                 break;
             case Crossarm10kVT0:
-                model.add(new SERawQuadCube(0.15F, 0.1F, 1.6F, textureMetal));
+                model.add(new RawQuadCube(0.15F, 0.1F, 1.6F, textureMetal));
                 model.merge(insulator.clone().translateCoord(0, 0.05F, -0.74F));
                 model.merge(insulator.clone().translateCoord(0, 0.05F, 0.74F));
                 model.merge(insulator.clone().translateCoord(0, 1F, 0));
                 break;
             case Crossarm10kVT1:
-                model.add(new SERawQuadCube(0.15F, 0.08F, 1.6F, textureMetal).translateCoord(0, 0.05F, 0));
+                model.add(new RawQuadCube(0.15F, 0.08F, 1.6F, textureMetal).translateCoord(0, 0.05F, 0));
                 break;
             case Crossarm415VT0:
-                model.add(new SERawQuadCube(0.15F, 0.1F, 1.94F, textureMetal));
+                model.add(new RawQuadCube(0.15F, 0.1F, 1.94F, textureMetal));
                 model.merge(insulator.clone().translateCoord(0, 0.05F, -0.9F));
                 model.merge(insulator.clone().translateCoord(0, 0.05F, -0.45F));
                 model.merge(insulator.clone().translateCoord(0, 0.05F, 0.45F));

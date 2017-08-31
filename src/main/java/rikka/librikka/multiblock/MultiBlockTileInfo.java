@@ -56,8 +56,12 @@ public class MultiBlockTileInfo {
     }
 
     public BlockPos getPartPos(Vec3i offsetPos) {
-        int[] offset = MultiBlockStructure.offsetFromOrigin(this.facing.ordinal() - 2, this.mirrored,
+        int[] offset = MultiBlockStructure.offsetFromOrigin(getFacing(), this.mirrored,
                 offsetPos.getX(), offsetPos.getY(), offsetPos.getZ());
         return this.origin.add(offset[0], offset[1], offset[2]);
+    }
+    
+    public int getFacing() {
+    	return this.facing.ordinal() - 2;
     }
 }

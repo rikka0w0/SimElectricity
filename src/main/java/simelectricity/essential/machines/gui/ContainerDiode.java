@@ -1,11 +1,13 @@
 package simelectricity.essential.machines.gui;
 
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.IContainerListener;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import rikka.librikka.container.IContainerWithGui;
 import simelectricity.essential.common.ContainerNoInventoryTwoPort;
 import simelectricity.essential.machines.tile.TileDiode;
 import simelectricity.essential.utils.network.ISEContainerUpdate;
@@ -13,7 +15,7 @@ import simelectricity.essential.utils.network.MessageContainerSync;
 
 import java.util.Iterator;
 
-public class ContainerDiode extends ContainerNoInventoryTwoPort<TileDiode> implements ISEContainerUpdate {
+public class ContainerDiode extends ContainerNoInventoryTwoPort<TileDiode> implements ISEContainerUpdate, IContainerWithGui {
     public double inputVoltage, outputVoltage;
     public EnumFacing inputSide, outputSide;
 
@@ -61,5 +63,11 @@ public class ContainerDiode extends ContainerNoInventoryTwoPort<TileDiode> imple
         outputSide = (EnumFacing) data[3];
 
         forwardBiased = inputVoltage > outputVoltage;
+    }
+    
+    @Override
+    @SideOnly(Side.CLIENT)
+    public GuiScreen createGui() {
+    	return new GuiDiode(this);
     }
 }

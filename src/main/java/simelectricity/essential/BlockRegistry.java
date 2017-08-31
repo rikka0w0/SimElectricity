@@ -1,7 +1,6 @@
 package simelectricity.essential;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.Container;
+
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import simelectricity.essential.cable.BlockCable;
@@ -17,7 +16,6 @@ import simelectricity.essential.grid.transformer.TilePowerTransformerWinding.Pri
 import simelectricity.essential.grid.transformer.TilePowerTransformerWinding.Secondary;
 import simelectricity.essential.machines.BlockElectronics;
 import simelectricity.essential.machines.BlockTwoPortElectronics;
-import simelectricity.essential.machines.gui.*;
 import simelectricity.essential.machines.tile.*;
 
 //@GameRegistry.ObjectHolder(SETemplate.MODID)
@@ -75,26 +73,6 @@ public class BlockRegistry {
         BlockRegistry.registerTile(TileCurrentSensor.class);
         BlockRegistry.registerTile(TileDiode.class);
         BlockRegistry.registerTile(TileSwitch.class);
-    }
-
-    public static Container getContainer(TileEntity te, EntityPlayer player) {
-        if (te instanceof TileVoltageMeter)
-            return new ContainerVoltageMeter(te);
-        if (te instanceof TileQuantumGenerator)
-            return new ContainerQuantumGenerator(te);
-        if (te instanceof TileAdjustableResistor)
-            return new ContainerAdjustableResistor(te);
-
-        if (te instanceof TileAdjustableTransformer)
-            return new ContainerAdjustableTransformer(te);
-        if (te instanceof TileCurrentSensor)
-            return new ContainerCurrentSensor(te);
-        if (te instanceof TileDiode)
-            return new ContainerDiode(te);
-        if (te instanceof TileSwitch)
-            return new ContainerSwitch(te);
-
-        return null;
     }
 
     private static void registerTile(Class<? extends TileEntity> teClass) {

@@ -9,14 +9,14 @@ import net.minecraft.inventory.IContainerListener;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import rikka.librikka.gui.ISEContainer;
+import rikka.librikka.container.IContainerWithGui;
 import simelectricity.essential.utils.network.ISEButtonEventHandler;
 import simelectricity.essential.utils.network.ISEContainerUpdate;
 import simelectricity.essential.utils.network.MessageContainerSync;
 
 import java.util.Iterator;
 
-public class ContainerVoltageSensor extends Container implements ISEContainerUpdate, ISEButtonEventHandler, ISEContainer {
+public class ContainerVoltageSensor extends Container implements ISEContainerUpdate, ISEButtonEventHandler, IContainerWithGui {
     private final VoltageSensorPanel panel;
     public boolean emitRedstoneSignal;
     public boolean inverted;

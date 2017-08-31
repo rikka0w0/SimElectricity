@@ -19,9 +19,9 @@ import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import rikka.librikka.Properties;
-import rikka.librikka.block.SEBlock;
-import rikka.librikka.item.ISESimpleTextureItem;
-import rikka.librikka.item.SEItemBlock;
+import rikka.librikka.block.BlockBase;
+import rikka.librikka.item.ISimpleTexture;
+import rikka.librikka.item.ItemBlockBase;
 import simelectricity.api.SEAPI;
 import simelectricity.api.node.ISEGridNode;
 import simelectricity.api.tile.ISEGridTile;
@@ -29,9 +29,9 @@ import simelectricity.essential.api.ISEHVCableConnector;
 
 import java.lang.ref.WeakReference;
 
-public class BlockCableJoint extends SEBlock implements ITileEntityProvider, ISEHVCableConnector, ISESimpleTextureItem {
+public class BlockCableJoint extends BlockBase implements ITileEntityProvider, ISEHVCableConnector, ISimpleTexture {
     public BlockCableJoint() {
-        super("essential_cable_joint", Material.GLASS, SEItemBlock.class);
+        super("essential_cable_joint", Material.GLASS, ItemBlockBase.class);
     }
 
     @Override

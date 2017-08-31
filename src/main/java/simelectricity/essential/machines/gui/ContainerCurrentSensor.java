@@ -1,11 +1,13 @@
 package simelectricity.essential.machines.gui;
 
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.IContainerListener;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import rikka.librikka.container.IContainerWithGui;
 import simelectricity.api.SEAPI;
 import simelectricity.essential.common.ContainerNoInventoryTwoPort;
 import simelectricity.essential.machines.tile.TileCurrentSensor;
@@ -16,7 +18,7 @@ import simelectricity.essential.utils.network.MessageContainerSync;
 
 import java.util.Iterator;
 
-public class ContainerCurrentSensor extends ContainerNoInventoryTwoPort<TileCurrentSensor> implements ISEContainerUpdate, ISEButtonEventHandler {
+public class ContainerCurrentSensor extends ContainerNoInventoryTwoPort<TileCurrentSensor> implements ISEContainerUpdate, ISEButtonEventHandler, IContainerWithGui {
     public double thresholdCurrent, resistance;
     public EnumFacing inputSide, outputSide;
     public boolean absMode, inverted;
@@ -186,5 +188,11 @@ public class ContainerCurrentSensor extends ContainerNoInventoryTwoPort<TileCurr
             this.tileEntity.absMode = absMode;
             this.tileEntity.checkRedstoneStatus();
         }
+    }
+    
+    @Override
+    @SideOnly(Side.CLIENT)
+    public GuiScreen createGui() {
+    	return new GuiCurrentSensor(this);
     }
 }

@@ -18,10 +18,10 @@ import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import rikka.librikka.block.SEBlock;
-import rikka.librikka.item.ISESimpleTextureItem;
+import rikka.librikka.block.BlockBase;
+import rikka.librikka.item.ISimpleTexture;
 import rikka.librikka.model.SingleTextureModel;
-import rikka.librikka.model.codebased.ISEModelLoader;
+import rikka.librikka.model.codebased.IModelLoader;
 
 /**
  * Load simple texture for items/itemblocks and also load code based block models
@@ -33,7 +33,7 @@ public class AdvancedModelLoader implements ICustomModelLoader {
 	//STI - simple texture item
 	private static final String PATH_STI = "virtual/sti/";
     public final String domain;
-    private final Set<ISEModelLoader> registeredLoaders = new HashSet();
+    private final Set<IModelLoader> registeredLoaders = new HashSet();
     
     public AdvancedModelLoader(String domain) {
         this.domain = domain;
@@ -43,7 +43,7 @@ public class AdvancedModelLoader implements ICustomModelLoader {
 
     @Override
     public void onResourceManagerReload(IResourceManager resourceManager) {
-    	for (ISEModelLoader loader : this.registeredLoaders)
+    	for (IModelLoader loader : this.registeredLoaders)
     		if (loader instanceof IResourceManagerReloadListener)
     			((IResourceManagerReloadListener) loader).onResourceManagerReload(resourceManager);
     }
@@ -58,7 +58,7 @@ public class AdvancedModelLoader implements ICustomModelLoader {
         if (resPath.startsWith(PATH_STI)) {
             return true;    //SimpleTextureItem
         } else {
-            for (ISEModelLoader loader : this.registeredLoaders)
+            for (IModelLoader loader : this.registeredLoaders)
                 if (loader.accepts(resPath))
                     return true;
         }
@@ -77,7 +77,7 @@ public class AdvancedModelLoader implements ICustomModelLoader {
             resPath = resPath.substring(PATH_STI.length());
             return new SingleTextureModel(this.domain, resPath, false);    //SimpleTextureItem
         } else {
-            for (ISEModelLoader loader : this.registeredLoaders)
+            for (IModelLoader loader : this.registeredLoaders)
                 if (loader.accepts(resPath)) {
                     String variantStr = ((ModelResourceLocation) modelLocation).getVariant();
                     return loader.loadModel(domain, resPath, variantStr);
@@ -90,13 +90,13 @@ public class AdvancedModelLoader implements ICustomModelLoader {
     ///////////////////////////
     /// Utils
     ///////////////////////////
-    public void registerModelLoader(ISEModelLoader loader) {
+    public void registerModelLoader(IModelLoader loader) {
         this.registeredLoaders.add(loader);
     }
 
-    public void registerInventoryIcon(SEBlock block) {
-    	if (block instanceof ISESimpleTextureItem) {
-    		ISESimpleTextureItem simpleTextureItem = (ISESimpleTextureItem) block;
+    public void registerInventoryIcon(BlockBase block) {
+    	if (block instanceof ISimpleTexture) {
+    		ISimpleTexture simpleTextureItem = (ISimpleTexture) block;
 
             NonNullList<ItemStack> itemStacks = NonNullList.create();
             block.itemBlock.getSubItems(block.itemBlock, null, itemStacks);
@@ -113,8 +113,8 @@ public class AdvancedModelLoader implements ICustomModelLoader {
     }
     
     public void registerInventoryIcon(Item item) {
-        if (item instanceof ISESimpleTextureItem) {
-            ISESimpleTextureItem simpleTextureItem = (ISESimpleTextureItem) item;
+        if (item instanceof ISimpleTexture) {
+            ISimpleTexture simpleTextureItem = (ISimpleTexture) item;
 
             NonNullList<ItemStack> itemStacks = NonNullList.create();
             item.getSubItems(item, null, itemStacks);
@@ -127,8 +127,8 @@ public class AdvancedModelLoader implements ICustomModelLoader {
             }
         } else if (item instanceof ItemBlock) {
             Block block = ((ItemBlock) item).getBlock();
-            if (block instanceof ISESimpleTextureItem) {
-                ISESimpleTextureItem simpleTextureItem = (ISESimpleTextureItem) block;
+            if (block instanceof ISimpleTexture) {
+                ISimpleTexture simpleTextureItem = (ISimpleTexture) block;
 
                 NonNullList<ItemStack> itemStacks = NonNullList.create();
                 item.getSubItems(item, null, itemStacks);

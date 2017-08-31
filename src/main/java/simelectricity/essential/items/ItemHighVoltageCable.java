@@ -11,8 +11,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
 import rikka.librikka.Utils;
-import rikka.librikka.item.ISESimpleTextureItem;
-import rikka.librikka.item.SEItem;
+import rikka.librikka.item.ISimpleTexture;
+import rikka.librikka.item.ItemBase;
 import simelectricity.api.SEAPI;
 import simelectricity.api.node.ISEGridNode;
 import simelectricity.essential.api.ISEHVCableConnector;
@@ -20,7 +20,7 @@ import simelectricity.essential.api.ISEHVCableConnector;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ItemHighVoltageCable extends SEItem implements ISESimpleTextureItem {
+public class ItemHighVoltageCable extends ItemBase implements ISimpleTexture {
     private static final String[] subNames = {"copper", "aluminum"};
     private static final double[] resistivityList = {0.1, 0.2};
     private final Map<EntityPlayer, BlockPos> lastCoordinates;
