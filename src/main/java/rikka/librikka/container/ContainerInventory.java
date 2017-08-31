@@ -8,7 +8,7 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
 public class ContainerInventory<T> extends Container{
-	protected int nextSlotID = 0;
+	protected int numOfSlots = 0;
 	protected final int firstTileSlotID;
 	
 	private final IInventory inventoryTile;
@@ -17,12 +17,8 @@ public class ContainerInventory<T> extends Container{
 	
 	@Override
 	protected Slot addSlotToContainer(Slot slotIn) {
-		nextSlotID++;
+		numOfSlots++;
 		return super.addSlotToContainer(slotIn);
-	}
-	
-	protected int getNextAvaliableSlotID() {
-		return nextSlotID;
 	}
 	
 	protected ContainerInventory(InventoryPlayer invPlayer, IInventory inventoryTile) {
@@ -52,7 +48,7 @@ public class ContainerInventory<T> extends Container{
 			}
 		}
 		
-		this.firstTileSlotID = nextSlotID;
+		this.firstTileSlotID = numOfSlots;
 	}
 	
     @Override
@@ -68,7 +64,7 @@ public class ContainerInventory<T> extends Container{
 		ItemStack sourceStack = sourceSlot.getStack();
 		ItemStack copyOfSourceStack = sourceStack.copy();
 
-		int inventorySize = nextSlotID - firstTileSlotID;
+		int inventorySize = numOfSlots - firstTileSlotID;
 		
 		// Check if the slot clicked is one of the vanilla container slots
 		if (sourceSlotIndex >= 0 && sourceSlotIndex < firstTileSlotID) {
