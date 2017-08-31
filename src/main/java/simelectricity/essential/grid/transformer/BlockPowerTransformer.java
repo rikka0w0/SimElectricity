@@ -1,5 +1,8 @@
 package simelectricity.essential.grid.transformer;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
@@ -23,10 +26,8 @@ import rikka.librikka.block.ISubBlock;
 import rikka.librikka.block.BlockBase;
 import rikka.librikka.item.ISimpleTexture;
 import rikka.librikka.item.ItemBlockBase;
-import rikka.librikka.multiblock.IMultiBlockTile;
 import rikka.librikka.multiblock.MultiBlockStructure;
 import rikka.librikka.multiblock.MultiBlockStructure.Result;
-import rikka.librikka.multiblock.MultiBlockTileInfo;
 import simelectricity.api.SEAPI;
 import simelectricity.api.node.ISESimulatable;
 import simelectricity.essential.api.ISEHVCableConnector;
@@ -146,8 +147,9 @@ public class BlockPowerTransformer extends BlockBase implements ITileEntityProvi
     @Override
     public void breakBlock(World world, BlockPos pos, IBlockState state) {
         TileEntity te = world.getTileEntity(pos);
-        if (te != null)
-            this.structureTemplate.restoreStructure(te, state);
+        if (te != null) {
+            this.structureTemplate.restoreStructure(te, state, true);
+        }
 
         super.breakBlock(world, pos, state);
     }
@@ -163,19 +165,23 @@ public class BlockPowerTransformer extends BlockBase implements ITileEntityProvi
     }
 
     @Override
+    public List<ItemStack> getDrops(IBlockAccess world, BlockPos pos, IBlockState state, int fortune) {
+    	EnumBlockType blockType = state.getValue(EnumBlockType.property);
+    	if (blockType.formed)
+    	    return new LinkedList<ItemStack>();
+
+    	return super.getDrops(world, pos, state, fortune);
+    }
+    
+    /**
+     * Creative-mode middle mouse button clicks
+     */
+    @Override
     public ItemStack getItem(World world, BlockPos pos, IBlockState state) {
         EnumBlockType blockType = state.getValue(EnumBlockType.property);
 
-        if (blockType.formed) {
-        	TileEntity te = world.getTileEntity(pos);
-        	if (te instanceof IMultiBlockTile) {
-        		MultiBlockTileInfo mbInfo = ((IMultiBlockTile) te).getMultiBlockTileInfo();
-        		if (mbInfo != null) {
-        			//TODO: No item drop
-        		}
-        	}
+        if (blockType.formed)
         	return ItemStack.EMPTY;
-        }
             
         return new ItemStack(this.itemBlock, 1, this.damageDropped(state));
     }

@@ -8,13 +8,8 @@ public interface ISECoverPanelHost {
     /**
      * Use custom raytrace to determine which cover panel is actually selected by the player
      *
-     * @param world
-     * @param x
-     * @param y
-     * @param z
      * @param player
-     * @param side   the closest side to the player
-     * @return the side which the player is actually looking at, null - center
+     * @return the side which the player is actually looking at, null - the cable
      */
     ISECoverPanel getSelectedCoverPanel(EntityPlayer player);
 

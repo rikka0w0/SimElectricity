@@ -1,5 +1,6 @@
 package rikka.librikka.multiblock;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -9,7 +10,7 @@ import rikka.librikka.Utils;
 public class MultiBlockTileInfo {
     public final EnumFacing facing;
     public final boolean mirrored;
-    public final int xOffset, yOffset, zOffset;
+    public final int xOffset, yOffset, zOffset;	//From configuration origin
     public final BlockPos origin;
     public boolean formed;
 
@@ -63,5 +64,9 @@ public class MultiBlockTileInfo {
     
     public int getFacing() {
     	return this.facing.ordinal() - 2;
+    }
+    
+    public IBlockState getConstructionBlock(MultiBlockStructure structureTemplate) {
+    	return structureTemplate.getBlockInfo(getFacing(), mirrored, xOffset, yOffset, zOffset).state;
     }
 }

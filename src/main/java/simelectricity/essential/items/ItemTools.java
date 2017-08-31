@@ -14,8 +14,8 @@ import rikka.librikka.Utils;
 import rikka.librikka.item.ISimpleTexture;
 import rikka.librikka.item.ItemBase;
 import simelectricity.api.ISECrowbarTarget;
+import simelectricity.api.ISESidedFacing;
 import simelectricity.api.ISEWrenchable;
-import simelectricity.api.ISidedFacing;
 import simelectricity.api.SEAPI;
 import simelectricity.api.node.ISEGridNode;
 import simelectricity.api.node.ISESimulatable;
@@ -90,8 +90,8 @@ public class ItemTools extends ItemBase implements ISimpleTexture {
     }
 
     public static EnumActionResult useGlove(TileEntity te, EntityPlayer player, EnumFacing side) {
-        if (te instanceof ISidedFacing) {
-            ISidedFacing target = (ISidedFacing) te;
+        if (te instanceof ISESidedFacing) {
+            ISESidedFacing target = (ISESidedFacing) te;
 
             if (target.canSetFacing(side)) {
                 if (te.getWorld().isRemote) {

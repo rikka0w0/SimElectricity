@@ -3,15 +3,19 @@ package simelectricity.api;
 import net.minecraft.util.EnumFacing;
 
 /**
- * Implement this interface in a tileEntity to allow the wrench to change its functional side
+ * For TileEntities only, implementing this makes it a target for wrenches,
+ * wrenches are used to change machines' functional side (The side used to interact with the EnergyNet)
  */
 public interface ISEWrenchable {
+    /**
+     * @return false to reject the action
+     */
     boolean canWrenchBeUsed(EnumFacing side);
 
     /**
-     * Called when the functional side is going to be set by the wrench, DONT use this when placing the block!
+     * Called when the functional side is about be set by the wrench
      * </p>
-     * Note: SERVER ONLY! Initiate a server->client sync if needed
+     * Note: Called from SERVER ONLY! Initiate a server->client sync if needed
      */
     void onWrenchAction(EnumFacing side, boolean isCreativePlayer);
 }

@@ -7,14 +7,14 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import rikka.librikka.tileentity.IGuiProviderTile;
-import simelectricity.api.IEnergyNetUpdateHandler;
+import simelectricity.api.ISEEnergyNetUpdateHandler;
 import simelectricity.api.SEAPI;
 import simelectricity.api.components.ISETransformer;
 import simelectricity.essential.common.semachine.ISESocketProvider;
 import simelectricity.essential.common.semachine.SETwoPortMachine;
 import simelectricity.essential.machines.gui.ContainerAdjustableTransformer;
 
-public class TileAdjustableTransformer extends SETwoPortMachine implements ISETransformer, IEnergyNetUpdateHandler, ISESocketProvider, IGuiProviderTile {
+public class TileAdjustableTransformer extends SETwoPortMachine implements ISETransformer, ISEEnergyNetUpdateHandler, ISESocketProvider, IGuiProviderTile {
     //Input - primary, output - secondary
     public double ratio = 10, outputResistance = 1;
 
@@ -40,7 +40,7 @@ public class TileAdjustableTransformer extends SETwoPortMachine implements ISETr
     }
 
     /////////////////////////////////////////////////////////
-    ///IEnergyNetUpdateHandler
+    ///ISEEnergyNetUpdateHandler
     /////////////////////////////////////////////////////////
     @Override
     public void onEnergyNetUpdate() {

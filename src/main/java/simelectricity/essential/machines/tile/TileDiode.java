@@ -6,14 +6,14 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import rikka.librikka.tileentity.IGuiProviderTile;
-import simelectricity.api.IEnergyNetUpdateHandler;
+import simelectricity.api.ISEEnergyNetUpdateHandler;
 import simelectricity.api.SEAPI;
 import simelectricity.api.components.ISEDiode;
 import simelectricity.essential.common.semachine.ISESocketProvider;
 import simelectricity.essential.common.semachine.SETwoPortMachine;
 import simelectricity.essential.machines.gui.ContainerDiode;
 
-public class TileDiode extends SETwoPortMachine implements ISEDiode, IEnergyNetUpdateHandler, ISESocketProvider, IGuiProviderTile {
+public class TileDiode extends SETwoPortMachine implements ISEDiode, ISEEnergyNetUpdateHandler, ISESocketProvider, IGuiProviderTile {
     public double inputVoltage, outputVoltage;
 
     /////////////////////////////////////////////////////////
@@ -35,7 +35,7 @@ public class TileDiode extends SETwoPortMachine implements ISEDiode, IEnergyNetU
     }
 
     ///////////////////////////////////
-    /// IEnergyNetUpdateHandler
+    /// ISEEnergyNetUpdateHandler
     ///////////////////////////////////
     @Override
     public void onEnergyNetUpdate() {

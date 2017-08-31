@@ -7,14 +7,14 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import rikka.librikka.tileentity.IGuiProviderTile;
-import simelectricity.api.IEnergyNetUpdateHandler;
+import simelectricity.api.ISEEnergyNetUpdateHandler;
 import simelectricity.api.SEAPI;
 import simelectricity.api.components.ISESwitch;
 import simelectricity.essential.common.semachine.ISESocketProvider;
 import simelectricity.essential.common.semachine.SETwoPortMachine;
 import simelectricity.essential.machines.gui.ContainerSwitch;
 
-public class TileSwitch extends SETwoPortMachine implements ISESwitch, IEnergyNetUpdateHandler, ISESocketProvider, IGuiProviderTile {
+public class TileSwitch extends SETwoPortMachine implements ISESwitch, ISEEnergyNetUpdateHandler, ISESocketProvider, IGuiProviderTile {
     public double current;
 
     public double resistance = 0.001;
@@ -43,7 +43,7 @@ public class TileSwitch extends SETwoPortMachine implements ISESwitch, IEnergyNe
     }
 
     /////////////////////////////////////////////////////////
-    ///IEnergyNetUpdateHandler
+    ///ISEEnergyNetUpdateHandler
     /////////////////////////////////////////////////////////
     @Override
     public void onEnergyNetUpdate() {

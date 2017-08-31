@@ -14,7 +14,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import rikka.librikka.Utils;
 import rikka.librikka.tileentity.IGuiProviderTile;
-import simelectricity.api.IEnergyNetUpdateHandler;
+import simelectricity.api.ISEEnergyNetUpdateHandler;
 import simelectricity.api.SEAPI;
 import simelectricity.api.node.ISESimulatable;
 import simelectricity.api.tile.ISECableTile;
@@ -24,7 +24,7 @@ import simelectricity.essential.api.SEEAPI;
 import simelectricity.essential.api.coverpanel.*;
 import simelectricity.essential.common.SEEnergyTile;
 
-public class TileCable extends SEEnergyTile implements ISEGenericCable, ISEIuminousCoverPanelHost, ISECableTile, IEnergyNetUpdateHandler, IGuiProviderTile {
+public class TileCable extends SEEnergyTile implements ISEGenericCable, ISEIuminousCoverPanelHost, ISECableTile, ISEEnergyNetUpdateHandler, IGuiProviderTile {
     public boolean emitRedstoneSignal;
     /**
      * Accessible from client
@@ -308,7 +308,7 @@ public class TileCable extends SEEnergyTile implements ISEGenericCable, ISEIumin
     }
 
     ////////////////////////////////////////
-    //IEnergyNetUpdateHandler
+    //ISEEnergyNetUpdateHandler
     ////////////////////////////////////////
     @Override
     public void onEnergyNetUpdate() {

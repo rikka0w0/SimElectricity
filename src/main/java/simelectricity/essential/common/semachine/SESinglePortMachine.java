@@ -6,14 +6,14 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import rikka.librikka.Utils;
 import simelectricity.api.ISEWrenchable;
-import simelectricity.api.ISidedFacing;
+import simelectricity.api.ISESidedFacing;
 import simelectricity.api.SEAPI;
 import simelectricity.api.components.ISEComponentParameter;
 import simelectricity.api.node.ISESubComponent;
 import simelectricity.api.tile.ISETile;
 import simelectricity.essential.common.SEEnergyTile;
 
-public abstract class SESinglePortMachine extends SEEnergyTile implements ISidedFacing, ISEWrenchable, ISETile, ISEComponentParameter {
+public abstract class SESinglePortMachine extends SEEnergyTile implements ISESidedFacing, ISEWrenchable, ISETile, ISEComponentParameter {
     protected EnumFacing functionalSide = EnumFacing.SOUTH;
     protected EnumFacing facing = EnumFacing.NORTH;
     protected ISESubComponent circuit = SEAPI.energyNetAgent.newComponent(this, this);
@@ -42,7 +42,7 @@ public abstract class SESinglePortMachine extends SEEnergyTile implements ISided
     }
 
     ///////////////////////////////////
-    /// ISidedFacing
+    /// ISESidedFacing
     ///////////////////////////////////
     @Override
     public void setFacing(EnumFacing newFacing) {

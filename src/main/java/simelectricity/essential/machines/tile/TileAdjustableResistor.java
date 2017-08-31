@@ -8,14 +8,14 @@ import net.minecraft.util.ITickable;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import rikka.librikka.tileentity.IGuiProviderTile;
-import simelectricity.api.IEnergyNetUpdateHandler;
+import simelectricity.api.ISEEnergyNetUpdateHandler;
 import simelectricity.api.SEAPI;
 import simelectricity.api.components.ISEVoltageSource;
 import simelectricity.essential.common.semachine.ISESocketProvider;
 import simelectricity.essential.common.semachine.SESinglePortMachine;
 import simelectricity.essential.machines.gui.ContainerAdjustableResistor;
 
-public class TileAdjustableResistor extends SESinglePortMachine implements ISEVoltageSource, IEnergyNetUpdateHandler, ISESocketProvider, ITickable, IGuiProviderTile {
+public class TileAdjustableResistor extends SESinglePortMachine implements ISEVoltageSource, ISEEnergyNetUpdateHandler, ISESocketProvider, ITickable, IGuiProviderTile {
     //Component parameters
     public double resistance = 100;
 
@@ -64,7 +64,7 @@ public class TileAdjustableResistor extends SESinglePortMachine implements ISEVo
     }
 
     ///////////////////////////////////
-    /// IEnergyNetUpdateHandler
+    /// ISEEnergyNetUpdateHandler
     ///////////////////////////////////
     @Override
     public void onEnergyNetUpdate() {

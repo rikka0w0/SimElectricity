@@ -6,7 +6,6 @@ import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.World;
 
 import java.util.HashSet;
@@ -195,12 +194,18 @@ public class MultiBlockStructure {
         return null;
     }
 
-    public void restoreStructure(TileEntity te, IBlockState stateJustRemoved) {
+    public void restoreStructure(TileEntity te, IBlockState stateJustRemoved, boolean dropConstructionBlockAsItem) {
         if (te instanceof IMultiBlockTile) {
             MultiBlockTileInfo mbInfo = ((IMultiBlockTile) te).getMultiBlockTileInfo();
             if (!mbInfo.formed)
                 return;    //Avoid circulation, improve performance
 
+            if (dropConstructionBlockAsItem) {
+            	IBlockState stateToDrop = this.getConstructionBlock(mbInfo);
+            	System.out.println("drop!!!!!!!!!!!!!!!");
+            	stateToDrop.getBlock().dropBlockAsItem(te.getWorld(), te.getPos(), stateToDrop, 0);
+            }
+            
             Set<IMultiBlockTile> removedTile = new HashSet();
 
             World world = te.getWorld();
@@ -261,15 +266,20 @@ public class MultiBlockStructure {
         }
     }
 
-    public BlockInfo getBlockInfo(int rotation, boolean mirrored, Vec3i pos) {
+    public BlockInfo getBlockInfo(int rotation, boolean mirrored, int xOffset, int yOffset, int zOffset) {
     	BlockInfo[][][] configuration;
         if (mirrored) {
-            configuration = mirroredAboutZ[rotation];
+            configuration = unmirrored[0];
         } else {
-            configuration = unmirrored[rotation];
+            configuration = unmirrored[0];
         }
         
-        return configuration[pos.getY()][pos.getZ()][pos.getX()];
+        return configuration[yOffset][zOffset][xOffset];
+    }
+    
+    public IBlockState getConstructionBlock(MultiBlockTileInfo mbInfo) {
+    	BlockInfo info = this.getBlockInfo(mbInfo.getFacing(), mbInfo.mirrored, mbInfo.xOffset, mbInfo.yOffset, mbInfo.zOffset);
+    	return info==null? null : info.state;
     }
     
     public static class BlockInfo {
@@ -425,7 +435,7 @@ public class MultiBlockStructure {
 
                             if (te instanceof IMultiBlockTile) {
                                 MultiBlockTileInfo mbInfo = new MultiBlockTileInfo(
-                                        facing, this.mirrored, offset[0], offset[1], offset[2], this.xOriginActual, this.yOriginActual, this.zOriginActual
+                                        facing, this.mirrored, blockInfo.x, blockInfo.y, blockInfo.z, this.xOriginActual, this.yOriginActual, this.zOriginActual
                                 );
                                 ((IMultiBlockTile) te).onStructureCreating(mbInfo);
                                 createdTile.add((IMultiBlockTile) te);

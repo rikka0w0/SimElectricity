@@ -8,14 +8,14 @@ import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import rikka.librikka.tileentity.IGuiProviderTile;
-import simelectricity.api.IEnergyNetUpdateHandler;
+import simelectricity.api.ISEEnergyNetUpdateHandler;
 import simelectricity.api.SEAPI;
 import simelectricity.api.components.ISESwitch;
 import simelectricity.essential.common.semachine.ISESocketProvider;
 import simelectricity.essential.common.semachine.SETwoPortMachine;
 import simelectricity.essential.machines.gui.ContainerCurrentSensor;
 
-public class TileCurrentSensor extends SETwoPortMachine implements ISESwitch, IEnergyNetUpdateHandler, ISESocketProvider, IGuiProviderTile {
+public class TileCurrentSensor extends SETwoPortMachine implements ISESwitch, ISEEnergyNetUpdateHandler, ISESocketProvider, IGuiProviderTile {
     public double current;
     public boolean emitRedstoneSignal;
 
@@ -48,7 +48,7 @@ public class TileCurrentSensor extends SETwoPortMachine implements ISESwitch, IE
     }
 
     /////////////////////////////////////////////////////////
-    ///IEnergyNetUpdateHandler
+    ///ISEEnergyNetUpdateHandler
     /////////////////////////////////////////////////////////
     @Override
     public void onEnergyNetUpdate() {

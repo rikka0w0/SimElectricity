@@ -7,14 +7,14 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import rikka.librikka.tileentity.IGuiProviderTile;
-import simelectricity.api.IEnergyNetUpdateHandler;
+import simelectricity.api.ISEEnergyNetUpdateHandler;
 import simelectricity.api.SEAPI;
 import simelectricity.api.components.ISEVoltageSource;
 import simelectricity.essential.common.semachine.ISESocketProvider;
 import simelectricity.essential.common.semachine.SESinglePortMachine;
 import simelectricity.essential.machines.gui.ContainerQuantumGenerator;
 
-public class TileQuantumGenerator extends SESinglePortMachine implements ISEVoltageSource, IEnergyNetUpdateHandler, ISESocketProvider, IGuiProviderTile {
+public class TileQuantumGenerator extends SESinglePortMachine implements ISEVoltageSource, ISEEnergyNetUpdateHandler, ISESocketProvider, IGuiProviderTile {
     //Component parameters
     public double internalVoltage = 230;
     public double resistance = 0.1;
@@ -56,7 +56,7 @@ public class TileQuantumGenerator extends SESinglePortMachine implements ISEVolt
     }
 
     ///////////////////////////////////
-    /// IEnergyNetUpdateHandler
+    /// ISEEnergyNetUpdateHandler
     ///////////////////////////////////
     @Override
     public void onEnergyNetUpdate() {

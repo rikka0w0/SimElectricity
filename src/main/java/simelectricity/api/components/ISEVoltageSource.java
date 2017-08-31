@@ -2,18 +2,20 @@ package simelectricity.api.components;
 
 
 /**
- * A simple electrical model for machines or generators
+ * A voltage source in series with a resistance, a simple model for machines or generators.
  */
 public interface ISEVoltageSource extends ISEComponentParameter {
     /**
-     * Returns the voltage of the internal voltage source
+     * @return the voltage of the internal voltage source
      * <p/>
      * 0 for loads, positive values for generators
      */
     double getOutputVoltage();
 
     /**
-     * Returns the internal resistance
+     * @return the resistance in series with the voltage source
+     * </p>
+     * For generators, it is the output impedance. For loads, it is the load impedance.
      */
     double getResistance();
 }

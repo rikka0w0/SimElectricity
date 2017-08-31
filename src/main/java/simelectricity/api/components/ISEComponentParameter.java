@@ -2,8 +2,8 @@ package simelectricity.api.components;
 
 
 /**
- * ISEComponentParameter provides electrical parameters to create a circuit block
- * {@link ISESubComponent}
+ * ISEComponentParameter provides parameters for creating circuit nodes
+ * {@link simelectricity.api.node.ISESubComponent}
  */
 public interface ISEComponentParameter {
 

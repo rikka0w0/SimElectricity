@@ -21,7 +21,7 @@ package simelectricity.energynet;
 
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.WorldServer;
-import simelectricity.api.IEnergyNetUpdateHandler;
+import simelectricity.api.ISEEnergyNetUpdateHandler;
 import simelectricity.api.node.ISESimulatable;
 import simelectricity.common.ConfigManager;
 import simelectricity.common.SEUtils;
@@ -222,14 +222,14 @@ public final class EnergyNet extends EnergyNetSimulator implements Runnable {
                 Iterator<TileEntity> iterator = this.dataProvider.getLoadedTileIterator();
                 while (iterator.hasNext()) {
                     TileEntity te = iterator.next();
-                    if (te instanceof IEnergyNetUpdateHandler)
-                        ((IEnergyNetUpdateHandler) te).onEnergyNetUpdate();
+                    if (te instanceof ISEEnergyNetUpdateHandler)
+                        ((ISEEnergyNetUpdateHandler) te).onEnergyNetUpdate();
                 }
                 iterator = this.dataProvider.getLoadedGridTileIterator();
                 while (iterator.hasNext()) {
                     TileEntity te = iterator.next();
-                    if (te instanceof IEnergyNetUpdateHandler)
-                        ((IEnergyNetUpdateHandler) te).onEnergyNetUpdate();
+                    if (te instanceof ISEEnergyNetUpdateHandler)
+                        ((ISEEnergyNetUpdateHandler) te).onEnergyNetUpdate();
                 }
 
                 processing = false;

@@ -4,34 +4,34 @@ package simelectricity.api.components;
 /**
  * Represents a constant power load
  * <p/>
- * Within a certain range, the power consumed by the load is constant
+ * Within a certain range, the load consumes a constant amount of power
  * <p/>
  * Otherwise it behaves just like a resistor
  * <p/>
- * See SimElectricity wikipedia for circuit models and more informations
+ * See SimElectricity wikipedia for circuit models and more details
  */
 public interface ISEConstantPowerLoad extends ISEComponentParameter {
     /**
-     * Returns the desired power that is consumed by this component
+     * @return regulated power level
      */
     double getRatedPower();
 
     /**
-     * Returns the minimum resistance allowed
+     * @return the minimum allowed resistance
      * <p/>
-     * Usually equals the square of the minimum allow working voltage on the rated power
+     * Usually equals to the square of the minimum input voltage on the rated power
      */
     double getMinimumResistance();
 
     /**
-     * Returns the maximum resistance allowed
+     * @return the maximum allowed resistance
      * <p/>
-     * Usually equals the square of the maximum allow working voltage on the rated power
+     * Usually equals to the square of the maximum input voltage on the rated power
      */
     double getMaximumResistance();
 
     /**
-     * If return false, the load will be ignored during simulation
+     * @return true if the load is turned on
      */
     boolean isEnabled();
 }

@@ -3,23 +3,24 @@ package simelectricity.api.tile;
 import simelectricity.api.node.ISEGridNode;
 
 /**
- * TileEntities can implement this interface
+ * For TileEntities only.
  */
 public interface ISEGridTile {
-    /**
-     * @return the GridNode instance from setGridNode()
-     */
     ISEGridNode getGridNode();
 
     /**
-     * This function will be called by the grid manager when a ISEGridObject is going to associate with the ISEGridTile
+     * This function will be called by the grid manager once a ISEGridObject is going to associate with the ISEGridTile
      * <p/>
-     * Make sure you store the instance of ISEGridObject in this function
+     * Make sure you  storethe ISEGridNode instance in your TileEntity
+     * <p/>
+     * Do NOT call this function anywhere else!
+     * @param gridNode the ISEGridNode at the TileEntity's location
      */
-    void setGridNode(ISEGridNode gridObj);
+    void setGridNode(ISEGridNode gridNode);
 
     /**
-     * This function will be called as soon as the neighbor list of its ISEGridObject has changed
+     * Grid modifications (related to the ISEGridNode at this location) can trigger this function.
+     * Do/Schedule rendering updates here.
      * <p/>
      * E.g. Connection established, map loading, Connection removed...
      */

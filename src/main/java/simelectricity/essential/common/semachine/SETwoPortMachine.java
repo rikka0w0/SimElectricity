@@ -5,14 +5,14 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import rikka.librikka.Utils;
-import simelectricity.api.ISidedFacing;
+import simelectricity.api.ISESidedFacing;
 import simelectricity.api.SEAPI;
 import simelectricity.api.components.ISEComponentParameter;
 import simelectricity.api.node.ISESubComponent;
 import simelectricity.api.tile.ISETile;
 import simelectricity.essential.common.SEEnergyTile;
 
-public class SETwoPortMachine extends SEEnergyTile implements ISidedFacing, ISETile, ISEComponentParameter {
+public class SETwoPortMachine extends SEEnergyTile implements ISESidedFacing, ISETile, ISEComponentParameter {
     public EnumFacing inputSide = EnumFacing.SOUTH;
     public EnumFacing outputSide = EnumFacing.NORTH;
     protected EnumFacing facing = EnumFacing.NORTH;
@@ -45,7 +45,7 @@ public class SETwoPortMachine extends SEEnergyTile implements ISidedFacing, ISET
     }
 
     ///////////////////////////////////
-    /// ISidedFacing
+    /// ISESidedFacing
     ///////////////////////////////////
     @Override
     public void setFacing(EnumFacing newFacing) {

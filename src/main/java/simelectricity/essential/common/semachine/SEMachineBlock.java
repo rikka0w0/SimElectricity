@@ -21,7 +21,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import rikka.librikka.block.ISubBlock;
 import rikka.librikka.block.MetaBlock;
 import rikka.librikka.item.ItemBlockBase;
-import simelectricity.api.ISidedFacing;
+import simelectricity.api.ISESidedFacing;
 import simelectricity.api.SEAPI;
 
 import java.util.ArrayList;
@@ -97,8 +97,8 @@ public abstract class SEMachineBlock extends MetaBlock implements ITileEntityPro
     public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
         TileEntity te = world.getTileEntity(pos);
 
-        if (te instanceof ISidedFacing) {
-            EnumFacing facing = ((ISidedFacing) te).getFacing();
+        if (te instanceof ISESidedFacing) {
+            EnumFacing facing = ((ISESidedFacing) te).getFacing();
             state = state.withProperty(ExtendedProperties.propertyFacing, facing);
         }
 

@@ -10,13 +10,14 @@ import simelectricity.api.node.ISESimulatable;
 import simelectricity.api.node.ISESubComponent;
 
 /**
- * Provides necessary functions which enable access to the SimElectricity EnergyNet
- *
- * @author rikka0w0
+ * Provides access to the SimElectricity EnergyNet
+ * <p/>
+ * DO NOT use this, internal only!
+ * @author rikka0_0
  */
 public interface IEnergyNetAgent {
     /**
-     * @return the voltage of the node, in volts, ground referenced
+     * @return the node voltage, in volts, refer to ground
      */
     double getVoltage(ISESimulatable node);
 
@@ -35,9 +36,7 @@ public interface IEnergyNetAgent {
     boolean isNodeValid(World world, ISESimulatable node);
 
 
-    ///////////////////////////
-    ///Events
-    ///////////////////////////
+
 
     /**
      * Add a TileEntity to the energyNet

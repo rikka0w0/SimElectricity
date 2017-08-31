@@ -2,33 +2,41 @@ package simelectricity.api.components;
 
 import net.minecraft.util.EnumFacing;
 
+/**
+ * Provides necessary parameters for a cable node
+ */
 public interface ISECable extends ISEComponentParameter {
     /**
-     * Returns the color of the cable
+     *
+     * @return an integer which represents the color of the cable
      * <p/>
-     * Color 0 is considered as universal, that means cables with any color can connect to a cable with universal color 0
-     */
-
-    /**
-     * @return an integer represents the color of the cable
-     * <p/>
-     * A cable tile with color 0 can connect to any other cables,
-     * a cable tile with non-zero color can only connect to cables which has the same color or 0 color.
+     * 0 - can connect to any other cables,
+     * Otherwise - can only connect to cables with the same color or color 0.
      */
     int getColor();
 
     /**
-     * @return the resistance between the cable node and any other neighbor nodes
+     * @return the resistance between this cable node and any other neighbor nodes
      * <p/>
-     * Check SimElectricity wikipedia for circuit models and more informations
+     * Check out SimElectricity wikipedia for circuit models and more details
      */
     double getResistance();
 
-    boolean canConnectOnSide(EnumFacing direction);
+    /**
+     * @return false to block any connection from the given side
+     */
+    boolean canConnectOnSide(EnumFacing side);
 
+    /**
+     * @return true to link to cable node to the grid node at the same location
+     */
     boolean isGridLinkEnabled();
 
     boolean hasShuntResistance();
 
+    /**
+     * Shunt resistance is the resistance placed between the cable node and the ground (0V reference)
+     * @return must be a non-zero value
+     */
     double getShuntResistance();
 }

@@ -3,11 +3,10 @@ package simelectricity.api.node;
 import net.minecraft.util.math.BlockPos;
 
 /**
- * A ISEGridObject is the object stored in the world's grid, it is independent of the tileEntity
+ * A ISEGridNode represents a circuit node in the world's grid system, it is independent of its host tileEntity and chunk
  * <p/>
- * However, if the chunk which 'contains' the ISEGridObject is loaded, the energy net will associate the ISEGridObject with the tileEntity
- * <p/>
- * The tileEntity must implements ISEGridTile interface
+ * Once the host chunk is loaded, the EnergyNet will assign this ISEGridNode to the {@link simelectricity.api.tile.ISEGridTile}
+ * at the same location
  */
 public interface ISEGridNode extends ISESimulatable {
     int ISEGridNode_Wire = 0;
@@ -19,7 +18,7 @@ public interface ISEGridNode extends ISESimulatable {
     int getType();
 
     /**
-     * @return a list of neighbors
+     * @return a list of neighbor ISEGridNodes
      */
     ISEGridNode[] getNeighborList();
 
