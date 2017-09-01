@@ -21,7 +21,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import rikka.librikka.block.BlockBase;
 import rikka.librikka.item.ISimpleTexture;
 import rikka.librikka.model.SingleTextureModel;
-import rikka.librikka.model.codebased.IModelLoader;
 
 /**
  * Load simple texture for items/itemblocks and also load code based block models

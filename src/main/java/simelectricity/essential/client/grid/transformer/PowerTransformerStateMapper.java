@@ -10,7 +10,7 @@ import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.obj.OBJLoader;
 import rikka.librikka.Properties;
 import rikka.librikka.model.SingleTextureModel;
-import rikka.librikka.model.codebased.IModelLoader;
+import rikka.librikka.model.loader.IModelLoader;
 import simelectricity.essential.BlockRegistry;
 import simelectricity.essential.grid.transformer.BlockPowerTransformer;
 import simelectricity.essential.grid.transformer.EnumBlockType;

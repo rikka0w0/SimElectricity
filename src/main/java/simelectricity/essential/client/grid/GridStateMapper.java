@@ -11,7 +11,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import rikka.librikka.Properties;
 import rikka.librikka.model.GhostModel;
-import rikka.librikka.model.codebased.IModelLoader;
+import rikka.librikka.model.loader.IModelLoader;
 import simelectricity.essential.BlockRegistry;
 import simelectricity.essential.client.grid.pole.*;
 import simelectricity.essential.grid.BlockPowerPole2;

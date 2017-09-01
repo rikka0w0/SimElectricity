@@ -41,11 +41,6 @@ public abstract class SEComponent implements ISESimulatable, ISEComponentParamet
         return null;
     }
 
-    @Override
-    public ISEComponentParameter getCachedParameters() {
-        return this;
-    }
-
     /**
      * @param <TYPE> extends ISEComponentParameter
      */

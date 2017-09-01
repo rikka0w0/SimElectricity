@@ -1,4 +1,4 @@
-package rikka.librikka.model.codebased;
+package rikka.librikka.model.loader;
 
 import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.fml.relauncher.Side;

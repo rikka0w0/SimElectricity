@@ -8,7 +8,7 @@ import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import rikka.librikka.model.codebased.IModelLoader;
+import rikka.librikka.model.loader.IModelLoader;
 import simelectricity.essential.cable.BlockCable;
 
 @SideOnly(Side.CLIENT)
