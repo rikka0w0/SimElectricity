@@ -22,7 +22,7 @@ dependencies {
 }
 
 version = "1.0.0"
-group = "simElectricity" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+group = "simelectricity" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "SimElectricity"
 
 sourceCompatibility = targetCompatibility = "1.8" // Need this here so eclipse task generates correctly.
@@ -35,6 +35,7 @@ minecraft {
     runDir = "run"
     mappings = "stable_32"
 }
+
 processResources {
     // this will ensure that this task is redone when the versions change.
     inputs.property "version", project.version
@@ -54,6 +55,110 @@ processResources {
     }
 }
 
+// configure  the source folders
+sourceSets {
+    main {
+        java {
+            srcDir "src/main/java"
+            srcDir "librikka/src"
+        }
+        resources {
+            srcDir "src/main/resources"
+            exclude "**/.md" // exclude readme from localization repo
+        }
+    }
+}
+
+
+jar.classifier = 'full'
+ext.jarFile = zipTree(jar.archivePath)
+def libsDir = new File(System.getenv("LIBS_DIR") ?: "build/libs/")
+sourceJar.excludes.addAll(["rikka/**"])
+
+task deobfJar(type: Jar) {
+    destinationDir = libsDir
+
+    doFirst {
+        from(sourceSets.main.output) {
+            excludes.addAll(["rikka/**"])
+        }
+    }
+    classifier = 'dev'
+}
+
+task standaloneJar(type: Jar, dependsOn: reobfJar) {
+    destinationDir = libsDir
+
+    doFirst {
+        from(project.ext.jarFile) {
+            excludes.addAll(["rikka/**"])
+        }
+    }
+}
+
+task apiSrcJar(type: Jar) {
+    destinationDir = libsDir
+    appendix = "api"
+    classifier = 'sources'
+
+    doFirst {
+        from (sourceSets.main.allSource) {
+           includes.addAll(["simelectricity/api/**", "simelectricity/essential/api/**"])
+        }
+    }
+}
+
+task apiDevJar(type: Jar, dependsOn: reobfJar) {
+    destinationDir = libsDir
+    appendix = 'api'
+    classifier = 'dev'
+
+    doFirst {
+        from(sourceSets.main.output) {
+            includes.addAll(["simelectricity/api/**", "simelectricity/essential/api/**"])
+        }
+    }
+}
+
+task apiJar(type: Jar, dependsOn: reobfJar) {
+    destinationDir = libsDir
+    appendix = 'api'
+
+    doFirst {
+        from(project.ext.jarFile) {
+            includes.addAll(["simelectricity/api/**", "simelectricity/essential/api/**"])
+        }
+    }
+}
+
+task energyNetDevJar(type: Jar, dependsOn: reobfJar) {
+    destinationDir = libsDir
+    appendix = 'energyNet'
+    classifier = 'dev'
+
+    doFirst {
+        from(sourceSets.main.output) {
+            includes.addAll(["simelectricity/**"])
+            excludes.addAll(["simelectricity/essential/**"])
+        }
+    }
+}
+
+task energyNetJar(type: Jar, dependsOn: reobfJar) {
+    destinationDir = libsDir
+    appendix = 'energyNet'
+
+    doFirst {
+        from(project.ext.jarFile) {
+            includes.addAll(["simelectricity/**"])
+            excludes.addAll(["simelectricity/essential/**"])
+        }
+    }
+}
+
+build.dependsOn deobfJar, standaloneJar, apiJar, apiDevJar, apiSrcJar, energyNetDevJar, energyNetJar
+
 dependencies {
+
 }
 
