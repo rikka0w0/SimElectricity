@@ -30,11 +30,6 @@ public class BlockElectronics extends SEMachineBlock implements ISESidedTextureB
     }
 
     @Override
-    protected int getMetaUpperBound() {
-        return BlockElectronics.subNames.length;
-    }
-
-    @Override
     public TileEntity createNewTileEntity(World world, int meta) {
         switch (meta) {
             case 0:

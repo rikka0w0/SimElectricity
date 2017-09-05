@@ -38,11 +38,6 @@ public class BlockTwoPortElectronics extends SEMachineBlock implements ISESidedT
     }
 
     @Override
-    protected int getMetaUpperBound() {
-        return BlockTwoPortElectronics.subNames.length;
-    }
-
-    @Override
     public TileEntity createNewTileEntity(World world, int meta) {
         switch (meta) {
             case 0:

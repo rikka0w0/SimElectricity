@@ -28,11 +28,10 @@ import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import rikka.librikka.RayTraceHelper;
-import rikka.librikka.UnlistedPropertyRef;
-import rikka.librikka.block.ISubBlock;
 import rikka.librikka.block.MetaBlock;
 import rikka.librikka.item.ISimpleTexture;
 import rikka.librikka.item.ItemBlockBase;
+import rikka.librikka.properties.UnlistedPropertyRef;
 import simelectricity.api.SEAPI;
 import simelectricity.essential.Essential;
 import simelectricity.essential.api.ISECoverPanelHost;
@@ -52,11 +51,10 @@ import java.util.List;
  *
  * @author Rikka0_0
  */
-public class BlockCable extends MetaBlock implements ITileEntityProvider, ISubBlock, ISimpleTexture {
+public class BlockCable extends MetaBlock implements ITileEntityProvider, ISimpleTexture {
     ///////////////////////////////
     /// Cable Properties
     ///////////////////////////////
-    public final String[] subNames;
     public final float[] thickness;
     public final float[] resistances;
     private final Class<? extends TileCable> tileEntityClass;
@@ -70,27 +68,18 @@ public class BlockCable extends MetaBlock implements ITileEntityProvider, ISubBl
         setResistance(10.0F);
         setSoundType(SoundType.METAL);
     }
-    
-    /**
-     * @return when implementing your own cable, please make sure to return correct number!
-     */
-    @Override
-    protected int getMetaUpperBound() {
-        return 3;
-    }
-    
+        
     @Override
     @SideOnly(Side.CLIENT)
     public String getIconName(int damage) {
-        return "essential_cable_" + this.subNames[damage] + "_inventory";
+        return "essential_cable_" + getSubBlockUnlocalizedNames()[damage] + "_inventory";
     }
     ///////////////////////////////
     ///Block Properties
     ///////////////////////////////
     protected BlockCable(String name, Material material, Class<? extends ItemBlockBase> itemBlockClass,
                          String[] cableTypes, float[] thicknessList, float[] resistanceList, Class<? extends TileCable> tileEntityClass) {
-        super(name, material, itemBlockClass);
-		subNames = cableTypes;
+        super(name, cableTypes, material, itemBlockClass);
 		thickness = thicknessList;
 		resistances = resistanceList;
         this.tileEntityClass = tileEntityClass;
@@ -128,11 +117,6 @@ public class BlockCable extends MetaBlock implements ITileEntityProvider, ISubBl
         }
 
         return null;
-    }
-
-    @Override
-    public String[] getSubBlockUnlocalizedNames() {
-        return this.subNames;
     }
 
     @Override

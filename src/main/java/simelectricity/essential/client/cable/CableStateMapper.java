@@ -28,7 +28,7 @@ public class CableStateMapper extends StateMapperBase implements IModelLoader {
             BlockCable cable = (BlockCable) block;
             int meta = cable.getMetaFromState(state);
             String name = cable.getRegistryName().getResourcePath();
-            String subName = cable.subNames[meta];
+            String subName = cable.getSubBlockUnlocalizedNames()[meta];
             double thickness = cable.thickness[meta];
 
             //Encode relative information in the variant name part

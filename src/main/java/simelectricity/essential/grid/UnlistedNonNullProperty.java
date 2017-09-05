@@ -1,7 +1,7 @@
 package simelectricity.essential.grid;
 
 import net.minecraftforge.common.property.IUnlistedProperty;
-import rikka.librikka.UnlistedPropertyRef;
+import rikka.librikka.properties.UnlistedPropertyRef;
 import simelectricity.api.tile.ISEGridTile;
 
 import java.lang.ref.WeakReference;

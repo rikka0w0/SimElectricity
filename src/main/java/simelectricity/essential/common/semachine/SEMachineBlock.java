@@ -27,14 +27,8 @@ import simelectricity.api.SEAPI;
 import java.util.ArrayList;
 
 public abstract class SEMachineBlock extends MetaBlock implements ITileEntityProvider, ISubBlock {
-    protected final String[] subNames;
-
     public SEMachineBlock(String unlocalizedName, String[] subNames) {
-        super(unlocalizedName, Material.IRON, ItemBlockBase.class);
-
-        this.subNames = new String[subNames.length];
-        for (int i = 0; i < subNames.length; i++)
-            this.subNames[i] = subNames[i];
+        super(unlocalizedName, subNames, Material.IRON, ItemBlockBase.class);
         
         setHardness(3.0F);
         setResistance(10.0F);
@@ -55,11 +49,6 @@ public abstract class SEMachineBlock extends MetaBlock implements ITileEntityPro
     @Override
     public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player) {
         return new ItemStack(this.itemBlock, 1, getMetaFromState(world.getBlockState(pos)));
-    }
-
-    @Override
-    public String[] getSubBlockUnlocalizedNames() {
-        return this.subNames;
     }
 
     @Override
