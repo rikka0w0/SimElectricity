@@ -20,9 +20,9 @@ public class TransmissionLineGLRender {
      */
     public static void renderParabolicCable(Vec3f from, Vec3f to, boolean half, float thickness, float tension, TransmissionLineGLRender.ITextureProvider textureProvider, int textureIndex) {
         GL11.glPushMatrix();
-        GL11.glTranslatef(from.xCoord, from.yCoord, from.zCoord);
+        GL11.glTranslatef(from.x, from.y, from.z);
         float distance = from.distanceTo(to);
-        p2pRotation(from.xCoord, from.yCoord, from.zCoord, to.xCoord, to.yCoord, to.zCoord, distance);
+        p2pRotation(from.x, from.y, from.z, to.x, to.y, to.z, distance);
         render_parabola(distance, half, tension, ConfigManager.parabolaRenderSteps, thickness, textureProvider, textureIndex);
         GL11.glPopMatrix();
     }

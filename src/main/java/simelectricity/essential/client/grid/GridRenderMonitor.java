@@ -58,7 +58,7 @@ public class GridRenderMonitor {
                 }
             }
 
-            System.out.println("Grid render updated, remaining:" + this.affactedTiles.size());
+            //System.out.println("Grid render updated, remaining:" + this.affactedTiles.size());
         }
     }
 

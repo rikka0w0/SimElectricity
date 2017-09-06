@@ -18,8 +18,8 @@ public class Models {
             SERenderHeap insulator = modelInsulator.clone();
 
             insulator.rotateAroundZ((float) (angle / Math.PI * 180));
-            insulator.rotateToVec(from.xCoord, from.yCoord, from.zCoord, to.xCoord, from.yCoord, to.zCoord);
-            insulator.transform(from.xCoord, from.yCoord, from.zCoord);
+            insulator.rotateToVec(from.x, from.y, from.z, to.x, from.y, to.z);
+            insulator.transform(from.x, from.y, from.z);
             insulator.transform(-pos.getX(), -pos.getY(), -pos.getZ());
             insulator.bake(quads);
         }

@@ -95,39 +95,15 @@ public class PowerPoleRenderHelper {
     }
 
     public static boolean hasIntersection(Vec3f from1, Vec3f to1, Vec3f from2, Vec3f to2) {
-        double m1 = (from1.xCoord - to1.xCoord) / (from1.zCoord - to1.zCoord);
-        double k1 = from1.xCoord - from1.zCoord * m1;
-        double m2 = (from2.xCoord - to2.xCoord) / (from2.zCoord - to2.zCoord);
-        double k2 = from2.xCoord - from2.zCoord * m2;
+        double m1 = (from1.x - to1.x) / (from1.z - to1.z);
+        double k1 = from1.x - from1.z * m1;
+        double m2 = (from2.x - to2.x) / (from2.z - to2.z);
+        double k2 = from2.x - from2.z * m2;
 
         double zc = (k2 - k1) / (m1 - m2);
         double zx = m1 * zc + k1;
 
-        return from1.xCoord > zx && zx > to1.xCoord || from1.xCoord < zx && zx < to1.xCoord;
-    }
-
-    private static Pair<PowerPoleRenderHelper.Insulator, PowerPoleRenderHelper.Insulator>[] swapIfIntersectInternal(Pair<PowerPoleRenderHelper.Insulator, PowerPoleRenderHelper.Insulator>[] connections) {
-        if (connections.length == 1)
-            return connections;
-
-        Vec3f from1 = connections[0].getLeft().realPos;
-        Vec3f to1 = connections[0].getRight().realPos;
-        Vec3f from2 = connections[connections.length - 1].getLeft().realPos;
-        Vec3f to2 = connections[connections.length - 1].getRight().realPos;
-
-
-        if (hasIntersection(from1, to1, from2, to2)) {
-            //Do Swap
-            Pair<PowerPoleRenderHelper.Insulator, PowerPoleRenderHelper.Insulator>[] fixedConnections = new Pair[connections.length];
-
-            for (int i = 0; i < connections.length; i++) {
-                fixedConnections[i] = Pair.of(connections[i].getLeft(), connections[connections.length - 1 - i].getRight());
-            }
-
-            return fixedConnections;
-        } else {
-            return connections;
-        }
+        return from1.x > zx && zx > to1.x || from1.x < zx && zx < to1.x;
     }
 
     private static float calcInitSlope(float length, float tension) {
@@ -142,7 +118,7 @@ public class PowerPoleRenderHelper {
 
     private static Vec3f fixConnectionPoints(Vec3f from, Vec3f to, float distance, float angle, float insulatorLength, float tension) {
         float lcos = insulatorLength * MathHelper.cos(angle);
-        float atan = (float) Math.atan2(to.xCoord - from.xCoord, from.zCoord - to.zCoord);
+        float atan = (float) Math.atan2(to.x - from.x, from.z - to.z);
 
         return from.add(lcos * MathHelper.sin(atan), insulatorLength * MathHelper.sin(angle), -lcos * MathHelper.cos(atan));
     }
@@ -210,9 +186,13 @@ public class PowerPoleRenderHelper {
             TileEntity te = world.getTileEntity(neighborPos);
             if (te instanceof ISEPowerPole) {
                 PowerPoleRenderHelper helper = ((ISEPowerPole) te).getRenderHelper();
-                if (helper == null)
-                    continue;//TODO: helper might be null, double check this! (far future)
-                this.findConnection(helper);
+                if (helper == null) {
+                	findVirtualConnection(neighborPos);
+                }else {
+                	findConnection(helper);
+                }
+            }else {
+            	findVirtualConnection(neighborPos);
             }
         }
     }
@@ -221,6 +201,37 @@ public class PowerPoleRenderHelper {
         this.extraWires.add(new PowerPoleRenderHelper.ExtraWireInfo(from, to, tension));
     }
 
+    private void findVirtualConnection(BlockPos neighborCoord) {
+        PowerPoleRenderHelper.Group group1 = null;
+        float minDistance = Float.MAX_VALUE;
+
+        //Find shortest path
+        for (int i = 0; i < this.groups.length; i++) {
+            float distance = this.groups[i].distanceTo(neighborCoord);
+            if (distance < minDistance) {
+                minDistance = distance;
+                group1 = this.groups[i];
+            }
+        }
+        
+        PowerPoleRenderHelper.ConnectionInfo[] ret = new PowerPoleRenderHelper.ConnectionInfo[this.insulatorPerGroup];
+        Vec3f from1 = group1.insulators[0].realPos;
+        Vec3f to1 = group1.insulators[0].virtualize(neighborCoord);
+        Vec3f from2 = group1.insulators[insulatorPerGroup - 1].realPos;
+        Vec3f to2 = group1.insulators[insulatorPerGroup - 1].virtualize(neighborCoord);
+        if (hasIntersection(from1, to1, from2, to2)) {
+        	for (int i = 0; i < insulatorPerGroup; i++) {
+        		ret[i] = new PowerPoleRenderHelper.ConnectionInfo(group1.insulators[i], group1.insulators[insulatorPerGroup - 1 - i].virtualize(neighborCoord));
+        	}
+        }else {
+            for (int i = 0; i < insulatorPerGroup; i++) {
+                ret[i] = new PowerPoleRenderHelper.ConnectionInfo(group1.insulators[i], group1.insulators[i].virtualize(neighborCoord));
+            }
+        }
+        
+        this.connectionInfo.add(ret);        
+    }
+    
     private void findConnection(PowerPoleRenderHelper neighbor) {
         PowerPoleRenderHelper.Group group1 = null;
         PowerPoleRenderHelper.Group group2 = null;
@@ -238,15 +249,20 @@ public class PowerPoleRenderHelper {
             }
         }
 
-        Pair<PowerPoleRenderHelper.Insulator, PowerPoleRenderHelper.Insulator>[] connections = new Pair[this.insulatorPerGroup];
-        for (int i = 0; i < this.insulatorPerGroup; i++) {
-            connections[i] = Pair.of(group1.insulators[i], group2.insulators[i]);
-        }
-        connections = PowerPoleRenderHelper.swapIfIntersectInternal(connections);
-
         PowerPoleRenderHelper.ConnectionInfo[] ret = new PowerPoleRenderHelper.ConnectionInfo[this.insulatorPerGroup];
-        for (int i = 0; i < this.insulatorPerGroup; i++) {
-            ret[i] = new PowerPoleRenderHelper.ConnectionInfo(connections[i]);
+
+        Vec3f from1 = group1.insulators[0].realPos;
+        Vec3f to1 = group2.insulators[0].realPos;
+        Vec3f from2 = group1.insulators[insulatorPerGroup - 1].realPos;
+        Vec3f to2 = group2.insulators[insulatorPerGroup - 1].realPos;
+        if (hasIntersection(from1, to1, from2, to2)) {
+            for (int i = 0; i < insulatorPerGroup; i++) {
+                ret[i] = new PowerPoleRenderHelper.ConnectionInfo(group1.insulators[i], group2.insulators[insulatorPerGroup - 1 - i]);
+            }
+        }else {
+            for (int i = 0; i < insulatorPerGroup; i++) {
+                ret[i] = new PowerPoleRenderHelper.ConnectionInfo(group1.insulators[i], group2.insulators[i]);
+            }
         }
 
         this.connectionInfo.add(ret);
@@ -258,9 +274,9 @@ public class PowerPoleRenderHelper {
                 RawQuadGroup insulator = insulatorModel.clone();
 
                 insulator.rotateAroundZ(connection.insulatorAngle / MathAssitant.PI * 180F);
-                insulator.rotateToVec(connection.from.xCoord, connection.from.yCoord, connection.from.zCoord,
-                        connection.fixedTo.xCoord, connection.from.yCoord, connection.fixedTo.zCoord);
-                insulator.translateCoord(connection.from.xCoord, connection.from.yCoord, connection.from.zCoord);
+                insulator.rotateToVec(connection.from.x, connection.from.y, connection.from.z,
+                        connection.fixedTo.x, connection.from.y, connection.fixedTo.z);
+                insulator.translateCoord(connection.from.x, connection.from.y, connection.from.z);
                 insulator.translateCoord(-this.pos.getX(), -this.pos.getY(), -this.pos.getZ());
                 insulator.bake(quads);
             }
@@ -283,6 +299,10 @@ public class PowerPoleRenderHelper {
             this.offsetY = offsetY;
             this.offsetZ = offsetZ;
             realPos = new Vec3f(offsetX + parent.pos.getX(), offsetY + parent.pos.getY(), offsetZ + parent.pos.getZ());
+        }
+        
+        public Vec3f virtualize(BlockPos newPos) {
+        	return realPos.add(newPos.subtract(parent.pos));
         }
     }
 
@@ -316,6 +336,17 @@ public class PowerPoleRenderHelper {
 
             return MathHelper.sqrt(x * x + z * z);
         }
+        
+        public float distanceTo(BlockPos pos) {
+            //Normalize respect to current TileEntity coordinate
+            Vec3i offset = pos.subtract(this.parent.pos);
+
+            float x = offset.getX() - this.centerX;
+            float y = offset.getY() - this.centerY;
+            float z = offset.getZ()  - this.centerZ;
+
+            return MathHelper.sqrt(x * x + z * z);
+        }
     }
 
     public static class ConnectionInfo {
@@ -323,25 +354,50 @@ public class PowerPoleRenderHelper {
         public final Vec3f fixedFrom, fixedTo;
         public final float insulatorAngle, tension;
 
-        private ConnectionInfo(Pair<PowerPoleRenderHelper.Insulator, PowerPoleRenderHelper.Insulator> connection) {
-            float tension = connection.getLeft().tension;
-            float tension2 = connection.getRight().tension;
+        public final boolean isVirtual;
+        
+        private ConnectionInfo(PowerPoleRenderHelper.Insulator from, PowerPoleRenderHelper.Insulator to) {
+            float tension = from.tension;
+            float tension2 = to.tension;
             tension = tension < tension2 ? tension : tension2;
 
-            from = connection.getLeft().realPos;
-            to = connection.getRight().realPos;
+            this.from = from.realPos;
+            this.to = to.realPos;
 
             float distance = this.from.distanceTo(this.to);
-            float angle = PowerPoleRenderHelper.calcAngle(distance, this.from.yCoord, this.to.yCoord, tension);
-            Vec3f fixedFrom = PowerPoleRenderHelper.fixConnectionPoints(this.from, this.to, distance, angle, connection.getLeft().length, tension);
+            float angle = PowerPoleRenderHelper.calcAngle(distance, this.from.y, this.to.y, tension);
+            Vec3f fixedFrom = PowerPoleRenderHelper.fixConnectionPoints(this.from, this.to, distance, angle, from.length, tension);
 
-            float dummyAngle = PowerPoleRenderHelper.calcAngle(distance, this.to.yCoord, this.from.yCoord, tension);
-            Vec3f fixedTo = PowerPoleRenderHelper.fixConnectionPoints(this.to, this.from, distance, dummyAngle, connection.getRight().length, tension);
+            float dummyAngle = PowerPoleRenderHelper.calcAngle(distance, this.to.y, this.from.y, tension);
+            Vec3f fixedTo = PowerPoleRenderHelper.fixConnectionPoints(this.to, this.from, distance, dummyAngle, to.length, tension);
 
             this.fixedFrom = fixedFrom;
             this.fixedTo = fixedTo;
             insulatorAngle = angle;
             this.tension = tension;
+            
+            this.isVirtual = false;
+        }
+        
+        private ConnectionInfo(PowerPoleRenderHelper.Insulator from, Vec3f to) {
+        	float tension = from.tension;
+        	
+        	this.from = from.realPos;
+        	this.to = to;
+        	
+            float distance = this.from.distanceTo(this.to);
+            float angle = PowerPoleRenderHelper.calcAngle(distance, this.from.y, this.to.y, tension);
+            Vec3f fixedFrom = PowerPoleRenderHelper.fixConnectionPoints(this.from, this.to, distance, angle, from.length, tension);
+
+            float dummyAngle = PowerPoleRenderHelper.calcAngle(distance, this.to.y, this.from.y, tension);
+            Vec3f fixedTo = PowerPoleRenderHelper.fixConnectionPoints(this.to, this.from, distance, dummyAngle, from.length, tension);
+            
+            this.fixedFrom = fixedFrom;
+            this.fixedTo = fixedTo;
+            this.insulatorAngle = angle;
+            this.tension = tension;
+            
+            this.isVirtual = true;
         }
     }
 
