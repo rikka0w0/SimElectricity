@@ -14,7 +14,7 @@ public class CableRawModel extends TextureLoaderModel {
 
     public CableRawModel(String domain, String name, float thickness) throws Exception {
         String insulatorTexture = domain + ":blocks/cable/" + name + "_insulator";
-        String conductorTexture = domain + ":blocks/cable/" + name + "_copper";
+        String conductorTexture = domain + ":blocks/cable/" + name + "_conductor";
 
         this.insulatorTexture = this.registerTexture(insulatorTexture);    // We just want to bypass the ModelBakery
         this.conductorTexture = this.registerTexture(conductorTexture);    // and load our texture

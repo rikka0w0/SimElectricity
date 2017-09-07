@@ -22,6 +22,7 @@ gui.sime:resistance_output=Output Resistance
 gui.sime:resistance_internal=Internal Resistance
 gui.sime:voltage_internal=Internal Voltage
 gui.sime:ratio_step_up=Step-up ratio
+gui.sime:resistivity=Resistivity
 gui.sime:resistance_secondary=Resistance(Ref. to Sec.)
 gui.sime:forward_biased=Forward Biased
 gui.sime:reverse_biased=Reverse Biasedz

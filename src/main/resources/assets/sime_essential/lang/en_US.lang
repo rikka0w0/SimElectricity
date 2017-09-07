@@ -2,6 +2,15 @@
 tile.sime_essential:essential_cable.copper_thin.name=Thin Copper Cable
 tile.sime_essential:essential_cable.copper_medium.name=Medium Copper Cable
 tile.sime_essential:essential_cable.copper_thick.name=Thick Copper Cable
+tile.sime_essential:essential_cable.aluminum_thin.name=Thin Aluminum Cable
+tile.sime_essential:essential_cable.aluminum_medium.name=Medium Aluminum Cable
+tile.sime_essential:essential_cable.aluminum_thick.name=Thick Aluminum Cable
+tile.sime_essential:essential_cable.silver_thin.name=Thin Silver Cable
+tile.sime_essential:essential_cable.silver_medium.name=Medium Silver Cable
+tile.sime_essential:essential_cable.silver_thick.name=Thick Silver Cable
+tile.sime_essential:essential_cable.gold_thin.name=Thin Gold Cable
+tile.sime_essential:essential_cable.gold_medium.name=Medium Gold Cable
+tile.sime_essential:essential_cable.gold_thick.name=Thick Gold Cable
 
 tile.sime_essential:essential_electronics.voltage_meter.name=Voltage Meter
 tile.sime_essential:essential_electronics.quantum_generator.name=Quantum Generator
@@ -22,6 +31,13 @@ tile.sime_essential:essential_powerpole3.pole.name=Power Pole
 tile.sime_essential:essential_powerpole3.crossarm10kvt0.name=Cross Arm (10kV, Type 0)
 tile.sime_essential:essential_powerpole3.crossarm10kvt1.name=Cross Arm (10kV, Type 1)
 tile.sime_essential:essential_powerpole3.crossarm415vt0.name=Cross Arm (415V, Type 0)
+
+tile.sime_essential:essential_powertransformer.casing.name=35Kv-10Kv Transformer Casing
+tile.sime_essential:essential_powertransformer.ironcore.name=35Kv-10Kv Transformer Laminated Iron Core
+tile.sime_essential:essential_powertransformer.winding.name=35Kv-10Kv Transformer Coil
+tile.sime_essential:essential_powertransformer.oiltank.name=35Kv-10Kv Transformer Oil Tank
+tile.sime_essential:essential_powertransformer.oiltanksupport.name=35Kv-10Kv Transformer Tank Support
+tile.sime_essential:essential_powertransformer.oilpipe.name=35Kv-10Kv Transformer Oil Pipe
 
 # Fluids
 fluid.vita_tea=Vita Lemon Tea

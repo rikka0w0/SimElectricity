@@ -21,6 +21,7 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.property.IExtendedBlockState;
@@ -40,6 +41,7 @@ import simelectricity.essential.api.SEEAPI;
 import simelectricity.essential.api.coverpanel.ISECoverPanel;
 import simelectricity.essential.api.coverpanel.ISEGuiCoverPanel;
 import simelectricity.essential.api.coverpanel.ISERedstoneEmitterCoverPanel;
+import simelectricity.essential.utils.SEUnitHelper;
 
 import javax.annotation.Nullable;
 import java.lang.ref.WeakReference;
@@ -60,9 +62,9 @@ public class BlockCable extends MetaBlock implements ITileEntityProvider, ISimpl
     private final Class<? extends TileCable> tileEntityClass;
     public BlockCable() {
         this("essential_cable", Material.GLASS, ItemBlockBase.class,
-                new String[]{"copper_thin", "copper_medium", "copper_thick"},
-                new float[]{0.22F, 0.32F, 0.42F},
-                new float[]{0.1F, 0.01F, 0.001F},
+                new String[]{"copper_thin", "copper_medium", "copper_thick", "aluminum_thin", "aluminum_medium", "aluminum_thick", "silver_thin", "silver_medium", "silver_thick", "gold_thin", "gold_medium", "gold_thick"},
+                new float[]{0.22F, 0.32F, 0.42F, 0.22F, 0.32F, 0.42F , 0.22F, 0.32F, 0.42F , 0.22F, 0.32F, 0.42F},
+                new float[]{0.1F, 0.01F, 0.001F, 0.1F, 0.01F, 0.001F, 0.1F, 0.01F, 0.001F, 0.1F, 0.01F, 0.001F},
                 TileCable.class);
 		setHardness(0.2F);
         setResistance(10.0F);
@@ -102,6 +104,12 @@ public class BlockCable extends MetaBlock implements ITileEntityProvider, ISimpl
     public void beforeRegister() {
 		isBlockContainer = true;
 		setCreativeTab(SEAPI.SETab);
+    }
+
+    @SideOnly(Side.CLIENT)
+    public void addInformation(ItemStack stack, EntityPlayer player, List<String> tooltip, boolean advanced) {
+        int type = stack.getItemDamage();
+        tooltip.add(I18n.translateToLocal("gui.sime:resistivity") + ": " + SEUnitHelper.getStringWithoutUnit(2F*resistances[type]) + "\u03a9/m");
     }
 
     @Override
