@@ -2,6 +2,15 @@
 tile.sime_essential:essential_cable.copper_thin.name=细铜线
 tile.sime_essential:essential_cable.copper_medium.name=铜线
 tile.sime_essential:essential_cable.copper_thick.name=粗铜线
+tile.sime_essential:essential_cable.aluminum_thin.name=细铝线
+tile.sime_essential:essential_cable.aluminum_medium.name=铝线
+tile.sime_essential:essential_cable.aluminum_thick.name=粗铝线
+tile.sime_essential:essential_cable.silver_thin.name=细银线
+tile.sime_essential:essential_cable.silver_medium.name=银线
+tile.sime_essential:essential_cable.silver_thick.name=粗银线
+tile.sime_essential:essential_cable.gold_thin.name=细金线
+tile.sime_essential:essential_cable.gold_medium.name=金线
+tile.sime_essential:essential_cable.gold_thick.name=粗金线
 
 tile.sime_essential:essential_electronics.voltage_meter.name=电压表
 tile.sime_essential:essential_electronics.quantum_generator.name=量子发电机
@@ -22,6 +31,13 @@ tile.sime_essential:essential_powerpole3.pole.name=电线杆
 tile.sime_essential:essential_powerpole3.crossarm10kvt0.name=支架(10kV, 0型)
 tile.sime_essential:essential_powerpole3.crossarm10kvt1.name=支架(10kV, 1型)
 tile.sime_essential:essential_powerpole3.crossarm415vt0.name=支架(415V, 0型)
+
+tile.sime_essential:essential_powertransformer.casing.name=35Kv-10Kv变压器外壳
+tile.sime_essential:essential_powertransformer.ironcore.name=35Kv-10Kv变压器铁芯
+tile.sime_essential:essential_powertransformer.winding.name=35Kv-10Kv变压器线圈
+tile.sime_essential:essential_powertransformer.oiltank.name=35Kv-10Kv变压器油罐
+tile.sime_essential:essential_powertransformer.oiltanksupport.name=35Kv-10Kv变压器油罐支架
+tile.sime_essential:essential_powertransformer.oilpipe.name=35Kv-10Kv变压器油导管
 
 # Fluids
 fluid.vita_tea=扶她柠檬茶
