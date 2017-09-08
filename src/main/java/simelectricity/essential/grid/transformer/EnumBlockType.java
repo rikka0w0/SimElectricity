@@ -4,6 +4,8 @@ import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.math.Vec3i;
 
+import javax.annotation.Nonnull;
+
 public enum EnumBlockType implements IStringSerializable {
     Casing(0, false, "casing", null),
     IronCore(1, false, "ironcore", null),
@@ -22,20 +24,22 @@ public enum EnumBlockType implements IStringSerializable {
     public static final PropertyEnum<EnumBlockType> property = PropertyEnum.create("blocktype", EnumBlockType.class);
 
     public static final EnumBlockType[] values = new EnumBlockType[12];
-    public static final EnumBlockType[] rawStructure = new EnumBlockType[6];
-    public static final EnumBlockType[] formedStructure = new EnumBlockType[6];
+    static final EnumBlockType[] rawStructure = new EnumBlockType[6];
+    static final EnumBlockType[] formedStructure = new EnumBlockType[6];
 
     static {
-        int i = 0, j = 0;
+        int i = 0;
+        int j = 0;
+
         for (EnumBlockType value : EnumBlockType.values()) {
             if (value.formed) {
-                EnumBlockType.formedStructure[j] = value;
+                formedStructure[j] = value;
                 j++;
             } else {
-                EnumBlockType.rawStructure[i] = value;
+                rawStructure[i] = value;
                 i++;
             }
-            EnumBlockType.values[value.index] = value;
+            values[value.index] = value;
         }
     }
 
@@ -43,6 +47,7 @@ public enum EnumBlockType implements IStringSerializable {
     public final boolean formed;
     public final Vec3i offset;
     private final String name;
+
     EnumBlockType(int index, boolean formed, String name, Vec3i offset) {
         this.index = index;
         this.formed = formed;
@@ -51,22 +56,26 @@ public enum EnumBlockType implements IStringSerializable {
     }
 
     public static String[] getRawStructureNames() {
-        String[] ret = new String[EnumBlockType.rawStructure.length];
+        int length = rawStructure.length;
+        String[] ret = new String[length];
 
-        for (int i = 0; i < EnumBlockType.rawStructure.length; i++)
-            ret[i] = EnumBlockType.rawStructure[i].name;
+        for (int i = 0; i < length; i++) {
+            ret[i] = rawStructure[i].name;
+        }
 
         return ret;
     }
 
     public static EnumBlockType fromInt(int in) {
-        if (in >= EnumBlockType.values.length || in < 0)
+        if (in >= values.length || in < 0) {
             return null;
+        }
 
-        return EnumBlockType.values[in];
+        return values[in];
     }
 
     @Override
+    @Nonnull
     public String getName() {
         return this.name;
     }

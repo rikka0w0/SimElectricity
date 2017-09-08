@@ -1,8 +1,5 @@
 package simelectricity.essential.grid.transformer;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
@@ -21,8 +18,8 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import rikka.librikka.block.ISubBlock;
 import rikka.librikka.block.BlockBase;
+import rikka.librikka.block.ISubBlock;
 import rikka.librikka.item.ISimpleTexture;
 import rikka.librikka.item.ItemBlockBase;
 import rikka.librikka.multiblock.MultiBlockStructure;
@@ -30,51 +27,61 @@ import rikka.librikka.multiblock.MultiBlockStructure.Result;
 import rikka.librikka.properties.Properties;
 import simelectricity.api.SEAPI;
 import simelectricity.api.node.ISESimulatable;
+import simelectricity.api.node.NoComplementException;
+import simelectricity.api.tile.ISEGridTile;
 import simelectricity.essential.api.ISEHVCableConnector;
 import simelectricity.essential.grid.transformer.TilePowerTransformerPlaceHolder.Primary;
 import simelectricity.essential.grid.transformer.TilePowerTransformerPlaceHolder.Render;
 import simelectricity.essential.grid.transformer.TilePowerTransformerPlaceHolder.Secondary;
 
+import javax.annotation.Nonnull;
+import java.util.LinkedList;
+import java.util.List;
+
 public class BlockPowerTransformer extends BlockBase implements ITileEntityProvider, ISubBlock, ISimpleTexture, ISEHVCableConnector {
-    public static final String[] subNames = EnumBlockType.getRawStructureNames();
+    private static final String[] subNames = EnumBlockType.getRawStructureNames();
     ///////////////////////////////
     ///BlockStates
     ///////////////////////////////
     public static final IProperty<Boolean> propertyMirrored = PropertyBool.create("mirrored");
-    public final MultiBlockStructure structureTemplate;
+    private static final float TRANSFORMER_HARDNESS = 3.0F;
+    private static final float TRANSFORMER_RESISTANCE = 10.0F;
+    private static final String UNLOCALIZED_NAME = "essential_powertransformer";
+    private final MultiBlockStructure structureTemplate;
 
     public BlockPowerTransformer() {
-        super("essential_powertransformer", Material.IRON, ItemBlockBase.class);
+        super(UNLOCALIZED_NAME, Material.IRON, ItemBlockBase.class);
 
-        structureTemplate = this.createStructureTemplate();
-        
-        setHardness(3.0F);
-        setResistance(10.0F);
+        this.structureTemplate = this.createStructureTemplate();
+
+        setHardness(TRANSFORMER_HARDNESS);
+        setResistance(TRANSFORMER_RESISTANCE);
         setSoundType(SoundType.METAL);
     }
 
     @Override
     public String[] getSubBlockUnlocalizedNames() {
-        return BlockPowerTransformer.subNames;
+        return subNames;
     }
 
     @Override
     public String getIconName(int damage) {
-        return "powertransformer_" + BlockPowerTransformer.subNames[damage];
+        return "powertransformer_" + subNames[damage];
     }
 
     @Override
     public void beforeRegister() {
-        isBlockContainer = true;
+        this.isBlockContainer = true;
         setCreativeTab(SEAPI.SETab);
     }
 
     @Override
-    public TileEntity createNewTileEntity(World world, int meta) {
+    public TileEntity createNewTileEntity(@Nonnull World world, int meta) {
         EnumBlockType blockType = EnumBlockType.fromInt(meta);
 
-        if (!blockType.formed)
+        if (!blockType.formed) {
             return null;
+        }
 
         switch (blockType) {
             case Placeholder:
@@ -95,17 +102,17 @@ public class BlockPowerTransformer extends BlockBase implements ITileEntityProvi
     }
 
     @Override
-    protected final BlockStateContainer createBlockState() {
-        return new BlockStateContainer(this, EnumBlockType.property, Properties.facing2bit, BlockPowerTransformer.propertyMirrored);
+    protected BlockStateContainer createBlockState() {
+        return new BlockStateContainer(this, EnumBlockType.property, Properties.facing2bit, propertyMirrored);
     }
 
     @Override
-    public final IBlockState getStateFromMeta(int meta) {
+    public IBlockState getStateFromMeta(int meta) {
         return this.stateFromType(EnumBlockType.fromInt(meta));
     }
 
     @Override
-    public final int getMetaFromState(IBlockState state) {
+    public int getMetaFromState(IBlockState state) {
         return state.getValue(EnumBlockType.property).index;
     }
 
@@ -114,17 +121,18 @@ public class BlockPowerTransformer extends BlockBase implements ITileEntityProvi
     }
 
     @Override
-    public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
+    public IBlockState getActualState(@Nonnull IBlockState state, IBlockAccess world, BlockPos pos) {
         TileEntity te = world.getTileEntity(pos);
         if (te instanceof Render) {
             Render render = (Render) te;
             EnumFacing facing = render.getFacing();
             boolean mirrored = render.isMirrored();
-            if (facing == null)
+            if (facing == null) {
                 return state; //Prevent crashing!
+            }
 
-            state = state.withProperty(Properties.facing2bit, facing.ordinal() - 2 & 3)
-                    .withProperty(BlockPowerTransformer.propertyMirrored, mirrored);
+            state = state.withProperty(Properties.facing2bit, (facing.ordinal() - 2) & 3)
+                    .withProperty(propertyMirrored, mirrored);
         }
         return state;
     }
@@ -134,18 +142,18 @@ public class BlockPowerTransformer extends BlockBase implements ITileEntityProvi
     ///////////////////////////////
     @Override
     public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
-        if (world.isRemote)
+        if (world.isRemote) {
             return;
+        }
 
         Result ret = this.structureTemplate.attempToBuild(world, pos);
         if (ret != null) {
             ret.createStructure();
         }
-        return;
     }
 
     @Override
-    public void breakBlock(World world, BlockPos pos, IBlockState state) {
+    public void breakBlock(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull IBlockState state) {
         TileEntity te = world.getTileEntity(pos);
         if (te != null) {
             this.structureTemplate.restoreStructure(te, state, true);
@@ -158,31 +166,35 @@ public class BlockPowerTransformer extends BlockBase implements ITileEntityProvi
     public int damageDropped(IBlockState state) {
         EnumBlockType blockType = state.getValue(EnumBlockType.property);
 
-        if (blockType.formed)
+        if (blockType.formed) {
             return 0;
+        }
 
         return this.getMetaFromState(state);
     }
 
     @Override
-    public List<ItemStack> getDrops(IBlockAccess world, BlockPos pos, IBlockState state, int fortune) {
-    	EnumBlockType blockType = state.getValue(EnumBlockType.property);
-    	if (blockType.formed)
-    	    return new LinkedList<ItemStack>();
+    public List<ItemStack> getDrops(IBlockAccess world, BlockPos pos, @Nonnull IBlockState state, int fortune) {
+        EnumBlockType blockType = state.getValue(EnumBlockType.property);
+        if (blockType.formed) {
+            return new LinkedList<>();
+        }
 
     	return super.getDrops(world, pos, state, fortune);
     }
-    
+
     /**
      * Creative-mode middle mouse button clicks
      */
     @Override
-    public ItemStack getItem(World world, BlockPos pos, IBlockState state) {
+    @Nonnull
+    public ItemStack getItem(World world, BlockPos pos, @Nonnull IBlockState state) {
         EnumBlockType blockType = state.getValue(EnumBlockType.property);
 
-        if (blockType.formed)
-        	return ItemStack.EMPTY;
-            
+        if (blockType.formed) {
+            return ItemStack.EMPTY;
+        }
+
         return new ItemStack(this.itemBlock, 1, this.damageDropped(state));
     }
 
@@ -191,7 +203,7 @@ public class BlockPowerTransformer extends BlockBase implements ITileEntityProvi
         return false;
     }
 
-    public MultiBlockStructure createStructureTemplate() {
+    private MultiBlockStructure createStructureTemplate() {
         //y,z,x facing NORTH(Z-), do not change
         MultiBlockStructure.BlockInfo[][][] configuration = new MultiBlockStructure.BlockInfo[5][][];
 
@@ -262,26 +274,32 @@ public class BlockPowerTransformer extends BlockBase implements ITileEntityProvi
     public ISESimulatable getNode(World world, BlockPos pos) {
         TileEntity te = world.getTileEntity(pos);
 
-        if (te instanceof Primary)
+        if (te instanceof Primary) {
             return ((Primary) te).getPrimaryTile();
-        else if (te instanceof Secondary)
+        }
+        if (te instanceof Secondary) {
             return ((Secondary) te).getSecondaryTile();
-        else if (te instanceof TilePowerTransformerWinding)
-            return ((TilePowerTransformerWinding) te).getGridNode();
+        }
+        if (te instanceof TilePowerTransformerWinding) {
+            return ((ISEGridTile) te).getGridNode();
+        }
 
-        return null;
+        throw new NoComplementException();
     }
 
     @Override
     public boolean canHVCableConnect(World world, BlockPos pos) {
         TileEntity te = world.getTileEntity(pos);
 
-        if (te instanceof Primary)
+        if (te instanceof Primary) {
             return ((Primary) te).canConnect();
-        else if (te instanceof Secondary)
+        }
+        if (te instanceof Secondary) {
             return ((Secondary) te).canConnect();
-        else if (te instanceof TilePowerTransformerWinding)
+        }
+        if (te instanceof TilePowerTransformerWinding) {
             return ((TilePowerTransformerWinding) te).canConnect();
+        }
 
         return false;
     }
