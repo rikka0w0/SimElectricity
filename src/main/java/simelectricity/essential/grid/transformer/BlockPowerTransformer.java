@@ -3,7 +3,6 @@ package simelectricity.essential.grid.transformer;
 import java.util.LinkedList;
 import java.util.List;
 
-import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
@@ -29,13 +28,13 @@ import rikka.librikka.multiblock.MultiBlockStructure;
 import rikka.librikka.multiblock.MultiBlockStructure.Result;
 import rikka.librikka.properties.Properties;
 import simelectricity.api.SEAPI;
-import simelectricity.api.node.ISESimulatable;
+import simelectricity.api.node.ISEGridNode;
 import simelectricity.essential.api.ISEHVCableConnector;
 import simelectricity.essential.grid.transformer.TilePowerTransformerPlaceHolder.Primary;
 import simelectricity.essential.grid.transformer.TilePowerTransformerPlaceHolder.Render;
 import simelectricity.essential.grid.transformer.TilePowerTransformerPlaceHolder.Secondary;
 
-public class BlockPowerTransformer extends BlockBase implements ITileEntityProvider, ISubBlock, ISimpleTexture, ISEHVCableConnector {
+public class BlockPowerTransformer extends BlockBase implements ISubBlock, ISimpleTexture, ISEHVCableConnector {
     public static final String[] subNames = EnumBlockType.getRawStructureNames();
     ///////////////////////////////
     ///BlockStates
@@ -47,7 +46,8 @@ public class BlockPowerTransformer extends BlockBase implements ITileEntityProvi
         super("essential_powertransformer", Material.IRON, ItemBlockBase.class);
 
         structureTemplate = this.createStructureTemplate();
-        
+
+        setCreativeTab(SEAPI.SETab);
         setHardness(3.0F);
         setResistance(10.0F);
         setSoundType(SoundType.METAL);
@@ -62,16 +62,16 @@ public class BlockPowerTransformer extends BlockBase implements ITileEntityProvi
     public String getIconName(int damage) {
         return "powertransformer_" + BlockPowerTransformer.subNames[damage];
     }
-
+    
+    ///////////////////////////////
+    /// TileEntity
+    ///////////////////////////////
+	@Override
+	public boolean hasTileEntity(IBlockState state) {return true;}
+	
     @Override
-    public void beforeRegister() {
-        isBlockContainer = true;
-        setCreativeTab(SEAPI.SETab);
-    }
-
-    @Override
-    public TileEntity createNewTileEntity(World world, int meta) {
-        EnumBlockType blockType = EnumBlockType.fromInt(meta);
+    public TileEntity createTileEntity(World world, IBlockState state) {
+        EnumBlockType blockType = state.getValue(EnumBlockType.property);
 
         if (!blockType.formed)
             return null;
@@ -259,7 +259,7 @@ public class BlockPowerTransformer extends BlockBase implements ITileEntityProvi
     /// ISEHVCableConnector
     //////////////////////////////////////
     @Override
-    public ISESimulatable getNode(World world, BlockPos pos) {
+    public ISEGridNode getNode(World world, BlockPos pos) {
         TileEntity te = world.getTileEntity(pos);
 
         if (te instanceof Primary)
@@ -273,7 +273,7 @@ public class BlockPowerTransformer extends BlockBase implements ITileEntityProvi
     }
 
     @Override
-    public boolean canHVCableConnect(World world, BlockPos pos) {
+    public boolean canHVCableSelect(World world, BlockPos pos) {
         TileEntity te = world.getTileEntity(pos);
 
         if (te instanceof Primary)

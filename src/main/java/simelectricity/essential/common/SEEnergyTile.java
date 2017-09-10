@@ -1,9 +1,9 @@
 package simelectricity.essential.common;
 
-import rikka.librikka.tileentity.SETileEntity;
+import rikka.librikka.tileentity.TileEntityBase;
 import simelectricity.api.SEAPI;
 
-public abstract class SEEnergyTile extends SETileEntity {
+public abstract class SEEnergyTile extends TileEntityBase {
     protected boolean isAddedToEnergyNet;
 
     /**

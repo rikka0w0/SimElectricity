@@ -5,10 +5,12 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.StateMapperBase;
 import net.minecraft.item.ItemBlock;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.client.model.obj.OBJLoader;
-import rikka.librikka.model.SingleTextureModel;
+import rikka.librikka.model.GhostModel;
 import rikka.librikka.model.loader.IModelLoader;
 import rikka.librikka.properties.Properties;
 import simelectricity.essential.BlockRegistry;
@@ -69,8 +71,10 @@ public class PowerTransformerStateMapper extends StateMapperBase implements IMod
                 int facing = Integer.parseInt(splited[3]);
                 boolean mirrored = Boolean.parseBoolean(splited[4]);
                 return new PowerTransformerRawModel(facing, mirrored);
-            } else {
-                return new SingleTextureModel(domain, "powertransformer_" + blockType.getName(), true);
+            } else if (blockType.formed){
+            	return new GhostModel();
+            }else {
+            	return ModelLoaderRegistry.getModel(new ResourceLocation(domain + ":block/powertransformer_" + blockType.getName()));
             }
         }
 

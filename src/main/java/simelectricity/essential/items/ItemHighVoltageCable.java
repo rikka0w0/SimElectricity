@@ -80,7 +80,7 @@ public class ItemHighVoltageCable extends ItemBase implements ISimpleTexture {
         BlockPos lastCoordinate = this.lastCoordinates.get(player);
 
         if (lastCoordinate == null) {    //First selection
-            if (connector1.canHVCableConnect(world, pos)) {
+            if (connector1.canHVCableSelect(world, pos)) {
                 lastCoordinate = new BlockPos(pos);
                 Utils.chatWithLocalization(player, "chat.sime_essential:powerpole_selected");
             } else {
@@ -98,9 +98,9 @@ public class ItemHighVoltageCable extends ItemBase implements ISimpleTexture {
 
                 if (node1 == node2) {
                     Utils.chatWithLocalization(player, I18n.translateToLocal("chat.sime_essential:powerpole_recursive_connection"));
-                } else if (!connector1.canHVCableConnect(world, pos)) {
+                } else if (!connector1.canHVCableConnect(world, pos, lastCoordinate)) {
                     Utils.chatWithLocalization(player, I18n.translateToLocal("chat.sime_essential:powerpole_current_selection_invalid"));
-                } else if (!connector2.canHVCableConnect(world, lastCoordinate)) {
+                } else if (!connector2.canHVCableConnect(world, lastCoordinate, pos)) {
                     Utils.chatWithLocalization(player, I18n.translateToLocal("chat.sime_essential:powerpole_last_selection_invalid"));
                 } else if (!ItemHighVoltageCable.numberOfConductorMatched(node1, node2)) {
                     Utils.chatWithLocalization(player, I18n.translateToLocal("chat.sime_essential:powerpole_type_mismatch"));

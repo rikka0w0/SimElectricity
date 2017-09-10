@@ -1,7 +1,7 @@
 package simelectricity.essential.grid;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.ITileEntityProvider;
+import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyBool;
@@ -40,7 +40,7 @@ import java.lang.ref.WeakReference;
 import java.util.LinkedList;
 import java.util.List;
 
-public class BlockPowerPole2 extends BlockBase implements ITileEntityProvider, ISubBlock, ISEHVCableConnector {
+public class BlockPowerPole2 extends BlockBase implements ISubBlock, ISEHVCableConnector {
     public static final String[] subNames = {"0", "1"};
     ///////////////////
     /// Utils
@@ -60,6 +60,10 @@ public class BlockPowerPole2 extends BlockBase implements ITileEntityProvider, I
 
     public BlockPowerPole2() {
         super("essential_powerpole2", Material.ROCK, BlockPowerPole2.ItemBlock.class);
+		setCreativeTab(SEAPI.SETab);
+		setHardness(0.2F);
+        setResistance(10.0F);
+        setSoundType(SoundType.METAL);
     }
 
     private static LinkedList<BlockInfo> getRodBlockOffsets(IBlockState state) {
@@ -104,12 +108,6 @@ public class BlockPowerPole2 extends BlockBase implements ITileEntityProvider, I
     @Override
     public String[] getSubBlockUnlocalizedNames() {
         return BlockPowerPole2.subNames;
-    }
-
-    @Override
-    public void beforeRegister() {
-		isBlockContainer = true;
-		setCreativeTab(SEAPI.SETab);
     }
 
     @Override
@@ -243,9 +241,15 @@ public class BlockPowerPole2 extends BlockBase implements ITileEntityProvider, I
         super.breakBlock(world, pos, state);
     }
 
+    ///////////////////////////////
+    /// TileEntity
+    ///////////////////////////////
+	@Override
+	public boolean hasTileEntity(IBlockState state) {return true;}
+	
     @Override
-    public TileEntity createNewTileEntity(World world, int meta) {
-        if (!getStateFromMeta(meta).getValue(propertyIsPole))
+    public TileEntity createTileEntity(World world, IBlockState state) {
+        if (!state.getValue(propertyIsPole))
             return new TilePowerPole2();
         return null;
     }
@@ -355,7 +359,7 @@ public class BlockPowerPole2 extends BlockBase implements ITileEntityProvider, I
     /// ISEHVCableConnector
     //////////////////////////////////////
     @Override
-    public boolean canHVCableConnect(World world, BlockPos pos) {
+    public boolean canHVCableSelect(World world, BlockPos pos) {
         TileEntity te = this.getCenterTileFromRodPos(world, pos);
 
         if (te instanceof TilePowerPole)

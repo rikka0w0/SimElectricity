@@ -38,8 +38,8 @@ public class BlockTwoPortElectronics extends SEMachineBlock implements ISESidedT
     }
 
     @Override
-    public TileEntity createNewTileEntity(World world, int meta) {
-        switch (meta) {
+    public TileEntity createTileEntity(World world, IBlockState state) {
+        switch (this.getMetaFromState(state)) {
             case 0:
                 return new TileAdjustableTransformer();
             case 1:

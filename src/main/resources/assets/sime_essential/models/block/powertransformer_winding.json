@@ -1,0 +1,12 @@
+{
+  "parent": "block/cube",
+  "textures": {
+    "down": "sime_essential:blocks/powertransformer_winding_top",
+    "up": "sime_essential:blocks/powertransformer_winding_top",
+    "north": "sime_essential:blocks/powertransformer_winding_side",
+    "south": "sime_essential:blocks/powertransformer_winding_side",
+    "west": "sime_essential:blocks/powertransformer_winding_side",
+    "east": "sime_essential:blocks/powertransformer_winding_side",
+    "particle": "sime_essential:blocks/powertransformer_winding_side"
+  }
+}

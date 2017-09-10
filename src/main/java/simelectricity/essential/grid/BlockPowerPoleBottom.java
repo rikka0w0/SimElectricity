@@ -192,7 +192,7 @@ public class BlockPowerPoleBottom extends BlockBase implements ISEHVCableConnect
     /// ISEHVCableConnector
     //////////////////////////////////////
     @Override
-    public boolean canHVCableConnect(World world, BlockPos pos) {
+    public boolean canHVCableSelect(World world, BlockPos pos) {
         IBlockState state = world.getBlockState(pos);
         BlockPos centerPos = BlockPowerPoleBottom.getCenterBoxCoord(pos, state);
         TileEntity te = world.getTileEntity(centerPos);

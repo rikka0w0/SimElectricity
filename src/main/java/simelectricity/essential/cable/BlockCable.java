@@ -1,7 +1,6 @@
 package simelectricity.essential.cable;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
@@ -53,7 +52,7 @@ import java.util.List;
  *
  * @author Rikka0_0
  */
-public class BlockCable extends MetaBlock implements ITileEntityProvider, ISimpleTexture {
+public class BlockCable extends MetaBlock implements ISimpleTexture {
     ///////////////////////////////
     /// Cable Properties
     ///////////////////////////////
@@ -66,6 +65,7 @@ public class BlockCable extends MetaBlock implements ITileEntityProvider, ISimpl
                 new float[]{0.22F, 0.32F, 0.42F, 0.22F, 0.32F, 0.42F , 0.22F, 0.32F, 0.42F , 0.22F, 0.32F, 0.42F},
                 new float[]{0.1F, 0.01F, 0.001F, 0.1F, 0.01F, 0.001F, 0.1F, 0.01F, 0.001F, 0.1F, 0.01F, 0.001F},
                 TileCable.class);
+		setCreativeTab(SEAPI.SETab);
 		setHardness(0.2F);
         setResistance(10.0F);
         setSoundType(SoundType.METAL);
@@ -100,25 +100,22 @@ public class BlockCable extends MetaBlock implements ITileEntityProvider, ISimpl
         }
     }
 
-    @Override
-    public void beforeRegister() {
-		isBlockContainer = true;
-		setCreativeTab(SEAPI.SETab);
-    }
-
     @SideOnly(Side.CLIENT)
     public void addInformation(ItemStack stack, EntityPlayer player, List<String> tooltip, boolean advanced) {
         int type = stack.getItemDamage();
         tooltip.add(I18n.translateToLocal("gui.sime:resistivity") + ": " + SEUnitHelper.getStringWithoutUnit(2F*resistances[type]) + "\u03a9/m");
     }
 
+	@Override
+	public boolean hasTileEntity(IBlockState state) {return true;}
+    
     @Override
-    public TileEntity createNewTileEntity(World world, int meta) {
+    public TileEntity createTileEntity(World world, IBlockState state) {
         TileCable cable;
         try {
             cable = tileEntityClass.getConstructor().newInstance();
-            if (!world.isRemote)    //createNewTileEntity is only called by server when the block is firstly placed
-                cable.setResistanceOnPlace(this.resistances[meta]);
+            if (!world.isRemote)    //createTileEntity is only called by the server thread when the block is placed at the first
+                cable.setResistanceOnPlace(this.resistances[this.getMetaFromState(state)]);
             return cable;
         } catch (Exception e) {
             e.printStackTrace();

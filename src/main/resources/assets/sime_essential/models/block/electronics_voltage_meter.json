@@ -1,12 +1,12 @@
 {
   "parent": "block/cube",
   "textures": {
-    "down": "sime_essential:blocks/machines/voltage_meter_side",
-    "up": "sime_essential:blocks/machines/voltage_meter_side",
-    "north": "sime_essential:blocks/machines/voltage_meter_side",
+    "down": "sime_essential:blocks/machines/machine_bottom",
+    "up": "sime_essential:blocks/machines/machine_top",
+    "north": "sime_essential:blocks/machines/machine_side",
     "south": "sime_essential:blocks/machines/voltage_meter_front",
-    "west": "sime_essential:blocks/machines/voltage_meter_side",
-    "east": "sime_essential:blocks/machines/voltage_meter_side",
-    "particle": "sime_essential:blocks/machines/voltage_meter_side"
+    "west": "sime_essential:blocks/machines/machine_side",
+    "east": "sime_essential:blocks/machines/machine_side",
+    "particle": "sime_essential:blocks/machines/voltage_meter_front"
   }
 }

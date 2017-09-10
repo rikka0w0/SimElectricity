@@ -1,7 +1,12 @@
 {
-  "parent": "block/cube_all",
+  "parent": "block/cube",
   "textures": {
-    "all": "sime_essential:blocks/machines/adjustable_transformer",
-    "particle": "sime_essential:blocks/machines/adjustable_transformer"
+    "down": "sime_essential:blocks/machines/machine_bottom",
+    "up": "sime_essential:blocks/machines/machine_top",
+    "north": "sime_essential:blocks/machines/adjustable_transformer_side",
+    "south": "sime_essential:blocks/machines/adjustable_transformer_side",
+    "west": "sime_essential:blocks/machines/adjustable_transformer_side",
+    "east": "sime_essential:blocks/machines/adjustable_transformer_side",
+    "particle": "sime_essential:blocks/machines/adjustable_transformer_side"
   }
 }

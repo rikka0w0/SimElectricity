@@ -117,7 +117,7 @@ public class PowerPoleTopModel extends BlockRenderModel {
             return quads;
         }
 
-        return ImmutableList.of();
+        return this.quads;
     }
 
 

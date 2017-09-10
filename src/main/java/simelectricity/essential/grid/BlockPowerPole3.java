@@ -1,7 +1,6 @@
 package simelectricity.essential.grid;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
@@ -38,12 +37,13 @@ import javax.annotation.Nullable;
 import java.lang.ref.WeakReference;
 import java.util.List;
 
-public class BlockPowerPole3 extends BlockBase implements ITileEntityProvider, ISubBlock, ISEHVCableConnector {
+public class BlockPowerPole3 extends BlockBase implements ISubBlock, ISEHVCableConnector {
     public BlockPowerPole3() {
         super("essential_powerpole3", Material.ROCK, ItemBlockBase.class);
 
 		setDefaultState(blockState.getBaseState());
 		
+		setCreativeTab(SEAPI.SETab);
         setHardness(3.0F);
         setResistance(10.0F);
         setSoundType(SoundType.METAL);
@@ -55,18 +55,34 @@ public class BlockPowerPole3 extends BlockBase implements ITileEntityProvider, I
     }
 
     @Override
-    public void beforeRegister() {
-		isBlockContainer = true;
-		setCreativeTab(SEAPI.SETab);
-    }
-
-    @Override
     public boolean canPlaceBlockAt(World world, BlockPos pos) {
         IBlockState blockState = world.getBlockState(pos.down());
 
         return blockState.getBlock() == this || blockState.isSideSolid(world, pos.down(), EnumFacing.UP);
     }
 
+    ///////////////////////////////
+    /// TileEntity
+    ///////////////////////////////
+	@Override
+	public boolean hasTileEntity(IBlockState state) {return true;}
+    
+    @Override
+    public TileEntity createTileEntity(World world, IBlockState state) {
+        EnumBlockTypePole3 blockType = state.getValue(EnumBlockTypePole3.property);
+
+        switch (blockType) {
+            case Pole:
+                return null;
+            case Crossarm10kVT0:
+                return new Pole10KvType0();
+            case Crossarm10kVT1:
+                return new Pole10KvType1();
+            case Crossarm415VT0:
+                return new Pole415vType0();
+        }
+        return null;
+    }
     ///////////////////////////////
     ///BlockStates
     ///////////////////////////////
@@ -125,12 +141,6 @@ public class BlockPowerPole3 extends BlockBase implements ITileEntityProvider, I
     }
 
     @Override
-    public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int damage, EntityLivingBase placer) {
-        IBlockState state = super.getStateForPlacement(world, pos, facing, hitX, hitY, hitZ, damage, placer);
-        return state;
-    }
-
-    @Override
     public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
         super.onBlockPlacedBy(world, pos, state, placer, stack);
 
@@ -172,23 +182,6 @@ public class BlockPowerPole3 extends BlockBase implements ITileEntityProvider, I
         }
     }
 
-    @Override
-    public TileEntity createNewTileEntity(World world, int meta) {
-        EnumBlockTypePole3 blockType = EnumBlockTypePole3.fromInt(meta);
-
-        switch (blockType) {
-            case Pole:
-                return null;
-            case Crossarm10kVT0:
-                return new Pole10KvType0();
-            case Crossarm10kVT1:
-                return new Pole10KvType1();
-            case Crossarm415VT0:
-                return new Pole415vType0();
-        }
-        return null;
-    }
-
     ///////////////////
     /// BoundingBox
     ///////////////////
@@ -206,7 +199,7 @@ public class BlockPowerPole3 extends BlockBase implements ITileEntityProvider, I
     /// ISEHVCableConnector
     //////////////////////////////////////
     @Override
-    public boolean canHVCableConnect(World world, BlockPos pos) {
+    public boolean canHVCableSelect(World world, BlockPos pos) {
         TileEntity te = world.getTileEntity(pos);
 
         return te instanceof TilePowerPole3;

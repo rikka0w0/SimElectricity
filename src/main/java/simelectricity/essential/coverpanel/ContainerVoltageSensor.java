@@ -34,7 +34,7 @@ public class ContainerVoltageSensor extends Container implements ISEContainerUpd
     
     @Override
     public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, EntityPlayer player) {
-        return null;
+        return ItemStack.EMPTY;
     }
 
     @Override

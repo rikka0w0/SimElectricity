@@ -1,6 +1,6 @@
 package simelectricity.essential.grid;
 
-import net.minecraft.block.ITileEntityProvider;
+import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.BlockStateContainer;
@@ -29,9 +29,13 @@ import simelectricity.essential.api.ISEHVCableConnector;
 
 import java.lang.ref.WeakReference;
 
-public class BlockCableJoint extends BlockBase implements ITileEntityProvider, ISEHVCableConnector, ISimpleTexture {
+public class BlockCableJoint extends BlockBase implements ISEHVCableConnector, ISimpleTexture {
     public BlockCableJoint() {
         super("essential_cable_joint", Material.GLASS, ItemBlockBase.class);
+		setCreativeTab(SEAPI.SETab);
+		setHardness(0.2F);
+        setResistance(10.0F);
+        setSoundType(SoundType.METAL);
     }
 
     @Override
@@ -77,17 +81,14 @@ public class BlockCableJoint extends BlockBase implements ITileEntityProvider, I
         return state;
     }
 
-    ///////////////////
-    /// Initialize
-    ///////////////////
+    ///////////////////////////////
+    /// TileEntity
+    ///////////////////////////////
+	@Override
+	public boolean hasTileEntity(IBlockState state) {return true;}
+	
     @Override
-    public void beforeRegister() {
-		isBlockContainer = true;
-		setCreativeTab(SEAPI.SETab);
-    }
-
-    @Override
-    public TileEntity createNewTileEntity(World world, int meta) {
+    public TileEntity createTileEntity(World world, IBlockState state) {
         return new TileCableJoint();
     }
 
@@ -150,12 +151,17 @@ public class BlockCableJoint extends BlockBase implements ITileEntityProvider, I
     /// ISEHVCableConnector
     //////////////////////////////////////
     @Override
-    public boolean canHVCableConnect(World world, BlockPos pos) {
+    public boolean canHVCableSelect(World world, BlockPos pos) {
         TileEntity te = world.getTileEntity(pos);
         if (te instanceof TileCableJoint)
             return ((TileCableJoint) te).canConnect();
         else
             return false;
+    }
+    
+    @Override
+    public boolean canHVCableConnect(World world, BlockPos fromPos, BlockPos toPos) {
+    	return canHVCableSelect(world, fromPos);
     }
 
     @Override

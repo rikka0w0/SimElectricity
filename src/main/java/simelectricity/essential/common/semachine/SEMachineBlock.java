@@ -1,6 +1,5 @@
 package simelectricity.essential.common.semachine;
 
-import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
@@ -26,19 +25,14 @@ import simelectricity.api.SEAPI;
 
 import java.util.ArrayList;
 
-public abstract class SEMachineBlock extends MetaBlock implements ITileEntityProvider, ISubBlock {
+public abstract class SEMachineBlock extends MetaBlock implements ISubBlock {
     public SEMachineBlock(String unlocalizedName, String[] subNames) {
         super(unlocalizedName, subNames, Material.IRON, ItemBlockBase.class);
         
+        setCreativeTab(SEAPI.SETab);
         setHardness(3.0F);
         setResistance(10.0F);
         setSoundType(SoundType.METAL);
-    }
-
-    @Override
-    public void beforeRegister() {
-        isBlockContainer = true;
-        setCreativeTab(SEAPI.SETab);
     }
 
     @Override
@@ -116,4 +110,13 @@ public abstract class SEMachineBlock extends MetaBlock implements ITileEntityPro
         }
         return state;
     }
+    
+    ///////////////////////////////
+    /// TileEntity
+    ///////////////////////////////
+	@Override
+	public boolean hasTileEntity(IBlockState state) {return true;}
+	
+	@Override
+	public abstract TileEntity createTileEntity(World world, IBlockState state);
 }

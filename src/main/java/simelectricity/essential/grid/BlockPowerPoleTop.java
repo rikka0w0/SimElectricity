@@ -20,7 +20,6 @@
 package simelectricity.essential.grid;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
@@ -53,7 +52,7 @@ import simelectricity.essential.BlockRegistry;
 import java.lang.ref.WeakReference;
 import java.util.LinkedList;
 
-public class BlockPowerPoleTop extends BlockBase implements ITileEntityProvider, ISubBlock {
+public class BlockPowerPoleTop extends BlockBase implements ISubBlock {
     public static final String[] subNames = {"0", "1"};
     ///////////////////////////////////////
     /// Utils
@@ -75,6 +74,7 @@ public class BlockPowerPoleTop extends BlockBase implements ITileEntityProvider,
         setHardness(3.0F);
         setResistance(10.0F);
         setSoundType(SoundType.METAL);
+		setCreativeTab(SEAPI.SETab);
     }
 
     private static BlockInfo createCollisionBoxCoordOffset(int facing, int x, int y, int z, int part) {
@@ -159,14 +159,14 @@ public class BlockPowerPoleTop extends BlockBase implements ITileEntityProvider,
         return BlockPowerPoleTop.subNames;
     }
 
+    ///////////////////////////////
+    /// TileEntity
+    ///////////////////////////////
+	@Override
+	public boolean hasTileEntity(IBlockState state) {return true;}
+	
     @Override
-    public void beforeRegister() {
-		isBlockContainer = true;
-		setCreativeTab(SEAPI.SETab);
-    }
-
-    @Override
-    public TileEntity createNewTileEntity(World world, int meta) {
+    public TileEntity createTileEntity(World world, IBlockState state) {
         return new TilePowerPole();
     }
 

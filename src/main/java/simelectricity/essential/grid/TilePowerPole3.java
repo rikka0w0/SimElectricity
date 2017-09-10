@@ -89,14 +89,14 @@ public abstract class TilePowerPole3 extends TilePowerPole {
                 }
             };
             helper.addInsulatorGroup(-0.6F, 0.9F, 0,
-                    helper.createInsulator(0.5F, 2, -0.05F, 0.1F, -0.74F),
-                    helper.createInsulator(0.5F, 2, -0.05F, 0.9F, 0),
-                    helper.createInsulator(0.5F, 2, -0.05F, 0.1F, 0.74F)
+                    helper.createInsulator(0.5F, 1.2F, -0.05F, 0.1F, -0.74F),
+                    helper.createInsulator(0.5F, 1.2F, -0.05F, 0.9F, 0),
+                    helper.createInsulator(0.5F, 1.2F, -0.05F, 0.1F, 0.74F)
             );
             helper.addInsulatorGroup(0.6F, 0.9F, 0,
-                    helper.createInsulator(0.5F, 2, 0.05F, 0.1F, -0.74F),
-                    helper.createInsulator(0.5F, 2, 0.05F, 0.9F, 0),
-                    helper.createInsulator(0.5F, 2, 0.05F, 0.1F, 0.74F)
+                    helper.createInsulator(0.5F, 1.2F, 0.05F, 0.1F, -0.74F),
+                    helper.createInsulator(0.5F, 1.2F, 0.05F, 0.9F, 0),
+                    helper.createInsulator(0.5F, 1.2F, 0.05F, 0.1F, 0.74F)
             );
             return helper;
         }
