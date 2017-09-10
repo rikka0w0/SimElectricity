@@ -2,6 +2,7 @@ package simelectricity.essential.grid.transformer;
 
 import java.util.LinkedList;
 import java.util.List;
+import javax.annotation.Nonnull;
 
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
@@ -20,8 +21,8 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import rikka.librikka.block.ISubBlock;
 import rikka.librikka.block.BlockBase;
+import rikka.librikka.block.ISubBlock;
 import rikka.librikka.item.ISimpleTexture;
 import rikka.librikka.item.ItemBlockBase;
 import rikka.librikka.multiblock.MultiBlockStructure;
@@ -29,23 +30,22 @@ import rikka.librikka.multiblock.MultiBlockStructure.Result;
 import rikka.librikka.properties.Properties;
 import simelectricity.api.SEAPI;
 import simelectricity.api.node.ISEGridNode;
+import simelectricity.api.node.ISESimulatable;
+import simelectricity.api.node.NoComplementException;
+import simelectricity.api.tile.ISEGridTile;
 import simelectricity.essential.api.ISEHVCableConnector;
 import simelectricity.essential.grid.transformer.TilePowerTransformerPlaceHolder.Primary;
 import simelectricity.essential.grid.transformer.TilePowerTransformerPlaceHolder.Render;
 import simelectricity.essential.grid.transformer.TilePowerTransformerPlaceHolder.Secondary;
 
 public class BlockPowerTransformer extends BlockBase implements ISubBlock, ISimpleTexture, ISEHVCableConnector {
-    public static final String[] subNames = EnumBlockType.getRawStructureNames();
-    ///////////////////////////////
-    ///BlockStates
-    ///////////////////////////////
-    public static final IProperty<Boolean> propertyMirrored = PropertyBool.create("mirrored");
+    private static final String[] subNames = EnumBlockType.getRawStructureNames();
     public final MultiBlockStructure structureTemplate;
 
     public BlockPowerTransformer() {
         super("essential_powertransformer", Material.IRON, ItemBlockBase.class);
 
-        structureTemplate = this.createStructureTemplate();
+        this.structureTemplate = this.createStructureTemplate();
 
         setCreativeTab(SEAPI.SETab);
         setHardness(3.0F);
@@ -62,13 +62,13 @@ public class BlockPowerTransformer extends BlockBase implements ISubBlock, ISimp
     public String getIconName(int damage) {
         return "powertransformer_" + BlockPowerTransformer.subNames[damage];
     }
-    
+
     ///////////////////////////////
     /// TileEntity
     ///////////////////////////////
 	@Override
 	public boolean hasTileEntity(IBlockState state) {return true;}
-	
+
     @Override
     public TileEntity createTileEntity(World world, IBlockState state) {
         EnumBlockType blockType = state.getValue(EnumBlockType.property);
@@ -93,19 +93,23 @@ public class BlockPowerTransformer extends BlockBase implements ISubBlock, ISimp
                 return null;
         }
     }
+    ///////////////////////////////
+    ///BlockStates
+    ///////////////////////////////
+    public static final IProperty<Boolean> propertyMirrored = PropertyBool.create("mirrored");
 
     @Override
-    protected final BlockStateContainer createBlockState() {
-        return new BlockStateContainer(this, EnumBlockType.property, Properties.facing2bit, BlockPowerTransformer.propertyMirrored);
+    protected BlockStateContainer createBlockState() {
+        return new BlockStateContainer(this, EnumBlockType.property, Properties.facing2bit, propertyMirrored);
     }
 
     @Override
-    public final IBlockState getStateFromMeta(int meta) {
+    public IBlockState getStateFromMeta(int meta) {
         return this.stateFromType(EnumBlockType.fromInt(meta));
     }
 
     @Override
-    public final int getMetaFromState(IBlockState state) {
+    public int getMetaFromState(IBlockState state) {
         return state.getValue(EnumBlockType.property).index;
     }
 
@@ -114,17 +118,18 @@ public class BlockPowerTransformer extends BlockBase implements ISubBlock, ISimp
     }
 
     @Override
-    public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos) {
+    public IBlockState getActualState(@Nonnull IBlockState state, IBlockAccess world, BlockPos pos) {
         TileEntity te = world.getTileEntity(pos);
         if (te instanceof Render) {
             Render render = (Render) te;
             EnumFacing facing = render.getFacing();
             boolean mirrored = render.isMirrored();
-            if (facing == null)
+            if (facing == null) {
                 return state; //Prevent crashing!
+            }
 
-            state = state.withProperty(Properties.facing2bit, facing.ordinal() - 2 & 3)
-                    .withProperty(BlockPowerTransformer.propertyMirrored, mirrored);
+            state = state.withProperty(Properties.facing2bit, (facing.ordinal() - 2) & 3)
+                    .withProperty(propertyMirrored, mirrored);
         }
         return state;
     }
@@ -145,7 +150,7 @@ public class BlockPowerTransformer extends BlockBase implements ISubBlock, ISimp
     }
 
     @Override
-    public void breakBlock(World world, BlockPos pos, IBlockState state) {
+    public void breakBlock(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull IBlockState state) {
         TileEntity te = world.getTileEntity(pos);
         if (te != null) {
             this.structureTemplate.restoreStructure(te, state, true);

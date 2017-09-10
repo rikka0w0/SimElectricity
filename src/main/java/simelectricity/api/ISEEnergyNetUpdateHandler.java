@@ -22,17 +22,17 @@ package simelectricity.api;
 
 public interface ISEEnergyNetUpdateHandler {
     /**
-     * This function will be called as soon as the EnergyNet finishes voltage calculation</p>
-     * Suitable for TileEntities which implement any of the following:</p>
-     * ISECableTile, ISEGridTile and ISEMachineTile</p>
+     * This function will be called as soon as the EnergyNet finishes voltage calculation
+     * Suitable for TileEntities which implement any of the following:<br>
+     * ISECableTile, ISEGridTile and ISEMachineTile<br>
      * Warning: this function is called from the EnergyNet thread, so do not directly interact with
-     * Blocks, TileEntities or anything in the world. </p>
+     * Blocks, TileEntities or anything in the world.<br>
      * Inappropriate multi-threading can lead to random weirdness in the game and
-     * it can extremely hard to locate the problem. </p>
-     * </p>
+     * it can extremely hard to locate the problem.<br>
+     * <br>
      * The recommended solution is to schedule a task to the server's queue so that
-     * the server thread will execute them. </p>
-     * </p>
+     * the server thread will execute them.<br>
+     * <br>
      * Since this method is server-only, the world object in TileEntities must be WorldServer,
      * (Remember EnergyNet threads are server threads, clients can not have them!),
      * so simply cast the world object into WorldServer and call WorldServer.addScheduledTask()

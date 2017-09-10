@@ -10,7 +10,7 @@ public interface ISECrowbarTarget {
 
     /**
      * Called when a player right-clicked the block with a crowbar
-     * </p>
+     *
      * Note: Called from SERVER ONLY! Initiate a server->client sync if needed
      */
     void onCrowbarAction(EnumFacing side, boolean isCreativePlayer);

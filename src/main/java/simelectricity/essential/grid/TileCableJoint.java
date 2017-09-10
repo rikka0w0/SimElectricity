@@ -18,7 +18,11 @@ import simelectricity.essential.client.grid.ISEPowerPole;
 import simelectricity.essential.client.grid.PowerPoleRenderHelper;
 import simelectricity.essential.common.SEEnergyTile;
 
+import javax.annotation.Nonnull;
+
 public class TileCableJoint extends SEEnergyTile implements ISECableTile, ISEGridTile, ISEPowerPole {
+    private static final double MAX_DENDER_DISTANCE_SQUARED = 100000.0;
+    private static final double RESISTANCE = 0.1;
     private final ISESimulatable cableNode = SEAPI.energyNetAgent.newCable(this, true);
 
     @SideOnly(Side.CLIENT)
@@ -35,11 +39,12 @@ public class TileCableJoint extends SEEnergyTile implements ISECableTile, ISEGri
     @SideOnly(Side.CLIENT)
     @Override
     public double getMaxRenderDistanceSquared() {
-        return 100000;
+        return MAX_DENDER_DISTANCE_SQUARED;
     }
 
     @SideOnly(Side.CLIENT)
     @Override
+    @Nonnull
     public AxisAlignedBB getRenderBoundingBox() {
         return TileEntity.INFINITE_EXTENT_AABB;
     }
@@ -54,7 +59,7 @@ public class TileCableJoint extends SEEnergyTile implements ISECableTile, ISEGri
 
     @Override
     public double getResistance() {
-        return 0.1;
+        return RESISTANCE;
     }
 
     @Override
@@ -89,7 +94,7 @@ public class TileCableJoint extends SEEnergyTile implements ISECableTile, ISEGri
 
     @Override
     public void setGridNode(ISEGridNode gridObj) {
-        gridNode = gridObj;
+        this.gridNode = gridObj;
     }
 
     @Override
@@ -124,16 +129,18 @@ public class TileCableJoint extends SEEnergyTile implements ISECableTile, ISEGri
     public void onSyncDataFromServerArrived(NBTTagCompound nbt) {
         neighbor = Utils.posFromNbt(nbt, "neighbor");
 
-        if (this.renderHelper == null)
+        if (this.renderHelper == null) {
             this.renderHelper = this.createRenderHelper();
+        }
 
         PowerPoleRenderHelper.notifyChanged(this);
         //this.updateRenderInfo();
 
         if (this.neighbor != null) {
             TileEntity neighborTile = this.world.getTileEntity(neighbor);
-            if (neighborTile instanceof ISEPowerPole)
+            if (neighborTile instanceof ISEPowerPole) {
                 PowerPoleRenderHelper.notifyChanged((ISEPowerPole) neighborTile);
+            }
             //((ISEPowerPole)neighborTile).updateRenderInfo();
         }
 
