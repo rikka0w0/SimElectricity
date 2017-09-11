@@ -23,7 +23,7 @@ public class PowerPole3RawModel extends TextureLoaderModel {
 
         this.textureMetal = this.registerTexture("sime_essential:render/transmission/metal");
         this.textureInsulator = this.registerTexture("sime_essential:render/transmission/glass_insulator");
-        this.textureConcrete = this.registerTexture("sime_essential:render/transmission/metal");
+        this.textureConcrete = this.registerTexture("sime_essential:render/transmission/concrete");
     }
 
     @Override

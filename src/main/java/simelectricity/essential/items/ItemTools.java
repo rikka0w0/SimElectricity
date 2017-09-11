@@ -34,7 +34,7 @@ public class ItemTools extends ItemBase implements ISimpleTexture {
     public ItemTools() {
         super("essential_tools", true);
         setMaxStackSize(1);
-        setMaxDamage(0);
+        setCreativeTab(SEAPI.SETab);
     }
 
     public static EnumActionResult useCrowbar(TileEntity te, EntityPlayer player, EnumFacing side) {
@@ -171,11 +171,6 @@ public class ItemTools extends ItemBase implements ISimpleTexture {
         double currentMagnitude = SEAPI.energyNetAgent.getCurrentMagnitude(node);
         if (!Double.isNaN(currentMagnitude))
             Utils.chat(player, "I=" + SEUnitHelper.getCurrentStringWithUnit(currentMagnitude));
-    }
-
-    @Override
-    public void beforeRegister() {
-        setCreativeTab(SEAPI.SETab);
     }
 
     @Override

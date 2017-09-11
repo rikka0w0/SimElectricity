@@ -117,11 +117,7 @@ public class MessageContainerSync implements IMessage {
 
     }
 
-    /**
-     * This message can only be proceed on the client side
-     */
     public static class Handler implements IMessageHandler<MessageContainerSync, IMessage> {
-
         @Override
         public IMessage onMessage(MessageContainerSync message, MessageContext ctx) {
             if (ctx.side == Side.SERVER) {
@@ -129,6 +125,8 @@ public class MessageContainerSync implements IMessage {
                 MinecraftServer server = ctx.getServerHandler().player.mcServer;
                 int windowID = message.windowID;
                 Object[] data = message.data;
+                
+                //Make sure the actual modification is done on the server-thread.
                 server.addScheduledTask(new Runnable() {
                     @Override
                     public void run() {

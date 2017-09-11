@@ -27,6 +27,7 @@ public class ItemHighVoltageCable extends ItemBase implements ISimpleTexture {
 
     public ItemHighVoltageCable() {
         super("essential_hv_cable", true);
+        setCreativeTab(SEAPI.SETab);
         lastCoordinates = new HashMap<EntityPlayer, BlockPos>();
     }
 
@@ -34,11 +35,6 @@ public class ItemHighVoltageCable extends ItemBase implements ISimpleTexture {
         if (node1.numOfParallelConductor() == 0 || node2.numOfParallelConductor() == 0)
             return true;
         return node1.numOfParallelConductor() == node2.numOfParallelConductor();
-    }
-
-    @Override
-    public void beforeRegister() {
-        setCreativeTab(SEAPI.SETab);
     }
 
     @Override

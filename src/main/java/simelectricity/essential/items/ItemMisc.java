@@ -9,10 +9,6 @@ public class ItemMisc extends ItemBase implements ISimpleTexture {
 
     public ItemMisc() {
         super("essential_item", true);
-    }
-
-    @Override
-    public void beforeRegister() {
         setCreativeTab(SEAPI.SETab);
     }
 

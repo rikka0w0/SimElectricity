@@ -10,11 +10,6 @@ import simelectricity.api.SEAPI;
 public class ItemVitaTea extends ItemBase implements ISimpleTexture {
     public ItemVitaTea() {
         super("cell_vita", false);
-
-    }
-
-    @Override
-    public void beforeRegister() {
         setCreativeTab(SEAPI.SETab);
     }
 

@@ -28,7 +28,7 @@ public class PowerPole2Model extends BlockRenderModel {
     private final int type;
     private final boolean isRod;
 
-    public PowerPole2Model(int facing, int type, boolean isRod, TextureAtlasSprite textureMetal, TextureAtlasSprite textureInsulator) {
+    public PowerPole2Model(int facing, int type, boolean isRod, TextureAtlasSprite textureMetal, TextureAtlasSprite textureInsulator, TextureAtlasSprite textureConcrete) {
         this.textureMetal = textureMetal;
         this.textureInsulator = textureInsulator;
         quads = new LinkedList();
@@ -42,7 +42,7 @@ public class PowerPole2Model extends BlockRenderModel {
         if (isRod) {
             modelInsulator = null;
 
-            RawQuadCube cube = new RawQuadCube(0.25F, 1, 0.25F, textureMetal);
+            RawQuadCube cube = new RawQuadCube(0.25F, 1, 0.25F, textureConcrete);
             cube.translateCoord(0.5F, 0, 0.5F);
             cube.bake(this.quads);
         } else {
