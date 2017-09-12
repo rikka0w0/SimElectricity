@@ -40,8 +40,8 @@ public class Essential {
         SEEAPI.coverPanelRegistry = new CoverPanelRegistry();
 
         networkChannel = NetworkRegistry.INSTANCE.newSimpleChannel(modID);
-        networkChannel.registerMessage(MessageContainerSync.Handler.class, MessageContainerSync.class, 0, Side.CLIENT);
-        networkChannel.registerMessage(MessageContainerSync.Handler.class, MessageContainerSync.class, 1, Side.SERVER);
+        networkChannel.registerMessage(MessageContainerSync.HandlerClient.class, MessageContainerSync.class, 0, Side.CLIENT);
+        networkChannel.registerMessage(MessageContainerSync.HandlerServer.class, MessageContainerSync.class, 1, Side.SERVER);
 
         proxy.preInit();
     }
