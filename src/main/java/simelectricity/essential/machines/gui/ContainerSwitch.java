@@ -57,11 +57,8 @@ public class ContainerSwitch extends ContainerNoInventoryTwoPort<TileSwitch> imp
         while (iterator.hasNext()) {
             IContainerListener crafter = iterator.next();
 
-            if (crafter instanceof EntityPlayerMP) {
-                //TODO: i don't know whether i did the right thing
-                crafter.sendWindowProperty(this, 123, 456);
+            if (crafter instanceof EntityPlayerMP)
                 MessageContainerSync.sendToClient((EntityPlayerMP) crafter, resistance, isOn, maxCurrent, current, inputSide, outputSide);
-            }
         }
     }
 
