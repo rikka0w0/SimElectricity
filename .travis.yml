@@ -7,9 +7,9 @@ script:
  - ./gradlew build
 addons:
   artifacts:
-  s3_region: "ap-northeast-1"
-  paths:
-    - $(ls build/libs/* | tr "\n" ":")
+    s3_region: "ap-northeast-1"
+    paths:
+      - $(ls build/libs/* | tr "\n" ":")
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
   - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
