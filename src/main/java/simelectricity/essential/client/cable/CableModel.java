@@ -102,19 +102,11 @@ public class CableModel extends BlockRenderModel {
 
         List<BakedQuad> quads = new LinkedList<BakedQuad>();
 
-        if (!(blockState instanceof IExtendedBlockState))
-            //Normally this should not happen, just in case, to prevent crashing
-            return ImmutableList.of();
-
-        IExtendedBlockState exBlockState = (IExtendedBlockState) blockState;
-        WeakReference<TileEntity> ref = exBlockState.getValue(UnlistedPropertyRef.propertyTile);
-        TileEntity te = ref == null ? null : ref.get();
-
+        TileEntity te = UnlistedPropertyRef.get(blockState);
         if (!(te instanceof ISEGenericCable))
             return ImmutableList.of();
         
         ISEGenericCable cable = (ISEGenericCable) te;
-
         BlockRenderLayer layer = MinecraftForgeClient.getRenderLayer();
 
         //Render center & branches in SOLID layer
