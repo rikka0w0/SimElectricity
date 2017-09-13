@@ -119,20 +119,10 @@ public class MessageContainerSync implements IMessage {
 
     }
 
-    @SideOnly(Side.CLIENT)
+    //This class have to be visible to the dedicated server even the server doesn't need it at all
     public static class HandlerClient implements IMessageHandler<MessageContainerSync, IMessage> {
         @Override
         public IMessage onMessage(MessageContainerSync message, MessageContext ctx) {
-
-            onClientMessage(message, ctx);
-
-            //Reply nothing
-            return null;
-        }
-
-
-        @SideOnly(Side.CLIENT)
-        private void onClientMessage(MessageContainerSync message, MessageContext ctx) {
             Object[] payload = message.data;
 
             //Client
@@ -144,20 +134,15 @@ public class MessageContainerSync implements IMessage {
                         ((ISEContainerUpdate) invContainer).onDataArrivedFromServer(payload);
                 }
             });
-        }
 
+            //Reply nothing
+            return null;
+        }
     }
 
     public static class HandlerServer implements IMessageHandler<MessageContainerSync, IMessage> {
         @Override
         public IMessage onMessage(MessageContainerSync message, MessageContext ctx) {
-            onMessageServer(message, ctx);
-
-            //Reply nothing
-            return null;
-        }
-
-        private void onMessageServer(MessageContainerSync message, MessageContext ctx) {
             //Server
             MinecraftServer server = ctx.getServerHandler().player.mcServer;
             int windowID = message.windowID;
@@ -192,6 +177,9 @@ public class MessageContainerSync implements IMessage {
                     }//while()
                 }//run()
             });
+
+            //Reply nothing
+            return null;
         }
     }
 
