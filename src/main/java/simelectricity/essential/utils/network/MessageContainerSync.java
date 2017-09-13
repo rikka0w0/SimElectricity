@@ -27,18 +27,20 @@ public class MessageContainerSync implements IMessage {
     private boolean toServer;
     private int windowID;
     private Object[] data;
+
     public MessageContainerSync() {
     }
 
     @SideOnly(Side.CLIENT)
     private MessageContainerSync(int windowID, Object[] data) {
-		toServer = true;
+        toServer = true;
         this.windowID = windowID;
         this.data = data;
     }
+
     private MessageContainerSync(Object[] data) {
-		toServer = false;
-		windowID = -1;
+        toServer = false;
+        windowID = -1;
         this.data = data;
     }
 
@@ -49,13 +51,13 @@ public class MessageContainerSync implements IMessage {
     @SideOnly(Side.CLIENT)
     public static void sendButtonClickEventToSever(Container clientContainer, int buttonID, boolean isCtrlPressed) {
         Essential.instance.networkChannel.sendToServer(new MessageContainerSync(clientContainer.windowId,
-                new Object[]{MessageContainerSync.EVENT_BUTTON_CLICK, buttonID, isCtrlPressed}));
+                new Object[]{EVENT_BUTTON_CLICK, buttonID, isCtrlPressed}));
     }
 
     @SideOnly(Side.CLIENT)
     public static void sendDirectionSelectorClickEventToSever(Container clientContainer, EnumFacing direction, int mouseButton) {
         Essential.instance.networkChannel.sendToServer(new MessageContainerSync(clientContainer.windowId,
-                new Object[]{MessageContainerSync.EVENT_DIRECTION_SELECT, direction, mouseButton}));
+                new Object[]{EVENT_DIRECTION_SELECT, direction, mouseButton}));
     }
 
     @SideOnly(Side.CLIENT)
@@ -71,19 +73,19 @@ public class MessageContainerSync implements IMessage {
 
         for (int i = 0; i < this.data.length; i++) {
             if (this.data[i].getClass() == Byte.class) {
-                buf.writeByte(MessageContainerSync.TYPE_BYTE);
+                buf.writeByte(TYPE_BYTE);
                 buf.writeByte((Byte) this.data[i]);
             } else if (this.data[i].getClass() == Integer.class) {
-                buf.writeByte(MessageContainerSync.TYPE_INT);
+                buf.writeByte(TYPE_INT);
                 buf.writeInt((Integer) this.data[i]);
             } else if (this.data[i].getClass() == Double.class) {
-                buf.writeByte(MessageContainerSync.TYPE_DOUBLE);
+                buf.writeByte(TYPE_DOUBLE);
                 buf.writeDouble((Double) this.data[i]);
             } else if (this.data[i].getClass() == EnumFacing.class) {
-                buf.writeByte(MessageContainerSync.TYPE_ENUMFACING);
+                buf.writeByte(TYPE_ENUMFACING);
                 buf.writeByte(((EnumFacing) this.data[i]).ordinal());
             } else if (this.data[i].getClass() == Boolean.class) {
-                buf.writeByte(MessageContainerSync.TYPE_BOOLEAN);
+                buf.writeByte(TYPE_BOOLEAN);
                 buf.writeBoolean((Boolean) this.data[i]);
             }
         }
@@ -91,88 +93,106 @@ public class MessageContainerSync implements IMessage {
 
     @Override
     public void fromBytes(ByteBuf buf) {
-		this.toServer = buf.readBoolean();
-		this.windowID = buf.readInt();
+        this.toServer = buf.readBoolean();
+        this.windowID = buf.readInt();
         int length = buf.readByte();
-		this.data = new Object[length];
+        this.data = new Object[length];
 
         for (int i = 0; i < this.data.length; i++) {
             switch (buf.readByte()) {
-                case MessageContainerSync.TYPE_BYTE:
-					this.data[i] = buf.readByte();
+                case TYPE_BYTE:
+                    this.data[i] = buf.readByte();
                     break;
-                case MessageContainerSync.TYPE_INT:
-					this.data[i] = buf.readInt();
+                case TYPE_INT:
+                    this.data[i] = buf.readInt();
                     break;
-                case MessageContainerSync.TYPE_DOUBLE:
-					this.data[i] = buf.readDouble();
+                case TYPE_DOUBLE:
+                    this.data[i] = buf.readDouble();
                     break;
-                case MessageContainerSync.TYPE_ENUMFACING:
-					this.data[i] = EnumFacing.getFront(buf.readByte());
+                case TYPE_ENUMFACING:
+                    this.data[i] = EnumFacing.getFront(buf.readByte());
                     break;
-                case MessageContainerSync.TYPE_BOOLEAN:
-					this.data[i] = buf.readBoolean();
+                case TYPE_BOOLEAN:
+                    this.data[i] = buf.readBoolean();
             }
         }
 
     }
 
-    public static class Handler implements IMessageHandler<MessageContainerSync, IMessage> {
+    @SideOnly(Side.CLIENT)
+    public static class HandlerClient implements IMessageHandler<MessageContainerSync, IMessage> {
         @Override
         public IMessage onMessage(MessageContainerSync message, MessageContext ctx) {
-            if (ctx.side == Side.SERVER) {
-                //Server
-                MinecraftServer server = ctx.getServerHandler().player.mcServer;
-                int windowID = message.windowID;
-                Object[] data = message.data;
-                
-                //Make sure the actual modification is done on the server-thread.
-                server.addScheduledTask(new Runnable() {
-                    @Override
-                    public void run() {
-                        Iterator<EntityPlayerMP> playerListIterator = server.getPlayerList().getPlayers().iterator();
-                        while (playerListIterator.hasNext()) {
-                            EntityPlayerMP player = playerListIterator.next();
 
-                            if (player.openContainer.windowId == windowID) {
-                                Container container = player.openContainer;
-
-                                switch ((Byte) data[0]) {
-                                    case MessageContainerSync.EVENT_CUSTOM:
-                                        if (container instanceof ISECustomContainerEventHandler)
-                                            ((ISECustomContainerEventHandler) container).onDataArrivedFromClient(data);
-                                        break;
-                                    case MessageContainerSync.EVENT_BUTTON_CLICK:
-                                        if (container instanceof ISEButtonEventHandler)
-                                            ((ISEButtonEventHandler) container).onButtonPressed((Integer) data[1], (Boolean) data[2]);
-                                        break;
-                                    case MessageContainerSync.EVENT_DIRECTION_SELECT:
-                                        if (container instanceof ISEDirectionSelectorEventHandler)
-                                            ((ISEDirectionSelectorEventHandler) container).onDirectionSelected((EnumFacing) data[1], (Integer) data[2]);
-                                        break;
-                                }
-                            }
-                        }//while()
-                    }//run()
-                });
-
-            } else {
-                Object[] payload = message.data;
-
-                //Client
-                Essential.proxy.getClientThread().addScheduledTask(new Runnable() {
-                    @Override
-					public void run() {
-                        Container invContainer = Essential.proxy.getClientPlayer().openContainer;
-                        if (invContainer instanceof ISEContainerUpdate)
-                            ((ISEContainerUpdate) invContainer).onDataArrivedFromServer(payload);
-                    }
-                });
-            }
+            onClientMessage(message, ctx);
 
             //Reply nothing
             return null;
         }
 
+
+        @SideOnly(Side.CLIENT)
+        private void onClientMessage(MessageContainerSync message, MessageContext ctx) {
+            Object[] payload = message.data;
+
+            //Client
+            Essential.proxy.getClientThread().addScheduledTask(new Runnable() {
+                @Override
+                public void run() {
+                    Container invContainer = Essential.proxy.getClientPlayer().openContainer;
+                    if (invContainer instanceof ISEContainerUpdate)
+                        ((ISEContainerUpdate) invContainer).onDataArrivedFromServer(payload);
+                }
+            });
+        }
+
     }
+
+    public static class HandlerServer implements IMessageHandler<MessageContainerSync, IMessage> {
+        @Override
+        public IMessage onMessage(MessageContainerSync message, MessageContext ctx) {
+            onMessageServer(message, ctx);
+
+            //Reply nothing
+            return null;
+        }
+
+        private void onMessageServer(MessageContainerSync message, MessageContext ctx) {
+            //Server
+            MinecraftServer server = ctx.getServerHandler().player.mcServer;
+            int windowID = message.windowID;
+            Object[] data = message.data;
+
+            //Make sure the actual modification is done on the server-thread.
+            server.addScheduledTask(new Runnable() {
+                @Override
+                public void run() {
+                    Iterator<EntityPlayerMP> playerListIterator = server.getPlayerList().getPlayers().iterator();
+                    while (playerListIterator.hasNext()) {
+                        EntityPlayerMP player = playerListIterator.next();
+
+                        if (player.openContainer.windowId == windowID) {
+                            Container container = player.openContainer;
+
+                            switch ((Byte) data[0]) {
+                                case EVENT_CUSTOM:
+                                    if (container instanceof ISECustomContainerEventHandler)
+                                        ((ISECustomContainerEventHandler) container).onDataArrivedFromClient(data);
+                                    break;
+                                case EVENT_BUTTON_CLICK:
+                                    if (container instanceof ISEButtonEventHandler)
+                                        ((ISEButtonEventHandler) container).onButtonPressed((Integer) data[1], (Boolean) data[2]);
+                                    break;
+                                case EVENT_DIRECTION_SELECT:
+                                    if (container instanceof ISEDirectionSelectorEventHandler)
+                                        ((ISEDirectionSelectorEventHandler) container).onDirectionSelected((EnumFacing) data[1], (Integer) data[2]);
+                                    break;
+                            }
+                        }
+                    }//while()
+                }//run()
+            });
+        }
+    }
+
 }
