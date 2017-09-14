@@ -162,3 +162,59 @@ dependencies {
 
 }
 
+task clearMOD << {
+    println 'clear mods'
+    delete "run/mods"
+    mkdir 'run/mods'
+}
+
+task copyIC << {
+    println 'copying ic'
+    copy{
+        into 'run/mods'
+        from('archive/devLibs'){
+            include 'industrialcraft-2-2.7.83-ex111-dev.jar'
+        }
+    }
+}
+
+task copyBC << {
+    println 'copying bc'
+    copy{
+        into 'run/mods'
+        from('archive/devLibs'){
+            include 'buildcraft-7.99.7.jar'
+        }
+    }
+}
+
+
+task runWithBC {
+    doFirst {
+        clearMOD.execute()
+        copyBC.execute()
+    }
+    group = 'forgegradle'
+    finalizedBy runClient
+}
+
+
+task runWithIC {
+    doFirst {
+        clearMOD.execute()
+        copyIC.execute()
+    }
+    group = 'forgegradle'
+    finalizedBy runClient
+}
+
+
+task runWithALL {
+    doFirst {
+        clearMOD.execute()
+        copyIC.execute()
+        copyBC.execute()
+    }
+    group = 'forgegradle'
+    finalizedBy runClient
+}
