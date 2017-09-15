@@ -219,10 +219,92 @@ public class BlockCable extends MetaBlock implements ISimpleTexture {
      * @param meta
      * @return
      */
-    public AxisAlignedBB getCableBoundingBox(EnumFacing side, int meta) {
+    public AxisAlignedBB getBranchBoundingBox(EnumFacing side, int meta) {
     	return (side==null) ?
     			cableBoundingBoxes[meta][6]:	//Center
     			cableBoundingBoxes[meta][side.ordinal()];
+    }
+    
+    public static AxisAlignedBB getBoundingBox(ISEGenericCable cable, float thickness, boolean ignoreCoverPanel) {
+        double x1, y1, z1, x2, y2, z2;
+        x1 = 0.5 - thickness / 2;
+        y1 = x1;
+        z1 = x1;
+        x2 = 0.5 + thickness / 2;
+        y2 = x2;
+        z2 = x2;
+
+        //Branches
+        if (cable.connectedOnSide(EnumFacing.DOWN))
+            y1 = 0;
+
+        if (cable.connectedOnSide(EnumFacing.UP))
+            y2 = 1;
+
+        if (cable.connectedOnSide(EnumFacing.NORTH))
+            z1 = 0;
+
+        if (cable.connectedOnSide(EnumFacing.SOUTH))
+            z2 = 1;
+
+        if (cable.connectedOnSide(EnumFacing.WEST))
+            x1 = 0;
+
+        if (cable.connectedOnSide(EnumFacing.EAST))
+            x2 = 1;
+
+        if (!ignoreCoverPanel) {
+        	//Cover panel
+	        if (cable.getCoverPanelOnSide(EnumFacing.DOWN) != null) {
+	        	x1=0;
+	        	y1=0;
+	        	z1=0;
+	        	x2=1;
+	        	z2=1;
+	        }
+	        
+	        if (cable.getCoverPanelOnSide(EnumFacing.UP) != null) {
+	        	x1=0;
+	        	z1=0;
+	        	x2=1;
+	        	y2=1;
+	        	z2=1;
+	        }
+	
+	        if (cable.getCoverPanelOnSide(EnumFacing.NORTH) != null) {
+	        	x1=0;
+	        	y1=0;
+	        	z1=0;
+	        	x2=1;
+	        	y2=1;
+	        }
+	
+	        if (cable.getCoverPanelOnSide(EnumFacing.SOUTH) != null) {
+	        	x1=0;
+	        	y1=0;
+	        	x2=1;
+	        	y2=1;
+	        	z2=1;
+	        }
+	
+	        if (cable.getCoverPanelOnSide(EnumFacing.WEST) != null) {
+	        	x1=0;
+	        	y1=0;
+	        	z1=0;
+	        	y2=1;
+	        	z2=1;
+	        }
+	        
+	        if (cable.getCoverPanelOnSide(EnumFacing.EAST) != null) {
+	        	y1=0;
+	        	z1=0;
+	        	x2=1;
+	        	y2=1;
+	        	z2=1;
+	        }
+        }
+        
+        return new AxisAlignedBB(x1, y1, z1, x2, y2, z2);
     }
     
     @Override
@@ -232,7 +314,7 @@ public class BlockCable extends MetaBlock implements ISimpleTexture {
     }
 
     @Nullable
-    public RayTraceResult rayTrace(World world, BlockPos pos, EntityPlayer player) {
+    public RayTraceResult rayTrace(IBlockAccess world, BlockPos pos, EntityPlayer player) {
         Vec3d start = player.getPositionVector().addVector(0, player.getEyeHeight(), 0);
         double reachDistance = 5;
         if (player instanceof EntityPlayerMP)
@@ -243,7 +325,7 @@ public class BlockCable extends MetaBlock implements ISimpleTexture {
     }
 
     @Nullable
-    public RayTraceResult rayTrace(World world, BlockPos pos, Vec3d start, Vec3d end) {
+    public RayTraceResult rayTrace(IBlockAccess world, BlockPos pos, Vec3d start, Vec3d end) {
         TileEntity tile = world.getTileEntity(pos);
         if (!(tile instanceof ISEGenericCable))
             return RayTraceHelper.computeTrace(null, pos, start, end, Block.FULL_BLOCK_AABB, 400);
@@ -254,10 +336,10 @@ public class BlockCable extends MetaBlock implements ISimpleTexture {
         RayTraceResult best = null;
         //Cable center & branches
         //Start form center
-        best = RayTraceHelper.computeTrace(best, pos, start, end, getCableBoundingBox(null, meta), 0);
+        best = RayTraceHelper.computeTrace(best, pos, start, end, getBranchBoundingBox(null, meta), 0);
         for (EnumFacing side : EnumFacing.VALUES) {
             if (cable.connectedOnSide(side))
-                best = RayTraceHelper.computeTrace(best, pos, start, end, getCableBoundingBox(side, meta), side.ordinal() + 1);
+                best = RayTraceHelper.computeTrace(best, pos, start, end, getBranchBoundingBox(side, meta), side.ordinal() + 1);
         }
 
         //CoverPanel
@@ -292,8 +374,8 @@ public class BlockCable extends MetaBlock implements ISimpleTexture {
         double max = 0.5 + this.thickness[meta] / 2;
 
         //Center
-		Block.addCollisionBoxToList(pos, axisAlignedBB, collidingBoxes, new AxisAlignedBB(min, min, min, max, max, max));
-
+        Block.addCollisionBoxToList(pos, axisAlignedBB, collidingBoxes, new AxisAlignedBB(min, min, min, max, max, max));
+		
         //Branches
         if (cable.connectedOnSide(EnumFacing.DOWN))
 			Block.addCollisionBoxToList(pos, axisAlignedBB, collidingBoxes, new AxisAlignedBB(min, 0, min, max, max, max));
@@ -332,59 +414,52 @@ public class BlockCable extends MetaBlock implements ISimpleTexture {
         if (cable.getCoverPanelOnSide(EnumFacing.EAST) != null)
 			Block.addCollisionBoxToList(pos, axisAlignedBB, collidingBoxes, new AxisAlignedBB(1 - ISECoverPanel.thickness, 0, 0, 1, 1, 1));
     }
+    
 
+    
     @Override
-    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos)
-    {
-        TileEntity te = source.getTileEntity(pos);       
-        if (!(te instanceof ISEGenericCable)) {
-        	int meta = state.getValue(this.propertyMeta);
-            return cableBoundingBoxes[meta][6]; 	       //For block placing
-        }
+    @Deprecated
+    @SideOnly(Side.CLIENT)
+    public AxisAlignedBB getSelectedBoundingBox(IBlockState state, World world, BlockPos pos) {
+    	int meta = state.getValue(this.propertyMeta);
+    	TileEntity te = world.getTileEntity(pos);
         
-        RayTraceResult trace = Minecraft.getMinecraft().objectMouseOver;    //Not sure what this does!
-        //trace = rayTrace(world, pos, Minecraft.getMinecraft().player);	//Was
+        if (!(te instanceof ISEGenericCable))
+            return cableBoundingBoxes[meta][6]; 	       //This is not supposed to happen
+    	
+        ISEGenericCable cable = (ISEGenericCable) te;
+    	RayTraceResult trace = Minecraft.getMinecraft().objectMouseOver;
+    	//Was rayTrace(source, pos, Minecraft.getMinecraft().player);
+
         if (trace == null || trace.subHit < 0 || !pos.equals(trace.getBlockPos())) {
             // Perhaps we aren't the object the mouse is over
-            return Block.FULL_BLOCK_AABB;
+        	return cableBoundingBoxes[meta][6]; 
         }
 
+        AxisAlignedBB aabb;
         if (trace.subHit > 6 && trace.subHit < 13) {    //CoverPanel
-            return coverPanelBoundingBoxes[trace.subHit - 7].offset(pos).expand(0.01, 0.01, 0.01);
+        	aabb = coverPanelBoundingBoxes[trace.subHit - 7].offset(pos).expand(0.01, 0.01, 0.01);
         } else if (trace.subHit > -1 && trace.subHit < 7) {    //Center or branches
-            int meta = state.getValue(this.propertyMeta);
-            ISEGenericCable cable = (ISEGenericCable) te;
-
-            double x1, y1, z1, x2, y2, z2;
-            x1 = 0.5 - this.thickness[meta] / 2;
-            y1 = x1;
-            z1 = x1;
-            x2 = 0.5 + this.thickness[meta] / 2;
-            y2 = x2;
-            z2 = x2;
-
-            if (cable.connectedOnSide(EnumFacing.DOWN))
-                y1 = 0;
-
-            if (cable.connectedOnSide(EnumFacing.UP))
-                y2 = 1;
-
-            if (cable.connectedOnSide(EnumFacing.NORTH))
-                z1 = 0;
-
-            if (cable.connectedOnSide(EnumFacing.SOUTH))
-                z2 = 1;
-
-            if (cable.connectedOnSide(EnumFacing.WEST))
-                x1 = 0;
-
-            if (cable.connectedOnSide(EnumFacing.EAST))
-                x2 = 1;
-
-            return new AxisAlignedBB(x1, y1, z1, x2, y2, z2).offset(pos).expand(0.01, 0.01, 0.01);
+        	aabb = getBoundingBox(cable, this.thickness[meta], true).offset(pos).expand(0.01, 0.01, 0.01);
+        } else {
+        	aabb = null;
         }
+        
+    	return aabb;
+    }
+	
+    @Nullable
+    @Override
+    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
+    	int meta = state.getValue(this.propertyMeta);
+    	TileEntity te = source.getTileEntity(pos);
+        
+        if (!(te instanceof ISEGenericCable))
+            return cableBoundingBoxes[meta][6]; 	       //For block placing
+    	
+        ISEGenericCable cable = (ISEGenericCable) te;
 
-        return null;
+        return getBoundingBox(cable, this.thickness[meta], false);
     }
 
     //////////////////////////////////////
