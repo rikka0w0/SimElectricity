@@ -214,7 +214,12 @@ public class BlockCable extends MetaBlock implements ISimpleTexture {
     //Meta, side
     protected final AxisAlignedBB[][] cableBoundingBoxes;
     //Custom ray trace
-    protected AxisAlignedBB getCableBoundingBox(EnumFacing side, int meta) {
+    /**
+     * @param side null for center
+     * @param meta
+     * @return
+     */
+    public AxisAlignedBB getCableBoundingBox(EnumFacing side, int meta) {
     	return (side==null) ?
     			cableBoundingBoxes[meta][6]:	//Center
     			cableBoundingBoxes[meta][side.ordinal()];
@@ -328,13 +333,15 @@ public class BlockCable extends MetaBlock implements ISimpleTexture {
 			Block.addCollisionBoxToList(pos, axisAlignedBB, collidingBoxes, new AxisAlignedBB(1 - ISECoverPanel.thickness, 0, 0, 1, 1, 1));
     }
 
-    @SideOnly(Side.CLIENT)
     @Override
-    public AxisAlignedBB getSelectedBoundingBox(IBlockState state, World world, BlockPos pos) {
-        TileEntity te = world.getTileEntity(pos);
-        if (!(te instanceof ISEGenericCable))
-            return Block.FULL_BLOCK_AABB;        //This should never happen but just in case
-
+    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos)
+    {
+        TileEntity te = source.getTileEntity(pos);       
+        if (!(te instanceof ISEGenericCable)) {
+        	int meta = state.getValue(this.propertyMeta);
+            return cableBoundingBoxes[meta][6]; 	       //For block placing
+        }
+        
         RayTraceResult trace = Minecraft.getMinecraft().objectMouseOver;    //Not sure what this does!
         //trace = rayTrace(world, pos, Minecraft.getMinecraft().player);	//Was
         if (trace == null || trace.subHit < 0 || !pos.equals(trace.getBlockPos())) {
@@ -379,7 +386,6 @@ public class BlockCable extends MetaBlock implements ISimpleTexture {
 
         return null;
     }
-
 
     //////////////////////////////////////
     /////Item drops and Block activities

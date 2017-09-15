@@ -202,7 +202,7 @@ public class BlockPowerPole3 extends BlockBase implements ISubBlock, ISEHVCableC
     public boolean canHVCableSelect(World world, BlockPos pos) {
         TileEntity te = world.getTileEntity(pos);
 
-        return te instanceof TilePowerPole3;
+        return te instanceof TilePowerPole3 ? ((TilePowerPole3) te).canConnect() : false;
     }
 
     @Override

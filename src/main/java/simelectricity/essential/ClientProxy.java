@@ -7,8 +7,6 @@ import net.minecraft.util.IThreadListener;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import rikka.librikka.model.loader.AdvancedModelLoader;
 
 import simelectricity.essential.api.SEEAPI;

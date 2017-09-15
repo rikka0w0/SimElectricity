@@ -8,7 +8,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.client.MinecraftForgeClient;
-import net.minecraftforge.common.property.IExtendedBlockState;
 import rikka.librikka.model.codebased.BlockRenderModel;
 import rikka.librikka.model.quadbuilder.RawQuadCube;
 import rikka.librikka.properties.UnlistedPropertyRef;
@@ -17,7 +16,6 @@ import simelectricity.essential.api.client.ISECoverPanelRender;
 import simelectricity.essential.api.coverpanel.ISECoverPanel;
 
 import javax.annotation.Nullable;
-import java.lang.ref.WeakReference;
 import java.util.LinkedList;
 import java.util.List;
 

@@ -135,9 +135,6 @@ public class TilePowerPole extends SEEnergyTile implements ISEGridTile, ISEPower
         }
 
         markTileEntityForS2CSync();
-
-        //notifyNeighbor(neighbor1);
-        //notifyNeighbor(neighbor2);
     }
 
     public boolean canConnect() {
