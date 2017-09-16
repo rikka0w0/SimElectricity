@@ -105,11 +105,11 @@ public final class EnergyNet extends EnergyNetSimulator implements Runnable {
 		 * GridEvent.MakeTransformer	|2
 		 * GridEvent.BreakTranformer	|2
 		 * GridEvent.BreakConnection	|2
-		 * GridEvent.RemoveNode			|1
-		 * TileEvent.Attach				|3
-		 * TileEvent.ConnectionChanged	|4
-		 * TileEvent.ParamChanged		|4
-		 * TileEvent.Detach				|3
+		 * GridEvent.RemoveNode			|3
+		 * TileEvent.Attach				|4
+		 * TileEvent.ConnectionChanged	|5
+		 * TileEvent.ParamChanged		|5
+		 * TileEvent.Detach				|6
 		 */
         for (int priority = 1; priority <= EnergyEventBase.numOfPriority; priority++) {
             Iterator<EnergyEventBase> iterator = this.cachedEvents.iterator();

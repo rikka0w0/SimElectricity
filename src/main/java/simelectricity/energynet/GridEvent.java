@@ -26,7 +26,7 @@ public abstract class GridEvent extends EnergyEventBase {
 
     public static class RemoveNode extends GridEvent {
         public RemoveNode(ISEGridNode node) {
-            super(1, node);
+            super(3, node);
         }
 
         @Override

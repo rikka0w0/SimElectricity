@@ -15,7 +15,7 @@ public abstract class TileEvent extends EnergyEventBase {
 
     public static class Attach extends TileEvent {
         public Attach(TileEntity te) {
-            super(3, te);
+            super(4, te);
         }
 
         @Override
@@ -35,7 +35,7 @@ public abstract class TileEvent extends EnergyEventBase {
 
     public static class Detach extends TileEvent {
         public Detach(TileEntity te) {
-            super(3, te);
+            super(6, te);
         }
 
         @Override
@@ -55,7 +55,7 @@ public abstract class TileEvent extends EnergyEventBase {
 
     public static class ParamChanged extends TileEvent {
         public ParamChanged(TileEntity te) {
-            super(4, te);
+            super(5, te);
         }
 
         @Override
@@ -67,7 +67,7 @@ public abstract class TileEvent extends EnergyEventBase {
 
     public static class ConnectionChanged extends TileEvent {
         public ConnectionChanged(TileEntity te) {
-            super(4, te);
+            super(5, te);
         }
 
         @Override
