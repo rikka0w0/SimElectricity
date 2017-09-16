@@ -29,16 +29,14 @@ import simelectricity.SimElectricity;
 
 public class ConfigManager {
     public static Configuration config;
-
-    /**
-     * Enable Optimized Nodes
-     */
+    
+    public static boolean showDebugOutput;
     public static boolean showEnergyNetInfo;
     public static String matrixSolver;
     public static int precision;
     public static int maxIteration;
     public static int shuntPN;
-
+    
     @SideOnly(Side.CLIENT)
     public static int parabolaRenderSteps;
 
@@ -50,7 +48,8 @@ public class ConfigManager {
     }
 
     private static void syncConfig(boolean isClient) {
-        ConfigManager.showEnergyNetInfo = ConfigManager.config.get(Configuration.CATEGORY_GENERAL, "Show Energy Net Info", false, "Display energy net information, such as tile attached/deteched/changed").getBoolean();
+    	ConfigManager.showDebugOutput = ConfigManager.config.get(Configuration.CATEGORY_GENERAL, "Enable Debug Output", false, "Display debug output, such as S->C sync notifications").getBoolean();
+        ConfigManager.showEnergyNetInfo = ConfigManager.config.get(Configuration.CATEGORY_GENERAL, "Show EnergyNet Info", false, "Display EnergyNet information, such as tile attached/deteched/changed").getBoolean();
         ConfigManager.matrixSolver = ConfigManager.config.getString("Matrix Solver", Configuration.CATEGORY_GENERAL, "QR", "The algorithms used to perform matrix calculation(QR is much more effective than Gaussian.).Options: QR, Gaussian", new String[]{"QR", "Gaussian"});
         ConfigManager.precision = ConfigManager.config.get(Configuration.CATEGORY_GENERAL, "Precision", 3, "3 means the result is precise up to at least 3 decimal places").getInt();
         ConfigManager.maxIteration = ConfigManager.config.get(Configuration.CATEGORY_GENERAL, "Max iteration", 50, "The maximum number of iteration before abort the simulation").getInt();
@@ -58,7 +57,7 @@ public class ConfigManager {
 
         //Client-only configurations
         if (isClient) {
-            ConfigManager.parabolaRenderSteps = ConfigManager.config.get(Configuration.CATEGORY_GENERAL, "Parabola Render Steps", 12, "Determines how smooth the parabola cable is(must be a even number!CLIENT ONLY!)").getInt();
+            ConfigManager.parabolaRenderSteps = ConfigManager.config.get(Configuration.CATEGORY_CLIENT, "Parabola Render Steps", 12, "Determines how smooth the parabola cable is(must be a even number!CLIENT ONLY!)").getInt();
         }
 
         if (ConfigManager.config.hasChanged())

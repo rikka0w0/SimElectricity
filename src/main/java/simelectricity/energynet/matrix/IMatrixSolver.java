@@ -1,6 +1,6 @@
 package simelectricity.energynet.matrix;
 
-import simelectricity.common.SEUtils;
+import simelectricity.common.SELogger;
 
 /**
  * A class that is designed to solve problem Ax=b
@@ -53,7 +53,7 @@ public interface IMatrixSolver {
             try {
                 return (IMatrixSolver) Class.forName("simelectricity.energynet.matrix." + name).newInstance();
             } catch (Exception e) {
-                SEUtils.logFatal("Invalid Matrix Solver! Please check your config settings!", SEUtils.simulator);
+                SELogger.logFatal(SELogger.simulator, "Invalid Matrix Solver! Please check your config settings!");
                 e.printStackTrace();
                 return null;
             }

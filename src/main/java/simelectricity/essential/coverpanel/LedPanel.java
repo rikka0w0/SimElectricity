@@ -15,8 +15,8 @@ import simelectricity.essential.api.coverpanel.ISEIuminousCoverPanel;
 import simelectricity.essential.client.coverpanel.LedPanelRender;
 
 public class LedPanel implements ISEElectricalLoadCoverPanel, ISEIuminousCoverPanel {
-    private byte lightLevel;
-    private TileEntity hostTileEntity;
+    private volatile byte lightLevel;
+    private volatile TileEntity hostTileEntity;
 
     @Override
     public boolean isHollow() {

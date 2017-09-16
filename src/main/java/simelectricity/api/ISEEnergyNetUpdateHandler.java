@@ -22,13 +22,13 @@ package simelectricity.api;
 
 public interface ISEEnergyNetUpdateHandler {
     /**
-     * This function will be called as soon as the EnergyNet finishes voltage calculation
+     * This function will be called as soon as the EnergyNet finishes simulation
      * Suitable for TileEntities which implement any of the following:<br>
      * ISECableTile, ISEGridTile and ISEMachineTile<br>
-     * Warning: this function is called from the EnergyNet thread, so do not directly interact with
+     * Warning: this function is always called from the EnergyNet thread, so do not directly interact with
      * Blocks, TileEntities or anything in the world.<br>
      * Inappropriate multi-threading can lead to random weirdness in the game and
-     * it can extremely hard to locate the problem.<br>
+     * it be can extremely hard to locate the problem.<br>
      * <br>
      * The recommended solution is to schedule a task to the server's queue so that
      * the server thread will execute them.<br>

@@ -4,6 +4,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import rikka.librikka.tileentity.IGuiProviderTile;
@@ -15,11 +16,11 @@ import simelectricity.essential.common.semachine.SETwoPortMachine;
 import simelectricity.essential.machines.gui.ContainerSwitch;
 
 public class TileSwitch extends SETwoPortMachine implements ISESwitch, ISEEnergyNetUpdateHandler, ISESocketProvider, IGuiProviderTile {
-    public double current;
+    public volatile double current;
 
-    public double resistance = 0.001;
-    public double maxCurrent = 1;
-    public boolean isOn;
+    public volatile double resistance = 0.001;
+    public volatile double maxCurrent = 1;
+    public volatile boolean isOn;
 
     /////////////////////////////////////////////////////////
     ///TileEntity
@@ -53,8 +54,14 @@ public class TileSwitch extends SETwoPortMachine implements ISESwitch, ISEEnergy
             this.current = 0;
         }
 
-        if (this.current > this.maxCurrent)
-            this.setSwitchStatus(false);
+        if (this.current > this.maxCurrent) {
+            ((WorldServer) world).addScheduledTask(new Runnable() {
+                @Override
+                public void run() {
+                	setSwitchStatus(false);
+                }
+            });
+        }
     }
 
     /////////////////////////////////////////////////////////

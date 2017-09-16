@@ -2,6 +2,7 @@ package simelectricity.essential.machines.tile;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import simelectricity.api.ISEEnergyNetUpdateHandler;
@@ -11,7 +12,7 @@ import simelectricity.essential.common.semachine.ISESocketProvider;
 import simelectricity.essential.common.semachine.SESinglePortMachine;
 
 public class TileIncandescentLamp extends SESinglePortMachine implements ISEVoltageSource, ISEEnergyNetUpdateHandler, ISESocketProvider {
-    public byte lightLevel;
+    public volatile byte lightLevel;
 
     @Override
     public double getResistance() {
@@ -33,7 +34,12 @@ public class TileIncandescentLamp extends SESinglePortMachine implements ISEVolt
 
         this.lightLevel = (byte) lightLevel;
 
-        markTileEntityForS2CSync();
+        ((WorldServer) world).addScheduledTask(new Runnable() {
+            @Override
+            public void run() {
+            	markTileEntityForS2CSync();
+            }
+        });
     }
 
     @Override
@@ -45,7 +51,6 @@ public class TileIncandescentLamp extends SESinglePortMachine implements ISEVolt
     @Override
     public void prepareS2CPacketData(NBTTagCompound nbt) {
         super.prepareS2CPacketData(nbt);
-
         nbt.setByte("lightLevel", this.lightLevel);
     }
 

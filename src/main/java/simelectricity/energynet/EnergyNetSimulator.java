@@ -2,7 +2,7 @@ package simelectricity.energynet;
 
 import simelectricity.api.node.ISESimulatable;
 import simelectricity.common.ConfigManager;
-import simelectricity.common.SEUtils;
+import simelectricity.common.SELogger;
 import simelectricity.energynet.components.*;
 import simelectricity.energynet.matrix.IMatrixSolver;
 
@@ -418,7 +418,7 @@ public class EnergyNetSimulator {
 
             if (keepGoing) {
                 if (this.iterations > ConfigManager.maxIteration) {
-                    SEUtils.logError("Maximum number of iteration has reached, something must be wrong!", SEUtils.simulator);
+                    SELogger.logError(SELogger.simulator, "Convergence problem: Reached maximum iteration limit!");
                     break;
                 }
             } else {
@@ -435,7 +435,7 @@ public class EnergyNetSimulator {
             }
             //matrix.print(header);
             if (!this.matrix.solve(currents)) {
-                throw new RuntimeException("Due to incorrect value of components, the energy net has been shutdown!");
+                throw new RuntimeException("Due to incorrect value of components, the EnergyNet has been shutdown!");
             }
             //currents is now deltaV
 
@@ -457,6 +457,6 @@ public class EnergyNetSimulator {
             node.voltageCache = voltages[node.index];
         }
 
-        SEUtils.logInfo("Calculation converges in " + String.valueOf(this.iterations) + " iterations.", SEUtils.simulator);
+        SELogger.logInfo(SELogger.simulator, "Simulation converges in "+ this.iterations + " iterations.");
     }
 }

@@ -14,7 +14,7 @@ import simelectricity.essential.common.semachine.SETwoPortMachine;
 import simelectricity.essential.machines.gui.ContainerDiode;
 
 public class TileDiode extends SETwoPortMachine implements ISEDiode, ISEEnergyNetUpdateHandler, ISESocketProvider, IGuiProviderTile {
-    public double inputVoltage, outputVoltage;
+    public volatile double inputVoltage, outputVoltage;
 
     /////////////////////////////////////////////////////////
     ///ISEDiodeData

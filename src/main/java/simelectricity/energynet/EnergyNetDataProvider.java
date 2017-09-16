@@ -17,7 +17,7 @@ import simelectricity.api.node.ISESubComponent;
 import simelectricity.api.tile.ISECableTile;
 import simelectricity.api.tile.ISEGridTile;
 import simelectricity.api.tile.ISETile;
-import simelectricity.common.SEUtils;
+import simelectricity.common.SELogger;
 import simelectricity.energynet.components.Cable;
 import simelectricity.energynet.components.GridNode;
 import simelectricity.energynet.components.SEComponent;
@@ -68,6 +68,10 @@ public class EnergyNetDataProvider extends WorldSavedData {
     //Tile Event handling ----------------------------------------------------------------------------
 
     //Utils ------------------------------------------------------------------------------
+    public static TileEntity getTileEntityOnDirection(TileEntity te, EnumFacing direction) {
+        return te.getWorld().getTileEntity(te.getPos().offset(direction));
+    }
+    
     public Iterator<TileEntity> getLoadedTileIterator() {
         return this.loadedTiles.iterator();
     }
@@ -89,7 +93,7 @@ public class EnergyNetDataProvider extends WorldSavedData {
      */
     public void registerTile(TileEntity te) {
         if (this.loadedTiles.contains(te)) {
-            SEUtils.logWarn("Duplicated TileEntity:" + te + ", this could be a bug!", SEUtils.energyNet);
+            SELogger.logWarn(SELogger.energyNet, "Duplicated TileEntity:" + te + ", this could be a bug!");
         } else {
             this.loadedTiles.add(te);
         }
@@ -106,7 +110,7 @@ public class EnergyNetDataProvider extends WorldSavedData {
 
             //Build connection with neighbors
             for (EnumFacing direction : EnumFacing.VALUES) {
-                TileEntity neighborTileEntity = SEUtils.getTileEntityOnDirection(te, direction);
+                TileEntity neighborTileEntity = getTileEntityOnDirection(te, direction);
 
                 if (neighborTileEntity instanceof ISECableTile) {  //Conductor
                     ISECableTile neighborCableTile = (ISECableTile) neighborTileEntity;
@@ -147,7 +151,7 @@ public class EnergyNetDataProvider extends WorldSavedData {
                 if (subComponent != null) {
                     this.tileEntityGraph.addVertex((SEComponent) subComponent);
 
-                    TileEntity neighborTileEntity = SEUtils.getTileEntityOnDirection(te, direction);
+                    TileEntity neighborTileEntity = getTileEntityOnDirection(te, direction);
 
                     if (neighborTileEntity instanceof ISECableTile) {
                         // Connected properly
@@ -165,7 +169,7 @@ public class EnergyNetDataProvider extends WorldSavedData {
         if (this.loadedTiles.contains(te)) {
             this.loadedTiles.remove(te);
         } else {
-            SEUtils.logWarn("Attempt to remove unregistered:" + te + ", this could be a bug!", SEUtils.energyNet);
+            SELogger.logWarn(SELogger.energyNet, "Attempt to remove an unregistered:" + te + ", this could be a bug!");
         }
 
         if (te instanceof ISECableTile) {
@@ -349,7 +353,7 @@ public class EnergyNetDataProvider extends WorldSavedData {
             gridNode.buildNeighborConnection(this.gridNodeMap, this.tileEntityGraph);
         }
 
-        SEUtils.logInfo("Grid objectes has been loaded", SEUtils.energyNet);
+        SELogger.logInfo(SELogger.energyNet, "Loaded GridNodes from storage");
     }
 
     @Override

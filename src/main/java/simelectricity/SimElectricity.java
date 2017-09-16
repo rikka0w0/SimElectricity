@@ -32,7 +32,7 @@ import simelectricity.api.SEAPI;
 import simelectricity.common.CommandSimE;
 import simelectricity.common.ConfigManager;
 import simelectricity.common.ItemSEMgrTool;
-import simelectricity.common.SEUtils;
+import simelectricity.common.SELogger;
 import simelectricity.energynet.EnergyNetAgent;
 import simelectricity.energynet.EnergyNetEventHandler;
 
@@ -84,6 +84,6 @@ public class SimElectricity {
     @Mod.EventHandler
     public void serverStart(FMLServerStartingEvent event) {
         event.registerServerCommand(new CommandSimE());
-        SEUtils.logInfo("Server command registered", SEUtils.loader);
+        SELogger.logInfo(SELogger.loader, "Server command registered");
     }
 }

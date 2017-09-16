@@ -18,7 +18,7 @@ public class TileAdjustableTransformer extends SETwoPortMachine implements ISETr
     //Input - primary, output - secondary
     public double ratio = 10, outputResistance = 1;
 
-    public double vPri, vSec;
+    public volatile double vPri, vSec;
 
     /////////////////////////////////////////////////////////
     ///TileEntity

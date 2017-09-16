@@ -24,7 +24,7 @@ import net.minecraft.world.WorldServer;
 import simelectricity.api.ISEEnergyNetUpdateHandler;
 import simelectricity.api.node.ISESimulatable;
 import simelectricity.common.ConfigManager;
-import simelectricity.common.SEUtils;
+import simelectricity.common.SELogger;
 import simelectricity.energynet.components.SEComponent;
 import simelectricity.energynet.matrix.IMatrixSolver.MatrixHelper;
 
@@ -42,10 +42,10 @@ public final class EnergyNet extends EnergyNetSimulator implements Runnable {
     ///////////////////////////////////////////////////////
     private final LinkedList<EnergyEventBase> cachedEvents = new LinkedList<EnergyEventBase>();
     private boolean scheduledRefresh;
-    private volatile boolean needOptimize;    //Set to true to launch the optimizer
-    private volatile boolean alive;            //Set to false to kill the energyNet thread
-    private volatile boolean processing;    //An indicator of the energyNet state
-    private volatile long duration;            //Time taken for the latest simulation, in milliseconds
+    private volatile boolean needOptimize;    	//Set to true to launch the optimizer
+    private volatile boolean alive;            	//Set to false to kill the energyNet thread
+    private volatile boolean processing;    	//An indicator of the EnergyNet state
+    private volatile long duration;            	//Time taken for the latest simulation, in milliseconds
 
     //////////////////////////
     /// Constructor
@@ -63,10 +63,10 @@ public final class EnergyNet extends EnergyNetSimulator implements Runnable {
         processing = false;
         thread.start();
 
-        SEUtils.logInfo("EnergyNet has been created for DIM" + String.valueOf(world.provider.getDimension()), SEUtils.general);
+        SELogger.logInfo(SELogger.general, "EnergyNet has been created for DIM" + world.provider.getDimension());
     }
 
-    public static synchronized boolean isNodeValid(ISESimulatable node) {
+    public synchronized boolean isNodeValid(ISESimulatable node) {
         return ((SEComponent) node).isValid;
     }
 
@@ -79,7 +79,7 @@ public final class EnergyNet extends EnergyNetSimulator implements Runnable {
      */
     public synchronized void onPreTick() {
         if (processing) {
-            SEUtils.logWarn("Simulation takes longer than usual!", SEUtils.simulator);
+            SELogger.logWarn(SELogger.simulator, "Simulation takes longer than usual!");
             while (processing)
                 try {
                     Thread.sleep(1);
@@ -202,20 +202,20 @@ public final class EnergyNet extends EnergyNetSimulator implements Runnable {
         long startAt;
         while (this.alive) {
             try {
-                SEUtils.logInfo(this.getThreadName() + " Sleep", SEUtils.simulator);
+                SELogger.logInfo(SELogger.simulator, this.getThreadName() + " Sleep");
                 while (this.alive)
                     Thread.sleep(1);
             } catch (InterruptedException e) {
-                SEUtils.logInfo(this.getThreadName() + " wake up", SEUtils.simulator);
+                SELogger.logInfo(SELogger.simulator, this.getThreadName() + " wake up");
 
                 if (!this.alive)
                     break;
 
                 processing = true;
-                SEUtils.logInfo(this.getThreadName() + " Started", SEUtils.simulator);
+                SELogger.logInfo(SELogger.simulator, this.getThreadName() + " Started");
                 startAt = System.currentTimeMillis();
                 this.runSimulator(this.needOptimize);
-                SEUtils.logInfo(this.getThreadName() + " Done", SEUtils.simulator);
+                SELogger.logInfo(SELogger.simulator, this.getThreadName() + " Done");
                 this.duration = System.currentTimeMillis() - startAt;
 
                 //Execute Handlers
@@ -235,6 +235,6 @@ public final class EnergyNet extends EnergyNetSimulator implements Runnable {
                 processing = false;
             }
         }
-        SEUtils.logInfo(this.getThreadName() + " is shutting down", SEUtils.general);
+        SELogger.logInfo(SELogger.general, this.getThreadName() + " is shutting down");
     }
 }

@@ -33,7 +33,7 @@ public class TileCable extends SEEnergyTile implements ISEGenericCable, ISEIumin
     private final ISESimulatable node = SEAPI.energyNetAgent.newCable(this, false);
     private int color;
     private double resistance = 10;
-    private double voltage;
+    private volatile double voltage;
     private final boolean[] connections = new boolean[6];
     private final ISECoverPanel[] installedCoverPanels = new ISECoverPanel[6];
 
@@ -159,7 +159,7 @@ public class TileCable extends SEEnergyTile implements ISEGenericCable, ISEIumin
         //Remove the panel
 		this.installedCoverPanels[side.ordinal()] = null;
 
-        if (coverPanel instanceof ISEElectricalLoadCoverPanel)
+        if (coverPanel instanceof ISEElectricalLoadCoverPanel || !coverPanel.isHollow())
             SEAPI.energyNetAgent.updateTileConnection(this);
 
 		this.onLightValueUpdated();

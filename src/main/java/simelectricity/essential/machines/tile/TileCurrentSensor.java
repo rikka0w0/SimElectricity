@@ -16,7 +16,7 @@ import simelectricity.essential.common.semachine.SETwoPortMachine;
 import simelectricity.essential.machines.gui.ContainerCurrentSensor;
 
 public class TileCurrentSensor extends SETwoPortMachine implements ISESwitch, ISEEnergyNetUpdateHandler, ISESocketProvider, IGuiProviderTile {
-    public double current;
+    public volatile double current;
     public boolean emitRedstoneSignal;
 
     public double resistance = 0.001;

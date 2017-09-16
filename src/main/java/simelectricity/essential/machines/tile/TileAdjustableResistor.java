@@ -20,9 +20,9 @@ public class TileAdjustableResistor extends SESinglePortMachine implements ISEVo
     public double resistance = 100;
 
     //Calculated values
-    public double voltage;
-    public double current;
-    public double powerLevel;
+    public volatile double voltage;
+    public volatile double current;
+    public volatile double powerLevel;
     public double bufferedEnergy;
 
     ///////////////////////////////////

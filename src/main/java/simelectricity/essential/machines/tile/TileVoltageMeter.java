@@ -14,7 +14,7 @@ import simelectricity.essential.common.semachine.SESinglePortMachine;
 import simelectricity.essential.machines.gui.ContainerVoltageMeter;
 
 public class TileVoltageMeter extends SESinglePortMachine implements ISEVoltageSource, ISEEnergyNetUpdateHandler, ISESocketProvider, IGuiProviderTile {
-    public double voltage;
+    public volatile double voltage;
 
     @Override
     public double getResistance() {

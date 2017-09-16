@@ -19,8 +19,6 @@
 
 package simelectricity.common;
 
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fml.common.FMLLog;
 import org.apache.logging.log4j.Level;
 import simelectricity.SimElectricity;
@@ -30,41 +28,43 @@ import simelectricity.SimElectricity;
  *
  * @author Meow J
  */
-public enum SEUtils {
+public enum SELogger {
     //Info Sources
-    loader("ModLoader"),
-    general("General"),
-    simulator("Simulator"),
-    energyNet("EnergyNet");
+    loader("ModLoader", false),
+    general("General", false),
+    simulator("Simulator", false),
+    energyNet("EnergyNet", false),
+    sync("Sync", true);
 
 
     private final String text;
+    public final boolean isDebugInfo;
 
-    SEUtils(String text) {
+    SELogger(String text, boolean isDebugInfo) {
         this.text = text;
+        this.isDebugInfo = isDebugInfo;
     }
 
-    public static void logInfo(Object object, SEUtils source) {
-        if (!ConfigManager.showEnergyNetInfo && (source == SEUtils.energyNet || source == SEUtils.simulator))
+    public static void logInfo(SELogger source, Object object) {
+        if (!ConfigManager.showDebugOutput && source.isDebugInfo)
+        	return;
+        
+        if (!ConfigManager.showEnergyNetInfo && (source == SELogger.energyNet || source == SELogger.simulator))
             return;
-
-        FMLLog.log(SimElectricity.NAME, Level.INFO, source + "|" + String.valueOf(object));
+        
+        FMLLog.log(SimElectricity.NAME, Level.INFO, source + "|" + object);
     }
 
-    public static void logWarn(Object object, SEUtils source) {
-        FMLLog.log(SimElectricity.NAME, Level.WARN, source + "|" + String.valueOf(object));
+    public static void logWarn(SELogger source, Object object) {
+        FMLLog.log(SimElectricity.NAME, Level.WARN, source + "|" + object);
     }
 
-    public static void logError(Object object, SEUtils source) {
-        FMLLog.log(SimElectricity.NAME, Level.ERROR, source + "|" + String.valueOf(object));
+    public static void logError(SELogger source, Object object) {
+        FMLLog.log(SimElectricity.NAME, Level.ERROR, source + "|" + object);
     }
 
-    public static void logFatal(Object object, SEUtils source) {
-        FMLLog.log(SimElectricity.NAME, Level.FATAL, source + "|" + String.valueOf(object));
-    }
-
-    public static TileEntity getTileEntityOnDirection(TileEntity te, EnumFacing direction) {
-        return te.getWorld().getTileEntity(te.getPos().offset(direction));
+    public static void logFatal(SELogger source, Object object) {
+        FMLLog.log(SimElectricity.NAME, Level.FATAL, source + "|" + object);
     }
 
     @Override

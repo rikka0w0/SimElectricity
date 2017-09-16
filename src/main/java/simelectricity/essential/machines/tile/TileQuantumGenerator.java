@@ -16,12 +16,12 @@ import simelectricity.essential.machines.gui.ContainerQuantumGenerator;
 
 public class TileQuantumGenerator extends SESinglePortMachine implements ISEVoltageSource, ISEEnergyNetUpdateHandler, ISESocketProvider, IGuiProviderTile {
     //Component parameters
-    public double internalVoltage = 230;
-    public double resistance = 0.1;
+    public volatile double internalVoltage = 230;
+    public volatile double resistance = 0.1;
 
     //Calculated values
-    public double voltage;
-    public double current;
+    public volatile double voltage;
+    public volatile double current;
 
     ///////////////////////////////////
     /// TileEntity
