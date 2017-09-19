@@ -29,7 +29,7 @@ import rikka.librikka.multiblock.MultiBlockStructure;
 import rikka.librikka.multiblock.MultiBlockStructure.Result;
 import rikka.librikka.properties.Properties;
 import simelectricity.api.SEAPI;
-import simelectricity.api.node.ISEGridNode;
+import simelectricity.api.tile.ISEGridTile;
 import simelectricity.essential.api.ISEHVCableConnector;
 import simelectricity.essential.grid.transformer.TilePowerTransformerPlaceHolder.Primary;
 import simelectricity.essential.grid.transformer.TilePowerTransformerPlaceHolder.Render;
@@ -261,31 +261,17 @@ public class BlockPowerTransformer extends BlockBase implements ISubBlock, ISimp
     /// ISEHVCableConnector
     //////////////////////////////////////
     @Override
-    public ISEGridNode getNode(World world, BlockPos pos) {
+    public ISEGridTile getGridTile(World world, BlockPos pos) {
         TileEntity te = world.getTileEntity(pos);
 
         if (te instanceof Primary)
-            return ((Primary) te).getPrimaryTile();
+            return ((Primary) te).getWinding();
         else if (te instanceof Secondary)
-            return ((Secondary) te).getSecondaryTile();
+            return ((Secondary) te).getWinding();
         else if (te instanceof TilePowerTransformerWinding)
-            return ((TilePowerTransformerWinding) te).getGridNode();
+            return (TilePowerTransformerWinding) te;
 
         return null;
-    }
-
-    @Override
-    public boolean canHVCableSelect(World world, BlockPos pos) {
-        TileEntity te = world.getTileEntity(pos);
-
-        if (te instanceof Primary)
-            return ((Primary) te).canConnect();
-        else if (te instanceof Secondary)
-            return ((Secondary) te).canConnect();
-        else if (te instanceof TilePowerTransformerWinding)
-            return ((TilePowerTransformerWinding) te).canConnect();
-
-        return false;
     }
 
     ////////////////////////////////////

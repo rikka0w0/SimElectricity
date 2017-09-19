@@ -28,7 +28,37 @@ public abstract class TilePowerTransformerWinding extends TilePowerTransformer i
     /////ISEGridTile
     //////////////////////////////
     private ISEGridNode gridNode;
+    
+    @Override
+    public ISEGridNode getGridNode() {
+        return this.gridNode;
+    }
 
+    @Override
+    public void setGridNode(ISEGridNode gridObj) {
+        gridNode = gridObj;
+    }
+
+    @Override
+    public void onGridNeighborUpdated() {
+        neighbor = null;
+        f:
+        for (ISESimulatable neighbor : this.gridNode.getNeighborList()) {
+            if (neighbor instanceof ISEGridNode) {
+                ISEGridNode gridNode = (ISEGridNode) neighbor;
+                this.neighbor = gridNode.getPos().toImmutable();
+                break f;
+            }
+        }
+
+        markTileEntityForS2CSync();
+    }
+
+	@Override
+	public boolean canConnect(BlockPos toPos) {
+        return this.neighbor == null;
+    }
+	
     //////////////////////////////
     /////TileEntity
     //////////////////////////////
@@ -96,35 +126,6 @@ public abstract class TilePowerTransformerWinding extends TilePowerTransformer i
     @Override
     public void onStructureRemoved() {
         SEAPI.energyNetAgent.detachGridNode(this.world, this.gridNode);
-    }
-
-    @Override
-    public ISEGridNode getGridNode() {
-        return this.gridNode;
-    }
-
-    @Override
-    public void setGridNode(ISEGridNode gridObj) {
-        gridNode = gridObj;
-    }
-
-    @Override
-    public void onGridNeighborUpdated() {
-        neighbor = null;
-        f:
-        for (ISESimulatable neighbor : this.gridNode.getNeighborList()) {
-            if (neighbor instanceof ISEGridNode) {
-                ISEGridNode gridNode = (ISEGridNode) neighbor;
-                this.neighbor = gridNode.getPos().toImmutable();
-                break f;
-            }
-        }
-
-        markTileEntityForS2CSync();
-    }
-
-    public boolean canConnect() {
-        return this.neighbor == null;
     }
 
     /////////////////////////////////////////////////////////

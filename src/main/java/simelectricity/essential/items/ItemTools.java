@@ -152,11 +152,12 @@ public class ItemTools extends ItemBase implements ISimpleTexture {
                 if (world.isRemote)
                     return EnumActionResult.PASS;
 
-                Utils.chat(player, "------------------");
                 ISESimulatable node = ((ISENodeDelegateBlock) block).getNode(world, pos);
-                if (node != null)
-                    ItemTools.printVI(node, player);
-
+                if (node != null) {
+                	Utils.chat(player, "------------------");
+                	ItemTools.printVI(node, player);
+                }
+                    
                 return EnumActionResult.PASS;
             }
         }

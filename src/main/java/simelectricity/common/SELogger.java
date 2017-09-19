@@ -34,7 +34,8 @@ public enum SELogger {
     general("General", false),
     simulator("Simulator", false),
     energyNet("EnergyNet", false),
-    sync("Sync", true);
+    sync("Sync", true),
+    client("Client", true);
 
 
     private final String text;

@@ -23,8 +23,7 @@ import simelectricity.essential.client.semachine.SocketRender;
 import simelectricity.essential.grid.TileCableJoint;
 import simelectricity.essential.grid.TilePowerPole;
 import simelectricity.essential.grid.TilePowerPole2;
-import simelectricity.essential.grid.TilePowerPole3.Pole10KvType0;
-import simelectricity.essential.grid.TilePowerPole3.Pole10KvType1;
+import simelectricity.essential.grid.TilePowerPole3.Pole10Kv;
 import simelectricity.essential.grid.TilePowerPole3.Pole415vType0;
 import simelectricity.essential.grid.transformer.TilePowerTransformerWinding.Primary;
 import simelectricity.essential.grid.transformer.TilePowerTransformerWinding.Secondary;
@@ -107,8 +106,8 @@ public class ClientProxy extends CommonProxy {
         TileRenderPowerPole.register(TilePowerPole2.class);
         TileRenderPowerPole.register(Primary.class);
         TileRenderPowerPole.register(Secondary.class);
-        TileRenderPowerPole.register(Pole10KvType0.class);
-        TileRenderPowerPole.register(Pole10KvType1.class);
+        TileRenderPowerPole.register(Pole10Kv.Type0.class);
+        TileRenderPowerPole.register(Pole10Kv.Type1.class);
         TileRenderPowerPole.register(Pole415vType0.class);
     }
 

@@ -1,52 +1,30 @@
 package simelectricity.essential.grid;
 
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import rikka.librikka.Utils;
 import rikka.librikka.math.MathAssitant;
 import rikka.librikka.math.Vec3f;
-import simelectricity.api.node.ISEGridNode;
-import simelectricity.api.tile.ISEGridTile;
-import simelectricity.essential.client.grid.ISEPowerPole;
 import simelectricity.essential.client.grid.PowerPoleRenderHelper;
-import simelectricity.essential.common.SEEnergyTile;
 
 
-public class TilePowerPole extends SEEnergyTile implements ISEGridTile, ISEPowerPole {
-    private BlockPos neighbor1, neighbor2;
-    @SideOnly(Side.CLIENT)
-    private PowerPoleRenderHelper renderHelper;
-    //////////////////////////////
-    /////ISEGridTile
-    //////////////////////////////
-    private ISEGridNode gridNode;
-
+public class TilePowerPole extends TilePowerPoleBase {
+    @Override
     @SideOnly(Side.CLIENT)
     protected boolean scheduleBlockRenderUpdateWhenChange() {
-        return this.isSpecial();
-    }
-
-    protected boolean isSpecial() {
         return this.getBlockMetadata() >> 3 == 0;
     }
 
+    @Override
     @SideOnly(Side.CLIENT)
     protected PowerPoleRenderHelper createRenderHelper() {
         PowerPoleRenderHelper helper;
         int rotation = this.getBlockMetadata() & 7;
 
-        if (this.isSpecial()) {
+        if (this.scheduleBlockRenderUpdateWhenChange()) {
             helper = new PowerPoleRenderHelper(TilePowerPole.this.world, TilePowerPole.this.pos, rotation, 2, 3) {
                 @Override
-                public void updateRenderData(BlockPos... neighborPosList) {
-                    super.updateRenderData(neighborPosList);
-
+                public void onUpdate() {
                     if (this.connectionInfo.size() < 2)
                         return;
 
@@ -93,113 +71,4 @@ public class TilePowerPole extends SEEnergyTile implements ISEGridTile, ISEPower
 
         return helper;
     }
-
-    //////////////////////////////
-    /////ITransmissionTower
-    //////////////////////////////
-    @SideOnly(Side.CLIENT)
-    @Override
-    public void updateRenderInfo() {
-        this.getRenderHelper().updateRenderData(this.neighbor1, this.neighbor2);
-        if (this.scheduleBlockRenderUpdateWhenChange())
-            markForRenderUpdate();
-    }
-
-    @SideOnly(Side.CLIENT)
-    @Override
-    public PowerPoleRenderHelper getRenderHelper() {
-        return this.renderHelper;
-    }
-
-    @Override
-    public ISEGridNode getGridNode() {
-        return this.gridNode;
-    }
-
-    @Override
-    public void setGridNode(ISEGridNode gridObj) {
-        gridNode = gridObj;
-    }
-
-    @Override
-    public void onGridNeighborUpdated() {
-        this.neighbor1 = null;
-        this.neighbor2 = null;
-
-        ISEGridNode[] neighbors = this.gridNode.getNeighborList();
-        if (neighbors.length == 1) {
-            this.neighbor1 = neighbors[0].getPos();
-        } else if (neighbors.length > 1) {
-            this.neighbor1 = neighbors[0].getPos();
-            this.neighbor2 = neighbors[1].getPos();
-        }
-
-        markTileEntityForS2CSync();
-    }
-
-    public boolean canConnect() {
-        return this.neighbor1 == null || this.neighbor2 == null;
-    }
-
-    private void notifyNeighbor(BlockPos neighbor) {
-        if (neighbor == null)
-            return;
-        IBlockState state = this.world.getBlockState(neighbor);
-        this.world.notifyBlockUpdate(this.neighbor1, state, state, 2);
-    }
-
-    //////////////////////////////
-    /////TileEntity
-    //////////////////////////////
-    @SideOnly(Side.CLIENT)
-    @Override
-    public double getMaxRenderDistanceSquared() {
-        return 100000;
-    }
-
-    @SideOnly(Side.CLIENT)
-    @Override
-    public AxisAlignedBB getRenderBoundingBox() {
-        return TileEntity.INFINITE_EXTENT_AABB;
-    }
-
-    /////////////////////////////////////////////////////////
-    ///Sync
-    /////////////////////////////////////////////////////////
-    @Override
-    public void prepareS2CPacketData(NBTTagCompound nbt) {
-        Utils.saveToNbt(nbt, "neighbor1", this.neighbor1);
-        Utils.saveToNbt(nbt, "neighbor2", this.neighbor2);
-    }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public void onSyncDataFromServerArrived(NBTTagCompound nbt) {
-        this.neighbor1 = Utils.posFromNbt(nbt, "neighbor1");
-        this.neighbor2 = Utils.posFromNbt(nbt, "neighbor2");
-
-        if (this.renderHelper == null)
-            this.renderHelper = this.createRenderHelper();
-
-        PowerPoleRenderHelper.notifyChanged(this);
-        //this.updateRenderInfo();
-
-        this.updateRenderInfo(this.neighbor1);
-        this.updateRenderInfo(this.neighbor2);
-
-        super.onSyncDataFromServerArrived(nbt);
-    }
-
-    @SideOnly(Side.CLIENT)
-    private void updateRenderInfo(BlockPos neighborPos) {
-        if (neighborPos == null)
-            return;
-
-        TileEntity neighbor = this.world.getTileEntity(neighborPos);
-        if (neighbor instanceof ISEPowerPole)
-            PowerPoleRenderHelper.notifyChanged((ISEPowerPole) neighbor);
-        //((ISEPowerPole)neighbor).updateRenderInfo();
-    }
-
-
 }

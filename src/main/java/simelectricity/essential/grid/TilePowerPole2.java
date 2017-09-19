@@ -1,6 +1,5 @@
 package simelectricity.essential.grid;
 
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -8,19 +7,23 @@ import rikka.librikka.math.MathAssitant;
 import rikka.librikka.math.Vec3f;
 import simelectricity.essential.client.grid.PowerPoleRenderHelper;
 
-public class TilePowerPole2 extends TilePowerPole {
+public class TilePowerPole2 extends TilePowerPoleBase {
+    @Override
+    @SideOnly(Side.CLIENT)
+    protected boolean scheduleBlockRenderUpdateWhenChange() {
+        return this.getBlockMetadata() >> 3 == 0;
+    }
+	
     @Override
     @SideOnly(Side.CLIENT)
     protected PowerPoleRenderHelper createRenderHelper() {
         PowerPoleRenderHelper helper;
         int rotation = (this.getBlockMetadata() & 3) * 2;
 
-        if (this.isSpecial()) {
+        if (scheduleBlockRenderUpdateWhenChange()) {
             helper = new PowerPoleRenderHelper(TilePowerPole2.this.world, TilePowerPole2.this.pos, rotation, 2, 3) {
                 @Override
-                public void updateRenderData(BlockPos... neighborPosList) {
-                    super.updateRenderData(neighborPosList);
-
+                public void onUpdate() {
                     if (this.connectionInfo.size() < 2)
                         return;
 

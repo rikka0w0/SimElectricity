@@ -8,7 +8,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import rikka.librikka.Utils;
 import rikka.librikka.multiblock.MultiBlockTileInfo;
-import simelectricity.api.node.ISEGridNode;
 
 public class TilePowerTransformerPlaceHolder extends TilePowerTransformer {
     @Override
@@ -26,32 +25,18 @@ public class TilePowerTransformerPlaceHolder extends TilePowerTransformer {
     }
 	
     public static class Primary extends TilePowerTransformerPlaceHolder {
-        public ISEGridNode getPrimaryTile() {
+        public TilePowerTransformerWinding getWinding() {
             BlockPos pos = this.mbInfo.getPartPos(EnumBlockType.Primary.offset);
             TileEntity te = this.world.getTileEntity(pos);
-            return te instanceof TilePowerTransformerWinding.Primary ?
-                    ((TilePowerTransformerWinding.Primary) te).getGridNode() : null;
-        }
-
-        public boolean canConnect() {
-            BlockPos pos = this.mbInfo.getPartPos(EnumBlockType.Primary.offset);
-            TileEntity te = this.world.getTileEntity(pos);
-            return te instanceof TilePowerTransformerWinding && ((TilePowerTransformerWinding) te).canConnect();
+            return te instanceof TilePowerTransformerWinding ? (TilePowerTransformerWinding)te : null;
         }
     }
 
     public static class Secondary extends TilePowerTransformerPlaceHolder {
-        public ISEGridNode getSecondaryTile() {
+        public TilePowerTransformerWinding getWinding() {
             BlockPos pos = this.mbInfo.getPartPos(EnumBlockType.Secondary.offset);
             TileEntity te = this.world.getTileEntity(pos);
-            return te instanceof TilePowerTransformerWinding.Secondary ?
-                    ((TilePowerTransformerWinding.Secondary) te).getGridNode() : null;
-        }
-
-        public boolean canConnect() {
-            BlockPos pos = this.mbInfo.getPartPos(EnumBlockType.Secondary.offset);
-            TileEntity te = this.world.getTileEntity(pos);
-            return te instanceof TilePowerTransformerWinding && ((TilePowerTransformerWinding) te).canConnect();
+            return te instanceof TilePowerTransformerWinding ? (TilePowerTransformerWinding) te : null;
         }
     }
 

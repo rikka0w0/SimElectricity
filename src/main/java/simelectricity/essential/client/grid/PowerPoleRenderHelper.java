@@ -171,14 +171,22 @@ public class PowerPoleRenderHelper {
         addedGroup++;
     }
 
+
+    public final void updateRenderData(BlockPos... neighborPosList) {
+        this.connectionInfo.clear();
+        this.extraWires.clear();
+        addNeighors(neighborPosList);
+        onUpdate();
+    }
+    
     /**
-     * Override this to add extra wires, DO NOT forget to call super.updateRenderData() first!
+     * Override this to add extra wires
      *
      * @param neighborPosList
      */
-    public void updateRenderData(BlockPos... neighborPosList) {
-        this.connectionInfo.clear();
-        this.extraWires.clear();
+    public void onUpdate() {}
+
+    public final void addNeighors(BlockPos... neighborPosList) {
         for (BlockPos neighborPos : neighborPosList) {
             if (neighborPos == null)
                 continue;
@@ -196,8 +204,8 @@ public class PowerPoleRenderHelper {
             }
         }
     }
-
-    public void addExtraWire(Vec3f from, Vec3f to, float tension) {
+    
+    public final void addExtraWire(Vec3f from, Vec3f to, float tension) {
         this.extraWires.add(new PowerPoleRenderHelper.ExtraWireInfo(from, to, tension));
     }
 

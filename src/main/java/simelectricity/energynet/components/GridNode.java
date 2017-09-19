@@ -9,6 +9,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+import javax.annotation.Nonnull;
+
 public class GridNode extends SEComponent implements ISEGridNode {
     private final BlockPos pos;
 
@@ -143,6 +145,7 @@ public class GridNode extends SEComponent implements ISEGridNode {
     ///ISEGridNode
     ///////////////////////////////
     @Override
+    @Nonnull
     public ISEGridNode[] getNeighborList() {
         ISEGridNode[] ret = new ISEGridNode[neighbors.size()];
         int i = 0;

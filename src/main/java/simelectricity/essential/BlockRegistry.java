@@ -6,8 +6,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import simelectricity.essential.cable.BlockCable;
 import simelectricity.essential.cable.TileCable;
 import simelectricity.essential.grid.*;
-import simelectricity.essential.grid.TilePowerPole3.Pole10KvType0;
-import simelectricity.essential.grid.TilePowerPole3.Pole10KvType1;
+import simelectricity.essential.grid.TilePowerPole3.Pole10Kv;
 import simelectricity.essential.grid.TilePowerPole3.Pole415vType0;
 import simelectricity.essential.grid.transformer.BlockPowerTransformer;
 import simelectricity.essential.grid.transformer.TilePowerTransformerPlaceHolder;
@@ -59,8 +58,8 @@ public class BlockRegistry {
         BlockRegistry.registerTile(Render.class);
         BlockRegistry.registerTile(Primary.class);
         BlockRegistry.registerTile(Secondary.class);
-        BlockRegistry.registerTile(Pole10KvType0.class);
-        BlockRegistry.registerTile(Pole10KvType1.class);
+        BlockRegistry.registerTile(Pole10Kv.Type0.class);
+        BlockRegistry.registerTile(Pole10Kv.Type1.class);
         BlockRegistry.registerTile(Pole415vType0.class);
 
         BlockRegistry.registerTile(TileVoltageMeter.class);

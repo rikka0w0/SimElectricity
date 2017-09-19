@@ -26,11 +26,9 @@ import rikka.librikka.block.BlockBase;
 import rikka.librikka.item.ItemBlockBase;
 import rikka.librikka.properties.Properties;
 import simelectricity.api.SEAPI;
-import simelectricity.api.node.ISEGridNode;
 import simelectricity.api.tile.ISEGridTile;
 import simelectricity.essential.api.ISEHVCableConnector;
-import simelectricity.essential.grid.TilePowerPole3.Pole10KvType0;
-import simelectricity.essential.grid.TilePowerPole3.Pole10KvType1;
+import simelectricity.essential.grid.TilePowerPole3.Pole10Kv;
 import simelectricity.essential.grid.TilePowerPole3.Pole415vType0;
 
 import javax.annotation.Nullable;
@@ -75,9 +73,9 @@ public class BlockPowerPole3 extends BlockBase implements ISubBlock, ISEHVCableC
             case Pole:
                 return null;
             case Crossarm10kVT0:
-                return new Pole10KvType0();
+                return new Pole10Kv.Type0();
             case Crossarm10kVT1:
-                return new Pole10KvType1();
+                return new Pole10Kv.Type1();
             case Crossarm415VT0:
                 return new Pole415vType0();
         }
@@ -199,17 +197,10 @@ public class BlockPowerPole3 extends BlockBase implements ISubBlock, ISEHVCableC
     /// ISEHVCableConnector
     //////////////////////////////////////
     @Override
-    public boolean canHVCableSelect(World world, BlockPos pos) {
+    public ISEGridTile getGridTile(World world, BlockPos pos) {
         TileEntity te = world.getTileEntity(pos);
 
-        return te instanceof TilePowerPole3 ? ((TilePowerPole3) te).canConnect() : false;
-    }
-
-    @Override
-    public ISEGridNode getNode(World world, BlockPos pos) {
-        TileEntity te = world.getTileEntity(pos);
-
-        return te instanceof TilePowerPole3 ? ((TilePowerPole3) te).getGridNode() : null;
+        return te instanceof TilePowerPole3 ? (TilePowerPole3) te : null;
     }
 
     ////////////////////////////////////

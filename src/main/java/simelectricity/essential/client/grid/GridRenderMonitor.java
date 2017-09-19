@@ -7,6 +7,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
+import simelectricity.common.SELogger;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -21,11 +22,9 @@ public class GridRenderMonitor {
         GridRenderMonitor.instance = this;
     }
 
-    public void notifyChanged(ISEPowerPole... list) {
-        synchronized (this) {
+    public synchronized void notifyChanged(ISEPowerPole... list) {
             for (int i = 0; i < list.length; i++)
                 this.affactedTiles.add(list[i]);
-        }
     }
 
     @SubscribeEvent
@@ -58,7 +57,7 @@ public class GridRenderMonitor {
                 }
             }
 
-            //System.out.println("Grid render updated, remaining:" + this.affactedTiles.size());
+            SELogger.logInfo(SELogger.client, "Grid render updated, remaining:" + this.affactedTiles.size());
         }
     }
 

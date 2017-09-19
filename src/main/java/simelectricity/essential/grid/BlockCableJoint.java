@@ -23,7 +23,6 @@ import rikka.librikka.item.ISimpleTexture;
 import rikka.librikka.item.ItemBlockBase;
 import rikka.librikka.properties.Properties;
 import simelectricity.api.SEAPI;
-import simelectricity.api.node.ISEGridNode;
 import simelectricity.api.tile.ISEGridTile;
 import simelectricity.essential.api.ISEHVCableConnector;
 
@@ -151,25 +150,11 @@ public class BlockCableJoint extends BlockBase implements ISEHVCableConnector, I
     /// ISEHVCableConnector
     //////////////////////////////////////
     @Override
-    public boolean canHVCableSelect(World world, BlockPos pos) {
+    public ISEGridTile getGridTile(World world, BlockPos pos) {
         TileEntity te = world.getTileEntity(pos);
         if (te instanceof TileCableJoint)
-            return ((TileCableJoint) te).canConnect();
+            return (TileCableJoint) te;
         else
-            return false;
-    }
-    
-    @Override
-    public boolean canHVCableConnect(World world, BlockPos fromPos, BlockPos toPos) {
-    	return canHVCableSelect(world, fromPos);
-    }
-
-    @Override
-    public ISEGridNode getNode(World world, BlockPos pos) {
-        TileEntity te = world.getTileEntity(pos);
-        if (te instanceof ISEGridTile)
-            return ((ISEGridTile) te).getGridNode();
-
-        return null;
+            return null;
     }
 }

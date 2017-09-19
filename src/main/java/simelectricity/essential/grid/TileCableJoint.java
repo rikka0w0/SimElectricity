@@ -1,54 +1,45 @@
 package simelectricity.essential.grid;
 
-import net.minecraft.nbt.NBTTagCompound;
+import javax.annotation.Nonnull;
+
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import rikka.librikka.Utils;
 import rikka.librikka.properties.Properties;
 import simelectricity.api.SEAPI;
-import simelectricity.api.node.ISEGridNode;
 import simelectricity.api.node.ISESimulatable;
 import simelectricity.api.tile.ISECableTile;
-import simelectricity.api.tile.ISEGridTile;
-import simelectricity.essential.client.grid.ISEPowerPole;
 import simelectricity.essential.client.grid.PowerPoleRenderHelper;
-import simelectricity.essential.common.SEEnergyTile;
 
-import javax.annotation.Nonnull;
-
-public class TileCableJoint extends SEEnergyTile implements ISECableTile, ISEGridTile, ISEPowerPole {
-    private static final double MAX_DENDER_DISTANCE_SQUARED = 100000.0;
-    private static final double RESISTANCE = 0.1;
+public class TileCableJoint extends TilePoleAccessory implements ISECableTile {
     private final ISESimulatable cableNode = SEAPI.energyNetAgent.newCable(this, true);
-
-    @SideOnly(Side.CLIENT)
-    private PowerPoleRenderHelper renderHelper;
-    private BlockPos neighbor;
-    //////////////////////////////
-    /////ISEGridTile
-    //////////////////////////////
-    private ISEGridNode gridNode;
-
-    //////////////////////////////
-    /////TileEntity
-    //////////////////////////////
-    @SideOnly(Side.CLIENT)
-    @Override
-    public double getMaxRenderDistanceSquared() {
-        return MAX_DENDER_DISTANCE_SQUARED;
-    }
-
-    @SideOnly(Side.CLIENT)
+    
     @Override
     @Nonnull
-    public AxisAlignedBB getRenderBoundingBox() {
-        return TileEntity.INFINITE_EXTENT_AABB;
-    }
+    @SideOnly(Side.CLIENT)
+    protected PowerPoleRenderHelper createRenderHelper() {
+        //Create renderHelper on client side
+        int rotation = this.world.getBlockState(this.pos).getValue(Properties.facing3bit);
+        PowerPoleRenderHelper renderHelper = new PowerPoleRenderHelper(this.world, this.pos, rotation, 1, 3);
+        renderHelper.addInsulatorGroup(0.6F, 1.45F, 0F,
+                renderHelper.createInsulator(0, 2, -0.3F, 1.17F, -0.95F),
+                renderHelper.createInsulator(0, 2, 0.6F, 1.45F, 0F),
+                renderHelper.createInsulator(0, 2, -0.3F, 1.17F, 0.95F));
 
+        return renderHelper;
+    }
+    
+    @Override
+    public boolean canConnect(BlockPos toPos) {
+    	if (toPos == null)
+    		return this.host == null;
+    	
+    	TileEntity to = world.getTileEntity(toPos);
+        return this.host == null && to instanceof TilePowerPole3.Pole10Kv;
+    }
+    
     /////////////////////////////////////////////////////////
     ///ISECableTile
     /////////////////////////////////////////////////////////
@@ -59,7 +50,7 @@ public class TileCableJoint extends SEEnergyTile implements ISECableTile, ISEGri
 
     @Override
     public double getResistance() {
-        return RESISTANCE;
+        return 0.1;
     }
 
     @Override
@@ -85,93 +76,5 @@ public class TileCableJoint extends SEEnergyTile implements ISECableTile, ISEGri
     @Override
     public double getShuntResistance() {
         return 0;
-    }
-
-    @Override
-    public ISEGridNode getGridNode() {
-        return this.gridNode;
-    }
-
-    @Override
-    public void setGridNode(ISEGridNode gridObj) {
-        this.gridNode = gridObj;
-    }
-
-    @Override
-    public void onGridNeighborUpdated() {
-        neighbor = null;
-        f:
-        for (ISESimulatable neighbor : this.gridNode.getNeighborList()) {
-            if (neighbor instanceof ISEGridNode) {
-                ISEGridNode gridNode = (ISEGridNode) neighbor;
-                this.neighbor = gridNode.getPos().toImmutable();
-                break f;
-            }
-        }
-
-        markTileEntityForS2CSync();
-    }
-
-    public boolean canConnect() {
-        return this.neighbor == null;
-    }
-
-    /////////////////////////////////////////////////////////
-    ///Sync
-    /////////////////////////////////////////////////////////
-    @Override
-    public void prepareS2CPacketData(NBTTagCompound nbt) {
-        Utils.saveToNbt(nbt, "neighbor", this.neighbor);
-    }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public void onSyncDataFromServerArrived(NBTTagCompound nbt) {
-        neighbor = Utils.posFromNbt(nbt, "neighbor");
-
-        if (this.renderHelper == null) {
-            this.renderHelper = this.createRenderHelper();
-        }
-
-        PowerPoleRenderHelper.notifyChanged(this);
-        //this.updateRenderInfo();
-
-        if (this.neighbor != null) {
-            TileEntity neighborTile = this.world.getTileEntity(neighbor);
-            if (neighborTile instanceof ISEPowerPole) {
-                PowerPoleRenderHelper.notifyChanged((ISEPowerPole) neighborTile);
-            }
-            //((ISEPowerPole)neighborTile).updateRenderInfo();
-        }
-
-        super.onSyncDataFromServerArrived(nbt);
-    }
-
-    /////////////////////////////////////////////////////////
-    ///ITransmissionTower
-    /////////////////////////////////////////////////////////
-    @Override
-    @SideOnly(Side.CLIENT)
-    public void updateRenderInfo() {
-        this.renderHelper.updateRenderData(this.neighbor);
-    }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public PowerPoleRenderHelper getRenderHelper() {
-        return this.renderHelper;
-    }
-
-    @SideOnly(Side.CLIENT)
-    protected PowerPoleRenderHelper createRenderHelper() {
-        //Create renderHelper on client side
-        int rotation = this.world.getBlockState(this.pos).getValue(Properties.facing3bit);
-        PowerPoleRenderHelper renderHelper = new PowerPoleRenderHelper(this.world, this.pos, rotation, 1, 3);
-        renderHelper.addInsulatorGroup(0.6F, 1.45F, 0F,
-                renderHelper.createInsulator(0, 2, -0.3F, 1.17F, -0.95F),
-                renderHelper.createInsulator(0, 2, 0.6F, 1.45F, 0F),
-                renderHelper.createInsulator(0, 2, -0.3F, 1.17F, 0.95F));
-
-        return renderHelper;
     }
 }
