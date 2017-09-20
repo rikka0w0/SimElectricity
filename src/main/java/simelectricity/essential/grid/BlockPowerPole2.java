@@ -29,10 +29,12 @@ import rikka.librikka.block.BlockBase;
 import rikka.librikka.item.ISimpleTexture;
 import rikka.librikka.item.ItemBlockBase;
 import rikka.librikka.properties.Properties;
+import rikka.librikka.properties.UnlistedPropertyRef;
 import simelectricity.api.SEAPI;
 import simelectricity.api.tile.ISEGridTile;
 import simelectricity.essential.BlockRegistry;
 import simelectricity.essential.api.ISEHVCableConnector;
+import simelectricity.essential.client.grid.ISEPowerPole;
 
 import javax.annotation.Nullable;
 import java.lang.ref.WeakReference;
@@ -124,7 +126,7 @@ public class BlockPowerPole2 extends BlockBase implements ISubBlock, ISEHVCableC
     protected final BlockStateContainer createBlockState() {
         return new ExtendedBlockState(this,
                 new IProperty[]{Properties.type1bit, propertyIsPole, Properties.facing2bit},
-                new IUnlistedProperty[]{UnlistedNonNullProperty.propertyGridTile});
+                new IUnlistedProperty[]{UnlistedPropertyRef.propertyTile});
     }
 
     @Override
@@ -151,9 +153,8 @@ public class BlockPowerPole2 extends BlockBase implements ISubBlock, ISEHVCableC
 
             TileEntity te = world.getTileEntity(pos);
 
-            if (te instanceof ISEGridTile) {
-                retval = retval.withProperty(UnlistedNonNullProperty.propertyGridTile, new WeakReference<>((ISEGridTile) te));
-            }
+            if (te instanceof ISEPowerPole)
+                retval = retval.withProperty(UnlistedPropertyRef.propertyTile, new WeakReference<>(te));
 
             return retval;
         }
@@ -361,8 +362,8 @@ public class BlockPowerPole2 extends BlockBase implements ISubBlock, ISEHVCableC
     public ISEGridTile getGridTile(World world, BlockPos pos) {
         TileEntity te = this.getCenterTileFromRodPos(world, pos);
 
-        if (te instanceof TilePowerPole)
-            return (TilePowerPole) te;
+        if (te instanceof TilePowerPole2)
+            return (TilePowerPole2) te;
         else
             return null;
     }

@@ -45,9 +45,11 @@ import rikka.librikka.block.BlockBase;
 import rikka.librikka.item.ISimpleTexture;
 import rikka.librikka.item.ItemBlockBase;
 import rikka.librikka.properties.Properties;
+import rikka.librikka.properties.UnlistedPropertyRef;
 import simelectricity.api.SEAPI;
 import simelectricity.api.tile.ISEGridTile;
 import simelectricity.essential.BlockRegistry;
+import simelectricity.essential.client.grid.ISEPowerPole;
 
 import java.lang.ref.WeakReference;
 import java.util.LinkedList;
@@ -182,7 +184,7 @@ public class BlockPowerPoleTop extends BlockBase implements ISubBlock {
     protected final BlockStateContainer createBlockState() {
         return new ExtendedBlockState(this,
                 new IProperty[]{Properties.type1bit, Properties.facing3bit},
-                new IUnlistedProperty[]{UnlistedNonNullProperty.propertyGridTile});
+                new IUnlistedProperty[]{UnlistedPropertyRef.propertyTile});
     }
 
     @Override
@@ -206,9 +208,8 @@ public class BlockPowerPoleTop extends BlockBase implements ISubBlock {
 
             TileEntity te = world.getTileEntity(pos);
 
-            if (te instanceof ISEGridTile) {
-                retval = retval.withProperty(UnlistedNonNullProperty.propertyGridTile, new WeakReference<>((ISEGridTile) te));
-            }
+            if (te instanceof ISEPowerPole)
+                retval = retval.withProperty(UnlistedPropertyRef.propertyTile, new WeakReference<>(te));
 
             return retval;
         }

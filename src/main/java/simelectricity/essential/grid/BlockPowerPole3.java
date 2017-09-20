@@ -25,9 +25,11 @@ import rikka.librikka.block.ISubBlock;
 import rikka.librikka.block.BlockBase;
 import rikka.librikka.item.ItemBlockBase;
 import rikka.librikka.properties.Properties;
+import rikka.librikka.properties.UnlistedPropertyRef;
 import simelectricity.api.SEAPI;
 import simelectricity.api.tile.ISEGridTile;
 import simelectricity.essential.api.ISEHVCableConnector;
+import simelectricity.essential.client.grid.ISEPowerPole;
 import simelectricity.essential.grid.TilePowerPole3.Pole10Kv;
 import simelectricity.essential.grid.TilePowerPole3.Pole415vType0;
 
@@ -88,7 +90,7 @@ public class BlockPowerPole3 extends BlockBase implements ISubBlock, ISEHVCableC
     protected final BlockStateContainer createBlockState() {
         return new ExtendedBlockState(this,
                 new IProperty[]{EnumBlockTypePole3.property, Properties.facing3bit},
-                new IUnlistedProperty[]{UnlistedNonNullProperty.propertyGridTile});
+                new IUnlistedProperty[]{UnlistedPropertyRef.propertyTile});
     }
 
     @Override
@@ -121,9 +123,8 @@ public class BlockPowerPole3 extends BlockBase implements ISubBlock, ISEHVCableC
 
             TileEntity te = world.getTileEntity(pos);
 
-            if (te instanceof ISEGridTile) {
-                retval = retval.withProperty(UnlistedNonNullProperty.propertyGridTile, new WeakReference<>((ISEGridTile) te));
-            }
+            if (te instanceof ISEPowerPole)
+                retval = retval.withProperty(UnlistedPropertyRef.propertyTile, new WeakReference<>(te));
 
             return retval;
         }

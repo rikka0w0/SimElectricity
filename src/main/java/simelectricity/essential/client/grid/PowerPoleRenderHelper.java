@@ -14,14 +14,13 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import rikka.librikka.math.MathAssitant;
 import rikka.librikka.math.Vec3f;
 import rikka.librikka.model.quadbuilder.RawQuadGroup;
-
-import org.apache.commons.lang3.tuple.Pair;
-import simelectricity.api.tile.ISEGridTile;
-import simelectricity.essential.grid.UnlistedNonNullProperty;
+import rikka.librikka.properties.UnlistedPropertyRef;
 
 import java.lang.ref.WeakReference;
 import java.util.LinkedList;
 import java.util.List;
+
+import javax.annotation.Nullable;
 
 @SideOnly(Side.CLIENT)
 public class PowerPoleRenderHelper {
@@ -71,29 +70,6 @@ public class PowerPoleRenderHelper {
         }
     }
 
-    public static Pair<Vec3f, Vec3f>[] swapIfIntersect(Pair<Vec3f, Vec3f>[] connections) {
-        if (connections.length == 1)
-            return connections;
-
-        Vec3f from1 = connections[0].getLeft();
-        Vec3f to1 = connections[0].getRight();
-        Vec3f from2 = connections[connections.length - 1].getLeft();
-        Vec3f to2 = connections[connections.length - 1].getRight();
-
-        if (PowerPoleRenderHelper.hasIntersection(from1, to1, from2, to2)) {
-            //Do Swap
-            Pair<Vec3f, Vec3f>[] fixedConnections = new Pair[connections.length];
-
-            for (int i = 0; i < connections.length; i++) {
-                fixedConnections[i] = Pair.of(connections[i].getLeft(), connections[connections.length - 1 - i].getRight());
-            }
-
-            return fixedConnections;
-        } else {
-            return connections;
-        }
-    }
-
     public static boolean hasIntersection(Vec3f from1, Vec3f to1, Vec3f from2, Vec3f to2) {
         double m1 = (from1.x - to1.x) / (from1.z - to1.z);
         double k1 = from1.x - from1.z * m1;
@@ -130,14 +106,15 @@ public class PowerPoleRenderHelper {
         GridRenderMonitor.instance.notifyChanged(list);
     }
 
+    @Nullable
     public static PowerPoleRenderHelper fromState(IBlockState blockState) {
         if (!(blockState instanceof IExtendedBlockState))
             //Normally this should not happen, just in case, to prevent crashing
             return null;
 
         IExtendedBlockState exBlockState = (IExtendedBlockState) blockState;
-        WeakReference<ISEGridTile> ref = exBlockState.getValue(UnlistedNonNullProperty.propertyGridTile);
-        ISEGridTile gridTile = ref == null ? null : ref.get();
+        WeakReference<TileEntity> ref = exBlockState.getValue(UnlistedPropertyRef.propertyTile);
+        TileEntity gridTile = ref == null ? null : ref.get();
 
         if (!(gridTile instanceof ISEPowerPole))
             //Normally this should not happen, just in case, to prevent crashing
@@ -145,7 +122,21 @@ public class PowerPoleRenderHelper {
 
         return ((ISEPowerPole) gridTile).getRenderHelper();
     }
-
+    
+    @Nullable
+    public static PowerPoleRenderHelper fromPos(IBlockAccess world, @Nullable BlockPos pos) {
+    	if (pos == null)
+    		return null;
+    	
+    	TileEntity te = world.getTileEntity(pos);    	
+    	return te instanceof ISEPowerPole ? ((ISEPowerPole) te).getRenderHelper() : null;
+    }
+    
+    @Nullable
+    public PowerPoleRenderHelper fromPos(@Nullable BlockPos pos) {
+    	return fromPos(this.world, pos);
+    }
+    
     public PowerPoleRenderHelper.Insulator createInsulator(float length, float tension, float offsetX, float offsetY, float offsetZ) {
         if (this.mirroredAboutZ)
             offsetX = -offsetX;
@@ -231,7 +222,7 @@ public class PowerPoleRenderHelper {
         	for (int i = 0; i < insulatorPerGroup; i++) {
         		ret[i] = new PowerPoleRenderHelper.ConnectionInfo(group1.insulators[i], group1.insulators[insulatorPerGroup - 1 - i].virtualize(neighborCoord));
         	}
-        }else {
+        } else {
             for (int i = 0; i < insulatorPerGroup; i++) {
                 ret[i] = new PowerPoleRenderHelper.ConnectionInfo(group1.insulators[i], group1.insulators[i].virtualize(neighborCoord));
             }

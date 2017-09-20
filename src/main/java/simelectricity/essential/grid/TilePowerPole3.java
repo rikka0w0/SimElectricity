@@ -1,5 +1,6 @@
 package simelectricity.essential.grid;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.minecraft.nbt.NBTTagCompound;
@@ -25,7 +26,7 @@ public abstract class TilePowerPole3 extends TilePowerPoleBase {
     @Override
     @SideOnly(Side.CLIENT)
     public void updateRenderInfo() {
-        this.getRenderHelper().updateRenderData(this.neighbor1, this.neighbor2, accessory);
+        this.getRenderHelper().updateRenderData(this.neighbor1, this.neighbor2);
         if (this.scheduleBlockRenderUpdateWhenChange())
             markForRenderUpdate();
     }
@@ -100,9 +101,34 @@ public abstract class TilePowerPole3 extends TilePowerPoleBase {
     public static abstract class Pole10Kv extends TilePowerPole3 {
         public static class Type0 extends Pole10Kv {
             @Override
+            @Nonnull
             @SideOnly(Side.CLIENT)
             protected PowerPoleRenderHelper createRenderHelper() {
-                PowerPoleRenderHelper helper = new PowerPoleRenderHelper(world, pos, facing, 1, 3);
+                PowerPoleRenderHelper helper = new PowerPoleRenderHelper(world, pos, facing, 1, 3) {
+                	@Override
+                	public void onUpdate() {
+            			PowerPoleRenderHelper helper = fromPos(accessory);
+            			if (helper != null) {
+            				Vec3f to0 = helper.groups[0].insulators[0].realPos;
+            				Vec3f to1 = helper.groups[0].insulators[1].realPos;
+            				Vec3f to2 = helper.groups[0].insulators[2].realPos;
+            				
+            				Vec3f from0 = this.groups[0].insulators[0].realPos;
+            				Vec3f from1 = this.groups[0].insulators[1].realPos;
+            				Vec3f from2 = this.groups[0].insulators[2].realPos;
+            				
+            				float tension = -0.2F;
+            				this.addExtraWire(from1, to1, tension);
+            				if (PowerPoleRenderHelper.hasIntersection(from0, to0, from2, to2)) {
+            					this.addExtraWire(from0, to2, tension);
+            					this.addExtraWire(from2, to0, tension);
+            				} else {
+            					this.addExtraWire(from0, to0, tension);
+            					this.addExtraWire(from2, to2, tension);
+            				}
+            			}
+                	}
+                };
                 helper.addInsulatorGroup(0, 0.5F, 0,
                         helper.createInsulator(0, 1.2F, 0, 0.55F, -0.74F),
                         helper.createInsulator(0, 1.2F, 0, 1.5F, 0),
@@ -114,6 +140,7 @@ public abstract class TilePowerPole3 extends TilePowerPoleBase {
         
         public static class Type1 extends Pole10Kv {
             @Override
+            @Nonnull
             @SideOnly(Side.CLIENT)
             protected PowerPoleRenderHelper createRenderHelper() {
                 int rotation = facing;
@@ -163,6 +190,7 @@ public abstract class TilePowerPole3 extends TilePowerPoleBase {
     
     public static class Pole415vType0 extends TilePowerPole3 {
         @Override
+        @Nonnull
         @SideOnly(Side.CLIENT)
         protected PowerPoleRenderHelper createRenderHelper() {
             PowerPoleRenderHelper helper = new PowerPoleRenderHelper(this.world, this.pos, this.facing, 1, 4);

@@ -13,9 +13,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.common.property.ExtendedBlockState;
-import net.minecraftforge.common.property.IExtendedBlockState;
-import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import rikka.librikka.block.BlockBase;
@@ -25,8 +22,6 @@ import rikka.librikka.properties.Properties;
 import simelectricity.api.SEAPI;
 import simelectricity.api.tile.ISEGridTile;
 import simelectricity.essential.api.ISEHVCableConnector;
-
-import java.lang.ref.WeakReference;
 
 public class BlockCableJoint extends BlockBase implements ISEHVCableConnector, ISimpleTexture {
     public BlockCableJoint() {
@@ -48,9 +43,7 @@ public class BlockCableJoint extends BlockBase implements ISEHVCableConnector, I
     ///////////////////////////////
     @Override
     protected final BlockStateContainer createBlockState() {
-        return new ExtendedBlockState(this,
-                new IProperty[]{Properties.facing3bit},
-                new IUnlistedProperty[]{UnlistedNonNullProperty.propertyGridTile});
+        return new BlockStateContainer(this, new IProperty[]{Properties.facing3bit});
     }
 
     @Override
@@ -62,22 +55,6 @@ public class BlockCableJoint extends BlockBase implements ISEHVCableConnector, I
     public final int getMetaFromState(IBlockState state) {
         int facing = state.getValue(Properties.facing3bit);
         return facing;
-    }
-
-    @Override
-    public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
-        if (state instanceof IExtendedBlockState) {
-            IExtendedBlockState retval = (IExtendedBlockState) state;
-
-            TileEntity te = world.getTileEntity(pos);
-
-            if (te instanceof ISEGridTile) {
-                retval = retval.withProperty(UnlistedNonNullProperty.propertyGridTile, new WeakReference<>((ISEGridTile) te));
-            }
-
-            return retval;
-        }
-        return state;
     }
 
     ///////////////////////////////
@@ -123,7 +100,7 @@ public class BlockCableJoint extends BlockBase implements ISEHVCableConnector, I
     @Override
     public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
         IBlockState state = super.getStateForPlacement(world, pos, facing, hitX, hitY, hitZ, meta, placer);
-        int facingInt = 8 - MathHelper.floor(placer.rotationYaw * 8.0F / 360.0F + 0.5D) & 7;
+        int facingInt = 8 - MathHelper.floor(placer.rotationYaw * 8.0F / 360.0F + 0.5D - 4) & 7;
         return state.withProperty(Properties.facing3bit, facingInt);
     }
 

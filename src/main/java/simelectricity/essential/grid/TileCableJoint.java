@@ -17,6 +17,12 @@ public class TileCableJoint extends TilePoleAccessory implements ISECableTile {
     private final ISESimulatable cableNode = SEAPI.energyNetAgent.newCable(this, true);
     
     @Override
+    @SideOnly(Side.CLIENT)
+	public void updateRenderInfo() {
+    	
+    }
+    
+    @Override
     @Nonnull
     @SideOnly(Side.CLIENT)
     protected PowerPoleRenderHelper createRenderHelper() {
