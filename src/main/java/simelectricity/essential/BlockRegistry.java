@@ -1,8 +1,9 @@
 package simelectricity.essential;
 
-
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.common.registry.IForgeRegistry;
+import rikka.librikka.block.BlockBase;
 import simelectricity.essential.cable.BlockCable;
 import simelectricity.essential.cable.TileCable;
 import simelectricity.essential.grid.*;
@@ -19,7 +20,7 @@ import simelectricity.essential.machines.tile.*;
 
 //@GameRegistry.ObjectHolder(SETemplate.MODID)
 public class BlockRegistry {
-    public static BlockCable blockCable;
+	public static BlockCable blockCable;
 
     public static BlockPowerPoleTop powerPoleTop;
     public static BlockPowerPoleBottom powerPoleBottom;
@@ -31,8 +32,8 @@ public class BlockRegistry {
 
     public static BlockElectronics blockElectronics;
     public static BlockTwoPortElectronics blockTwoPortElectronics;
-
-    public static void registerBlocks() {
+    
+    public static void initBlocks() {
         BlockRegistry.blockCable = new BlockCable();
 
         BlockRegistry.powerPoleTop = new BlockPowerPoleTop();
@@ -46,38 +47,64 @@ public class BlockRegistry {
         BlockRegistry.blockElectronics = new BlockElectronics();
         BlockRegistry.blockTwoPortElectronics = new BlockTwoPortElectronics();
     }
-
-    public static void registerTileEntities() {
-        BlockRegistry.registerTile(TileCable.class);
-        BlockRegistry.registerTile(TilePowerPole.class);
-        BlockRegistry.registerTile(TileCableJoint.class);
-        BlockRegistry.registerTile(TilePowerPole2.class);
-        BlockRegistry.registerTile(TilePowerTransformerPlaceHolder.class);
-        BlockRegistry.registerTile(TilePowerTransformerPlaceHolder.Primary.class);
-        BlockRegistry.registerTile(TilePowerTransformerPlaceHolder.Secondary.class);
-        BlockRegistry.registerTile(Render.class);
-        BlockRegistry.registerTile(Primary.class);
-        BlockRegistry.registerTile(Secondary.class);
-        BlockRegistry.registerTile(Pole10Kv.Type0.class);
-        BlockRegistry.registerTile(Pole10Kv.Type1.class);
-        BlockRegistry.registerTile(Pole415vType0.class);
-
-        BlockRegistry.registerTile(TileVoltageMeter.class);
-        BlockRegistry.registerTile(TileQuantumGenerator.class);
-        BlockRegistry.registerTile(TileAdjustableResistor.class);
-        BlockRegistry.registerTile(TileIncandescentLamp.class);
-        BlockRegistry.registerTile(TileSolarPanel.class);
-
-        BlockRegistry.registerTile(TileAdjustableTransformer.class);
-        BlockRegistry.registerTile(TileCurrentSensor.class);
-        BlockRegistry.registerTile(TileDiode.class);
-        BlockRegistry.registerTile(TileSwitch.class);
+    
+    public static void registerBlocks(IForgeRegistry registry, boolean isItemBlock) {
+    	registerBlocks(registry, isItemBlock,
+    			blockCable,
+    			
+    			powerPoleTop,
+    			powerPoleBottom,
+    			powerPoleCollisionBox,
+    			cableJoint,
+    			powerPole2,
+    			powerPole3,
+    			powerTransformer,
+    			
+    			blockElectronics,
+    			blockTwoPortElectronics
+    			);
     }
+    
+    public static void registerTileEntities() {
+    	registerTile(TileCable.class);
+        registerTile(TilePowerPole.class);
+        registerTile(TileCableJoint.class);
+        registerTile(TilePowerPole2.class);
+        registerTile(TilePowerTransformerPlaceHolder.class);
+        registerTile(TilePowerTransformerPlaceHolder.Primary.class);
+        registerTile(TilePowerTransformerPlaceHolder.Secondary.class);
+        registerTile(Render.class);
+        registerTile(Primary.class);
+        registerTile(Secondary.class);
+        registerTile(Pole10Kv.Type0.class);
+        registerTile(Pole10Kv.Type1.class);
+        registerTile(Pole415vType0.class);
 
+        registerTile(TileVoltageMeter.class);
+        registerTile(TileQuantumGenerator.class);
+        registerTile(TileAdjustableResistor.class);
+        registerTile(TileIncandescentLamp.class);
+        registerTile(TileSolarPanel.class);
+
+        registerTile(TileAdjustableTransformer.class);
+        registerTile(TileCurrentSensor.class);
+        registerTile(TileDiode.class);
+        registerTile(TileSwitch.class);
+    }
+    
+    private static void registerBlocks(IForgeRegistry registry, boolean isItemBlock, BlockBase... blocks) {
+    	if (isItemBlock) {
+        	for (BlockBase block: blocks)
+        		registry.register(block.itemBlock);
+    	} else {
+    		registry.registerAll(blocks);
+    	}
+    }
+    
     private static void registerTile(Class<? extends TileEntity> teClass) {
-        String registryName = teClass.getName();
-        registryName = registryName.substring(registryName.lastIndexOf(".") + 1);
-        registryName = Essential.modID + ":" + registryName;
-        GameRegistry.registerTileEntity(teClass, registryName);
+    	String registryName = teClass.getName();
+    	registryName = registryName.substring(registryName.lastIndexOf(".") + 1);
+    	registryName = Essential.MODID + ":" + registryName;
+    	GameRegistry.registerTileEntity(teClass, registryName);
     }
 }

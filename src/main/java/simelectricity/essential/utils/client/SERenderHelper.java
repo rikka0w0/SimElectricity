@@ -20,7 +20,7 @@ import simelectricity.essential.Essential;
 @SideOnly(Side.CLIENT)
 public class SERenderHelper {
     public static ResourceLocation createResourceLocation(String path) {
-        return new ResourceLocation(Essential.modID, path);
+        return new ResourceLocation(Essential.MODID, path);
     }
 
     public static void rotateUpwardCoordSysTo(EnumFacing direction) {

@@ -28,7 +28,7 @@ public abstract class GenericCoverPanelRender<T extends ISECoverPanel> implement
 
     protected GenericCoverPanelRender(String textureName) {
         MinecraftForge.EVENT_BUS.register(this);
-        textureRes = new ResourceLocation(Essential.modID + ":blocks/coverpanel/" + textureName);
+        textureRes = new ResourceLocation(Essential.MODID + ":blocks/coverpanel/" + textureName);
     }
 
     @SubscribeEvent

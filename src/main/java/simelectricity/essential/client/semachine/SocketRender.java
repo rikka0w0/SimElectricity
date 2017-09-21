@@ -46,6 +46,6 @@ public class SocketRender {
         TextureMap map = event.getMap();
 
         for (int i = 0; i < SocketRender.icons.length; i++)
-            SocketRender.icons[i] = map.registerSprite(new ResourceLocation(Essential.modID + ":blocks/sockets/" + i));
+            SocketRender.icons[i] = map.registerSprite(new ResourceLocation(Essential.MODID + ":blocks/sockets/" + i));
     }
 }

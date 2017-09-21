@@ -42,7 +42,7 @@ public class SupportRender {
         //Register textures
         TextureMap map = event.getMap();
 
-        TextureAtlasSprite texture = map.registerSprite(new ResourceLocation(Essential.modID + ":blocks/coverpanel/support"));
+        TextureAtlasSprite texture = map.registerSprite(new ResourceLocation(Essential.MODID + ":blocks/coverpanel/support"));
         this.textures = new TextureAtlasSprite[]{null, null, texture, texture, texture, texture};
     }
 }

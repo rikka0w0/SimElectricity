@@ -1,5 +1,6 @@
 package simelectricity.essential;
 
+import net.minecraftforge.fml.common.registry.IForgeRegistry;
 import simelectricity.essential.items.ItemHighVoltageCable;
 import simelectricity.essential.items.ItemMisc;
 import simelectricity.essential.items.ItemTools;
@@ -11,10 +12,19 @@ public class ItemRegistry {
     public static ItemMisc itemMisc;
     public static ItemTools itemTools;
 
-    public static void registerItems() {
-        ItemRegistry.itemVitaTea = new ItemVitaTea();
-        ItemRegistry.itemHVCable = new ItemHighVoltageCable();
-        ItemRegistry.itemMisc = new ItemMisc();
-        ItemRegistry.itemTools = new ItemTools();
+    public static void initItems() {
+        itemVitaTea = new ItemVitaTea();
+        itemHVCable = new ItemHighVoltageCable();
+        itemMisc = new ItemMisc();
+        itemTools = new ItemTools();
+    }
+    
+    public static void registerItems(IForgeRegistry registry) {
+    	registry.registerAll(
+    			itemVitaTea,
+    			itemHVCable,
+    			itemMisc,
+    			itemTools
+    			);
     }
 }

@@ -7,10 +7,8 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import rikka.librikka.Utils;
 
 import org.lwjgl.opengl.GL11;
-import simelectricity.essential.Essential;
 import simelectricity.essential.utils.SEUnitHelper;
 import simelectricity.essential.utils.client.gui.GuiDirectionSelector;
 import simelectricity.essential.utils.client.gui.SEGuiContainer;
@@ -81,9 +79,7 @@ public final class GuiSwitch extends SEGuiContainer<ContainerSwitch> {
         this.buttonList.add(new GuiButton(10, this.guiLeft + xbase + 100, this.guiTop + ybase + 38, 20, 20, "+.1"));
         this.buttonList.add(new GuiButton(11, this.guiLeft + xbase + 120, this.guiTop + ybase + 38, 20, 20, "+1"));
 
-        this.directionSelector = new GuiDirectionSelector(this.guiLeft + 116, this.guiTop + 20,
-                Utils.getPlayerSightHorizontal(Essential.proxy.getClientPlayer())
-        );
+        this.directionSelector = new GuiDirectionSelector(this.guiLeft + 116, this.guiTop + 20);
     }
 
     @Override

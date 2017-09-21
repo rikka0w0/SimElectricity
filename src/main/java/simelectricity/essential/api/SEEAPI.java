@@ -13,6 +13,9 @@ public class SEEAPI {
      */
     public static ISECoverPanelRegistry coverPanelRegistry;
 
+    /**
+     * Register new colored blocks during the FMLInitializationEvent event
+     */
     @SideOnly(Side.CLIENT)
     public static LinkedList<Block> coloredBlocks;
 }

@@ -20,12 +20,15 @@
 package simelectricity;
 
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import simelectricity.api.SEAPI;
@@ -41,11 +44,8 @@ public class SimElectricity {
     public static final String MODID = "simelectricity";
     public static final String NAME = "SimElectricity";
     public static final String version = "1.0.0";
-
-    @SidedProxy(clientSide = "simelectricity.ClientProxy", serverSide = "simelectricity.CommonProxy")
-    public static CommonProxy proxy;
-
-    @Mod.Instance(SimElectricity.MODID)
+    
+    @Mod.Instance(MODID)
     public static SimElectricity instance;
 
     /**
@@ -63,24 +63,33 @@ public class SimElectricity {
 
         //Register event buses
         new EnergyNetEventHandler();
-
-        //Register creative tabs
-        SEAPI.SETab = new CreativeTabs(SimElectricity.MODID) {
-            @Override
-            @SideOnly(Side.CLIENT)
-            public ItemStack getTabIconItem() {
-                return new ItemStack(SEAPI.managementToolItem);
-            }
-        };
-
-
-        //Register items
-        SEAPI.managementToolItem = new ItemSEMgrTool();
-
+        
         //Register renders
-        proxy.registerRender();
+        //proxy.registerRender();
     }
-
+    
+    @Mod.EventBusSubscriber(modid = MODID)
+    public static class RegistrationHandler {
+    	@SubscribeEvent
+    	public static void newRegistry(RegistryEvent.NewRegistry event) {
+            //Register creative tabs
+            SEAPI.SETab = new CreativeTabs(SimElectricity.MODID) {
+                @Override
+                @SideOnly(Side.CLIENT)
+                public ItemStack getTabIconItem() {
+                    return new ItemStack(SEAPI.managementToolItem);
+                }
+            };
+    	}
+    	
+    	@SubscribeEvent
+		public static void registerItems(RegistryEvent.Register<Item> event) {
+    		//Register items
+    		SEAPI.managementToolItem = new ItemSEMgrTool();
+        	GameRegistry.register(SEAPI.managementToolItem);
+    	}
+    }
+    
     @Mod.EventHandler
     public void serverStart(FMLServerStartingEvent event) {
         event.registerServerCommand(new CommandSimE());

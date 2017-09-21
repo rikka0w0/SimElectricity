@@ -147,29 +147,49 @@ public abstract class TilePowerPole3 extends TilePowerPoleBase {
                 PowerPoleRenderHelper helper = new PowerPoleRenderHelper(world, pos, rotation, 2, 3) {
                     @Override
                     public void onUpdate() {
-                        if (this.connectionInfo.size() < 2)
-                            return;
+                    	if (this.connectionInfo.size() == 1) {
+                			PowerPoleRenderHelper helper = fromPos(accessory);
+                			if (helper != null) {
+                        		PowerPoleRenderHelper.ConnectionInfo[] connection1 = this.connectionInfo.getFirst();
+                				Vec3f from0 = connection1[0].fixedFrom;
+                				Vec3f from1 = connection1[1].fixedFrom;
+                				Vec3f from2 = connection1[2].fixedFrom;
+                				
+                				Vec3f to0 = helper.groups[0].insulators[0].realPos;
+                				Vec3f to1 = helper.groups[0].insulators[1].realPos;
+                				Vec3f to2 = helper.groups[0].insulators[2].realPos;
+                				
+                				this.addExtraWire(from1, to1, 0.25F);
+                				if (PowerPoleRenderHelper.hasIntersection(from0, to0, from2, to2)) {
+                					this.addExtraWire(from0, to2, 0.1F);
+                					this.addExtraWire(from2, to0, 0.1F);
+                				} else {
+                					this.addExtraWire(from0, to0, 0.1F);
+                					this.addExtraWire(from2, to2, 0.1F);
+                				}
+                			}
+                    	} else if (this.connectionInfo.size() == 2) {
+                            PowerPoleRenderHelper.ConnectionInfo[] connection1 = this.connectionInfo.getFirst();
+                            PowerPoleRenderHelper.ConnectionInfo[] connection2 = connectionInfo.getLast();
 
-                        PowerPoleRenderHelper.ConnectionInfo[] connection1 = this.connectionInfo.getFirst();
-                        PowerPoleRenderHelper.ConnectionInfo[] connection2 = connectionInfo.getLast();
-
-                        Vec3f pos = new Vec3f(
-                                0.5F + this.pos.getX(),
-                                this.pos.getY() + 1.5F,
-                                0.5F + this.pos.getZ()
-                        );
+                            Vec3f pos = new Vec3f(
+                                    0.5F + this.pos.getX(),
+                                    this.pos.getY() + 1.5F,
+                                    0.5F + this.pos.getZ()
+                            );
 
 
-    					this.addExtraWire(connection1[1].fixedFrom, pos, -0.4F);
-    					this.addExtraWire(pos, connection2[1].fixedFrom, -0.4F);
-                        if (PowerPoleRenderHelper.hasIntersection(
-                                connection1[0].fixedFrom, connection2[0].fixedFrom,
-                                connection1[2].fixedFrom, connection2[2].fixedFrom)) {
-    						this.addExtraWire(connection1[0].fixedFrom, connection2[2].fixedFrom, 0.5F);
-    						this.addExtraWire(connection1[2].fixedFrom, connection2[0].fixedFrom, 0.5F);
-    					} else {
-    						this.addExtraWire(connection1[0].fixedFrom, connection2[0].fixedFrom, 0.5F);
-    						this.addExtraWire(connection1[2].fixedFrom, connection2[2].fixedFrom, 0.5F);
+        					this.addExtraWire(connection1[1].fixedFrom, pos, -0.4F);
+        					this.addExtraWire(pos, connection2[1].fixedFrom, -0.4F);
+                            if (PowerPoleRenderHelper.hasIntersection(
+                                    connection1[0].fixedFrom, connection2[0].fixedFrom,
+                                    connection1[2].fixedFrom, connection2[2].fixedFrom)) {
+        						this.addExtraWire(connection1[0].fixedFrom, connection2[2].fixedFrom, 0.5F);
+        						this.addExtraWire(connection1[2].fixedFrom, connection2[0].fixedFrom, 0.5F);
+        					} else {
+        						this.addExtraWire(connection1[0].fixedFrom, connection2[0].fixedFrom, 0.5F);
+        						this.addExtraWire(connection1[2].fixedFrom, connection2[2].fixedFrom, 0.5F);
+                            }
                         }
                     }
                 };

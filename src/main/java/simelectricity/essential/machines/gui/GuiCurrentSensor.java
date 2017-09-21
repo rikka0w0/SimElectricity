@@ -4,10 +4,8 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.inventory.Container;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.translation.I18n;
-import rikka.librikka.Utils;
 
 import org.lwjgl.opengl.GL11;
-import simelectricity.essential.Essential;
 import simelectricity.essential.utils.SEUnitHelper;
 import simelectricity.essential.utils.client.gui.GuiDirectionSelector;
 import simelectricity.essential.utils.client.gui.SEGuiContainer;
@@ -69,8 +67,6 @@ public class GuiCurrentSensor extends SEGuiContainer<ContainerCurrentSensor> {
         this.buttonList.add(new GuiButton(12, this.guiLeft + xbase + 50, this.guiTop + ybase - 36, 90, 20, "Toggle Behavior"));
         this.buttonList.add(new GuiButton(13, this.guiLeft + xbase, this.guiTop + ybase - 36, 50, 20, "Abs()"));
 
-        this.directionSelector = new GuiDirectionSelector(this.guiLeft + 116, this.guiTop + 20,
-                Utils.getPlayerSightHorizontal(Essential.proxy.getClientPlayer())
-        );
+        this.directionSelector = new GuiDirectionSelector(this.guiLeft + 116, this.guiTop + 20);
     }
 }

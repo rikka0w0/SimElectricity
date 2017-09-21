@@ -24,6 +24,9 @@ import net.minecraft.item.Item;
 import simelectricity.api.internal.IEnergyNetAgent;
 
 public class SEAPI {
+	/**
+	 * Should not check this before initialization phase
+	 */
     public static boolean isSELoaded;
 
     public static IEnergyNetAgent energyNetAgent;

@@ -4,7 +4,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import rikka.librikka.Utils;
 
+@SideOnly(Side.CLIENT)
 public class GuiDirectionSelector {
     private static final int[][] rotationMatrix = {
             {2, 3, 4, 5},
@@ -14,6 +18,10 @@ public class GuiDirectionSelector {
     };
     private final GuiDirectionSelector.GuiDirectionSelectorButton[] buttons;
 
+    public GuiDirectionSelector(int x, int y) {
+    	this(x, y, Utils.getPlayerSightHorizontal(Minecraft.getMinecraft().player));
+    }
+    
     public GuiDirectionSelector(int x, int y, EnumFacing playerSight) {
         int sight;
         if (playerSight == null)
