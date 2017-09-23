@@ -69,18 +69,73 @@ public class PowerPoleRenderHelper {
                 return 0;
         }
     }
-
+    
+    /**
+     * @return true if interval1 and interval2 intersects
+     */
     public static boolean hasIntersection(Vec3f from1, Vec3f to1, Vec3f from2, Vec3f to2) {
-        double m1 = (from1.x - to1.x) / (from1.z - to1.z);
-        double k1 = from1.x - from1.z * m1;
-        double m2 = (from2.x - to2.x) / (from2.z - to2.z);
-        double k2 = from2.x - from2.z * m2;
+        float m1 = (from1.x - to1.x) / (from1.z - to1.z);
+        float k1 = from1.x - from1.z * m1;
+        float m2 = (from2.x - to2.x) / (from2.z - to2.z);
+        float k2 = from2.x - from2.z * m2;
 
-        double zc = (k2 - k1) / (m1 - m2);
-        double zx = m1 * zc + k1;
-
+        float zc = (k2 - k1) / (m1 - m2);
+        float zx = m1 * zc + k1;
+        
         return from1.x > zx && zx > to1.x || from1.x < zx && zx < to1.x;
     }
+    
+/*    //http://blog.csdn.net/rickliuxiao/article/details/6259322
+    private static boolean between(float a, float X0, float X1) {  
+    	float temp1= a-X0;  
+    	float temp2= a-X1;  
+        return (temp1<1e-8 && temp2 > -1e-8) || (temp2 <1e-6 && temp1 > -1e-8); 
+    } 
+    
+    *//**
+     * @return true if interval(p1,p2) and interval(p3,p4) intersects
+     *//*
+    public static boolean hasIntersection(Vec3f p1, Vec3f p2, Vec3f p3, Vec3f p4) {  
+    	float line_x,line_z; 
+        if ((MathHelper.abs(p1.x-p2.x)<1e-6) && (MathHelper.abs(p3.x-p4.x)<1e-6)) {
+            return false;
+        } else if ((MathHelper.abs(p1.x-p2.x)<1e-6)) {  
+            if (between(p1.x,p3.x,p4.x)) {  
+            	float k = (p4.z-p3.z)/(p4.x-p3.x);  
+                line_x = p1.x;  
+                line_z = k*(line_x-p3.x)+p3.z;  
+      
+                return  between(line_z,p1.z,p2.z);
+            }  
+            else {  
+                return false;  
+            }  
+        }  
+        else if (MathHelper.abs(p3.x-p4.x) < 1e-6) {  
+            if (between(p3.x,p1.x,p2.x)) {  
+            	float k = (p2.z-p1.z)/(p2.x-p1.x);  
+                line_x = p3.x;  
+                line_z = k*(line_x-p2.x)+p2.z;  
+      
+                return between(line_z,p3.z,p4.z);
+            }  
+            else {
+                return false;  
+            }
+        } else {  
+            float k1 = (p2.z-p1.z)/(p2.x-p1.x);   
+            float k2 = (p4.z-p3.z)/(p4.x-p3.x);  
+      
+            if (MathHelper.abs(k1-k2) < 1e-6) {  
+                return false;  
+            } else {  
+                line_x = ((p3.z - p1.z) - (k2*p3.x - k1*p1.x)) / (k1-k2);  
+                line_z = k1*(line_x-p1.x)+p1.z;  
+            }  
+      
+            return between(line_x,p1.x,p2.x)&&between(line_x,p3.x,p4.x); 
+        }  
+    }  */
 
     private static float calcInitSlope(float length, float tension) {
         double b = 4 * tension / length;
@@ -289,6 +344,7 @@ public class PowerPoleRenderHelper {
          */
         public final float length, tension, offsetX, offsetY, offsetZ;
         public final Vec3f realPos;
+		private Group group;
 
         private Insulator(PowerPoleRenderHelper parent, float length, float tension, float offsetX, float offsetY, float offsetZ) {
             this.parent = parent;
@@ -298,6 +354,10 @@ public class PowerPoleRenderHelper {
             this.offsetY = offsetY;
             this.offsetZ = offsetZ;
             realPos = new Vec3f(offsetX + parent.pos.getX(), offsetY + parent.pos.getY(), offsetZ + parent.pos.getZ());
+        }
+        
+        public Group getGroup() {
+        	return group;
         }
         
         public Vec3f virtualize(BlockPos newPos) {
@@ -321,10 +381,15 @@ public class PowerPoleRenderHelper {
             this.insulators = new PowerPoleRenderHelper.Insulator[insulators.length];
             for (int i = 0; i < insulators.length; i++) {
                 this.insulators[i] = insulators[i];
+                this.insulators[i].group = this;
             }
         }
-
-
+        
+        /**
+         * Find the real distance
+         * @param group
+         * @return
+         */
         public float distanceTo(PowerPoleRenderHelper.Group group) {
             //Normalize respect to current TileEntity coordinate
             Vec3i offset = group.parent.pos.subtract(this.parent.pos);
@@ -336,22 +401,55 @@ public class PowerPoleRenderHelper {
             return MathHelper.sqrt(x * x + z * z);
         }
         
-        public float distanceTo(BlockPos pos) {
-            //Normalize respect to current TileEntity coordinate
-            Vec3i offset = pos.subtract(this.parent.pos);
-
-            float x = offset.getX() - this.centerX;
-            float y = offset.getY() - this.centerY;
-            float z = offset.getZ()  - this.centerZ;
+        /**
+         * Estimate the distance
+         * @param pos
+         * @return
+         */
+        public float distanceTo(Vec3i pos) {
+            float x = pos.getX() - (this.parent.pos.getX() + this.centerX);
+            float y = pos.getY() - (this.parent.pos.getY() + this.centerY);
+            float z = pos.getZ() - (this.parent.pos.getZ() + this.centerZ);
 
             return MathHelper.sqrt(x * x + z * z);
         }
+        
+        public Group closest(Group... groups) {
+        	Group ret = null;
+        	float minDistance = Float.MAX_VALUE;
+        	
+        	for (Group group: groups) {
+                float distance = distanceTo(group);
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    ret = group;
+                }
+        	}
+        	
+        	return ret;
+        }
+        
+        public ConnectionInfo[] closest(ConnectionInfo[]... connections) {
+        	ConnectionInfo[] ret = null;
+        	float minDistance = Float.MAX_VALUE;
+        	
+        	for (ConnectionInfo[] connection: connections) {
+                float distance = distanceTo(connection[0].fromGroup);
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    ret = connection;
+                }
+        	}
+        	
+        	return ret;
+        }
     }
-
+    
     public static class ConnectionInfo {
         public final Vec3f from, to;
         public final Vec3f fixedFrom, fixedTo;
         public final float insulatorAngle, tension;
+        public final Group fromGroup;
 
         public final boolean isVirtual;
         
@@ -374,6 +472,7 @@ public class PowerPoleRenderHelper {
             this.fixedTo = fixedTo;
             insulatorAngle = angle;
             this.tension = tension;
+            this.fromGroup = from.group;
             
             this.isVirtual = false;
         }
@@ -395,6 +494,7 @@ public class PowerPoleRenderHelper {
             this.fixedTo = fixedTo;
             this.insulatorAngle = angle;
             this.tension = tension;
+            this.fromGroup = from.group;
             
             this.isVirtual = true;
         }

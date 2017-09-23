@@ -147,8 +147,28 @@ public abstract class TilePowerPole3 extends TilePowerPoleBase {
                 PowerPoleRenderHelper helper = new PowerPoleRenderHelper(world, pos, rotation, 2, 3) {
                     @Override
                     public void onUpdate() {
-                    	if (this.connectionInfo.size() == 1) {
-                			PowerPoleRenderHelper helper = fromPos(accessory);
+                    	PowerPoleRenderHelper helper = fromPos(accessory);
+                    	if (this.connectionInfo.isEmpty()) {
+                    		if (helper != null){
+                    			Group target = helper.groups[0].closest(this.groups[0], this.groups[1]);
+                 				Vec3f from0 = target.insulators[0].realPos;
+                				Vec3f from1 = target.insulators[1].realPos;
+                				Vec3f from2 = target.insulators[2].realPos;
+                				
+                				Vec3f to0 = helper.groups[0].insulators[0].realPos;
+                				Vec3f to1 = helper.groups[0].insulators[1].realPos;
+                				Vec3f to2 = helper.groups[0].insulators[2].realPos;
+                				
+                				this.addExtraWire(from1, to1, 0.25F);
+                				if (PowerPoleRenderHelper.hasIntersection(from0, to0, from2, to2)) {
+                					this.addExtraWire(from0, to2, 0.1F);
+                					this.addExtraWire(from2, to0, 0.1F);
+                				} else {
+                					this.addExtraWire(from0, to0, 0.1F);
+                					this.addExtraWire(from2, to2, 0.1F);
+                				}
+                    		}
+                    	} if (this.connectionInfo.size() == 1) {
                 			if (helper != null) {
                         		PowerPoleRenderHelper.ConnectionInfo[] connection1 = this.connectionInfo.getFirst();
                 				Vec3f from0 = connection1[0].fixedFrom;
@@ -169,7 +189,7 @@ public abstract class TilePowerPole3 extends TilePowerPoleBase {
                 				}
                 			}
                     	} else if (this.connectionInfo.size() == 2) {
-                            PowerPoleRenderHelper.ConnectionInfo[] connection1 = this.connectionInfo.getFirst();
+                            PowerPoleRenderHelper.ConnectionInfo[] connection1 = connectionInfo.getFirst();
                             PowerPoleRenderHelper.ConnectionInfo[] connection2 = connectionInfo.getLast();
 
                             Vec3f pos = new Vec3f(
@@ -189,6 +209,26 @@ public abstract class TilePowerPole3 extends TilePowerPoleBase {
         					} else {
         						this.addExtraWire(connection1[0].fixedFrom, connection2[0].fixedFrom, 0.5F);
         						this.addExtraWire(connection1[2].fixedFrom, connection2[2].fixedFrom, 0.5F);
+                            }
+                            
+                            if (helper != null) {
+                				Vec3f to0 = helper.groups[0].insulators[0].realPos;
+                				Vec3f to1 = helper.groups[0].insulators[1].realPos;
+                				Vec3f to2 = helper.groups[0].insulators[2].realPos;
+
+                				ConnectionInfo[] target = helper.groups[0].closest(connection1, connection2);
+                				Vec3f from0 = target[0].fixedFrom;
+                				Vec3f from1 = target[1].fixedFrom;
+                				Vec3f from2 = target[2].fixedFrom;
+                				
+                				this.addExtraWire(from1, to1, 0.25F);
+                				if (PowerPoleRenderHelper.hasIntersection(from0, to0, from2, to2)) {
+                					this.addExtraWire(from0, to2, 0.1F);
+                					this.addExtraWire(from2, to0, 0.1F);
+                				} else {
+                					this.addExtraWire(from0, to0, 0.1F);
+                					this.addExtraWire(from2, to2, 0.1F);
+                				}
                             }
                         }
                     }

@@ -3,6 +3,7 @@ package simelectricity.essential;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.relauncher.Side;
 import rikka.librikka.model.loader.AdvancedModelLoader;
 import simelectricity.essential.client.cable.CableStateMapper;
 import simelectricity.essential.client.grid.GridStateMapper;
@@ -17,7 +18,7 @@ import simelectricity.essential.grid.TilePowerPole3.Pole415vType0;
 import simelectricity.essential.grid.transformer.TilePowerTransformerWinding.Primary;
 import simelectricity.essential.grid.transformer.TilePowerTransformerWinding.Secondary;
 
-@Mod.EventBusSubscriber(modid = Essential.MODID)
+@Mod.EventBusSubscriber(modid = Essential.MODID, value = Side.CLIENT)
 public class ClientRegistrationHandler {
 	@SubscribeEvent
 	public static void registerModel(ModelRegistryEvent event) {
