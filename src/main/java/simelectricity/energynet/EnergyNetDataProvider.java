@@ -88,20 +88,37 @@ public class EnergyNetDataProvider extends WorldSavedData {
         return this.gridNodeMap.get(pos);
     }
 
-    /**
-     * @param te must implements ISECableTile or ISETile
-     */
-    public void registerTile(TileEntity te) {
+    public void addTile(TileEntity te) {
         if (this.loadedTiles.contains(te)) {
             SELogger.logWarn(SELogger.energyNet, "Duplicated TileEntity:" + te + ", this could be a bug!");
         } else {
+            if (te instanceof ISECableTile) {
+                ISECableTile cableTile = (ISECableTile) te;
+                Cable cable = (Cable) cableTile.getNode();
+                this.tileEntityGraph.addVertex(cable);
+            } if (te instanceof ISETile) {
+                ISETile tile = (ISETile) te;
+                
+                for (EnumFacing direction : EnumFacing.VALUES) {
+                    ISESubComponent subComponent = tile.getComponent(direction);
+                    if (subComponent != null) {
+                        this.tileEntityGraph.addVertex((SEComponent) subComponent);
+                    }
+                }
+            }
             this.loadedTiles.add(te);
         }
+    }
+
+    public void updateTileConnection(TileEntity te) {
+    	if (!this.loadedTiles.contains(te))
+            return;
 
         if (te instanceof ISECableTile) {
             ISECableTile cableTile = (ISECableTile) te;
             Cable cable = (Cable) cableTile.getNode();
-            this.tileEntityGraph.addVertex(cable);
+            
+            this.tileEntityGraph.isolateVertex(cable);
 
             if (cable.isGridInterConnectionPoint) {
                 GridNode gridNode = getGridObjectAtCoord(te.getPos());
@@ -130,7 +147,7 @@ public class EnergyNetDataProvider extends WorldSavedData {
                             (cableTile.getColor() == 0 ||
                                     neighborCableTile.getColor() == 0 ||
                                     cableTile.getColor() == neighborCableTile.getColor()
-                            ) && cableTile.canConnectOnSide(direction) &&
+                            ) && cable.canConnectOnSide(direction) &&
                                     neighborCableTile.canConnectOnSide(direction.getOpposite())) {
 
                         this.tileEntityGraph.addEdge((SEComponent) neighborCableTile.getNode(), (SEComponent) cableTile.getNode());
@@ -146,11 +163,17 @@ public class EnergyNetDataProvider extends WorldSavedData {
             }
         } else if (te instanceof ISETile) {
             ISETile tile = (ISETile) te;
+            
             for (EnumFacing direction : EnumFacing.VALUES) {
                 ISESubComponent subComponent = tile.getComponent(direction);
                 if (subComponent != null) {
-                    this.tileEntityGraph.addVertex((SEComponent) subComponent);
-
+                    this.tileEntityGraph.isolateVertex((SEComponent) subComponent);
+                }
+            }
+            
+            for (EnumFacing direction : EnumFacing.VALUES) {
+                ISESubComponent subComponent = tile.getComponent(direction);
+                if (subComponent != null) {
                     TileEntity neighborTileEntity = getTileEntityOnDirection(te, direction);
 
                     if (neighborTileEntity instanceof ISECableTile) {
@@ -164,13 +187,30 @@ public class EnergyNetDataProvider extends WorldSavedData {
             throw new RuntimeException("Unexpected TileEntity:" + te);
         }
     }
+    
+    public void updateTileParam(TileEntity te) {
+    	if (!this.loadedTiles.contains(te))
+            return;
+    	
+        if (te instanceof ISECableTile) {
+            Cable cable = (Cable) ((ISECableTile) te).getNode();
+            cable.updateComponentParameters();
+        } else if (te instanceof ISETile) {
+            ISETile tile = (ISETile) te;
+            for (EnumFacing direction : EnumFacing.VALUES) {
+                ISESubComponent subComponent = tile.getComponent(direction);
 
-    public void unregisterTile(TileEntity te) {
-        if (this.loadedTiles.contains(te)) {
-            this.loadedTiles.remove(te);
+                if (subComponent instanceof Tile)
+                    ((Tile) subComponent).updateComponentParameters();
+            }
         } else {
-            SELogger.logWarn(SELogger.energyNet, "Attempt to remove an unregistered:" + te + ", this could be a bug!");
+            throw new RuntimeException("Unexpected TileEntity:" + te);
         }
+    }
+    
+    public void removeTile(TileEntity te) {
+    	if (!this.loadedTiles.contains(te))
+            return;
 
         if (te instanceof ISECableTile) {
             Cable cable = (Cable) ((ISECableTile) te).getNode();
@@ -187,23 +227,8 @@ public class EnergyNetDataProvider extends WorldSavedData {
         } else {
             throw new RuntimeException("Unexpected TileEntity:" + te);
         }
-    }
-
-    public void updateTileParam(TileEntity te) {
-        if (te instanceof ISECableTile) {
-            Cable cable = (Cable) ((ISECableTile) te).getNode();
-            cable.updateComponentParameters();
-        } else if (te instanceof ISETile) {
-            ISETile tile = (ISETile) te;
-            for (EnumFacing direction : EnumFacing.VALUES) {
-                ISESubComponent subComponent = tile.getComponent(direction);
-
-                if (subComponent instanceof Tile)
-                    ((Tile) subComponent).updateComponentParameters();
-            }
-        } else {
-            throw new RuntimeException("Unexpected TileEntity:" + te);
-        }
+        
+        this.loadedTiles.remove(te);
     }
 
     //Grid Event handling ----------------------------------------------------------------------------
@@ -353,7 +378,7 @@ public class EnergyNetDataProvider extends WorldSavedData {
             gridNode.buildNeighborConnection(this.gridNodeMap, this.tileEntityGraph);
         }
 
-        SELogger.logInfo(SELogger.energyNet, "Loaded GridNodes from storage");
+        SELogger.logInfo(SELogger.energyNet, "Loaded GridNodes from world NBT storage");
     }
 
     @Override

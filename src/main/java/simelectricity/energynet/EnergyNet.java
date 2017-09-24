@@ -92,6 +92,9 @@ public final class EnergyNet extends EnergyNetSimulator implements Runnable {
         boolean needOptimize = false;    //Due to connection changes
         boolean calc = false;            //Perform simulation
 
+        if (this.cachedEvents.isEmpty() && !this.scheduledRefresh)
+        	return;
+        
         if (this.scheduledRefresh) {
             calc = true;
             needOptimize = true;
@@ -111,23 +114,24 @@ public final class EnergyNet extends EnergyNetSimulator implements Runnable {
 		 * TileEvent.ParamChanged		|5
 		 * TileEvent.Detach				|6
 		 */
-        for (int priority = 1; priority <= EnergyEventBase.numOfPriority; priority++) {
+        for (int pass = 0; pass < EnergyEventBase.numOfPass; pass++) {
             Iterator<EnergyEventBase> iterator = this.cachedEvents.iterator();
 
             //Process EventQueue
             while (iterator.hasNext()) {
                 EnergyEventBase event = iterator.next();
-
-                //Process event
-                if (event.priority == priority) {
-                    event.process(this.dataProvider);
-                    calc |= event.needUpdate;
-                    needOptimize |= event.changedStructure;
-                    iterator.remove(); //Remove from the queue
-                }
+                event.process(this.dataProvider, pass);
             }
         }
 
+        Iterator<EnergyEventBase> iterator = this.cachedEvents.iterator();
+        while (iterator.hasNext()) {
+            EnergyEventBase event = iterator.next();
+
+            calc |= event.needUpdate();
+            needOptimize |= event.changedStructure();
+        }
+        
         this.cachedEvents.clear();
         this.dataProvider.fireGridTileUpdateEvent();
 

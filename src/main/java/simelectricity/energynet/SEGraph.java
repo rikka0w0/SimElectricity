@@ -28,9 +28,7 @@ public class SEGraph {
     ///Optimizer
     ////////////////////////////////////////////////
     private static boolean isWire(SEComponent node) {
-        if (node instanceof Cable)
-            return true;
-        return node instanceof GridNode;
+        return node instanceof Cable || node instanceof GridNode;
     }
 
     private static boolean shouldCalcVoltage(SEComponent node) {
@@ -39,7 +37,7 @@ public class SEGraph {
         if (SEGraph.isInterconnectionTerminal(node))        //A interconnection terminal
             return true;
 
-        if (node instanceof Cable && ((Cable) node).hasShuntResistance)
+        if (node instanceof Cable && ((Cable) node).hasShuntResistance())
             return true;
 
         return node instanceof GridNode && ((GridNode) node).type != GridNode.ISEGridNode_Wire;
@@ -60,9 +58,9 @@ public class SEGraph {
         if (cur instanceof Cable) {
             Cable curConductor = (Cable) cur;
             if (neighbor instanceof Cable) {
-                return curConductor.resistance + ((Cable) neighbor).resistance;
+                return curConductor.getResistance() + ((Cable) neighbor).getResistance();
             } else {
-                return curConductor.resistance;
+                return curConductor.getResistance();
             }
         } else if (cur instanceof GridNode) {
             GridNode curGridNode = (GridNode) cur;
@@ -73,7 +71,7 @@ public class SEGraph {
             }
         } else {
             if (neighbor instanceof Cable) {
-                return ((Cable) neighbor).resistance;
+                return ((Cable) neighbor).getResistance();
             }
         }
 
@@ -97,9 +95,6 @@ public class SEGraph {
      * Add an EnergyTiles/GridNode into the graph
      */
     public void addVertex(SEComponent node) {
-        if (this.containsNode(node))
-            return;
-
         if (SEGraph.isWire(node))
             this.wires.addLast(node);
         else
@@ -111,13 +106,17 @@ public class SEGraph {
     /**
      * Remove a vertex and its edges
      */
-    public void removeVertex(SEComponent node) {
-        if (!this.containsNode(node))
-            return;
-
+    public void removeVertex(SEComponent node) {        
         //Mark as dead
         node.isValid = false;
-
+    	isolateVertex(node);
+        (SEGraph.isWire(node) ? this.wires : this.components).remove(node);
+    }
+    
+    /**
+     * Remove all connection to the node
+     */
+    public void isolateVertex(SEComponent node) {        
         //Cut possible interconnection
         if (node instanceof Cable)
             this.breakInterconnection((Cable) node);
@@ -130,7 +129,6 @@ public class SEGraph {
         }
 
         node.neighbors.clear();
-        (SEGraph.isWire(node) ? this.wires : this.components).remove(node);
     }
 
     /**
@@ -260,23 +258,21 @@ public class SEGraph {
     ///////////////////////////////////
     /// Grid - Cable interconnection
     ///////////////////////////////////
-    public void interconnection(Cable cable, GridNode gridNode) {
+    public static void interconnection(Cable cable, GridNode gridNode) {
         gridNode.interConnection = cable;
         cable.connectedGridNode = gridNode;
     }
 
-    public void breakInterconnection(Cable cable) {
-        if (cable.connectedGridNode != null) {
+    private static void breakInterconnection(Cable cable) {
+        if (cable.connectedGridNode != null)
             cable.connectedGridNode.interConnection = null;
-            cable.connectedGridNode = null;
-        }
+        cable.connectedGridNode = null;
     }
 
-    public void breakInterconnection(GridNode gridNode) {
-        if (gridNode.interConnection != null) {
+    private static void breakInterconnection(GridNode gridNode) {
+        if (gridNode.interConnection != null)
             gridNode.interConnection.connectedGridNode = null;
-            gridNode.interConnection = null;
-        }
+        gridNode.interConnection = null;
     }
 
     ///////////////////////////////////

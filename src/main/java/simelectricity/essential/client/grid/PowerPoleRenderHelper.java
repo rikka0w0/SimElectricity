@@ -227,8 +227,6 @@ public class PowerPoleRenderHelper {
     
     /**
      * Override this to add extra wires
-     *
-     * @param neighborPosList
      */
     public void onUpdate() {}
 

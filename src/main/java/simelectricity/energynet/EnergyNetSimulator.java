@@ -77,16 +77,16 @@ public class EnergyNetSimulator {
         } else if (node instanceof SwitchA) {
             SwitchA switchA = (SwitchA) node;
             double vA = switchA.voltageCache;
-            double vB = switchA.B.voltageCache;
-            return Math.abs((vA - vB) / switchA.resistance);
+            double vB = switchA.getComplement().voltageCache;
+            return Math.abs((vA - vB) / switchA.getResistance());
         } else if (node instanceof SwitchB) {
             SwitchB switchB = (SwitchB) node;
             double vA = switchB.voltageCache;
-            double vB = switchB.A.voltageCache;
-            return Math.abs((vA - vB) / switchB.A.resistance);
+            double vB = switchB.getComplement().voltageCache;
+            return Math.abs((vA - vB) / switchB.getResistance());
         } else if (node instanceof VoltageSource) {
             VoltageSource vs = (VoltageSource) node;
-            return Math.abs((vs.voltageCache - vs.v) / vs.r);
+            return Math.abs((vs.voltageCache - vs.getOutputVoltage()) / vs.getResistance());
         }
 
         return Double.NaN;
@@ -115,18 +115,18 @@ public class EnergyNetSimulator {
             if (columnNode instanceof Cable) {
                 Cable cable = (Cable) columnNode;
 
-                if (cable.hasShuntResistance)
-                    currents[columnNode.index] -= voltages[columnNode.index] / cable.shuntResistance;
+                if (cable.hasShuntResistance())
+                    currents[columnNode.index] -= voltages[cable.index] / cable.getShuntResistance();
 
                 //Cable - GridNode interconnection
-                if (cable.connectedGridNode != null && cable.isGridLinkEnabled)
-                    currents[columnNode.index] -= (voltages[columnNode.index] - voltages[cable.connectedGridNode.index]) / cable.resistance;
+                if (cable.connectedGridNode != null && cable.isGridLinkEnabled())
+                    currents[columnNode.index] -= (voltages[cable.index] - voltages[cable.connectedGridNode.index]) / cable.getResistance();
             } else if (columnNode instanceof GridNode) {
                 GridNode gridNode = (GridNode) columnNode;
 
                 //Cable - GridNode interconnection
-                if (gridNode.interConnection != null && gridNode.interConnection.isGridLinkEnabled)
-                    currents[columnNode.index] -= (voltages[columnNode.index] - voltages[gridNode.interConnection.index]) / gridNode.interConnection.resistance;
+                if (gridNode.interConnection != null && gridNode.interConnection.isGridLinkEnabled())
+                    currents[columnNode.index] -= (voltages[gridNode.index] - voltages[gridNode.interConnection.index]) / gridNode.interConnection.getResistance();
 
                 if (gridNode.type == GridNode.ISEGridNode_TransformerPrimary) {
                     GridNode pri = gridNode;
@@ -149,49 +149,49 @@ public class EnergyNetSimulator {
             //Node - shunt and two port networks
             else if (columnNode instanceof VoltageSource) {
                 VoltageSource vs = (VoltageSource) columnNode;
-                currents[columnNode.index] -= (voltages[columnNode.index] - vs.v) / vs.r;
+                currents[columnNode.index] -= (voltages[vs.index] - vs.getOutputVoltage()) / vs.getResistance();
             } else if (columnNode instanceof ConstantPowerLoad) {
                 ConstantPowerLoad load = (ConstantPowerLoad) columnNode;
 
-                double V = voltages[columnNode.index];
-                double Rcal = V * V / load.pRated;
+                double V = voltages[load.index];
+                double Rcal = V * V / load.getRatedPower();
 
-                if (Rcal > load.rMax)
-                    Rcal = load.rMax;
-                if (Rcal < load.rMin)
-                    Rcal = load.rMin;
+                if (Rcal > load.getMaximumResistance())
+                    Rcal = load.getMaximumResistance();
+                if (Rcal < load.getMinimumResistance())
+                    Rcal = load.getMinimumResistance();
 
-                if (load.enabled)
+                if (load.isEnabled())
                     currents[columnNode.index] -= V / Rcal;
             }
 
             //Switch
             else if (columnNode instanceof SwitchA) {
                 SwitchA A = (SwitchA) columnNode;
-                SwitchB B = A.B;
+                SwitchB B = A.getComplement();
 
-                if (A.isOn)
-                    currents[columnNode.index] -= (voltages[columnNode.index] - voltages[B.index]) / A.resistance;
+                if (A.isOn())
+                    currents[columnNode.index] -= (voltages[A.index] - voltages[B.index]) / A.getResistance();
             } else if (columnNode instanceof SwitchB) {
                 SwitchB B = (SwitchB) columnNode;
-                SwitchA A = B.A;
+                SwitchA A = B.getComplement();
 
-                if (A.isOn)
-                    currents[columnNode.index] -= (voltages[columnNode.index] - voltages[A.index]) / A.resistance;
+                if (A.isOn())
+                    currents[columnNode.index] -= (voltages[B.index] - voltages[A.index]) / A.getResistance();
             }
 
             //Transformer
             else if (columnNode instanceof TransformerPrimary) {
                 TransformerPrimary pri = (TransformerPrimary) columnNode;
-                TransformerSecondary sec = pri.secondary;
-                double ratio = pri.ratio;
-                double res = pri.rsec;
+                TransformerSecondary sec = pri.getComplement();
+                double ratio = pri.getRatio();
+                double res = pri.getInternalResistance();
                 currents[columnNode.index] -= voltages[pri.index] * ratio * ratio / res - voltages[sec.index] * ratio / res;
             } else if (columnNode instanceof TransformerSecondary) {
                 TransformerSecondary sec = (TransformerSecondary) columnNode;
-                TransformerPrimary pri = sec.primary;
-                double ratio = pri.ratio;
-                double res = pri.rsec;
+                TransformerPrimary pri = sec.getComplement();
+                double ratio = pri.getRatio();
+                double res = pri.getInternalResistance();
                 currents[columnNode.index] -= -(voltages[pri.index] * ratio / res) + voltages[sec.index] / res;
             }
 
@@ -199,16 +199,16 @@ public class EnergyNetSimulator {
             //Diode
             else if (columnNode instanceof DiodeInput) {
                 DiodeInput input = (DiodeInput) columnNode;
-                DiodeOutput output = input.output;
+                DiodeOutput output = input.getComplement();
 
-                double Vd = voltages[columnNode.index] - voltages[output.index];
+                double Vd = voltages[input.index] - voltages[output.index];
 
                 currents[columnNode.index] -= input.calcId(Vd) + Vd * this.Gpn;
             } else if (columnNode instanceof DiodeOutput) {
                 DiodeOutput output = (DiodeOutput) columnNode;
-                DiodeInput input = output.input;
+                DiodeInput input = output.getComplement();
 
-                double Vd = voltages[input.index] - voltages[columnNode.index];
+                double Vd = voltages[input.index] - voltages[output.index];
 
 
                 currents[columnNode.index] += input.calcId(Vd) + Vd * this.Gpn;
@@ -221,8 +221,6 @@ public class EnergyNetSimulator {
 
         while (iterator.hasNext()) {
             SEComponent columnNode = iterator.next();
-            int columnIndex = columnNode.index;
-
             double diagonalElement = 0;
 
             //Add conductance between nodes
@@ -235,7 +233,7 @@ public class EnergyNetSimulator {
 
                 diagonalElement += 1.0D / R;
 
-                this.matrix.setElementValue(columnIndex, rowIndex, -1.0D / R);
+                this.matrix.setElementValue(columnNode.index, rowIndex, -1.0D / R);
             }
 
 
@@ -243,25 +241,25 @@ public class EnergyNetSimulator {
             if (columnNode instanceof Cable) {
                 Cable cable = (Cable) columnNode;
 
-                if (cable.hasShuntResistance)
-                    diagonalElement += 1.0D / cable.shuntResistance;
+                if (cable.hasShuntResistance())
+                    diagonalElement += 1.0D / cable.getShuntResistance();
 
-                if (cable.connectedGridNode != null && cable.isGridLinkEnabled) {
-                    int iCable = columnIndex;
+                if (cable.connectedGridNode != null && cable.isGridLinkEnabled()) {
+                    int iCable = cable.index;
                     int iGridNode = cable.connectedGridNode.index;
 
                     //Diagonal element
-                    diagonalElement += 1.0D / cable.resistance;
+                    diagonalElement += 1.0D / cable.getResistance();
 
                     //Off-diagonal elements
-                    this.matrix.setElementValue(iCable, iGridNode, -1.0D / cable.resistance);
-                    this.matrix.setElementValue(iGridNode, iCable, -1.0D / cable.resistance);
+                    this.matrix.setElementValue(iCable, iGridNode, -1.0D / cable.getResistance());
+                    this.matrix.setElementValue(iGridNode, iCable, -1.0D / cable.getResistance());
                 }
             } else if (columnNode instanceof GridNode) {
                 GridNode gridNode = (GridNode) columnNode;
 
-                if (gridNode.interConnection != null && gridNode.interConnection.isGridLinkEnabled) {
-                    diagonalElement += 1.0D / gridNode.interConnection.resistance;
+                if (gridNode.interConnection != null && gridNode.interConnection.isGridLinkEnabled()) {
+                    diagonalElement += 1.0D / gridNode.interConnection.getResistance();
                 }
 
                 if (gridNode.type == GridNode.ISEGridNode_TransformerPrimary) {
@@ -294,7 +292,7 @@ public class EnergyNetSimulator {
 
             //Process voltage sources and resistive loads
             else if (columnNode instanceof VoltageSource) {
-                diagonalElement += 1.0D / ((VoltageSource) columnNode).r;
+                diagonalElement += 1.0D / ((VoltageSource) columnNode).getResistance();
             }
 
             //Constant power load
@@ -302,14 +300,14 @@ public class EnergyNetSimulator {
                 ConstantPowerLoad load = (ConstantPowerLoad) columnNode;
                 double V = voltages[columnNode.index];
 
-                double Rcal = V * V / load.pRated;
+                double Rcal = V * V / load.getRatedPower();
 
-                if (Rcal > load.rMax)
-                    Rcal = load.rMax;
-                if (Rcal < load.rMin)
-                    Rcal = load.rMin;
+                if (Rcal > load.getMaximumResistance())
+                    Rcal = load.getMaximumResistance();
+                if (Rcal < load.getMinimumResistance())
+                    Rcal = load.getMinimumResistance();
 
-                if (load.enabled)
+                if (load.isEnabled())
                     diagonalElement += 1.0D / Rcal;
             }
 
@@ -318,21 +316,21 @@ public class EnergyNetSimulator {
             else if (columnNode instanceof SwitchA) {
                 SwitchA A = (SwitchA) columnNode;
 
-                if (A.isOn) {
-                    int iA = columnIndex;
-                    int iB = A.B.index;
+                if (A.isOn()) {
+                    int iA = A.index;
+                    int iB = A.getComplement().index;
 
                     //Diagonal element
-                    diagonalElement += 1.0D / A.resistance;
+                    diagonalElement += 1.0D / A.getResistance();
 
                     //Off-diagonal elements
-                    this.matrix.setElementValue(iA, iB, -1.0D / A.resistance);
-                    this.matrix.setElementValue(iB, iA, -1.0D / A.resistance);
+                    this.matrix.setElementValue(iA, iB, -1.0D / A.getResistance());
+                    this.matrix.setElementValue(iB, iA, -1.0D / A.getResistance());
                 }
             } else if (columnNode instanceof SwitchB) {
                 //Diagonal element
-                if (((SwitchB) columnNode).A.isOn)
-                    diagonalElement += 1.0D / ((SwitchB) columnNode).A.resistance;
+                if (((SwitchB) columnNode).isOn())
+                    diagonalElement += 1.0D / ((SwitchB) columnNode).getResistance();
             }
 
 
@@ -340,10 +338,10 @@ public class EnergyNetSimulator {
             else if (columnNode instanceof TransformerPrimary) {
                 TransformerPrimary pri = (TransformerPrimary) columnNode;
                 int iPri = pri.index;
-                int iSec = pri.secondary.index;
+                int iSec = pri.getComplement().index;
 
-                double ratio = pri.ratio;
-                double res = pri.rsec;
+                double ratio = pri.getRatio();
+                double res = pri.getInternalResistance();
                 //Primary diagonal element
                 diagonalElement += ratio * ratio / res;
 
@@ -352,15 +350,16 @@ public class EnergyNetSimulator {
                 this.matrix.setElementValue(iSec, iPri, -ratio / res);
             } else if (columnNode instanceof TransformerSecondary) {
                 //Secondary diagonal element
-                diagonalElement += 1.0D / ((TransformerSecondary) columnNode).primary.rsec;
+                diagonalElement += 1.0D / ((TransformerSecondary) columnNode).getComplement().getInternalResistance();
             }
 
             //Diode
             else if (columnNode instanceof DiodeInput) {
                 DiodeInput input = (DiodeInput) columnNode;
+                DiodeOutput output = input.getComplement();
 
-                int iPri = columnIndex;
-                int iSec = input.output.index;
+                int iPri = input.index;
+                int iSec = output.index;
                 double Vd = voltages[iPri] - voltages[iSec];
                 double Gd = input.calcG(Vd) + this.Gpn;
 
@@ -368,18 +367,19 @@ public class EnergyNetSimulator {
                 this.matrix.setElementValue(iPri, iSec, -Gd);
                 this.matrix.setElementValue(iSec, iPri, -Gd);
             } else if (columnNode instanceof DiodeOutput) {
-                DiodeInput input = ((DiodeOutput) columnNode).input;
+            	DiodeOutput output = (DiodeOutput) columnNode;
+                DiodeInput input = output.getComplement();
 
                 int iPri = input.index;
-                int iSec = columnIndex;
+                int iSec = output.index;
                 double Vd = voltages[iPri] - voltages[iSec];
                 double Gd = input.calcG(Vd) + this.Gpn;
 
                 diagonalElement += Gd;
             }
 
-
-            this.matrix.setElementValue(columnIndex, columnIndex, diagonalElement);
+            
+            this.matrix.setElementValue(columnNode.index, columnNode.index, diagonalElement);
         }
 
         this.matrix.finishEditing();

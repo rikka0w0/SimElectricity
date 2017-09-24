@@ -3,7 +3,6 @@ package simelectricity.energynet.components;
 import net.minecraft.tileentity.TileEntity;
 import simelectricity.api.components.ISEComponentParameter;
 import simelectricity.api.node.ISESimulatable;
-import simelectricity.api.node.ISESubComponent;
 
 import java.util.LinkedList;
 
@@ -29,17 +28,6 @@ public abstract class SEComponent implements ISESimulatable, ISEComponentParamet
      */
     public LinkedList<SEComponent> neighbors = new LinkedList<SEComponent>();
 
-    /////////////////////////////
-    /// ISESimulatable
-    /////////////////////////////
-
-    /**
-     * Only two port networks need to override this!
-     */
-    @Override
-    public ISESubComponent getComplement() {
-        return null;
-    }
 
     /**
      * @param <TYPE> extends ISEComponentParameter

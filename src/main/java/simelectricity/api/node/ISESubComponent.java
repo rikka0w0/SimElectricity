@@ -5,8 +5,9 @@ package simelectricity.api.node;
  * such as transformer primary winding, transformer secondary winding e.t.c.
  * <p/>
  * Use {@link simelectricity.api.SEAPI.energyNetAgent.newComponent} to create SubComponents.
+ * @T internal use only
  */
 
-public interface ISESubComponent extends ISESimulatable {
-
+public interface ISESubComponent<T extends ISESubComponent> extends ISESimulatable {
+	T getComplement();
 }

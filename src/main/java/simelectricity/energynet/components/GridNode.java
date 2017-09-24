@@ -13,6 +13,7 @@ import javax.annotation.Nonnull;
 
 public class GridNode extends SEComponent implements ISEGridNode {
     private final BlockPos pos;
+    private final byte numOfParallelConductor;
 
     //0 - transmission line 1 - transformer primary 2 - transformer secondary
     public byte type;
@@ -23,7 +24,7 @@ public class GridNode extends SEComponent implements ISEGridNode {
     public LinkedList<Double> neighborR = new LinkedList<Double>();
     //Simulation & Optimization
     public Cable interConnection;
-    private final byte numOfParallelConductor;
+    
     //Only used for loading
     private int[] neighborX;
     private int[] neighborY;

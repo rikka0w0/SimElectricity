@@ -4,8 +4,8 @@ import net.minecraft.tileentity.TileEntity;
 import simelectricity.api.components.ISETransformer;
 import simelectricity.api.node.ISESubComponent;
 
-public class TransformerSecondary extends SEComponent implements ISESubComponent, ISETransformer {
-    public TransformerPrimary primary;
+public class TransformerSecondary extends SEComponent implements ISESubComponent<TransformerPrimary>, ISETransformer {
+    private volatile TransformerPrimary primary;
 
     public TransformerSecondary(TransformerPrimary primary, TileEntity te) {
         this.primary = primary;
@@ -13,7 +13,7 @@ public class TransformerSecondary extends SEComponent implements ISESubComponent
     }
 
     @Override
-    public ISESubComponent getComplement() {
+    public TransformerPrimary getComplement() {
         return this.primary;
     }
 

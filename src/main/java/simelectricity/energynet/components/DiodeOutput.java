@@ -4,8 +4,8 @@ import net.minecraft.tileentity.TileEntity;
 import simelectricity.api.components.ISEDiode;
 import simelectricity.api.node.ISESubComponent;
 
-public class DiodeOutput extends SEComponent implements ISESubComponent, ISEDiode {
-    public DiodeInput input;
+public class DiodeOutput extends SEComponent implements ISESubComponent<DiodeInput>, ISEDiode {
+	private volatile DiodeInput input;
 
     public DiodeOutput(DiodeInput input, TileEntity te) {
         this.input = input;
@@ -13,22 +13,22 @@ public class DiodeOutput extends SEComponent implements ISESubComponent, ISEDiod
     }
 
     @Override
-    public ISESubComponent getComplement() {
+    public synchronized DiodeInput getComplement() {
         return this.input;
     }
 
     @Override
-    public double getForwardResistance() {
+    public synchronized double getForwardResistance() {
         return this.input.Rs;
     }
 
     @Override
-    public double getSaturationCurrent() {
+    public synchronized double getSaturationCurrent() {
         return this.input.Is;
     }
 
     @Override
-    public double getThermalVoltage() {
+    public synchronized double getThermalVoltage() {
         return this.input.Vt;
     }
 

@@ -6,15 +6,15 @@ import simelectricity.api.node.ISESubComponent;
 import simelectricity.energynet.components.SEComponent.Tile;
 
 public class ConstantPowerLoad extends Tile<ISEConstantPowerLoad> implements ISESubComponent, ISEConstantPowerLoad {
-    public double pRated, rMin, rMax;
-    public boolean enabled;
+	private volatile double pRated, rMin, rMax;
+    private volatile boolean enabled;
 
     public ConstantPowerLoad(ISEConstantPowerLoad dataProvider, TileEntity te) {
         super(dataProvider, te);
     }
 
     @Override
-    public void updateComponentParameters() {
+    public synchronized void updateComponentParameters() {
         pRated = this.dataProvider.getRatedPower();
         rMin = this.dataProvider.getMinimumResistance();
         rMax = this.dataProvider.getMaximumResistance();
@@ -22,22 +22,27 @@ public class ConstantPowerLoad extends Tile<ISEConstantPowerLoad> implements ISE
     }
 
     @Override
-    public double getRatedPower() {
+    public synchronized double getRatedPower() {
         return this.pRated;
     }
 
     @Override
-    public double getMinimumResistance() {
+    public synchronized double getMinimumResistance() {
         return this.rMin;
     }
 
     @Override
-    public double getMaximumResistance() {
+    public synchronized double getMaximumResistance() {
         return this.rMax;
     }
 
     @Override
-    public boolean isEnabled() {
+    public synchronized boolean isEnabled() {
         return this.enabled;
     }
+
+	@Override
+	public ISESubComponent getComplement() {
+		return null;
+	}
 }

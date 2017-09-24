@@ -5,9 +5,9 @@ import simelectricity.api.components.ISEDiode;
 import simelectricity.api.node.ISESubComponent;
 import simelectricity.energynet.components.SEComponent.Tile;
 
-public class DiodeInput extends Tile<ISEDiode> implements ISESubComponent, ISEDiode {
-    public DiodeOutput output;
-    protected double Rs, Is, Vt, Vfw;
+public class DiodeInput extends Tile<ISEDiode> implements ISESubComponent<DiodeOutput>, ISEDiode {
+    protected volatile DiodeOutput output;
+    protected volatile double Rs, Is, Vt, Vfw;
     private double const1, const2;
 
     public DiodeInput(ISEDiode dataProvider, TileEntity te) {
@@ -16,12 +16,12 @@ public class DiodeInput extends Tile<ISEDiode> implements ISESubComponent, ISEDi
     }
 
     @Override
-    public ISESubComponent getComplement() {
+    public synchronized DiodeOutput getComplement() {
         return this.output;
     }
 
     @Override
-    public void updateComponentParameters() {
+    public synchronized void updateComponentParameters() {
         Rs = this.dataProvider.getForwardResistance();
         Is = this.dataProvider.getSaturationCurrent();
         Vt = this.dataProvider.getThermalVoltage();
@@ -31,17 +31,17 @@ public class DiodeInput extends Tile<ISEDiode> implements ISESubComponent, ISEDi
     }
 
     @Override
-    public double getForwardResistance() {
+    public synchronized double getForwardResistance() {
         return this.Rs;
     }
 
     @Override
-    public double getSaturationCurrent() {
+    public synchronized double getSaturationCurrent() {
         return this.Is;
     }
 
     @Override
-    public double getThermalVoltage() {
+    public synchronized double getThermalVoltage() {
         return this.Vt;
     }
 

@@ -6,28 +6,33 @@ import simelectricity.api.node.ISESubComponent;
 import simelectricity.energynet.components.SEComponent.Tile;
 
 public class VoltageSource extends Tile<ISEVoltageSource> implements ISESubComponent, ISEVoltageSource {
-    public double v, r;
+    private volatile double v, r;
 
     public VoltageSource(ISEVoltageSource dataProvider, TileEntity te) {
         super(dataProvider, te);
     }
 
     @Override
-    public void updateComponentParameters() {
+    public synchronized void updateComponentParameters() {
         v = this.dataProvider.getOutputVoltage();
         r = this.dataProvider.getResistance();
     }
 
     @Override
-    public double getOutputVoltage() {
+    public synchronized double getOutputVoltage() {
         return this.v;
     }
 
     @Override
-    public double getResistance() {
+    public synchronized double getResistance() {
         return this.r;
     }
 
+	@Override
+	public ISESubComponent getComplement() {
+		return null;
+	}
+    
     @Override
     public String toString() {
         return "V";

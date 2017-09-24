@@ -9,31 +9,33 @@ import simelectricity.energynet.components.SEComponent.Tile;
 public class Cable extends Tile<ISECable> implements ISECable {
     //Properties, do not modify their value!
     public final boolean isGridInterConnectionPoint;
-    public boolean isGridLinkEnabled;
-    public int color;
-    public double resistance;
-    public boolean hasShuntResistance;
-    public double shuntResistance;
+    
+    private volatile boolean isGridLinkEnabled;
+    private volatile int color;
+    private volatile double resistance;
+    private volatile boolean hasShuntResistance;
+    private volatile double shuntResistance;
+    private volatile boolean[] canConnectOnSide;        //Use canConnectOnSide() instead
+    
     //Simulation & Optimization
-    public GridNode connectedGridNode;
-    private final boolean[] canConnectOnSide;        //Use canConnectOnSide() instead
+    public volatile GridNode connectedGridNode;
 
     public Cable(ISECableTile dataProvider, TileEntity te, boolean isGridInterConnectionPoint) {
         super(dataProvider, te);
         this.isGridInterConnectionPoint = isGridInterConnectionPoint;
-        canConnectOnSide = new boolean[6];
-
-        connectedGridNode = null;
+        
+        this.connectedGridNode = null;
     }
 
     @Override
-    public void updateComponentParameters() {
+    public synchronized void updateComponentParameters() {
         color = this.dataProvider.getColor();
         resistance = this.dataProvider.getResistance();
         isGridLinkEnabled = this.dataProvider.isGridLinkEnabled();
         hasShuntResistance = this.dataProvider.hasShuntResistance();
         shuntResistance = this.dataProvider.getShuntResistance();
 
+        canConnectOnSide = new boolean[6];
         int i = 0;
         for (EnumFacing dir : EnumFacing.VALUES) {
             canConnectOnSide[i] = this.dataProvider.canConnectOnSide(dir);
@@ -45,32 +47,35 @@ public class Cable extends Tile<ISECable> implements ISECable {
     ///ISECableParameter
     /////////////////////////
     @Override
-    public boolean canConnectOnSide(EnumFacing direction) {
-        return canConnectOnSide[direction.ordinal()];
+    public synchronized boolean canConnectOnSide(EnumFacing direction) {
+    	if (canConnectOnSide == null)
+    		return false;
+        
+    	return canConnectOnSide[direction.ordinal()];
     }
 
     @Override
-    public int getColor() {
+    public synchronized int getColor() {
         return this.color;
     }
 
     @Override
-    public double getResistance() {
+    public synchronized double getResistance() {
         return this.resistance;
     }
 
     @Override
-    public boolean isGridLinkEnabled() {
+    public synchronized boolean isGridLinkEnabled() {
         return this.isGridLinkEnabled;
     }
 
     @Override
-    public boolean hasShuntResistance() {
+    public synchronized boolean hasShuntResistance() {
         return this.hasShuntResistance;
     }
 
     @Override
-    public double getShuntResistance() {
+    public synchronized double getShuntResistance() {
         return this.shuntResistance;
     }
 }

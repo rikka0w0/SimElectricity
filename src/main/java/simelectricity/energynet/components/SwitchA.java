@@ -5,11 +5,11 @@ import simelectricity.api.components.ISESwitch;
 import simelectricity.api.node.ISESubComponent;
 import simelectricity.energynet.components.SEComponent.Tile;
 
-public class SwitchA extends Tile<ISESwitch> implements ISESubComponent, ISESwitch {
-    public boolean isOn;
-    public double resistance;
+public class SwitchA extends Tile<ISESwitch> implements ISESubComponent<SwitchB>, ISESwitch {
+    protected volatile boolean isOn;
+    protected volatile double resistance;
 
-    public SwitchB B;
+    protected volatile SwitchB B;
 
     public SwitchA(ISESwitch dataProvider, TileEntity te) {
         super(dataProvider, te);
@@ -17,23 +17,23 @@ public class SwitchA extends Tile<ISESwitch> implements ISESubComponent, ISESwit
     }
 
     @Override
-    public ISESubComponent getComplement() {
+    public synchronized SwitchB getComplement() {
         return this.B;
     }
 
     @Override
-    public void updateComponentParameters() {
+    public synchronized void updateComponentParameters() {
         isOn = this.dataProvider.isOn();
         resistance = this.dataProvider.getResistance();
     }
 
     @Override
-    public boolean isOn() {
+    public synchronized boolean isOn() {
         return this.isOn;
     }
 
     @Override
-    public double getResistance() {
+    public synchronized double getResistance() {
         return this.resistance;
     }
 }

@@ -32,7 +32,6 @@ import simelectricity.api.node.ISESubComponent;
 import simelectricity.api.tile.ISECableTile;
 import simelectricity.api.tile.ISEGridTile;
 import simelectricity.api.tile.ISETile;
-import simelectricity.common.ConfigManager;
 import simelectricity.common.SELogger;
 import simelectricity.energynet.GridEvent.AppendNode;
 import simelectricity.energynet.GridEvent.BreakConnection;
@@ -169,10 +168,8 @@ public class EnergyNetAgent implements IEnergyNetAgent {
 
     @Override
     public void attachTile(TileEntity te) {
-        if (!te.getWorld().isBlockLoaded(te.getPos())) {
-            SELogger.logInfo(SELogger.energyNet, te + " attaches too early!, abort!");
-            return;
-        }
+        if (te.getWorld().isRemote)
+            throw new RuntimeException("Server-only API is called from client side!");
 
         if (te.isInvalid()) {
             SELogger.logInfo(SELogger.energyNet, "Invalid tileentity " + te + " is trying to attach, aborted");
@@ -185,124 +182,108 @@ public class EnergyNetAgent implements IEnergyNetAgent {
         }
 
         if (te instanceof ISETile || te instanceof ISECableTile) {
-            if (ConfigManager.showEnergyNetInfo)
-                SELogger.logInfo(SELogger.energyNet, "Tileentity " + te + " attached to the EnergyNet");
+            SELogger.logInfo(SELogger.energyNet, "Tileentity " + te + " attached to the EnergyNet");
         }
 
         if (te instanceof ISEGridTile) {
-            if (ConfigManager.showEnergyNetInfo)
-                SELogger.logInfo(SELogger.energyNet, "GridTile linked with GridNode at " + te.getPos());
+            SELogger.logInfo(SELogger.energyNet, "GridTile linked with GridNode at " + te.getPos());
         }
-
+        
         EnergyNetAgent.getEnergyNetForWorld(te.getWorld()).addEvent(new Attach(te));
     }
 
     @Override
     public void updateTileParameter(TileEntity te) {
-        if (te.getWorld().isRemote) {
-            SELogger.logInfo(SELogger.energyNet, "Client tileentity " + te + " is found, aborted");
-            return;
-        }
-
+        if (te.getWorld().isRemote)
+            throw new RuntimeException("Server-only API is called from client side!");
+        
+        SELogger.logInfo(SELogger.energyNet, "Tileentity " + te + " requested for EnergyNet update");
+        
         EnergyNetAgent.getEnergyNetForWorld(te.getWorld()).addEvent(new ParamChanged(te));
-
-        if (ConfigManager.showEnergyNetInfo)
-            SELogger.logInfo(SELogger.energyNet, "Tileentity " + te + " requested for EnergyNet update");
     }
 
     @Override
     public void detachTile(TileEntity te) {
-        if (te.getWorld().isRemote) {
-            SELogger.logInfo(SELogger.energyNet, "Client tileentity " + te + " is found, aborted");
-            return;
-        }
+        if (te.getWorld().isRemote)
+            throw new RuntimeException("Server-only API is called from client side!");
 
-        if (te instanceof ISEGridTile) {
-            if (ConfigManager.showEnergyNetInfo)
-                SELogger.logInfo(SELogger.energyNet, "GridTile invalidated at" + te.getPos());
-        }
+        if (te instanceof ISEGridTile)
+            SELogger.logInfo(SELogger.energyNet, "GridTile invalidated at " + te.getPos());
 
-        if (te instanceof ISETile || te instanceof ISECableTile) {
-            if (ConfigManager.showEnergyNetInfo)
+        if (te instanceof ISETile || te instanceof ISECableTile)
                 SELogger.logInfo(SELogger.energyNet, "Tileentity " + te + " detached from the EnergyNet");
-        }
-
+        
         EnergyNetAgent.getEnergyNetForWorld(te.getWorld()).addEvent(new Detach(te));
     }
 
     @Override
     public void updateTileConnection(TileEntity te) {
-        if (te.getWorld().isRemote) {
+        if (te.getWorld().isRemote)
             throw new RuntimeException("Server-only API is called from client side!");
-        }
-
+        
+        SELogger.logInfo(SELogger.energyNet, "Tileentity " + te + " updated its connection");
+        
         EnergyNetAgent.getEnergyNetForWorld(te.getWorld()).addEvent(new ConnectionChanged(te));
-
-        if (ConfigManager.showEnergyNetInfo)
-            SELogger.logInfo(SELogger.energyNet, "Tileentity " + te + " updated its connection");
     }
 
 
     @Override
     public void attachGridNode(World world, ISEGridNode node) {
+        if (world.isRemote)
+            throw new RuntimeException("Server-only API is called from client side!");
+        
+        SELogger.logInfo(SELogger.energyNet, "GridNode attached at " + node.getPos());
+        
         EnergyNetAgent.getEnergyNetForWorld(world).addEvent(new AppendNode(node));
-
-    	/*if (energyNet.addGridNode(x, y, z, type)){
-    		if (ConfigManager.showEnergyNetInfo)
-    			SELogger.logInfo("GridObject attached at " +String.valueOf(x)+":"+String.valueOf(y)+":"+String.valueOf(z));
-    	}else{
-    		if (ConfigManager.showEnergyNetInfo)
-    			SELogger.logInfo("Fail to attach gridObject at " +String.valueOf(x)+":"+String.valueOf(y)+":"+String.valueOf(z));
-    	}*/
     }
 
     @Override
     public void detachGridNode(World world, ISEGridNode node) {
+        if (world.isRemote)
+            throw new RuntimeException("Server-only API is called from client side!");
+        
+        SELogger.logInfo(SELogger.energyNet, "GridNode detached at " + node.getPos());
+        
         EnergyNetAgent.getEnergyNetForWorld(world).addEvent(new RemoveNode(node));
-    	/*if (energyNet.removeGridNode(x, y, z)){
-    		if (ConfigManager.showEnergyNetInfo)
-    			SELogger.logInfo("GridObject detached at "+String.valueOf(x)+":"+String.valueOf(y)+":"+String.valueOf(z));
-    	}else{
-    		if (ConfigManager.showEnergyNetInfo)
-    			SELogger.logInfo("Fail to detach gridObject at " +String.valueOf(x)+":"+String.valueOf(y)+":"+String.valueOf(z));
-    	}*/
     }
 
     @Override
     public void connectGridNode(World world, ISEGridNode node1, ISEGridNode node2, double resistance) {
+        if (world.isRemote)
+            throw new RuntimeException("Server-only API is called from client side!");
+        
+        SELogger.logInfo(SELogger.energyNet, "Established connection between GridNodes: " + node1.getPos() + " and " + node2.getPos());
+        
         EnergyNetAgent.getEnergyNetForWorld(world).addEvent(new Connect(node1, node2, resistance));
-    	/*if (energyNet.addGridConnection(x1, y1, z1, x2, y2, z2, resistance)){
-    		if (ConfigManager.showEnergyNetInfo)
-    			SELogger.logInfo("Grid connection built between " +String.valueOf(x1)+":"+String.valueOf(y1)+":"+String.valueOf(z1)+" and "
-					+String.valueOf(x2)+":"+String.valueOf(y2)+":"+String.valueOf(z2));
-    	}else{
-    		if (ConfigManager.showEnergyNetInfo)
-    			SELogger.logInfo("Fail to build grid connection between " +String.valueOf(x1)+":"+String.valueOf(y1)+":"+String.valueOf(z1)+" and "
-					+String.valueOf(x2)+":"+String.valueOf(y2)+":"+String.valueOf(z2));
-    	}*/
     }
 
     @Override
     public void breakGridConnection(World world, ISEGridNode node1, ISEGridNode node2) {
+        if (world.isRemote)
+            throw new RuntimeException("Server-only API is called from client side!");
+        
+        SELogger.logInfo(SELogger.energyNet, "Removed connection between GridNodes: " + node1.getPos() + " and " + node2.getPos());
+        
         EnergyNetAgent.getEnergyNetForWorld(world).addEvent(new BreakConnection(node1, node2));
-    	/*if (energyNet.removeGridConnection(x1, y1, z1, x2, y2, z2)){
-    		if (ConfigManager.showEnergyNetInfo)
-    			SELogger.logInfo("Grid connection removed between " +String.valueOf(x1)+","+String.valueOf(y1)+","+String.valueOf(z1)+" and "
-				+String.valueOf(x2)+","+String.valueOf(y2)+","+String.valueOf(z2));
-    	}else{
-    		if (ConfigManager.showEnergyNetInfo)
-    			SELogger.logInfo("Fail to remove grid connection between " +String.valueOf(x1)+","+String.valueOf(y1)+","+String.valueOf(z1)+" and "
-				+String.valueOf(x2)+","+String.valueOf(y2)+","+String.valueOf(z2));
-    	}*/
     }
 
     @Override
     public void makeTransformer(World world, ISEGridNode primary, ISEGridNode secondary, double resistance, double ratio) {
+        if (world.isRemote)
+            throw new RuntimeException("Server-only API is called from client side!");
+        
+        SELogger.logInfo(SELogger.energyNet, "New transformer, primary: " + primary.getPos() + ", secondary: " + secondary.getPos());
+        
         EnergyNetAgent.getEnergyNetForWorld(world).addEvent(new MakeTransformer(primary, secondary, resistance, ratio));
     }
 
     @Override
     public void breakTransformer(World world, ISEGridNode node) {
+        if (world.isRemote)
+            throw new RuntimeException("Server-only API is called from client side!");
+        
+        SELogger.logInfo(SELogger.energyNet, "Removed transformer, winding: " + node.getPos());
+        
         EnergyNetAgent.getEnergyNetForWorld(world).addEvent(new BreakTranformer(node));
     }
 }
