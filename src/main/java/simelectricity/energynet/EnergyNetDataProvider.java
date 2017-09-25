@@ -129,9 +129,13 @@ public class EnergyNetDataProvider extends WorldSavedData {
             for (EnumFacing direction : EnumFacing.VALUES) {
                 TileEntity neighborTileEntity = getTileEntityOnDirection(te, direction);
 
+                if (!cable.canConnectOnSide(direction))
+                	continue;
+                
                 if (neighborTileEntity instanceof ISECableTile) {  //Conductor
                     ISECableTile neighborCableTile = (ISECableTile) neighborTileEntity;
-
+                    Cable neighborCable = (Cable) neighborCableTile.getNode();
+                    
                 	/*
                      * Two cable blocks can link together if and only if both of the following conditions are meet:
                 	 *
@@ -145,19 +149,20 @@ public class EnergyNetDataProvider extends WorldSavedData {
                 	 */
                     if (
                             (cableTile.getColor() == 0 ||
-                                    neighborCableTile.getColor() == 0 ||
-                                    cableTile.getColor() == neighborCableTile.getColor()
-                            ) && cable.canConnectOnSide(direction) &&
-                                    neighborCableTile.canConnectOnSide(direction.getOpposite())) {
+                            neighborCable.getColor() == 0 ||
+                             cableTile.getColor() == neighborCable.getColor()
+                            ) && 
+                            cable.canConnectOnSide(direction) &&
+                            neighborCable.canConnectOnSide(direction.getOpposite())) {
 
-                        this.tileEntityGraph.addEdge((SEComponent) neighborCableTile.getNode(), (SEComponent) cableTile.getNode());
+                        this.tileEntityGraph.addEdge(neighborCable, cable);
                     }
                 } else if (neighborTileEntity instanceof ISETile) {
                     ISETile tile = (ISETile) neighborTileEntity;
                     ISESubComponent component = tile.getComponent(direction.getOpposite());
 
                     if (component != null) {
-                        this.tileEntityGraph.addEdge((SEComponent) component, (SEComponent) cableTile.getNode());
+                        this.tileEntityGraph.addEdge((SEComponent) component, cable);
                     }
                 }
             }
@@ -177,9 +182,10 @@ public class EnergyNetDataProvider extends WorldSavedData {
                     TileEntity neighborTileEntity = getTileEntityOnDirection(te, direction);
 
                     if (neighborTileEntity instanceof ISECableTile) {
+                    	Cable cable = (Cable) ((ISECableTile) neighborTileEntity).getNode();
                         // Connected properly
-                        if (((Cable) ((ISECableTile) neighborTileEntity).getNode()).canConnectOnSide(direction.getOpposite()))
-                            this.tileEntityGraph.addEdge((SEComponent) ((ISECableTile) neighborTileEntity).getNode(), (SEComponent) subComponent);
+                        if (cable.canConnectOnSide(direction.getOpposite()))
+                            this.tileEntityGraph.addEdge(cable, (SEComponent) subComponent);
                     }
                 }
             }

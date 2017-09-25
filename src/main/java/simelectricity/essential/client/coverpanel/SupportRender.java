@@ -5,9 +5,6 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.event.TextureStitchEvent.Pre;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import rikka.librikka.model.quadbuilder.RawQuadCube;
 import simelectricity.essential.Essential;
 import simelectricity.essential.api.coverpanel.ISECoverPanel;
@@ -15,34 +12,24 @@ import simelectricity.essential.api.coverpanel.ISECoverPanel;
 import java.util.LinkedList;
 
 public class SupportRender {
-    private static SupportRender instance = new SupportRender();
-    private TextureAtlasSprite[] textures;
-    private final LinkedList<BakedQuad>[] bakedQuads = new LinkedList[6];    //BakedQuads for all 6 directions
+    private static TextureAtlasSprite[] textures;
+    private final static LinkedList<BakedQuad>[] bakedQuads = new LinkedList[6];    //BakedQuads for all 6 directions
 
-    public SupportRender() {
-        SupportRender.instance = this;
-        MinecraftForge.EVENT_BUS.register(this);
+    public static void stitchTexture(TextureMap map) {
+        TextureAtlasSprite texture = map.registerSprite(new ResourceLocation(Essential.MODID + ":blocks/coverpanel/support"));
+        textures = new TextureAtlasSprite[]{null, null, texture, texture, texture, texture};
     }
 
     public static LinkedList<BakedQuad> forSide(EnumFacing side) {
         int i = side.ordinal();
-        if (SupportRender.instance.bakedQuads[i] == null) {
-            SupportRender.instance.bakedQuads[i] = new LinkedList();
-            RawQuadCube cube = new RawQuadCube(0.1F, 0.5F - ISECoverPanel.thickness, 0.1F, SupportRender.instance.textures);
+        if (SupportRender.bakedQuads[i] == null) {
+            SupportRender.bakedQuads[i] = new LinkedList();
+            RawQuadCube cube = new RawQuadCube(0.1F, 0.5F - ISECoverPanel.thickness, 0.1F, SupportRender.textures);
             cube.rotateToDirection(side);
             cube.translateCoord(0.5F, 0.5F, 0.5F);
-            cube.bake(SupportRender.instance.bakedQuads[i]);
+            cube.bake(SupportRender.bakedQuads[i]);
         }
 
-        return SupportRender.instance.bakedQuads[i];
-    }
-
-    @SubscribeEvent
-    public void stitcherEventPre(Pre event) {
-        //Register textures
-        TextureMap map = event.getMap();
-
-        TextureAtlasSprite texture = map.registerSprite(new ResourceLocation(Essential.MODID + ":blocks/coverpanel/support"));
-        this.textures = new TextureAtlasSprite[]{null, null, texture, texture, texture, texture};
+        return SupportRender.bakedQuads[i];
     }
 }

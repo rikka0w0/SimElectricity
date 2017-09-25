@@ -1,15 +1,19 @@
 package simelectricity.essential;
 
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import rikka.librikka.model.loader.AdvancedModelLoader;
 import simelectricity.essential.client.cable.CableStateMapper;
+import simelectricity.essential.client.coverpanel.SupportRender;
 import simelectricity.essential.client.grid.GridStateMapper;
 import simelectricity.essential.client.grid.TileRenderPowerPole;
 import simelectricity.essential.client.grid.transformer.PowerTransformerStateMapper;
 import simelectricity.essential.client.semachine.SEMachineStateMapper;
+import simelectricity.essential.client.semachine.SocketRender;
 import simelectricity.essential.grid.TileCableJoint;
 import simelectricity.essential.grid.TilePowerPole;
 import simelectricity.essential.grid.TilePowerPole2;
@@ -56,6 +60,14 @@ public class ClientRegistrationHandler {
         loader.registerModelLoader(ptStateMapper);
         ptStateMapper.register(BlockRegistry.powerTransformer);
 	}
+	
+    @SubscribeEvent
+    public static void preStitchTexture(TextureStitchEvent.Pre event) {
+    	TextureMap map = event.getMap();
+    	
+    	SocketRender.stitchTexture(map);
+    	SupportRender.stitchTexture(map);
+    }
 	
 	public static void registerTileEntityRenders() {
         TileRenderPowerPole.register(TileCableJoint.class);

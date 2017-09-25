@@ -17,6 +17,7 @@ import simelectricity.api.ISECrowbarTarget;
 import simelectricity.api.ISESidedFacing;
 import simelectricity.api.ISEWrenchable;
 import simelectricity.api.SEAPI;
+import simelectricity.api.components.ISECable;
 import simelectricity.api.node.ISEGridNode;
 import simelectricity.api.node.ISESimulatable;
 import simelectricity.api.node.ISESubComponent;
@@ -108,23 +109,21 @@ public class ItemTools extends ItemBase implements ISimpleTexture {
     }
 
     public static EnumActionResult useMultimeter(World world, BlockPos pos, EntityPlayer player, EnumFacing side) {
+        if (world.isRemote)
+            return EnumActionResult.PASS;
+        
         TileEntity te = world.getTileEntity(pos);
-
+        if (te == null)
+            return EnumActionResult.PASS;
+        
+        Utils.chat(player, "------------------");
+        
         if (te instanceof ISECableTile) {
-            if (te.getWorld().isRemote)
-                return EnumActionResult.PASS;
-
-            Utils.chat(player, "------------------");
             ISESimulatable node = ((ISECableTile) te).getNode();
             ItemTools.printVI(node, player);
-
-            return EnumActionResult.PASS;
-        } else if (te instanceof ISETile) {
-            if (te.getWorld().isRemote)
-                return EnumActionResult.PASS;
-
-            Utils.chat(player, "------------------");
-
+        }
+        
+        if (te instanceof ISETile) {
             ISETile tile = (ISETile) te;
 
             for (EnumFacing dir : EnumFacing.VALUES) {
@@ -136,29 +135,23 @@ public class ItemTools extends ItemBase implements ISimpleTexture {
                 }
             }
 
-            return EnumActionResult.PASS;
-        } else if (te instanceof ISEGridTile) {
-            if (te.getWorld().isRemote)
-                return EnumActionResult.PASS;
-
-            Utils.chat(player, "------------------");
+        } 
+        
+        if (te instanceof ISEGridTile) {
             ISEGridNode node = ((ISEGridTile) te).getGridNode();
             ItemTools.printVI(node, player);
 
             return EnumActionResult.PASS;
-        } else {
-            Block block = world.getBlockState(pos).getBlock();
-            if (block instanceof ISENodeDelegateBlock) {
-                if (world.isRemote)
-                    return EnumActionResult.PASS;
-
-                ISESimulatable node = ((ISENodeDelegateBlock) block).getNode(world, pos);
-                if (node != null) {
-                	Utils.chat(player, "------------------");
-                	ItemTools.printVI(node, player);
-                }
-                    
+        }
+        
+        Block block = world.getBlockState(pos).getBlock();
+        if (block instanceof ISENodeDelegateBlock) {
+            if (world.isRemote)
                 return EnumActionResult.PASS;
+
+            ISESimulatable node = ((ISENodeDelegateBlock) block).getNode(world, pos);
+            if (node != null) {
+            	ItemTools.printVI(node, player);
             }
         }
 
@@ -166,12 +159,28 @@ public class ItemTools extends ItemBase implements ISimpleTexture {
     }
 
     public static void printVI(ISESimulatable node, EntityPlayer player) {
-        Utils.chat(player, "V=" + SEUnitHelper.getVoltageStringWithUnit(
-                SEAPI.energyNetAgent.getVoltage(node)));
-
+    	String s = "WTF";
+    	
+    	if (node instanceof ISECable) {
+    		s = "Cable";
+    	} else if (node instanceof ISEGridNode) {
+    		int type = ((ISEGridNode) node).getType();
+    		if (type == 0)
+    			s = "Pole";
+    		else if (type == 1)
+    			s = "TransformerPrimary";
+    		else if (type == 2)
+    			s = "TransformerSecondary";
+    	}
+    	
+    	s += ", " + SEUnitHelper.getVoltageStringWithUnit(
+                SEAPI.energyNetAgent.getVoltage(node));
+    	
         double currentMagnitude = SEAPI.energyNetAgent.getCurrentMagnitude(node);
         if (!Double.isNaN(currentMagnitude))
-            Utils.chat(player, "I=" + SEUnitHelper.getCurrentStringWithUnit(currentMagnitude));
+        	s += ", I=" + SEUnitHelper.getCurrentStringWithUnit(currentMagnitude);
+        
+        Utils.chat(player, s);
     }
 
     @Override

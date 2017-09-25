@@ -9,10 +9,8 @@ import net.minecraftforge.common.MinecraftForge;
 
 import simelectricity.essential.api.SEEAPI;
 import simelectricity.essential.client.coverpanel.LedPanelRender;
-import simelectricity.essential.client.coverpanel.SupportRender;
 import simelectricity.essential.client.coverpanel.VoltageSensorRender;
 import simelectricity.essential.client.grid.GridRenderMonitor;
-import simelectricity.essential.client.semachine.SocketRender;
 
 import java.util.LinkedList;
 
@@ -37,10 +35,6 @@ public class ClientProxy extends CommonProxy {
     public void preInit() {
         //Initialize client-side API
         SEEAPI.coloredBlocks = new LinkedList<Block>();
-        
-        //Initialize socket render and support render
-        new SocketRender();
-        new SupportRender();
 
         //Initialize coverpanel render
         new VoltageSensorRender();
