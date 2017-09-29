@@ -113,8 +113,21 @@ public class ItemTools extends ItemBase implements ISimpleTexture {
             return EnumActionResult.PASS;
         
         TileEntity te = world.getTileEntity(pos);
-        if (te == null)
+        Block block = world.getBlockState(pos).getBlock();
+        
+        if (te == null && !(block instanceof ISENodeDelegateBlock))
             return EnumActionResult.PASS;
+        
+        Utils.chat(player, "------------------");
+        
+        if (block instanceof ISENodeDelegateBlock) {
+            ISESimulatable node = ((ISENodeDelegateBlock) block).getNode(world, pos);
+            if (node != null) {
+            	ItemTools.printVI(node, player);
+            }
+        }
+        
+            
         
         Utils.chat(player, "------------------");
         
@@ -140,21 +153,8 @@ public class ItemTools extends ItemBase implements ISimpleTexture {
         if (te instanceof ISEGridTile) {
             ISEGridNode node = ((ISEGridTile) te).getGridNode();
             ItemTools.printVI(node, player);
-
-            return EnumActionResult.PASS;
         }
         
-        Block block = world.getBlockState(pos).getBlock();
-        if (block instanceof ISENodeDelegateBlock) {
-            if (world.isRemote)
-                return EnumActionResult.PASS;
-
-            ISESimulatable node = ((ISENodeDelegateBlock) block).getNode(world, pos);
-            if (node != null) {
-            	ItemTools.printVI(node, player);
-            }
-        }
-
         return EnumActionResult.PASS;
     }
 

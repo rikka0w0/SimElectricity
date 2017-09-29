@@ -19,49 +19,42 @@
 
 package simelectricity.energynet;
 
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.WorldServer;
-import simelectricity.api.ISEEnergyNetUpdateHandler;
 import simelectricity.api.node.ISESimulatable;
 import simelectricity.common.ConfigManager;
 import simelectricity.common.SELogger;
 import simelectricity.energynet.components.SEComponent;
-import simelectricity.energynet.matrix.IMatrixSolver.MatrixHelper;
+import simelectricity.energynet.components.SwitchA;
+import simelectricity.energynet.components.SwitchB;
+import simelectricity.energynet.components.VoltageSource;
 
 import java.util.Iterator;
 import java.util.LinkedList;
 
-public final class EnergyNet extends EnergyNetSimulator implements Runnable {
+public final class EnergyNet {
     private final WorldServer world;
+    //Contains information about the grid
+    protected final EnergyNetDataProvider dataProvider;
     //////////////////////////
     /// Threading
     //////////////////////////
-    private final Thread thread;
+    private EnergyNetSimulator simulator;
     ///////////////////////////////////////////////////////
     ///Event Queue
     ///////////////////////////////////////////////////////
     private final LinkedList<EnergyEventBase> cachedEvents = new LinkedList<EnergyEventBase>();
     private boolean scheduledRefresh;
-    private volatile boolean needOptimize;    	//Set to true to launch the optimizer
-    private volatile boolean alive;            	//Set to false to kill the energyNet thread
-    private volatile boolean processing;    	//An indicator of the EnergyNet state
-    private volatile long duration;            	//Time taken for the latest simulation, in milliseconds
+
 
     //////////////////////////
     /// Constructor
     //////////////////////////
     public EnergyNet(WorldServer world) {
-        super(Math.pow(10, -ConfigManager.precision),
-                1.0D / ConfigManager.shuntPN,
-                MatrixHelper.newSolver(ConfigManager.matrixSolver),
-                EnergyNetDataProvider.get(world));
         this.world = world;
+        this.dataProvider = EnergyNetDataProvider.get(world);
 
         //Initialize thread
-        thread = new Thread(this, "SEEnergyNet_DIM" + String.valueOf(world.provider.getDimension()));
-        alive = true;
-        processing = false;
-        thread.start();
+        this.simulator = new EnergyNetSimulator(dataProvider, "SEEnergyNet_DIM" + String.valueOf(world.provider.getDimension()));
 
         SELogger.logInfo(SELogger.general, "EnergyNet has been created for DIM" + world.provider.getDimension());
     }
@@ -78,16 +71,17 @@ public final class EnergyNet extends EnergyNetSimulator implements Runnable {
      * Called at pre-tick stage
      */
     public synchronized void onPreTick() {
-        if (processing) {
+        if (this.simulator.isAlive() && this.simulator.isWorking()) {
             SELogger.logWarn(SELogger.simulator, "Simulation takes longer than usual!");
-            while (processing)
-                try {
-                    Thread.sleep(1);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+            
+            while (this.simulator.isWorking()) {
+            	try {
+					Thread.sleep(1);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+            }
         }
-
 
         boolean needOptimize = false;    //Due to connection changes
         boolean calc = false;            //Perform simulation
@@ -136,8 +130,7 @@ public final class EnergyNet extends EnergyNetSimulator implements Runnable {
         this.dataProvider.fireGridTileUpdateEvent();
 
         if (calc) {
-            this.needOptimize = needOptimize;
-            this.thread.interrupt();
+            this.simulator.start(needOptimize);
         }
     }
 
@@ -146,8 +139,8 @@ public final class EnergyNet extends EnergyNetSimulator implements Runnable {
     //////////////////////////
     public String[] info() {
         SEGraph tileEntityGraph = this.dataProvider.getTEGraph();
-        String density;
-
+        int iterations = this.simulator.getIterations();
+        
         if (tileEntityGraph.size() == 0 && this.dataProvider.getGridObjectCount() == 0) {
             return new String[]{
                     "EnergyNet is empty and idle",
@@ -155,13 +148,7 @@ public final class EnergyNet extends EnergyNetSimulator implements Runnable {
             };
         }
 
-        if (this.matrix.getMatrixSize() == 0) {
-            density = "Undefined";
-        } else {
-            density = this.matrix.getTotalNonZeros() * 100 / this.matrix.getMatrixSize() / this.matrix.getMatrixSize() + "%";
-        }
-
-        if (this.iterations == 0) {
+        if (iterations == 0) {
             return new String[]{
                     "EnergyNet is idle",
                     "Tiles: " + String.valueOf(tileEntityGraph.size()),
@@ -170,14 +157,14 @@ public final class EnergyNet extends EnergyNetSimulator implements Runnable {
             };
         } else {
             return new String[]{
-                    "Time consumption: " + String.valueOf(duration) + "ms",
+                    "Time consumption: " + this.simulator.getTimeConsumption() + "ms",
                     "Tiles: " + String.valueOf(tileEntityGraph.size()),
                     "Grid Objects: " + String.valueOf(this.dataProvider.getGridObjectCount()),
-                    "Matrix size: " + String.valueOf(this.matrix.getMatrixSize()),
-                    "Non-zero elements: " + String.valueOf(this.matrix.getTotalNonZeros()),
-                    "Density: " + density,
+                    "Matrix size: " + this.simulator.getMatrixSize(),
+                    //"Non-zero elements: " + String.valueOf(this.matrix.getTotalNonZeros()),
+                    "Density: " + this.simulator.getDensity() + "%",
                     "Matrix solving algorithsm: " + ConfigManager.matrixSolver,
-                    "Iterations:" + String.valueOf(this.iterations)
+                    "Iterations:" + String.valueOf(iterations)
             };
         }
     }
@@ -186,59 +173,66 @@ public final class EnergyNet extends EnergyNetSimulator implements Runnable {
         this.scheduledRefresh = true;
     }
 
-    public boolean hasValidState() {
-        return !this.processing;
-    }
-
-    /**
-     * @return thread name, e.g. SEEnergyNet_DIM0
-     */
-    public String getThreadName() {
-        return this.thread.getName();
-    }
-
     public void notifyServerShuttingdown() {
-        alive = false;
+        this.simulator.suicide();
+    }
+    
+    public static final double getVoltage(ISESimulatable Tile) {
+        SEComponent node = (SEComponent) Tile;
+        if (node.eliminated) {
+            if (node.optimizedNeighbors.size() == 2) {
+                SEComponent A = node.optimizedNeighbors.getFirst();
+                SEComponent B = node.optimizedNeighbors.getLast();
+                double vA = A.voltageCache;
+                double vB = B.voltageCache;
+                double rA = node.optimizedResistance.getFirst();
+                double rB = node.optimizedResistance.getLast();
+                return vA - (vA - vB) * rA / (rA + rB);
+            } else if (node.optimizedNeighbors.size() == 1) {
+                return node.optimizedNeighbors.getFirst().voltageCache;
+            } else if (node.optimizedNeighbors.size() == 0) {
+                return 0;
+            } else {
+                throw new RuntimeException("WTF mate whats going on?!");
+            }
+        } else {
+            return node.voltageCache;
+        }
     }
 
-    @Override
-    public void run() {
-        long startAt;
-        while (this.alive) {
-            try {
-                SELogger.logInfo(SELogger.simulator, this.getThreadName() + " Sleep");
-                while (this.alive)
-                    Thread.sleep(1);
-            } catch (InterruptedException e) {
-                SELogger.logInfo(SELogger.simulator, this.getThreadName() + " wake up");
-
-                if (!this.alive)
-                    break;
-
-                processing = true;
-                SELogger.logInfo(SELogger.simulator, this.getThreadName() + " Started");
-                startAt = System.currentTimeMillis();
-                this.runSimulator(this.needOptimize);
-                SELogger.logInfo(SELogger.simulator, this.getThreadName() + " Done");
-                this.duration = System.currentTimeMillis() - startAt;
-
-                //Execute Handlers
-                Iterator<TileEntity> iterator = this.dataProvider.getLoadedTileIterator();
-                while (iterator.hasNext()) {
-                    TileEntity te = iterator.next();
-                    if (te instanceof ISEEnergyNetUpdateHandler)
-                        ((ISEEnergyNetUpdateHandler) te).onEnergyNetUpdate();
-                }
-                iterator = this.dataProvider.getLoadedGridTileIterator();
-                while (iterator.hasNext()) {
-                    TileEntity te = iterator.next();
-                    if (te instanceof ISEEnergyNetUpdateHandler)
-                        ((ISEEnergyNetUpdateHandler) te).onEnergyNetUpdate();
-                }
-
-                processing = false;
+    public static final double getCurrentMagnitude(ISESimulatable Tile) {
+        SEComponent node = (SEComponent) Tile;
+        if (node.eliminated) {
+            if (node.optimizedNeighbors.size() == 2) {
+                SEComponent A = node.optimizedNeighbors.getFirst();
+                SEComponent B = node.optimizedNeighbors.getLast();
+                double vA = A.voltageCache;
+                double vB = B.voltageCache;
+                double rA = node.optimizedResistance.getFirst();
+                double rB = node.optimizedResistance.getLast();
+                return Math.abs((vA - vB) / (rA + rB));
+            } else if (node.optimizedNeighbors.size() == 1) {
+                return 0;
+            } else if (node.optimizedNeighbors.size() == 0) {
+                return 0;
+            } else {
+                throw new RuntimeException("WTF mate whats going on?!");
             }
+        } else if (node instanceof SwitchA) {
+            SwitchA switchA = (SwitchA) node;
+            double vA = switchA.voltageCache;
+            double vB = switchA.getComplement().voltageCache;
+            return Math.abs((vA - vB) / switchA.getResistance());
+        } else if (node instanceof SwitchB) {
+            SwitchB switchB = (SwitchB) node;
+            double vA = switchB.voltageCache;
+            double vB = switchB.getComplement().voltageCache;
+            return Math.abs((vA - vB) / switchB.getResistance());
+        } else if (node instanceof VoltageSource) {
+            VoltageSource vs = (VoltageSource) node;
+            return Math.abs((vs.voltageCache - vs.getOutputVoltage()) / vs.getResistance());
         }
-        SELogger.logInfo(SELogger.general, this.getThreadName() + " is shutting down");
+
+        return Double.NaN;
     }
 }

@@ -342,6 +342,9 @@ public class EnergyNetDataProvider extends WorldSavedData {
     }
 
     public void onGridTileInvalidate(TileEntity te) {
+    	if (!this.loadedTiles.contains(te))
+            return;
+    	
         this.loadedGridTiles.remove(te);
 
         ISEGridTile gridTile = (ISEGridTile) te;

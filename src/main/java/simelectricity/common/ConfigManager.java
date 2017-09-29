@@ -26,6 +26,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import simelectricity.SimElectricity;
+import simelectricity.energynet.EnergyNetSimulator;
 
 public class ConfigManager {
     public static Configuration config;
@@ -63,6 +64,7 @@ public class ConfigManager {
         if (ConfigManager.config.hasChanged())
             ConfigManager.config.save();
 
+        EnergyNetSimulator.config();
     }
 
     //This function is supposed to be called by a client only!

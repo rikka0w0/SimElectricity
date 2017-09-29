@@ -52,15 +52,17 @@ public abstract class TileEvent extends EnergyEventBase {
 
         @Override
         public void process(EnergyNetDataProvider dataProvider, int pass) {
-            if (this.te instanceof ISETile || this.te instanceof ISECableTile) {
-            	if (pass == TADD || pass == TDEL) {
+        	if (pass == TADD || pass == TDEL) {
+        		if (this.te instanceof ISETile || this.te instanceof ISECableTile) {
                     dataProvider.removeTile(this.te);
             	}
+        		
+
+                if (this.te instanceof ISEGridTile && pass == TDEL) {
+                    dataProvider.onGridTileInvalidate(this.te);
+                }
             }
 
-            if (this.te instanceof ISEGridTile && pass == TDEL) {
-                dataProvider.onGridTileInvalidate(this.te);
-            }
         }
 
 		@Override

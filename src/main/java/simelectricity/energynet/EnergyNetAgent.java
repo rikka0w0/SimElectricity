@@ -85,7 +85,7 @@ public class EnergyNetAgent implements IEnergyNetAgent {
         SEComponent obj = (SEComponent) Tile;
         EnergyNet energyNet = EnergyNetAgent.getEnergyNetForWorld(obj.te.getWorld());
 
-        return EnergyNetSimulator.getVoltage(Tile);
+        return EnergyNet.getVoltage(Tile);
     }
 
     @Override

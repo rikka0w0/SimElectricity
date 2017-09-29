@@ -1,97 +1,160 @@
 package simelectricity.energynet;
 
-import simelectricity.api.node.ISESimulatable;
+import simelectricity.api.ISEEnergyNetUpdateHandler;
 import simelectricity.common.ConfigManager;
 import simelectricity.common.SELogger;
 import simelectricity.energynet.components.*;
 import simelectricity.energynet.matrix.IMatrixSolver;
+import simelectricity.energynet.matrix.IMatrixSolver.MatrixHelper;
 
 import java.util.Iterator;
 import java.util.LinkedList;
 
+import net.minecraft.tileentity.TileEntity;
 
-public class EnergyNetSimulator {
-    //The absolute tolerance
-    protected final double epsilon;
-    //The conductance placed between each PN junction(to alleviate convergence problem)
-    protected final double Gpn;
-    //Diode parameters for regulator controllers
-    protected final double Vt = 26e-6;
-    protected final double Is = 1e-6;
-    //Matrix solving algorithm used to solve the problem
-    protected final IMatrixSolver matrix;
-    //Contains information about the grid
-    protected final EnergyNetDataProvider dataProvider;
-    //Records the number of iterations during last iterating process
-    protected int iterations;
 
-    protected EnergyNetSimulator(double epsilon, double Gpn,
-    		IMatrixSolver matrixSolver, EnergyNetDataProvider dataProvider) {
-        this.epsilon = epsilon;
-        this.Gpn = Gpn;
-        matrix = matrixSolver;
-        this.dataProvider = dataProvider;
+public class EnergyNetSimulator extends Thread {
+	/////////////////////////////////////////////////
+	/// Configuration
+	/////////////////////////////////////////////////
+    /**
+     * The absolute tolerance
+     */
+    private static double epsilon;
+    /**
+     * The conductance placed between each PN junction(to alleviate convergence problem)
+     */
+    private static double Gpn;
+    /**
+     * Matrix solving algorithm used to solve the problem
+     */
+    private static IMatrixSolver matrix;
+    
+    public static final void config() {
+        epsilon = Math.pow(10, -ConfigManager.precision);
+        Gpn = 1.0D / ConfigManager.shuntPN;
+        matrix = MatrixHelper.newSolver(ConfigManager.matrixSolver);
+    }
+    
+	/////////////////////////////////////////////////
+	/// Runtime
+	/////////////////////////////////////////////////
+    private final EnergyNetDataProvider dataProvider;
+    /**
+     * Records the number of iterations during last iterating process
+     */
+    protected volatile int iterations;
+    
+    private volatile boolean needOptimize;    	//Set to true to launch the optimizer
+    private volatile boolean processing;    	//An indicator of the EnergyNet state
+    private volatile long duration;            	//Time taken for the latest simulation, in milliseconds
+    private volatile boolean suicide;
+    
+    protected EnergyNetSimulator(EnergyNetDataProvider dataProvider, String name) {
+    	this.dataProvider = dataProvider;
+    	this.setName(name);
+    	this.processing = false;
+    	this.suicide = false;
+    }
+    
+	/////////////////////////////////////////////////
+	/// Info
+	/////////////////////////////////////////////////
+    public int getIterations() {
+    	return this.iterations;
+    }
+    
+    public long getTimeConsumption() {
+    	return this.duration;
     }
 
-    public static final synchronized double getVoltage(ISESimulatable Tile) {
-        SEComponent node = (SEComponent) Tile;
-        if (node.eliminated) {
-            if (node.optimizedNeighbors.size() == 2) {
-                SEComponent A = node.optimizedNeighbors.getFirst();
-                SEComponent B = node.optimizedNeighbors.getLast();
-                double vA = A.voltageCache;
-                double vB = B.voltageCache;
-                double rA = node.optimizedResistance.getFirst();
-                double rB = node.optimizedResistance.getLast();
-                return vA - (vA - vB) * rA / (rA + rB);
-            } else if (node.optimizedNeighbors.size() == 1) {
-                return node.optimizedNeighbors.getFirst().voltageCache;
-            } else if (node.optimizedNeighbors.size() == 0) {
-                return 0;
-            } else {
-                throw new RuntimeException("WTF mate whats going on?!");
-            }
+    public float getMatrixSize() {
+    	return this.matrix.getMatrixSize();
+    }
+    
+    public float getTotalNonZeros() {
+    	return this.matrix.getTotalNonZeros();
+    }
+    
+    public float getDensity() {
+        if (this.matrix.getMatrixSize() == 0) {
+            return Float.NaN;
         } else {
-            return node.voltageCache;
+        	return (float)this.matrix.getTotalNonZeros() * 100F / (float)this.matrix.getMatrixSize() / (float)this.matrix.getMatrixSize();
         }
     }
-
-    public static final synchronized double getCurrentMagnitude(ISESimulatable Tile) {
-        SEComponent node = (SEComponent) Tile;
-        if (node.eliminated) {
-            if (node.optimizedNeighbors.size() == 2) {
-                SEComponent A = node.optimizedNeighbors.getFirst();
-                SEComponent B = node.optimizedNeighbors.getLast();
-                double vA = A.voltageCache;
-                double vB = B.voltageCache;
-                double rA = node.optimizedResistance.getFirst();
-                double rB = node.optimizedResistance.getLast();
-                return Math.abs((vA - vB) / (rA + rB));
-            } else if (node.optimizedNeighbors.size() == 1) {
-                return 0;
-            } else if (node.optimizedNeighbors.size() == 0) {
-                return 0;
-            } else {
-                throw new RuntimeException("WTF mate whats going on?!");
-            }
-        } else if (node instanceof SwitchA) {
-            SwitchA switchA = (SwitchA) node;
-            double vA = switchA.voltageCache;
-            double vB = switchA.getComplement().voltageCache;
-            return Math.abs((vA - vB) / switchA.getResistance());
-        } else if (node instanceof SwitchB) {
-            SwitchB switchB = (SwitchB) node;
-            double vA = switchB.voltageCache;
-            double vB = switchB.getComplement().voltageCache;
-            return Math.abs((vA - vB) / switchB.getResistance());
-        } else if (node instanceof VoltageSource) {
-            VoltageSource vs = (VoltageSource) node;
-            return Math.abs((vs.voltageCache - vs.getOutputVoltage()) / vs.getResistance());
-        }
-
-        return Double.NaN;
+    
+	/////////////////////////////////////////////////
+	/// Threading
+	/////////////////////////////////////////////////
+    public void suicide() {
+    	this.suicide = true;
+    	this.interrupt();
     }
+    
+    public boolean isWorking() {
+    	return this.processing;
+    }
+    
+    public void start(boolean needOptimize) {
+    	this.needOptimize = needOptimize;
+    	
+    	if (!this.isAlive())
+    		this.start();
+    	
+    	synchronized (this) {  
+    		this.notify();
+        }
+    }
+    
+    @Override
+    public void run() {
+        long startAt;
+        
+        while(true){  
+            try {
+                SELogger.logInfo(SELogger.simulator, this.getName() + " wake up");
 
+                processing = true;
+                SELogger.logInfo(SELogger.simulator, this.getName() + " Started");
+                startAt = System.currentTimeMillis();
+                this.runSimulator(this.needOptimize);
+                SELogger.logInfo(SELogger.simulator, this.getName() + " Done");
+                this.duration = System.currentTimeMillis() - startAt;
+
+                //Execute Handlers
+                Iterator<TileEntity> iterator = this.dataProvider.getLoadedTileIterator();
+                while (iterator.hasNext()) {
+                    TileEntity te = iterator.next();
+                    if (te instanceof ISEEnergyNetUpdateHandler)
+                        ((ISEEnergyNetUpdateHandler) te).onEnergyNetUpdate();
+                }
+                iterator = this.dataProvider.getLoadedGridTileIterator();
+                while (iterator.hasNext()) {
+                    TileEntity te = iterator.next();
+                    if (te instanceof ISEEnergyNetUpdateHandler)
+                        ((ISEEnergyNetUpdateHandler) te).onEnergyNetUpdate();
+                }
+
+                processing = false;
+                SELogger.logInfo(SELogger.simulator, this.getName() + " sleep");
+            	
+                synchronized (this) {  
+                    wait();  
+                }
+            } catch (InterruptedException e) {
+            	if (this.suicide) {
+                	SELogger.logInfo(SELogger.general, this.getName() + " is shutting down");
+            		return;
+            	}
+            	
+                e.printStackTrace();  
+            }  
+        }  
+        
+        
+    }
+    
     /**
      * @param voltages input, node voltage array from last iteration
      * @param currents output, return the new current mismatch
@@ -386,10 +449,11 @@ public class EnergyNetSimulator {
     }
 
     protected final void runSimulator(boolean optimizeGraph) {
+    	SEGraph circuit = dataProvider.getTEGraph();
         if (optimizeGraph)
-            this.dataProvider.getTEGraph().optimizGraph();
+        	circuit.optimizGraph();
 
-        LinkedList<SEComponent> unknownVoltageNodes = this.dataProvider.getTEGraph().getTerminalNodes();
+        LinkedList<SEComponent> unknownVoltageNodes = circuit.getTerminalNodes();
 
         int matrixSize = 0;
         Iterator<SEComponent> iterator = unknownVoltageNodes.iterator();
@@ -452,7 +516,7 @@ public class EnergyNetSimulator {
 
 
         //Update voltage cache
-        this.dataProvider.getTEGraph().clearVoltageCache();
+        circuit.clearVoltageCache();
         for (SEComponent node : unknownVoltageNodes) {
             node.voltageCache = voltages[node.index];
         }
