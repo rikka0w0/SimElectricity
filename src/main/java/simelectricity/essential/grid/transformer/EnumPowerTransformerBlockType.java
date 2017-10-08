@@ -6,7 +6,7 @@ import net.minecraft.util.math.Vec3i;
 
 import javax.annotation.Nonnull;
 
-public enum EnumBlockType implements IStringSerializable {
+public enum EnumPowerTransformerBlockType implements IStringSerializable {
     Casing(0, false, "casing", null),
     IronCore(1, false, "ironcore", null),
     Winding(2, false, "winding", null),
@@ -21,17 +21,17 @@ public enum EnumBlockType implements IStringSerializable {
     Placeholder(10, true, "placeholder", null),
     Render(11, true, "render", new Vec3i(3, 2, 2));                    //Render the structure
 
-    public static final PropertyEnum<EnumBlockType> property = PropertyEnum.create("blocktype", EnumBlockType.class);
+    public static final PropertyEnum<EnumPowerTransformerBlockType> property = PropertyEnum.create("blocktype", EnumPowerTransformerBlockType.class);
 
-    public static final EnumBlockType[] values = new EnumBlockType[12];
-    static final EnumBlockType[] rawStructure = new EnumBlockType[6];
-    static final EnumBlockType[] formedStructure = new EnumBlockType[6];
+    public static final EnumPowerTransformerBlockType[] values = new EnumPowerTransformerBlockType[12];
+    static final EnumPowerTransformerBlockType[] rawStructure = new EnumPowerTransformerBlockType[6];
+    static final EnumPowerTransformerBlockType[] formedStructure = new EnumPowerTransformerBlockType[6];
 
     static {
         int i = 0;
         int j = 0;
 
-        for (EnumBlockType value : EnumBlockType.values()) {
+        for (EnumPowerTransformerBlockType value : EnumPowerTransformerBlockType.values()) {
             if (value.formed) {
                 formedStructure[j] = value;
                 j++;
@@ -48,7 +48,7 @@ public enum EnumBlockType implements IStringSerializable {
     public final Vec3i offset;
     private final String name;
 
-    EnumBlockType(int index, boolean formed, String name, Vec3i offset) {
+    EnumPowerTransformerBlockType(int index, boolean formed, String name, Vec3i offset) {
         this.index = index;
         this.formed = formed;
         this.name = name;
@@ -66,7 +66,7 @@ public enum EnumBlockType implements IStringSerializable {
         return ret;
     }
 
-    public static EnumBlockType fromInt(int in) {
+    public static EnumPowerTransformerBlockType fromInt(int in) {
         if (in >= values.length || in < 0) {
             return null;
         }

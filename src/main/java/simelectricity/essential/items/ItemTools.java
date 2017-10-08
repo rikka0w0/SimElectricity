@@ -115,25 +115,29 @@ public class ItemTools extends ItemBase implements ISimpleTexture {
         TileEntity te = world.getTileEntity(pos);
         Block block = world.getBlockState(pos).getBlock();
         
-        if (te == null && !(block instanceof ISENodeDelegateBlock))
+        ISESimulatable delegatedNode = null;
+        if (block instanceof ISENodeDelegateBlock) {
+        	delegatedNode = ((ISENodeDelegateBlock) block).getNode(world, pos);
+        }
+        
+        if (!(	te instanceof ISECableTile ||
+        		te instanceof ISETile ||
+        		te instanceof ISETile) && delegatedNode == null)
             return EnumActionResult.PASS;
         
         Utils.chat(player, "------------------");
         
         if (block instanceof ISENodeDelegateBlock) {
-            ISESimulatable node = ((ISENodeDelegateBlock) block).getNode(world, pos);
-            if (node != null) {
-            	ItemTools.printVI(node, player);
+        	delegatedNode = ((ISENodeDelegateBlock) block).getNode(world, pos);
+            if (delegatedNode != null) {
+            	ItemTools.printVI(delegatedNode, player);
             }
         }
-        
-            
-        
-        Utils.chat(player, "------------------");
-        
+                
         if (te instanceof ISECableTile) {
             ISESimulatable node = ((ISECableTile) te).getNode();
-            ItemTools.printVI(node, player);
+            if (node != delegatedNode)
+            	ItemTools.printVI(node, player);
         }
         
         if (te instanceof ISETile) {
@@ -141,7 +145,7 @@ public class ItemTools extends ItemBase implements ISimpleTexture {
 
             for (EnumFacing dir : EnumFacing.VALUES) {
                 ISESubComponent comp = tile.getComponent(dir);
-                if (comp != null) {
+                if (comp != null && comp != delegatedNode) {
                     String[] temp = comp.toString().split("[.]");
                     Utils.chat(player, temp[temp.length - 1].split("@")[0] + ": " +
                             SEUnitHelper.getVoltageStringWithUnit(SEAPI.energyNetAgent.getVoltage(comp)));
@@ -152,7 +156,8 @@ public class ItemTools extends ItemBase implements ISimpleTexture {
         
         if (te instanceof ISEGridTile) {
             ISEGridNode node = ((ISEGridTile) te).getGridNode();
-            ItemTools.printVI(node, player);
+            if (node != delegatedNode)
+            	ItemTools.printVI(node, player);
         }
         
         return EnumActionResult.PASS;

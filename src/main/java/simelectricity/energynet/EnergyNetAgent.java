@@ -165,21 +165,29 @@ public class EnergyNetAgent implements IEnergyNetAgent {
         return EnergyNetAgent.getEnergyNetForWorld(world).isNodeValid(node);
     }
 
+    private boolean isInvalidTile(TileEntity te) {       
+        if (!(te instanceof ISETile || te instanceof ISECableTile || te instanceof ISEGridTile)){
+        	SELogger.logWarn(SELogger.energyNet, "Unknown tileentity " + te + ", aborted");
+        	return true;
+        }
+
+        if (te.getWorld().isRemote) {
+            SELogger.logWarn(SELogger.energyNet, "Client tileentity " + te + " is found, aborted");
+            throw new RuntimeException("Server-only API is called from client side!");
+        }
+        
+        return false;
+    }
 
     @Override
     public void attachTile(TileEntity te) {
-        if (te.getWorld().isRemote)
-            throw new RuntimeException("Server-only API is called from client side!");
-
         if (te.isInvalid()) {
             SELogger.logInfo(SELogger.energyNet, "Invalid tileentity " + te + " is trying to attach, aborted");
             return;
         }
-
-        if (te.getWorld().isRemote) {
-            SELogger.logInfo(SELogger.energyNet, "Client tileentity " + te + " is found, aborted");
-            return;
-        }
+    	
+        if (isInvalidTile(te))
+        	return;
 
         if (te instanceof ISETile || te instanceof ISECableTile) {
             SELogger.logInfo(SELogger.energyNet, "Tileentity " + te + " attached to the EnergyNet");
@@ -194,8 +202,8 @@ public class EnergyNetAgent implements IEnergyNetAgent {
 
     @Override
     public void updateTileParameter(TileEntity te) {
-        if (te.getWorld().isRemote)
-            throw new RuntimeException("Server-only API is called from client side!");
+        if (isInvalidTile(te))
+        	return;
         
         SELogger.logInfo(SELogger.energyNet, "Tileentity " + te + " requested for EnergyNet update");
         
@@ -204,8 +212,8 @@ public class EnergyNetAgent implements IEnergyNetAgent {
 
     @Override
     public void detachTile(TileEntity te) {
-        if (te.getWorld().isRemote)
-            throw new RuntimeException("Server-only API is called from client side!");
+        if (isInvalidTile(te))
+        	return;
 
         if (te instanceof ISEGridTile)
             SELogger.logInfo(SELogger.energyNet, "GridTile invalidated at " + te.getPos());
@@ -218,8 +226,8 @@ public class EnergyNetAgent implements IEnergyNetAgent {
 
     @Override
     public void updateTileConnection(TileEntity te) {
-        if (te.getWorld().isRemote)
-            throw new RuntimeException("Server-only API is called from client side!");
+        if (isInvalidTile(te))
+        	return;
         
         SELogger.logInfo(SELogger.energyNet, "Tileentity " + te + " updated its connection");
         

@@ -1,63 +1,35 @@
 package simelectricity.essential.grid.transformer;
 
-import java.util.LinkedList;
-import java.util.List;
-import javax.annotation.Nonnull;
-
-import net.minecraft.block.SoundType;
+import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.IProperty;
-import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import rikka.librikka.block.BlockBase;
-import rikka.librikka.block.ISubBlock;
-import rikka.librikka.item.ISimpleTexture;
-import rikka.librikka.item.ItemBlockBase;
 import rikka.librikka.multiblock.MultiBlockStructure;
-import rikka.librikka.multiblock.MultiBlockStructure.Result;
 import rikka.librikka.properties.Properties;
-import simelectricity.api.SEAPI;
 import simelectricity.api.tile.ISEGridTile;
 import simelectricity.essential.api.ISEHVCableConnector;
 import simelectricity.essential.grid.transformer.TilePowerTransformerPlaceHolder.Primary;
 import simelectricity.essential.grid.transformer.TilePowerTransformerPlaceHolder.Render;
 import simelectricity.essential.grid.transformer.TilePowerTransformerPlaceHolder.Secondary;
 
-public class BlockPowerTransformer extends BlockBase implements ISubBlock, ISimpleTexture, ISEHVCableConnector {
-    private static final String[] subNames = EnumBlockType.getRawStructureNames();
-    public final MultiBlockStructure structureTemplate;
+public class BlockPowerTransformer extends BlockAbstractTransformer implements ISEHVCableConnector {
+    private static final String[] subNames = EnumPowerTransformerBlockType.getRawStructureNames();
 
     public BlockPowerTransformer() {
-        super("essential_powertransformer", Material.IRON, ItemBlockBase.class);
-
-        this.structureTemplate = this.createStructureTemplate();
-
-        setCreativeTab(SEAPI.SETab);
-        setHardness(3.0F);
-        setResistance(10.0F);
-        setSoundType(SoundType.METAL);
+        super("essential_powertransformer", Material.IRON);
     }
 
     @Override
     public String[] getSubBlockUnlocalizedNames() {
-        return BlockPowerTransformer.subNames;
-    }
-
-    @Override
-    public String getIconName(int damage) {
-        return "powertransformer_" + BlockPowerTransformer.subNames[damage];
+        return this.subNames;
     }
 
     ///////////////////////////////
@@ -68,7 +40,7 @@ public class BlockPowerTransformer extends BlockBase implements ISubBlock, ISimp
 
     @Override
     public TileEntity createTileEntity(World world, IBlockState state) {
-        EnumBlockType blockType = state.getValue(EnumBlockType.property);
+        EnumPowerTransformerBlockType blockType = state.getValue(EnumPowerTransformerBlockType.property);
 
         if (!blockType.formed)
             return null;
@@ -90,124 +62,55 @@ public class BlockPowerTransformer extends BlockBase implements ISubBlock, ISimp
                 return null;
         }
     }
+
     ///////////////////////////////
     ///BlockStates
     ///////////////////////////////
-    public static final IProperty<Boolean> propertyMirrored = PropertyBool.create("mirrored");
-
     @Override
     protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer(this, EnumBlockType.property, Properties.facing2bit, propertyMirrored);
+        return new BlockStateContainer(this, EnumPowerTransformerBlockType.property, BlockHorizontal.FACING, Properties.propertyMirrored);
     }
-
+    
     @Override
     public IBlockState getStateFromMeta(int meta) {
-        return this.stateFromType(EnumBlockType.fromInt(meta));
+        return this.stateFromType(EnumPowerTransformerBlockType.fromInt(meta));
     }
 
     @Override
     public int getMetaFromState(IBlockState state) {
-        return state.getValue(EnumBlockType.property).index;
+        return state.getValue(EnumPowerTransformerBlockType.property).index;
     }
-
-    public IBlockState stateFromType(EnumBlockType blockType) {
-        return getDefaultState().withProperty(EnumBlockType.property, blockType);
-    }
-
-    @Override
-    public IBlockState getActualState(@Nonnull IBlockState state, IBlockAccess world, BlockPos pos) {
-        TileEntity te = world.getTileEntity(pos);
-        if (te instanceof Render) {
-            Render render = (Render) te;
-            EnumFacing facing = render.getFacing();
-            boolean mirrored = render.isMirrored();
-            if (facing == null) {
-                return state; //Prevent crashing!
-            }
-
-            state = state.withProperty(Properties.facing2bit, (facing.ordinal() - 2) & 3)
-                    .withProperty(propertyMirrored, mirrored);
-        }
-        return state;
-    }
-
-    ///////////////////////////////
-    /// Block activities
-    ///////////////////////////////
-    @Override
-    public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
-        if (world.isRemote)
-            return;
-
-        Result ret = this.structureTemplate.attempToBuild(world, pos);
-        if (ret != null) {
-            ret.createStructure();
-        }
-        return;
-    }
-
-    @Override
-    public void breakBlock(@Nonnull World world, @Nonnull BlockPos pos, @Nonnull IBlockState state) {
-        TileEntity te = world.getTileEntity(pos);
-        if (te != null) {
-            this.structureTemplate.restoreStructure(te, state, true);
-        }
-
-        super.breakBlock(world, pos, state);
-    }
-
-    @Override
-    public int damageDropped(IBlockState state) {
-        EnumBlockType blockType = state.getValue(EnumBlockType.property);
-
-        if (blockType.formed)
-            return 0;
-
-        return this.getMetaFromState(state);
-    }
-
-    @Override
-    public List<ItemStack> getDrops(IBlockAccess world, BlockPos pos, IBlockState state, int fortune) {
-    	EnumBlockType blockType = state.getValue(EnumBlockType.property);
-    	if (blockType.formed)
-    	    return new LinkedList<ItemStack>();
-
-    	return super.getDrops(world, pos, state, fortune);
+       
+    public IBlockState stateFromType(EnumPowerTransformerBlockType blockType) {
+        return getDefaultState().withProperty(EnumPowerTransformerBlockType.property, blockType);
     }
     
-    /**
-     * Creative-mode middle mouse button clicks
-     */
-    @Override
-    public ItemStack getItem(World world, BlockPos pos, IBlockState state) {
-        EnumBlockType blockType = state.getValue(EnumBlockType.property);
+	@Override
+	protected ItemStack getItemToDrop(IBlockState state) {
+        EnumPowerTransformerBlockType blockType = state.getValue(EnumPowerTransformerBlockType.property);
 
         if (blockType.formed)
         	return ItemStack.EMPTY;
             
-        return new ItemStack(this.itemBlock, 1, this.damageDropped(state));
-    }
-
+        return new ItemStack(this.itemBlock, 1, this.getMetaFromState(state));
+	}
+    
     @Override
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
-        return false;
-    }
-
-    public MultiBlockStructure createStructureTemplate() {
+    protected MultiBlockStructure createStructureTemplate() {
         //y,z,x facing NORTH(Z-), do not change
         MultiBlockStructure.BlockInfo[][][] configuration = new MultiBlockStructure.BlockInfo[5][][];
 
-        MultiBlockStructure.BlockInfo core2PH = new MultiBlockStructure.BlockInfo(stateFromType(EnumBlockType.IronCore), stateFromType(EnumBlockType.Placeholder));
-        MultiBlockStructure.BlockInfo coil2PH = new MultiBlockStructure.BlockInfo(stateFromType(EnumBlockType.Winding), stateFromType(EnumBlockType.Placeholder));
-        MultiBlockStructure.BlockInfo support2PH = new MultiBlockStructure.BlockInfo(stateFromType(EnumBlockType.OilTankSupport), stateFromType(EnumBlockType.Placeholder));
-        MultiBlockStructure.BlockInfo pipe2PH = new MultiBlockStructure.BlockInfo(stateFromType(EnumBlockType.OilPipe), stateFromType(EnumBlockType.Placeholder));
-        MultiBlockStructure.BlockInfo tank2PH = new MultiBlockStructure.BlockInfo(stateFromType(EnumBlockType.OilTank), stateFromType(EnumBlockType.Placeholder));
-        MultiBlockStructure.BlockInfo casing2PH = new MultiBlockStructure.BlockInfo(stateFromType(EnumBlockType.Casing), stateFromType(EnumBlockType.Placeholder));
-        MultiBlockStructure.BlockInfo casing2PHpri = new MultiBlockStructure.BlockInfo(stateFromType(EnumBlockType.Casing), stateFromType(EnumBlockType.PlaceholderPrimary));
-        MultiBlockStructure.BlockInfo casing2PHsec = new MultiBlockStructure.BlockInfo(stateFromType(EnumBlockType.Casing), stateFromType(EnumBlockType.PlaceholderSecondary));
-        MultiBlockStructure.BlockInfo casing2pri = new MultiBlockStructure.BlockInfo(stateFromType(EnumBlockType.Casing), stateFromType(EnumBlockType.Primary));
-        MultiBlockStructure.BlockInfo casing2sec = new MultiBlockStructure.BlockInfo(stateFromType(EnumBlockType.Casing), stateFromType(EnumBlockType.Secondary));
-        MultiBlockStructure.BlockInfo casing2render = new MultiBlockStructure.BlockInfo(stateFromType(EnumBlockType.Casing), stateFromType(EnumBlockType.Render));
+        MultiBlockStructure.BlockInfo core2PH = new MultiBlockStructure.BlockInfo(stateFromType(EnumPowerTransformerBlockType.IronCore), stateFromType(EnumPowerTransformerBlockType.Placeholder));
+        MultiBlockStructure.BlockInfo coil2PH = new MultiBlockStructure.BlockInfo(stateFromType(EnumPowerTransformerBlockType.Winding), stateFromType(EnumPowerTransformerBlockType.Placeholder));
+        MultiBlockStructure.BlockInfo support2PH = new MultiBlockStructure.BlockInfo(stateFromType(EnumPowerTransformerBlockType.OilTankSupport), stateFromType(EnumPowerTransformerBlockType.Placeholder));
+        MultiBlockStructure.BlockInfo pipe2PH = new MultiBlockStructure.BlockInfo(stateFromType(EnumPowerTransformerBlockType.OilPipe), stateFromType(EnumPowerTransformerBlockType.Placeholder));
+        MultiBlockStructure.BlockInfo tank2PH = new MultiBlockStructure.BlockInfo(stateFromType(EnumPowerTransformerBlockType.OilTank), stateFromType(EnumPowerTransformerBlockType.Placeholder));
+        MultiBlockStructure.BlockInfo casing2PH = new MultiBlockStructure.BlockInfo(stateFromType(EnumPowerTransformerBlockType.Casing), stateFromType(EnumPowerTransformerBlockType.Placeholder));
+        MultiBlockStructure.BlockInfo casing2PHpri = new MultiBlockStructure.BlockInfo(stateFromType(EnumPowerTransformerBlockType.Casing), stateFromType(EnumPowerTransformerBlockType.PlaceholderPrimary));
+        MultiBlockStructure.BlockInfo casing2PHsec = new MultiBlockStructure.BlockInfo(stateFromType(EnumPowerTransformerBlockType.Casing), stateFromType(EnumPowerTransformerBlockType.PlaceholderSecondary));
+        MultiBlockStructure.BlockInfo casing2pri = new MultiBlockStructure.BlockInfo(stateFromType(EnumPowerTransformerBlockType.Casing), stateFromType(EnumPowerTransformerBlockType.Primary));
+        MultiBlockStructure.BlockInfo casing2sec = new MultiBlockStructure.BlockInfo(stateFromType(EnumPowerTransformerBlockType.Casing), stateFromType(EnumPowerTransformerBlockType.Secondary));
+        MultiBlockStructure.BlockInfo casing2render = new MultiBlockStructure.BlockInfo(stateFromType(EnumPowerTransformerBlockType.Casing), stateFromType(EnumPowerTransformerBlockType.Render));
 
 
         //  .-->x+ (East)
@@ -281,7 +184,7 @@ public class BlockPowerTransformer extends BlockBase implements ISubBlock, ISimp
     @Override
     @SideOnly(Side.CLIENT)
     public boolean shouldSideBeRendered(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side) {
-        EnumBlockType blockType = blockState.getValue(EnumBlockType.property);
+        EnumPowerTransformerBlockType blockType = blockState.getValue(EnumPowerTransformerBlockType.property);
         return !blockType.formed;
         //return true;
     }

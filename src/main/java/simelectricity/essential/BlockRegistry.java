@@ -9,7 +9,9 @@ import simelectricity.essential.cable.TileCable;
 import simelectricity.essential.grid.*;
 import simelectricity.essential.grid.TilePowerPole3.Pole10Kv;
 import simelectricity.essential.grid.TilePowerPole3.Pole415vType0;
+import simelectricity.essential.grid.transformer.BlockDistributionTransformer;
 import simelectricity.essential.grid.transformer.BlockPowerTransformer;
+import simelectricity.essential.grid.transformer.TileDistributionTransformerPole;
 import simelectricity.essential.grid.transformer.TilePowerTransformerPlaceHolder;
 import simelectricity.essential.grid.transformer.TilePowerTransformerPlaceHolder.Render;
 import simelectricity.essential.grid.transformer.TilePowerTransformerWinding.Primary;
@@ -29,6 +31,7 @@ public class BlockRegistry {
     public static BlockPowerPole2 powerPole2;
     public static BlockPowerPole3 powerPole3;
     public static BlockPowerTransformer powerTransformer;
+    public static BlockDistributionTransformer distributionTransformer;
 
     public static BlockElectronics blockElectronics;
     public static BlockTwoPortElectronics blockTwoPortElectronics;
@@ -43,6 +46,7 @@ public class BlockRegistry {
         BlockRegistry.powerPole2 = new BlockPowerPole2();
         BlockRegistry.powerPole3 = new BlockPowerPole3();
         BlockRegistry.powerTransformer = new BlockPowerTransformer();
+        BlockRegistry.distributionTransformer = new BlockDistributionTransformer();
 
         BlockRegistry.blockElectronics = new BlockElectronics();
         BlockRegistry.blockTwoPortElectronics = new BlockTwoPortElectronics();
@@ -59,6 +63,7 @@ public class BlockRegistry {
     			powerPole2,
     			powerPole3,
     			powerTransformer,
+    			distributionTransformer,
     			
     			blockElectronics,
     			blockTwoPortElectronics
@@ -79,6 +84,7 @@ public class BlockRegistry {
         registerTile(Pole10Kv.Type0.class);
         registerTile(Pole10Kv.Type1.class);
         registerTile(Pole415vType0.class);
+        registerTile(TileDistributionTransformerPole.class);
 
         registerTile(TileVoltageMeter.class);
         registerTile(TileQuantumGenerator.class);

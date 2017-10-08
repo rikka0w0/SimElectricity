@@ -1,120 +1,15 @@
 package simelectricity.essential.grid.transformer;
 
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-import rikka.librikka.Utils;
-import rikka.librikka.multiblock.MultiBlockTileInfo;
 import simelectricity.api.SEAPI;
-import simelectricity.api.node.ISEGridNode;
-import simelectricity.api.node.ISESimulatable;
-import simelectricity.api.tile.ISEGridTile;
-import simelectricity.essential.client.grid.ISEPowerPole;
 import simelectricity.essential.client.grid.PowerPoleRenderHelper;
 
-public abstract class TilePowerTransformerWinding extends TilePowerTransformer implements ISEGridTile, ISEPowerPole {
-    @SideOnly(Side.CLIENT)
-    protected EnumFacing facing;
-    @SideOnly(Side.CLIENT)
-    protected boolean mirrored;
-    @SideOnly(Side.CLIENT)
-    protected PowerPoleRenderHelper renderHelper;
-    protected BlockPos neighbor;
-    //////////////////////////////
-    /////ISEGridTile
-    //////////////////////////////
-    private ISEGridNode gridNode;
-    
-    @Override
-    public ISEGridNode getGridNode() {
-        return this.gridNode;
-    }
-
-    @Override
-    public void setGridNode(ISEGridNode gridObj) {
-        gridNode = gridObj;
-    }
-
-    @Override
-    public void onGridNeighborUpdated() {
-        neighbor = null;
-        f:
-        for (ISESimulatable neighbor : this.gridNode.getNeighborList()) {
-            if (neighbor instanceof ISEGridNode) {
-                ISEGridNode gridNode = (ISEGridNode) neighbor;
-                this.neighbor = gridNode.getPos().toImmutable();
-                break f;
-            }
-        }
-
-        markTileEntityForS2CSync();
-    }
-
-	@Override
-	public boolean canConnect(BlockPos toPos) {
-        return this.neighbor == null;
-    }
-	
-    //////////////////////////////
-    /////TileEntity
-    //////////////////////////////
-    @SideOnly(Side.CLIENT)
-    @Override
-    public double getMaxRenderDistanceSquared() {
-        return 100000;
-    }
-
-    @SideOnly(Side.CLIENT)
-    @Override
-    public AxisAlignedBB getRenderBoundingBox() {
-        return TileEntity.INFINITE_EXTENT_AABB;
-    }
-
-    /////////////////////////////////////////////////////////
-    ///Sync
-    /////////////////////////////////////////////////////////
-    @Override
-    public void prepareS2CPacketData(NBTTagCompound nbt) {
-        Utils.saveToNbt(nbt, "neighbor", this.neighbor);
-        Utils.saveToNbt(nbt, "facing", this.mbInfo.facing);
-        nbt.setBoolean("mirrored", this.mbInfo.mirrored);
-    }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public void onSyncDataFromServerArrived(NBTTagCompound nbt) {
-        neighbor = Utils.posFromNbt(nbt, "neighbor");
-        facing = Utils.facingFromNbt(nbt, "facing");
-        mirrored = nbt.getBoolean("mirrored");
-
-        if (this.renderHelper == null)
-            this.renderHelper = this.createRenderHelper();
-
-        PowerPoleRenderHelper.notifyChanged(this);
-        //this.updateRenderInfo();
-
-        if (this.neighbor != null) {
-            TileEntity neighborTile = this.world.getTileEntity(neighbor);
-            if (neighborTile instanceof ISEPowerPole)
-                PowerPoleRenderHelper.notifyChanged((ISEPowerPole) neighborTile);
-            //((ISEPowerPole)neighborTile).updateRenderInfo();
-        }
-
-        super.onSyncDataFromServerArrived(nbt);
-    }
-
+public abstract class TilePowerTransformerWinding extends SEMultiBlockGridTile{
     //////////////////////////////
     /////IMultiBlockTile
     //////////////////////////////
     @Override
-    public void onStructureCreating(MultiBlockTileInfo mbInfo) {
-        this.mbInfo = mbInfo;
-        markDirty();
-
+    public void onStructureCreating() {
         gridNode = SEAPI.energyNetAgent.newGridNode(this.pos, 3);
         SEAPI.energyNetAgent.attachGridNode(this.world, this.gridNode);
     }
@@ -128,29 +23,10 @@ public abstract class TilePowerTransformerWinding extends TilePowerTransformer i
         SEAPI.energyNetAgent.detachGridNode(this.world, this.gridNode);
     }
 
-    /////////////////////////////////////////////////////////
-    ///ITransmissionTower
-    /////////////////////////////////////////////////////////
-    @Override
-    @SideOnly(Side.CLIENT)
-    public PowerPoleRenderHelper getRenderHelper() {
-        return this.renderHelper;
-    }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public void updateRenderInfo() {
-        this.renderHelper.updateRenderData(this.neighbor);
-    }
-
-    @SideOnly(Side.CLIENT)
-    protected abstract PowerPoleRenderHelper createRenderHelper();
-
     public static class Primary extends TilePowerTransformerWinding {
         @Override
         public void onStructureCreated() {
-            super.onStructureCreated();
-            BlockPos pos = this.mbInfo.getPartPos(EnumBlockType.Secondary.offset);
+            BlockPos pos = this.mbInfo.getPartPos(EnumPowerTransformerBlockType.Secondary.offset);
             TilePowerTransformerWinding.Secondary secondaryTile = (TilePowerTransformerWinding.Secondary) this.world.getTileEntity(pos);
             SEAPI.energyNetAgent.makeTransformer(this.world, getGridNode(), secondaryTile.getGridNode(), 1, 1 / 3.5);
         }

@@ -11,7 +11,7 @@ import simelectricity.essential.client.cable.CableStateMapper;
 import simelectricity.essential.client.coverpanel.SupportRender;
 import simelectricity.essential.client.grid.GridStateMapper;
 import simelectricity.essential.client.grid.TileRenderPowerPole;
-import simelectricity.essential.client.grid.transformer.PowerTransformerStateMapper;
+import simelectricity.essential.client.grid.transformer.TransformerStateMapper;
 import simelectricity.essential.client.semachine.SEMachineStateMapper;
 import simelectricity.essential.client.semachine.SocketRender;
 import simelectricity.essential.grid.TileCableJoint;
@@ -56,9 +56,10 @@ public class ClientRegistrationHandler {
         loader.registerInventoryIcon(BlockRegistry.powerPole2.itemBlock);
         gStateMapper.register(BlockRegistry.powerPole3);
 
-        PowerTransformerStateMapper ptStateMapper = new PowerTransformerStateMapper(Essential.MODID);
-        loader.registerModelLoader(ptStateMapper);
-        ptStateMapper.register(BlockRegistry.powerTransformer);
+        TransformerStateMapper transformerStateMapper = new TransformerStateMapper(Essential.MODID);
+        loader.registerModelLoader(transformerStateMapper);
+        transformerStateMapper.register(BlockRegistry.powerTransformer);
+        transformerStateMapper.register(BlockRegistry.distributionTransformer);
 	}
 	
     @SubscribeEvent

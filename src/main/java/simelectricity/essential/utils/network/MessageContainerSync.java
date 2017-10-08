@@ -24,7 +24,6 @@ public class MessageContainerSync implements IMessage {
     private static final byte TYPE_ENUMFACING = 3;
     private static final byte TYPE_BOOLEAN = 4;
     //MessageData
-    private boolean toServer;
     private int windowID;
     private Object[] data;
 
@@ -33,13 +32,11 @@ public class MessageContainerSync implements IMessage {
 
     @SideOnly(Side.CLIENT)
     private MessageContainerSync(int windowID, Object[] data) {
-        toServer = true;
         this.windowID = windowID;
         this.data = data;
     }
 
     private MessageContainerSync(Object[] data) {
-        toServer = false;
         windowID = -1;
         this.data = data;
     }
@@ -67,7 +64,6 @@ public class MessageContainerSync implements IMessage {
 
     @Override
     public void toBytes(ByteBuf buf) {
-        buf.writeBoolean(this.toServer);
         buf.writeInt(this.windowID);
         buf.writeByte(this.data.length);
 
@@ -93,7 +89,6 @@ public class MessageContainerSync implements IMessage {
 
     @Override
     public void fromBytes(ByteBuf buf) {
-        this.toServer = buf.readBoolean();
         this.windowID = buf.readInt();
         int length = buf.readByte();
         this.data = new Object[length];

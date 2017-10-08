@@ -5,6 +5,8 @@ import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.EnumFacing;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import rikka.librikka.model.codebased.BlockRenderModel;
 import simelectricity.essential.client.grid.pole.Models;
 import simelectricity.essential.utils.client.SERenderHeap;
@@ -13,6 +15,7 @@ import simelectricity.essential.utils.client.SERenderHelper;
 import java.util.LinkedList;
 import java.util.List;
 
+@SideOnly(Side.CLIENT)
 public class PowerTransformerModel extends BlockRenderModel {
     public static final int[] rotationMatrix = {4, 0, 6, 2};    //NSWE
     private final int rotation;

@@ -10,6 +10,7 @@ import java.util.ListIterator;
 
 /**
  * A bridging class between EnergyNet and CSprase lib
+ * Sparse matrix format: http://www.cs.colostate.edu/~mcrob/toolbox/c++/sparseMatrix/sparse_matrix_compression.html
  */
 public class QR implements IMatrixSolver {
     public static final double EPSILON = 1e-10;
