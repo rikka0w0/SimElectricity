@@ -14,25 +14,28 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import rikka.librikka.math.Vec3f;
 import rikka.librikka.model.codebased.CodeBasedModel;
 import rikka.librikka.model.quadbuilder.RawQuadCube;
 import rikka.librikka.model.quadbuilder.RawQuadGroup;
-import simelectricity.essential.grid.transformer.EnumDistributionTransformerBlockType;
+import simelectricity.essential.client.grid.TransmissionLineGLRender;
+import simelectricity.essential.client.grid.pole.Models;
+import simelectricity.essential.grid.transformer.EnumDistributionTransformerRenderPart;
 
 @SideOnly(Side.CLIENT)
 public class DistributionTransformerFormedModel extends CodeBasedModel {
 	private final LinkedList<BakedQuad> quads = new LinkedList();
     private final Set<ResourceLocation> textures = Sets.newHashSet();
 	
-    private final EnumDistributionTransformerBlockType blockType;
+    private final EnumDistributionTransformerRenderPart part;
     private final int rotation;
     private final boolean mirrored;
     private final ResourceLocation textureMetalLoc, textureInsulatorLoc, textureConcreteLoc;
     private TextureAtlasSprite textureMetal, textureInsulator, textureConcrete;
 	
-	public DistributionTransformerFormedModel(EnumDistributionTransformerBlockType blockType, int facing, boolean mirrored) {
-		this.blockType = blockType;
-		this.rotation = facing * 90 - 90;
+	public DistributionTransformerFormedModel(EnumDistributionTransformerRenderPart part, int facing, boolean mirrored) {
+		this.part = part;
+		this.rotation = PowerTransformerModel.rotationMatrix[facing] * 45 - 90;
         this.mirrored = mirrored;
 		
         //Custom texture
@@ -59,29 +62,106 @@ public class DistributionTransformerFormedModel extends CodeBasedModel {
 		
 		quads.clear();
 		
+		RawQuadGroup insulator = null;
 		RawQuadGroup model = new RawQuadGroup();
-		switch (blockType) {
-		case PlaceHolder:
+		switch (part) {
+		case AuxLeft:
+			insulator = Models.render10kVInsulatorSmall(textureMetal, textureInsulator);
+			model.merge(insulator.clone().translateCoord(-0.425F, 0.6F, 0.15F));
+			model.merge(insulator.clone().translateCoord(-0.775F, 0.6F, 0.15F));
+			model.merge(insulator.clone().translateCoord(-1.125F, 0.6F, 0.15F));
+            model.add((new RawQuadCube(1.5F, 0.1F, 0.05F, textureMetal)).translateCoord(-0.625F, 0.5F, 0.15F));
+            
+            model.add((new RawQuadCube(0.05F, 0.1F, 1.625F, textureMetal)).translateCoord(0.15F, 0.75F, 0.6875F));
+
+			insulator = Models.render415VInsulator(textureMetal, textureInsulator);
+			insulator.rotateAroundZ(-90);
+			model.merge(insulator.clone().translateCoord(0.15F, 0.76F, 1.175F));
+			model.merge(insulator.clone().translateCoord(0.15F, 0.76F, 0.675F));
+            
+            model.add(new RawQuadCube(0.25F, 1, 0.25F, textureConcrete));
 			break;
-		case Pole10kV:
+		case AuxMiddle:
+			insulator = Models.render10kVInsulatorSmall(textureMetal, textureInsulator);
+			model.merge(insulator.clone().translateCoord(-0.425F, 0.6F, -0.15F));
+			model.merge(insulator.clone().translateCoord(-0.775F, 0.6F, -0.15F));
+			model.merge(insulator.clone().translateCoord(-1.125F, 0.6F, -0.15F));
+            model.add((new RawQuadCube(1.5F, 0.1F, 0.05F, textureMetal)).translateCoord(-0.625F, 0.5F, -0.15F));
+            
+            model.add((new RawQuadCube(0.05F, 0.1F, 1.625F, textureMetal)).translateCoord(0.15F, 0.75F, -0.6875F));
+            
+			insulator = Models.render415VInsulator(textureMetal, textureInsulator);
+			insulator.rotateAroundZ(-90);
+			model.merge(insulator.clone().translateCoord(0.15F, 0.76F, -1.175F));
+			model.merge(insulator.clone().translateCoord(0.15F, 0.76F, -0.675F));
+            
+            model.add(new RawQuadCube(0.25F, 1, 0.25F, textureConcrete));
 			break;
-		case Pole10kVAux:
+		case AuxRight:
+			insulator = Models.render10kVInsulatorSmall(textureMetal, textureInsulator);
+			model.merge(insulator.clone().translateCoord(-0.425F, 0.6F, -0.15F));
+			model.merge(insulator.clone().translateCoord(-0.775F, 0.6F, -0.15F));
+			model.merge(insulator.clone().translateCoord(-1.125F, 0.6F, -0.15F));
+			
+            model.add((new RawQuadCube(1.5F, 0.1F, 0.05F, textureMetal)).translateCoord(-0.625F, 0.5F, 0.15F));
+            model.add((new RawQuadCube(1.5F, 0.1F, 0.05F, textureMetal)).translateCoord(-0.625F, 0.5F, -0.15F));
+            model.add((new RawQuadCube(0.05F, 0.1F, 1.4F, textureMetal)).translateCoord(-1.4F, 0.5F, 0));
+
+			insulator.rotateAroundZ(90);
+			model.merge(insulator.clone().translateCoord(-1.4F, 0.55F, 0.65F));
+			model.merge(insulator.clone().translateCoord(-1.4F, 0.55F, 0));
+			model.merge(insulator.clone().translateCoord(-1.4F, 0.55F, -0.65F));
+			
+            model.add(new RawQuadCube(0.25F, 1, 0.25F, textureConcrete));
 			break;
-		case Pole10kVNormal:
+			
+		case Pole10kVLeft:
+			insulator = Models.render10kVInsulator(textureMetal, textureInsulator);
+            model.add(new RawQuadCube(0.15F, 0.1F, 1.6F, textureMetal));
+            model.merge(insulator.clone().translateCoord(0, 0.05F, -0.74F));
+            model.merge(insulator.clone().translateCoord(0, 0.05F, 0.74F));
+            model.merge(insulator.clone().translateCoord(0, 1F, 0));
+            model.add(new RawQuadCube(0.25F, 1, 0.25F, textureConcrete));
+            model.rotateAroundY(90);
 			break;
-		case Pole10kVSpec:
+			
+		case Pole10kVRight:		
+            insulator = Models.render10kVInsulator(textureMetal, textureInsulator);
+            model.add(new RawQuadCube(0.15F, 0.1F, 1.6F, textureMetal));
+            model.merge(insulator.clone().translateCoord(0, 0.05F, -0.74F));
+            model.merge(insulator.clone().translateCoord(0, 0.05F, 0.74F));
+            model.merge(insulator.clone().translateCoord(0, 1F, 0));
+            model.add(new RawQuadCube(0.25F, 1, 0.25F, textureConcrete));
+            model.rotateAroundY(90);
+            
+			insulator = Models.render10kVInsulatorSmall(textureMetal, textureInsulator);
+			insulator.rotateAroundZ(90);
+			model.merge(insulator.clone().translateCoord(-1.4F, -0.2F, 0.65F));
+			model.merge(insulator.clone().translateCoord(-1.4F, -0.2F, 0));
+			model.merge(insulator.clone().translateCoord(-1.4F, -0.2F, -0.65F));
+            
+            model.add((new RawQuadCube(1.5F, 0.1F, 0.05F, textureMetal)).translateCoord(-0.625F, -0.25F, 0.15F));
+            model.add((new RawQuadCube(1.5F, 0.1F, 0.05F, textureMetal)).translateCoord(-0.625F, -0.25F, -0.15F));
+            model.add((new RawQuadCube(0.05F, 0.1F, 1.4F, textureMetal)).translateCoord(-1.4F, -0.25F, 0));
 			break;
-		case Pole415V:
-			model.add(new RawQuadCube(0.15F, 0.08F, 1.6F, textureMetal).translateCoord(0, 0.05F, 0));
+			
+		case Pole415VLeft:
+		case Pole415VRight:
+            insulator = Models.render415VInsulator(textureMetal, textureInsulator);
+            model.add(new RawQuadCube(0.15F, 0.1F, 1.94F, textureMetal));
+            model.merge(insulator.clone().translateCoord(0, 0.05F, -0.9F));
+            model.merge(insulator.clone().translateCoord(0, 0.05F, -0.45F));
+            model.merge(insulator.clone().translateCoord(0, 0.05F, 0.45F));
+            model.merge(insulator.clone().translateCoord(0, 0.05F, 0.9F));
+            model.add(new RawQuadCube(0.25F, 1, 0.25F, textureConcrete));
+            model.rotateAroundY(90);
 			break;
-		case Pole415VNormal:
+			
+		case TransformerLeft:
 			break;
-		case Primary10kV:
+		case TransformerRight:
 			break;
-		case Secondary415V:
-			break;
-		case Transformer:
-			break;
+			
 		default:
 			break;
 		}

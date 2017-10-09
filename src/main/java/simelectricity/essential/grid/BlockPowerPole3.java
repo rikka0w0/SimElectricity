@@ -27,6 +27,7 @@ import rikka.librikka.item.ItemBlockBase;
 import rikka.librikka.properties.Properties;
 import rikka.librikka.properties.UnlistedPropertyRef;
 import simelectricity.api.SEAPI;
+import simelectricity.api.node.ISEGridNode;
 import simelectricity.api.tile.ISEGridTile;
 import simelectricity.essential.api.ISEHVCableConnector;
 import simelectricity.essential.client.grid.ISEPowerPole;
@@ -58,7 +59,8 @@ public class BlockPowerPole3 extends BlockBase implements ISubBlock, ISEHVCableC
     public boolean canPlaceBlockAt(World world, BlockPos pos) {
         IBlockState blockState = world.getBlockState(pos.down());
 
-        return blockState.getBlock() == this || blockState.isSideSolid(world, pos.down(), EnumFacing.UP);
+        boolean flg = blockState.getBlock() == this || blockState.isSideSolid(world, pos.down(), EnumFacing.UP);
+        return flg;
     }
 
     ///////////////////////////////
@@ -165,8 +167,11 @@ public class BlockPowerPole3 extends BlockBase implements ISubBlock, ISEHVCableC
     @Override
     public void breakBlock(World world, BlockPos pos, IBlockState state) {
         TileEntity te = world.getTileEntity(pos);    //Do this before the tileEntity is removed!
-        if (te instanceof ISEGridTile)
-            SEAPI.energyNetAgent.detachGridNode(world, ((ISEGridTile) te).getGridNode());
+        if (te instanceof ISEGridTile) {
+        	ISEGridNode node = ((ISEGridTile) te).getGridNode();
+        	if (node != null)
+                SEAPI.energyNetAgent.detachGridNode(world, node);
+        }
 
         super.breakBlock(world, pos, state);
     }

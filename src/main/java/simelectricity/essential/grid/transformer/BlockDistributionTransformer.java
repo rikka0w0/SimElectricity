@@ -1,14 +1,22 @@
 package simelectricity.essential.grid.transformer;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import rikka.librikka.multiblock.IMultiBlockTile;
 import rikka.librikka.multiblock.MultiBlockStructure;
+import rikka.librikka.multiblock.MultiBlockTileInfo;
 import rikka.librikka.properties.Properties;
+import simelectricity.essential.BlockRegistry;
+import simelectricity.essential.grid.EnumBlockTypePole3;
 
 public class BlockDistributionTransformer extends BlockAbstractTransformer{
 	private static final String[] subNames = EnumDistributionTransformerBlockType.getRawStructureNames();	
@@ -54,7 +62,10 @@ public class BlockDistributionTransformer extends BlockAbstractTransformer{
     ///////////////////////////////
     @Override
     protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer(this, EnumDistributionTransformerBlockType.property, BlockHorizontal.FACING, Properties.propertyMirrored);
+        return new BlockStateContainer(this, 
+        		EnumDistributionTransformerBlockType.property, 
+        		EnumDistributionTransformerRenderPart.property, 
+        		BlockHorizontal.FACING, Properties.propertyMirrored);
     }
 
     @Override
@@ -71,6 +82,23 @@ public class BlockDistributionTransformer extends BlockAbstractTransformer{
         return getDefaultState().withProperty(EnumDistributionTransformerBlockType.property, blockType);
     }
     
+    @Override
+    public IBlockState getActualState(@Nonnull IBlockState state, IBlockAccess world, BlockPos pos) {
+    	state = super.getActualState(state, world, pos);
+    	
+    	if (state.getValue(EnumDistributionTransformerBlockType.property).formed) {
+    		TileEntity te = world.getTileEntity(pos);
+    		if (te instanceof IMultiBlockTile) {
+    			EnumDistributionTransformerRenderPart renderPart = MultiBlockTileInfo.lookup((IMultiBlockTile)te, renderParts);
+    			if (renderPart == null)
+    		    	return state;
+    			
+    			state = state.withProperty(EnumDistributionTransformerRenderPart.property, renderPart);
+    		}
+    	}
+    	
+    	return state;
+    }
     
     @Override
 	protected ItemStack getItemToDrop(IBlockState state) {
@@ -82,6 +110,12 @@ public class BlockDistributionTransformer extends BlockAbstractTransformer{
         return new ItemStack(this.itemBlock, 1, this.getMetaFromState(state));
     }
     
+   
+    ///////////////////////////////
+    /// MultiBlock
+    ///////////////////////////////
+    private EnumDistributionTransformerRenderPart[][][] renderParts;
+    
     private MultiBlockStructure.BlockInfo createBlockMapping(EnumDistributionTransformerBlockType in, EnumDistributionTransformerBlockType out) {
     	return new MultiBlockStructure.BlockInfo(stateFromType(in), stateFromType(out));
     }
@@ -92,6 +126,8 @@ public class BlockDistributionTransformer extends BlockAbstractTransformer{
         MultiBlockStructure.BlockInfo[][][] configuration = new MultiBlockStructure.BlockInfo[7][][];
         
         MultiBlockStructure.BlockInfo a = createBlockMapping(EnumDistributionTransformerBlockType.Pole10kVNormal, EnumDistributionTransformerBlockType.Pole10kV);
+//        MultiBlockStructure.BlockInfo a = new MultiBlockStructure.BlockInfo(BlockRegistry.powerPole3.getStateFromMeta(EnumBlockTypePole3.Crossarm10kVT1.ordinal()),
+//        																	stateFromType(EnumDistributionTransformerBlockType.Pole10kV));
         MultiBlockStructure.BlockInfo b = createBlockMapping(EnumDistributionTransformerBlockType.Pole10kVSpec, EnumDistributionTransformerBlockType.Primary10kV);
         MultiBlockStructure.BlockInfo c = createBlockMapping(EnumDistributionTransformerBlockType.Pole10kVAux, EnumDistributionTransformerBlockType.PlaceHolder);
     	
@@ -131,6 +167,43 @@ public class BlockDistributionTransformer extends BlockAbstractTransformer{
         configuration[6] = new MultiBlockStructure.BlockInfo[][]{
         	{a   , null, null, null, null, b}
         };
+        
+        
+        
+        //  .-->x+ (East)
+        //  |                           Facing/Looking at North(x-)
+        // \|/
+        //  z+ (South)      
+        renderParts = new EnumDistributionTransformerRenderPart[7][][]; 
+        renderParts[0] = new EnumDistributionTransformerRenderPart[][]{
+        	{null, EnumDistributionTransformerRenderPart.TransformerLeft, EnumDistributionTransformerRenderPart.TransformerRight   , null, null, null}
+        };
+        
+        renderParts[1] = new EnumDistributionTransformerRenderPart[][]{
+        	{null, null, null, null, null, null}
+        };
+        
+        renderParts[2] = new EnumDistributionTransformerRenderPart[][]{
+        	{EnumDistributionTransformerRenderPart.AuxLeft, null, null,EnumDistributionTransformerRenderPart.AuxMiddle, null, EnumDistributionTransformerRenderPart.AuxLeft.AuxRight}
+        };
+        
+        renderParts[3] = new EnumDistributionTransformerRenderPart[][]{
+        	{null, null, null, null, null, null}
+        };
+        
+        renderParts[4] = new EnumDistributionTransformerRenderPart[][]{
+        	{EnumDistributionTransformerRenderPart.Pole415VLeft   , null, null, null, null, EnumDistributionTransformerRenderPart.Pole415VRight}
+        };
+        
+        renderParts[5] = new EnumDistributionTransformerRenderPart[][]{
+        	{null, null, null, null, null, null}
+        };
+        
+        renderParts[6] = new EnumDistributionTransformerRenderPart[][]{
+        	{EnumDistributionTransformerRenderPart.Pole10kVLeft   , null, null, null, null, EnumDistributionTransformerRenderPart.Pole10kVRight}
+        };
+        
+        
         
         return new MultiBlockStructure(configuration);
     }

@@ -18,6 +18,7 @@ import simelectricity.essential.BlockRegistry;
 import simelectricity.essential.grid.transformer.BlockDistributionTransformer;
 import simelectricity.essential.grid.transformer.BlockPowerTransformer;
 import simelectricity.essential.grid.transformer.EnumDistributionTransformerBlockType;
+import simelectricity.essential.grid.transformer.EnumDistributionTransformerRenderPart;
 import simelectricity.essential.grid.transformer.EnumPowerTransformerBlockType;
 
 public class TransformerStateMapper extends StateMapperBase implements IModelLoader {
@@ -55,9 +56,14 @@ public class TransformerStateMapper extends StateMapperBase implements IModelLoa
             }
         } else if (block == BlockRegistry.distributionTransformer) {
         	EnumDistributionTransformerBlockType blockType = state.getValue(EnumDistributionTransformerBlockType.property);
-            int facing = state.getValue(BlockHorizontal.FACING).ordinal() - 2;
-            boolean mirrored = state.getValue(Properties.propertyMirrored);
-            varStr = blockType.ordinal() + "," + facing + "," + mirrored;
+        	if (blockType.formed) {
+        		EnumDistributionTransformerRenderPart renderPart = state.getValue(EnumDistributionTransformerRenderPart.property);
+                int facing = state.getValue(BlockHorizontal.FACING).ordinal() - 2;
+                boolean mirrored = state.getValue(Properties.propertyMirrored);
+                varStr = blockType.ordinal() + "," + renderPart.ordinal() + "," + facing + "," + mirrored;
+        	} else {
+        		varStr = blockType.ordinal() + "";
+        	}
         }
 
         ModelResourceLocation res = new ModelResourceLocation(domain + ":" + TransformerStateMapper.VPATH,
@@ -86,10 +92,14 @@ public class TransformerStateMapper extends StateMapperBase implements IModelLoa
             }
         }  else if (block == BlockRegistry.distributionTransformer) {
         	EnumDistributionTransformerBlockType blockType = EnumDistributionTransformerBlockType.fromInt(Integer.parseInt(splited[2]));
-        	int facing = Integer.parseInt(splited[3]);
-            boolean mirrored = Boolean.parseBoolean(splited[4]);
-                        
-            return new DistributionTransformerFormedModel(blockType, facing, mirrored);
+        	if (blockType.formed) {
+        		EnumDistributionTransformerRenderPart renderPart = EnumDistributionTransformerRenderPart.fromInt(Integer.parseInt(splited[3]));
+            	int facing = Integer.parseInt(splited[4]);
+                boolean mirrored = Boolean.parseBoolean(splited[5]);
+                return new DistributionTransformerFormedModel(renderPart, facing, mirrored);
+        	} else {
+        		return new GhostModel();
+        	}        
         }
 
         return null;

@@ -1,21 +1,54 @@
 package simelectricity.essential.client.grid;
 
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import rikka.librikka.math.MathAssitant;
 import rikka.librikka.math.Vec3f;
+import rikka.librikka.model.quadbuilder.RawQuadCube;
+import rikka.librikka.model.quadbuilder.RawQuadGroup;
 
 import org.lwjgl.opengl.GL11;
 import simelectricity.common.ConfigManager;
 
 @SideOnly(Side.CLIENT)
-public class TransmissionLineGLRender {
+public class TransmissionLineGLRender {	
+	public static RawQuadGroup renderParabolicCable(Vec3f from, Vec3f to, boolean half, float tension, float thickness, TextureAtlasSprite texture) {
+		RawQuadGroup ret = new RawQuadGroup();
+		
+		float steps = ConfigManager.parabolaRenderSteps;
+		float length = from.distanceTo(to);
+		float b = 4F * tension / length;
+		float a = -b / length;
+        float unitLength = length / steps;
+
+        float x0, y0, x1, y1;
+
+        for (int i = 0; i < steps / (half ? 2 : 1); i++) {
+            x0 = i * unitLength;
+            y0 = x0 * x0 * a + x0 * b;
+            x1 = (i + 1) * unitLength;
+            y1 = x1 * x1 * a + x1 * b;
+            
+            ret.add((new RawQuadCube(thickness, MathHelper.sqrt(unitLength*unitLength + (y1 - y0)*(y1 - y0)), thickness, texture))
+            			.rotateAroundZ((float) Math.atan2(y0 - y1, unitLength) * 180F / MathAssitant.PI)
+            			.translateCoord(y0, i * unitLength, 0)
+            			);
+        }
+        
+        ret.rotateToVec(from.x, from.y, from.z, to.x, to.y, to.z);
+        
+        return ret;
+	}
+	
     /**
      * Render parabolic cable between two points
      * </p> coordinates are MineCraft coordinates, the cable will start from current openGL reference point
      *
-     * @param thickness    Thickness of the cable
+     * @param thickness    
      * @param textureIndex The index of texture
      */
     public static void renderParabolicCable(Vec3f from, Vec3f to, boolean half, float thickness, float tension, TransmissionLineGLRender.ITextureProvider textureProvider, int textureIndex) {

@@ -54,7 +54,7 @@ public abstract class BlockAbstractTransformer extends BlockBase implements ISub
     ///////////////////////////////
     @Override
     public IBlockState getActualState(@Nonnull IBlockState state, IBlockAccess world, BlockPos pos) {
-        TileEntity te = world.getTileEntity(pos);
+    	TileEntity te = world.getTileEntity(pos);
         if (te instanceof SEMultiBlockEnergyTile) {
         	SEMultiBlockEnergyTile render = (SEMultiBlockEnergyTile) te;
             EnumFacing facing = render.getFacing();

@@ -6,6 +6,8 @@ import net.minecraft.util.math.Vec3i;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import rikka.librikka.math.Vec3f;
+import rikka.librikka.model.quadbuilder.RawQuadCube;
+import rikka.librikka.model.quadbuilder.RawQuadGroup;
 import simelectricity.essential.utils.client.SERenderHeap;
 import simelectricity.essential.utils.client.SERenderHelper;
 
@@ -13,6 +15,30 @@ import java.util.LinkedList;
 
 @SideOnly(Side.CLIENT)
 public class Models {
+	public static RawQuadGroup render10kVInsulator(TextureAtlasSprite textureMetal, TextureAtlasSprite textureInsulator) {
+		RawQuadGroup insulator = new RawQuadGroup();
+        insulator.add(new RawQuadCube(0.08F, 0.5F, 0.08F, textureMetal));
+        insulator.add(new RawQuadCube(0.5F, 0.05F, 0.5F, textureInsulator).translateCoord(0, 0.15F, 0));
+        insulator.add(new RawQuadCube(0.5F, 0.05F, 0.5F, textureInsulator).translateCoord(0, 0.225F, 0));
+        insulator.add(new RawQuadCube(0.5F, 0.05F, 0.5F, textureInsulator).translateCoord(0, 0.3F, 0));
+        return insulator;
+	}
+	
+	public static RawQuadGroup render10kVInsulatorSmall(TextureAtlasSprite textureMetal, TextureAtlasSprite textureCeramic) {
+		RawQuadGroup insulator = new RawQuadGroup();
+        insulator.add(new RawQuadCube(0.05F, 0.25F, 0.05F, textureMetal));
+        insulator.add(new RawQuadCube(0.25F, 0.05F, 0.25F, textureCeramic).translateCoord(0, 0.075F, 0));
+        insulator.add(new RawQuadCube(0.15F, 0.05F, 0.15F, textureCeramic).translateCoord(0, 0.15F, 0));
+        return insulator;
+	}
+	
+	public static RawQuadGroup render415VInsulator(TextureAtlasSprite textureMetal, TextureAtlasSprite textureInsulator) {
+		RawQuadGroup insulator = new RawQuadGroup();
+        insulator.add(new RawQuadCube(0.08F, 0.25F, 0.08F, textureMetal));
+        insulator.add(new RawQuadCube(0.25F, 0.05F, 0.25F, textureInsulator).translateCoord(0, 0.15F, 0));
+        return insulator;
+	}
+	
     public static void renderInsulators(Vec3i pos, Vec3f from, Vec3f to, double angle, SERenderHeap modelInsulator, LinkedList<BakedQuad> quads) {
         for (int i = 0; i < 3; i++) {
             SERenderHeap insulator = modelInsulator.clone();
