@@ -68,4 +68,8 @@ public abstract class SEMultiBlockEnergyTile extends SEEnergyTile implements IMu
     public EnumFacing getFacing() {
     	return this.mbInfo==null? null : this.mbInfo.facing;
     }
+    
+    public int getFacingInt() {
+    	return this.mbInfo==null? null : this.mbInfo.getFacing();
+    }
 }

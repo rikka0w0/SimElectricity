@@ -5,6 +5,8 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
+
+import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelRotation;
 import net.minecraft.client.renderer.block.model.Variant;
@@ -18,6 +20,11 @@ import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import rikka.librikka.model.GhostModel;
+import simelectricity.essential.client.grid.pole.Models;
+import simelectricity.essential.utils.client.SERenderHeap;
+import simelectricity.essential.utils.client.SERenderHelper;
+
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.vecmath.Matrix4f;
@@ -25,6 +32,7 @@ import java.util.*;
 
 @SideOnly(Side.CLIENT)
 public class PowerTransformerRawModel implements IModel {
+    public static final int[] rotationAngle = {90, 270, 180, 0};    //NSWE {4, 0, 6, 2}
     private static final ModelRotation[] rotationMatrix = {
             ModelRotation.X0_Y270,
             ModelRotation.X0_Y90,
@@ -123,10 +131,50 @@ public class PowerTransformerRawModel implements IModel {
             transformation = rotationState;
         }
 
+        //Bake the Obj Model
         IBakedModel bakedModel = this.model.bake(transformation, format, bakedTextureGetter);
+        
+        LinkedList<BakedQuad> quads = new LinkedList();
+        quads.addAll(bakedModel.getQuads(null, null, 0));
+        
+        int rotation = rotationAngle[facing];
+        TextureAtlasSprite textureMetal = bakedTextureGetter.apply(this.textureMetal);
+        TextureAtlasSprite textureInsulator = bakedTextureGetter.apply(this.textureInsulator);
+        
+        //Rotation is done first (with the .obj loader), so we need to figure out the reflection axis
+        int b = 1;
 
-        return new PowerTransformerModel(this.facing, this.mirrored, bakedModel,
-                bakedTextureGetter.apply(this.textureMetal),
-                bakedTextureGetter.apply(this.textureInsulator));
+        if (mirrored)
+            b = -1;
+
+        SERenderHeap model = new SERenderHeap();
+        SERenderHeap insulator = Models.renderInsulatorString(1.4, textureInsulator);
+        double[][] rod = SERenderHelper.createCubeVertexes(0.1, 1.8, 0.1);
+        SERenderHelper.translateCoord(rod, 0, -0.1, 0);
+        insulator.addCube(rod, textureMetal);
+        insulator.transform(0, 0.1, 0);
+        model.appendHeap(insulator.clone().transform(1, 1, -1.5 * b));
+        model.appendHeap(insulator.clone().transform(1, 1, 0 * b));
+        model.appendHeap(insulator.transform(1, 1, 1.5 * b));
+
+        insulator = Models.renderInsulatorString(0.7, textureInsulator);
+        rod = SERenderHelper.createCubeVertexes(0.1, 1.1, 0.1);
+        SERenderHelper.translateCoord(rod, 0, -0.1, 0);
+        insulator.addCube(rod, textureMetal);
+        insulator.transform(0, 0.1, 0);
+        model.appendHeap(insulator.clone().transform(-1, 1, 0.2 * b));
+        model.appendHeap(insulator.clone().transform(-1, 1, 1 * b));
+        model.appendHeap(insulator.transform(-1, 1, 1.8 * b));
+        model.rotateAroundY(rotation).transform(0.5, 0, 0.5).bake(quads);
+        
+        if (mirrored)
+        	bakedModelMirrored[facing] = quads;
+        else
+        	bakedModelUnmirrored[facing] = quads;
+        
+        return new GhostModel();
     }
+    
+    public final static LinkedList<BakedQuad>[] bakedModelUnmirrored = new LinkedList[4];
+    public final static LinkedList<BakedQuad>[] bakedModelMirrored = new LinkedList[4];
 }

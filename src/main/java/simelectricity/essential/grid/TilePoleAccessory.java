@@ -91,6 +91,11 @@ public abstract class TilePoleAccessory extends SEEnergyTile implements ISEPoleA
         return TileEntity.INFINITE_EXTENT_AABB;
     }
     
+    @Override
+    public boolean hasFastRenderer() {
+        return true;
+    }
+    
     /////////////////////////////////////////////////////////
     ///Sync
     /////////////////////////////////////////////////////////

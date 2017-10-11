@@ -14,16 +14,16 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import rikka.librikka.math.Vec3f;
 import rikka.librikka.model.codebased.CodeBasedModel;
 import rikka.librikka.model.quadbuilder.RawQuadCube;
 import rikka.librikka.model.quadbuilder.RawQuadGroup;
-import simelectricity.essential.client.grid.TransmissionLineGLRender;
 import simelectricity.essential.client.grid.pole.Models;
 import simelectricity.essential.grid.transformer.EnumDistributionTransformerRenderPart;
 
 @SideOnly(Side.CLIENT)
 public class DistributionTransformerFormedModel extends CodeBasedModel {
+    public static final int[] rotationMatrix = {4, 0, 6, 2};    //NSWE
+	
 	private final LinkedList<BakedQuad> quads = new LinkedList();
     private final Set<ResourceLocation> textures = Sets.newHashSet();
 	
@@ -35,7 +35,7 @@ public class DistributionTransformerFormedModel extends CodeBasedModel {
 	
 	public DistributionTransformerFormedModel(EnumDistributionTransformerRenderPart part, int facing, boolean mirrored) {
 		this.part = part;
-		this.rotation = PowerTransformerModel.rotationMatrix[facing] * 45 - 90;
+		this.rotation = rotationMatrix[facing] * 45 - 90;
         this.mirrored = mirrored;
 		
         //Custom texture
@@ -80,6 +80,7 @@ public class DistributionTransformerFormedModel extends CodeBasedModel {
 			model.merge(insulator.clone().translateCoord(0.15F, 0.76F, 0.675F));
             
             model.add(new RawQuadCube(0.25F, 1, 0.25F, textureConcrete));
+            //model.merge(TransmissionLineGLRender.renderParabolicCable(new Vec3f(0,0,0), new Vec3f(5,5,5), false, 1, 0.05F, textureConcrete));
 			break;
 		case AuxMiddle:
 			insulator = Models.render10kVInsulatorSmall(textureMetal, textureInsulator);

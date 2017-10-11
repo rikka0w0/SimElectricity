@@ -2,6 +2,7 @@ package simelectricity.essential.grid.transformer;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -39,6 +40,25 @@ public class TilePowerTransformerPlaceHolder extends SEMultiBlockEnergyTile {
         public void onSyncDataFromServerArrived(NBTTagCompound nbt) {
         	super.onSyncDataFromServerArrived(nbt);
             markForRenderUpdate();
+        }
+        
+        //////////////////////////////
+        /////TileEntity
+        //////////////////////////////
+        @SideOnly(Side.CLIENT)
+        @Override
+        public double getMaxRenderDistanceSquared() {
+            return 100000;
+        }
+
+        @SideOnly(Side.CLIENT)
+        @Override
+        public AxisAlignedBB getRenderBoundingBox() {
+            return TileEntity.INFINITE_EXTENT_AABB;
+        }
+        
+        public boolean hasFastRenderer() {
+            return true;
         }
     }
 }

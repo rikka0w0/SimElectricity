@@ -30,11 +30,15 @@ public class PowerPoleRenderHelper {
     public final PowerPoleRenderHelper.Group[] groups;
     public final int insulatorPerGroup;
     private final IBlockAccess world;
+    
     /**
      * Buffer
      */
-    public LinkedList<PowerPoleRenderHelper.ConnectionInfo[]> connectionInfo = new LinkedList();
-    public LinkedList<PowerPoleRenderHelper.ExtraWireInfo> extraWires = new LinkedList();
+    public final LinkedList<PowerPoleRenderHelper.ConnectionInfo[]> connectionInfo = new LinkedList();
+    public final LinkedList<PowerPoleRenderHelper.ExtraWireInfo> extraWires = new LinkedList();
+    
+    public final LinkedList<BakedQuad> quadBuffer = new LinkedList();
+    
     private int addedGroup;
 
     public PowerPoleRenderHelper(IBlockAccess world, BlockPos pos, int rotationMC, int numOfGroup, int insulatorPerGroup) {
@@ -223,6 +227,9 @@ public class PowerPoleRenderHelper {
         this.extraWires.clear();
         addNeighors(neighborPosList);
         onUpdate();
+        
+        //Bake Quads
+        this.quadBuffer.clear();
     }
     
     /**
