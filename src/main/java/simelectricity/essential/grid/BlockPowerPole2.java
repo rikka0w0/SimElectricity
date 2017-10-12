@@ -182,10 +182,10 @@ public class BlockPowerPole2 extends BlockBase implements ISubBlock, ISEHVCableC
     @Override
     public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player) {
         TileEntity te = this.getCenterTileFromRodPos(world, pos);
-        if (te instanceof TilePowerPole)
+        if (te instanceof TilePowerPole2)
             return new ItemStack(this.itemBlock, 1, this.damageDropped(world.getBlockState(te.getPos())));
 
-        return null;
+        return ItemStack.EMPTY;
     }
 
     @Override

@@ -26,6 +26,7 @@ import javax.annotation.Nullable;
 public class PowerPoleRenderHelper {
     public final BlockPos pos;    //Real MC pos
     public final boolean mirroredAboutZ;
+    public final int rotationMC;
     public final int rotation;
     public final PowerPoleRenderHelper.Group[] groups;
     public final int insulatorPerGroup;
@@ -38,6 +39,7 @@ public class PowerPoleRenderHelper {
     public final LinkedList<PowerPoleRenderHelper.ExtraWireInfo> extraWires = new LinkedList();
     
     public final LinkedList<BakedQuad> quadBuffer = new LinkedList();
+    private boolean needBake = false;
     
     private int addedGroup;
 
@@ -52,11 +54,12 @@ public class PowerPoleRenderHelper {
     public PowerPoleRenderHelper(IBlockAccess world, BlockPos pos, int rotationMC, boolean mirroredAboutZ, int numOfGroup, int insulatorPerGroup) {
         this.world = world;
         this.pos = pos;
-        rotation = rotationMC * 45 - 90;
+        this.rotationMC = rotationMC;
+        this.rotation = rotationMC * 45 - 90;
         this.mirroredAboutZ = mirroredAboutZ;
-        groups = new PowerPoleRenderHelper.Group[numOfGroup];
+        this.groups = new PowerPoleRenderHelper.Group[numOfGroup];
         this.insulatorPerGroup = insulatorPerGroup;
-        addedGroup = 0;
+        this.addedGroup = 0;
     }
 
     public static int facing2rotation(EnumFacing facing) {
@@ -221,7 +224,14 @@ public class PowerPoleRenderHelper {
         addedGroup++;
     }
 
-
+    public final boolean needBake() {
+    	if (needBake) {
+    		needBake = false;
+    		return true;
+    	}
+    	return false;
+    }
+    
     public final void updateRenderData(BlockPos... neighborPosList) {
         this.connectionInfo.clear();
         this.extraWires.clear();
@@ -230,6 +240,7 @@ public class PowerPoleRenderHelper {
         
         //Bake Quads
         this.quadBuffer.clear();
+        this.needBake = true;
     }
     
     /**

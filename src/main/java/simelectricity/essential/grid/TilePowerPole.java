@@ -9,9 +9,8 @@ import simelectricity.essential.client.grid.PowerPoleRenderHelper;
 
 
 public class TilePowerPole extends TilePowerPoleBase {
-    @Override
     @SideOnly(Side.CLIENT)
-    protected boolean scheduleBlockRenderUpdateWhenChange() {
+    public boolean isType0() {
         return this.getBlockMetadata() >> 3 == 0;
     }
 
@@ -21,7 +20,7 @@ public class TilePowerPole extends TilePowerPoleBase {
         PowerPoleRenderHelper helper;
         int rotation = this.getBlockMetadata() & 7;
 
-        if (this.scheduleBlockRenderUpdateWhenChange()) {
+        if (this.isType0()) {
             helper = new PowerPoleRenderHelper(TilePowerPole.this.world, TilePowerPole.this.pos, rotation, 2, 3) {
                 @Override
                 public void onUpdate() {

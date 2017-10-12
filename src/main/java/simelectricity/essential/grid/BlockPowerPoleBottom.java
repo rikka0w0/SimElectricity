@@ -9,6 +9,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3i;
@@ -20,11 +21,14 @@ import rikka.librikka.block.BlockBase;
 import rikka.librikka.item.ISimpleTexture;
 import rikka.librikka.item.ItemBlockBase;
 import rikka.librikka.properties.Properties;
+import rikka.librikka.tileentity.TileEntityBase;
 import simelectricity.api.tile.ISEGridTile;
 import simelectricity.essential.BlockRegistry;
 import simelectricity.essential.api.ISEHVCableConnector;
 
 import java.util.LinkedList;
+
+import javax.annotation.Nonnull;
 
 public class BlockPowerPoleBottom extends BlockBase implements ISEHVCableConnector, ISimpleTexture {
     ///////////////////
@@ -139,6 +143,42 @@ public class BlockPowerPoleBottom extends BlockBase implements ISEHVCableConnect
         return "essential_powerpole_0";    //There's no way to obtain this block, so just return a existing texture
     }
 
+    ///////////////////////////////
+    /// TileEntity
+    ///////////////////////////////
+	@Override
+	public boolean hasTileEntity(IBlockState state) {return true;}
+	
+    @Override
+    public TileEntity createTileEntity(World world, IBlockState state) {
+        return new Tile();
+    }
+    
+    public static class Tile extends TileEntityBase {
+        @SideOnly(Side.CLIENT)
+        @Override
+        public double getMaxRenderDistanceSquared() {
+            return 100000;
+        }
+
+        @SideOnly(Side.CLIENT)
+        @Override
+        @Nonnull
+        public AxisAlignedBB getRenderBoundingBox() {
+            return TileEntity.INFINITE_EXTENT_AABB;
+        }
+        
+        @Override
+        public boolean hasFastRenderer() {
+            return true;
+        }
+    	
+    	@SideOnly(Side.CLIENT)
+    	public int getFacing() {
+    		return this.getBlockMetadata() & 7;
+    	}
+    }
+    
     ///////////////////////////////
     ///BlockStates
     ///////////////////////////////

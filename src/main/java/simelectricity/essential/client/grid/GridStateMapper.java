@@ -43,11 +43,9 @@ public class GridStateMapper extends StateMapperBase implements IModelLoader {
         if (block == BlockRegistry.cableJoint) {
             varStr = "" + state.getValue(Properties.facing3bit);
         } else if (block == BlockRegistry.powerPoleBottom) {
-            varStr = "" + state.getValue(Properties.facing3bit);
+
         } else if (block == BlockRegistry.powerPoleTop) {
-            int type = state.getValue(Properties.type1bit);
-            int facing = state.getValue(Properties.facing3bit);
-            varStr = facing + "," + type;
+
         } else if (block == BlockRegistry.powerPoleCollisionBox) {
 
         } else if (block == BlockRegistry.powerPole2) {
@@ -82,12 +80,9 @@ public class GridStateMapper extends StateMapperBase implements IModelLoader {
             int facing = Integer.parseInt(splited[2]);
             return new CableJointRawModel(facing);
         } else if (block == BlockRegistry.powerPoleBottom) {
-            int facing = Integer.parseInt(splited[2]);
-            return new PowerPoleBottomRawModel(facing);
+        	return new PowerPoleBottomRawModel();
         } else if (block == BlockRegistry.powerPoleTop) {
-            int facing = Integer.parseInt(splited[2]);
-            int type = Integer.parseInt(splited[3]);
-            return new PowerPoleTopRawModel(facing, type);
+            return new PowerPoleTopRawModel();
         } else if (block == BlockRegistry.powerPoleCollisionBox) {
             return new GhostModel();
         } else if (block == BlockRegistry.powerPole2) {

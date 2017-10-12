@@ -12,11 +12,13 @@ import simelectricity.essential.client.cable.CableStateMapper;
 import simelectricity.essential.client.coverpanel.SupportRender;
 import simelectricity.essential.client.grid.FastTESRPowerPole;
 import simelectricity.essential.client.grid.GridStateMapper;
+import simelectricity.essential.client.grid.pole.FastTESRPowerPoleBottom;
+import simelectricity.essential.client.grid.pole.FastTESRPowerPoleTop;
 import simelectricity.essential.client.grid.transformer.FastTESRPowerTransformer;
 import simelectricity.essential.client.grid.transformer.TransformerStateMapper;
 import simelectricity.essential.client.semachine.SEMachineStateMapper;
 import simelectricity.essential.client.semachine.SocketRender;
-import simelectricity.essential.grid.TileCableJoint;
+import simelectricity.essential.grid.BlockPowerPoleBottom;
 import simelectricity.essential.grid.TilePowerPole;
 import simelectricity.essential.grid.TilePowerPole2;
 import simelectricity.essential.grid.TilePowerPole3.Pole10Kv;
@@ -75,8 +77,6 @@ public class ClientRegistrationHandler {
     }
 	
 	public static void registerTileEntityRenders() {
-		FastTESRPowerPole.register(TileCableJoint.class);
-        FastTESRPowerPole.register(TilePowerPole.class);
         FastTESRPowerPole.register(TilePowerPole2.class);
         FastTESRPowerPole.register(Primary.class);
         FastTESRPowerPole.register(Secondary.class);
@@ -84,6 +84,8 @@ public class ClientRegistrationHandler {
         FastTESRPowerPole.register(Pole10Kv.Type1.class);
         FastTESRPowerPole.register(Pole415vType0.class);
         
-        ClientRegistry.bindTileEntitySpecialRenderer(TilePowerTransformerPlaceHolder.Render.class, new FastTESRPowerTransformer());
+        ClientRegistry.bindTileEntitySpecialRenderer(BlockPowerPoleBottom.Tile.class, FastTESRPowerPoleBottom.instance);
+        ClientRegistry.bindTileEntitySpecialRenderer(TilePowerPole.class, FastTESRPowerPoleTop.instance);
+        ClientRegistry.bindTileEntitySpecialRenderer(TilePowerTransformerPlaceHolder.Render.class, FastTESRPowerTransformer.instance);
 	}
 }

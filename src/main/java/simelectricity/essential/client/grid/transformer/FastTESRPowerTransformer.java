@@ -1,5 +1,6 @@
 package simelectricity.essential.client.grid.transformer;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import net.minecraft.client.renderer.VertexBuffer;
@@ -13,7 +14,13 @@ import simelectricity.essential.grid.transformer.TilePowerTransformerPlaceHolder
 
 @SideOnly(Side.CLIENT)
 public class FastTESRPowerTransformer extends FastTESR<TilePowerTransformerPlaceHolder.Render>{
-    @Override
+    public final static FastTESRPowerTransformer instance = new FastTESRPowerTransformer();
+	private FastTESRPowerTransformer() {}
+	
+    public final static LinkedList<BakedQuad>[] bakedModelUnmirrored = new LinkedList[4];
+    public final static LinkedList<BakedQuad>[] bakedModelMirrored = new LinkedList[4];
+	
+	@Override
     public boolean isGlobalRenderer(TilePowerTransformerPlaceHolder.Render te) {
         return true;
     }
@@ -25,7 +32,7 @@ public class FastTESRPowerTransformer extends FastTESR<TilePowerTransformerPlace
 		
 		int facing = te.getFacingInt();
 		boolean mirrored = te.isMirrored();
-		List<BakedQuad> quads = mirrored ? PowerTransformerRawModel.bakedModelMirrored[facing] : PowerTransformerRawModel.bakedModelUnmirrored[facing];
+		List<BakedQuad> quads = mirrored ? bakedModelMirrored[facing] : bakedModelUnmirrored[facing];
 		
 		int i = 15728640;	//TODO: Fix light calculation
 		for (BakedQuad quad: quads) {
@@ -33,21 +40,12 @@ public class FastTESRPowerTransformer extends FastTESR<TilePowerTransformerPlace
 			buffer.addVertexData(quad.getVertexData());
 			buffer.putBrightness4(i, i, i, i);
 			
-			int k = -1;
-            float f = (float)(k >> 16 & 255) / 255.0F;
-            float f1 = (float)(k >> 8 & 255) / 255.0F;
-            float f2 = (float)(k & 255) / 255.0F;
-            if(quad.shouldApplyDiffuseLighting()) {
-            	//Fix lighting problem with mirrored models.
-                float diffuse = LightUtil.diffuseLight(mirrored ? quad.getFace() : quad.getFace().getOpposite());
-                f *= diffuse;
-                f1 *= diffuse;
-                f2 *= diffuse;
-            }
-            buffer.putColorMultiplier(f, f1, f2, 4);
-            buffer.putColorMultiplier(f, f1, f2, 3);
-            buffer.putColorMultiplier(f, f1, f2, 2);
-            buffer.putColorMultiplier(f, f1, f2, 1);
+            float diffuse = LightUtil.diffuseLight(mirrored ? quad.getFace() : quad.getFace().getOpposite());
+            
+            buffer.putColorMultiplier(diffuse, diffuse, diffuse, 4);
+            buffer.putColorMultiplier(diffuse, diffuse, diffuse, 3);
+            buffer.putColorMultiplier(diffuse, diffuse, diffuse, 2);
+            buffer.putColorMultiplier(diffuse, diffuse, diffuse, 1);
 			buffer.putPosition(pos.getX(), pos.getY(), pos.getZ());
 		}
 	}

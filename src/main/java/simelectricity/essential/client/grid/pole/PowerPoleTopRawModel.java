@@ -1,31 +1,87 @@
 package simelectricity.essential.client.grid.pole;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import com.google.common.base.Function;
-import net.minecraft.client.renderer.block.model.IBakedModel;
+import com.google.common.collect.ImmutableList;
+
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.vertex.VertexFormat;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import rikka.librikka.model.codebased.TextureLoaderModel;
+import rikka.librikka.model.codebased.CodeBasedModel;
+import simelectricity.essential.utils.client.SERenderHeap;
+import simelectricity.essential.utils.client.SERenderHelper;
 
 @SideOnly(Side.CLIENT)
-public class PowerPoleTopRawModel extends TextureLoaderModel {
+public class PowerPoleTopRawModel extends CodeBasedModel {
     private final ResourceLocation textureMetal, textureInsulator;
-    private final int facing;
-    private final int type;
+    private TextureAtlasSprite particle;
 
-    public PowerPoleTopRawModel(int facing, int type) {
+    public PowerPoleTopRawModel() {
         this.textureMetal = this.registerTexture("sime_essential:render/transmission/metal");
         this.textureInsulator = this.registerTexture("sime_essential:render/transmission/glass_insulator");
-        this.facing = facing;
-        this.type = type;
     }
 
     @Override
-    public IBakedModel bake(IModelState state, VertexFormat format,
-                            Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter) {
-        return new PowerPoleTopModel(this.facing, this.type, bakedTextureGetter.apply(this.textureMetal), bakedTextureGetter.apply(this.textureInsulator));
+    public void bake(Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter) {
+    	SERenderHeap model = Models.renderTower0Top(bakedTextureGetter.apply(this.textureMetal));
+		
+		SERenderHeap modelInsulator = Models.renderInsulatorString(1.4, bakedTextureGetter.apply(this.textureInsulator));
+        double[][] rod2 = SERenderHelper.createCubeVertexes(0.1, 2, 0.1);
+        SERenderHelper.translateCoord(rod2, 0, -0.3, 0);
+        modelInsulator.addCube(rod2, bakedTextureGetter.apply(this.textureMetal));
+        modelInsulator.transform(0, 0.3, 0);
+        FastTESRPowerPoleTop.modelInsulator = modelInsulator;
+        
+    	for (int facing=0; facing< 8; facing ++) {
+    		LinkedList<BakedQuad> type0 = new LinkedList();
+        	LinkedList<BakedQuad> insulator35Kv = new LinkedList();
+    		LinkedList<BakedQuad> type1 = new LinkedList();
+    		/*
+    		 * Meta facing: MC: South - 0, OpenGL: Xpos(East) - 0
+    		 */
+    		int rotation = facing * 45 - 90;
+    		
+    		//Type 0
+            SERenderHeap insulatorHeap = modelInsulator.clone();
+            insulatorHeap.rotateAroundZ(180);
+            insulatorHeap.transform(0, 7, 3.95);
+            insulatorHeap.rotateAroundVector(rotation, 0, 1, 0);
+            insulatorHeap.transform(0.5, 0, 0.5);
+            insulatorHeap.bake(insulator35Kv);
+            model.clone().rotateAroundY(rotation).transform(0.5, -18, 0.5).bake(type0);
+            
+            //Type 1
+            SERenderHeap type1Model = model.clone();
+            SERenderHeap insulator = Models.renderInsulatorString(1.4, bakedTextureGetter.apply(this.textureInsulator));
+            double[][] rod = SERenderHelper.createCubeVertexes(0.1, 1.95, 0.1);
+            SERenderHelper.translateCoord(rod, 0, -0.15, 0);
+            insulator.addCube(rod, bakedTextureGetter.apply(this.textureMetal));
+            type1Model.appendHeap(insulator.clone().transform(0, 18 - 1.85, -4.9));
+            type1Model.appendHeap(insulator.clone().transform(0, 18 - 1.85, 4.9));
+            type1Model.appendHeap(insulator.transform(0, 23.15, 3.95));
+            type1Model.rotateAroundY(rotation).transform(0.5, -18, 0.5).bake(type1);
+            
+            FastTESRPowerPoleTop.bakedModelType0[facing] = type0;
+            FastTESRPowerPoleTop.insulator35Kv[facing] = insulator35Kv;
+            FastTESRPowerPoleTop.bakedModelType1[facing] = type1;
+    	}
+    	
+    	particle = bakedTextureGetter.apply(this.textureMetal);
     }
+
+	@Override
+	public List<BakedQuad> getQuads(IBlockState state, EnumFacing side, long rand) {
+		return ImmutableList.of();
+	}
+
+	@Override
+	public TextureAtlasSprite getParticleTexture() {
+		return particle;
+	}
 }

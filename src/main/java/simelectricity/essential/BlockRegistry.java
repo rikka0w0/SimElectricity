@@ -72,6 +72,7 @@ public class BlockRegistry {
     
     public static void registerTileEntities() {
     	registerTile(TileCable.class);
+    	registerTile(BlockPowerPoleBottom.Tile.class);
         registerTile(TilePowerPole.class);
         registerTile(TileCableJoint.class);
         registerTile(TilePowerPole2.class);

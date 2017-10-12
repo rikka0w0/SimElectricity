@@ -6,12 +6,16 @@ import com.google.common.collect.ImmutableList.Builder;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
+import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
+import net.minecraft.client.renderer.block.model.ItemOverrideList;
 import net.minecraft.client.renderer.block.model.ModelRotation;
 import net.minecraft.client.renderer.block.model.Variant;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
@@ -20,7 +24,6 @@ import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import rikka.librikka.model.GhostModel;
 import simelectricity.essential.client.grid.pole.Models;
 import simelectricity.essential.utils.client.SERenderHeap;
 import simelectricity.essential.utils.client.SERenderHelper;
@@ -31,7 +34,7 @@ import javax.vecmath.Matrix4f;
 import java.util.*;
 
 @SideOnly(Side.CLIENT)
-public class PowerTransformerRawModel implements IModel {
+public class PowerTransformerRawModel implements IModel, IBakedModel {
     public static final int[] rotationAngle = {90, 270, 180, 0};    //NSWE {4, 0, 6, 2}
     private static final ModelRotation[] rotationMatrix = {
             ModelRotation.X0_Y270,
@@ -46,7 +49,7 @@ public class PowerTransformerRawModel implements IModel {
     private final int facing;
     private final boolean mirrored;
     private final ResourceLocation textureMetal, textureInsulator;
-
+    
     public PowerTransformerRawModel(int facing, boolean mirrored) throws Exception {
         String modelName = "sime_essential:powertransformer.obj";    //Sketch Up --*.dae--> Blender --> *.obj & *.mtl
         Builder<Pair<IModel, IModelState>> builder = ImmutableList.builder();
@@ -168,13 +171,51 @@ public class PowerTransformerRawModel implements IModel {
         model.rotateAroundY(rotation).transform(0.5, 0, 0.5).bake(quads);
         
         if (mirrored)
-        	bakedModelMirrored[facing] = quads;
+        	FastTESRPowerTransformer.bakedModelMirrored[facing] = quads;
         else
-        	bakedModelUnmirrored[facing] = quads;
+        	FastTESRPowerTransformer.bakedModelUnmirrored[facing] = quads;
         
-        return new GhostModel();
+        this.paritcle = textureMetal;
+        return this;
     }
+
+    /////////////////
+    /// IBakedModel
+    /////////////////
+    private TextureAtlasSprite paritcle;
     
-    public final static LinkedList<BakedQuad>[] bakedModelUnmirrored = new LinkedList[4];
-    public final static LinkedList<BakedQuad>[] bakedModelMirrored = new LinkedList[4];
+	@Override
+	public List<BakedQuad> getQuads(IBlockState state, EnumFacing side, long rand) {
+		return ImmutableList.of();
+	}
+    
+    @Override
+    public boolean isAmbientOcclusion() {
+        return false;
+    }
+
+    @Override
+    public boolean isGui3d() {
+        return false;
+    }
+
+    @Override
+    public boolean isBuiltInRenderer() {
+        return false;
+    }
+
+    @Override
+    public ItemCameraTransforms getItemCameraTransforms() {
+        return ItemCameraTransforms.DEFAULT;
+    }
+
+    @Override
+    public ItemOverrideList getOverrides() {
+        return ItemOverrideList.NONE;
+    }
+
+	@Override
+	public TextureAtlasSprite getParticleTexture() {
+		return paritcle;
+	}
 }

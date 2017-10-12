@@ -71,41 +71,56 @@ public class FastTESRPowerPole<T extends TileEntity & ISEPowerPole> extends Fast
         return true;
     }
     
-	@Override
-	public void renderTileEntityFast(T te, double x, double y, double z, float partialTicks, int destroyStage, VertexBuffer buffer) {
-		PowerPoleRenderHelper helper = te.getRenderHelper();
-		
-        if (helper == null)
-            return;
-        
-		BlockPos pos = helper.pos;        
-        if (helper.quadBuffer.isEmpty()) {
-        	if (helper.extraWires.isEmpty() && helper.connectionInfo.isEmpty())
-        		return;
-        	
-            for (PowerPoleRenderHelper.ConnectionInfo[] connections : helper.connectionInfo) {
-                for (PowerPoleRenderHelper.ConnectionInfo info : connections) {
-                	RawQuadGroup group = renderParabolicCable(info.fixedFrom, info.fixedTo, true, info.tension, 0.06F, texture);
-                	group.translateCoord(- pos.getX(), - pos.getY(), - pos.getZ());
-                	group.bake(helper.quadBuffer);
-                }
-            }
-            
-            for (PowerPoleRenderHelper.ExtraWireInfo wire : helper.extraWires) {
-            	RawQuadGroup group = renderParabolicCable(wire.from, wire.to, false, wire.tension, 0.06F, texture);
-            	group.translateCoord(- pos.getX(), - pos.getY(), - pos.getZ());
+    protected void bake(T te, PowerPoleRenderHelper helper) {
+    	if (helper.extraWires.isEmpty() && helper.connectionInfo.isEmpty())
+    		return;
+    	
+		BlockPos pos = helper.pos;  
+        for (PowerPoleRenderHelper.ConnectionInfo[] connections : helper.connectionInfo) {
+            for (PowerPoleRenderHelper.ConnectionInfo info : connections) {
+            	RawQuadGroup group = renderParabolicCable(info.fixedFrom, info.fixedTo, true, info.tension, 0.06F, texture);
+            	group.translateCoord(-pos.getX(), -pos.getY(), -pos.getZ());
             	group.bake(helper.quadBuffer);
             }
         }
         
-
-		buffer.setTranslation(x-pos.getX(), y-pos.getY(), z-pos.getZ());
+        for (PowerPoleRenderHelper.ExtraWireInfo wire : helper.extraWires) {
+        	RawQuadGroup group = renderParabolicCable(wire.from, wire.to, false, wire.tension, 0.06F, texture);
+        	group.translateCoord(-pos.getX(), -pos.getY(), -pos.getZ());
+        	group.bake(helper.quadBuffer);
+        }
+    }
+    
+	@Override
+	public void renderTileEntityFast(T te, double x, double y, double z, float partialTicks, int destroyStage, VertexBuffer buffer) {
+		if (te.isInvalid())
+			return;
+		
+		PowerPoleRenderHelper helper = te.getRenderHelper();
+		
+        if (helper == null)
+            return;
+              
+        if (helper.needBake())
+        	bake(te, helper);
+        
+		buffer.setTranslation(x, y, z);
 		
 		int i = 15728640;
 		for (BakedQuad quad: helper.quadBuffer) {
 			buffer.addVertexData(quad.getVertexData());
 			buffer.putBrightness4(i, i, i, i);
-			buffer.putPosition(pos.getX(), pos.getY(), pos.getZ());
+			
+			float diffuse = 1;
+            if(quad.shouldApplyDiffuseLighting())
+                diffuse = net.minecraftforge.client.model.pipeline.LightUtil.diffuseLight(quad.getFace());
+
+            buffer.putColorMultiplier(diffuse, diffuse, diffuse, 4);
+            buffer.putColorMultiplier(diffuse, diffuse, diffuse, 3);
+            buffer.putColorMultiplier(diffuse, diffuse, diffuse, 2);
+            buffer.putColorMultiplier(diffuse, diffuse, diffuse, 1);
+			
+			buffer.putPosition(0, 0, 0);
 		}
 	}
 }
