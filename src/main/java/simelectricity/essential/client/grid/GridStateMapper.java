@@ -89,11 +89,11 @@ public class GridStateMapper extends StateMapperBase implements IModelLoader {
             int facing = Integer.parseInt(splited[2]);
             int type = Integer.parseInt(splited[3]);
             boolean isRod = Boolean.parseBoolean(splited[4]);
-            return new PowerPole2RawModel(facing, type, isRod);
+            return new PowerPole2Model(facing, type, isRod);
         } else if (block == BlockRegistry.powerPole3) {
             int facing = Integer.parseInt(splited[2]);
             EnumBlockTypePole3 blockType = EnumBlockTypePole3.fromInt(Integer.parseInt(splited[3]));
-            return new PowerPole3RawModel(blockType, facing);
+            return new PowerPole3Model(blockType, facing);
         }
 
         return null;

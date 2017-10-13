@@ -1,15 +1,18 @@
 package simelectricity.essential.client.grid.pole;
 
+import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import rikka.librikka.model.codebased.BlockRenderModel;
+import rikka.librikka.model.CodeBasedModel;
+import rikka.librikka.model.loader.EasyTextureLoader;
 import rikka.librikka.model.quadbuilder.RawQuadCube;
 import simelectricity.essential.client.grid.PowerPoleRenderHelper;
 import simelectricity.essential.client.grid.PowerPoleRenderHelper.ConnectionInfo;
@@ -20,25 +23,66 @@ import java.util.LinkedList;
 import java.util.List;
 
 @SideOnly(Side.CLIENT)
-public class PowerPole2Model extends BlockRenderModel {
-    private final TextureAtlasSprite textureMetal;
-    private final TextureAtlasSprite textureInsulator;
-    private final LinkedList<BakedQuad> quads;
-    private final SERenderHeap modelInsulator;
+public class PowerPole2Model extends CodeBasedModel {
+    private final LinkedList<BakedQuad> quads = new LinkedList();
+    private final int rotation;
     private final int type;
     private final boolean isRod;
+    
+    private SERenderHeap modelInsulator;
 
-    public PowerPole2Model(int facing, int type, boolean isRod, TextureAtlasSprite textureMetal, TextureAtlasSprite textureInsulator, TextureAtlasSprite textureConcrete) {
-        this.textureMetal = textureMetal;
-        this.textureInsulator = textureInsulator;
-        quads = new LinkedList();
-        this.type = type;
-        this.isRod = isRod;
-
+    @EasyTextureLoader.Mark("sime_essential:render/transmission/metal")
+    private final TextureAtlasSprite textureMetal = null;
+    @EasyTextureLoader.Mark("sime_essential:render/transmission/glass_insulator")
+    private final TextureAtlasSprite textureInsulator = null;
+    @EasyTextureLoader.Mark("sime_essential:render/transmission/concrete")
+    private final TextureAtlasSprite textureConcrete = null;
+    
+    public PowerPole2Model(int facing, int type, boolean isRod) {
 		/*
 		 * Meta facing: MC: South - 0, OpenGL: Xpos(East) - 0
 		 */
-        int rotation = facing * 90 - 90;
+        this.rotation = facing * 90 - 90;
+        this.type = type;
+        this.isRod = isRod;
+    }
+
+    @Override
+    public TextureAtlasSprite getParticleTexture() {
+        return this.textureMetal;
+    }
+
+    @Override
+    public List<BakedQuad> getQuads(IBlockState blockState, EnumFacing side, long rand) {
+        if (MinecraftForgeClient.getRenderLayer() == BlockRenderLayer.SOLID) {
+            if (this.isRod || this.type == 1)
+                return ImmutableList.copyOf(quads);
+
+            LinkedList<BakedQuad> quads = new LinkedList();
+            quads.addAll(this.quads);
+
+            PowerPoleRenderHelper helper = PowerPoleRenderHelper.fromState(blockState);
+
+            if (helper == null)
+                return quads;    //Before the new placed block receiving the update packet from server;
+
+            for (ConnectionInfo[] connections : helper.connectionInfo) {
+                for (ConnectionInfo connection : connections) {
+                    Models.renderInsulators(helper.pos, connection.from, connection.fixedTo, connection.insulatorAngle, this.modelInsulator, quads);
+                }
+            }
+
+            return quads;
+        }
+
+        return ImmutableList.of();
+    }
+
+	@Override
+	protected void bake(Function<ResourceLocation, TextureAtlasSprite> textureRegistry) {
+		this.quads.clear();
+		
+
         if (isRod) {
             modelInsulator = null;
 
@@ -79,36 +123,5 @@ public class PowerPole2Model extends BlockRenderModel {
 
             model2.rotateAroundY(rotation).transform(0.5, 0, 0.5).bake(this.quads);
         }
-    }
-
-    @Override
-    public TextureAtlasSprite getParticleTexture() {
-        return this.textureMetal;
-    }
-
-    @Override
-    public List<BakedQuad> getQuads(IBlockState blockState, EnumFacing side, long rand) {
-        if (MinecraftForgeClient.getRenderLayer() == BlockRenderLayer.SOLID) {
-            if (this.isRod || this.type == 1)
-                return ImmutableList.copyOf(quads);
-
-            LinkedList<BakedQuad> quads = new LinkedList();
-            quads.addAll(this.quads);
-
-            PowerPoleRenderHelper helper = PowerPoleRenderHelper.fromState(blockState);
-
-            if (helper == null)
-                return quads;    //Before the new placed block receiving the update packet from server;
-
-            for (ConnectionInfo[] connections : helper.connectionInfo) {
-                for (ConnectionInfo connection : connections) {
-                    Models.renderInsulators(helper.pos, connection.from, connection.fixedTo, connection.insulatorAngle, this.modelInsulator, quads);
-                }
-            }
-
-            return quads;
-        }
-
-        return ImmutableList.of();
-    }
+	}
 }

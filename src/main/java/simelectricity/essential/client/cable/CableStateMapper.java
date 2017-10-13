@@ -55,7 +55,7 @@ public class CableStateMapper extends StateMapperBase implements IModelLoader {
         String[] splited = variantStr.split(",");
         String name = splited[0];
         float thickness = Float.parseFloat(splited[1]);
-        return new CableRawModel(domain, name, thickness);
+        return new CableModel(domain, "cable/" + name, thickness);
     }
 
     public void register(BlockCable block) {
