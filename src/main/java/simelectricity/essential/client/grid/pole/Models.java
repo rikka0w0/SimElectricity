@@ -32,10 +32,31 @@ public class Models {
         return insulator;
 	}
 	
+	public static RawQuadGroup render10kVInsulatorTall(TextureAtlasSprite textureMetal, TextureAtlasSprite textureInsulator) {
+		RawQuadGroup insulator = new RawQuadGroup();
+		insulator.add((new RawQuadCube(0.1F, 0.325F, 0.1F, textureInsulator)));
+		insulator.add((new RawQuadCube(0.2F, 0.05F, 0.2F, textureInsulator)).translateCoord(0, 0.05F, 0));
+		insulator.add((new RawQuadCube(0.2F, 0.05F, 0.2F, textureInsulator)).translateCoord(0, 0.15F, 0));
+		insulator.add((new RawQuadCube(0.2F, 0.05F, 0.2F, textureInsulator)).translateCoord(0, 0.25F, 0));
+		insulator.add((new RawQuadCube(0.05F, 0.075F, 0.05F, textureMetal)).translateCoord(0, 0.325F, 0));
+        return insulator;
+	}
+	
 	public static RawQuadGroup render415VInsulator(TextureAtlasSprite textureMetal, TextureAtlasSprite textureInsulator) {
 		RawQuadGroup insulator = new RawQuadGroup();
         insulator.add(new RawQuadCube(0.08F, 0.25F, 0.08F, textureMetal));
         insulator.add(new RawQuadCube(0.25F, 0.05F, 0.25F, textureInsulator).translateCoord(0, 0.15F, 0));
+        return insulator;
+	}
+	
+	public static RawQuadGroup render415VInsulatorTall(TextureAtlasSprite textureMetal, TextureAtlasSprite textureInsulator) {
+		RawQuadGroup insulator = new RawQuadGroup();
+		insulator.add((new RawQuadCube(0.05F, 0.25F, 0.05F, textureInsulator)));
+		insulator.add((new RawQuadCube(0.1F, 0.025F, 0.1F, textureInsulator)).translateCoord(0, 0.025F, 0));
+		insulator.add((new RawQuadCube(0.1F, 0.025F, 0.1F, textureInsulator)).translateCoord(0, 0.075F, 0));
+		insulator.add((new RawQuadCube(0.1F, 0.025F, 0.1F, textureInsulator)).translateCoord(0, 0.125F, 0));
+		insulator.add((new RawQuadCube(0.1F, 0.025F, 0.1F, textureInsulator)).translateCoord(0, 0.175F, 0));
+		insulator.add((new RawQuadCube(0.05F, 0.075F, 0.05F, textureMetal)).translateCoord(0, 0.25F, 0));
         return insulator;
 	}
 	

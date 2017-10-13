@@ -2,7 +2,6 @@ package simelectricity.essential.grid.transformer;
 
 import javax.annotation.Nonnull;
 
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockStateContainer;
@@ -19,8 +18,6 @@ import rikka.librikka.multiblock.IMultiBlockTile;
 import rikka.librikka.multiblock.MultiBlockStructure;
 import rikka.librikka.multiblock.MultiBlockTileInfo;
 import rikka.librikka.properties.Properties;
-import simelectricity.essential.BlockRegistry;
-import simelectricity.essential.grid.EnumBlockTypePole3;
 
 public class BlockDistributionTransformer extends BlockAbstractTransformer{
 	private static final String[] subNames = EnumDistributionTransformerBlockType.getRawStructureNames();	

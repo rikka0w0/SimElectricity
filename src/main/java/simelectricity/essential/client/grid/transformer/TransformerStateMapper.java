@@ -84,7 +84,7 @@ public class TransformerStateMapper extends StateMapperBase implements IModelLoa
             if (blockType == EnumPowerTransformerBlockType.Render) {
                 int facing = Integer.parseInt(splited[3]);
                 boolean mirrored = Boolean.parseBoolean(splited[4]);
-                return new PowerTransformerRawModel(facing, mirrored);
+                return new PowerTransformerModel(facing, mirrored);
             } else if (blockType.formed){
             	return new GhostModel();
             }else {
@@ -99,7 +99,7 @@ public class TransformerStateMapper extends StateMapperBase implements IModelLoa
                 return new DistributionTransformerFormedModel(renderPart, facing, mirrored);
         	} else {
         		return new GhostModel();
-        	}        
+        	}
         }
 
         return null;

@@ -78,11 +78,11 @@ public class GridStateMapper extends StateMapperBase implements IModelLoader {
 
         if (block == BlockRegistry.cableJoint) {
             int facing = Integer.parseInt(splited[2]);
-            return new CableJointRawModel(facing);
+            return new CableJointModel(facing);
         } else if (block == BlockRegistry.powerPoleBottom) {
-        	return new PowerPoleBottomRawModel();
+        	return new PowerPoleBottomModel();
         } else if (block == BlockRegistry.powerPoleTop) {
-            return new PowerPoleTopRawModel();
+            return new PowerPoleTopModel();
         } else if (block == BlockRegistry.powerPoleCollisionBox) {
             return new GhostModel();
         } else if (block == BlockRegistry.powerPole2) {

@@ -14,22 +14,17 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.Vec3i;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import rikka.librikka.model.codebased.CodeBasedModel;
+import rikka.librikka.model.CodeBasedModel;
+import rikka.librikka.model.loader.EasyTextureLoader;
 import simelectricity.essential.grid.BlockPowerPoleBottom;
 
 @SideOnly(Side.CLIENT)
-public class PowerPoleBottomRawModel extends CodeBasedModel {
-    private final ResourceLocation texture;
-    private TextureAtlasSprite particle;
-
-    public PowerPoleBottomRawModel() {
-        texture = this.registerTexture("sime_essential:render/transmission/metal");
-    }
+public class PowerPoleBottomModel extends CodeBasedModel {
+	@EasyTextureLoader.Mark("sime_essential:render/transmission/metal")
+    private final TextureAtlasSprite texture = null;
 
     @Override
-    public void bake(Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter) {
-    	this.particle = bakedTextureGetter.apply(texture);
-    	
+    public void bake(Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter) {    	
     	for (int facing=0; facing<8; facing++) {
             int rotation = 0;
             switch (facing) {
@@ -62,7 +57,7 @@ public class PowerPoleBottomRawModel extends CodeBasedModel {
 
             Vec3i offset = BlockPowerPoleBottom.getCenterBoxOffset(facing);
             LinkedList<BakedQuad> quads = new LinkedList();
-            Models.renderTower0Bottom(this.particle).rotateAroundY(rotation).transform(0.5 + offset.getX(), 0, 0.5 + offset.getZ()).bake(quads);
+            Models.renderTower0Bottom(texture).rotateAroundY(rotation).transform(0.5 + offset.getX(), 0, 0.5 + offset.getZ()).bake(quads);
             FastTESRPowerPoleBottom.bakedModel[facing] = quads;
     	}
     }
@@ -74,6 +69,6 @@ public class PowerPoleBottomRawModel extends CodeBasedModel {
 
 	@Override
 	public TextureAtlasSprite getParticleTexture() {
-		return particle;
+		return texture;
 	}
 }

@@ -13,28 +13,26 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import rikka.librikka.model.codebased.CodeBasedModel;
+import rikka.librikka.model.CodeBasedModel;
+import rikka.librikka.model.loader.EasyTextureLoader;
 import simelectricity.essential.utils.client.SERenderHeap;
 import simelectricity.essential.utils.client.SERenderHelper;
 
 @SideOnly(Side.CLIENT)
-public class PowerPoleTopRawModel extends CodeBasedModel {
-    private final ResourceLocation textureMetal, textureInsulator;
-    private TextureAtlasSprite particle;
+public class PowerPoleTopModel extends CodeBasedModel {
+	@EasyTextureLoader.Mark("sime_essential:render/transmission/metal")
+    private final TextureAtlasSprite textureMetal = null;
+	@EasyTextureLoader.Mark("sime_essential:render/transmission/glass_insulator")
+    private final TextureAtlasSprite textureInsulator = null;
 
-    public PowerPoleTopRawModel() {
-        this.textureMetal = this.registerTexture("sime_essential:render/transmission/metal");
-        this.textureInsulator = this.registerTexture("sime_essential:render/transmission/glass_insulator");
-    }
-
-    @Override
+	@Override
     public void bake(Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter) {
-    	SERenderHeap model = Models.renderTower0Top(bakedTextureGetter.apply(this.textureMetal));
+    	SERenderHeap model = Models.renderTower0Top(textureMetal);
 		
-		SERenderHeap modelInsulator = Models.renderInsulatorString(1.4, bakedTextureGetter.apply(this.textureInsulator));
+		SERenderHeap modelInsulator = Models.renderInsulatorString(1.4, textureInsulator);
         double[][] rod2 = SERenderHelper.createCubeVertexes(0.1, 2, 0.1);
         SERenderHelper.translateCoord(rod2, 0, -0.3, 0);
-        modelInsulator.addCube(rod2, bakedTextureGetter.apply(this.textureMetal));
+        modelInsulator.addCube(rod2, textureMetal);
         modelInsulator.transform(0, 0.3, 0);
         FastTESRPowerPoleTop.modelInsulator = modelInsulator;
         
@@ -58,10 +56,10 @@ public class PowerPoleTopRawModel extends CodeBasedModel {
             
             //Type 1
             SERenderHeap type1Model = model.clone();
-            SERenderHeap insulator = Models.renderInsulatorString(1.4, bakedTextureGetter.apply(this.textureInsulator));
+            SERenderHeap insulator = Models.renderInsulatorString(1.4, textureInsulator);
             double[][] rod = SERenderHelper.createCubeVertexes(0.1, 1.95, 0.1);
             SERenderHelper.translateCoord(rod, 0, -0.15, 0);
-            insulator.addCube(rod, bakedTextureGetter.apply(this.textureMetal));
+            insulator.addCube(rod, textureMetal);
             type1Model.appendHeap(insulator.clone().transform(0, 18 - 1.85, -4.9));
             type1Model.appendHeap(insulator.clone().transform(0, 18 - 1.85, 4.9));
             type1Model.appendHeap(insulator.transform(0, 23.15, 3.95));
@@ -71,8 +69,6 @@ public class PowerPoleTopRawModel extends CodeBasedModel {
             FastTESRPowerPoleTop.insulator35Kv[facing] = insulator35Kv;
             FastTESRPowerPoleTop.bakedModelType1[facing] = type1;
     	}
-    	
-    	particle = bakedTextureGetter.apply(this.textureMetal);
     }
 
 	@Override
@@ -82,6 +78,6 @@ public class PowerPoleTopRawModel extends CodeBasedModel {
 
 	@Override
 	public TextureAtlasSprite getParticleTexture() {
-		return particle;
+		return textureMetal;
 	}
 }

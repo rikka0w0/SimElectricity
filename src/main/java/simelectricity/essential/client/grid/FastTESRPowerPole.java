@@ -38,6 +38,10 @@ public class FastTESRPowerPole<T extends TileEntity & ISEPowerPole> extends Fast
         ClientRegistry.bindTileEntitySpecialRenderer(cls, FastTESRPowerPole.instance);
     }
 
+    public static RawQuadGroup renderParabolicCable(Vec3f from, Vec3f to, boolean half, float tension, float thickness) {
+    	return renderParabolicCable(from, to, half, tension, thickness, texture);
+    }
+    
 	public static RawQuadGroup renderParabolicCable(Vec3f from, Vec3f to, boolean half, float tension, float thickness, TextureAtlasSprite texture) {
 		RawQuadGroup ret = new RawQuadGroup();
 		
@@ -78,14 +82,14 @@ public class FastTESRPowerPole<T extends TileEntity & ISEPowerPole> extends Fast
 		BlockPos pos = helper.pos;  
         for (PowerPoleRenderHelper.ConnectionInfo[] connections : helper.connectionInfo) {
             for (PowerPoleRenderHelper.ConnectionInfo info : connections) {
-            	RawQuadGroup group = renderParabolicCable(info.fixedFrom, info.fixedTo, true, info.tension, 0.06F, texture);
+            	RawQuadGroup group = renderParabolicCable(info.fixedFrom, info.fixedTo, true, info.tension, 0.06F);
             	group.translateCoord(-pos.getX(), -pos.getY(), -pos.getZ());
             	group.bake(helper.quadBuffer);
             }
         }
         
         for (PowerPoleRenderHelper.ExtraWireInfo wire : helper.extraWires) {
-        	RawQuadGroup group = renderParabolicCable(wire.from, wire.to, false, wire.tension, 0.06F, texture);
+        	RawQuadGroup group = renderParabolicCable(wire.from, wire.to, false, wire.tension, 0.06F);
         	group.translateCoord(-pos.getX(), -pos.getY(), -pos.getZ());
         	group.bake(helper.quadBuffer);
         }

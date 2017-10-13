@@ -34,7 +34,7 @@ import javax.vecmath.Matrix4f;
 import java.util.*;
 
 @SideOnly(Side.CLIENT)
-public class PowerTransformerRawModel implements IModel, IBakedModel {
+public class PowerTransformerModel implements IModel, IBakedModel {
     public static final int[] rotationAngle = {90, 270, 180, 0};    //NSWE {4, 0, 6, 2}
     private static final ModelRotation[] rotationMatrix = {
             ModelRotation.X0_Y270,
@@ -50,13 +50,13 @@ public class PowerTransformerRawModel implements IModel, IBakedModel {
     private final boolean mirrored;
     private final ResourceLocation textureMetal, textureInsulator;
     
-    public PowerTransformerRawModel(int facing, boolean mirrored) throws Exception {
+    public PowerTransformerModel(int facing, boolean mirrored) throws Exception {
         String modelName = "sime_essential:powertransformer.obj";    //Sketch Up --*.dae--> Blender --> *.obj & *.mtl
         Builder<Pair<IModel, IModelState>> builder = ImmutableList.builder();
         LinkedList<Variant> variants = new LinkedList<Variant>();
         boolean uvLock = false;
 
-        Variant variant = new Variant(new ResourceLocation(modelName), PowerTransformerRawModel.rotationMatrix[facing], uvLock, 1);
+        Variant variant = new Variant(new ResourceLocation(modelName), PowerTransformerModel.rotationMatrix[facing], uvLock, 1);
 
         ResourceLocation loc = variant.getModelLocation();
         if (!dependencies.contains(loc))
@@ -105,7 +105,7 @@ public class PowerTransformerRawModel implements IModel, IBakedModel {
                             Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter) {
         //IModelState actualState = MultiModelState.getPartState(state, model, 0);
         //IBakedModel bakedModel = model.bake(rotationMatrix[facing], format, bakedTextureGetter);
-        ModelRotation rotationState = PowerTransformerRawModel.rotationMatrix[this.facing];
+        ModelRotation rotationState = PowerTransformerModel.rotationMatrix[this.facing];
         IModelState transformation;
 
         //Handle mirror
