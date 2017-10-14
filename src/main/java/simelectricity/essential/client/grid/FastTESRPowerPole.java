@@ -20,7 +20,7 @@ import rikka.librikka.model.quadbuilder.RawQuadGroup;
 import simelectricity.common.ConfigManager;
 
 @SideOnly(Side.CLIENT)
-public class FastTESRPowerPole<T extends TileEntity & ISEPowerPole> extends FastTESR<T> {
+public class FastTESRPowerPole<T extends TileEntity & ISEPowerPole> extends FastTESR<T> {	
     private static FastTESRPowerPole instance;
     private static TextureAtlasSprite texture;
 
@@ -38,6 +38,29 @@ public class FastTESRPowerPole<T extends TileEntity & ISEPowerPole> extends Fast
         ClientRegistry.bindTileEntitySpecialRenderer(cls, FastTESRPowerPole.instance);
     }
 
+    public static RawQuadGroup renderParabolicCable(Object[] vertexAndTension, float thickness) {
+    	return renderParabolicCable(vertexAndTension, thickness, texture);
+    }
+    
+    /**
+     * 
+     * @param vertexesAndTension Vec3f, float, Vec3f, float, ..., Vec3f
+     * @param thickness
+     * @param texture
+     * @return
+     */
+    public static RawQuadGroup renderParabolicCable(Object[] vertexesAndTension, float thickness, TextureAtlasSprite texture) {
+    	RawQuadGroup ret = new RawQuadGroup();
+    	Vec3f start = (Vec3f) vertexesAndTension[0];
+    	for (int i=1; i<vertexesAndTension.length; i+=2) {
+    		float tension = (float) vertexesAndTension[i];
+    		Vec3f end = (Vec3f) vertexesAndTension[i+1];
+    		ret.merge(renderParabolicCable(start, end, false, tension, thickness, texture));
+    		start = end;
+    	}
+		return ret;
+    }
+    
     public static RawQuadGroup renderParabolicCable(Vec3f from, Vec3f to, boolean half, float tension, float thickness) {
     	return renderParabolicCable(from, to, half, tension, thickness, texture);
     }

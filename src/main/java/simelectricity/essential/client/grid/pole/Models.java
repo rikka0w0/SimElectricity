@@ -60,6 +60,34 @@ public class Models {
         return insulator;
 	}
 	
+	public static RawQuadGroup render10kVSwitch(TextureAtlasSprite textureMetal, TextureAtlasSprite textureInsulator) {
+		RawQuadGroup insulator = new RawQuadGroup();
+		insulator.add((new RawQuadCube(0.075F, 0.425F, 0.075F, textureInsulator)));
+		insulator.add((new RawQuadCube(0.15F, 0.025F, 0.15F, textureInsulator)).translateCoord(0, 0.025F, 0));
+		insulator.add((new RawQuadCube(0.15F, 0.025F, 0.15F, textureInsulator)).translateCoord(0, 0.075F, 0));
+		insulator.add((new RawQuadCube(0.15F, 0.025F, 0.15F, textureInsulator)).translateCoord(0, 0.125F, 0));
+		insulator.add((new RawQuadCube(0.15F, 0.025F, 0.15F, textureInsulator)).translateCoord(0, 0.175F, 0));
+		insulator.add((new RawQuadCube(0.15F, 0.025F, 0.15F, textureInsulator)).translateCoord(0, 0.225F, 0));
+		insulator.add((new RawQuadCube(0.15F, 0.025F, 0.15F, textureInsulator)).translateCoord(0, 0.275F, 0));
+		insulator.add((new RawQuadCube(0.15F, 0.025F, 0.15F, textureInsulator)).translateCoord(0, 0.325F, 0));
+		insulator.add((new RawQuadCube(0.15F, 0.025F, 0.15F, textureInsulator)).translateCoord(0, 0.375F, 0));
+		
+		insulator.add((new RawQuadCube(0.2F, 0.025F, 0.05F, textureMetal)).translateCoord(-0.0625F, 0.425F, 0));
+		insulator.add((new RawQuadCube(0.2F, 0.025F, 0.05F, textureMetal)).translateCoord(-0.0625F, -0.025F, 0));
+		return insulator;
+	}
+	
+	public static RawQuadGroup render415VSwitch(TextureAtlasSprite textureMetal, TextureAtlasSprite textureInsulator) {
+		RawQuadGroup insulator = new RawQuadGroup();
+		insulator.add((new RawQuadCube(0.05F, 0.2F, 0.05F, textureInsulator)));
+		insulator.add((new RawQuadCube(0.1F, 0.025F, 0.1F, textureInsulator)).translateCoord(0, 0.025F, 0));
+		insulator.add((new RawQuadCube(0.1F, 0.025F, 0.1F, textureInsulator)).translateCoord(0, 0.075F, 0));
+		insulator.add((new RawQuadCube(0.1F, 0.025F, 0.1F, textureInsulator)).translateCoord(0, 0.125F, 0));
+		insulator.add((new RawQuadCube(0.05F, 0.05F, 0.025F, textureMetal)).translateCoord(0, -0.05F, 0));
+		insulator.merge(insulator.clone().translateCoord(0.3F, 0, 0));
+		return insulator;
+	}
+	
     public static void renderInsulators(Vec3i pos, Vec3f from, Vec3f to, double angle, SERenderHeap modelInsulator, LinkedList<BakedQuad> quads) {
         for (int i = 0; i < 3; i++) {
             SERenderHeap insulator = modelInsulator.clone();
