@@ -15,14 +15,15 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import rikka.librikka.model.CodeBasedModel;
 import rikka.librikka.model.loader.EasyTextureLoader;
+import simelectricity.essential.client.ResourcePaths;
 import simelectricity.essential.utils.client.SERenderHeap;
 import simelectricity.essential.utils.client.SERenderHelper;
 
 @SideOnly(Side.CLIENT)
 public class PowerPoleTopModel extends CodeBasedModel {
-	@EasyTextureLoader.Mark("sime_essential:render/transmission/metal")
+	@EasyTextureLoader.Mark(ResourcePaths.metal)
     private final TextureAtlasSprite textureMetal = null;
-	@EasyTextureLoader.Mark("sime_essential:render/transmission/glass_insulator")
+	@EasyTextureLoader.Mark(ResourcePaths.glass_insulator)
     private final TextureAtlasSprite textureInsulator = null;
 
 	@Override

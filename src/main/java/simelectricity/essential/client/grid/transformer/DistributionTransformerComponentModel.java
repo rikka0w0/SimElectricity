@@ -27,6 +27,7 @@ import rikka.librikka.model.CodeBasedModel;
 import rikka.librikka.model.loader.EasyTextureLoader;
 import rikka.librikka.model.quadbuilder.RawQuadCube;
 import rikka.librikka.model.quadbuilder.RawQuadGroup;
+import simelectricity.essential.client.ResourcePaths;
 import simelectricity.essential.client.grid.FastTESRPowerPole;
 import simelectricity.essential.client.grid.pole.Models;
 import simelectricity.essential.grid.transformer.EnumDistributionTransformerBlockType;
@@ -43,13 +44,13 @@ public class DistributionTransformerComponentModel extends CodeBasedModel implem
     @EasyTextureLoader.Mark("sime_essential:render/distribution/transformer_side")
     private final TextureAtlasSprite textureTransformerSide = null;
 	
-    @EasyTextureLoader.Mark("sime_essential:render/transmission/metal")
+    @EasyTextureLoader.Mark(ResourcePaths.metal)
     private final TextureAtlasSprite textureMetal = null;
-    @EasyTextureLoader.Mark("sime_essential:render/transmission/glass_insulator")
+    @EasyTextureLoader.Mark(ResourcePaths.glass_insulator)
     private final TextureAtlasSprite textureInsulator = null;
-    @EasyTextureLoader.Mark("sime_essential:render/transmission/concrete")
+    @EasyTextureLoader.Mark(ResourcePaths.concrete)
     private final TextureAtlasSprite textureConcrete = null;
-    @EasyTextureLoader.Mark("sime_essential:render/transmission/concrete")
+    @EasyTextureLoader.Mark(ResourcePaths.ceramic_insulator)
     private final TextureAtlasSprite textureCeramic = null;   
 	
 	public DistributionTransformerComponentModel(EnumDistributionTransformerBlockType blockType, boolean rotated) {
@@ -81,9 +82,9 @@ public class DistributionTransformerComponentModel extends CodeBasedModel implem
 			model.add((new RawQuadCube(0.25F, 1, 0.25F, textureConcrete)));
 			break;
 		case Pole10kVNormal:
-			model.merge(FastTESRPowerPole.renderParabolicCable(new Vec3f(0.4F, 0.45F, -0.74F), new Vec3f(-0.4F, 0.45F, -0.74F), false, -0.1F, 0.03F));
-			model.merge(FastTESRPowerPole.renderParabolicCable(new Vec3f(0.4F, 1.45F, 0), new Vec3f(-0.4F, 1.45F, 0), false, -0.1F, 0.03F));
-			model.merge(FastTESRPowerPole.renderParabolicCable(new Vec3f(0.4F, 0.45F, 0.74F), new Vec3f(-0.4F, 0.45F, 0.74F), false, -0.1F, 0.03F));
+			model.merge(FastTESRPowerPole.renderParabolicCable(new Vec3f(0.4F, 0.45F, -0.74F), new Vec3f(-0.4F, 0.4F, -0.74F), false, -0.1F, 0.03F));
+			model.merge(FastTESRPowerPole.renderParabolicCable(new Vec3f(0.4F, 1.45F, 0), new Vec3f(-0.4F, 1.4F, 0), false, -0.1F, 0.03F));
+			model.merge(FastTESRPowerPole.renderParabolicCable(new Vec3f(0.4F, 0.45F, 0.74F), new Vec3f(-0.4F, 0.4F, 0.74F), false, -0.1F, 0.03F));
 			
             model.add(new RawQuadCube(0.15F, 0.1F, 1.6F, textureMetal));
             insulator = Models.render10kVInsulator(textureMetal, textureInsulator);
@@ -93,9 +94,9 @@ public class DistributionTransformerComponentModel extends CodeBasedModel implem
             model.add((new RawQuadCube(0.25F, 1, 0.25F, textureConcrete)));
 			break;
 		case Pole10kVSpec:
-			model.merge(FastTESRPowerPole.renderParabolicCable(new Vec3f(0.4F, 0.45F, -0.74F), new Vec3f(-0.4F, 0.45F, -0.74F), false, -0.1F, 0.03F));
-			model.merge(FastTESRPowerPole.renderParabolicCable(new Vec3f(0.4F, 1.45F, 0), new Vec3f(-0.4F, 1.45F, 0), false, -0.1F, 0.03F));
-			model.merge(FastTESRPowerPole.renderParabolicCable(new Vec3f(0.4F, 0.45F, 0.74F), new Vec3f(-0.4F, 0.45F, 0.74F), false, -0.1F, 0.03F));
+			model.merge(FastTESRPowerPole.renderParabolicCable(new Vec3f(0.4F, 0.45F, -0.74F), new Vec3f(-0.4F, 0.4F, -0.74F), false, -0.1F, 0.03F));
+			model.merge(FastTESRPowerPole.renderParabolicCable(new Vec3f(0.4F, 1.45F, 0), new Vec3f(-0.4F, 1.4F, 0), false, -0.1F, 0.03F));
+			model.merge(FastTESRPowerPole.renderParabolicCable(new Vec3f(0.4F, 0.45F, 0.74F), new Vec3f(-0.4F, 0.4F, 0.74F), false, -0.1F, 0.03F));
 			
 			model.add((new RawQuadCube(0.15F, 0.1F, 1.6F, textureMetal)).translateCoord(0.2F, -0.3F, 0));
 			model.add((new RawQuadCube(0.15F, 0.1F, 1.6F, textureMetal)).translateCoord(-0.2F, -0.3F, 0));

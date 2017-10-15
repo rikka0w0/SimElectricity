@@ -14,6 +14,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import rikka.librikka.model.CodeBasedModel;
 import rikka.librikka.model.loader.EasyTextureLoader;
 import rikka.librikka.model.quadbuilder.RawQuadCube;
+import simelectricity.essential.client.ResourcePaths;
 import simelectricity.essential.client.grid.PowerPoleRenderHelper;
 import simelectricity.essential.client.grid.PowerPoleRenderHelper.ConnectionInfo;
 import simelectricity.essential.utils.client.SERenderHeap;
@@ -31,11 +32,11 @@ public class PowerPole2Model extends CodeBasedModel {
     
     private SERenderHeap modelInsulator;
 
-    @EasyTextureLoader.Mark("sime_essential:render/transmission/metal")
+    @EasyTextureLoader.Mark(ResourcePaths.metal)
     private final TextureAtlasSprite textureMetal = null;
-    @EasyTextureLoader.Mark("sime_essential:render/transmission/glass_insulator")
+    @EasyTextureLoader.Mark(ResourcePaths.glass_insulator)
     private final TextureAtlasSprite textureInsulator = null;
-    @EasyTextureLoader.Mark("sime_essential:render/transmission/concrete")
+    @EasyTextureLoader.Mark(ResourcePaths.concrete)
     private final TextureAtlasSprite textureConcrete = null;
     
     public PowerPole2Model(int facing, int type, boolean isRod) {

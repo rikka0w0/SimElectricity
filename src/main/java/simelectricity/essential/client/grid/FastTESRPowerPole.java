@@ -18,6 +18,7 @@ import rikka.librikka.math.Vec3f;
 import rikka.librikka.model.quadbuilder.RawQuadCube;
 import rikka.librikka.model.quadbuilder.RawQuadGroup;
 import simelectricity.common.ConfigManager;
+import simelectricity.essential.client.ResourcePaths;
 
 @SideOnly(Side.CLIENT)
 public class FastTESRPowerPole<T extends TileEntity & ISEPowerPole> extends FastTESR<T> {	
@@ -28,7 +29,7 @@ public class FastTESRPowerPole<T extends TileEntity & ISEPowerPole> extends Fast
      * Do not call this
      */
     public static void stitchTexture(TextureMap map) {
-        texture = map.registerSprite(new ResourceLocation("sime_essential:render/transmission/hv_cable"));
+        texture = map.registerSprite(new ResourceLocation(ResourcePaths.hv_cable));
     }
     
     public static <T extends TileEntity & ISEPowerPole> void register(Class<T> cls) {

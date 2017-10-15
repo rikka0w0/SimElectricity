@@ -23,21 +23,27 @@ tile.sime_essential:essential_two_port_electronics.diode.name=二极管
 tile.sime_essential:essential_two_port_electronics.switch.name=开关
 
 tile.sime_essential:essential_cable_joint.name=三相电缆连接器
-tile.sime_essential:essential_powerpole.0.name=35Kv输电塔0型
-tile.sime_essential:essential_powerpole.1.name=35Kv输电塔1型
-tile.sime_essential:essential_powerpole2.0.name=35Kv输电塔2型
-tile.sime_essential:essential_powerpole2.1.name=35Kv输电塔3型
+tile.sime_essential:essential_powerpole.0.name=35kV输电塔0型
+tile.sime_essential:essential_powerpole.1.name=35kV输电塔1型
+tile.sime_essential:essential_powerpole2.0.name=35kV输电塔2型
+tile.sime_essential:essential_powerpole2.1.name=35kV输电塔3型
 tile.sime_essential:essential_powerpole3.pole.name=电线杆
 tile.sime_essential:essential_powerpole3.crossarm10kvt0.name=支架(10kV, 0型)
 tile.sime_essential:essential_powerpole3.crossarm10kvt1.name=支架(10kV, 1型)
 tile.sime_essential:essential_powerpole3.crossarm415vt0.name=支架(415V, 0型)
 
-tile.sime_essential:essential_powertransformer.casing.name=35Kv-10Kv变压器外壳
-tile.sime_essential:essential_powertransformer.ironcore.name=35Kv-10Kv变压器铁芯
-tile.sime_essential:essential_powertransformer.winding.name=35Kv-10Kv变压器线圈
-tile.sime_essential:essential_powertransformer.oiltank.name=35Kv-10Kv变压器油罐
-tile.sime_essential:essential_powertransformer.oiltanksupport.name=35Kv-10Kv变压器油罐支架
-tile.sime_essential:essential_powertransformer.oilpipe.name=35Kv-10Kv变压器油导管
+tile.sime_essential:essential_powertransformer.casing.name=35kV-10kV变压器外壳
+tile.sime_essential:essential_powertransformer.ironcore.name=35kV-10kV变压器铁芯
+tile.sime_essential:essential_powertransformer.winding.name=35kV-10kV变压器线圈
+tile.sime_essential:essential_powertransformer.oiltank.name=35kV-10kV变压器油罐
+tile.sime_essential:essential_powertransformer.oiltanksupport.name=35kV-10kV变压器油罐支架
+tile.sime_essential:essential_powertransformer.oilpipe.name=35kV-10kV变压器油导管
+
+tile.sime_essential:essential_disttransformer.pole10kvnormal.name=10kV配电变压器电线杆
+tile.sime_essential:essential_disttransformer.pole10kvspec.name=特殊的10kV配电变压器电线杆
+tile.sime_essential:essential_disttransformer.pole10kvaux.name=辅助配电变压器电线杆
+tile.sime_essential:essential_disttransformer.pole415vnormal.name=415V配电变压器电线杆
+tile.sime_essential:essential_disttransformer.transformer.name=配电变压器
 
 # Fluids
 fluid.vita_tea=扶她柠檬茶

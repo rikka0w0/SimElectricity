@@ -24,6 +24,7 @@ import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import simelectricity.essential.client.ResourcePaths;
 import simelectricity.essential.client.grid.pole.Models;
 import simelectricity.essential.utils.client.SERenderHeap;
 import simelectricity.essential.utils.client.SERenderHelper;
@@ -79,8 +80,8 @@ public class PowerTransformerModel implements IModel, IBakedModel {
         this.mirrored = mirrored;
 
         //Custom texture
-        textureMetal = new ResourceLocation("sime_essential:render/transmission/metal");
-        textureInsulator = new ResourceLocation("sime_essential:render/transmission/glass_insulator");
+        textureMetal = new ResourceLocation(ResourcePaths.metal);
+        textureInsulator = new ResourceLocation(ResourcePaths.glass_insulator);
         textures.add(textureMetal);
         textures.add(textureInsulator);
     }

@@ -23,21 +23,27 @@ tile.sime_essential:essential_two_port_electronics.diode.name=Diode
 tile.sime_essential:essential_two_port_electronics.switch.name=Switch
 
 tile.sime_essential:essential_cable_joint.name=Three Phase Cable Joint
-tile.sime_essential:essential_powerpole.0.name=35Kv Power Pole Type 0
-tile.sime_essential:essential_powerpole.1.name=35Kv Power Pole Type 1
-tile.sime_essential:essential_powerpole2.0.name=35Kv Power Pole Type 2
-tile.sime_essential:essential_powerpole2.1.name=35Kv Power Pole Type 3
+tile.sime_essential:essential_powerpole.0.name=35kV Power Pole Type 0
+tile.sime_essential:essential_powerpole.1.name=35kV Power Pole Type 1
+tile.sime_essential:essential_powerpole2.0.name=35kV Power Pole Type 2
+tile.sime_essential:essential_powerpole2.1.name=35kV Power Pole Type 3
 tile.sime_essential:essential_powerpole3.pole.name=Power Pole
 tile.sime_essential:essential_powerpole3.crossarm10kvt0.name=Cross Arm (10kV, Type 0)
 tile.sime_essential:essential_powerpole3.crossarm10kvt1.name=Cross Arm (10kV, Type 1)
 tile.sime_essential:essential_powerpole3.crossarm415vt0.name=Cross Arm (415V, Type 0)
 
-tile.sime_essential:essential_powertransformer.casing.name=35Kv-10Kv Transformer Casing
-tile.sime_essential:essential_powertransformer.ironcore.name=35Kv-10Kv Transformer Laminated Iron Core
-tile.sime_essential:essential_powertransformer.winding.name=35Kv-10Kv Transformer Coil
-tile.sime_essential:essential_powertransformer.oiltank.name=35Kv-10Kv Transformer Oil Tank
-tile.sime_essential:essential_powertransformer.oiltanksupport.name=35Kv-10Kv Transformer Tank Support
-tile.sime_essential:essential_powertransformer.oilpipe.name=35Kv-10Kv Transformer Oil Pipe
+tile.sime_essential:essential_powertransformer.casing.name=35kV-10kV Transformer Casing
+tile.sime_essential:essential_powertransformer.ironcore.name=35kV-10kV Transformer Laminated Iron Core
+tile.sime_essential:essential_powertransformer.winding.name=35kV-10kV Transformer Coil
+tile.sime_essential:essential_powertransformer.oiltank.name=35kV-10kV Transformer Oil Tank
+tile.sime_essential:essential_powertransformer.oiltanksupport.name=35kV-10kV Transformer Tank Support
+tile.sime_essential:essential_powertransformer.oilpipe.name=35kV-10kV Transformer Oil Pipe
+
+tile.sime_essential:essential_disttransformer.pole10kvnormal.name=10kV Distribution Transformer Pole
+tile.sime_essential:essential_disttransformer.pole10kvspec.name=10kV Distribution Transformer Pole(Special)
+tile.sime_essential:essential_disttransformer.pole10kvaux.name=Auxiliary Distribution Transformer Pole
+tile.sime_essential:essential_disttransformer.pole415vnormal.name=415V Distribution Transformer Pole
+tile.sime_essential:essential_disttransformer.transforme.namer=Distribution Transformer
 
 # Fluids
 fluid.vita_tea=Vita Lemon Tea

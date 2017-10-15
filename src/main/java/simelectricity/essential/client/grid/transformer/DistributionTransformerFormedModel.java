@@ -19,6 +19,7 @@ import rikka.librikka.model.CodeBasedModel;
 import rikka.librikka.model.loader.EasyTextureLoader;
 import rikka.librikka.model.quadbuilder.RawQuadCube;
 import rikka.librikka.model.quadbuilder.RawQuadGroup;
+import simelectricity.essential.client.ResourcePaths;
 import simelectricity.essential.client.grid.FastTESRPowerPole;
 import simelectricity.essential.client.grid.pole.Models;
 import simelectricity.essential.grid.transformer.EnumDistributionTransformerRenderPart;
@@ -41,13 +42,13 @@ public class DistributionTransformerFormedModel extends CodeBasedModel {
     @EasyTextureLoader.Mark("sime_essential:render/distribution/transformer_side")
     private final TextureAtlasSprite textureTransformerSide = null;   
     
-    @EasyTextureLoader.Mark("sime_essential:render/transmission/metal")
+    @EasyTextureLoader.Mark(ResourcePaths.metal)
     private final TextureAtlasSprite textureMetal = null;
-    @EasyTextureLoader.Mark("sime_essential:render/transmission/glass_insulator")
+    @EasyTextureLoader.Mark(ResourcePaths.glass_insulator)
     private final TextureAtlasSprite textureInsulator = null;
-    @EasyTextureLoader.Mark("sime_essential:render/transmission/concrete")
+    @EasyTextureLoader.Mark(ResourcePaths.concrete)
     private final TextureAtlasSprite textureConcrete = null;
-    @EasyTextureLoader.Mark("sime_essential:render/transmission/concrete")
+    @EasyTextureLoader.Mark(ResourcePaths.ceramic_insulator)
     private final TextureAtlasSprite textureCeramic = null;   
     
     

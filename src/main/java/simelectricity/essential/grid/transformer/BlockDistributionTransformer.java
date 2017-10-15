@@ -1,7 +1,9 @@
 package simelectricity.essential.grid.transformer;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockStateContainer;
@@ -10,6 +12,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -125,7 +128,11 @@ public class BlockDistributionTransformer extends BlockAbstractTransformer imple
     public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
     	IBlockState state = stateFromType(EnumDistributionTransformerBlockType.fromInt(meta&7));
     	EnumFacing sight = Utils.getPlayerSightHorizontal(placer);
-    	return state.withProperty(Properties.propertyMirrored, sight==EnumFacing.EAST || sight==EnumFacing.WEST);
+    	return state.withProperty(Properties.propertyMirrored, facing2mirrored(sight));
+    }
+    
+    private boolean facing2mirrored(EnumFacing facing) {
+    	return facing==EnumFacing.EAST || facing==EnumFacing.WEST;
     }
     
     @Override
@@ -138,7 +145,29 @@ public class BlockDistributionTransformer extends BlockAbstractTransformer imple
         return new ItemStack(this.itemBlock, 1, getMetaFromState(stateFromType(blockType)));
     }
     
+    ///////////////////
+    /// BoundingBox
+    ///////////////////
+    @Override
+    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess world, BlockPos pos) {
+    	EnumDistributionTransformerBlockType blockType = state.getValue(EnumDistributionTransformerBlockType.property);
+    	
+    	if (blockType == EnumDistributionTransformerBlockType.Transformer)
+    		return Block.FULL_BLOCK_AABB;
+    	
+    	if (blockType.formed) {
+    		state = this.getActualState(state, world, pos);
+    		EnumDistributionTransformerRenderPart part = state.getValue(EnumDistributionTransformerRenderPart.property);
+    		if (part == EnumDistributionTransformerRenderPart.TransformerLeft || part == EnumDistributionTransformerRenderPart.TransformerRight)
+    			return Block.FULL_BLOCK_AABB;
+    	}
+    	
+    	return new AxisAlignedBB(0.375F, 0, 0.375F, 0.625F, 1, 0.625F);
+    }
 
+    ///////////////////
+    /// ISEHVCableConnector
+    ///////////////////
 	@Override
 	public ISEGridTile getGridTile(World world, BlockPos pos) {
 		TileEntity te = world.getTileEntity(pos);
@@ -158,6 +187,16 @@ public class BlockDistributionTransformer extends BlockAbstractTransformer imple
     				return true;
     			
     	    	return this.state.getValue(EnumDistributionTransformerBlockType.property) != state.getValue(EnumDistributionTransformerBlockType.property);
+    		}
+    		
+    		@Override
+    		protected IBlockState getStateForRestore(@Nullable TileEntity tileEntity) {
+    			if (tileEntity instanceof IMultiBlockTile) {
+    				IMultiBlockTile tile = (IMultiBlockTile) tileEntity;
+    				EnumFacing facing = tile.getMultiBlockTileInfo().facing;
+    				return state.withProperty(Properties.propertyMirrored, !facing2mirrored(facing));
+    			}
+    			return state;
     		}
     	};
     }

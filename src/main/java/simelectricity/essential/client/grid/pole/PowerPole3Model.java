@@ -22,6 +22,7 @@ import org.lwjgl.util.vector.Vector3f;
 
 import com.google.common.base.Function;
 
+import simelectricity.essential.client.ResourcePaths;
 import simelectricity.essential.client.grid.PowerPoleRenderHelper;
 import simelectricity.essential.grid.EnumBlockTypePole3;
 
@@ -37,11 +38,11 @@ public class PowerPole3Model extends CodeBasedModel implements IPerspectiveAware
 
     private RawQuadGroup insulator;
 
-    @EasyTextureLoader.Mark("sime_essential:render/transmission/metal")
+    @EasyTextureLoader.Mark(ResourcePaths.metal)
     private final TextureAtlasSprite textureMetal = null;
-    @EasyTextureLoader.Mark("sime_essential:render/transmission/glass_insulator")
+    @EasyTextureLoader.Mark(ResourcePaths.glass_insulator)
     private final TextureAtlasSprite textureInsulator = null;
-    @EasyTextureLoader.Mark("sime_essential:render/transmission/concrete")
+    @EasyTextureLoader.Mark(ResourcePaths.concrete)
     private final TextureAtlasSprite textureConcrete = null;
     
     public PowerPole3Model(EnumBlockTypePole3 blockType, int facing) {

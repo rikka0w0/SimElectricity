@@ -16,11 +16,12 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import rikka.librikka.model.CodeBasedModel;
 import rikka.librikka.model.loader.EasyTextureLoader;
+import simelectricity.essential.client.ResourcePaths;
 import simelectricity.essential.grid.BlockPowerPoleBottom;
 
 @SideOnly(Side.CLIENT)
 public class PowerPoleBottomModel extends CodeBasedModel {
-	@EasyTextureLoader.Mark("sime_essential:render/transmission/metal")
+	@EasyTextureLoader.Mark(ResourcePaths.metal)
     private final TextureAtlasSprite texture = null;
 
     @Override
