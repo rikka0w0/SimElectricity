@@ -56,13 +56,13 @@ public class TransformerStateMapper extends StateMapperBase implements IModelLoa
             }
         } else if (block == BlockRegistry.distributionTransformer) {
         	EnumDistributionTransformerBlockType blockType = state.getValue(EnumDistributionTransformerBlockType.property);
+            boolean mirrored = state.getValue(Properties.propertyMirrored);
         	if (blockType.formed) {
         		EnumDistributionTransformerRenderPart renderPart = state.getValue(EnumDistributionTransformerRenderPart.property);
                 int facing = state.getValue(BlockHorizontal.FACING).ordinal() - 2;
-                boolean mirrored = state.getValue(Properties.propertyMirrored);
                 varStr = blockType.ordinal() + "," + renderPart.ordinal() + "," + facing + "," + mirrored;
         	} else {
-        		varStr = blockType.ordinal() + "";
+        		varStr = blockType.ordinal() + "," + mirrored;
         	}
         }
 
@@ -98,7 +98,8 @@ public class TransformerStateMapper extends StateMapperBase implements IModelLoa
                 boolean mirrored = Boolean.parseBoolean(splited[5]);
                 return new DistributionTransformerFormedModel(renderPart, facing, mirrored);
         	} else {
-        		return new GhostModel();
+                boolean mirrored = Boolean.parseBoolean(splited[3]);
+        		return new DistributionTransformerComponentModel(blockType, mirrored);
         	}
         }
 

@@ -114,16 +114,10 @@ public class PowerPole3Model extends CodeBasedModel implements IPerspectiveAware
                 break;
             case Crossarm10kVT0:
             case Crossarm10kVT1:
-                insulator = new RawQuadGroup();
-                insulator.add(new RawQuadCube(0.08F, 0.5F, 0.08F, textureMetal));
-                insulator.add(new RawQuadCube(0.5F, 0.05F, 0.5F, textureInsulator).translateCoord(0, 0.15F, 0));
-                insulator.add(new RawQuadCube(0.5F, 0.05F, 0.5F, textureInsulator).translateCoord(0, 0.225F, 0));
-                insulator.add(new RawQuadCube(0.5F, 0.05F, 0.5F, textureInsulator).translateCoord(0, 0.3F, 0));
+                insulator = Models.render10kVInsulator(textureMetal, textureInsulator);
                 break;
             case Crossarm415VT0:
-                insulator = new RawQuadGroup();
-                insulator.add(new RawQuadCube(0.08F, 0.25F, 0.08F, textureMetal));
-                insulator.add(new RawQuadCube(0.25F, 0.05F, 0.25F, textureInsulator).translateCoord(0, 0.15F, 0));
+                insulator = Models.render415VInsulator(textureMetal, textureInsulator);
                 break;
         }
         this.insulator = insulator;

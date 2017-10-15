@@ -23,6 +23,7 @@ import simelectricity.essential.grid.TilePowerPole;
 import simelectricity.essential.grid.TilePowerPole2;
 import simelectricity.essential.grid.TilePowerPole3.Pole10Kv;
 import simelectricity.essential.grid.TilePowerPole3.Pole415vType0;
+import simelectricity.essential.grid.transformer.TileDistributionTransformer;
 import simelectricity.essential.grid.transformer.TilePowerTransformerPlaceHolder;
 import simelectricity.essential.grid.transformer.TilePowerTransformerWinding.Primary;
 import simelectricity.essential.grid.transformer.TilePowerTransformerWinding.Secondary;
@@ -83,6 +84,9 @@ public class ClientRegistrationHandler {
         FastTESRPowerPole.register(Pole10Kv.Type0.class);
         FastTESRPowerPole.register(Pole10Kv.Type1.class);
         FastTESRPowerPole.register(Pole415vType0.class);
+        
+        FastTESRPowerPole.register(TileDistributionTransformer.Pole10kV.class);
+        FastTESRPowerPole.register(TileDistributionTransformer.Pole415V.class);
         
         ClientRegistry.bindTileEntitySpecialRenderer(BlockPowerPoleBottom.Tile.class, FastTESRPowerPoleBottom.instance);
         ClientRegistry.bindTileEntitySpecialRenderer(TilePowerPole.class, FastTESRPowerPoleTop.instance);

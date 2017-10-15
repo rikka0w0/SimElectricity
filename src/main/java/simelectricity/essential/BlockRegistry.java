@@ -11,7 +11,7 @@ import simelectricity.essential.grid.TilePowerPole3.Pole10Kv;
 import simelectricity.essential.grid.TilePowerPole3.Pole415vType0;
 import simelectricity.essential.grid.transformer.BlockDistributionTransformer;
 import simelectricity.essential.grid.transformer.BlockPowerTransformer;
-import simelectricity.essential.grid.transformer.TileDistributionTransformerPole;
+import simelectricity.essential.grid.transformer.TileDistributionTransformer;
 import simelectricity.essential.grid.transformer.TilePowerTransformerPlaceHolder;
 import simelectricity.essential.grid.transformer.TilePowerTransformerPlaceHolder.Render;
 import simelectricity.essential.grid.transformer.TilePowerTransformerWinding.Primary;
@@ -85,7 +85,9 @@ public class BlockRegistry {
         registerTile(Pole10Kv.Type0.class);
         registerTile(Pole10Kv.Type1.class);
         registerTile(Pole415vType0.class);
-        registerTile(TileDistributionTransformerPole.class);
+        registerTile(TileDistributionTransformer.Pole10kV.class);
+        registerTile(TileDistributionTransformer.Pole415V.class);
+        registerTile(TileDistributionTransformer.PlaceHolder.class);
 
         registerTile(TileVoltageMeter.class);
         registerTile(TileQuantumGenerator.class);

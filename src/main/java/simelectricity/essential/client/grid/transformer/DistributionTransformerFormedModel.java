@@ -34,6 +34,13 @@ public class DistributionTransformerFormedModel extends CodeBasedModel {
     private final int rotation;
     private final boolean mirrored;
     
+    @EasyTextureLoader.Mark("sime_essential:render/distribution/transformer_heatsink_front_back")
+    private final TextureAtlasSprite textureHeatSink = null;
+    @EasyTextureLoader.Mark("sime_essential:render/distribution/transformer_front_back")
+    private final TextureAtlasSprite textureTransformerFrontBack = null;
+    @EasyTextureLoader.Mark("sime_essential:render/distribution/transformer_side")
+    private final TextureAtlasSprite textureTransformerSide = null;   
+    
     @EasyTextureLoader.Mark("sime_essential:render/transmission/metal")
     private final TextureAtlasSprite textureMetal = null;
     @EasyTextureLoader.Mark("sime_essential:render/transmission/glass_insulator")
@@ -52,52 +59,7 @@ public class DistributionTransformerFormedModel extends CodeBasedModel {
 	
 	@Override
 	public List<BakedQuad> getQuads(IBlockState state, EnumFacing side, long rand) {
-		LinkedList<BakedQuad> list = new LinkedList(quads);
-		
-
-		if (state != null) {
-			if (state.getValue(EnumDistributionTransformerRenderPart.property) == EnumDistributionTransformerRenderPart.Pole10kVRight) {
-				RawQuadGroup model = new RawQuadGroup();
-
-
-				
-
-				
-		        model.rotateAroundY(rotation);
-		        model.translateCoord(0.5F, 0, 0.5F);
-		        model.bake(list);
-			}
-			
-			if (state.getValue(EnumDistributionTransformerRenderPart.property) == EnumDistributionTransformerRenderPart.AuxRight) {
-				RawQuadGroup model = new RawQuadGroup();
-				
-
-				model.merge(Models.render10kVInsulatorSmall(textureMetal, textureInsulator).rotateAroundX(180).translateCoord(-0.45F, 0.55F, 0.15F));
-				model.merge(Models.render10kVInsulatorSmall(textureMetal, textureInsulator).rotateAroundX(180).translateCoord(-0.85F, 0.55F, -0.15F));
-				
-				model.merge(FastTESRPowerPole.renderParabolicCable(new Object[] {
-						new Vec3f(-1.5F, 0.275F, -0.65F),
-						0.15F, new Vec3f(-1.125F, 0.775F, -0.65F)}, 0.03F));
-				
-				model.merge(FastTESRPowerPole.renderParabolicCable(new Object[] {
-						new Vec3f(-1.5F, 0.275F, 0),
-						0.1F, new Vec3f(-0.85F, 0.3F, -0.15F),
-						0.2F, new Vec3f(-0.775F, 0.775F, -0.65F)}, 0.03F));
-				
-				model.merge(FastTESRPowerPole.renderParabolicCable(new Object[] {
-						new Vec3f(-1.5F, 0.275F, 0.65F),
-						0.1F, new Vec3f(-0.45F, 0.3F, 0.15F),
-						0.2F, new Vec3f(-0.425F, 0.775F, -0.65F)}, 0.03F));
-				
-
-				
-		        model.rotateAroundY(rotation);
-		        model.translateCoord(0.5F, 0, 0.5F);
-		        model.bake(list);
-			}
-		}
-
-		return list;
+		return quads;
 	}
 
 	@Override
@@ -189,6 +151,26 @@ public class DistributionTransformerFormedModel extends CodeBasedModel {
             model.add((new RawQuadCube(1.5F, 0.1F, 0.05F, textureMetal)).translateCoord(-0.625F, 0.5F, -0.15F));
             model.add((new RawQuadCube(0.05F, 0.1F, 1.4F, textureMetal)).translateCoord(-1.4F, 0.5F, 0));
 			
+            
+            
+            //Cable
+			model.merge(Models.render10kVInsulatorSmall(textureMetal, textureInsulator).rotateAroundX(180).translateCoord(-0.45F, 0.55F, 0.15F));
+			model.merge(Models.render10kVInsulatorSmall(textureMetal, textureInsulator).rotateAroundX(180).translateCoord(-0.85F, 0.55F, -0.15F));
+			
+			model.merge(FastTESRPowerPole.renderParabolicCable(new Object[] {
+					new Vec3f(-1.5F, 0.275F, -0.65F),
+					0.15F, new Vec3f(-1.125F, 0.775F, -0.65F)}, 0.03F));
+			
+			model.merge(FastTESRPowerPole.renderParabolicCable(new Object[] {
+					new Vec3f(-1.5F, 0.275F, 0),
+					0.1F, new Vec3f(-0.85F, 0.3F, -0.15F),
+					0.2F, new Vec3f(-0.775F, 0.775F, -0.65F)}, 0.03F));
+			
+			model.merge(FastTESRPowerPole.renderParabolicCable(new Object[] {
+					new Vec3f(-1.5F, 0.275F, 0.65F),
+					0.1F, new Vec3f(-0.45F, 0.3F, 0.15F),
+					0.2F, new Vec3f(-0.425F, 0.775F, -0.65F)}, 0.03F));
+            
 			//Cable(upwards)
 			model.merge(FastTESRPowerPole.renderParabolicCable(new Vec3f(-1.725F, 0.7F, 0.65F), new Vec3f(-1.65F,3.8F,0.65F), false, 0, 0.03F));
 			model.merge(FastTESRPowerPole.renderParabolicCable(new Vec3f(-1.725F, 0.7F, 0), new Vec3f(-1.65F,3.8F,0), false, 0, 0.03F));
@@ -302,11 +284,17 @@ public class DistributionTransformerFormedModel extends CodeBasedModel {
 			model.add((new RawQuadCube(0.05F, 0.1F, 1.5F, textureMetal)).translateCoord(-0.15F, 0, -0.25F));
 			
 			//Body
-			model.add((new RawQuadCube(0.8F, 0.9F, 1.8F, textureMetal)).translateCoord(0, 0.1F, 0.5F));
+			model.add((new RawQuadCube(0.8F, 0.9F, 1.8F, new TextureAtlasSprite[] {
+					textureTransformerFrontBack, textureTransformerFrontBack, textureTransformerSide, textureTransformerSide, textureTransformerFrontBack, textureTransformerFrontBack
+					})).translateCoord(0, 0.1F, 0.5F));
 			//Heatsinker(Front)
-			model.add((new RawQuadCube(0.2F, 0.7F, 1.4F, textureMetal)).translateCoord(-0.5F, 0.15F, 0.5F));
+			model.add((new RawQuadCube(0.2F, 0.7F, 1.4F, new TextureAtlasSprite[] {
+					textureTransformerFrontBack, textureTransformerFrontBack, textureTransformerSide, textureTransformerSide, textureHeatSink, textureHeatSink
+					})).translateCoord(-0.5F, 0.15F, 0.5F));
 			//Heatsinker(Back)
-			model.add((new RawQuadCube(0.2F, 0.7F, 1.4F, textureMetal)).translateCoord(0.5F, 0.15F, 0.5F));
+			model.add((new RawQuadCube(0.2F, 0.7F, 1.4F, new TextureAtlasSprite[] {
+					textureTransformerFrontBack, textureTransformerFrontBack, textureTransformerSide, textureTransformerSide, textureHeatSink, textureHeatSink
+					})).translateCoord(0.5F, 0.15F, 0.5F));
 			
 			//Insulators
 			model.merge(Models.render415VInsulatorTall(textureMetal, textureCeramic).translateCoord(0.25F, 1, 0));

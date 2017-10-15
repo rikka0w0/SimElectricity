@@ -33,7 +33,7 @@ public abstract class SEMultiBlockEnergyTile extends SEEnergyTile implements IMu
         
         onStructureCreating();
     }
-        
+    
     @Override
     public MultiBlockTileInfo getMultiBlockTileInfo() {
         return mbInfo;

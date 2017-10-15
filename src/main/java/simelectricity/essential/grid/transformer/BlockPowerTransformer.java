@@ -12,6 +12,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import rikka.librikka.multiblock.BlockMapping;
 import rikka.librikka.multiblock.MultiBlockStructure;
 import rikka.librikka.properties.Properties;
 import simelectricity.api.tile.ISEGridTile;
@@ -98,26 +99,26 @@ public class BlockPowerTransformer extends BlockAbstractTransformer implements I
     @Override
     protected MultiBlockStructure createStructureTemplate() {
         //y,z,x facing NORTH(Z-), do not change
-        MultiBlockStructure.BlockInfo[][][] configuration = new MultiBlockStructure.BlockInfo[5][][];
+        BlockMapping[][][] configuration = new BlockMapping[5][][];
 
-        MultiBlockStructure.BlockInfo core2PH = new MultiBlockStructure.BlockInfo(stateFromType(EnumPowerTransformerBlockType.IronCore), stateFromType(EnumPowerTransformerBlockType.Placeholder));
-        MultiBlockStructure.BlockInfo coil2PH = new MultiBlockStructure.BlockInfo(stateFromType(EnumPowerTransformerBlockType.Winding), stateFromType(EnumPowerTransformerBlockType.Placeholder));
-        MultiBlockStructure.BlockInfo support2PH = new MultiBlockStructure.BlockInfo(stateFromType(EnumPowerTransformerBlockType.OilTankSupport), stateFromType(EnumPowerTransformerBlockType.Placeholder));
-        MultiBlockStructure.BlockInfo pipe2PH = new MultiBlockStructure.BlockInfo(stateFromType(EnumPowerTransformerBlockType.OilPipe), stateFromType(EnumPowerTransformerBlockType.Placeholder));
-        MultiBlockStructure.BlockInfo tank2PH = new MultiBlockStructure.BlockInfo(stateFromType(EnumPowerTransformerBlockType.OilTank), stateFromType(EnumPowerTransformerBlockType.Placeholder));
-        MultiBlockStructure.BlockInfo casing2PH = new MultiBlockStructure.BlockInfo(stateFromType(EnumPowerTransformerBlockType.Casing), stateFromType(EnumPowerTransformerBlockType.Placeholder));
-        MultiBlockStructure.BlockInfo casing2PHpri = new MultiBlockStructure.BlockInfo(stateFromType(EnumPowerTransformerBlockType.Casing), stateFromType(EnumPowerTransformerBlockType.PlaceholderPrimary));
-        MultiBlockStructure.BlockInfo casing2PHsec = new MultiBlockStructure.BlockInfo(stateFromType(EnumPowerTransformerBlockType.Casing), stateFromType(EnumPowerTransformerBlockType.PlaceholderSecondary));
-        MultiBlockStructure.BlockInfo casing2pri = new MultiBlockStructure.BlockInfo(stateFromType(EnumPowerTransformerBlockType.Casing), stateFromType(EnumPowerTransformerBlockType.Primary));
-        MultiBlockStructure.BlockInfo casing2sec = new MultiBlockStructure.BlockInfo(stateFromType(EnumPowerTransformerBlockType.Casing), stateFromType(EnumPowerTransformerBlockType.Secondary));
-        MultiBlockStructure.BlockInfo casing2render = new MultiBlockStructure.BlockInfo(stateFromType(EnumPowerTransformerBlockType.Casing), stateFromType(EnumPowerTransformerBlockType.Render));
+        BlockMapping core2PH = new BlockMapping(stateFromType(EnumPowerTransformerBlockType.IronCore), stateFromType(EnumPowerTransformerBlockType.Placeholder));
+        BlockMapping coil2PH = new BlockMapping(stateFromType(EnumPowerTransformerBlockType.Winding), stateFromType(EnumPowerTransformerBlockType.Placeholder));
+        BlockMapping support2PH = new BlockMapping(stateFromType(EnumPowerTransformerBlockType.OilTankSupport), stateFromType(EnumPowerTransformerBlockType.Placeholder));
+        BlockMapping pipe2PH = new BlockMapping(stateFromType(EnumPowerTransformerBlockType.OilPipe), stateFromType(EnumPowerTransformerBlockType.Placeholder));
+        BlockMapping tank2PH = new BlockMapping(stateFromType(EnumPowerTransformerBlockType.OilTank), stateFromType(EnumPowerTransformerBlockType.Placeholder));
+        BlockMapping casing2PH = new BlockMapping(stateFromType(EnumPowerTransformerBlockType.Casing), stateFromType(EnumPowerTransformerBlockType.Placeholder));
+        BlockMapping casing2PHpri = new BlockMapping(stateFromType(EnumPowerTransformerBlockType.Casing), stateFromType(EnumPowerTransformerBlockType.PlaceholderPrimary));
+        BlockMapping casing2PHsec = new BlockMapping(stateFromType(EnumPowerTransformerBlockType.Casing), stateFromType(EnumPowerTransformerBlockType.PlaceholderSecondary));
+        BlockMapping casing2pri = new BlockMapping(stateFromType(EnumPowerTransformerBlockType.Casing), stateFromType(EnumPowerTransformerBlockType.Primary));
+        BlockMapping casing2sec = new BlockMapping(stateFromType(EnumPowerTransformerBlockType.Casing), stateFromType(EnumPowerTransformerBlockType.Secondary));
+        BlockMapping casing2render = new BlockMapping(stateFromType(EnumPowerTransformerBlockType.Casing), stateFromType(EnumPowerTransformerBlockType.Render));
 
 
         //  .-->x+ (East)
         //  |                           Facing/Looking at North(x-)
         // \|/
         //  z+ (South)
-        configuration[0] = new MultiBlockStructure.BlockInfo[][]{
+        configuration[0] = new BlockMapping[][]{
                 {null, casing2PHpri, casing2PHpri, null, casing2PHpri, casing2PHpri, null},
                 {casing2PHpri, casing2PHpri, casing2PHpri, casing2PHpri, casing2PHpri, casing2PHpri, casing2PHpri},
                 {casing2PH, casing2PH, casing2PH, casing2PH, casing2PH, casing2PH, casing2PH},
@@ -125,7 +126,7 @@ public class BlockPowerTransformer extends BlockAbstractTransformer implements I
                 {null, casing2PHsec, casing2PHsec, casing2PHsec, casing2PHsec, casing2PHsec, null}
         };
 
-        configuration[1] = new MultiBlockStructure.BlockInfo[][]{
+        configuration[1] = new BlockMapping[][]{
                 {null, casing2PHpri, casing2PHpri, casing2PHpri, casing2PHpri, casing2PHpri, null},
                 {casing2PHpri, coil2PH, coil2PH, coil2PH, coil2PH, coil2PH, casing2PHpri},
                 {casing2PH, coil2PH, core2PH, core2PH, core2PH, coil2PH, casing2PH},
@@ -133,7 +134,7 @@ public class BlockPowerTransformer extends BlockAbstractTransformer implements I
                 {null, casing2PHsec, casing2PHsec, casing2PHsec, casing2PHsec, casing2PHsec, null}
         };
 
-        configuration[2] = new MultiBlockStructure.BlockInfo[][]{
+        configuration[2] = new BlockMapping[][]{
                 {null, casing2PHpri, casing2PHpri, null, casing2PHpri, casing2PHpri, null},
                 {casing2PHpri, casing2PHpri, casing2PHpri, casing2pri, casing2PHpri, casing2PHpri, casing2PHpri},
                 {casing2PH, casing2PH, casing2PH, casing2render, casing2PH, casing2PH, casing2PH},
@@ -141,7 +142,7 @@ public class BlockPowerTransformer extends BlockAbstractTransformer implements I
                 {support2PH, casing2PHsec, casing2PHsec, casing2PHsec, casing2PHsec, casing2PHsec, null}
         };
 
-        configuration[3] = new MultiBlockStructure.BlockInfo[][]{
+        configuration[3] = new BlockMapping[][]{
                 {null, null, null, null, null, null, null},
                 {null, null, null, null, null, null, null},
                 {support2PH, null, null, null, null, null, null},
@@ -149,7 +150,7 @@ public class BlockPowerTransformer extends BlockAbstractTransformer implements I
                 {support2PH, null, null, null, null, null, null}
         };
 
-        configuration[4] = new MultiBlockStructure.BlockInfo[][]{
+        configuration[4] = new BlockMapping[][]{
                 {null, null, null, null, null, null, null},
                 {null, null, null, null, null, null, null},
                 {tank2PH, null, null, null, null, null, null},
