@@ -23,11 +23,6 @@ public abstract class TilePowerPoleBase extends SEEnergyTile implements ISEGridT
     @SideOnly(Side.CLIENT)
     protected abstract PowerPoleRenderHelper createRenderHelper();
     
-    @SideOnly(Side.CLIENT)
-    protected boolean scheduleBlockRenderUpdateWhenChange() {
-    	return false;
-    }
-    
     //////////////////////////////
     /////ISEPowerPole
     //////////////////////////////
@@ -38,8 +33,6 @@ public abstract class TilePowerPoleBase extends SEEnergyTile implements ISEGridT
     @SideOnly(Side.CLIENT)
     public void updateRenderInfo() {
         this.getRenderHelper().updateRenderData(this.neighbor1, this.neighbor2);
-        if (this.scheduleBlockRenderUpdateWhenChange())
-            markForRenderUpdate();
     }
 
     @Override

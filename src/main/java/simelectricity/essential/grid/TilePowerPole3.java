@@ -16,20 +16,6 @@ import simelectricity.essential.client.grid.PowerPoleRenderHelper;
 public abstract class TilePowerPole3 extends TilePowerPoleBase {
 	protected BlockPos accessory;
 	public int facing;
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    protected boolean scheduleBlockRenderUpdateWhenChange() {
-        return this instanceof Pole10Kv.Type1;
-    }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public void updateRenderInfo() {
-        this.getRenderHelper().updateRenderData(this.neighbor1, this.neighbor2);
-        if (this.scheduleBlockRenderUpdateWhenChange())
-            markForRenderUpdate();
-    }
     
     @Override
     public boolean canConnect(@Nullable BlockPos to) {

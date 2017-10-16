@@ -1,5 +1,7 @@
 package simelectricity.essential.client.grid;
 
+import java.util.List;
+
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -8,6 +10,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3i;
 import net.minecraftforge.client.model.animation.FastTESR;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.relauncher.Side;
@@ -19,6 +22,7 @@ import rikka.librikka.model.quadbuilder.RawQuadCube;
 import rikka.librikka.model.quadbuilder.RawQuadGroup;
 import simelectricity.common.ConfigManager;
 import simelectricity.essential.client.ResourcePaths;
+import simelectricity.essential.client.grid.PowerPoleRenderHelper.ConnectionInfo;
 
 @SideOnly(Side.CLIENT)
 public class FastTESRPowerPole<T extends TileEntity & ISEPowerPole> extends FastTESR<T> {	
@@ -93,6 +97,26 @@ public class FastTESRPowerPole<T extends TileEntity & ISEPowerPole> extends Fast
         ret.translateCoord(from.x, from.y, from.z);
         return ret;
 	}
+	
+    public static void renderInsulator(Vec3i pos, Vec3f from, Vec3f to, float angle, RawQuadGroup modelInsulator, List<BakedQuad> quads) {
+    	modelInsulator = modelInsulator.clone();
+    	modelInsulator.rotateAroundZ(angle / MathAssitant.PI * 180);
+    	modelInsulator.rotateToVec(from.x, from.y, from.z, to.x, from.y, to.z);
+    	modelInsulator.translateCoord(from.x-pos.getX(), from.y-pos.getY(), from.z-pos.getZ());
+    	modelInsulator.bake(quads);
+    }
+    
+    protected void renderInsulator(PowerPoleRenderHelper helper, RawQuadGroup modelInsulator) {
+        for (ConnectionInfo[] connections : helper.connectionInfo) {
+            for (ConnectionInfo connection : connections) {
+                renderInsulator(helper.pos, connection.from, connection.fixedTo, connection.insulatorAngle, modelInsulator, helper.quadBuffer);
+            }
+        }
+    }
+    
+    /////////////////////////
+    //// FastTESRPowerPole
+    /////////////////////////
     
     @Override
     public boolean isGlobalRenderer(TileEntity te) {

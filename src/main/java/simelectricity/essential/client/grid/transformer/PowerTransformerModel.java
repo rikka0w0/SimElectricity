@@ -24,10 +24,10 @@ import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import rikka.librikka.model.quadbuilder.RawQuadCube;
+import rikka.librikka.model.quadbuilder.RawQuadGroup;
 import simelectricity.essential.client.ResourcePaths;
 import simelectricity.essential.client.grid.pole.Models;
-import simelectricity.essential.utils.client.SERenderHeap;
-import simelectricity.essential.utils.client.SERenderHelper;
 
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -54,7 +54,7 @@ public class PowerTransformerModel implements IModel, IBakedModel {
     public PowerTransformerModel(int facing, boolean mirrored) throws Exception {
         String modelName = "sime_essential:powertransformer.obj";    //Sketch Up --*.dae--> Blender --> *.obj & *.mtl
         Builder<Pair<IModel, IModelState>> builder = ImmutableList.builder();
-        LinkedList<Variant> variants = new LinkedList<Variant>();
+        List<Variant> variants = new LinkedList<Variant>();
         boolean uvLock = false;
 
         Variant variant = new Variant(new ResourceLocation(modelName), PowerTransformerModel.rotationMatrix[facing], uvLock, 1);
@@ -138,7 +138,7 @@ public class PowerTransformerModel implements IModel, IBakedModel {
         //Bake the Obj Model
         IBakedModel bakedModel = this.model.bake(transformation, format, bakedTextureGetter);
         
-        LinkedList<BakedQuad> quads = new LinkedList();
+        List<BakedQuad> quads = new ArrayList();
         quads.addAll(bakedModel.getQuads(null, null, 0));
         
         int rotation = rotationAngle[facing];
@@ -151,25 +151,21 @@ public class PowerTransformerModel implements IModel, IBakedModel {
         if (mirrored)
             b = -1;
 
-        SERenderHeap model = new SERenderHeap();
-        SERenderHeap insulator = Models.renderInsulatorString(1.4, textureInsulator);
-        double[][] rod = SERenderHelper.createCubeVertexes(0.1, 1.8, 0.1);
-        SERenderHelper.translateCoord(rod, 0, -0.1, 0);
-        insulator.addCube(rod, textureMetal);
-        insulator.transform(0, 0.1, 0);
-        model.appendHeap(insulator.clone().transform(1, 1, -1.5 * b));
-        model.appendHeap(insulator.clone().transform(1, 1, 0 * b));
-        model.appendHeap(insulator.transform(1, 1, 1.5 * b));
+        RawQuadGroup model = new RawQuadGroup();
+        RawQuadGroup insulator = Models.renderInsulatorString(1.4F, textureInsulator);
+        insulator.add((new RawQuadCube(0.1F, 1.8F, 0.1F, textureMetal)).translateCoord(0, -0.1F, 0));
+        insulator.translateCoord(0, 0.1F, 0);
+        model.merge(insulator.clone().translateCoord(1, 1, -1.5F * b));
+        model.merge(insulator.clone().translateCoord(1, 1, 0));
+        model.merge(insulator.translateCoord(1, 1, 1.5F * b));
 
-        insulator = Models.renderInsulatorString(0.7, textureInsulator);
-        rod = SERenderHelper.createCubeVertexes(0.1, 1.1, 0.1);
-        SERenderHelper.translateCoord(rod, 0, -0.1, 0);
-        insulator.addCube(rod, textureMetal);
-        insulator.transform(0, 0.1, 0);
-        model.appendHeap(insulator.clone().transform(-1, 1, 0.2 * b));
-        model.appendHeap(insulator.clone().transform(-1, 1, 1 * b));
-        model.appendHeap(insulator.transform(-1, 1, 1.8 * b));
-        model.rotateAroundY(rotation).transform(0.5, 0, 0.5).bake(quads);
+        insulator = Models.renderInsulatorString(0.7F, textureInsulator);
+        insulator.add((new RawQuadCube(0.1F, 1.1F, 0.1F, textureMetal)).translateCoord(0, -0.1F, 0));
+        insulator.translateCoord(0, 0.1F, 0);
+        model.merge(insulator.clone().translateCoord(-1, 1, 0.2F * b));
+        model.merge(insulator.clone().translateCoord(-1, 1, 1 * b));
+        model.merge(insulator.translateCoord(-1, 1, 1.8F * b));
+        model.rotateAroundY(rotation).translateCoord(0.5F, 0, 0.5F).bake(quads);
         
         if (mirrored)
         	FastTESRPowerTransformer.bakedModelMirrored[facing] = quads;

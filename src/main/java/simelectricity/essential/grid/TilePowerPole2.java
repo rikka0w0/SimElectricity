@@ -8,9 +8,8 @@ import rikka.librikka.math.Vec3f;
 import simelectricity.essential.client.grid.PowerPoleRenderHelper;
 
 public class TilePowerPole2 extends TilePowerPoleBase {
-    @Override
     @SideOnly(Side.CLIENT)
-    protected boolean scheduleBlockRenderUpdateWhenChange() {
+    public boolean isType0() {
         return this.getBlockMetadata() >> 3 == 0;
     }
 	
@@ -20,7 +19,7 @@ public class TilePowerPole2 extends TilePowerPoleBase {
         PowerPoleRenderHelper helper;
         int rotation = (this.getBlockMetadata() & 3) * 2;
 
-        if (scheduleBlockRenderUpdateWhenChange()) {
+        if (this.isType0()) {
             helper = new PowerPoleRenderHelper(TilePowerPole2.this.world, TilePowerPole2.this.pos, rotation, 2, 3) {
                 @Override
                 public void onUpdate() {
@@ -61,9 +60,9 @@ public class TilePowerPole2 extends TilePowerPoleBase {
         } else {
             helper = new PowerPoleRenderHelper(this.world, this.pos, rotation, 1, 3);
             helper.addInsulatorGroup(0, 0.125F - 1.95F, 0F,
-                    helper.createInsulator(0, 3, 0, 0.125F - 1.95F, -4.5F),
-                    helper.createInsulator(0, 3, 0, 0.125F - 1.95F, 0F),
-                    helper.createInsulator(0, 3, 0, 0.125F - 1.95F, 4.5F)
+                    helper.createInsulator(0, 3, 0, -2F, -4.5F),
+                    helper.createInsulator(0, 3, 0, -2F, 0F),
+                    helper.createInsulator(0, 3, 0, -2F, 4.5F)
             );
         }
 

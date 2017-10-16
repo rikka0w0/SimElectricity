@@ -1,17 +1,12 @@
 package simelectricity.essential.client.grid.pole;
 
-import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.util.math.Vec3i;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import rikka.librikka.math.Vec3f;
 import rikka.librikka.model.quadbuilder.RawQuadCube;
 import rikka.librikka.model.quadbuilder.RawQuadGroup;
 import simelectricity.essential.utils.client.SERenderHeap;
 import simelectricity.essential.utils.client.SERenderHelper;
-
-import java.util.LinkedList;
 
 @SideOnly(Side.CLIENT)
 public class Models {
@@ -88,26 +83,24 @@ public class Models {
 		return insulator;
 	}
 	
-    public static void renderInsulators(Vec3i pos, Vec3f from, Vec3f to, double angle, SERenderHeap modelInsulator, LinkedList<BakedQuad> quads) {
-        for (int i = 0; i < 3; i++) {
-            SERenderHeap insulator = modelInsulator.clone();
+	public static RawQuadGroup render35KvInsulator(TextureAtlasSprite textureMetal, TextureAtlasSprite textureInsulator) {
+		RawQuadGroup insulator = new RawQuadGroup();
+		RawQuadCube string = new RawQuadCube(0.5F, 0.05F, 0.5F, textureInsulator);
 
-            insulator.rotateAroundZ((float) (angle / Math.PI * 180));
-            insulator.rotateToVec(from.x, from.y, from.z, to.x, from.y, to.z);
-            insulator.transform(from.x, from.y, from.z);
-            insulator.transform(-pos.getX(), -pos.getY(), -pos.getZ());
-            insulator.bake(quads);
+        for (int i = 0; i < 1.4F / 0.1F + 1; i++) {
+            insulator.add(string.clone().translateCoord(0, 0.1F * i, 0));
         }
-    }
-
-    public static SERenderHeap renderInsulatorString(double length, TextureAtlasSprite insulatorTexture) {
-        SERenderHeap h = new SERenderHeap();
-        double[][] insulator = SERenderHelper.createCubeVertexes(0.5, 0.05, 0.5);
+		
+        insulator.add((new RawQuadCube(0.1F, 2F, 0.1F, textureMetal)).translateCoord(0F, -0.3F, 0F));
+		return insulator.translateCoord(0F, 0.3F, 0F);
+	}
+	
+    public static RawQuadGroup renderInsulatorString(float length, TextureAtlasSprite insulatorTexture) {
+    	RawQuadGroup h = new RawQuadGroup();
+        RawQuadCube insulator = new RawQuadCube(0.5F, 0.05F, 0.5F, insulatorTexture);
 
         for (int i = 0; i < length / 0.1 + 1; i++) {
-            double[][] element = SERenderHelper.createSafeCopy(insulator);
-            SERenderHelper.translateCoord(element, 0, 0.1 * i, 0);
-            h.addCube(element, insulatorTexture);
+        	h.add(insulator.clone().translateCoord(0, 0.1F * i, 0));
         }
         return h;
     }

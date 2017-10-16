@@ -1,6 +1,8 @@
 package simelectricity.essential.client.grid.pole;
 
 import com.google.common.base.Function;
+import com.google.common.collect.ImmutableList;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -11,13 +13,13 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import rikka.librikka.model.CodeBasedModel;
 import rikka.librikka.model.loader.EasyTextureLoader;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 @SideOnly(Side.CLIENT)
 public class CableJointModel extends CodeBasedModel {
 	private final int facing;
-    private final LinkedList<BakedQuad> quads = new LinkedList();
+    private final List<BakedQuad> quads = new ArrayList();
 
     @EasyTextureLoader.Mark("sime_essential:render/transmission/essential_cable_joint_texture_updown")
     private final TextureAtlasSprite texture_updown = null;
@@ -34,6 +36,9 @@ public class CableJointModel extends CodeBasedModel {
 
     @Override
     public List<BakedQuad> getQuads(IBlockState state, EnumFacing side, long rand) {
+    	if (side != null)
+            return ImmutableList.of();
+    	
         return this.quads;
     }
 

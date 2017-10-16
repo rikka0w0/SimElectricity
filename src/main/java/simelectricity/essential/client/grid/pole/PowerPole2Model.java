@@ -5,32 +5,25 @@ import com.google.common.collect.ImmutableList;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import rikka.librikka.model.CodeBasedModel;
 import rikka.librikka.model.loader.EasyTextureLoader;
 import rikka.librikka.model.quadbuilder.RawQuadCube;
+import rikka.librikka.model.quadbuilder.RawQuadGroup;
 import simelectricity.essential.client.ResourcePaths;
-import simelectricity.essential.client.grid.PowerPoleRenderHelper;
-import simelectricity.essential.client.grid.PowerPoleRenderHelper.ConnectionInfo;
-import simelectricity.essential.utils.client.SERenderHeap;
-import simelectricity.essential.utils.client.SERenderHelper;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 @SideOnly(Side.CLIENT)
 public class PowerPole2Model extends CodeBasedModel {
-    private final LinkedList<BakedQuad> quads = new LinkedList();
+    private final List<BakedQuad> quads = new ArrayList();
     private final int rotation;
     private final int type;
     private final boolean isRod;
-    
-    private SERenderHeap modelInsulator;
 
     @EasyTextureLoader.Mark(ResourcePaths.metal)
     private final TextureAtlasSprite textureMetal = null;
@@ -55,74 +48,35 @@ public class PowerPole2Model extends CodeBasedModel {
 
     @Override
     public List<BakedQuad> getQuads(IBlockState blockState, EnumFacing side, long rand) {
-        if (MinecraftForgeClient.getRenderLayer() == BlockRenderLayer.SOLID) {
-            if (this.isRod || this.type == 1)
-                return ImmutableList.copyOf(quads);
-
-            LinkedList<BakedQuad> quads = new LinkedList();
-            quads.addAll(this.quads);
-
-            PowerPoleRenderHelper helper = PowerPoleRenderHelper.fromState(blockState);
-
-            if (helper == null)
-                return quads;    //Before the new placed block receiving the update packet from server;
-
-            for (ConnectionInfo[] connections : helper.connectionInfo) {
-                for (ConnectionInfo connection : connections) {
-                    Models.renderInsulators(helper.pos, connection.from, connection.fixedTo, connection.insulatorAngle, this.modelInsulator, quads);
-                }
-            }
-
-            return quads;
-        }
-
-        return ImmutableList.of();
+    	if (side != null)
+            return ImmutableList.of();
+    	
+        return this.quads;
     }
 
 	@Override
 	protected void bake(Function<ResourceLocation, TextureAtlasSprite> textureRegistry) {
 		this.quads.clear();
-		
+
+        FastTESRPowerPole2.modelInsulator = Models.render35KvInsulator(textureMetal, textureInsulator);		
 
         if (isRod) {
-            modelInsulator = null;
-
             RawQuadCube cube = new RawQuadCube(0.25F, 1, 0.25F, textureConcrete);
             cube.translateCoord(0.5F, 0, 0.5F);
             cube.bake(this.quads);
         } else {
-            SERenderHeap model2 = new SERenderHeap();
-            double[][] cube = SERenderHelper.createCubeVertexes(0.25, 11, 0.25);
-            SERenderHelper.translateCoord(cube, 0, -5.5, 0);
-            SERenderHelper.rotateAroundX(cube, 90);
-            SERenderHelper.translateCoord(cube, 0.25, 0.125, 0);
-            model2.addCube(cube, textureMetal);
-            cube = SERenderHelper.createCubeVertexes(0.25, 11, 0.25);
-            SERenderHelper.translateCoord(cube, 0, -5.5, 0);
-            SERenderHelper.rotateAroundX(cube, 90);
-            SERenderHelper.translateCoord(cube, -0.25, 0.125, 0);
-            model2.addCube(cube, textureMetal);
-
+        	RawQuadGroup model2 = new RawQuadGroup();
+        	model2.add((new RawQuadCube(0.25F, 11F, 0.25F, textureMetal)).translateCoord(0, -5.5F, 0).rotateAroundX(90).translateCoord(0.25F, 0.125F, 0));
+        	model2.add((new RawQuadCube(0.25F, 11F, 0.25F, textureMetal)).translateCoord(0, -5.5F, 0).rotateAroundX(90).translateCoord(-0.25F, 0.125F, 0));
 
             if (type > 0) {    //1
-                modelInsulator = null;
-
-                SERenderHeap insulator = Models.renderInsulatorString(1.4, textureInsulator);
-                double[][] rod = SERenderHelper.createCubeVertexes(0.1, 1.95, 0.1);
-                SERenderHelper.translateCoord(rod, 0, -0.15, 0);
-                insulator.addCube(rod, textureMetal);
-                model2.appendHeap(insulator.clone().transform(0, 0.125 - 1.8, -4.5));
-                model2.appendHeap(insulator.clone().transform(0, 0.125 - 1.8, 0));
-                model2.appendHeap(insulator.transform(0, 0.125 - 1.8, 4.5));
-            } else {
-                modelInsulator = Models.renderInsulatorString(1.4, textureInsulator);
-                double[][] rod2 = SERenderHelper.createCubeVertexes(0.1, 2, 0.1);
-                SERenderHelper.translateCoord(rod2, 0, -0.3, 0);
-                this.modelInsulator.addCube(rod2, textureMetal);
-                this.modelInsulator.transform(0, 0.3, 0);
+                RawQuadGroup insulator = FastTESRPowerPole2.modelInsulator.clone().rotateAroundX(180);
+                model2.merge(insulator.clone().translateCoord(0, 0, -4.5F));
+                model2.merge(insulator.clone().translateCoord(0, 0, 0));
+                model2.merge(insulator.translateCoord(0, 0, 4.5F));
             }
 
-            model2.rotateAroundY(rotation).transform(0.5, 0, 0.5).bake(this.quads);
+            model2.rotateAroundY(rotation).translateCoord(0.5F, 0, 0.5F).bake(this.quads);
         }
 	}
 }

@@ -1,6 +1,5 @@
 package simelectricity.essential.client.grid.transformer;
 
-import java.util.LinkedList;
 import java.util.List;
 
 import net.minecraft.client.renderer.VertexBuffer;
@@ -17,8 +16,8 @@ public class FastTESRPowerTransformer extends FastTESR<TilePowerTransformerPlace
     public final static FastTESRPowerTransformer instance = new FastTESRPowerTransformer();
 	private FastTESRPowerTransformer() {}
 	
-    public final static LinkedList<BakedQuad>[] bakedModelUnmirrored = new LinkedList[4];
-    public final static LinkedList<BakedQuad>[] bakedModelMirrored = new LinkedList[4];
+    public final static List<BakedQuad>[] bakedModelUnmirrored = new List[4];
+    public final static List<BakedQuad>[] bakedModelMirrored = new List[4];
 	
 	@Override
     public boolean isGlobalRenderer(TilePowerTransformerPlaceHolder.Render te) {

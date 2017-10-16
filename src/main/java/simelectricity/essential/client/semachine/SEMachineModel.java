@@ -14,7 +14,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import simelectricity.essential.common.semachine.ExtendedProperties;
 
 import javax.annotation.Nullable;
-import java.util.LinkedList;
+
+import java.util.ArrayList;
 import java.util.List;
 
 @SideOnly(Side.CLIENT)
@@ -69,18 +70,19 @@ public class SEMachineModel implements IBakedModel {
 
     @Override
     public List<BakedQuad> getQuads(@Nullable IBlockState blockState, @Nullable EnumFacing side, long rand) {
-        if (!(blockState instanceof IExtendedBlockState))
-            return this.bakedModel.getQuads(blockState, side, rand);    //Item Model
+    	if (side == null) {
+            if (!(blockState instanceof IExtendedBlockState))
+                return this.bakedModel.getQuads(blockState, side, rand);    //Item Model
 
-        IExtendedBlockState exBlockState = (IExtendedBlockState) blockState;
-        int[] socketIcon = this.getSocketIconArray(exBlockState);
+            IExtendedBlockState exBlockState = (IExtendedBlockState) blockState;
+            int[] socketIcon = this.getSocketIconArray(exBlockState);
 
 
-        List<BakedQuad> quads = new LinkedList<BakedQuad>();
-        quads.addAll(this.bakedModel.getQuads(blockState, side, rand));
-
-        SocketRender.getBaked(quads, socketIcon);
-
-        return quads;
+            List<BakedQuad> quads = new ArrayList<BakedQuad>();
+            SocketRender.getBaked(quads, socketIcon);
+            return quads;
+    	} else {
+    		return this.bakedModel.getQuads(blockState, side, rand); 
+    	}
     }
 }

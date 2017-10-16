@@ -1,7 +1,6 @@
 package simelectricity.essential.client.cable;
 
 import com.google.common.base.Function;
-import com.google.common.collect.ImmutableList;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -18,7 +17,8 @@ import simelectricity.essential.api.client.ISECoverPanelRender;
 import simelectricity.essential.api.coverpanel.ISECoverPanel;
 
 import javax.annotation.Nullable;
-import java.util.LinkedList;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class CableModel extends CodeBasedModel {
@@ -26,7 +26,7 @@ public class CableModel extends CodeBasedModel {
     private final ResourceLocation insulatorTextureLoc, conductorTextureLoc;
     private TextureAtlasSprite insulatorTexture, conductorTexture;
 
-    private final List<BakedQuad>[] branches = new LinkedList[6];
+    private final List<BakedQuad>[] branches = new List[6];
 
     public CableModel(String domain, String name, float thickness) {
         this.insulatorTextureLoc = this.registerTexture(domain + ":blocks/" + name + "_insulator");    // We just want to bypass the ModelBakery
@@ -41,44 +41,44 @@ public class CableModel extends CodeBasedModel {
 
     @Override
     public List<BakedQuad> getQuads(@Nullable IBlockState blockState,
-                                    @Nullable EnumFacing uselessside, long rand) {
+                                    @Nullable EnumFacing cullingSide, long rand) {
+    	List<BakedQuad> quads = new ArrayList<BakedQuad>();
 
-        List<BakedQuad> quads = new LinkedList<BakedQuad>();
-
-        TileEntity te = UnlistedPropertyRef.get(blockState);
+		TileEntity te = UnlistedPropertyRef.get(blockState);
         if (!(te instanceof ISEGenericCable))
-            return ImmutableList.of();
+            return quads;
         
         ISEGenericCable cable = (ISEGenericCable) te;
-        BlockRenderLayer layer = MinecraftForgeClient.getRenderLayer();
+    	
+    	if (cullingSide == null) {
+            //Render center & branches in SOLID layer
+            if (MinecraftForgeClient.getRenderLayer() == BlockRenderLayer.SOLID) {
+                byte numOfCon = 0;
+                EnumFacing conSide = EnumFacing.DOWN;
 
-        //Render center & branches in SOLID layer
-        if (layer == BlockRenderLayer.SOLID) {
-            byte numOfCon = 0;
-            EnumFacing conSide = EnumFacing.DOWN;
+                TextureAtlasSprite[] centerTexture = {this.insulatorTexture, this.insulatorTexture,
+                        this.insulatorTexture, this.insulatorTexture,
+                        this.insulatorTexture, this.insulatorTexture};
 
-            TextureAtlasSprite[] centerTexture = {this.insulatorTexture, this.insulatorTexture,
-                    this.insulatorTexture, this.insulatorTexture,
-                    this.insulatorTexture, this.insulatorTexture};
-
-            for (EnumFacing direction : EnumFacing.VALUES) {
-                if (cable.connectedOnSide(direction)) {
-                    quads.addAll(this.branches[direction.ordinal()]);
-                    centerTexture[direction.ordinal()] = null;
-                    conSide = direction;
-                    numOfCon++;
+                for (EnumFacing direction : EnumFacing.VALUES) {
+                    if (cable.connectedOnSide(direction)) {
+                        quads.addAll(this.branches[direction.ordinal()]);
+                        centerTexture[direction.ordinal()] = null;
+                        conSide = direction;
+                        numOfCon++;
+                    }
                 }
+
+                if (numOfCon == 1) {
+                    centerTexture[conSide.getOpposite().ordinal()] = this.conductorTexture;
+                }
+
+                RawQuadCube cube = new RawQuadCube(this.thickness, this.thickness, this.thickness, centerTexture);
+                cube.translateCoord(0.5F, 0.5F - this.thickness / 2, 0.5F);
+                cube.bake(quads);
             }
-
-            if (numOfCon == 1) {
-                centerTexture[conSide.getOpposite().ordinal()] = this.conductorTexture;
-            }
-
-            RawQuadCube cube = new RawQuadCube(this.thickness, this.thickness, this.thickness, centerTexture);
-            cube.translateCoord(0.5F, 0.5F - this.thickness / 2, 0.5F);
-            cube.bake(quads);
-        }
-
+    	}
+    	
         //CoverPanel can be rendered in any layer
         for (EnumFacing side : EnumFacing.VALUES) {
             ISECoverPanel coverPanel = cable.getCoverPanelOnSide(side);
@@ -98,12 +98,12 @@ public class CableModel extends CodeBasedModel {
 		this.insulatorTexture = textureRegistry.apply(insulatorTextureLoc);
 		
 		//Bake branches
-        List<BakedQuad> branchDown = new LinkedList<BakedQuad>();
-        List<BakedQuad> branchUp = new LinkedList<BakedQuad>();
-        List<BakedQuad> branchNorth = new LinkedList<BakedQuad>();
-        List<BakedQuad> branchSouth = new LinkedList<BakedQuad>();
-        List<BakedQuad> branchWest = new LinkedList<BakedQuad>();
-        List<BakedQuad> branchEast = new LinkedList<BakedQuad>();
+        List<BakedQuad> branchDown = new ArrayList<BakedQuad>();
+        List<BakedQuad> branchUp = new ArrayList<BakedQuad>();
+        List<BakedQuad> branchNorth = new ArrayList<BakedQuad>();
+        List<BakedQuad> branchSouth = new ArrayList<BakedQuad>();
+        List<BakedQuad> branchWest = new ArrayList<BakedQuad>();
+        List<BakedQuad> branchEast = new ArrayList<BakedQuad>();
 
         RawQuadCube cube = new RawQuadCube(thickness, 0.5F - thickness / 2, thickness,
                 new TextureAtlasSprite[]{conductorTexture, null,

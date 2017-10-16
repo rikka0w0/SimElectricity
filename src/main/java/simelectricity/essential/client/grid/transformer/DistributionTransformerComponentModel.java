@@ -1,6 +1,6 @@
 package simelectricity.essential.client.grid.transformer;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.vecmath.Matrix4f;
@@ -9,6 +9,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.util.vector.Vector3f;
 
 import com.google.common.base.Function;
+import com.google.common.collect.ImmutableList;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -37,7 +38,7 @@ public class DistributionTransformerComponentModel extends CodeBasedModel implem
 	private final EnumDistributionTransformerBlockType blockType;
 	private final boolean rotated;
 
-	private final LinkedList<BakedQuad> quads = new LinkedList();
+	private final List<BakedQuad> quads = new ArrayList();
 	
     @EasyTextureLoader.Mark("sime_essential:render/distribution/transformer_front_back")
     private final TextureAtlasSprite textureTransformerFrontBack = null;
@@ -60,6 +61,9 @@ public class DistributionTransformerComponentModel extends CodeBasedModel implem
 	
 	@Override
 	public List<BakedQuad> getQuads(IBlockState state, EnumFacing side, long rand) {
+    	if (side != null)
+            return ImmutableList.of();
+    	
 		return quads;
 	}
 

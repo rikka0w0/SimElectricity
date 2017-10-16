@@ -1,6 +1,6 @@
 package simelectricity.essential.client.grid.pole;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.google.common.base.Function;
@@ -15,9 +15,9 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import rikka.librikka.model.CodeBasedModel;
 import rikka.librikka.model.loader.EasyTextureLoader;
+import rikka.librikka.model.quadbuilder.RawQuadGroup;
 import simelectricity.essential.client.ResourcePaths;
 import simelectricity.essential.utils.client.SERenderHeap;
-import simelectricity.essential.utils.client.SERenderHelper;
 
 @SideOnly(Side.CLIENT)
 public class PowerPoleTopModel extends CodeBasedModel {
@@ -30,41 +30,34 @@ public class PowerPoleTopModel extends CodeBasedModel {
     public void bake(Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter) {
     	SERenderHeap model = Models.renderTower0Top(textureMetal);
 		
-		SERenderHeap modelInsulator = Models.renderInsulatorString(1.4, textureInsulator);
-        double[][] rod2 = SERenderHelper.createCubeVertexes(0.1, 2, 0.1);
-        SERenderHelper.translateCoord(rod2, 0, -0.3, 0);
-        modelInsulator.addCube(rod2, textureMetal);
-        modelInsulator.transform(0, 0.3, 0);
-        FastTESRPowerPoleTop.modelInsulator = modelInsulator;
+        FastTESRPowerPoleTop.modelInsulator = Models.render35KvInsulator(textureMetal, textureInsulator);		
         
     	for (int facing=0; facing< 8; facing ++) {
-    		LinkedList<BakedQuad> type0 = new LinkedList();
-        	LinkedList<BakedQuad> insulator35Kv = new LinkedList();
-    		LinkedList<BakedQuad> type1 = new LinkedList();
+    		List<BakedQuad> type0 = new ArrayList();
+        	List<BakedQuad> insulator35Kv = new ArrayList();
+    		List<BakedQuad> type1 = new ArrayList();
+    		
     		/*
     		 * Meta facing: MC: South - 0, OpenGL: Xpos(East) - 0
     		 */
     		int rotation = facing * 45 - 90;
     		
     		//Type 0
-            SERenderHeap insulatorHeap = modelInsulator.clone();
-            insulatorHeap.rotateAroundZ(180);
-            insulatorHeap.transform(0, 7, 3.95);
-            insulatorHeap.rotateAroundVector(rotation, 0, 1, 0);
-            insulatorHeap.transform(0.5, 0, 0.5);
-            insulatorHeap.bake(insulator35Kv);
+            RawQuadGroup insulator = FastTESRPowerPoleTop.modelInsulator.clone();
+            insulator.rotateAroundZ(180);
+            insulator.translateCoord(0, 7F, 3.95F);
+            insulator.rotateAroundVector(rotation, 0, 1, 0);
+            insulator.translateCoord(0.5F, 0, 0.5F);
+            insulator.bake(insulator35Kv);
             model.clone().rotateAroundY(rotation).transform(0.5, -18, 0.5).bake(type0);
             
             //Type 1
-            SERenderHeap type1Model = model.clone();
-            SERenderHeap insulator = Models.renderInsulatorString(1.4, textureInsulator);
-            double[][] rod = SERenderHelper.createCubeVertexes(0.1, 1.95, 0.1);
-            SERenderHelper.translateCoord(rod, 0, -0.15, 0);
-            insulator.addCube(rod, textureMetal);
-            type1Model.appendHeap(insulator.clone().transform(0, 18 - 1.85, -4.9));
-            type1Model.appendHeap(insulator.clone().transform(0, 18 - 1.85, 4.9));
-            type1Model.appendHeap(insulator.transform(0, 23.15, 3.95));
-            type1Model.rotateAroundY(rotation).transform(0.5, -18, 0.5).bake(type1);
+            RawQuadGroup insulators = new RawQuadGroup();
+            insulators.merge(FastTESRPowerPoleTop.modelInsulator.clone().translateCoord(0, -2F, -4.9F));
+            insulators.merge(FastTESRPowerPoleTop.modelInsulator.clone().translateCoord(0, -2F, 4.9F));
+            insulators.merge(FastTESRPowerPoleTop.modelInsulator.clone().translateCoord(0, 5F, 3.95F));
+            insulators.rotateAroundY(rotation).translateCoord(0.5F, 0, 0.5F).bake(type1);
+            type1.addAll(type0);
             
             FastTESRPowerPoleTop.bakedModelType0[facing] = type0;
             FastTESRPowerPoleTop.insulator35Kv[facing] = insulator35Kv;

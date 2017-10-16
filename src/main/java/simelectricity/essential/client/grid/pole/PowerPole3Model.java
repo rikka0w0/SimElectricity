@@ -21,22 +21,20 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.util.vector.Vector3f;
 
 import com.google.common.base.Function;
+import com.google.common.collect.ImmutableList;
 
 import simelectricity.essential.client.ResourcePaths;
-import simelectricity.essential.client.grid.PowerPoleRenderHelper;
 import simelectricity.essential.grid.EnumBlockTypePole3;
 
 import javax.vecmath.Matrix4f;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 @SideOnly(Side.CLIENT)
 public class PowerPole3Model extends CodeBasedModel implements IPerspectiveAwareModel {
     private final EnumBlockTypePole3 blockType;
     private final int rotation;
-    private final List<BakedQuad> quads = new LinkedList();
-
-    private RawQuadGroup insulator;
+    private final List<BakedQuad> quads = new ArrayList();
 
     @EasyTextureLoader.Mark(ResourcePaths.metal)
     private final TextureAtlasSprite textureMetal = null;
@@ -57,22 +55,9 @@ public class PowerPole3Model extends CodeBasedModel implements IPerspectiveAware
 
     @Override
     public List<BakedQuad> getQuads(IBlockState blockState, EnumFacing side, long rand) {
-        if (this.blockType == EnumBlockTypePole3.Crossarm10kVT1) {
-            PowerPoleRenderHelper helper = PowerPoleRenderHelper.fromState(blockState);
-
-            if (helper == null)
-                return this.quads;
-
-            LinkedList<BakedQuad> quads = new LinkedList();
-            quads.addAll(this.quads);
-            helper.renderInsulator(this.insulator, quads);
-
-            if (helper.connectionInfo.size() == 2) {
-				this.insulator.clone().translateCoord(0.5F, 1F, 0.5F).bake(quads);
-            }
-
-            return quads;
-        }
+    	if (side != null)
+            return ImmutableList.of();
+        
         return this.quads;
     }
 
@@ -104,6 +89,9 @@ public class PowerPole3Model extends CodeBasedModel implements IPerspectiveAware
 	protected void bake(Function<ResourceLocation, TextureAtlasSprite> textureRegistry) {
 		this.quads.clear();
 		
+
+        FastTESRPowerPole3.modelInsulator10kV = Models.render10kVInsulator(textureMetal, textureInsulator);
+		
         RawQuadCube cube = new RawQuadCube(0.25F, 1, 0.25F, textureConcrete);
         cube.translateCoord(0.5F, 0, 0.5F);
         cube.bake(this.quads);
@@ -121,8 +109,6 @@ public class PowerPole3Model extends CodeBasedModel implements IPerspectiveAware
                 insulator = Models.render415VInsulator(textureMetal, textureInsulator);
                 break;
         }
-        this.insulator = insulator;
-
 
         RawQuadGroup model = new RawQuadGroup();
         switch (blockType) {

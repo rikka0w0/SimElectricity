@@ -1,6 +1,6 @@
 package simelectricity.essential.client.grid.pole;
 
-import java.util.LinkedList;
+import java.util.List;
 
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -14,7 +14,7 @@ public class FastTESRPowerPoleBottom extends FastTESR<BlockPowerPoleBottom.Tile>
 	public final static TileEntitySpecialRenderer instance = new FastTESRPowerPoleBottom();
 	private FastTESRPowerPoleBottom () {}
 	
-	public final static LinkedList<BakedQuad>[] bakedModel = new LinkedList[8];
+	public final static List<BakedQuad>[] bakedModel = new List[8];
 	
     @Override
     public boolean isGlobalRenderer(BlockPowerPoleBottom.Tile te) {

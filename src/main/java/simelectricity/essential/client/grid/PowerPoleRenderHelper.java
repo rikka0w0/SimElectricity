@@ -17,6 +17,7 @@ import rikka.librikka.model.quadbuilder.RawQuadGroup;
 import rikka.librikka.properties.UnlistedPropertyRef;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -38,7 +39,7 @@ public class PowerPoleRenderHelper {
     public final LinkedList<PowerPoleRenderHelper.ConnectionInfo[]> connectionInfo = new LinkedList();
     public final LinkedList<PowerPoleRenderHelper.ExtraWireInfo> extraWires = new LinkedList();
     
-    public final LinkedList<BakedQuad> quadBuffer = new LinkedList();
+    public final List<BakedQuad> quadBuffer = new ArrayList();
     private boolean needBake = false;
     
     private int addedGroup;
@@ -168,6 +169,7 @@ public class PowerPoleRenderHelper {
         GridRenderMonitor.instance.notifyChanged(list);
     }
 
+    @Deprecated
     @Nullable
     public static PowerPoleRenderHelper fromState(IBlockState blockState) {
         if (!(blockState instanceof IExtendedBlockState))

@@ -1,10 +1,11 @@
 package simelectricity.essential.client.grid.transformer;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 import com.google.common.base.Function;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Sets;
 
 import net.minecraft.block.state.IBlockState;
@@ -28,7 +29,7 @@ import simelectricity.essential.grid.transformer.EnumDistributionTransformerRend
 public class DistributionTransformerFormedModel extends CodeBasedModel {
     public static final int[] rotationMatrix = {4, 0, 6, 2};    //NSWE
 	
-	private final LinkedList<BakedQuad> quads = new LinkedList();
+	private final List<BakedQuad> quads = new ArrayList();
     private final Set<ResourceLocation> textures = Sets.newHashSet();
 	
     private final EnumDistributionTransformerRenderPart part;
@@ -60,6 +61,9 @@ public class DistributionTransformerFormedModel extends CodeBasedModel {
 	
 	@Override
 	public List<BakedQuad> getQuads(IBlockState state, EnumFacing side, long rand) {
+    	if (side != null)
+            return ImmutableList.of();
+    	
 		return quads;
 	}
 

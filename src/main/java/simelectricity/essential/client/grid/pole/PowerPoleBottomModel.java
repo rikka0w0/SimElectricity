@@ -1,6 +1,6 @@
 package simelectricity.essential.client.grid.pole;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.google.common.base.Function;
@@ -57,7 +57,7 @@ public class PowerPoleBottomModel extends CodeBasedModel {
             }
 
             Vec3i offset = BlockPowerPoleBottom.getCenterBoxOffset(facing);
-            LinkedList<BakedQuad> quads = new LinkedList();
+            List<BakedQuad> quads = new ArrayList();
             Models.renderTower0Bottom(texture).rotateAroundY(rotation).transform(0.5 + offset.getX(), 0, 0.5 + offset.getZ()).bake(quads);
             FastTESRPowerPoleBottom.bakedModel[facing] = quads;
     	}
