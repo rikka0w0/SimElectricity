@@ -16,8 +16,12 @@ public class FastTESRPowerPole3 extends FastTESRPowerPole<TilePowerPole3>{
 
 	@Override
 	protected void bake(TilePowerPole3 te, PowerPoleRenderHelper helper) {
-		if (te instanceof TilePowerPole3.Pole10Kv.Type1)
+		if (te instanceof TilePowerPole3.Pole10Kv.Type1) {
 			renderInsulator(helper, modelInsulator10kV);
+			
+			if (helper.connectionInfo.size() == 2)
+				modelInsulator10kV.clone().translateCoord(0.5F, 1F, 0.5F).bake(helper.quadBuffer);
+		}
 		
 		super.bake(te, helper);
 	}

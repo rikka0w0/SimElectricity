@@ -3,24 +3,15 @@ package simelectricity.essential.client.grid.transformer;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.vecmath.Matrix4f;
-
-import org.apache.commons.lang3.tuple.Pair;
-import org.lwjgl.util.vector.Vector3f;
-
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
-import net.minecraft.client.renderer.block.model.ItemTransformVec3f;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.model.IPerspectiveAwareModel;
-import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import rikka.librikka.math.Vec3f;
@@ -31,10 +22,11 @@ import rikka.librikka.model.quadbuilder.RawQuadGroup;
 import simelectricity.essential.client.ResourcePaths;
 import simelectricity.essential.client.grid.FastTESRPowerPole;
 import simelectricity.essential.client.grid.pole.Models;
+import simelectricity.essential.client.grid.pole.PowerPole3Model;
 import simelectricity.essential.grid.transformer.EnumDistributionTransformerBlockType;
 
 @SideOnly(Side.CLIENT)
-public class DistributionTransformerComponentModel extends CodeBasedModel implements IPerspectiveAwareModel {
+public class DistributionTransformerComponentModel extends CodeBasedModel {
 	private final EnumDistributionTransformerBlockType blockType;
 	private final boolean rotated;
 
@@ -151,21 +143,7 @@ public class DistributionTransformerComponentModel extends CodeBasedModel implem
 	}
 
     @Override
-    public Pair<? extends IBakedModel, Matrix4f> handlePerspective(ItemCameraTransforms.TransformType cameraTransformType) {
-        ItemTransformVec3f half = new ItemTransformVec3f(new Vector3f(15, 255, 0), new Vector3f(), new Vector3f(0.5F, 0.5F, 0.5F));
-
-        ItemCameraTransforms itemCameraTransforms = new ItemCameraTransforms(
-                half,
-                half,
-                new ItemTransformVec3f(new Vector3f(-15, 255, 0), new Vector3f(), new Vector3f(0.5F, 0.5F, 0.5F)),
-                new ItemTransformVec3f(new Vector3f(-15, 255, 0), new Vector3f(), new Vector3f(0.5F, 0.5F, 0.5F)),
-                half,
-                new ItemTransformVec3f(new Vector3f(45, 255 - 45, 0), new Vector3f(), new Vector3f(0.5F, 0.65F, 0.5F)),
-                half,
-                half);
-        ItemTransformVec3f itemTransformVec3f = itemCameraTransforms.getTransform(cameraTransformType);
-        TRSRTransformation tr = new TRSRTransformation(itemTransformVec3f);
-
-        return Pair.of(this, tr.getMatrix());
+    public ItemCameraTransforms getItemCameraTransforms() {
+        return PowerPole3Model.itemCameraTransforms;
     }
 }

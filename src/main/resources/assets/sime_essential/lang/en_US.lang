@@ -43,7 +43,7 @@ tile.sime_essential:essential_disttransformer.pole10kvnormal.name=10kV Distribut
 tile.sime_essential:essential_disttransformer.pole10kvspec.name=10kV Distribution Transformer Pole(Special)
 tile.sime_essential:essential_disttransformer.pole10kvaux.name=Auxiliary Distribution Transformer Pole
 tile.sime_essential:essential_disttransformer.pole415vnormal.name=415V Distribution Transformer Pole
-tile.sime_essential:essential_disttransformer.transforme.namer=Distribution Transformer
+tile.sime_essential:essential_disttransformer.transformer.name=Distribution Transformer(10kV-415V)
 
 # Fluids
 fluid.vita_tea=Vita Lemon Tea

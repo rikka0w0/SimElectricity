@@ -2,22 +2,20 @@ package simelectricity.essential.client.grid.pole;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.block.model.ItemTransformVec3f;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.model.IPerspectiveAwareModel;
-import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
 import rikka.librikka.model.CodeBasedModel;
+import rikka.librikka.model.ModelPerspectives;
 import rikka.librikka.model.loader.EasyTextureLoader;
 import rikka.librikka.model.quadbuilder.RawQuadCube;
 import rikka.librikka.model.quadbuilder.RawQuadGroup;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.util.vector.Vector3f;
 
 import com.google.common.base.Function;
@@ -26,12 +24,11 @@ import com.google.common.collect.ImmutableList;
 import simelectricity.essential.client.ResourcePaths;
 import simelectricity.essential.grid.EnumBlockTypePole3;
 
-import javax.vecmath.Matrix4f;
 import java.util.ArrayList;
 import java.util.List;
 
 @SideOnly(Side.CLIENT)
-public class PowerPole3Model extends CodeBasedModel implements IPerspectiveAwareModel {
+public class PowerPole3Model extends CodeBasedModel {
     private final EnumBlockTypePole3 blockType;
     private final int rotation;
     private final List<BakedQuad> quads = new ArrayList();
@@ -64,25 +61,6 @@ public class PowerPole3Model extends CodeBasedModel implements IPerspectiveAware
     @Override
     public boolean isGui3d() {
         return false;
-    }
-
-    @Override
-    public Pair<? extends IBakedModel, Matrix4f> handlePerspective(ItemCameraTransforms.TransformType cameraTransformType) {
-        ItemTransformVec3f half = new ItemTransformVec3f(new Vector3f(15, 255, 0), new Vector3f(), new Vector3f(0.5F, 0.5F, 0.5F));
-
-        ItemCameraTransforms itemCameraTransforms = new ItemCameraTransforms(
-                half,
-                half,
-                new ItemTransformVec3f(new Vector3f(-15, 255, 0), new Vector3f(), new Vector3f(0.5F, 0.5F, 0.5F)),
-                new ItemTransformVec3f(new Vector3f(-15, 255, 0), new Vector3f(), new Vector3f(0.5F, 0.5F, 0.5F)),
-                half,
-                new ItemTransformVec3f(new Vector3f(45, 255 - 45, 0), new Vector3f(), new Vector3f(0.5F, 0.65F, 0.5F)),
-                half,
-                half);
-        ItemTransformVec3f itemTransformVec3f = itemCameraTransforms.getTransform(cameraTransformType);
-        TRSRTransformation tr = new TRSRTransformation(itemTransformVec3f);
-
-        return Pair.of(this, tr.getMatrix());
     }
 
 	@Override
@@ -136,4 +114,17 @@ public class PowerPole3Model extends CodeBasedModel implements IPerspectiveAware
         model.translateCoord(0.5F, 0, 0.5F);
         model.bake(this.quads);
 	}
+    
+    @Override
+    public ItemCameraTransforms getItemCameraTransforms() {
+        return itemCameraTransforms;
+    }
+    
+    public final static ItemCameraTransforms itemCameraTransforms = ModelPerspectives.create(ModelPerspectives.ItemBlock,
+    		null, null,
+    		new ItemTransformVec3f(new Vector3f(0, 225, 0), 	new Vector3f(0,0.15F,0), 				new Vector3f(0.4F, 0.4F, 0.4F)),		//firstperson_leftIn
+    		new ItemTransformVec3f(new Vector3f(0, 45, 0), 		new Vector3f(0,0.15F,0), 				new Vector3f(0.4F, 0.4F, 0.4F)),		//firstperson_rightIn
+    		null, 
+    		new ItemTransformVec3f(new Vector3f(45, 210, 0), new Vector3f(), new Vector3f(0.5F, 0.5F, 0.5F))	//gui
+    		, null, null);
 }

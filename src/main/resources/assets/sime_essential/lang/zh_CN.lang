@@ -43,7 +43,7 @@ tile.sime_essential:essential_disttransformer.pole10kvnormal.name=10kV配电变�
 tile.sime_essential:essential_disttransformer.pole10kvspec.name=特殊的10kV配电变压器电线杆
 tile.sime_essential:essential_disttransformer.pole10kvaux.name=辅助配电变压器电线杆
 tile.sime_essential:essential_disttransformer.pole415vnormal.name=415V配电变压器电线杆
-tile.sime_essential:essential_disttransformer.transformer.name=配电变压器
+tile.sime_essential:essential_disttransformer.transformer.name=配电变压器(10kV-415V)
 
 # Fluids
 fluid.vita_tea=扶她柠檬茶
