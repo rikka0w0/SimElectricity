@@ -7,13 +7,13 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 public interface ISEPowerPole {
     /**
-     * Called by network methods to update appearance, if PowerPoleRenderHelper is null, then attempt to create it in this method
+     * Call getRenderHelper().updateRenderData(neighbors);
      */
     @SideOnly(Side.CLIENT)
     void updateRenderInfo();
 
     /**
-     * @return an immutable instance of PowerPoleRenderHelper, created in updateRenderInfo()
+     * @return an immutable instance of PowerPoleRenderHelper, created before updateRenderInfo()
      */
     @Nonnull
     @SideOnly(Side.CLIENT)

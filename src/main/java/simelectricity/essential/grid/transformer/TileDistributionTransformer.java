@@ -1,31 +1,79 @@
 package simelectricity.essential.grid.transformer;
 
+import javax.annotation.Nullable;
+
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import rikka.librikka.Utils;
 import simelectricity.api.SEAPI;
 import simelectricity.api.node.ISEGridNode;
 import simelectricity.essential.client.grid.PowerPoleRenderHelper;
+import simelectricity.essential.client.grid.accessory.PoleAccessoryRendererDispatcher;
 import simelectricity.essential.common.SEMultiBlockEnergyTile;
+import simelectricity.essential.grid.TileCableJoint;
 
 public abstract class TileDistributionTransformer extends SEMultiBlockGridTile{
-	protected abstract BlockPos getComplementPos();
+	protected BlockPos accessory;
+	
+	protected boolean acceptAccessory(TileEntity accessory) {
+		return accessory instanceof TileCableJoint;
+	}
 	
     @Override
+    public boolean canConnect(@Nullable BlockPos to) {
+    	if (to == null)
+    		return this.neighbor == null || this.accessory == null;
+    	
+    	TileEntity te = world.getTileEntity(to);
+    	if (acceptAccessory(te)) {
+    		return this.accessory == null;
+    	} else {
+    		return this.neighbor == null;
+    	}
+    }
+    
+    @Override
     public void onGridNeighborUpdated() {
-    	neighbor = null;
+    	this.neighbor = null;
+        this.accessory = null;
+        
     	BlockPos complementPos = getComplementPos();
-    	for (ISEGridNode neighbor: this.gridNode.getNeighborList()) {
-    		BlockPos pos = neighbor.getPos();
+    	for (ISEGridNode node: this.gridNode.getNeighborList()) {
+    		BlockPos pos = node.getPos();
     		if (pos.equals(complementPos))
     			continue;
     		
-    		this.neighbor = neighbor.getPos();
+    		TileEntity tile = world.getTileEntity(node.getPos());
+        	if (acceptAccessory(tile)) 
+        		this.accessory = node.getPos();
+        	else
+        		this.neighbor = node.getPos();
     	}
 
         markTileEntityForS2CSync();
     }
+	
+    /////////////////////////////////////////////////////////
+    ///Sync
+    /////////////////////////////////////////////////////////
+    @Override
+    public void prepareS2CPacketData(NBTTagCompound nbt) {
+        super.prepareS2CPacketData(nbt);
+        Utils.saveToNbt(nbt, "accessory", this.accessory);
+    }
+
+    @Override
+	@SideOnly(Side.CLIENT)
+    public void onSyncDataFromServerArrived(NBTTagCompound nbt) {
+		this.accessory = Utils.posFromNbt(nbt, "accessory");
+        super.onSyncDataFromServerArrived(nbt);
+    }
+    
+	protected abstract BlockPos getComplementPos();
 	
 	public static class Pole415V extends TileDistributionTransformer {
 		public final static Vec3i rightPos = new Vec3i(5, 4, 0);
@@ -102,7 +150,13 @@ public abstract class TileDistributionTransformer extends SEMultiBlockGridTile{
 		@Override
 		@SideOnly(Side.CLIENT)
 		protected PowerPoleRenderHelper createRenderHelper() {
-            PowerPoleRenderHelper helper = new PowerPoleRenderHelper(world, pos, PowerPoleRenderHelper.facing2rotation(mbInfo.facing) - 2, mbInfo.mirrored, 1, 3);
+        	final TileDistributionTransformer pole = this;
+            PowerPoleRenderHelper helper = new PowerPoleRenderHelper(world, pos, PowerPoleRenderHelper.facing2rotation(mbInfo.facing) - 2, mbInfo.mirrored, 1, 3) {
+            	@Override
+            	public void onUpdate() {
+            		PoleAccessoryRendererDispatcher.render(pole, accessory);
+            	}
+            };
             helper.addInsulatorGroup(0, 0.5F, 0,
                     helper.createInsulator(0, 1.2F, 0, 0.55F, -0.74F),
                     helper.createInsulator(0, 1.2F, 0, 1.5F, 0),

@@ -32,7 +32,7 @@ public abstract class TilePowerPoleBase extends SEEnergyTile implements ISEGridT
     @Override
     @SideOnly(Side.CLIENT)
     public void updateRenderInfo() {
-        this.getRenderHelper().updateRenderData(this.neighbor1, this.neighbor2);
+        this.renderHelper.updateRenderData(this.neighbor1, this.neighbor2);
     }
 
     @Override

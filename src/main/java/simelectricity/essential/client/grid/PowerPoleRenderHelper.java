@@ -13,7 +13,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import rikka.librikka.math.MathAssitant;
 import rikka.librikka.math.Vec3f;
-import rikka.librikka.model.quadbuilder.RawQuadGroup;
 import rikka.librikka.properties.UnlistedPropertyRef;
 
 import java.lang.ref.WeakReference;
@@ -197,11 +196,11 @@ public class PowerPoleRenderHelper {
     }
     
     @Nullable
-    public PowerPoleRenderHelper fromPos(@Nullable BlockPos pos) {
+    public final PowerPoleRenderHelper fromPos(@Nullable BlockPos pos) {
     	return fromPos(this.world, pos);
     }
     
-    public PowerPoleRenderHelper.Insulator createInsulator(float length, float tension, float offsetX, float offsetY, float offsetZ) {
+    public final PowerPoleRenderHelper.Insulator createInsulator(float length, float tension, float offsetX, float offsetY, float offsetZ) {
         if (this.mirroredAboutZ)
             offsetX = -offsetX;
 
@@ -212,7 +211,7 @@ public class PowerPoleRenderHelper {
         return new PowerPoleRenderHelper.Insulator(this, length, tension, rotatedX + 0.5F, offsetY, rotatedZ + 0.5F);
     }
 
-    public void addInsulatorGroup(float centerX, float centerY, float centerZ, PowerPoleRenderHelper.Insulator... insulators) {
+    public final void addInsulatorGroup(float centerX, float centerY, float centerZ, PowerPoleRenderHelper.Insulator... insulators) {
         if (addedGroup == groups.length)
             return;
 
@@ -338,21 +337,6 @@ public class PowerPoleRenderHelper {
         }
 
         this.connectionInfo.add(ret);
-    }
-
-    public void renderInsulator(RawQuadGroup insulatorModel, List<BakedQuad> quads) {
-        for (PowerPoleRenderHelper.ConnectionInfo[] connections : connectionInfo) {
-            for (PowerPoleRenderHelper.ConnectionInfo connection : connections) {
-                RawQuadGroup insulator = insulatorModel.clone();
-
-                insulator.rotateAroundZ(connection.insulatorAngle / MathAssitant.PI * 180F);
-                insulator.rotateToVec(connection.from.x, connection.from.y, connection.from.z,
-                        connection.fixedTo.x, connection.from.y, connection.fixedTo.z);
-                insulator.translateCoord(connection.from.x, connection.from.y, connection.from.z);
-                insulator.translateCoord(-this.pos.getX(), -this.pos.getY(), -this.pos.getZ());
-                insulator.bake(quads);
-            }
-        }
     }
 
     public static class Insulator {

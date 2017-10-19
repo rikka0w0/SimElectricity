@@ -2,7 +2,6 @@ package simelectricity.essential.grid;
 
 import javax.annotation.Nonnull;
 
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.relauncher.Side;
@@ -39,11 +38,7 @@ public class TileCableJoint extends TilePoleAccessory implements ISECableTile {
     
     @Override
     public boolean canConnect(BlockPos toPos) {
-    	if (toPos == null)
-    		return this.host == null;
-    	
-    	TileEntity to = world.getTileEntity(toPos);
-        return this.host == null && to instanceof TilePowerPole3.Pole10Kv;
+        return this.host == null;
     }
     
     /////////////////////////////////////////////////////////

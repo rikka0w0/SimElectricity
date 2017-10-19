@@ -10,22 +10,18 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import rikka.librikka.Utils;
 import simelectricity.api.node.ISEGridNode;
+import simelectricity.api.tile.ISEGridTile;
 import simelectricity.essential.api.ISEPoleAccessory;
 import simelectricity.essential.client.grid.ISEPowerPole;
 import simelectricity.essential.client.grid.PowerPoleRenderHelper;
 import simelectricity.essential.common.SEEnergyTile;
 
-public abstract class TilePoleAccessory extends SEEnergyTile implements ISEPoleAccessory, ISEPowerPole {
+public abstract class TilePoleAccessory extends SEEnergyTile implements ISEPoleAccessory, ISEGridTile, ISEPowerPole {
     protected BlockPos host;
     
     @Nonnull
     @SideOnly(Side.CLIENT)
     protected abstract PowerPoleRenderHelper createRenderHelper();
-    
-    @SideOnly(Side.CLIENT)
-    protected boolean scheduleBlockRenderUpdateWhenChange() {
-    	return false;
-    }
     
     /////////////////////////////////////////////////////////
     /////ISEPowerPole
@@ -37,8 +33,6 @@ public abstract class TilePoleAccessory extends SEEnergyTile implements ISEPoleA
     @SideOnly(Side.CLIENT)
 	public void updateRenderInfo() {
         this.renderHelper.updateRenderData(this.host);
-        if (this.scheduleBlockRenderUpdateWhenChange())
-            markForRenderUpdate();
     }
 
     @Override
