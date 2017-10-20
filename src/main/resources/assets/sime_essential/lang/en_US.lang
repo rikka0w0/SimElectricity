@@ -22,7 +22,9 @@ tile.sime_essential:essential_two_port_electronics.current_sensor.name=Current S
 tile.sime_essential:essential_two_port_electronics.diode.name=Diode
 tile.sime_essential:essential_two_port_electronics.switch.name=Switch
 
-tile.sime_essential:essential_cable_joint.name=Three Phase Cable Joint
+tile.sime_essential:essential_cable_joint.10kv.name=Three Phase Cable Joint (10kV)
+tile.sime_essential:essential_cable_joint.415v.name=Three Phase Cable Joint (415V)
+
 tile.sime_essential:essential_powerpole.0.name=35kV Power Pole Type 0
 tile.sime_essential:essential_powerpole.1.name=35kV Power Pole Type 1
 tile.sime_essential:essential_powerpole2.0.name=35kV Power Pole Type 2

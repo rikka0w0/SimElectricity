@@ -16,6 +16,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import rikka.librikka.block.BlockBase;
+import rikka.librikka.block.ISubBlock;
 import rikka.librikka.item.ISimpleTexture;
 import rikka.librikka.item.ItemBlockBase;
 import rikka.librikka.properties.Properties;
@@ -23,7 +24,9 @@ import simelectricity.api.SEAPI;
 import simelectricity.api.tile.ISEGridTile;
 import simelectricity.essential.api.ISEHVCableConnector;
 
-public class BlockCableJoint extends BlockBase implements ISEHVCableConnector, ISimpleTexture {
+public class BlockCableJoint extends BlockBase implements ISubBlock, ISEHVCableConnector, ISimpleTexture {
+	private final static String[] subNames = new String[] {"10kv", "415v"};
+	
     public BlockCableJoint() {
         super("essential_cable_joint", Material.GLASS, ItemBlockBase.class);
 		setCreativeTab(SEAPI.SETab);
@@ -35,26 +38,33 @@ public class BlockCableJoint extends BlockBase implements ISEHVCableConnector, I
     @Override
     @SideOnly(Side.CLIENT)
     public String getIconName(int damage) {
-        return "essential_cable_joint";
+        return "essential_cable_joint_" + subNames[damage];
     }
 
+	@Override
+	public String[] getSubBlockUnlocalizedNames() {
+		return subNames;
+	}
     ///////////////////////////////
     ///BlockStates
     ///////////////////////////////
     @Override
     protected final BlockStateContainer createBlockState() {
-        return new BlockStateContainer(this, new IProperty[]{Properties.facing3bit});
+        return new BlockStateContainer(this, new IProperty[]{Properties.facing3bit, Properties.type1bit});
     }
 
     @Override
     public final IBlockState getStateFromMeta(int meta) {
-        return getDefaultState().withProperty(Properties.facing3bit, meta & 7);
+    	int facing = meta & 7;
+    	int type = (meta&8)>>3;
+        return getDefaultState().withProperty(Properties.facing3bit, facing).withProperty(Properties.type1bit, type);
     }
 
     @Override
     public final int getMetaFromState(IBlockState state) {
         int facing = state.getValue(Properties.facing3bit);
-        return facing;
+        int type = state.getValue(Properties.type1bit);
+        return (type<<3)&8 | facing&7;
     }
 
     ///////////////////////////////
@@ -65,7 +75,8 @@ public class BlockCableJoint extends BlockBase implements ISEHVCableConnector, I
 	
     @Override
     public TileEntity createTileEntity(World world, IBlockState state) {
-        return new TileCableJoint();
+        int type = state.getValue(Properties.type1bit);
+        return type==0 ? new TileCableJoint.Type10kV() : new TileCableJoint.Type415V();
     }
 
     ////////////////////////////////////
@@ -94,14 +105,13 @@ public class BlockCableJoint extends BlockBase implements ISEHVCableConnector, I
     //////////////////////////////////////
     @Override
     public int damageDropped(IBlockState state) {
-        return 0;
+        return state.getValue(Properties.type1bit);
     }
 
     @Override
     public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
-        IBlockState state = super.getStateForPlacement(world, pos, facing, hitX, hitY, hitZ, meta, placer);
         int facingInt = 8 - MathHelper.floor(placer.rotationYaw * 8.0F / 360.0F + 0.5D - 4) & 7;
-        return state.withProperty(Properties.facing3bit, facingInt);
+        return this.getDefaultState().withProperty(Properties.type1bit, meta & 1).withProperty(Properties.facing3bit, facingInt);
     }
 
     @Override
@@ -110,8 +120,11 @@ public class BlockCableJoint extends BlockBase implements ISEHVCableConnector, I
             return;
 
         TileEntity te = world.getTileEntity(pos);
-        if (te instanceof ISEGridTile)
-            SEAPI.energyNetAgent.attachGridNode(world, SEAPI.energyNetAgent.newGridNode(pos, 3));
+        if (te instanceof ISEGridTile) {
+        	
+        	int numOfConductor = te instanceof TileCableJoint.Type10kV ? 3 : 4;
+        	SEAPI.energyNetAgent.attachGridNode(world, SEAPI.energyNetAgent.newGridNode(pos, numOfConductor));
+        }
     }
 
     @Override

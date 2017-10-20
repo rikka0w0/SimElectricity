@@ -19,9 +19,7 @@ import simelectricity.essential.grid.TileCableJoint;
 public abstract class TileDistributionTransformer extends SEMultiBlockGridTile{
 	protected BlockPos accessory;
 	
-	protected boolean acceptAccessory(TileEntity accessory) {
-		return accessory instanceof TileCableJoint;
-	}
+	protected abstract boolean acceptAccessory(TileEntity accessory);
 	
     @Override
     public boolean canConnect(@Nullable BlockPos to) {
@@ -78,7 +76,12 @@ public abstract class TileDistributionTransformer extends SEMultiBlockGridTile{
 	public static class Pole415V extends TileDistributionTransformer {
 		public final static Vec3i rightPos = new Vec3i(5, 4, 0);
 		public final static Vec3i leftPos = new Vec3i(0, 4, 0);
-
+		
+		@Override
+		protected boolean acceptAccessory(TileEntity accessory) {
+			return accessory instanceof TileCableJoint.Type415V;
+		}
+		
 		@Override
 		protected void onStructureCreating() {
 	        gridNode = SEAPI.energyNetAgent.newGridNode(this.pos, 4);
@@ -105,7 +108,13 @@ public abstract class TileDistributionTransformer extends SEMultiBlockGridTile{
         @Override
         @SideOnly(Side.CLIENT)
         protected PowerPoleRenderHelper createRenderHelper() {
-            PowerPoleRenderHelper helper = new PowerPoleRenderHelper(this.world, this.pos, PowerPoleRenderHelper.facing2rotation(mbInfo.facing) - 2, mbInfo.mirrored, 1, 4);
+        	final TileDistributionTransformer pole = this;
+            PowerPoleRenderHelper helper = new PowerPoleRenderHelper(this.world, this.pos, PowerPoleRenderHelper.facing2rotation(mbInfo.facing) - 2, mbInfo.mirrored, 1, 4) {
+            	@Override
+            	public void onUpdate() {
+            		PoleAccessoryRendererDispatcher.render(pole, accessory);
+            	}
+            };
             helper.addInsulatorGroup(0, 0.55F, 0,
                     helper.createInsulator(0, 1.2F, 0, 0.3F, -0.9F),
                     helper.createInsulator(0, 1.2F, 0, 0.3F, -0.45F),
@@ -119,6 +128,11 @@ public abstract class TileDistributionTransformer extends SEMultiBlockGridTile{
 	public static class Pole10kV extends TileDistributionTransformer {
 		public final static Vec3i rightPos = new Vec3i(5, 6, 0);
 		public final static Vec3i leftPos = new Vec3i(0, 6, 0);
+		
+		@Override
+		protected boolean acceptAccessory(TileEntity accessory) {
+			return accessory instanceof TileCableJoint.Type10kV;
+		}
 		
 		@Override
 		protected void onStructureCreating() {

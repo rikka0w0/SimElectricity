@@ -41,7 +41,7 @@ public class GridStateMapper extends StateMapperBase implements IModelLoader {
         String varStr = "";
 
         if (block == BlockRegistry.cableJoint) {
-            varStr = "" + state.getValue(Properties.facing3bit);
+            varStr = state.getValue(Properties.facing3bit) + "," + state.getValue(Properties.type1bit);
         } else if (block == BlockRegistry.powerPoleBottom) {
 
         } else if (block == BlockRegistry.powerPoleTop) {
@@ -78,6 +78,7 @@ public class GridStateMapper extends StateMapperBase implements IModelLoader {
 
         if (block == BlockRegistry.cableJoint) {
             int facing = Integer.parseInt(splited[2]);
+            int type = Integer.parseInt(splited[3]);
             return new CableJointModel(facing);
         } else if (block == BlockRegistry.powerPoleBottom) {
         	return new PowerPoleBottomModel();

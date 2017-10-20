@@ -74,7 +74,8 @@ public class BlockRegistry {
     	registerTile(TileCable.class);
     	registerTile(BlockPowerPoleBottom.Tile.class);
         registerTile(TilePowerPole.class);
-        registerTile(TileCableJoint.class);
+        registerTile(TileCableJoint.Type10kV.class);
+        registerTile(TileCableJoint.Type415V.class);
         registerTile(TilePowerPole2.class);
         registerTile(TilePowerTransformerPlaceHolder.class);
         registerTile(TilePowerTransformerPlaceHolder.Primary.class);

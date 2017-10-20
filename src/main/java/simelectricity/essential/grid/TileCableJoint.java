@@ -12,28 +12,48 @@ import simelectricity.api.node.ISESimulatable;
 import simelectricity.api.tile.ISECableTile;
 import simelectricity.essential.client.grid.PowerPoleRenderHelper;
 
-public class TileCableJoint extends TilePoleAccessory implements ISECableTile {
+public abstract class TileCableJoint extends TilePoleAccessory implements ISECableTile {
     private final ISESimulatable cableNode = SEAPI.energyNetAgent.newCable(this, true);
+    
+    public static class Type10kV extends TileCableJoint {
+        @Override
+        @Nonnull
+        @SideOnly(Side.CLIENT)
+        protected PowerPoleRenderHelper createRenderHelper() {
+            //Create renderHelper on client side
+            int rotation = this.world.getBlockState(this.pos).getValue(Properties.facing3bit);
+            PowerPoleRenderHelper renderHelper = new PowerPoleRenderHelper(this.world, this.pos, rotation, 1, 3);
+            renderHelper.addInsulatorGroup(0.6F, 1.45F, 0F,
+                    renderHelper.createInsulator(0, 2, -0.3F, 1.17F, -0.95F),
+                    renderHelper.createInsulator(0, 2, 0.6F, 1.45F, 0F),
+                    renderHelper.createInsulator(0, 2, -0.3F, 1.17F, 0.95F));
+
+            return renderHelper;
+        }
+    }
+    
+    public static class Type415V extends TileCableJoint {
+        @Override
+        @Nonnull
+        @SideOnly(Side.CLIENT)
+        protected PowerPoleRenderHelper createRenderHelper() {
+            //Create renderHelper on client side
+            int rotation = this.world.getBlockState(this.pos).getValue(Properties.facing3bit);
+            PowerPoleRenderHelper renderHelper = new PowerPoleRenderHelper(this.world, this.pos, rotation, 1, 4);
+            renderHelper.addInsulatorGroup(0.6F, 1.45F, 0F,
+                    renderHelper.createInsulator(0, 2, -0.3F, 1.17F, -0.95F),
+                    renderHelper.createInsulator(0, 2, 0.15F, 1.45F, 0F),
+                    renderHelper.createInsulator(0, 2, -0.15F, 1.45F, 0F),
+                    renderHelper.createInsulator(0, 2, -0.3F, 1.17F, 0.95F));
+
+            return renderHelper;
+        }
+    }
     
     @Override
     @SideOnly(Side.CLIENT)
 	public void updateRenderInfo() {
     	
-    }
-    
-    @Override
-    @Nonnull
-    @SideOnly(Side.CLIENT)
-    protected PowerPoleRenderHelper createRenderHelper() {
-        //Create renderHelper on client side
-        int rotation = this.world.getBlockState(this.pos).getValue(Properties.facing3bit);
-        PowerPoleRenderHelper renderHelper = new PowerPoleRenderHelper(this.world, this.pos, rotation, 1, 3);
-        renderHelper.addInsulatorGroup(0.6F, 1.45F, 0F,
-                renderHelper.createInsulator(0, 2, -0.3F, 1.17F, -0.95F),
-                renderHelper.createInsulator(0, 2, 0.6F, 1.45F, 0F),
-                renderHelper.createInsulator(0, 2, -0.3F, 1.17F, 0.95F));
-
-        return renderHelper;
     }
     
     @Override

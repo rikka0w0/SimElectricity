@@ -20,9 +20,12 @@ public class PoleAccessoryRendererDispatcher {
 	private final static Map<Pair<Class<? extends ISEPowerPole>, Class<? extends ISEPoleAccessory>>,ISEAccessoryRenderer> registered = new HashMap();
 	
 	static {
-		register(TilePowerPole3.Pole10Kv.Type0.class, TileCableJoint.class, AR10kVType0CableJoint.instance);
-		register(TilePowerPole3.Pole10Kv.Type1.class, TileCableJoint.class, AR10kVType1CableJoint.instance);
-		register(TileDistributionTransformer.Pole10kV.class, TileCableJoint.class, AR10kVType0CableJoint.instance);
+		register(TilePowerPole3.Pole10Kv.Type0.class, TileCableJoint.Type10kV.class, AR10kVType0CableJoint.instance);
+		register(TilePowerPole3.Pole10Kv.Type1.class, TileCableJoint.Type10kV.class, AR10kVType1CableJoint.instance);
+		register(TileDistributionTransformer.Pole10kV.class, TileCableJoint.Type10kV.class, AR10kVType0CableJoint.instance);
+		
+		register(TilePowerPole3.Pole415vType0.class, TileCableJoint.Type415V.class, AR415VType0CableJoint.instance);
+		register(TileDistributionTransformer.Pole415V.class, TileCableJoint.Type415V.class, AR415VType0CableJoint.instance);
 	}
 	
 	public static void register(Class<? extends ISEPowerPole> poleClass, Class<? extends ISEPoleAccessory> accessoryClass, ISEAccessoryRenderer renderer) {

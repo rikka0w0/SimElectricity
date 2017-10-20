@@ -18,9 +18,7 @@ public abstract class TilePowerPole3 extends TilePowerPoleBase {
 	protected BlockPos accessory;
 	public int facing;
     
-	protected boolean acceptAccessory(TileEntity accessory) {
-		return accessory instanceof TileCableJoint;
-	}
+	protected abstract boolean acceptAccessory(TileEntity accessory);
 	
     @Override
     public boolean canConnect(@Nullable BlockPos to) {
@@ -89,6 +87,11 @@ public abstract class TilePowerPole3 extends TilePowerPoleBase {
     }
 
     public static abstract class Pole10Kv extends TilePowerPole3 {
+		@Override
+		protected boolean acceptAccessory(TileEntity accessory)  {
+			return accessory instanceof TileCableJoint.Type10kV;
+		}
+    	
         public static class Type0 extends Pole10Kv {
             @Override
             @Nonnull
@@ -163,11 +166,23 @@ public abstract class TilePowerPole3 extends TilePowerPoleBase {
     }
     
     public static class Pole415vType0 extends TilePowerPole3 {
+		@Override
+		protected boolean acceptAccessory(TileEntity accessory)  {
+			return accessory instanceof TileCableJoint.Type415V;
+		}
+    	
         @Override
         @Nonnull
         @SideOnly(Side.CLIENT)
         protected PowerPoleRenderHelper createRenderHelper() {
-            PowerPoleRenderHelper helper = new PowerPoleRenderHelper(this.world, this.pos, this.facing, 1, 4);
+        	final TilePowerPole3 pole = this;
+            PowerPoleRenderHelper helper = new PowerPoleRenderHelper(this.world, this.pos, this.facing, 1, 4){
+                @Override
+                public void onUpdate() {
+                	PoleAccessoryRendererDispatcher.render(pole, accessory);
+                }
+            };
+            
             helper.addInsulatorGroup(0, 0.55F, 0,
                     helper.createInsulator(0, 1.2F, 0, 0.3F, -0.9F),
                     helper.createInsulator(0, 1.2F, 0, 0.3F, -0.45F),
