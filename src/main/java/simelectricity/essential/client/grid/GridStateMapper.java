@@ -79,7 +79,7 @@ public class GridStateMapper extends StateMapperBase implements IModelLoader {
         if (block == BlockRegistry.cableJoint) {
             int facing = Integer.parseInt(splited[2]);
             int type = Integer.parseInt(splited[3]);
-            return new CableJointModel(facing);
+            return type==0? new CableJointModel.Type10kV(facing): new CableJointModel.Type415V(facing);
         } else if (block == BlockRegistry.powerPoleBottom) {
         	return new PowerPoleBottomModel();
         } else if (block == BlockRegistry.powerPoleTop) {
