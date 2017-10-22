@@ -77,15 +77,19 @@ public class BlockRegistry {
         registerTile(TileCableJoint.Type10kV.class);
         registerTile(TileCableJoint.Type415V.class);
         registerTile(TilePowerPole2.class);
+        
         registerTile(TilePowerTransformerPlaceHolder.class);
         registerTile(TilePowerTransformerPlaceHolder.Primary.class);
         registerTile(TilePowerTransformerPlaceHolder.Secondary.class);
         registerTile(Render.class);
         registerTile(Primary.class);
         registerTile(Secondary.class);
+        
         registerTile(Pole10Kv.Type0.class);
         registerTile(Pole10Kv.Type1.class);
         registerTile(Pole415vType0.class);
+        registerTile(TilePoleBranch.Type10kV.class);
+        
         registerTile(TileDistributionTransformer.Pole10kV.class);
         registerTile(TileDistributionTransformer.Pole415V.class);
         registerTile(TileDistributionTransformer.PlaceHolder.class);

@@ -8,6 +8,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import simelectricity.common.SELogger;
+import simelectricity.essential.client.grid.accessory.PoleAccessoryRendererDispatcher;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -16,6 +17,7 @@ import java.util.Set;
 public class GridRenderMonitor {
     public static GridRenderMonitor instance;
     private final Set<ISEPowerPole> affactedTiles = new HashSet();
+    private final Set<ISEPowerPole> processedTiles = new HashSet();
 
     public GridRenderMonitor() {
         MinecraftForge.EVENT_BUS.register(this);
@@ -48,15 +50,26 @@ public class GridRenderMonitor {
 
                 if (te.getWorld() != theWorld || te.isInvalid()) {
                     iterator.remove();
+                    continue;
                 }
 
                 PowerPoleRenderHelper helper = tile.getRenderHelper();
                 if (helper != null) {
-                    tile.updateRenderInfo();
-                    iterator.remove();
+                	helper.updateRenderData(theWorld, tile.getNeighborPosArray());
+                	this.processedTiles.add(tile);
+                	iterator.remove();
                 }
             }
-
+            
+            iterator = this.processedTiles.iterator();
+            while (iterator.hasNext()) {
+            	ISEPowerPole pole = iterator.next();
+            	pole.getRenderHelper().postUpdate();
+            	PoleAccessoryRendererDispatcher.render(theWorld, pole, pole.getAccessoryPos());
+            	iterator.remove();
+            }
+            this.processedTiles.clear();
+            
             SELogger.logInfo(SELogger.client, "Grid render updated, remaining:" + this.affactedTiles.size());
         }
     }

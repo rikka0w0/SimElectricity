@@ -7,7 +7,8 @@ public enum EnumBlockTypePole3 implements IStringSerializable {
     Pole(0, "pole", true, 0),
     Crossarm10kVT0(1, "crossarm10kvt0", false, 3),
     Crossarm10kVT1(2, "crossarm10kvt1", false, 3),
-    Crossarm415VT0(3, "crossarm415vt0", false, 4);
+    Crossarm415VT0(3, "crossarm415vt0", false, 4),
+    Crossarm10kVT2(4, "crossarm10kvt2", false, 3);
 
     public static final PropertyEnum<EnumBlockTypePole3> property = PropertyEnum.create("blocktype", EnumBlockTypePole3.class);
 

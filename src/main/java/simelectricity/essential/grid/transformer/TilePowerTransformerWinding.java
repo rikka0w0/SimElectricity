@@ -1,10 +1,18 @@
 package simelectricity.essential.grid.transformer;
 
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import simelectricity.api.SEAPI;
 import simelectricity.essential.client.grid.PowerPoleRenderHelper;
 
 public abstract class TilePowerTransformerWinding extends SEMultiBlockGridTile{
+    @Override
+    @SideOnly(Side.CLIENT)
+    public BlockPos getAccessoryPos() {
+    	return null;
+    }
+	
     //////////////////////////////
     /////IMultiBlockTile
     //////////////////////////////
@@ -34,7 +42,7 @@ public abstract class TilePowerTransformerWinding extends SEMultiBlockGridTile{
         @Override
         protected PowerPoleRenderHelper createRenderHelper() {
             //Create renderHelper on client side
-            PowerPoleRenderHelper renderHelper = new PowerPoleRenderHelper(this.world, this.pos, this.getFacing(), this.isMirrored(), 1, 3);
+            PowerPoleRenderHelper renderHelper = new PowerPoleRenderHelper(this.pos, this.getFacing(), this.isMirrored(), 1, 3);
             renderHelper.addInsulatorGroup(0F, 2.8F, 0F,
                     renderHelper.createInsulator(0, 2, 0, 2.8F, 1.5F),
                     renderHelper.createInsulator(0, 2, 0, 2.8F, 0),
@@ -47,7 +55,7 @@ public abstract class TilePowerTransformerWinding extends SEMultiBlockGridTile{
         @Override
         protected PowerPoleRenderHelper createRenderHelper() {
             //Create renderHelper on client side
-            PowerPoleRenderHelper renderHelper = new PowerPoleRenderHelper(this.world, this.pos, this.getFacing(), this.isMirrored(), 1, 3);
+            PowerPoleRenderHelper renderHelper = new PowerPoleRenderHelper(this.pos, this.getFacing(), this.isMirrored(), 1, 3);
             renderHelper.addInsulatorGroup(0, 1.8F, 0,
                     renderHelper.createInsulator(0, 0.5F, 0, 2.1F, 0.8F),
                     renderHelper.createInsulator(0, 0.5F, 0, 2.1F, 0),

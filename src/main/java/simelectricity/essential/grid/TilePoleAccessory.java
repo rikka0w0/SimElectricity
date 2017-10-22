@@ -27,14 +27,20 @@ public abstract class TilePoleAccessory extends SEEnergyTile implements ISEPoleA
     /////ISEPowerPole
     /////////////////////////////////////////////////////////
     @SideOnly(Side.CLIENT)
-    private PowerPoleRenderHelper renderHelper;
+    protected PowerPoleRenderHelper renderHelper;
     
     @Override
     @SideOnly(Side.CLIENT)
-	public void updateRenderInfo() {
-        this.renderHelper.updateRenderData(this.host);
+    public BlockPos[] getNeighborPosArray() {
+        return new BlockPos[] {};
     }
 
+    @Override
+    @SideOnly(Side.CLIENT)
+    public BlockPos getAccessoryPos() {
+    	return null;
+    }
+    
     @Override
     @SideOnly(Side.CLIENT)
     public PowerPoleRenderHelper getRenderHelper() {
@@ -44,7 +50,7 @@ public abstract class TilePoleAccessory extends SEEnergyTile implements ISEPoleA
     //////////////////////////////
     /////ISEGridTile
     //////////////////////////////
-    private ISEGridNode gridNode;
+    protected ISEGridNode gridNode;
     @Override
     public ISEGridNode getGridNode() {
         return this.gridNode;
@@ -67,7 +73,9 @@ public abstract class TilePoleAccessory extends SEEnergyTile implements ISEPoleA
     }
     
     @Override
-    public abstract boolean canConnect(BlockPos toPos);
+    public boolean canConnect(BlockPos toPos) {
+        return this.host == null;
+    }
     
     //////////////////////////////
     /////TileEntity
@@ -95,13 +103,13 @@ public abstract class TilePoleAccessory extends SEEnergyTile implements ISEPoleA
     /////////////////////////////////////////////////////////
     @Override
     public void prepareS2CPacketData(NBTTagCompound nbt) {
-        Utils.saveToNbt(nbt, "neighbor", this.host);
+        Utils.saveToNbt(nbt, "host", this.host);
     }
 
     @Override
     @SideOnly(Side.CLIENT)
     public void onSyncDataFromServerArrived(NBTTagCompound nbt) {
-    	host = Utils.posFromNbt(nbt, "neighbor");
+    	host = Utils.posFromNbt(nbt, "host");
     	
         if (this.renderHelper == null) 
             this.renderHelper = this.createRenderHelper();

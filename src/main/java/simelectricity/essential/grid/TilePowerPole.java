@@ -1,5 +1,6 @@
 package simelectricity.essential.grid;
 
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -13,6 +14,12 @@ public class TilePowerPole extends TilePowerPoleBase {
     public boolean isType0() {
         return this.getBlockMetadata() >> 3 == 0;
     }
+    
+    @Override
+    @SideOnly(Side.CLIENT)
+    public BlockPos getAccessoryPos() {
+    	return null;
+    }
 
     @Override
     @SideOnly(Side.CLIENT)
@@ -21,7 +28,7 @@ public class TilePowerPole extends TilePowerPoleBase {
         int rotation = this.getBlockMetadata() & 7;
 
         if (this.isType0()) {
-            helper = new PowerPoleRenderHelper(TilePowerPole.this.world, TilePowerPole.this.pos, rotation, 2, 3) {
+            helper = new PowerPoleRenderHelper(this.pos, rotation, 2, 3) {
                 @Override
                 public void onUpdate() {
                     if (this.connectionInfo.size() < 2)
@@ -60,7 +67,7 @@ public class TilePowerPole extends TilePowerPoleBase {
                     helper.createInsulator(2, 3, 1, 0, 4.5F)
             );
         } else {
-            helper = new PowerPoleRenderHelper(this.world, this.pos, rotation, 1, 3);
+            helper = new PowerPoleRenderHelper(this.pos, rotation, 1, 3);
             helper.addInsulatorGroup(0, 5, 3.95F,
                     helper.createInsulator(0, 3, 0, -2, -4.9F),
                     helper.createInsulator(0, 3, 0, 5, 3.95F),

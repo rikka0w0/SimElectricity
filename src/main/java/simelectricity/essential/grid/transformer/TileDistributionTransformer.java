@@ -12,7 +12,6 @@ import rikka.librikka.Utils;
 import simelectricity.api.SEAPI;
 import simelectricity.api.node.ISEGridNode;
 import simelectricity.essential.client.grid.PowerPoleRenderHelper;
-import simelectricity.essential.client.grid.accessory.PoleAccessoryRendererDispatcher;
 import simelectricity.essential.common.SEMultiBlockEnergyTile;
 import simelectricity.essential.grid.TileCableJoint;
 
@@ -20,6 +19,12 @@ public abstract class TileDistributionTransformer extends SEMultiBlockGridTile{
 	protected BlockPos accessory;
 	
 	protected abstract boolean acceptAccessory(TileEntity accessory);
+	
+	@Override
+	@SideOnly(Side.CLIENT)
+    public BlockPos getAccessoryPos() {
+		return accessory;
+	}
 	
     @Override
     public boolean canConnect(@Nullable BlockPos to) {
@@ -109,12 +114,7 @@ public abstract class TileDistributionTransformer extends SEMultiBlockGridTile{
         @SideOnly(Side.CLIENT)
         protected PowerPoleRenderHelper createRenderHelper() {
         	final TileDistributionTransformer pole = this;
-            PowerPoleRenderHelper helper = new PowerPoleRenderHelper(this.world, this.pos, PowerPoleRenderHelper.facing2rotation(mbInfo.facing) - 2, mbInfo.mirrored, 1, 4) {
-            	@Override
-            	public void onUpdate() {
-            		PoleAccessoryRendererDispatcher.render(pole, accessory);
-            	}
-            };
+            PowerPoleRenderHelper helper = new PowerPoleRenderHelper(this.pos, PowerPoleRenderHelper.facing2rotation(mbInfo.facing) - 2, mbInfo.mirrored, 1, 4);
             helper.addInsulatorGroup(0, 0.55F, 0,
                     helper.createInsulator(0, 1.2F, 0, 0.3F, -0.9F),
                     helper.createInsulator(0, 1.2F, 0, 0.3F, -0.45F),
@@ -165,18 +165,19 @@ public abstract class TileDistributionTransformer extends SEMultiBlockGridTile{
 		@SideOnly(Side.CLIENT)
 		protected PowerPoleRenderHelper createRenderHelper() {
         	final TileDistributionTransformer pole = this;
-            PowerPoleRenderHelper helper = new PowerPoleRenderHelper(world, pos, PowerPoleRenderHelper.facing2rotation(mbInfo.facing) - 2, mbInfo.mirrored, 1, 3) {
-            	@Override
-            	public void onUpdate() {
-            		PoleAccessoryRendererDispatcher.render(pole, accessory);
-            	}
-            };
+            PowerPoleRenderHelper helper = new PowerPoleRenderHelper(pos, PowerPoleRenderHelper.facing2rotation(mbInfo.facing) - 2, mbInfo.mirrored, 1, 3);
             helper.addInsulatorGroup(0, 0.5F, 0,
                     helper.createInsulator(0, 1.2F, 0, 0.55F, -0.74F),
                     helper.createInsulator(0, 1.2F, 0, 1.5F, 0),
                     helper.createInsulator(0, 1.2F, 0, 0.55F, 0.74F)
             );
             return helper;
+		}
+		
+		@Override
+		@SideOnly(Side.CLIENT)
+	    public BlockPos getAccessoryPos() {
+			return accessory;
 		}
 	}
 

@@ -30,7 +30,6 @@ public class PowerPoleRenderHelper {
     public final int rotation;
     public final PowerPoleRenderHelper.Group[] groups;
     public final int insulatorPerGroup;
-    private final IBlockAccess world;
     
     /**
      * Buffer
@@ -43,16 +42,15 @@ public class PowerPoleRenderHelper {
     
     private int addedGroup;
 
-    public PowerPoleRenderHelper(IBlockAccess world, BlockPos pos, int rotationMC, int numOfGroup, int insulatorPerGroup) {
-        this(world, pos, rotationMC, false, numOfGroup, insulatorPerGroup);
+    public PowerPoleRenderHelper(BlockPos pos, int rotationMC, int numOfGroup, int insulatorPerGroup) {
+        this(pos, rotationMC, false, numOfGroup, insulatorPerGroup);
     }
 
-    public PowerPoleRenderHelper(IBlockAccess world, BlockPos pos, EnumFacing facing, boolean mirroredAboutZ, int numOfGroup, int insulatorPerGroup) {
-        this(world, pos, PowerPoleRenderHelper.facing2rotation(facing), mirroredAboutZ, numOfGroup, insulatorPerGroup);
+    public PowerPoleRenderHelper(BlockPos pos, EnumFacing facing, boolean mirroredAboutZ, int numOfGroup, int insulatorPerGroup) {
+        this(pos, PowerPoleRenderHelper.facing2rotation(facing), mirroredAboutZ, numOfGroup, insulatorPerGroup);
     }
 
-    public PowerPoleRenderHelper(IBlockAccess world, BlockPos pos, int rotationMC, boolean mirroredAboutZ, int numOfGroup, int insulatorPerGroup) {
-        this.world = world;
+    public PowerPoleRenderHelper(BlockPos pos, int rotationMC, boolean mirroredAboutZ, int numOfGroup, int insulatorPerGroup) {
         this.pos = pos;
         this.rotationMC = rotationMC;
         this.rotation = rotationMC * 45 - 90;
@@ -186,20 +184,6 @@ public class PowerPoleRenderHelper {
         return ((ISEPowerPole) gridTile).getRenderHelper();
     }
     
-    @Nullable
-    public static PowerPoleRenderHelper fromPos(IBlockAccess world, @Nullable BlockPos pos) {
-    	if (pos == null)
-    		return null;
-    	
-    	TileEntity te = world.getTileEntity(pos);    	
-    	return te instanceof ISEPowerPole ? ((ISEPowerPole) te).getRenderHelper() : null;
-    }
-    
-    @Nullable
-    public final PowerPoleRenderHelper fromPos(@Nullable BlockPos pos) {
-    	return fromPos(this.world, pos);
-    }
-    
     public final PowerPoleRenderHelper.Insulator createInsulator(float length, float tension, float offsetX, float offsetY, float offsetZ) {
         if (this.mirroredAboutZ)
             offsetX = -offsetX;
@@ -233,10 +217,13 @@ public class PowerPoleRenderHelper {
     	return false;
     }
     
-    public final void updateRenderData(BlockPos... neighborPosList) {
+    public final void updateRenderData(IBlockAccess world, BlockPos... neighborPosList) {
         this.connectionInfo.clear();
         this.extraWires.clear();
-        addNeighors(neighborPosList);
+        addNeighors(world, neighborPosList);
+    }
+    
+    public final void postUpdate() {
         onUpdate();
         
         //Bake Quads
@@ -246,10 +233,13 @@ public class PowerPoleRenderHelper {
     
     /**
      * Override this to add extra wires
+     * @return true for success operation
      */
-    public void onUpdate() {}
+    protected void onUpdate() {}
+    
+    protected BlockPos getAccessoryPos() {return null;}
 
-    public final void addNeighors(BlockPos... neighborPosList) {
+    private final void addNeighors(IBlockAccess world, BlockPos... neighborPosList) {
         for (BlockPos neighborPos : neighborPosList) {
             if (neighborPos == null)
                 continue;

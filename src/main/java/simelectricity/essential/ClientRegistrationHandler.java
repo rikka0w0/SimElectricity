@@ -21,6 +21,7 @@ import simelectricity.essential.client.grid.transformer.TransformerStateMapper;
 import simelectricity.essential.client.semachine.SEMachineStateMapper;
 import simelectricity.essential.client.semachine.SocketRender;
 import simelectricity.essential.grid.BlockPowerPoleBottom;
+import simelectricity.essential.grid.TilePoleBranch;
 import simelectricity.essential.grid.TilePowerPole;
 import simelectricity.essential.grid.TilePowerPole2;
 import simelectricity.essential.grid.TilePowerPole3;
@@ -93,6 +94,7 @@ public class ClientRegistrationHandler {
         ClientRegistry.bindTileEntitySpecialRenderer(TilePowerPole.class, FastTESRPowerPoleTop.instance);
         ClientRegistry.bindTileEntitySpecialRenderer(TilePowerPole2.class, FastTESRPowerPole2.instance);
         ClientRegistry.bindTileEntitySpecialRenderer(TilePowerPole3.Pole10Kv.Type1.class, FastTESRPowerPole3.instance);
+        ClientRegistry.bindTileEntitySpecialRenderer(TilePoleBranch.Type10kV.class, FastTESRPowerPole3.instance);
         ClientRegistry.bindTileEntitySpecialRenderer(TilePowerTransformerPlaceHolder.Render.class, FastTESRPowerTransformer.instance);
 	}
 }

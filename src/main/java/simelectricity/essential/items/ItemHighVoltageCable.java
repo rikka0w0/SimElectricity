@@ -109,9 +109,9 @@ public class ItemHighVoltageCable extends ItemBase implements ISimpleTexture {
                 } else {
                 	boolean flag1 = tile1 instanceof ISEPoleAccessory;
                 	boolean flag2 = tile2 instanceof ISEPoleAccessory;
-                	if (flag1 && flag2) {
-                		Utils.chatWithLocalization(player, "chat.sime_essential:powerpole_connection_denied");
-                	} else {
+                	//if (flag1 && flag2) {
+                		//Utils.chatWithLocalization(player, "chat.sime_essential:powerpole_connection_denied");
+                	//} else {
             			double distance = node1.getPos().distanceSq(node2.getPos());
         				double resistance = distance * ItemHighVoltageCable.resistivityList[itemStack.getItemDamage()];    //Calculate the resistance
                 		boolean isCreative = player.isCreative();
@@ -126,7 +126,7 @@ public class ItemHighVoltageCable extends ItemBase implements ISimpleTexture {
                 		} else {
                 			connect(world, node1, node2, resistance, itemStack, isCreative);
                 		}
-                	}
+                	//}
                 }
             } else {
                 Utils.chatWithLocalization(player, I18n.translateToLocal("chat.sime_essential:powerpole_current_selection_invalid"));

@@ -31,7 +31,7 @@ public interface ISEGridTile {
     
     /**
      * 
-     * @param toPos null - selected by player, nonnull - target position
+     * @param toPos null - selected by player, non-null - target position
      * @return false to reject
      */
     boolean canConnect(@Nullable BlockPos toPos);

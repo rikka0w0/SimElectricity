@@ -104,8 +104,8 @@ public abstract class SEMultiBlockGridTile extends SEMultiBlockEnergyTile implem
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void updateRenderInfo() {
-        this.renderHelper.updateRenderData(this.neighbor);
+    public BlockPos[] getNeighborPosArray() {
+        return new BlockPos[] {this.neighbor};
     }
 
     @SideOnly(Side.CLIENT)

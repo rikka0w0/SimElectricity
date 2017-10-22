@@ -5,7 +5,6 @@ import simelectricity.essential.client.grid.PowerPoleRenderHelper;
 
 public class AR10kVType0CableJoint implements ISEAccessoryRenderer {
 	public final static ISEAccessoryRenderer instance = new AR10kVType0CableJoint();
-	
 	private AR10kVType0CableJoint() {}
 	
 	@Override

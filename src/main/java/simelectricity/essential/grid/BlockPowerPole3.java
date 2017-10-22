@@ -31,8 +31,8 @@ import simelectricity.api.node.ISEGridNode;
 import simelectricity.api.tile.ISEGridTile;
 import simelectricity.essential.api.ISEHVCableConnector;
 import simelectricity.essential.client.grid.ISEPowerPole;
-import simelectricity.essential.grid.TilePowerPole3.Pole10Kv;
-import simelectricity.essential.grid.TilePowerPole3.Pole415vType0;
+import simelectricity.essential.common.ISEFacing8;
+import simelectricity.essential.grid.TilePowerPole3;
 
 import javax.annotation.Nullable;
 import java.lang.ref.WeakReference;
@@ -77,11 +77,15 @@ public class BlockPowerPole3 extends BlockBase implements ISubBlock, ISEHVCableC
             case Pole:
                 return null;
             case Crossarm10kVT0:
-                return new Pole10Kv.Type0();
+                return new TilePowerPole3.Pole10Kv.Type0();
             case Crossarm10kVT1:
-                return new Pole10Kv.Type1();
+                return new TilePowerPole3.Pole10Kv.Type1();
             case Crossarm415VT0:
-                return new Pole415vType0();
+                return new TilePowerPole3.Pole415vType0();
+            case Crossarm10kVT2:
+            	return new TilePoleBranch.Type10kV();
+            default:
+            	break;
         }
         return null;
     }
@@ -111,8 +115,8 @@ public class BlockPowerPole3 extends BlockBase implements ISubBlock, ISEHVCableC
         EnumBlockTypePole3 blockType = state.getValue(EnumBlockTypePole3.property);
         if (!blockType.ignoreFacing) {
             TileEntity te = world.getTileEntity(pos);
-            if (te != null) {
-                state = state.withProperty(Properties.facing3bit, ((TilePowerPole3) te).facing);
+            if (te instanceof ISEFacing8) {
+                state = state.withProperty(Properties.facing3bit, ((ISEFacing8) te).getRotation());
             }
         }
         return state;
@@ -149,10 +153,8 @@ public class BlockPowerPole3 extends BlockBase implements ISubBlock, ISEHVCableC
         if (!blockType.ignoreFacing) {
             TileEntity te = world.getTileEntity(pos);
 
-            if (te instanceof TilePowerPole3) {
-                TilePowerPole3 pole = (TilePowerPole3) te;
-                pole.facing = 8 - MathHelper.floor(placer.rotationYaw * 8.0F / 360.0F + 0.5D) & 7;
-
+            if (te instanceof ISEFacing8) {
+            	((ISEFacing8)te).setFacingOnPlacement(8 - MathHelper.floor(placer.rotationYaw * 8.0F / 360.0F + 0.5D) & 7);
 
                 if (!world.isRemote) {
                     //TODO: CHECK!
@@ -206,7 +208,7 @@ public class BlockPowerPole3 extends BlockBase implements ISubBlock, ISEHVCableC
     public ISEGridTile getGridTile(World world, BlockPos pos) {
         TileEntity te = world.getTileEntity(pos);
 
-        return te instanceof TilePowerPole3 ? (TilePowerPole3) te : null;
+        return te instanceof ISEGridTile ? (ISEGridTile) te : null;
     }
 
     ////////////////////////////////////

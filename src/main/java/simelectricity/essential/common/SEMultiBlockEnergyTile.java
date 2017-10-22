@@ -70,6 +70,6 @@ public abstract class SEMultiBlockEnergyTile extends SEEnergyTile implements IMu
     }
     
     public int getFacingInt() {
-    	return this.mbInfo==null? null : this.mbInfo.getFacing();
+    	return this.mbInfo==null? 0 : this.mbInfo.facing.ordinal()-2;
     }
 }

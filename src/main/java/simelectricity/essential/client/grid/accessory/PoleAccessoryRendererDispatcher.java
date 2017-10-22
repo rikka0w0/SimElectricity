@@ -9,8 +9,10 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
 import simelectricity.essential.client.grid.PowerPoleRenderHelper;
 import simelectricity.essential.grid.TileCableJoint;
+import simelectricity.essential.grid.TilePoleBranch;
 import simelectricity.essential.grid.TilePowerPole3;
 import simelectricity.essential.grid.transformer.TileDistributionTransformer;
 import simelectricity.essential.client.grid.ISEPowerPole;
@@ -24,6 +26,8 @@ public class PoleAccessoryRendererDispatcher {
 		register(TilePowerPole3.Pole10Kv.Type1.class, TileCableJoint.Type10kV.class, AR10kVType1CableJoint.instance);
 		register(TileDistributionTransformer.Pole10kV.class, TileCableJoint.Type10kV.class, AR10kVType0CableJoint.instance);
 		
+		register(TilePowerPole3.Pole10Kv.Type1.class, TilePoleBranch.Type10kV.class, AR10kVPoleBranch.instance);
+		
 		register(TilePowerPole3.Pole415vType0.class, TileCableJoint.Type415V.class, AR415VType0CableJoint.instance);
 		register(TileDistributionTransformer.Pole415V.class, TileCableJoint.Type415V.class, AR415VType0CableJoint.instance);
 	}
@@ -32,7 +36,7 @@ public class PoleAccessoryRendererDispatcher {
 		registered.put(Pair.of(poleClass, accessoryClass), renderer);
 	}
 	
-	public static <T extends TileEntity&ISEPowerPole> void render(T pole, @Nullable BlockPos accessoryPos) {
+	public static <T extends ISEPowerPole> void render(IBlockAccess world, T pole, @Nullable BlockPos accessoryPos) {
 		if (accessoryPos == null)
 			return;
 		
@@ -40,7 +44,7 @@ public class PoleAccessoryRendererDispatcher {
 		if (helper == null)
 			return;
 				
-		TileEntity neighborTile = pole.getWorld().getTileEntity(accessoryPos);
+		TileEntity neighborTile = world.getTileEntity(accessoryPos);
 		if (neighborTile instanceof ISEPoleAccessory && neighborTile instanceof ISEPowerPole) {
 			ISEPoleAccessory accessory = (ISEPoleAccessory) neighborTile;
 			ISEAccessoryRenderer renderer = registered.get(Pair.of(pole.getClass(), accessory.getClass()));

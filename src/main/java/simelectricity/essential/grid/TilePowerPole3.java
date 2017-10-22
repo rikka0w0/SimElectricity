@@ -12,13 +12,19 @@ import rikka.librikka.Utils;
 import rikka.librikka.math.Vec3f;
 import simelectricity.api.node.ISEGridNode;
 import simelectricity.essential.client.grid.PowerPoleRenderHelper;
-import simelectricity.essential.client.grid.accessory.PoleAccessoryRendererDispatcher;
+import simelectricity.essential.common.ISEFacing8;
 
-public abstract class TilePowerPole3 extends TilePowerPoleBase {
+public abstract class TilePowerPole3 extends TilePowerPoleBase implements ISEFacing8{
 	protected BlockPos accessory;
-	public int facing;
+	private int facing;
     
 	protected abstract boolean acceptAccessory(TileEntity accessory);
+	
+	@Override
+	@SideOnly(Side.CLIENT)
+    public BlockPos getAccessoryPos() {
+		return accessory;
+	}
 	
     @Override
     public boolean canConnect(@Nullable BlockPos to) {
@@ -53,6 +59,16 @@ public abstract class TilePowerPole3 extends TilePowerPoleBase {
         markTileEntityForS2CSync();
     }
     
+    @Override
+	public void setFacingOnPlacement(int facing) {
+		this.facing = facing;
+	}
+	
+    @Override
+	public int getRotation() {
+    	return this.facing;
+    }
+    
     //////////////////////////////
     /////TileEntity
     //////////////////////////////
@@ -84,12 +100,20 @@ public abstract class TilePowerPole3 extends TilePowerPoleBase {
 		this.facing = nbt.getInteger("facing");
 		this.accessory = Utils.posFromNbt(nbt, "accessory");
         super.onSyncDataFromServerArrived(nbt);
+        this.updateRenderInfo(this.accessory);
     }
 
     public static abstract class Pole10Kv extends TilePowerPole3 {
 		@Override
 		protected boolean acceptAccessory(TileEntity accessory)  {
-			return accessory instanceof TileCableJoint.Type10kV;
+			if (accessory instanceof TileCableJoint.Type10kV)
+				return true;
+			
+			if (accessory instanceof TilePoleBranch.Type10kV) {
+				return accessory.getPos().up().equals(pos);
+			}
+			
+			return false;
 		}
     	
         public static class Type0 extends Pole10Kv {
@@ -98,12 +122,7 @@ public abstract class TilePowerPole3 extends TilePowerPoleBase {
             @SideOnly(Side.CLIENT)
             protected PowerPoleRenderHelper createRenderHelper() {
             	final TilePowerPole3 pole = this;
-                PowerPoleRenderHelper helper = new PowerPoleRenderHelper(world, pos, facing, 1, 3) {
-                	@Override
-                	public void onUpdate() {
-                		PoleAccessoryRendererDispatcher.render(pole, accessory);
-                	}
-                };
+                PowerPoleRenderHelper helper = new PowerPoleRenderHelper(pos, getRotation(), 1, 3);
                 helper.addInsulatorGroup(0, 0.5F, 0,
                         helper.createInsulator(0, 1.2F, 0, 0.55F, -0.74F),
                         helper.createInsulator(0, 1.2F, 0, 1.5F, 0),
@@ -118,13 +137,9 @@ public abstract class TilePowerPole3 extends TilePowerPoleBase {
             @Nonnull
             @SideOnly(Side.CLIENT)
             protected PowerPoleRenderHelper createRenderHelper() {
-            	final TilePowerPole3 pole = this;
-                int rotation = facing;
-                PowerPoleRenderHelper helper = new PowerPoleRenderHelper(world, pos, rotation, 2, 3) {
+                PowerPoleRenderHelper helper = new PowerPoleRenderHelper(this.pos, getRotation(), 2, 3) {
                     @Override
-                    public void onUpdate() {
-                    	PoleAccessoryRendererDispatcher.render(pole, accessory);
-                    	
+                    public void onUpdate() {                    	
                     	if (this.connectionInfo.size() == 2) {
                             PowerPoleRenderHelper.ConnectionInfo[] connection1 = connectionInfo.getFirst();
                             PowerPoleRenderHelper.ConnectionInfo[] connection2 = connectionInfo.getLast();
@@ -163,6 +178,7 @@ public abstract class TilePowerPole3 extends TilePowerPoleBase {
                 return helper;
             }
         }
+
     }
     
     public static class Pole415vType0 extends TilePowerPole3 {
@@ -176,12 +192,7 @@ public abstract class TilePowerPole3 extends TilePowerPoleBase {
         @SideOnly(Side.CLIENT)
         protected PowerPoleRenderHelper createRenderHelper() {
         	final TilePowerPole3 pole = this;
-            PowerPoleRenderHelper helper = new PowerPoleRenderHelper(this.world, this.pos, this.facing, 1, 4){
-                @Override
-                public void onUpdate() {
-                	PoleAccessoryRendererDispatcher.render(pole, accessory);
-                }
-            };
+            PowerPoleRenderHelper helper = new PowerPoleRenderHelper(this.pos, getRotation(), 1, 4);
             
             helper.addInsulatorGroup(0, 0.55F, 0,
                     helper.createInsulator(0, 1.2F, 0, 0.3F, -0.9F),

@@ -55,6 +55,19 @@ public class PowerPole3Model extends CodeBasedModel {
     	if (side != null)
             return ImmutableList.of();
         
+    	if (blockType == EnumBlockTypePole3.Crossarm10kVT2) {
+    		this.quads.clear();
+    		
+            RawQuadGroup model = new RawQuadGroup();
+            
+            model.add(new RawQuadCube(0.15F, 0.08F, 1.6F, textureMetal).translateCoord(0.2F, 0.05F, 0));
+            
+            model.rotateAroundY(rotation);
+            model.add((new RawQuadCube(0.25F, 1, 0.25F, textureConcrete)));
+            model.translateCoord(0.5F, 0, 0.5F);
+            model.bake(this.quads);
+    	}
+    	
         return this.quads;
     }
 
@@ -67,12 +80,7 @@ public class PowerPole3Model extends CodeBasedModel {
 	protected void bake(Function<ResourceLocation, TextureAtlasSprite> textureRegistry) {
 		this.quads.clear();
 		
-
         FastTESRPowerPole3.modelInsulator10kV = Models.render10kVInsulator(textureMetal, textureInsulator);
-		
-        RawQuadCube cube = new RawQuadCube(0.25F, 1, 0.25F, textureConcrete);
-        cube.translateCoord(0.5F, 0, 0.5F);
-        cube.bake(this.quads);
 
         RawQuadGroup insulator = null;
         //Build the insulator model
@@ -86,9 +94,12 @@ public class PowerPole3Model extends CodeBasedModel {
             case Crossarm415VT0:
                 insulator = Models.render415VInsulator(textureMetal, textureInsulator);
                 break;
+			case Crossarm10kVT2:
+				break;
         }
 
         RawQuadGroup model = new RawQuadGroup();
+        
         switch (blockType) {
             case Pole:
                 break;
@@ -108,9 +119,12 @@ public class PowerPole3Model extends CodeBasedModel {
                 model.merge(insulator.clone().translateCoord(0, 0.05F, 0.45F));
                 model.merge(insulator.clone().translateCoord(0, 0.05F, 0.9F));
                 break;
+            case Crossarm10kVT2:
+            	break;
         }
 
         model.rotateAroundY(rotation);
+        model.add((new RawQuadCube(0.25F, 1, 0.25F, textureConcrete)));
         model.translateCoord(0.5F, 0, 0.5F);
         model.bake(this.quads);
 	}
