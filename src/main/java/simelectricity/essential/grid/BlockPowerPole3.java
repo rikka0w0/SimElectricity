@@ -59,8 +59,8 @@ public class BlockPowerPole3 extends BlockBase implements ISubBlock, ISEHVCableC
     public boolean canPlaceBlockAt(World world, BlockPos pos) {
         IBlockState blockState = world.getBlockState(pos.down());
 
-        boolean flg = blockState.getBlock() == this || blockState.isSideSolid(world, pos.down(), EnumFacing.UP);
-        return flg;
+        //return flg = blockState.getBlock() == this || blockState.isSideSolid(world, pos.down(), EnumFacing.UP);
+        return true;
     }
 
     ///////////////////////////////

@@ -1,12 +1,10 @@
 {
-  "parent": "block/cube",
-  "textures": {
-    "down": "sime_essential:blocks/machines/switch_side",
-    "up": "sime_essential:blocks/machines/switch_side",
-    "north": "sime_essential:blocks/machines/switch_side",
-    "south": "sime_essential:blocks/machines/switch_front_off",
-    "west": "sime_essential:blocks/machines/switch_side",
-    "east": "sime_essential:blocks/machines/switch_side",
-    "particle": "sime_essential:blocks/machines/switch_side"
-  }
+    "parent": "sime_essential:block/machine",
+    "textures": {
+        "bottom": "sime_essential:blocks/machines/switch_side",
+        "top": "sime_essential:blocks/machines/switch_side",
+        "front": "sime_essential:blocks/machines/switch_front_off",
+        "back": "sime_essential:blocks/machines/switch_side",
+        "side": "sime_essential:blocks/machines/switch_side"
+    }
 }

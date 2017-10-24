@@ -3,6 +3,9 @@ package simelectricity.essential.common.semachine;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.properties.PropertyBool;
+import net.minecraft.block.properties.PropertyEnum;
+import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -15,6 +18,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
+import net.minecraftforge.common.property.Properties.PropertyAdapter;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import rikka.librikka.block.ISubBlock;
@@ -65,15 +69,15 @@ public abstract class SEMachineBlock extends MetaBlock implements ISubBlock {
     @Override
     protected void createProperties(ArrayList<IProperty> properties, ArrayList<IUnlistedProperty> unlisted) {
         super.createProperties(properties, unlisted);
-        properties.add(ExtendedProperties.propertyFacing);
-        properties.add(ExtendedProperties.propertyIs2state);
+        properties.add(propertyFacing);
+        properties.add(propertyIs2state);
 
-        unlisted.add(ExtendedProperties.propertyDownSocket);
-        unlisted.add(ExtendedProperties.propertyUpSocket);
-        unlisted.add(ExtendedProperties.propertyNorthSocket);
-        unlisted.add(ExtendedProperties.propertySouthSocket);
-        unlisted.add(ExtendedProperties.propertyWestSocket);
-        unlisted.add(ExtendedProperties.propertyEastSocket);
+        unlisted.add(propertyDownSocket);
+        unlisted.add(propertyUpSocket);
+        unlisted.add(propertyNorthSocket);
+        unlisted.add(propertySouthSocket);
+        unlisted.add(propertyWestSocket);
+        unlisted.add(propertyEastSocket);
     }
 
     @Override
@@ -82,10 +86,10 @@ public abstract class SEMachineBlock extends MetaBlock implements ISubBlock {
 
         if (te instanceof ISESidedFacing) {
             EnumFacing facing = ((ISESidedFacing) te).getFacing();
-            state = state.withProperty(ExtendedProperties.propertyFacing, facing);
+            state = state.withProperty(propertyFacing, facing);
         }
 
-        state = state.withProperty(ExtendedProperties.propertyIs2state, this.isSecondState(te));
+        state = state.withProperty(propertyIs2state, this.isSecondState(te));
 
         return state;
     }
@@ -101,7 +105,7 @@ public abstract class SEMachineBlock extends MetaBlock implements ISubBlock {
                 for (EnumFacing facing : EnumFacing.VALUES) {
                     int socketIconIndex = ((ISESocketProvider) te).getSocketIconIndex(facing);
                     socketIconIndex++; //Shift the range, so 0 becomes no icon
-                    IUnlistedProperty<Integer> prop = ExtendedProperties.propertySockets[facing.ordinal()];
+                    IUnlistedProperty<Integer> prop = propertySockets[facing.ordinal()];
                     retval = retval.withProperty(prop, socketIconIndex);
                 }
             }
@@ -119,4 +123,36 @@ public abstract class SEMachineBlock extends MetaBlock implements ISubBlock {
 	
 	@Override
 	public abstract TileEntity createTileEntity(World world, IBlockState state);
+	
+	/////////////////////////////////////////////////////
+	/// BlockStates and Extended BlockState Declaration
+	/////////////////////////////////////////////////////
+    public static final IProperty<EnumFacing> propertyFacing = PropertyEnum.create("facing", EnumFacing.class, EnumFacing.VALUES);
+    public static final IProperty<Boolean> propertyIs2state = PropertyBool.create("is2state");
+
+    public static final IUnlistedProperty<Integer> propertyDownSocket =
+            new PropertyAdapter<Integer>(PropertyInteger.create("downsocket", 0, ISESocketProvider.numOfSockets));
+
+    public static final IUnlistedProperty<Integer> propertyUpSocket =
+            new PropertyAdapter<Integer>(PropertyInteger.create("upsocket", 0, ISESocketProvider.numOfSockets));
+
+    public static final IUnlistedProperty<Integer> propertyNorthSocket =
+            new PropertyAdapter<Integer>(PropertyInteger.create("northsocket", 0, ISESocketProvider.numOfSockets));
+
+    public static final IUnlistedProperty<Integer> propertySouthSocket =
+            new PropertyAdapter<Integer>(PropertyInteger.create("southsocket", 0, ISESocketProvider.numOfSockets));
+
+    public static final IUnlistedProperty<Integer> propertyWestSocket =
+            new PropertyAdapter<Integer>(PropertyInteger.create("westsocket", 0, ISESocketProvider.numOfSockets));
+
+    public static final IUnlistedProperty<Integer> propertyEastSocket =
+            new PropertyAdapter<Integer>(PropertyInteger.create("eastsocket", 0, ISESocketProvider.numOfSockets));
+
+    /**
+     * Facing order, DUNSWE
+     */
+    public static final IUnlistedProperty<Integer>[] propertySockets =
+            new IUnlistedProperty[]{
+                    propertyDownSocket, propertyUpSocket, propertyNorthSocket, propertySouthSocket, propertyWestSocket, propertyEastSocket
+            };
 }

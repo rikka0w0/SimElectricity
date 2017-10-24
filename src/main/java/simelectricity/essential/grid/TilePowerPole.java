@@ -1,13 +1,11 @@
 package simelectricity.essential.grid;
 
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import rikka.librikka.math.MathAssitant;
 import rikka.librikka.math.Vec3f;
 import simelectricity.essential.client.grid.PowerPoleRenderHelper;
-
 
 public class TilePowerPole extends TilePowerPoleBase {
     @SideOnly(Side.CLIENT)
@@ -37,10 +35,15 @@ public class TilePowerPole extends TilePowerPoleBase {
                     PowerPoleRenderHelper.ConnectionInfo[] connection1 = this.connectionInfo.getFirst();
                     PowerPoleRenderHelper.ConnectionInfo[] connection2 = connectionInfo.getLast();
 
+                    float x = -3.95F;
+                    float z = 0;
+                    float cos = MathAssitant.cosAngle(rotation*45);
+                    float sin = MathAssitant.sinAngle(rotation*45);
+                    int rotation = 0;
                     Vec3f pos = new Vec3f(
-                            3.95F * MathHelper.sin(rotation / 180F * MathAssitant.PI) + 0.5F + this.pos.getX(),
-                            this.pos.getY() + 23 - 18,
-                            3.95F * MathHelper.cos(rotation / 180F * MathAssitant.PI) + 0.5F + this.pos.getZ()
+                            x*cos + z*sin + 0.5F + this.pos.getX(),
+                            this.pos.getY() + 5,
+                            -sin*x + cos*z + 0.5F + this.pos.getZ()
                     );
 
                     this.addExtraWire(connection1[1].fixedFrom, pos, 2.5F);
@@ -56,22 +59,22 @@ public class TilePowerPole extends TilePowerPoleBase {
                     }
                 }
             };
-            helper.addInsulatorGroup(-0.7F, 5, 0,
-                    helper.createInsulator(2, 3, -1, 0, -4.5F),
-                    helper.createInsulator(2, 3, -0.7F, 5, 0),
-                    helper.createInsulator(2, 3, -1, 0, 4.5F)
+            helper.addInsulatorGroup(0, 5, -0.7F,
+                    helper.createInsulator(2, 3, -4.5F, 0, -1),
+                    helper.createInsulator(2, 3, 0, 5, -0.7F),
+                    helper.createInsulator(2, 3,  4.5F, 0, -1)
             );
-            helper.addInsulatorGroup(0.7F, 5, 0,
-                    helper.createInsulator(2, 3, 1, 0, -4.5F),
-                    helper.createInsulator(2, 3, 0.7F, 5, 0),
-                    helper.createInsulator(2, 3, 1, 0, 4.5F)
+            helper.addInsulatorGroup(0, 5, 0.7F,
+                    helper.createInsulator(2, 3, -4.5F, 0, 1),
+                    helper.createInsulator(2, 3, 0, 5, 0.7F),
+                    helper.createInsulator(2, 3, 4.5F, 0, 1)
             );
         } else {
             helper = new PowerPoleRenderHelper(this.pos, rotation, 1, 3);
-            helper.addInsulatorGroup(0, 5, 3.95F,
-                    helper.createInsulator(0, 3, 0, -2, -4.9F),
-                    helper.createInsulator(0, 3, 0, 5, 3.95F),
-                    helper.createInsulator(0, 3, 0, -2, 4.9F)
+            helper.addInsulatorGroup(3.95F, 5, 0,
+                    helper.createInsulator(0, 3, -4.9F, -2, 0),
+                    helper.createInsulator(0, 3, 3.95F, 5, 0),
+                    helper.createInsulator(0, 3, 4.9F, -2, 0)
             );
         }
 

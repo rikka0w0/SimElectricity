@@ -17,7 +17,6 @@ import simelectricity.essential.client.grid.pole.FastTESRPowerPole3;
 import simelectricity.essential.client.grid.pole.FastTESRPowerPoleBottom;
 import simelectricity.essential.client.grid.pole.FastTESRPowerPoleTop;
 import simelectricity.essential.client.grid.transformer.FastTESRPowerTransformer;
-import simelectricity.essential.client.grid.transformer.TransformerStateMapper;
 import simelectricity.essential.client.semachine.SEMachineStateMapper;
 import simelectricity.essential.client.semachine.SocketRender;
 import simelectricity.essential.grid.BlockPowerPoleBottom;
@@ -66,10 +65,8 @@ public class ClientRegistrationHandler {
         loader.registerInventoryIcon(BlockRegistry.powerPole2.itemBlock);
         gStateMapper.register(BlockRegistry.powerPole3);
 
-        TransformerStateMapper transformerStateMapper = new TransformerStateMapper(Essential.MODID);
-        loader.registerModelLoader(transformerStateMapper);
-        transformerStateMapper.register(BlockRegistry.powerTransformer);
-        transformerStateMapper.register(BlockRegistry.distributionTransformer);
+        gStateMapper.register(BlockRegistry.powerTransformer);
+        gStateMapper.register(BlockRegistry.distributionTransformer);
 	}
 	
     @SubscribeEvent

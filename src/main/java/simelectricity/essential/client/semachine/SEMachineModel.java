@@ -11,7 +11,7 @@ import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import simelectricity.essential.common.semachine.ExtendedProperties;
+import simelectricity.essential.common.semachine.SEMachineBlock;
 
 import javax.annotation.Nullable;
 
@@ -54,13 +54,13 @@ public class SEMachineModel implements IBakedModel {
 
     @Override
     public ItemOverrideList getOverrides() {
-        return ItemOverrideList.NONE;    //I'm not sure what this thing does QAQ, only know this prevents crashing 233
+        return ItemOverrideList.NONE;
     }
 
     private int[] getSocketIconArray(IExtendedBlockState exBlockState) {
         int[] ret = new int[6];
         int i = 0;
-        for (IUnlistedProperty<Integer> prop : ExtendedProperties.propertySockets) {
+        for (IUnlistedProperty<Integer> prop : SEMachineBlock.propertySockets) {
             int val = exBlockState.getValue(prop);
             ret[i] = val - 1;    //-1: no socket icon
             i++;

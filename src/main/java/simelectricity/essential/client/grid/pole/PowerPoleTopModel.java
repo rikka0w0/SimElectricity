@@ -37,18 +37,17 @@ public class PowerPoleTopModel extends CodeBasedModel {
         	List<BakedQuad> insulator35Kv = new ArrayList();
     		List<BakedQuad> type1 = new ArrayList();
     		
-    		/*
-    		 * Meta facing: MC: South - 0, OpenGL: Xpos(East) - 0
-    		 */
-    		int rotation = facing * 45 - 90;
-    		
+
     		//Type 0
             RawQuadGroup insulator = FastTESRPowerPoleTop.modelInsulator.clone();
             insulator.rotateAroundZ(180);
-            insulator.translateCoord(0, 7F, 3.95F);
-            insulator.rotateAroundVector(rotation, 0, 1, 0);
+            insulator.translateCoord(-3.95F, 7F, 0);
+            insulator.rotateAroundVector(facing*45, 0, 1, 0);
             insulator.translateCoord(0.5F, 0, 0.5F);
-            insulator.bake(insulator35Kv);
+            insulator.bake(insulator35Kv);    		
+
+            //Legacy Rotation
+    		int rotation = facing * 45 + 90;
             model.clone().rotateAroundY(rotation).transform(0.5, -18, 0.5).bake(type0);
             
             //Type 1

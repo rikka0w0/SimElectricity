@@ -22,10 +22,10 @@ public abstract class TileCableJoint extends TilePoleAccessory implements ISECab
             //Create renderHelper on client side
             int rotation = this.world.getBlockState(this.pos).getValue(Properties.facing3bit);
             PowerPoleRenderHelper renderHelper = new PowerPoleRenderHelper(this.pos, rotation, 1, 3);
-            renderHelper.addInsulatorGroup(0.6F, 1.45F, 0F,
-                    renderHelper.createInsulator(0, 2, -0.3F, 1.17F, -0.95F),
-                    renderHelper.createInsulator(0, 2, 0.6F, 1.45F, 0F),
-                    renderHelper.createInsulator(0, 2, -0.3F, 1.17F, 0.95F));
+            renderHelper.addInsulatorGroup(0F, 1.45F, 0.6F,
+                    renderHelper.createInsulator(0, 2, -0.95F, 1.17F, -0.3F),
+                    renderHelper.createInsulator(0, 2, 0F, 1.45F, 0.6F),
+                    renderHelper.createInsulator(0, 2, 0.95F, 1.17F, -0.3F));
 
             return renderHelper;
         }
@@ -39,11 +39,11 @@ public abstract class TileCableJoint extends TilePoleAccessory implements ISECab
             //Create renderHelper on client side
             int rotation = this.world.getBlockState(this.pos).getValue(Properties.facing3bit);
             PowerPoleRenderHelper renderHelper = new PowerPoleRenderHelper(this.pos, rotation, 1, 4);
-            renderHelper.addInsulatorGroup(0.6F, 1.45F, 0F,
-            		renderHelper.createInsulator(0, 1.2F, -0.275F, 0.65F, -0.75F),
-            		renderHelper.createInsulator(0, 1.2F, 0.35F, 0.9F, -0.275F),
-            		renderHelper.createInsulator(0, 1.2F, 0.35F, 0.9F, 0.275F),
-            		renderHelper.createInsulator(0, 1.2F, -0.275F, 0.65F, 0.75F));
+            renderHelper.addInsulatorGroup(0F, 1.45F, 0.6F,
+            		renderHelper.createInsulator(0, 1.2F, -0.75F, 0.65F, -0.275F),
+            		renderHelper.createInsulator(0, 1.2F, -0.275F, 0.9F, 0.35F),
+            		renderHelper.createInsulator(0, 1.2F, 0.275F, 0.9F, 0.35F),
+            		renderHelper.createInsulator(0, 1.2F, 0.75F, 0.65F, -0.275F));
 
             return renderHelper;
         }

@@ -25,14 +25,14 @@ public class FastTESRPowerPoleTop extends FastTESRPowerPole<TilePowerPole>{
 		List<BakedQuad> quads = helper.quadBuffer;
 		
 		if (te.isType0()) {
-			quads.addAll(bakedModelType0[helper.rotationMC]);
+			quads.addAll(bakedModelType0[helper.orientation]);
 			
 	        if (helper.connectionInfo.size() > 1)
-            quads.addAll(this.insulator35Kv[helper.rotationMC]);
+            quads.addAll(this.insulator35Kv[helper.orientation]);
 			
 	        renderInsulator(helper, modelInsulator);
 		} else {
-			quads.addAll(bakedModelType1[helper.rotationMC]);
+			quads.addAll(bakedModelType1[helper.orientation]);
 		}
 		
         super.bake(te, helper);

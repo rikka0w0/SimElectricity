@@ -27,7 +27,7 @@ public class PowerPoleBottomModel extends CodeBasedModel {
     @Override
     public void bake(Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter) {    	
     	for (int facing=0; facing<8; facing++) {
-            int rotation = 0;
+            int rotation = 0;	//Legacy Rotation
             switch (facing) {
                 case 1:
                     rotation = 0;

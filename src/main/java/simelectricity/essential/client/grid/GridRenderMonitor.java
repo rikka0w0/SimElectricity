@@ -74,5 +74,20 @@ public class GridRenderMonitor {
         }
     }
 
+    public void markLoadedPowerPoleForRenderingUpdate() {
+        WorldClient theWorld = Minecraft.getMinecraft().world;
 
+        if (theWorld == null)
+            return;        //Not in game yet;
+        
+        for (TileEntity tile: theWorld.loadedTileEntityList) {
+        	if (tile instanceof ISEPowerPole) {
+        		PowerPoleRenderHelper helper = ((ISEPowerPole) tile).getRenderHelper();
+        		if (helper == null)
+        			continue;
+        		
+        		helper.postUpdate();
+        	}
+        }
+    }
 }

@@ -54,22 +54,22 @@ public class TilePowerPole2 extends TilePowerPoleBase {
                     }
                 }
             };
-            helper.addInsulatorGroup(-0.25F, 0.125F, 0,
-                    helper.createInsulator(2, 3, -0.25F, 0.125F, -4.5F),
-                    helper.createInsulator(2, 3, -0.25F, 0.125F, 0),
-                    helper.createInsulator(2, 3, -0.25F, 0.125F, 4.5F)
+            helper.addInsulatorGroup(0, 0.125F, -0.25F,
+                    helper.createInsulator(2, 3, -4.5F, 0.125F, -0.25F),
+                    helper.createInsulator(2, 3, 0, 0.125F, -0.25F),
+                    helper.createInsulator(2, 3, 4.5F, 0.125F, -0.25F)
             );
-            helper.addInsulatorGroup(0.25F, 0.125F, 0,
-                    helper.createInsulator(2, 3, 0.25F, 0.125F, -4.5F),
-                    helper.createInsulator(2, 3, 0.25F, 0.125F, 0),
-                    helper.createInsulator(2, 3, 0.25F, 0.125F, 4.5F)
+            helper.addInsulatorGroup(0, 0.125F, 0.25F,
+                    helper.createInsulator(2, 3, -4.5F, 0.125F, 0.25F),
+                    helper.createInsulator(2, 3, 0, 0.125F, 0.25F),
+                    helper.createInsulator(2, 3, 4.5F, 0.125F, 0.25F)
             );
         } else {
             helper = new PowerPoleRenderHelper(this.pos, rotation, 1, 3);
             helper.addInsulatorGroup(0, 0.125F - 1.95F, 0F,
-                    helper.createInsulator(0, 3, 0, -2F, -4.5F),
+                    helper.createInsulator(0, 3, -4.5F, -2F, 0),
                     helper.createInsulator(0, 3, 0, -2F, 0F),
-                    helper.createInsulator(0, 3, 0, -2F, 4.5F)
+                    helper.createInsulator(0, 3, 4.5F, -2F, 0)
             );
         }
 

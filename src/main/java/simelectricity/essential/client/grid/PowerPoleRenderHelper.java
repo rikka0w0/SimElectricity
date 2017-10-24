@@ -26,8 +26,7 @@ import javax.annotation.Nullable;
 public class PowerPoleRenderHelper {
     public final BlockPos pos;    //Real MC pos
     public final boolean mirroredAboutZ;
-    public final int rotationMC;
-    public final int rotation;
+    public final int orientation;
     public final PowerPoleRenderHelper.Group[] groups;
     public final int insulatorPerGroup;
     
@@ -52,8 +51,7 @@ public class PowerPoleRenderHelper {
 
     public PowerPoleRenderHelper(BlockPos pos, int rotationMC, boolean mirroredAboutZ, int numOfGroup, int insulatorPerGroup) {
         this.pos = pos;
-        this.rotationMC = rotationMC;
-        this.rotation = rotationMC * 45 - 90;
+        this.orientation = rotationMC;
         this.mirroredAboutZ = mirroredAboutZ;
         this.groups = new PowerPoleRenderHelper.Group[numOfGroup];
         this.insulatorPerGroup = insulatorPerGroup;
@@ -187,25 +185,30 @@ public class PowerPoleRenderHelper {
     public final PowerPoleRenderHelper.Insulator createInsulator(float length, float tension, float offsetX, float offsetY, float offsetZ) {
         if (this.mirroredAboutZ)
             offsetX = -offsetX;
-
-        float rotatedX = offsetZ * MathHelper.sin(rotation / 180F * MathAssitant.PI) + offsetX * MathHelper.cos(rotation / 180F * MathAssitant.PI);
-        float rotatedZ = offsetZ * MathHelper.cos(rotation / 180F * MathAssitant.PI) - offsetX * MathHelper.sin(rotation / 180F * MathAssitant.PI);
-
-
+        
+        float cos = MathAssitant.cosAngle(this.orientation * 45);
+        float sin = MathAssitant.sinAngle(this.orientation * 45);
+        
+        float rotatedX = offsetX * cos + offsetZ * sin;
+        float rotatedZ = -offsetX* sin + offsetZ * cos;
+        
         return new PowerPoleRenderHelper.Insulator(this, length, tension, rotatedX + 0.5F, offsetY, rotatedZ + 0.5F);
     }
 
     public final void addInsulatorGroup(float centerX, float centerY, float centerZ, PowerPoleRenderHelper.Insulator... insulators) {
         if (addedGroup == groups.length)
             return;
-
+        
         if (insulators.length != insulatorPerGroup)
             return;
-
-        float rotatedX = centerZ * MathHelper.sin(this.rotation / 180F * MathAssitant.PI) + centerX * MathHelper.cos(this.rotation / 180F * MathAssitant.PI) + 0.5F;
-        float rotatedZ = centerZ * MathHelper.cos(this.rotation / 180F * MathAssitant.PI) - centerX * MathHelper.sin(this.rotation / 180F * MathAssitant.PI) + 0.5F;
-
-        groups[addedGroup] = new PowerPoleRenderHelper.Group(this, rotatedX, centerY, rotatedZ, insulators);
+        
+        float cos = MathAssitant.cosAngle(this.orientation * 45);
+        float sin = MathAssitant.sinAngle(this.orientation * 45);
+        
+        float rotatedX = centerX * cos + centerZ * sin;
+        float rotatedZ = -centerX* sin + centerZ * cos;
+        
+        groups[addedGroup] = new PowerPoleRenderHelper.Group(this, rotatedX + 0.5F, centerY, rotatedZ + 0.5F, insulators);
         addedGroup++;
     }
 

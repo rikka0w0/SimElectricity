@@ -106,10 +106,10 @@ public abstract class TilePoleBranch extends TilePoleAccessory implements ISEFac
 		protected PowerPoleRenderHelper createRenderHelper() {
 			PowerPoleRenderHelper helper = new PowerPoleRenderHelper(pos, getRotation(), 1, 3);
 
-			helper.addInsulatorGroup(-0.6F, 0.9F, 0,
-					helper.createInsulator(0.5F, 1.2F, 0.2F, 0.1F, -0.74F),
-					helper.createInsulator(0.5F, 1.2F, 0.2F, 0.1F, 0),
-					helper.createInsulator(0.5F, 1.2F, 0.2F, 0.1F, 0.74F)
+			helper.addInsulatorGroup(0, 0.9F, -0.6F,
+					helper.createInsulator(0.5F, 1.2F, -0.74F, 0.1F, 0.2F),
+					helper.createInsulator(0.5F, 1.2F, 0, 0.1F, 0.2F),
+					helper.createInsulator(0.5F, 1.2F, 0.74F, 0.1F, 0.2F)
 					);
 
 			return helper;

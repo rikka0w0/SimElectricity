@@ -24,13 +24,14 @@ import java.util.*;
 
 @SideOnly(Side.CLIENT)
 public class SEMachineRawModel implements IModel {
+	//Copied from furnance.json
     private static final ModelRotation[] rotationMatrix = {
-            ModelRotation.X270_Y0, //Down
-            ModelRotation.X90_Y0,    //Up
-            ModelRotation.X0_Y180,    //North
-            ModelRotation.X0_Y0,    //South
-            ModelRotation.X0_Y90,    //West
-            ModelRotation.X0_Y270    //East
+            ModelRotation.X90_Y0, //Down
+            ModelRotation.X270_Y0,    //Up
+            ModelRotation.X0_Y0,    //North
+            ModelRotation.X0_Y180,    //South
+            ModelRotation.X0_Y270,    //West
+            ModelRotation.X0_Y90    //East
     };
     private final List<ResourceLocation> dependencies = new ArrayList<ResourceLocation>();
     private final Set<ResourceLocation> textures = Sets.newHashSet();

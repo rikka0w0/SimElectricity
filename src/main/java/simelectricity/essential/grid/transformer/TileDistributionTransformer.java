@@ -116,10 +116,10 @@ public abstract class TileDistributionTransformer extends SEMultiBlockGridTile{
         	final TileDistributionTransformer pole = this;
             PowerPoleRenderHelper helper = new PowerPoleRenderHelper(this.pos, PowerPoleRenderHelper.facing2rotation(mbInfo.facing) - 2, mbInfo.mirrored, 1, 4);
             helper.addInsulatorGroup(0, 0.55F, 0,
-                    helper.createInsulator(0, 1.2F, 0, 0.3F, -0.9F),
-                    helper.createInsulator(0, 1.2F, 0, 0.3F, -0.45F),
-                    helper.createInsulator(0, 1.2F, 0, 0.3F, 0.45F),
-                    helper.createInsulator(0, 1.2F, 0, 0.3F, 0.9F)
+                    helper.createInsulator(0, 1.2F, -0.9F, 0.3F, 0),
+                    helper.createInsulator(0, 1.2F, -0.45F, 0.3F, 0),
+                    helper.createInsulator(0, 1.2F, 0.45F, 0.3F, 0),
+                    helper.createInsulator(0, 1.2F, 0.9F, 0.3F, 0)
             );
             return helper;
         }
@@ -167,9 +167,9 @@ public abstract class TileDistributionTransformer extends SEMultiBlockGridTile{
         	final TileDistributionTransformer pole = this;
             PowerPoleRenderHelper helper = new PowerPoleRenderHelper(pos, PowerPoleRenderHelper.facing2rotation(mbInfo.facing) - 2, mbInfo.mirrored, 1, 3);
             helper.addInsulatorGroup(0, 0.5F, 0,
-                    helper.createInsulator(0, 1.2F, 0, 0.55F, -0.74F),
+                    helper.createInsulator(0, 1.2F, -0.74F, 0.55F, 0),
                     helper.createInsulator(0, 1.2F, 0, 1.5F, 0),
-                    helper.createInsulator(0, 1.2F, 0, 0.55F, 0.74F)
+                    helper.createInsulator(0, 1.2F, 0.74F, 0.55F, 0)
             );
             return helper;
 		}

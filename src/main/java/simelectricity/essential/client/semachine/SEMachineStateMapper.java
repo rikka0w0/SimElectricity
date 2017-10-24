@@ -11,7 +11,6 @@ import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import rikka.librikka.model.loader.IModelLoader;
-import simelectricity.essential.common.semachine.ExtendedProperties;
 import simelectricity.essential.common.semachine.SEMachineBlock;
 
 @SideOnly(Side.CLIENT)
@@ -31,8 +30,8 @@ public class SEMachineStateMapper extends StateMapperBase implements IModelLoade
             ISESidedTextureBlock stBlock = (ISESidedTextureBlock) block;
 
             String modelName = stBlock.getModelNameFrom(state);
-            EnumFacing facing = state.getValue(ExtendedProperties.propertyFacing);
-            boolean is2State = state.getValue(ExtendedProperties.propertyIs2state);
+            EnumFacing facing = state.getValue(SEMachineBlock.propertyFacing);
+            boolean is2State = state.getValue(SEMachineBlock.propertyIs2state);
 
             if (!stBlock.hasSecondState(state))
                 is2State = false;
@@ -68,7 +67,7 @@ public class SEMachineStateMapper extends StateMapperBase implements IModelLoade
         ItemBlock itemBlock = block.itemBlock;
         for (int meta : block.propertyMeta.getAllowedValues()) {
             IBlockState blockState = block.getStateFromMeta(meta);
-            blockState = blockState.withProperty(ExtendedProperties.propertyFacing, EnumFacing.NORTH);
+            blockState = blockState.withProperty(SEMachineBlock.propertyFacing, EnumFacing.NORTH);
             ModelResourceLocation res = getModelResourceLocation(blockState);
             //Also register inventory variants here
             ModelLoader.setCustomModelResourceLocation(itemBlock, meta, res);

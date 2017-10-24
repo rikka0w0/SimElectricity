@@ -1,12 +1,10 @@
 {
-  "parent": "block/cube",
-  "textures": {
-    "down": "sime_essential:blocks/machines/machine_bottom",
-    "up": "sime_essential:blocks/machines/machine_top",
-    "north": "sime_essential:blocks/machines/machine_side",
-    "south": "sime_essential:blocks/machines/adjustable_resistor_front",
-    "west": "sime_essential:blocks/machines/machine_side",
-    "east": "sime_essential:blocks/machines/machine_side",
-    "particle": "sime_essential:blocks/machines/adjustable_resistor_front"
-  }
+    "parent": "sime_essential:block/machine",
+    "textures": {
+        "bottom": "sime_essential:blocks/machines/machine_bottom",
+        "top": "sime_essential:blocks/machines/machine_top",
+        "front": "sime_essential:blocks/machines/adjustable_resistor_front",
+        "back": "sime_essential:blocks/machines/machine_side",
+        "side": "sime_essential:blocks/machines/machine_side"
+    }
 }

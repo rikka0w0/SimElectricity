@@ -124,9 +124,9 @@ public abstract class TilePowerPole3 extends TilePowerPoleBase implements ISEFac
             	final TilePowerPole3 pole = this;
                 PowerPoleRenderHelper helper = new PowerPoleRenderHelper(pos, getRotation(), 1, 3);
                 helper.addInsulatorGroup(0, 0.5F, 0,
-                        helper.createInsulator(0, 1.2F, 0, 0.55F, -0.74F),
+                        helper.createInsulator(0, 1.2F, -0.74F, 0.55F, 0),
                         helper.createInsulator(0, 1.2F, 0, 1.5F, 0),
-                        helper.createInsulator(0, 1.2F, 0, 0.55F, 0.74F)
+                        helper.createInsulator(0, 1.2F, 0.74F, 0.55F, 0)
                 );
                 return helper;
             }
@@ -165,20 +165,24 @@ public abstract class TilePowerPole3 extends TilePowerPoleBase implements ISEFac
                         }
                     }
                 };
-                helper.addInsulatorGroup(-0.6F, 0.9F, 0,
-                        helper.createInsulator(0.5F, 1.2F, -0.05F, 0.1F, -0.74F),
-                        helper.createInsulator(0.5F, 1.2F, -0.05F, 0.9F, 0),
-                        helper.createInsulator(0.5F, 1.2F, -0.05F, 0.1F, 0.74F)
+                helper.addInsulatorGroup(0, 0.9F, -0.6F,
+                        helper.createInsulator(0.5F, 1.2F, -0.74F, 0.1F, -0.05F),
+                        helper.createInsulator(0.5F, 1.2F, 0, 0.9F, -0.05F),
+                        helper.createInsulator(0.5F, 1.2F, 0.74F, 0.1F, -0.05F)
                 );
-                helper.addInsulatorGroup(0.6F, 0.9F, 0,
-                        helper.createInsulator(0.5F, 1.2F, 0.05F, 0.1F, -0.74F),
-                        helper.createInsulator(0.5F, 1.2F, 0.05F, 0.9F, 0),
-                        helper.createInsulator(0.5F, 1.2F, 0.05F, 0.1F, 0.74F)
+                helper.addInsulatorGroup(0, 0.9F, 0.6F,
+                        helper.createInsulator(0.5F, 1.2F, -0.74F, 0.1F, 0.05F),
+                        helper.createInsulator(0.5F, 1.2F, 0, 0.9F, 0.05F),
+                        helper.createInsulator(0.5F, 1.2F, 0.74F, 0.1F, 0.05F)
                 );
                 return helper;
             }
         }
 
+    }
+    
+    public void invalidate() {
+    	super.invalidate();
     }
     
     public static class Pole415vType0 extends TilePowerPole3 {
@@ -195,10 +199,10 @@ public abstract class TilePowerPole3 extends TilePowerPoleBase implements ISEFac
             PowerPoleRenderHelper helper = new PowerPoleRenderHelper(this.pos, getRotation(), 1, 4);
             
             helper.addInsulatorGroup(0, 0.55F, 0,
-                    helper.createInsulator(0, 1.2F, 0, 0.3F, -0.9F),
-                    helper.createInsulator(0, 1.2F, 0, 0.3F, -0.45F),
-                    helper.createInsulator(0, 1.2F, 0, 0.3F, 0.45F),
-                    helper.createInsulator(0, 1.2F, 0, 0.3F, 0.9F)
+                    helper.createInsulator(0, 1.2F, -0.9F, 0.3F, 0),
+                    helper.createInsulator(0, 1.2F, -0.45F, 0.3F, 0),
+                    helper.createInsulator(0, 1.2F, 0.45F, 0.3F, 0),
+                    helper.createInsulator(0, 1.2F, 0.9F, 0.3F, 0)
             );
             return helper;
         }
