@@ -262,7 +262,11 @@ public class PowerPoleRenderHelper {
     }
     
     public final void addExtraWire(Vec3f from, Vec3f to, float tension) {
-        this.extraWires.add(new PowerPoleRenderHelper.ExtraWireInfo(from, to, tension));
+        this.extraWires.add(new PowerPoleRenderHelper.ExtraWireInfo(from, to, tension, false));
+    }
+    
+    public final void addExtraWire(Vec3f from, Vec3f to, float tension, boolean useCatenary) {
+        this.extraWires.add(new PowerPoleRenderHelper.ExtraWireInfo(from, to, tension, useCatenary));
     }
 
     private void findVirtualConnection(BlockPos neighborCoord) {
@@ -498,11 +502,13 @@ public class PowerPoleRenderHelper {
     public static class ExtraWireInfo {
         public final Vec3f from, to;
         public final float tension;
+        public final boolean useCatenary;
 
-        private ExtraWireInfo(Vec3f from, Vec3f to, float tension) {
+        private ExtraWireInfo(Vec3f from, Vec3f to, float tension, boolean useCatenary) {
             this.from = from;
             this.to = to;
             this.tension = tension;
+            this.useCatenary = useCatenary;
         }
     }
 }

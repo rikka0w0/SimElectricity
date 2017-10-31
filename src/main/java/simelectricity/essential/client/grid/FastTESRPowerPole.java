@@ -79,21 +79,46 @@ public class FastTESRPowerPole<T extends TileEntity & ISEPowerPole> extends Fast
 		float a = -b / length;
         float unitLength = length / steps;
 
-        float x0, y0, x1, y1;
+        float y0 = 0, y1;
 
         for (int i = 0; i < steps / (half ? 2 : 1); i++) {
-            x0 = i * unitLength;
-            y0 = x0 * x0 * a + x0 * b;
-            x1 = (i + 1) * unitLength;
+        	float x1 = (i + 1) * unitLength;
             y1 = x1 * x1 * a + x1 * b;
             
             ret.add((new RawQuadCube(thickness, MathHelper.sqrt(unitLength*unitLength + (y1 - y0)*(y1 - y0)), thickness, texture))
             			.rotateAroundZ((float) Math.atan2(y0 - y1, unitLength) * 180F / MathAssitant.PI)
             			.translateCoord(y0, i * unitLength, 0)
             			);
+            y0 = y1;
         }
         
         ret.rotateToVec(from.x, from.y, from.z, to.x, to.y, to.z);
+        ret.translateCoord(from.x, from.y, from.z);
+        return ret;
+	}
+	
+	public static RawQuadGroup renderCatenaryCable(Vec3f from, Vec3f to, boolean half, float tension, float thickness, TextureAtlasSprite texture) {
+		RawQuadGroup ret = new RawQuadGroup();
+		
+		float steps = ConfigManager.parabolaRenderSteps;
+        float y0 = 0, y1;
+
+        float d = MathHelper.sqrt((from.x-to.x)*(from.x-to.x) + (from.z-to.z)*(from.z-to.z));
+        float step = d/steps;
+        Catenary c = new Catenary(0, to.y-from.y, d, tension);
+        
+        //Origin
+        for (int i = 0; i < steps / (half ? 2 : 1); i++) {
+            y1 = c.apply((i + 1) * step);
+            
+            ret.add((new RawQuadCube(thickness, MathHelper.sqrt(step*step + (y1 - y0)*(y1 - y0)), thickness, texture))
+            			.rotateAroundZ(-(float) Math.atan2(y0 - y1, step) * 180F / MathAssitant.PI)
+            			.translateCoord(-y0, i * step, 0)
+            			);
+            y0 = y1;
+        }
+        
+        ret.rotateToVec(from.x, 0, from.z, to.x, 0, to.z);
         ret.translateCoord(from.x, from.y, from.z);
         return ret;
 	}
@@ -130,14 +155,16 @@ public class FastTESRPowerPole<T extends TileEntity & ISEPowerPole> extends Fast
 		BlockPos pos = helper.pos;  
         for (PowerPoleRenderHelper.ConnectionInfo[] connections : helper.connectionInfo) {
             for (PowerPoleRenderHelper.ConnectionInfo info : connections) {
-            	RawQuadGroup group = renderParabolicCable(info.fixedFrom, info.fixedTo, true, info.tension, 0.06F);
+            	RawQuadGroup group = renderParabolicCable(info.fixedFrom, info.fixedTo, true, info.tension, 0.06F, texture);
             	group.translateCoord(-pos.getX(), -pos.getY(), -pos.getZ());
             	group.bake(helper.quadBuffer);
             }
         }
         
         for (PowerPoleRenderHelper.ExtraWireInfo wire : helper.extraWires) {
-        	RawQuadGroup group = renderParabolicCable(wire.from, wire.to, false, wire.tension, 0.06F);
+        	RawQuadGroup group = wire.useCatenary ? 
+        			renderCatenaryCable(wire.from, wire.to, false, wire.tension, 0.06F, texture) :
+        			renderParabolicCable(wire.from, wire.to, false, wire.tension, 0.06F, texture);
         	group.translateCoord(-pos.getX(), -pos.getY(), -pos.getZ());
         	group.bake(helper.quadBuffer);
         }

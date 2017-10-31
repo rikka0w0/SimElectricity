@@ -30,15 +30,44 @@ public class AR10kVPoleBranch implements ISEAccessoryRenderer {
 			
 			float b = calcAngleFromXInDegree(connection[0].fixedFrom,connection[0].fixedTo);
 			float c = b-a;
-			pole.addExtraWire(from1, to1, 0.25F);
-			if (PowerPoleRenderHelper.hasIntersection(from0, to0, from2, to2)) {
-				pole.addExtraWire(from0, to2, 0.1F);
-				pole.addExtraWire(from2, to0, 0.1F);
+			pole.addExtraWire(from1, to1, 0.1F);
+			boolean flag1 = PowerPoleRenderHelper.hasIntersection(from0, to0, from2, to2);
+			boolean flag2 = PowerPoleRenderHelper.hasIntersection(from0, to2, from2, to0);
+			
+			if (flag1 == flag2) {
+				float f0t0 = dist(from0, to0);
+				float f2t2 = dist(from2, to2);
+				float f0t2 = dist(from0, to2);
+				float f2t0 = dist(from2, to0);
+				
+				float tension1 = 0.6F;
+				float tension2 = 0.1F;
+				
+				if (f0t0+f2t2 > f0t2+f2t0) {
+					boolean flg = f0t2>f2t0;
+					pole.addExtraWire(from0, to2, flg?tension1:tension2, true);
+					pole.addExtraWire(from2, to0, flg?tension2:tension1, true);
+				} else {
+					boolean flg = f0t0>f2t2;
+					pole.addExtraWire(from0, to0, flg?tension1:tension2, true);
+					pole.addExtraWire(from2, to2, flg?tension2:tension1, true);
+				}
 			} else {
-				pole.addExtraWire(from0, to0, 0.1F);
-				pole.addExtraWire(from2, to2, 0.1F);
+				if (flag1) {
+					pole.addExtraWire(from0, to2, 0.5F);
+					pole.addExtraWire(from2, to0, 0.5F);
+				} else {
+					pole.addExtraWire(from0, to0, 0.5F);
+					pole.addExtraWire(from2, to2, 0.5F);
+				}
 			}
+			
+			
     	}
+	}
+	
+	public static float dist(Vec3f from, Vec3f to) {
+		return (from.x-to.x)*(from.x-to.x) + (from.z-to.z)*(from.z-to.z);
 	}
 	
 	public static float calcAngleFromXInDegree (Vec3f from, Vec3f to) {
