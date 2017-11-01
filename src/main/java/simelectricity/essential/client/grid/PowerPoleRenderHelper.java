@@ -497,6 +497,15 @@ public class PowerPoleRenderHelper {
             
             this.isVirtual = true;
         }
+        
+        public Vec3f pointOnCable(float dist) {
+        	float x = fixedFrom.x-from.x;
+        	float y = fixedFrom.y-from.y;
+        	float z = fixedFrom.z-from.z;
+        	float f = dist / MathHelper.sqrt(x*x+y*y+z*z);
+        	
+        	return new Vec3f(x*f + fixedFrom.x, y*f + fixedFrom.y, z*f + fixedFrom.z);
+        }
     }
 
     public static class ExtraWireInfo {

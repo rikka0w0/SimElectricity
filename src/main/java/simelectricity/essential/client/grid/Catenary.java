@@ -1,6 +1,7 @@
 package simelectricity.essential.client.grid;
 
 import net.minecraft.util.math.MathHelper;
+import rikka.librikka.math.MathAssitant;
 
 public class Catenary implements java.util.function.Function<Float,Float>, com.google.common.base.Function<Float,Float>{
 	private final float u, x1, k;
@@ -21,11 +22,11 @@ public class Catenary implements java.util.function.Function<Float,Float>, com.g
 		float L=calcL(a,h,d);
 		float L1=-h*L/a+MathHelper.sqrt(h*(a+h)*(L*L-a*a))/a;
 		float u=2*h/(L1*L1-h*h);
-		float x1=asinh(u*L1)/u;
+		float x1= MathAssitant.asinh(u*L1)/u;
 		float k=h1-h-1/u;
 		
 		if(yFrom>yTo)
-		    x1=x1+d-acosh(u*(yTo-k))/u-x1;
+		    x1=x1+d- MathAssitant.acosh(u*(yTo-k))/u-x1;
 		
 		this.u = u;
 		this.x1 = x1;
@@ -63,18 +64,6 @@ public class Catenary implements java.util.function.Function<Float,Float>, com.g
 		float q = 2*MathHelper.sqrt(h * (a+h) * (L*L - a*a));
 		return ((L*L-a*a)*(a+2*h)-L*q)
 				/
-				(a*a)*atanh(a*a/(L*(a+2*h)-q));
-	}
-	
-	public static float asinh(float x) {
-		return (float) Math.log(x+MathHelper.sqrt(x*x+1));
-	}
-	
-	public static float acosh(float x) {
-		return (float) Math.log(x+MathHelper.sqrt(x*x-1));
-	}
-	
-	public static float atanh(float x) {
-		return (float) (0.5*Math.log((1+x)/(1-x)));
+				(a*a)* MathAssitant.atanh(a*a/(L*(a+2*h)-q));
 	}
 }
