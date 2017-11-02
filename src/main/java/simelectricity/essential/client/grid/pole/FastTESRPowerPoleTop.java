@@ -27,7 +27,7 @@ public class FastTESRPowerPoleTop extends FastTESRPowerPole<TilePowerPole>{
 		if (te.isType0()) {
 			quads.addAll(bakedModelType0[helper.orientation]);
 			
-	        if (helper.connectionInfo.size() > 1)
+	        if (helper.connectionList.size() > 1)
             quads.addAll(this.insulator35Kv[helper.orientation]);
 			
 	        renderInsulator(helper, modelInsulator);

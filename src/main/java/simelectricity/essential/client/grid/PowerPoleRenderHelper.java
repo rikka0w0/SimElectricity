@@ -33,8 +33,8 @@ public class PowerPoleRenderHelper {
     /**
      * Buffer
      */
-    public final LinkedList<PowerPoleRenderHelper.ConnectionInfo[]> connectionInfo = new LinkedList();
-    public final LinkedList<PowerPoleRenderHelper.ExtraWireInfo> extraWires = new LinkedList();
+    public final LinkedList<PowerPoleRenderHelper.ConnectionInfo[]> connectionList = new LinkedList();
+    public final LinkedList<PowerPoleRenderHelper.ExtraWireInfo> extraWireList = new LinkedList();
     
     public final List<BakedQuad> quadBuffer = new ArrayList();
     private boolean needBake = false;
@@ -221,8 +221,8 @@ public class PowerPoleRenderHelper {
     }
     
     public final void updateRenderData(IBlockAccess world, BlockPos... neighborPosList) {
-        this.connectionInfo.clear();
-        this.extraWires.clear();
+        this.connectionList.clear();
+        this.extraWireList.clear();
         addNeighors(world, neighborPosList);
     }
     
@@ -262,11 +262,11 @@ public class PowerPoleRenderHelper {
     }
     
     public final void addExtraWire(Vec3f from, Vec3f to, float tension) {
-        this.extraWires.add(new PowerPoleRenderHelper.ExtraWireInfo(from, to, tension, false));
+        this.extraWireList.add(new PowerPoleRenderHelper.ExtraWireInfo(from, to, tension, false));
     }
     
     public final void addExtraWire(Vec3f from, Vec3f to, float tension, boolean useCatenary) {
-        this.extraWires.add(new PowerPoleRenderHelper.ExtraWireInfo(from, to, tension, useCatenary));
+        this.extraWireList.add(new PowerPoleRenderHelper.ExtraWireInfo(from, to, tension, useCatenary));
     }
 
     private void findVirtualConnection(BlockPos neighborCoord) {
@@ -297,7 +297,7 @@ public class PowerPoleRenderHelper {
             }
         }
         
-        this.connectionInfo.add(ret);        
+        this.connectionList.add(ret);        
     }
     
     private void findConnection(PowerPoleRenderHelper neighbor) {
@@ -333,7 +333,7 @@ public class PowerPoleRenderHelper {
             }
         }
 
-        this.connectionInfo.add(ret);
+        this.connectionList.add(ret);
     }
 
     public static class Insulator {
@@ -496,6 +496,10 @@ public class PowerPoleRenderHelper {
             this.fromGroup = from.group;
             
             this.isVirtual = true;
+        }
+        
+        public float calcAngleFromXInDegree() {
+        	return this.fixedFrom.calcAngleFromXInDegree(this.fixedTo);
         }
         
         public Vec3f pointOnCable(float dist) {

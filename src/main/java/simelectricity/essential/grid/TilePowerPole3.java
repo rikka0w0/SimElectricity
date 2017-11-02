@@ -140,9 +140,9 @@ public abstract class TilePowerPole3 extends TilePowerPoleBase implements ISEFac
                 PowerPoleRenderHelper helper = new PowerPoleRenderHelper(this.pos, getRotation(), 2, 3) {
                     @Override
                     public void onUpdate() {                    	
-                    	if (this.connectionInfo.size() == 2) {
-                            PowerPoleRenderHelper.ConnectionInfo[] connection1 = connectionInfo.getFirst();
-                            PowerPoleRenderHelper.ConnectionInfo[] connection2 = connectionInfo.getLast();
+                    	if (this.connectionList.size() == 2) {
+                            PowerPoleRenderHelper.ConnectionInfo[] connection1 = connectionList.getFirst();
+                            PowerPoleRenderHelper.ConnectionInfo[] connection2 = connectionList.getLast();
 
                             Vec3f pos = new Vec3f(
                                     0.5F + this.pos.getX(),

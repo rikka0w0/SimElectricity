@@ -22,7 +22,7 @@ public class FastTESRPowerPole3<T extends TileEntity & ISEPowerPole> extends Fas
 		if (te instanceof TilePowerPole3.Pole10Kv.Type1) {
 			renderInsulator(helper, modelInsulator10kV);
 			
-			if (helper.connectionInfo.size() == 2)
+			if (helper.connectionList.size() == 2)
 				modelInsulator10kV.clone().translateCoord(0.5F, 1F, 0.5F).bake(helper.quadBuffer);
 			
 		} else if (te instanceof TilePoleBranch.Type10kV) {

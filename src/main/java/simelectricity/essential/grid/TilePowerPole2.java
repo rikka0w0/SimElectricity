@@ -30,11 +30,11 @@ public class TilePowerPole2 extends TilePowerPoleBase {
             helper = new PowerPoleRenderHelper(this.pos, rotation, 2, 3) {
                 @Override
                 public void onUpdate() {
-                    if (this.connectionInfo.size() < 2)
+                    if (this.connectionList.size() < 2)
                         return;
 
-                    PowerPoleRenderHelper.ConnectionInfo[] connection1 = this.connectionInfo.getFirst();
-                    PowerPoleRenderHelper.ConnectionInfo[] connection2 = connectionInfo.getLast();
+                    PowerPoleRenderHelper.ConnectionInfo[] connection1 = this.connectionList.getFirst();
+                    PowerPoleRenderHelper.ConnectionInfo[] connection2 = connectionList.getLast();
 
                     Vec3f pos = new Vec3f(
                             3.95F * MathHelper.sin(rotation / 180F * MathAssitant.PI) + 0.5F + this.pos.getX(),

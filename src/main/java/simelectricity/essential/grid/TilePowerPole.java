@@ -29,11 +29,11 @@ public class TilePowerPole extends TilePowerPoleBase {
             helper = new PowerPoleRenderHelper(this.pos, rotation, 2, 3) {
                 @Override
                 public void onUpdate() {
-                    if (this.connectionInfo.size() < 2)
+                    if (this.connectionList.size() < 2)
                         return;
 
-                    PowerPoleRenderHelper.ConnectionInfo[] connection1 = this.connectionInfo.getFirst();
-                    PowerPoleRenderHelper.ConnectionInfo[] connection2 = connectionInfo.getLast();
+                    PowerPoleRenderHelper.ConnectionInfo[] connection1 = this.connectionList.getFirst();
+                    PowerPoleRenderHelper.ConnectionInfo[] connection2 = connectionList.getLast();
 
                     float x = -3.95F;
                     float z = 0;

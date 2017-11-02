@@ -11,7 +11,7 @@ public class AR10kVType1CableJoint implements ISEAccessoryRenderer {
 	
 	@Override
 	public void renderConnection(PowerPoleRenderHelper pole, PowerPoleRenderHelper accessory) {
-    	if (pole.connectionInfo.isEmpty()) {
+    	if (pole.connectionList.isEmpty()) {
     		Group target = accessory.groups[0].closest(pole.groups[0], pole.groups[1]);
 			Vec3f from0 = target.insulators[0].realPos;
 			Vec3f from1 = target.insulators[1].realPos;
@@ -29,8 +29,8 @@ public class AR10kVType1CableJoint implements ISEAccessoryRenderer {
 				pole.addExtraWire(from0, to0, 0.1F);
 				pole.addExtraWire(from2, to2, 0.1F);
 			}
-    	} if (pole.connectionInfo.size() == 1) {
-    		PowerPoleRenderHelper.ConnectionInfo[] connection1 = pole.connectionInfo.getFirst();
+    	} if (pole.connectionList.size() == 1) {
+    		PowerPoleRenderHelper.ConnectionInfo[] connection1 = pole.connectionList.getFirst();
 			Vec3f from0 = connection1[0].fixedFrom;
 			Vec3f from1 = connection1[1].fixedFrom;
 			Vec3f from2 = connection1[2].fixedFrom;
@@ -47,9 +47,9 @@ public class AR10kVType1CableJoint implements ISEAccessoryRenderer {
 				pole.addExtraWire(from0, to0, 0.1F);
 				pole.addExtraWire(from2, to2, 0.1F);
 			}
-    	} else if (pole.connectionInfo.size() == 2) {
-            PowerPoleRenderHelper.ConnectionInfo[] connection1 = pole.connectionInfo.getFirst();
-            PowerPoleRenderHelper.ConnectionInfo[] connection2 = pole.connectionInfo.getLast();
+    	} else if (pole.connectionList.size() == 2) {
+            PowerPoleRenderHelper.ConnectionInfo[] connection1 = pole.connectionList.getFirst();
+            PowerPoleRenderHelper.ConnectionInfo[] connection2 = pole.connectionList.getLast();
             
             Vec3f to0 = accessory.groups[0].insulators[0].realPos;
 			Vec3f to1 = accessory.groups[0].insulators[1].realPos;
