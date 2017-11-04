@@ -447,6 +447,7 @@ public class PowerPoleRenderHelper {
     public static class ConnectionInfo {
         public final Vec3f from, to;
         public final Vec3f fixedFrom, fixedTo;
+        public final Vec3f initalSlopVec;	//Unit Length
         public final float insulatorAngle, tension;
         public final Group fromGroup;
 
@@ -462,6 +463,7 @@ public class PowerPoleRenderHelper {
 
             float distance = this.from.distanceTo(this.to);
             float angle = PowerPoleRenderHelper.calcAngle(distance, this.from.y, this.to.y, tension);
+            this.initalSlopVec = PowerPoleRenderHelper.fixConnectionPoints(this.from, this.to, distance, angle, 1, tension).add(-this.from.x, -this.from.y, -this.from.z);
             Vec3f fixedFrom = PowerPoleRenderHelper.fixConnectionPoints(this.from, this.to, distance, angle, from.length, tension);
 
             float dummyAngle = PowerPoleRenderHelper.calcAngle(distance, this.to.y, this.from.y, tension);
@@ -469,7 +471,7 @@ public class PowerPoleRenderHelper {
 
             this.fixedFrom = fixedFrom;
             this.fixedTo = fixedTo;
-            insulatorAngle = angle;
+            this.insulatorAngle = angle;
             this.tension = tension;
             this.fromGroup = from.group;
             
@@ -484,6 +486,7 @@ public class PowerPoleRenderHelper {
         	
             float distance = this.from.distanceTo(this.to);
             float angle = PowerPoleRenderHelper.calcAngle(distance, this.from.y, this.to.y, tension);
+            this.initalSlopVec = PowerPoleRenderHelper.fixConnectionPoints(this.from, this.to, distance, angle, 1, tension).add(-this.from.x, -this.from.y, -this.from.z);
             Vec3f fixedFrom = PowerPoleRenderHelper.fixConnectionPoints(this.from, this.to, distance, angle, from.length, tension);
 
             float dummyAngle = PowerPoleRenderHelper.calcAngle(distance, this.to.y, this.from.y, tension);
@@ -503,12 +506,14 @@ public class PowerPoleRenderHelper {
         }
         
         public Vec3f pointOnCable(float dist) {
-        	float x = fixedFrom.x-from.x;
+/*        	float x = fixedFrom.x-from.x;
         	float y = fixedFrom.y-from.y;
-        	float z = fixedFrom.z-from.z;
-        	float f = dist / MathHelper.sqrt(x*x+y*y+z*z);
+        	float z = fixedFrom.z-from.z;*/
+        	float x = this.initalSlopVec.x;
+        	float y = this.initalSlopVec.y;
+        	float z = this.initalSlopVec.z;
         	
-        	return new Vec3f(x*f + fixedFrom.x, y*f + fixedFrom.y, z*f + fixedFrom.z);
+        	return new Vec3f(x*dist + fixedFrom.x, y*dist + fixedFrom.y, z*dist + fixedFrom.z);
         }
     }
 
