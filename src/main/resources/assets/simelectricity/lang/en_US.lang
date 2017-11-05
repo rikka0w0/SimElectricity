@@ -27,3 +27,6 @@ gui.sime:resistance_secondary=Resistance(Ref. to Sec.)
 gui.sime:forward_biased=Forward Biased
 gui.sime:reverse_biased=Reverse Biasedz
 gui.sime:condition_threshold=Threshold Condition
+
+seconfig.category:energynet=EnergyNet
+seconfig.category:energynet.tooltip=Configure the simulator

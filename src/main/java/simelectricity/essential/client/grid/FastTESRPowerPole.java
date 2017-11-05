@@ -20,7 +20,7 @@ import rikka.librikka.math.MathAssitant;
 import rikka.librikka.math.Vec3f;
 import rikka.librikka.model.quadbuilder.RawQuadCube;
 import rikka.librikka.model.quadbuilder.RawQuadGroup;
-import simelectricity.common.ConfigManager;
+import simelectricity.essential.ConfigProvider;
 import simelectricity.essential.client.ResourcePaths;
 import simelectricity.essential.client.grid.PowerPoleRenderHelper.ConnectionInfo;
 
@@ -73,7 +73,7 @@ public class FastTESRPowerPole<T extends TileEntity & ISEPowerPole> extends Fast
 	public static RawQuadGroup renderParabolicCable(Vec3f from, Vec3f to, boolean half, float tension, float thickness, TextureAtlasSprite texture) {
 		RawQuadGroup ret = new RawQuadGroup();
 		
-		float steps = ConfigManager.parabolaRenderSteps;
+		float steps = ConfigProvider.parabolaRenderSteps;
 		float length = from.distanceTo(to);	
 		float b = 4F * tension / length;
 		float a = -b / length;
@@ -104,7 +104,7 @@ public class FastTESRPowerPole<T extends TileEntity & ISEPowerPole> extends Fast
 	public static RawQuadGroup renderCatenaryCable(Vec3f from, Vec3f to, boolean half, float tension, float thickness, TextureAtlasSprite texture) {
 		RawQuadGroup ret = new RawQuadGroup();
 		
-		float steps = ConfigManager.parabolaRenderSteps;
+		float steps = ConfigProvider.parabolaRenderSteps;
         float y0 = 0, y1;
 
         float d = MathHelper.sqrt((from.x-to.x)*(from.x-to.x) + (from.z-to.z)*(from.z-to.z));

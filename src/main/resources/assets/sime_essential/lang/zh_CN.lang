@@ -78,3 +78,8 @@ chat.sime_essential:powerpole_type_mismatch=两个电线杆的导线数量不一
 gui.sime_essential:redstone_toggle_behavior=反转行为
 gui.sime_essential:redstone_normal=正常
 gui.sime_essential:redstone_inverted=反转
+
+seconfig.category:client=客户端设置
+seconfig.category:client.tooltip=只在客户端有效的设定,例如渲染
+seconfig.property:Cable Render Step Size=线缆渲染步进值
+seconfig.property:Cable Render Step Size.tooltip=这个数越大线缆越平滑,必须是偶数,越大对电脑图形性能要求越高

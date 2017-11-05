@@ -39,6 +39,8 @@ public class Essential {
      */
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
+    	new ConfigProvider();
+    	
         SEEAPI.coverPanelRegistry = new CoverPanelRegistry();
 
         networkChannel = NetworkRegistry.INSTANCE.newSimpleChannel(Essential.MODID);

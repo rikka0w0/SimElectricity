@@ -19,18 +19,31 @@
 
 package simelectricity.client;
 
+import java.util.ArrayList;
+
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraftforge.common.config.ConfigCategory;
 import net.minecraftforge.common.config.ConfigElement;
 import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.common.config.Property;
 import net.minecraftforge.fml.client.config.GuiConfig;
 import simelectricity.SimElectricity;
-import simelectricity.common.ConfigManager;
 
 public class SimEGuiConfig extends GuiConfig {
     @SuppressWarnings("unchecked")
     public SimEGuiConfig(GuiScreen parentScreen) {
         super(parentScreen,
-                new ConfigElement(ConfigManager.config.getCategory(Configuration.CATEGORY_GENERAL)).getChildElements(),
-                SimElectricity.MODID, false, false, GuiConfig.getAbridgedConfigPath(ConfigManager.config.toString()));
+        		new ArrayList<>(),
+                SimElectricity.MODID, false, false, GuiConfig.getAbridgedConfigPath(SimElectricity.config.toString()));
+        
+        Configuration config = SimElectricity.config;
+        for (String categoryName: config.getCategoryNames()) {
+        	ConfigCategory category = config.getCategory(categoryName);
+        	category.setLanguageKey("seconfig.category:" + categoryName);
+        	for (Property property: category.getValues().values()) {
+        		property.setLanguageKey("seconfig.property:" + property.getName());
+        	}
+        	configElements.add(new ConfigElement(category));
+        }
     }
 }

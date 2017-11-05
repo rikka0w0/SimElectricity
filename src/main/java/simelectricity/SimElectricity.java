@@ -22,9 +22,12 @@ package simelectricity;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -47,25 +50,36 @@ public class SimElectricity {
     
     @Mod.Instance(MODID)
     public static SimElectricity instance;
-
+    
+    public static Configuration config;
+    
     /**
      * PreInitialize
      */
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
-        //Initialize utility functions
+        //Initialize SEAPI
         SEAPI.isSELoaded = true;
         SEAPI.energyNetAgent = new EnergyNetAgent();
-
+        SEAPI.configManager = new ConfigManager();
+        
         //Load configurations
         FMLCommonHandler.instance().bus().register(new ConfigManager());
-        ConfigManager.init(event);
+        this.config = new Configuration(event.getSuggestedConfigurationFile());
 
         //Register event buses
         new EnergyNetEventHandler();
-        
-        //Register renders
-        //proxy.registerRender();
+    }
+    
+    @Mod.EventHandler
+    public void postInit(FMLInitializationEvent event) {
+    	ConfigManager.syncConfig(event.getSide().isClient());
+    }
+    
+    @Mod.EventHandler
+    public void postInit(FMLPostInitializationEvent event) {
+    	if (config.hasChanged())
+    		config.save();
     }
     
     @Mod.EventBusSubscriber(modid = MODID)

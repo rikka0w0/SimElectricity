@@ -21,17 +21,29 @@ package simelectricity.api;
 
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
-import simelectricity.api.internal.IEnergyNetAgent;
+import simelectricity.api.internal.ISEEnergyNetAgent;
+import simelectricity.api.internal.ISEConfigManager;
 
+/**
+ * Prior to use SEAPI, add<br>
+ * dependencies = "required-after:simelectricity"<br>
+ * to your @Mod annotation.
+ * @author Rikka0_0
+ */
 public class SEAPI {
 	/**
-	 * Should not check this before initialization phase
+	 * Become true after the initialization phase if SimElectricity is installed
 	 */
     public static boolean isSELoaded;
-
-    public static IEnergyNetAgent energyNetAgent;
+    
+    /**
+     * Provide an interface to interact with the EnergyNet
+     */
+    public static ISEEnergyNetAgent energyNetAgent;
 
     public static CreativeTabs SETab;
 
     public static Item managementToolItem;
+    
+    public static ISEConfigManager configManager;
 }

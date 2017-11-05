@@ -78,3 +78,6 @@ chat.sime_essential:powerpole_type_mismatch=Number of conductor doesn't match!
 gui.sime_essential:redstone_toggle_behavior=Toggle Behavior
 gui.sime_essential:redstone_normal=Normal
 gui.sime_essential:redstone_inverted=Inverted
+
+seconfig.category:client=Client Settings
+seconfig.category:client.tooltip=Client-only settings, e.g. Rendering

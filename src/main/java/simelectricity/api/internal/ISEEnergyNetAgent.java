@@ -15,7 +15,7 @@ import simelectricity.api.node.ISESubComponent;
  * DO NOT use this, internal only!
  * @author rikka0_0
  */
-public interface IEnergyNetAgent {
+public interface ISEEnergyNetAgent {
     /**
      * @return the node voltage, in volts, refer to ground
      */

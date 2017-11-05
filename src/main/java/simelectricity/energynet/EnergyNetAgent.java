@@ -25,7 +25,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import simelectricity.api.components.*;
-import simelectricity.api.internal.IEnergyNetAgent;
+import simelectricity.api.internal.ISEEnergyNetAgent;
 import simelectricity.api.node.ISEGridNode;
 import simelectricity.api.node.ISESimulatable;
 import simelectricity.api.node.ISESubComponent;
@@ -48,7 +48,7 @@ import simelectricity.energynet.components.*;
 import java.util.Map;
 import java.util.WeakHashMap;
 
-public class EnergyNetAgent implements IEnergyNetAgent {
+public class EnergyNetAgent implements ISEEnergyNetAgent {
     @SuppressWarnings("unchecked")
     public static Map<World, EnergyNet> mapping = new WeakHashMap();
 
