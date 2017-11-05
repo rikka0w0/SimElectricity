@@ -115,4 +115,20 @@ public abstract class TilePoleBranch extends TilePoleAccessory implements ISEFac
 			return helper;
 		}
 	}
+	
+	public static class Type415V extends TilePoleBranch {
+		@Override
+		protected PowerPoleRenderHelper createRenderHelper() {
+			PowerPoleRenderHelper helper = new PowerPoleRenderHelper(pos, getRotation(), 1, 4);
+
+            helper.addInsulatorGroup(0, 0.55F, 0,
+                    helper.createInsulator(0.25F, 1.2F, -0.9F, 0.5F, 0.25F),
+                    helper.createInsulator(0.25F, 1.2F, -0.45F, 0.5F, 0.25F),
+                    helper.createInsulator(0.25F, 1.2F, 0.45F, 0.5F, 0.25F),
+                    helper.createInsulator(0.25F, 1.2F, 0.9F, 0.5F, 0.25F)
+            );
+
+			return helper;
+		}
+	}
 }

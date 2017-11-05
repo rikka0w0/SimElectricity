@@ -82,8 +82,10 @@ public class BlockPowerPole3 extends BlockBase implements ISubBlock, ISEHVCableC
                 return new TilePowerPole3.Pole10Kv.Type1();
             case Crossarm415VT0:
                 return new TilePowerPole3.Pole415vType0();
-            case Crossarm10kVT2:
+            case Branching10kV:
             	return new TilePoleBranch.Type10kV();
+            case Branching415V:
+            	return new TilePoleBranch.Type415V();
             default:
             	break;
         }
@@ -199,16 +201,6 @@ public class BlockPowerPole3 extends BlockBase implements ISubBlock, ISEHVCableC
     @Override
     public void addCollisionBoxToList(IBlockState state, World world, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes, @Nullable Entity entityIn, boolean magicBool) {
 		Block.addCollisionBoxToList(pos, entityBox, collidingBoxes, state.getCollisionBoundingBox(world, pos));
-    }
-
-    //////////////////////////////////////
-    /// ISEHVCableConnector
-    //////////////////////////////////////
-    @Override
-    public ISEGridTile getGridTile(World world, BlockPos pos) {
-        TileEntity te = world.getTileEntity(pos);
-
-        return te instanceof ISEGridTile ? (ISEGridTile) te : null;
     }
 
     ////////////////////////////////////

@@ -28,6 +28,7 @@ public class PoleAccessoryRendererDispatcher {
 		
 		register(TilePowerPole3.Pole10Kv.Type0.class, TilePoleBranch.Type10kV.class, AR10kVType0Branch.instance);
 		register(TilePowerPole3.Pole10Kv.Type1.class, TilePoleBranch.Type10kV.class, AR10kVType1Branch.instance);
+		register(TilePowerPole3.Pole415vType0.class, TilePoleBranch.Type415V.class, AR415VBranch.instance);
 		
 		register(TilePowerPole3.Pole415vType0.class, TileCableJoint.Type415V.class, AR415VType0CableJoint.instance);
 		register(TileDistributionTransformer.Pole415V.class, TileCableJoint.Type415V.class, AR415VType0CableJoint.instance);

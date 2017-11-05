@@ -188,7 +188,14 @@ public abstract class TilePowerPole3 extends TilePowerPoleBase implements ISEFac
     public static class Pole415vType0 extends TilePowerPole3 {
 		@Override
 		protected boolean acceptAccessory(TileEntity accessory)  {
-			return accessory instanceof TileCableJoint.Type415V;
+			if (accessory instanceof TileCableJoint.Type415V)
+				return true;
+			
+			if (accessory instanceof TilePoleBranch.Type415V) {
+				return accessory.getPos().up().equals(pos);
+			}
+			
+			return false;
 		}
     	
         @Override

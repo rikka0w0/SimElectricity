@@ -32,8 +32,9 @@ tile.sime_essential:essential_powerpole2.1.name=35kV输电塔3型
 tile.sime_essential:essential_powerpole3.pole.name=电线杆
 tile.sime_essential:essential_powerpole3.crossarm10kvt0.name=支架(10kV, 0型)
 tile.sime_essential:essential_powerpole3.crossarm10kvt1.name=支架(10kV, 1型)
-tile.sime_essential:essential_powerpole3.crossarm10kvt2.name=分支(10kV)
 tile.sime_essential:essential_powerpole3.crossarm415vt0.name=支架(415V, 0型)
+tile.sime_essential:essential_powerpole3.branching10kv.name=分支(10kV)
+tile.sime_essential:essential_powerpole3.branching415v.name=分支(415V)
 
 tile.sime_essential:essential_powertransformer.casing.name=35kV-10kV变压器外壳
 tile.sime_essential:essential_powertransformer.ironcore.name=35kV-10kV变压器铁芯

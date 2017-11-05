@@ -36,7 +36,7 @@ public class PowerPole3Model extends CodeBasedModel {
     @EasyTextureLoader.Mark(ResourcePaths.metal)
     private final TextureAtlasSprite textureMetal = null;
     @EasyTextureLoader.Mark(ResourcePaths.glass_insulator)
-    private final TextureAtlasSprite textureInsulator = null;
+    private final TextureAtlasSprite glassInsulator = null;
     @EasyTextureLoader.Mark(ResourcePaths.concrete)
     private final TextureAtlasSprite textureConcrete = null;
     
@@ -54,19 +54,6 @@ public class PowerPole3Model extends CodeBasedModel {
     public List<BakedQuad> getQuads(IBlockState blockState, EnumFacing side, long rand) {
     	if (side != null)
             return ImmutableList.of();
-        
-    	if (blockType == EnumBlockTypePole3.Crossarm10kVT2) {
-    		this.quads.clear();
-    		
-            RawQuadGroup model = new RawQuadGroup();
-            
-            model.add(new RawQuadCube(0.15F, 0.08F, 1.6F, textureMetal).translateCoord(0.2F, 0.05F, 0));
-            
-            model.rotateAroundY(rotation);
-            model.add((new RawQuadCube(0.25F, 1, 0.25F, textureConcrete)));
-            model.translateCoord(0.5F, 0, 0.5F);
-            model.bake(this.quads);
-    	}
     	
         return this.quads;
     }
@@ -80,7 +67,8 @@ public class PowerPole3Model extends CodeBasedModel {
 	protected void bake(Function<ResourceLocation, TextureAtlasSprite> textureRegistry) {
 		this.quads.clear();
 		
-        FastTESRPowerPole3.modelInsulator10kV = Models.render10kVInsulator(textureMetal, textureInsulator);
+        FastTESRPowerPole3.modelInsulator10kV = Models.render10kVInsulator(textureMetal, glassInsulator);
+        FastTESRPowerPole3.modelInsulator415V = Models.render415VInsulator(textureMetal, glassInsulator);
 
         RawQuadGroup insulator = null;
         //Build the insulator model
@@ -89,12 +77,16 @@ public class PowerPole3Model extends CodeBasedModel {
                 break;
             case Crossarm10kVT0:
             case Crossarm10kVT1:
-                insulator = Models.render10kVInsulator(textureMetal, textureInsulator);
+                insulator = Models.render10kVInsulator(textureMetal, glassInsulator);
                 break;
             case Crossarm415VT0:
-                insulator = Models.render415VInsulator(textureMetal, textureInsulator);
+                insulator = Models.render415VInsulator(textureMetal, glassInsulator);
                 break;
-			case Crossarm10kVT2:
+			case Branching10kV:
+				break;
+			case Branching415V:
+				break;
+			default:
 				break;
         }
 
@@ -119,8 +111,14 @@ public class PowerPole3Model extends CodeBasedModel {
                 model.merge(insulator.clone().translateCoord(0, 0.05F, 0.45F));
                 model.merge(insulator.clone().translateCoord(0, 0.05F, 0.9F));
                 break;
-            case Crossarm10kVT2:
+            case Branching10kV:
+            	model.add(new RawQuadCube(0.15F, 0.08F, 1.6F, textureMetal).translateCoord(0.2F, 0.05F, 0));
             	break;
+			case Branching415V:
+				model.add(new RawQuadCube(0.15F, 0.1F, 1.94F, textureMetal).translateCoord(0.2F, 0.45F, 0));
+				break;
+			default:
+				break;
         }
 
         model.rotateAroundY(rotation);
@@ -139,6 +137,6 @@ public class PowerPole3Model extends CodeBasedModel {
     		new ItemTransformVec3f(new Vector3f(0, 225, 0), 	new Vector3f(0,0.15F,0), 				new Vector3f(0.4F, 0.4F, 0.4F)),		//firstperson_leftIn
     		new ItemTransformVec3f(new Vector3f(0, 45, 0), 		new Vector3f(0,0.15F,0), 				new Vector3f(0.4F, 0.4F, 0.4F)),		//firstperson_rightIn
     		null, 
-    		new ItemTransformVec3f(new Vector3f(45, 210, 0), new Vector3f(), new Vector3f(0.5F, 0.5F, 0.5F))	//gui
+    		new ItemTransformVec3f(new Vector3f(45, 30, 0), new Vector3f(0.025F, 0, 0), new Vector3f(0.5F, 0.5F, 0.5F))	//gui
     		, null, null);
 }

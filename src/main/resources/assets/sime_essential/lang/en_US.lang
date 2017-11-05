@@ -32,8 +32,9 @@ tile.sime_essential:essential_powerpole2.1.name=35kV Power Pole Type 3
 tile.sime_essential:essential_powerpole3.pole.name=Power Pole
 tile.sime_essential:essential_powerpole3.crossarm10kvt0.name=Cross Arm (10kV, Type 0)
 tile.sime_essential:essential_powerpole3.crossarm10kvt1.name=Cross Arm (10kV, Type 1)
-tile.sime_essential:essential_powerpole3.crossarm10kvt2.name=Branching (10kV)
 tile.sime_essential:essential_powerpole3.crossarm415vt0.name=Cross Arm (415V, Type 0)
+tile.sime_essential:essential_powerpole3.branching10kv.name=Branching (10kV)
+tile.sime_essential:essential_powerpole3.branching415v.name=Branching (415V)
 
 tile.sime_essential:essential_powertransformer.casing.name=35kV-10kV Transformer Casing
 tile.sime_essential:essential_powertransformer.ironcore.name=35kV-10kV Transformer Laminated Iron Core

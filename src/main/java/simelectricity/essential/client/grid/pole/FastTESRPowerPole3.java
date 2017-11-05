@@ -16,6 +16,7 @@ public class FastTESRPowerPole3<T extends TileEntity & ISEPowerPole> extends Fas
 	private FastTESRPowerPole3() {}
 	
 	public static RawQuadGroup modelInsulator10kV = null;
+	public static RawQuadGroup modelInsulator415V = null;
 
 	@Override
 	protected void bake(T te, PowerPoleRenderHelper helper) {
@@ -27,6 +28,8 @@ public class FastTESRPowerPole3<T extends TileEntity & ISEPowerPole> extends Fas
 			
 		} else if (te instanceof TilePoleBranch.Type10kV) {
 			renderInsulator(helper, modelInsulator10kV);
+		} else if (te instanceof TilePoleBranch.Type415V) {
+			renderInsulator(helper, modelInsulator415V);
 		}
 		
 		super.bake(te, helper);

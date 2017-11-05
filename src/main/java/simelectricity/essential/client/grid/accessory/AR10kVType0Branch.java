@@ -3,7 +3,6 @@ package simelectricity.essential.client.grid.accessory;
 import net.minecraft.util.math.MathHelper;
 import rikka.librikka.math.Vec3f;
 import rikka.librikka.model.loader.EasyTextureLoader;
-import rikka.librikka.model.quadbuilder.RawQuadGroup;
 import simelectricity.essential.client.ResourcePaths;
 import simelectricity.essential.client.grid.PowerPoleRenderHelper;
 import simelectricity.essential.client.grid.Sorter;
@@ -78,12 +77,13 @@ public class AR10kVType0Branch implements ISEAccessoryRenderer {
 					}
 					
 					pole.addExtraWire(pt, to[1].pointOnCable(0.3F), -0.5F);
-				} else {
-					RawQuadGroup insulator = Models.render10kVInsulator(EasyTextureLoader.getTexture(ResourcePaths.metal), EasyTextureLoader.getTexture(ResourcePaths.glass_insulator));
-					insulator.rotateAroundX(90).translateCoord(0, -1.2F, 0.125F).rotateAroundY(90 + middle).translateCoord(0.5F, 0, 0.5F).bake(pole.quadBuffer);
+				} else {					
+					Vec3f pt = new Vec3f(0.65F, -1.2F, 0).rotateAroundY(middle).add(0.5F, 0, 0.5F);
 					
-					Vec3f pt = new Vec3f(0.65F, -1.2F, 0).rotateAroundY(middle).add(0.5F, 0, 0.5F).add(pole.pos);
+					Models.render10kVInsulator(EasyTextureLoader.getTexture(ResourcePaths.metal), EasyTextureLoader.getTexture(ResourcePaths.glass_insulator))
+					.translateCoord(0, 0.125F, 0).rotateToVec(0.5F, 0, 0.5F, pt.x, 0, pt.z).translateCoord(0.5F, pt.y, 0.5F).bake(pole.quadBuffer);
 					
+					pt = pt.add(pole.pos);
 					pole.addExtraWire(from[0].pointOnCable(0.5F), to[0].fixedFrom, 0.1F, true);
 					pole.addExtraWire(from[2].pointOnCable(0.5F), pt, 0.4F, true);
 					pole.addExtraWire(pt, to[2].fixedFrom, 0.4F, true);
