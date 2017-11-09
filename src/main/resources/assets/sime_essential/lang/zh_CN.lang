@@ -83,3 +83,8 @@ seconfig.category:client=客户端设置
 seconfig.category:client.tooltip=只在客户端有效的设定,例如渲染
 seconfig.property:Cable Render Step Size=线缆渲染步进值
 seconfig.property:Cable Render Step Size.tooltip=这个数越大线缆越平滑,必须是偶数,越大对电脑图形性能要求越高
+
+seconfig.category:conversion=转换比率
+seconfig.category:conversion.tooltip=设置焦耳和其他能源的转换比例
+seconfig.property:Joule to RF conversion ratio=焦耳到RF的转换比例
+seconfig.property:Joule to RF conversion ratio.tooltip=这个数字决定1焦耳等于多少RF

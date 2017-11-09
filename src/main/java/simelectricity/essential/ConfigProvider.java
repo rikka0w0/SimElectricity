@@ -15,11 +15,16 @@ public class ConfigProvider implements ISEConfigHandler {
 	@SideOnly(Side.CLIENT)
     public static int parabolaRenderSteps;
 	
+	public static final String CATEGORY_CONVERSION = "conversion";
+	public static float joule2rf; 
+	
 	@Override
 	public void onConfigChanged(Configuration config, boolean isClient) {
         //Client-only configurations
         if (isClient) {
-        	ConfigProvider.parabolaRenderSteps = config.get(Configuration.CATEGORY_CLIENT, "Cable Render Step Size", 12, "The higher this number is, the smoother the catenary cable will be. (must be EVEN! CLIENT ONLY!)").getInt();//
+        	this.parabolaRenderSteps = config.getInt("Cable Render Step Size", Configuration.CATEGORY_CLIENT, 12, 0, Integer.MAX_VALUE, "The higher this number is, the smoother the catenary cable will be. (must be EVEN! CLIENT ONLY!)");
         }
+        
+        this.joule2rf = config.getFloat("Joule to RF conversion ratio", CATEGORY_CONVERSION, 1, 0, Float.MAX_VALUE, "This number determines how many RF equal to 1 Joule");
 	}
 }

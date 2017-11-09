@@ -81,3 +81,6 @@ gui.sime_essential:redstone_inverted=Inverted
 
 seconfig.category:client=Client Settings
 seconfig.category:client.tooltip=Client-only settings, e.g. Rendering
+
+seconfig.category:conversion=Conversion
+seconfig.category:conversion.tooltip=Set conversion ratio between Joule and other energy types
