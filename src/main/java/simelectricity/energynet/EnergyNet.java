@@ -42,7 +42,7 @@ public final class EnergyNet {
     ///////////////////////////////////////////////////////
     ///Event Queue
     ///////////////////////////////////////////////////////
-    private final LinkedList<EnergyEventBase> cachedEvents = new LinkedList<EnergyEventBase>();
+    private final LinkedList<EnergyEventBase> cachedEvents = new LinkedList<>();
     private boolean scheduledRefresh;
 
 
@@ -95,6 +95,13 @@ public final class EnergyNet {
             this.scheduledRefresh = false;
         }
 
+        // Copy the cached events to a new list to allow appending more EnergyTiles while processing the event queue
+        // Minecraft tend to create a new TileEntity if there is no TE there,
+        // this occasionally causes concurrent modification exception. So here is a work around.
+        LinkedList<EnergyEventBase> eventsToProcess = new LinkedList<>();
+        eventsToProcess.addAll(this.cachedEvents);
+        this.cachedEvents.clear();
+
 		/* Events MUST be processed in the following order:
 		 * Event Name					|Priority
 		 * GridEvent.AppendNode			|1
@@ -109,24 +116,17 @@ public final class EnergyNet {
 		 * TileEvent.Detach				|6
 		 */
         for (int pass = 0; pass < EnergyEventBase.numOfPass; pass++) {
-            Iterator<EnergyEventBase> iterator = this.cachedEvents.iterator();
-
             //Process EventQueue
-            while (iterator.hasNext()) {
-                EnergyEventBase event = iterator.next();
+            for (EnergyEventBase event : eventsToProcess) {
                 event.process(this.dataProvider, pass);
             }
         }
 
-        Iterator<EnergyEventBase> iterator = this.cachedEvents.iterator();
-        while (iterator.hasNext()) {
-            EnergyEventBase event = iterator.next();
-
+        for (EnergyEventBase event : eventsToProcess) {
             calc |= event.needUpdate();
             needOptimize |= event.changedStructure();
         }
-        
-        this.cachedEvents.clear();
+
         this.dataProvider.fireGridTileUpdateEvent();
 
         if (calc) {
