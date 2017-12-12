@@ -12,7 +12,7 @@ Presented by the Chinese Institution of Scientific Minecraft Mod (CISM)
 [BuildCraft Extension](https://github.com/RoyalAliceAcademyOfSciences/SimElectricity_BuildCraft_Extension):
 Install BuildCraft facade to SimElectricity cable
 
-# Setup Environment ![Image](/src/main/resources/assets/sime_essential/textures/items/tool_multimeter.png)
+# Setup the Environment ![Image](/src/main/resources/assets/sime_essential/textures/items/tool_multimeter.png)
 1. Ensure `Java` (found [here](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)) and `Git` (found [here](http://git-scm.com/)) are properly installed on your system.
 1. Create a base directory for the repo (anywhere you like)
 1. On Windows, open either 'CMD' or Windows PowerShell, on Linux and MacOS, 
@@ -43,7 +43,7 @@ and type the following commands:
 1. In the SimElectricity directory execute `gradlew eclipse` to generate the workspace and launch configuration
 1. Launch Eclipse and set your workspace to `.eclipse` folder under the SimElectricity directory
 1. Open any source file and hit the debug button to test if it works
-##IntelliJ IDEA
+## IntelliJ IDEA
 1. Launch IDEA and clone the SimElectricity git repository to your local disk
 1. IDEA should prompt you for importing Gradle project, choose YES
 1. After IDEA finishes setting up Gradle, open Gradle panel
