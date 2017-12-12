@@ -20,7 +20,7 @@ import simelectricity.essential.common.semachine.SESinglePortMachine;
 import simelectricity.essential.machines.tile.*;
 
 public class BlockElectronics extends SEMachineBlock implements ISESidedTextureBlock {
-    public static String subNames[] = {"voltage_meter", "quantum_generator", "adjustable_resistor", "incandescent_lamp", "solar_panel"};
+    public static String subNames[] = {"voltage_meter", "quantum_generator", "adjustable_resistor", "incandescent_lamp", "solar_panel", "transformer_se2rf"};
 
     ///////////////////////////////
     ///Block Properties
@@ -42,6 +42,8 @@ public class BlockElectronics extends SEMachineBlock implements ISESidedTextureB
                 return new TileIncandescentLamp();
             case 4:
                 return new TileSolarPanel();
+            case 5:
+                return new TileSE2RF();
         }
         return null;
     }

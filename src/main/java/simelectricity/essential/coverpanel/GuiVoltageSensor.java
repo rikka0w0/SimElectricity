@@ -33,7 +33,7 @@ public class GuiVoltageSensor extends SEGuiContainer<ContainerVoltageSensor> {
         drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
 
         drawTexturedModalRect(this.guiLeft + 70, this.guiTop + 30, this.container.inverted ? 52 : 0, 166, 52, 33);
-        drawTexturedModalRect(this.guiLeft + 130, this.guiTop + 36, this.container.emitRedstoneSignal ? 180 : 176, 0, 4, 16);
+        drawTexturedModalRect(this.guiLeft + 130, this.guiTop + 36, this.container.emitRedStoneSignal ? 180 : 176, 0, 4, 16);
     }
 
     @Override

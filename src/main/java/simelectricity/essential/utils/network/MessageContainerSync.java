@@ -1,181 +1,78 @@
 package simelectricity.essential.utils.network;
 
-import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.Container;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.EnumFacing;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import rikka.librikka.network.MessageContainerSyncBase;
 import simelectricity.essential.Essential;
 
-import java.util.Iterator;
+public class MessageContainerSync extends MessageContainerSyncBase {		
+	public static void syncToClient(EntityPlayerMP player, Object[] changeList) {
+		Essential.instance.networkChannel.sendTo(new MessageContainerSync(player.openContainer.windowId, EVENT_SYNC, changeList), player);
+	}
 
-public class MessageContainerSync implements IMessage {
-    private static final byte EVENT_CUSTOM = 0;
-    private static final byte EVENT_BUTTON_CLICK = 1;
-    private static final byte EVENT_DIRECTION_SELECT = 2;
-    private static final byte TYPE_BYTE = 0;
-    private static final byte TYPE_INT = 1;
-    private static final byte TYPE_DOUBLE = 2;
-    private static final byte TYPE_ENUMFACING = 3;
-    private static final byte TYPE_BOOLEAN = 4;
-    //MessageData
-    private int windowID;
-    private Object[] data;
+	public static void sendToClient(EntityPlayerMP player, Object... data) {
+		Essential.instance.networkChannel.sendTo(new MessageContainerSync(player.openContainer.windowId, EVENT_CUSTOM, data), player);
+	}
 
-    public MessageContainerSync() {
-    }
+	@SideOnly(Side.CLIENT)
+	public static void sendButtonClickEventToSever(Container clientContainer, int buttonID, boolean isCtrlPressed) {
+		Essential.instance.networkChannel.sendToServer(new MessageContainerSync(
+				clientContainer.windowId, 
+				EVENT_BUTTON_CLICK,
+				new Object[]{buttonID, isCtrlPressed}));
+	}
 
-    @SideOnly(Side.CLIENT)
-    private MessageContainerSync(int windowID, Object[] data) {
-        this.windowID = windowID;
-        this.data = data;
-    }
+	@SideOnly(Side.CLIENT)
+	public static void sendDirectionSelectorClickEventToSever(Container clientContainer, EnumFacing direction, int mouseButton) {
+		Essential.instance.networkChannel.sendToServer(new MessageContainerSync(clientContainer.windowId,
+				EVENT_DIRECTION_SELECT,
+				new Object[]{direction, mouseButton}));
+	}
 
-    private MessageContainerSync(Object[] data) {
-        windowID = -1;
-        this.data = data;
-    }
+	@SideOnly(Side.CLIENT)
+	public static void sendToServer(Container clientContainer, Object... data) {
+		Essential.instance.networkChannel.sendToServer(new MessageContainerSync(
+				clientContainer.windowId, 
+				MessageContainerSyncBase.EVENT_CUSTOM,
+				data));
+	}  
 
-    public static void sendToClient(EntityPlayerMP player, Object... data) {
-        Essential.instance.networkChannel.sendTo(new MessageContainerSync(data), player);
-    }
+	protected static final byte EVENT_BUTTON_CLICK = 2;
+	protected static final byte EVENT_DIRECTION_SELECT = 3;
+	
+	/** 
+	 * Compulsory constructor
+	 */
+	 public MessageContainerSync() {}
 
-    @SideOnly(Side.CLIENT)
-    public static void sendButtonClickEventToSever(Container clientContainer, int buttonID, boolean isCtrlPressed) {
-        Essential.instance.networkChannel.sendToServer(new MessageContainerSync(clientContainer.windowId,
-                new Object[]{EVENT_BUTTON_CLICK, buttonID, isCtrlPressed}));
-    }
+	/**
+	 * Client -> Server
+	 */
+	 protected MessageContainerSync(int windowID, byte type, Object[] data) {
+		 super(windowID, type, data);
+	 }  
 
-    @SideOnly(Side.CLIENT)
-    public static void sendDirectionSelectorClickEventToSever(Container clientContainer, EnumFacing direction, int mouseButton) {
-        Essential.instance.networkChannel.sendToServer(new MessageContainerSync(clientContainer.windowId,
-                new Object[]{EVENT_DIRECTION_SELECT, direction, mouseButton}));
-    }
+	 public static class HandlerServer extends MessageContainerSyncBase.HandlerServer<MessageContainerSync> {
+		 @Override
+		 protected void process(Container container, byte type, Object[] data) {	
+			 switch (type) {
+			 case EVENT_DIRECTION_SELECT:
+				 if (container instanceof ISEDirectionSelectorEventHandler)
+					 ((ISEDirectionSelectorEventHandler) container).onDirectionSelected((EnumFacing) data[0], (Integer) data[1]);
+				 return;
+			 case EVENT_BUTTON_CLICK:
+				 if (container instanceof ISEButtonEventHandler)
+					 ((ISEButtonEventHandler) container).onButtonPressed((Integer) data[0],
+							 (Boolean) data[1]);
+				 return;
+			 default:
+				 super.process(container, type, data);
+			 }
+		 }
+	 }
 
-    @SideOnly(Side.CLIENT)
-    public static void sendToServer(Container clientContainer, Object... data) {
-        Essential.instance.networkChannel.sendToServer(new MessageContainerSync(clientContainer.windowId, data));
-    }
-
-    @Override
-    public void toBytes(ByteBuf buf) {
-        buf.writeInt(this.windowID);
-        buf.writeByte(this.data.length);
-
-        for (int i = 0; i < this.data.length; i++) {
-            if (this.data[i].getClass() == Byte.class) {
-                buf.writeByte(TYPE_BYTE);
-                buf.writeByte((Byte) this.data[i]);
-            } else if (this.data[i].getClass() == Integer.class) {
-                buf.writeByte(TYPE_INT);
-                buf.writeInt((Integer) this.data[i]);
-            } else if (this.data[i].getClass() == Double.class) {
-                buf.writeByte(TYPE_DOUBLE);
-                buf.writeDouble((Double) this.data[i]);
-            } else if (this.data[i].getClass() == EnumFacing.class) {
-                buf.writeByte(TYPE_ENUMFACING);
-                buf.writeByte(((EnumFacing) this.data[i]).ordinal());
-            } else if (this.data[i].getClass() == Boolean.class) {
-                buf.writeByte(TYPE_BOOLEAN);
-                buf.writeBoolean((Boolean) this.data[i]);
-            }
-        }
-    }
-
-    @Override
-    public void fromBytes(ByteBuf buf) {
-        this.windowID = buf.readInt();
-        int length = buf.readByte();
-        this.data = new Object[length];
-
-        for (int i = 0; i < this.data.length; i++) {
-            switch (buf.readByte()) {
-                case TYPE_BYTE:
-                    this.data[i] = buf.readByte();
-                    break;
-                case TYPE_INT:
-                    this.data[i] = buf.readInt();
-                    break;
-                case TYPE_DOUBLE:
-                    this.data[i] = buf.readDouble();
-                    break;
-                case TYPE_ENUMFACING:
-                    this.data[i] = EnumFacing.getFront(buf.readByte());
-                    break;
-                case TYPE_BOOLEAN:
-                    this.data[i] = buf.readBoolean();
-            }
-        }
-
-    }
-
-    //This class have to be visible to the dedicated server even the server doesn't need it at all
-    public static class HandlerClient implements IMessageHandler<MessageContainerSync, IMessage> {
-        @Override
-        public IMessage onMessage(MessageContainerSync message, MessageContext ctx) {
-            Object[] payload = message.data;
-
-            //Client
-            Essential.proxy.getClientThread().addScheduledTask(new Runnable() {
-                @Override
-                public void run() {
-                    Container invContainer = Essential.proxy.getClientPlayer().openContainer;
-                    if (invContainer instanceof ISEContainerUpdate)
-                        ((ISEContainerUpdate) invContainer).onDataArrivedFromServer(payload);
-                }
-            });
-
-            //Reply nothing
-            return null;
-        }
-    }
-
-    public static class HandlerServer implements IMessageHandler<MessageContainerSync, IMessage> {
-        @Override
-        public IMessage onMessage(MessageContainerSync message, MessageContext ctx) {
-            //Server
-            MinecraftServer server = ctx.getServerHandler().player.mcServer;
-            int windowID = message.windowID;
-            Object[] data = message.data;
-
-            //Make sure the actual modification is done on the server-thread.
-            server.addScheduledTask(new Runnable() {
-                @Override
-                public void run() {
-                    Iterator<EntityPlayerMP> playerListIterator = server.getPlayerList().getPlayers().iterator();
-                    while (playerListIterator.hasNext()) {
-                        EntityPlayerMP player = playerListIterator.next();
-
-                        if (player.openContainer.windowId == windowID) {
-                            Container container = player.openContainer;
-
-                            switch ((Byte) data[0]) {
-                                case EVENT_CUSTOM:
-                                    if (container instanceof ISECustomContainerEventHandler)
-                                        ((ISECustomContainerEventHandler) container).onDataArrivedFromClient(data);
-                                    break;
-                                case EVENT_BUTTON_CLICK:
-                                    if (container instanceof ISEButtonEventHandler)
-                                        ((ISEButtonEventHandler) container).onButtonPressed((Integer) data[1], (Boolean) data[2]);
-                                    break;
-                                case EVENT_DIRECTION_SELECT:
-                                    if (container instanceof ISEDirectionSelectorEventHandler)
-                                        ((ISEDirectionSelectorEventHandler) container).onDirectionSelected((EnumFacing) data[1], (Integer) data[2]);
-                                    break;
-                            }
-                        }
-                    }//while()
-                }//run()
-            });
-
-            //Reply nothing
-            return null;
-        }
-    }
-
+	 public static class HandlerClient extends MessageContainerSyncBase.HandlerClient<MessageContainerSync> {}
 }

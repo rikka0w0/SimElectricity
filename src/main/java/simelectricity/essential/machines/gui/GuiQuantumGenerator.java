@@ -35,7 +35,7 @@ public final class GuiQuantumGenerator extends SEGuiContainer<ContainerQuantumGe
         this.fontRenderer.drawString(I18n.translateToLocal("gui.sime:current_output"), 85, ybase + 16, 4210752);
         this.fontRenderer.drawString(SEUnitHelper.getCurrentStringWithUnit(this.container.current), 85, ybase + 24, 4210752);
         this.fontRenderer.drawString(I18n.translateToLocal("gui.sime:power_output"), 85, ybase + 32, 4210752);
-        this.fontRenderer.drawString(SEUnitHelper.getPowerStringWithUnit(this.container.outputPower), 85, ybase + 40, 4210752);
+        this.fontRenderer.drawString(SEUnitHelper.getPowerStringWithUnit(this.container.voltage * this.container.current), 85, ybase + 40, 4210752);
     }
 
     @Override

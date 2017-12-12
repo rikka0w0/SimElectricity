@@ -28,7 +28,6 @@ import simelectricity.energynet.components.SwitchA;
 import simelectricity.energynet.components.SwitchB;
 import simelectricity.energynet.components.VoltageSource;
 
-import java.util.Iterator;
 import java.util.LinkedList;
 
 public final class EnergyNet {

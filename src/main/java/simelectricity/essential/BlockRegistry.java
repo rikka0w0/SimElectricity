@@ -100,6 +100,7 @@ public class BlockRegistry {
         registerTile(TileAdjustableResistor.class);
         registerTile(TileIncandescentLamp.class);
         registerTile(TileSolarPanel.class);
+        registerTile(TileSE2RF.class);
 
         registerTile(TileAdjustableTransformer.class);
         registerTile(TileCurrentSensor.class);

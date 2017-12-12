@@ -25,9 +25,14 @@ public class GuiCurrentSensor extends SEGuiContainer<ContainerCurrentSensor> {
         this.fontRenderer.drawString(I18n.translateToLocal("gui.sime:current_threshold"), 18, 85, 4210752);
         this.fontRenderer.drawString(I18n.translateToLocal("gui.sime:resistance_internal"), 18, 124, 4210752);
 
+        String conditionString = this.container.absMode ? "|I|" : "I";
+        conditionString += this.container.inverted ? "<" : ">";
+        conditionString += SEUnitHelper.getCurrentStringWithUnit(this.container.thresholdCurrent);
+        
+        
         int ybase = 22;
         this.fontRenderer.drawString(I18n.translateToLocal("gui.sime:condition_threshold"), 10, ybase, 4210752);
-        this.fontRenderer.drawString(this.container.conditionString, 10, ybase + 8, 4210752);
+        this.fontRenderer.drawString(conditionString, 10, ybase + 8, 4210752);
         this.fontRenderer.drawString("I=" + SEUnitHelper.getCurrentStringWithUnit(this.container.current), 10, ybase + 16, 4210752);
         this.fontRenderer.drawString("Ron = " + String.format("%.3f", this.container.resistance) + " \u03a9", 10, ybase + 24, 4210752);
     }

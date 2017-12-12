@@ -30,7 +30,7 @@ public final class GuiDiode extends SEGuiContainer<ContainerDiode> {
         this.fontRenderer.drawString(I18n.translateToLocal("gui.sime:voltage_output"), 85, ybase + 16, 4210752);
         this.fontRenderer.drawString(SEUnitHelper.getVoltageStringWithUnit(this.container.outputVoltage), 85, ybase + 24, 4210752);
 
-        this.fontRenderer.drawString(I18n.translateToLocal(this.container.forwardBiased ?
+        this.fontRenderer.drawString(I18n.translateToLocal(this.container.inputVoltage > this.container.outputVoltage ?
                 "gui.sime:forward_biased" :
                 "gui.sime:reverse_biased"
         ), 85, ybase + 32, 4210752);

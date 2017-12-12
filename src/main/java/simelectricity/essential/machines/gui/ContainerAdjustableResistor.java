@@ -1,26 +1,26 @@
 package simelectricity.essential.machines.gui;
 
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.inventory.IContainerListener;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import rikka.librikka.container.ContainerNoInventory;
+import rikka.librikka.container.ContainerSynchronizer;
 import rikka.librikka.container.IContainerWithGui;
 import simelectricity.api.SEAPI;
+import simelectricity.essential.common.ContainerNoInvAutoSync;
 import simelectricity.essential.machines.tile.TileAdjustableResistor;
 import simelectricity.essential.utils.network.ISEButtonEventHandler;
-import simelectricity.essential.utils.network.ISEContainerUpdate;
-import simelectricity.essential.utils.network.MessageContainerSync;
 
-import java.util.Iterator;
-
-public class ContainerAdjustableResistor extends ContainerNoInventory<TileAdjustableResistor> implements ISEContainerUpdate, ISEButtonEventHandler, IContainerWithGui {
+public class ContainerAdjustableResistor extends ContainerNoInvAutoSync<TileAdjustableResistor> implements ISEButtonEventHandler, IContainerWithGui {
+    @ContainerSynchronizer.SyncField
     public double resistance;
+    @ContainerSynchronizer.SyncField
     public double voltage;
+    @ContainerSynchronizer.SyncField
     public double current;
+    @ContainerSynchronizer.SyncField
     public double powerLevel;
+    @ContainerSynchronizer.SyncField
     public double bufferedEnergy;
 
     public ContainerAdjustableResistor(TileEntity tileEntity) {
@@ -28,51 +28,8 @@ public class ContainerAdjustableResistor extends ContainerNoInventory<TileAdjust
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
-    public void onDataArrivedFromServer(Object[] data) {
-        this.resistance = (Double) data[0];
-        this.voltage = (Double) data[1];
-        this.current = (Double) data[2];
-        this.powerLevel = (Double) data[3];
-        this.bufferedEnergy = (Double) data[4];
-    }
-
-    @Override
-    public void detectAndSendChanges() {
-        double voltage = tileEntity.voltage;
-        double resistance = tileEntity.resistance;
-        double current = tileEntity.current;
-        double powerLevel = tileEntity.powerLevel;
-        double bufferedEnergy = tileEntity.bufferedEnergy;
-
-        //Look for any changes
-        if (this.resistance == resistance &&
-                this.voltage == voltage &&
-                this.current == current &&
-                this.powerLevel == powerLevel &&
-                this.bufferedEnergy == bufferedEnergy)
-            return;
-
-        this.resistance = resistance;
-        this.voltage = voltage;
-        this.current = current;
-        this.powerLevel = powerLevel;
-        this.bufferedEnergy = bufferedEnergy;
-
-        //Send change to all crafter
-        Iterator<IContainerListener> iterator = listeners.iterator();
-        while (iterator.hasNext()) {
-            IContainerListener crafter = iterator.next();
-
-            if (crafter instanceof EntityPlayerMP) {
-                MessageContainerSync.sendToClient((EntityPlayerMP) crafter, resistance, voltage, current, powerLevel, bufferedEnergy);
-            }
-        }
-    }
-
-    @Override
     public void onButtonPressed(int buttonID, boolean isCtrlPressed) {
-        double resistance = tileEntity.resistance;
+        double resistance = host.resistance;
 
         switch (buttonID) {
             case 0:
@@ -101,7 +58,7 @@ public class ContainerAdjustableResistor extends ContainerNoInventory<TileAdjust
                 break;
 
             case 6:
-                tileEntity.bufferedEnergy = 0;
+                host.bufferedEnergy = 0;
                 return;
         }
 
@@ -110,14 +67,14 @@ public class ContainerAdjustableResistor extends ContainerNoInventory<TileAdjust
         if (resistance > 10000)
             resistance = 10000;
 
-        tileEntity.resistance = resistance;
+        host.resistance = resistance;
 
-        SEAPI.energyNetAgent.updateTileParameter(this.tileEntity);
+        SEAPI.energyNetAgent.updateTileParameter(this.host);
     }
-    
+
     @Override
     @SideOnly(Side.CLIENT)
     public GuiScreen createGui() {
-    	return new GuiAdjustableResistor(this);
+        return new GuiAdjustableResistor(this);
     }
 }

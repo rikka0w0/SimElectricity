@@ -1,25 +1,23 @@
 package simelectricity.essential.machines.gui;
 
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.inventory.IContainerListener;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import rikka.librikka.container.ContainerSynchronizer;
 import rikka.librikka.container.IContainerWithGui;
 import simelectricity.api.SEAPI;
 import simelectricity.essential.common.ContainerNoInventoryTwoPort;
 import simelectricity.essential.machines.tile.TileAdjustableTransformer;
 import simelectricity.essential.utils.network.ISEButtonEventHandler;
-import simelectricity.essential.utils.network.ISEContainerUpdate;
-import simelectricity.essential.utils.network.MessageContainerSync;
 
-import java.util.Iterator;
-
-public class ContainerAdjustableTransformer extends ContainerNoInventoryTwoPort<TileAdjustableTransformer> implements ISEContainerUpdate, ISEButtonEventHandler, IContainerWithGui {
-    public double ratio, outputResistance;
+public class ContainerAdjustableTransformer extends ContainerNoInventoryTwoPort<TileAdjustableTransformer> implements ISEButtonEventHandler, IContainerWithGui {
+	@ContainerSynchronizer.SyncField
+	public double ratio, outputResistance;
+	@ContainerSynchronizer.SyncField
     public EnumFacing inputSide, outputSide;
+	@ContainerSynchronizer.SyncField
     public double vPri, vSec;
 
     public ContainerAdjustableTransformer(TileEntity tileEntity) {
@@ -27,52 +25,8 @@ public class ContainerAdjustableTransformer extends ContainerNoInventoryTwoPort<
     }
 
     @Override
-    public void detectAndSendChanges() {
-        double ratio = this.tileEntity.ratio, outputResistance = this.tileEntity.outputResistance;
-        EnumFacing inputSide = this.tileEntity.inputSide, outputSide = this.tileEntity.outputSide;
-        double vPri = this.tileEntity.vPri, vSec = this.tileEntity.vSec;
-
-        //Look for any changes
-        if (this.ratio == ratio &&
-                this.outputResistance == outputResistance &&
-                this.inputSide == inputSide &&
-                this.outputSide == outputSide &&
-                this.vPri == vPri &&
-                this.vSec == vSec)
-            return;
-
-        this.ratio = ratio;
-        this.outputResistance = outputResistance;
-        this.inputSide = inputSide;
-        this.outputSide = outputSide;
-        this.vPri = vPri;
-        this.vSec = vSec;
-
-        //Send change to all crafter
-        Iterator<IContainerListener> iterator = listeners.iterator();
-        while (iterator.hasNext()) {
-            IContainerListener crafter = iterator.next();
-
-            if (crafter instanceof EntityPlayerMP) {
-                MessageContainerSync.sendToClient((EntityPlayerMP) crafter, ratio, outputResistance, inputSide, outputSide, vPri, vSec);
-            }
-        }
-    }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public void onDataArrivedFromServer(Object[] data) {
-        ratio = (Double) data[0];
-        outputResistance = (Double) data[1];
-        inputSide = (EnumFacing) data[2];
-        outputSide = (EnumFacing) data[3];
-        vPri = (Double) data[4];
-        vSec = (Double) data[5];
-    }
-
-    @Override
     public void onButtonPressed(int buttonID, boolean isCtrlPressed) {
-        double ratio = this.tileEntity.ratio, outputResistance = this.tileEntity.outputResistance;
+        double ratio = this.host.ratio, outputResistance = this.host.outputResistance;
 
         switch (buttonID) {
             case 6:
@@ -150,10 +104,10 @@ public class ContainerAdjustableTransformer extends ContainerNoInventoryTwoPort<
         if (ratio > 100)
             ratio = 100;
 
-        this.tileEntity.ratio = ratio;
-        this.tileEntity.outputResistance = outputResistance;
+        this.host.ratio = ratio;
+        this.host.outputResistance = outputResistance;
 
-        SEAPI.energyNetAgent.updateTileParameter(this.tileEntity);
+        SEAPI.energyNetAgent.updateTileParameter(this.host);
     }
     
     @Override

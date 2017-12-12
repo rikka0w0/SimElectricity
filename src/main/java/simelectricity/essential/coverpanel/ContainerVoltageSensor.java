@@ -1,29 +1,23 @@
 package simelectricity.essential.coverpanel;
 
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.inventory.ClickType;
-import net.minecraft.inventory.Container;
-import net.minecraft.inventory.IContainerListener;
-import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import rikka.librikka.container.ContainerSynchronizer;
 import rikka.librikka.container.IContainerWithGui;
+import simelectricity.essential.common.ContainerNoInvAutoSync;
 import simelectricity.essential.utils.network.ISEButtonEventHandler;
-import simelectricity.essential.utils.network.ISEContainerUpdate;
-import simelectricity.essential.utils.network.MessageContainerSync;
 
-import java.util.Iterator;
-
-public class ContainerVoltageSensor extends Container implements ISEContainerUpdate, ISEButtonEventHandler, IContainerWithGui {
-    private final VoltageSensorPanel panel;
-    public boolean emitRedstoneSignal;
+public class ContainerVoltageSensor extends ContainerNoInvAutoSync<VoltageSensorPanel> implements ISEButtonEventHandler, IContainerWithGui {
+	@ContainerSynchronizer.SyncField
+	public boolean emitRedStoneSignal;
+    @ContainerSynchronizer.SyncField
     public boolean inverted;
+    @ContainerSynchronizer.SyncField
     public double thresholdVoltage;
 
     public ContainerVoltageSensor(VoltageSensorPanel panel) {
-        this.panel = panel;
+    	super(panel);
     }
 
 	@Override
@@ -31,51 +25,6 @@ public class ContainerVoltageSensor extends Container implements ISEContainerUpd
 	public GuiScreen createGui() {
 		return new GuiVoltageSensor(this);
 	}
-    
-    @Override
-    public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, EntityPlayer player) {
-        return ItemStack.EMPTY;
-    }
-
-    @Override
-    public boolean canInteractWith(EntityPlayer player) {
-        return true;
-    }
-
-    @Override
-    public void detectAndSendChanges() {
-        boolean emitRedstoneSignal = this.panel.emitRedStoneSignal;
-        boolean inverted = this.panel.inverted;
-        double thresholdVoltage = this.panel.thresholdVoltage;
-
-        //Look for any changes
-        if (this.emitRedstoneSignal == emitRedstoneSignal &&
-                this.inverted == inverted &&
-                this.thresholdVoltage == thresholdVoltage)
-            return;
-
-        this.emitRedstoneSignal = emitRedstoneSignal;
-        this.inverted = inverted;
-        this.thresholdVoltage = thresholdVoltage;
-
-        //Send change to all crafter
-        Iterator<IContainerListener> iterator = listeners.iterator();
-        while (iterator.hasNext()) {
-            IContainerListener crafter = iterator.next();
-
-            if (crafter instanceof EntityPlayerMP) {
-                MessageContainerSync.sendToClient((EntityPlayerMP) crafter, emitRedstoneSignal, inverted, thresholdVoltage);
-            }
-        }
-    }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public void onDataArrivedFromServer(Object[] data) {
-        this.emitRedstoneSignal = (Boolean) data[0];
-        this.inverted = (Boolean) data[1];
-        this.thresholdVoltage = (Double) data[2];
-    }
 
     @Override
     public void onButtonPressed(int buttonID, boolean isCtrlPressed) {
@@ -118,9 +67,9 @@ public class ContainerVoltageSensor extends Container implements ISEContainerUpd
         if (thresholdVoltage > 500)
             thresholdVoltage = 500;
 
-        panel.thresholdVoltage = thresholdVoltage;
-        panel.inverted = inverted;
+        this.host.thresholdVoltage = thresholdVoltage;
+        this.host.inverted = inverted;
 
-        panel.checkRedStoneSignal();
+        this.host.checkRedStoneSignal();
     }
 }

@@ -25,7 +25,7 @@ gui.sime:ratio_step_up=Step-up ratio
 gui.sime:resistivity=Resistivity
 gui.sime:resistance_secondary=Resistance(Ref. to Sec.)
 gui.sime:forward_biased=Forward Biased
-gui.sime:reverse_biased=Reverse Biasedz
+gui.sime:reverse_biased=Reverse Biased
 gui.sime:condition_threshold=Threshold Condition
 
 seconfig.category:energynet=EnergyNet
