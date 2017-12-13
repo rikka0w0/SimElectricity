@@ -1,6 +1,5 @@
 package simelectricity.essential.grid;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.minecraft.nbt.NBTTagCompound;
@@ -19,7 +18,6 @@ import simelectricity.essential.common.SEEnergyTile;
 public abstract class TilePowerPoleBase extends SEEnergyTile implements ISEGridTile, ISEPowerPole {
     protected BlockPos neighbor1, neighbor2;
 
-    @Nonnull
     @SideOnly(Side.CLIENT)
     protected abstract PowerPoleRenderHelper createRenderHelper();
     
@@ -36,7 +34,6 @@ public abstract class TilePowerPoleBase extends SEEnergyTile implements ISEGridT
     }
 
     @Override
-    @Nonnull
     @SideOnly(Side.CLIENT)
     public PowerPoleRenderHelper getRenderHelper() {
         return this.renderHelper;
@@ -111,9 +108,9 @@ public abstract class TilePowerPoleBase extends SEEnergyTile implements ISEGridT
     public void onSyncDataFromServerArrived(NBTTagCompound nbt) {
         this.neighbor1 = Utils.posFromNbt(nbt, "neighbor1");
         this.neighbor2 = Utils.posFromNbt(nbt, "neighbor2");
-
         if (this.renderHelper == null)
             this.renderHelper = this.createRenderHelper();
+
 
         PowerPoleRenderHelper.notifyChanged(this);
 
