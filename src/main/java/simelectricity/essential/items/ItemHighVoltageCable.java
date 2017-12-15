@@ -8,6 +8,7 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
 import rikka.librikka.Utils;
@@ -112,13 +113,13 @@ public class ItemHighVoltageCable extends ItemBase implements ISimpleTexture {
                 	//if (flag1 && flag2) {
                 		//Utils.chatWithLocalization(player, "chat.sime_essential:powerpole_connection_denied");
                 	//} else {
-            			double distance = node1.getPos().distanceSq(node2.getPos());
+            			double distance = MathHelper.sqrt(node1.getPos().distanceSq(node2.getPos()));
         				double resistance = distance * ItemHighVoltageCable.resistivityList[itemStack.getItemDamage()];    //Calculate the resistance
                 		boolean isCreative = player.isCreative();
                 		if (!flag1 && !flag2){
-                			if (distance < 5 * 5) {
+                			if (distance < 5) {
                 				Utils.chatWithLocalization(player, I18n.translateToLocal("chat.sime_essential:powerpole_too_close"));
-                			} else if (distance > 200 * 200) {
+                			} else if (distance > 200) {
                 				Utils.chatWithLocalization(player, I18n.translateToLocal("chat.sime_essential:powerpole_too_far"));
                 			} else {
                 				connect(world, node1, node2, resistance, itemStack, isCreative);
