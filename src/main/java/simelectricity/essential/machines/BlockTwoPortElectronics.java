@@ -1,5 +1,6 @@
 package simelectricity.essential.machines;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -20,15 +21,13 @@ import simelectricity.essential.Essential;
 import simelectricity.essential.client.semachine.ISESidedTextureBlock;
 import simelectricity.essential.common.semachine.SEMachineBlock;
 import simelectricity.essential.common.semachine.SETwoPortMachine;
-import simelectricity.essential.machines.tile.TileAdjustableTransformer;
-import simelectricity.essential.machines.tile.TileCurrentSensor;
-import simelectricity.essential.machines.tile.TileDiode;
-import simelectricity.essential.machines.tile.TileSwitch;
+import simelectricity.essential.machines.tile.*;
+import simelectricity.essential.utils.RedstoneHelper;
 
 import javax.annotation.Nullable;
 
 public class BlockTwoPortElectronics extends SEMachineBlock implements ISESidedTextureBlock {
-    public static String subNames[] = {"adjustable_transformer", "current_sensor", "diode", "switch"};
+    public static String subNames[] = {"adjustable_transformer", "current_sensor", "diode", "switch", "relay"};
 
     ///////////////////////////////
     ///Block Properties
@@ -48,6 +47,8 @@ public class BlockTwoPortElectronics extends SEMachineBlock implements ISESidedT
                 return new TileDiode();
             case 3:
                 return new TileSwitch();
+            case 4:
+                return new TileRelay();
         }
         return null;
     }
@@ -165,5 +166,17 @@ public class BlockTwoPortElectronics extends SEMachineBlock implements ISESidedT
             return ((TileCurrentSensor) te).emitRedstoneSignal ? 15 : 0;
 
         return 0;
+    }
+
+    @Override
+    public void neighborChanged(IBlockState state, World world, BlockPos pos, Block blockIn, BlockPos fromPos) {
+        if (world.isRemote)
+            return;
+
+        TileEntity te = world.getTileEntity(pos);
+        if (te instanceof TileRelay) {
+            boolean isPowered = RedstoneHelper.isBlockPowered(world, pos, 4);
+            ((TileRelay) te).setSwitchStatus(isPowered);
+        }
     }
 }

@@ -106,6 +106,7 @@ public class BlockRegistry {
         registerTile(TileCurrentSensor.class);
         registerTile(TileDiode.class);
         registerTile(TileSwitch.class);
+        registerTile(TileRelay.class);
     }
     
     private static void registerBlocks(IForgeRegistry registry, boolean isItemBlock, BlockBase... blocks) {

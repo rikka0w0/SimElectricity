@@ -1,0 +1,10 @@
+{
+  "parent": "sime_essential:block/machine",
+  "textures": {
+    "bottom": "sime_essential:blocks/machines/relay_bottom",
+    "top": "sime_essential:blocks/machines/relay_top",
+    "front": "sime_essential:blocks/machines/relay_side",
+    "back": "sime_essential:blocks/machines/relay_side",
+    "side": "sime_essential:blocks/machines/relay_side"
+  }
+}
