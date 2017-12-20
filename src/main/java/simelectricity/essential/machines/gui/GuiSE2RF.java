@@ -1,12 +1,12 @@
 package simelectricity.essential.machines.gui;
 
-import org.lwjgl.opengl.GL11;
-
 import net.minecraft.inventory.Container;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.lwjgl.opengl.GL11;
+import simelectricity.essential.utils.SEUnitHelper;
 import simelectricity.essential.utils.client.gui.SEGuiContainer;
 
 @SideOnly(Side.CLIENT)
@@ -21,9 +21,12 @@ public final class GuiSE2RF extends SEGuiContainer<ContainerSE2RF>{
         //the parameters for drawString are: string, x, y, color
 
         this.fontRenderer.drawString(I18n.translateToLocal("tile.sime_essential:essential_two_port_electronics.se2rf.name"), 8, 6, 4210752);
-        
+
+        int ybase = 22;
         this.fontRenderer.drawString(I18n.translateToLocal("gui.sime:buffered_energy"), 18, 85, 4210752);
+        this.fontRenderer.drawString(SEUnitHelper.getStringWithoutUnit(this.container.bufferedEnergy) + "RF", 85, ybase + 8, 4210752);
         this.fontRenderer.drawString(I18n.translateToLocal("gui.sime:power_input"), 18, 124, 4210752);
+        this.fontRenderer.drawString(SEUnitHelper.getPowerStringWithUnit(this.container.actualInputPower), 18, 140, 4210752);
     }
 	
 	@Override

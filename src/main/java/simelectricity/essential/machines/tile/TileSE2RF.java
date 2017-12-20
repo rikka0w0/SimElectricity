@@ -9,16 +9,25 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.EnergyStorage;
 import net.minecraftforge.energy.IEnergyStorage;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import rikka.librikka.Utils;
 import rikka.librikka.tileentity.IGuiProviderTile;
+import simelectricity.api.ISEEnergyNetUpdateHandler;
 import simelectricity.api.SEAPI;
 import simelectricity.api.components.ISEConstantPowerLoad;
+import simelectricity.essential.ConfigProvider;
+import simelectricity.essential.common.semachine.ISESocketProvider;
 import simelectricity.essential.common.semachine.SESinglePortMachine;
 import simelectricity.essential.machines.gui.ContainerSE2RF;
 
-public class TileSE2RF extends SESinglePortMachine implements ISEConstantPowerLoad, ITickable, IGuiProviderTile {
-	public double bufferedEnergy;
-	
+public class TileSE2RF extends SESinglePortMachine implements ISEConstantPowerLoad, ISEEnergyNetUpdateHandler, ITickable, IGuiProviderTile, ISESocketProvider {
+    // In units of RF
+    public double bufferedEnergy;
+
+    public volatile double voltage;
+    public volatile double actualInputPower;    //In units of J
+
     public int calcRFPowerDemand() {
         int rfDemand = 0;
         for (EnumFacing side: EnumFacing.values()) {
@@ -42,8 +51,9 @@ public class TileSE2RF extends SESinglePortMachine implements ISEConstantPowerLo
     public void update() {
         if (world.isRemote)
             return;
-        
-        this.bufferedEnergy += SEAPI.energyNetAgent.getVoltage(circuit);
+
+
+        this.bufferedEnergy += actualInputPower * ConfigProvider.joule2rf;
 
         int rfDemand = calcRFPowerDemand();
 
@@ -100,6 +110,28 @@ public class TileSE2RF extends SESinglePortMachine implements ISEConstantPowerLo
     }
 
     ///////////////////////////////////
+    /// ISEEnergyNetUpdateHandler
+    ///////////////////////////////////
+    @Override
+    public void onEnergyNetUpdate() {
+        this.voltage = SEAPI.energyNetAgent.getVoltage(circuit);
+        ISEConstantPowerLoad cachedParam = (ISEConstantPowerLoad) circuit;
+
+        if (!cachedParam.isEnabled()) {
+            this.actualInputPower = 0;
+        } else {
+            double Rcal = voltage * voltage / cachedParam.getRatedPower();
+
+            if (Rcal > cachedParam.getMaximumResistance())
+                Rcal = cachedParam.getMaximumResistance();
+            if (Rcal < cachedParam.getMinimumResistance())
+                Rcal = cachedParam.getMinimumResistance();
+
+            this.actualInputPower = voltage * voltage / Rcal;
+        }
+    }
+
+    ///////////////////////////////////
     /// ISEConstantPowerLoad
     ///////////////////////////////////
     public double getRatedPower() {
@@ -125,4 +157,13 @@ public class TileSE2RF extends SESinglePortMachine implements ISEConstantPowerLo
 	public Container getContainer(EntityPlayer player, EnumFacing side) {
 		return new ContainerSE2RF(this);
 	}
+
+    ///////////////////////////////////
+    /// ISESocketProvider
+    ///////////////////////////////////
+    @Override
+    @SideOnly(Side.CLIENT)
+    public int getSocketIconIndex(EnumFacing side) {
+        return side == this.functionalSide ? 0 : -1;
+    }
 }

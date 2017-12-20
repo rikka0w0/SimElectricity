@@ -12,9 +12,14 @@ import simelectricity.essential.machines.tile.TileSE2RF;
 public class ContainerSE2RF extends ContainerNoInvAutoSync<TileSE2RF> implements IContainerWithGui {
 	@ContainerSynchronizer.SyncField
 	public double bufferedEnergy;
-	
-	
-	public ContainerSE2RF(TileEntity tileEntity) {
+
+    @ContainerSynchronizer.SyncField
+    public double voltage;
+    @ContainerSynchronizer.SyncField
+    public double actualInputPower;
+
+
+    public ContainerSE2RF(TileEntity tileEntity) {
 		super(tileEntity);
 	}
 
