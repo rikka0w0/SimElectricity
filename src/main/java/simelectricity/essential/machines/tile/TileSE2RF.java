@@ -22,26 +22,48 @@ import simelectricity.essential.common.semachine.SESinglePortMachine;
 import simelectricity.essential.machines.gui.ContainerSE2RF;
 
 public class TileSE2RF extends SESinglePortMachine implements ISEConstantPowerLoad, ISEEnergyNetUpdateHandler, ITickable, IGuiProviderTile, ISESocketProvider {
-    // In units of RF
-    public double bufferedEnergy;
+    public final static double ratedOutputPower = 100;	// W
+    public final static double minInputVoltage = 85;	// V
+    public final static double maxInputVoltage = 265;	// V
+    public final static double bufferCapacity = 1000;	// J
 
-    public volatile double voltage;
-    public volatile double actualInputPower;    //In units of J
+    public double ouputPowerSetPoint = 1;
+    public boolean enabled = true;
+    
+    public volatile double voltage;				// V
+    public volatile double actualInputPower;    // J per sec = J per 20-tick
+    public double bufferedEnergy;				// J
+    
+    public EnumFacing outputSide = EnumFacing.UP;
 
-    public int calcRFPowerDemand() {
+    public int calcRFPowerDemand(int offeredAmount, EnumFacing side) {
         int rfDemand = 0;
-        for (EnumFacing side: EnumFacing.values()) {
-            TileEntity te = Utils.getTileEntitySafely(world, pos.offset(side));
 
-            if (te != null && te.hasCapability(CapabilityEnergy.ENERGY, side.getOpposite())) {
-                IEnergyStorage es = te.getCapability(CapabilityEnergy.ENERGY, side.getOpposite());
-                if (es != null) {
-                    rfDemand += es.receiveEnergy(10000, true);
-                }
-            }
-        }
+        TileEntity te = Utils.getTileEntitySafely(world, pos.offset(side));
+
+		if (te != null && te.hasCapability(CapabilityEnergy.ENERGY, side.getOpposite())) {
+			IEnergyStorage es = te.getCapability(CapabilityEnergy.ENERGY, side.getOpposite());
+			if (es != null) {
+				rfDemand += es.receiveEnergy(offeredAmount, true);
+			}
+		}
 
         return rfDemand;
+    }
+    
+    public int outpurRFPower(int offeredAmount, EnumFacing side) {
+        int accpted = 0;
+
+        TileEntity te = Utils.getTileEntitySafely(world, pos.offset(side));
+
+		if (te != null && te.hasCapability(CapabilityEnergy.ENERGY, side.getOpposite())) {
+			IEnergyStorage es = te.getCapability(CapabilityEnergy.ENERGY, side.getOpposite());
+			if (es != null) {
+				accpted += es.receiveEnergy(offeredAmount, false);
+			}
+		}
+
+        return accpted;
     }
 
     ///////////////////////////////////
@@ -51,28 +73,47 @@ public class TileSE2RF extends SESinglePortMachine implements ISEConstantPowerLo
     public void update() {
         if (world.isRemote)
             return;
-
-
-        this.bufferedEnergy += actualInputPower * ConfigProvider.joule2rf;
-
-        int rfDemand = calcRFPowerDemand();
-
-        if (rfDemand != 0)
-            System.out.println("Power demand: " + rfDemand);
-
-        rfDemand = 0;
-        for (EnumFacing side: EnumFacing.values()) {
-            TileEntity te = Utils.getTileEntitySafely(world, pos.offset(side));
-
-            if (te != null && te.hasCapability(CapabilityEnergy.ENERGY, side.getOpposite())) {
-                IEnergyStorage es = te.getCapability(CapabilityEnergy.ENERGY, side.getOpposite());
-                if (es != null) {
-                    rfDemand += es.receiveEnergy(1000, false);
-                }
+        
+        boolean paramChanged = false;
+        
+        int offeredAmount = (int)(ratedOutputPower / 20 * ConfigProvider.joule2rf);	// Energy per tick, RF
+        int rfDemand = calcRFPowerDemand(offeredAmount, outputSide);	// Energy per tick, RF
+        if (((ISEConstantPowerLoad) circuit).isEnabled()) {
+        	this.bufferedEnergy += actualInputPower / 20;	// Energy per tick, J
+        	
+        	double ouputPowerSetPoint = rfDemand * 20 / ConfigProvider.joule2rf;
+	        if (ouputPowerSetPoint < 1) {
+	        	ouputPowerSetPoint = 1;
+	        }
+	        
+	        if (Math.abs(ouputPowerSetPoint - this.ouputPowerSetPoint) > 1e-6) {
+	        	this.ouputPowerSetPoint = ouputPowerSetPoint;
+	        	paramChanged = true;
+	        }
+        	
+            if (this.bufferedEnergy * ConfigProvider.joule2rf > rfDemand) {
+    	        int rfAccepted = outpurRFPower(offeredAmount, outputSide);	// Energy per tick, RF
+    	        this.bufferedEnergy -= rfAccepted / ConfigProvider.joule2rf;
+    	        
+    	        if (this.bufferedEnergy > this.bufferCapacity) {
+    	        	this.enabled = false;
+    	        	paramChanged = true;
+    	        }
+            }
+        } else {
+        	if (this.bufferedEnergy * ConfigProvider.joule2rf > rfDemand) {
+        		int rfAccepted = outpurRFPower(offeredAmount, outputSide);
+        		this.bufferedEnergy -= rfAccepted / ConfigProvider.joule2rf;
+        	}
+        	
+            if (this.bufferedEnergy < this.bufferCapacity * 0.25) {
+            	this.enabled = true;
+	        	paramChanged = true;
             }
         }
-
-        System.out.println("Accepted: " + rfDemand);
+        
+        if (paramChanged)
+        	SEAPI.energyNetAgent.updateTileParameter(this);
     }
 
     @Override
@@ -83,32 +124,61 @@ public class TileSE2RF extends SESinglePortMachine implements ISEConstantPowerLo
         return super.hasCapability(capability, facing);
     }
 
-    public static class RFBuffer extends EnergyStorage{
-        public RFBuffer(int capacity) {
-            super(capacity);
+    @Override
+    public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+        if (capability == CapabilityEnergy.ENERGY) {
+            return (T) rfBufferHandler;
+        }
+        return super.getCapability(capability, facing);
+    }
+
+    ///////////////////////////////////
+    /// IEnergyStorage
+    ///////////////////////////////////
+    RFBufferHandler rfBufferHandler = new RFBufferHandler(this);
+    protected static class RFBufferHandler implements IEnergyStorage {
+    	protected TileSE2RF owner;
+    	public RFBufferHandler(TileSE2RF owner) {
+    		this.owner = owner;
+    	}
+    	
+        @Override
+        public int receiveEnergy(int maxReceive, boolean simulate) {
+        	return 0;	// Can not receive
+        }
+
+        @Override
+        public int extractEnergy(int maxExtract, boolean simulate) {
+            if (!canExtract())
+                return 0;
+
+            int energyExtracted = Math.min(getEnergyStored(), Math.min((int)(owner.ratedOutputPower / 20 * ConfigProvider.joule2rf), maxExtract));
+            if (!simulate)
+            	owner.bufferedEnergy -= energyExtracted / ConfigProvider.joule2rf;
+            return energyExtracted;
+        }
+        
+		@Override
+		public int getMaxEnergyStored() {
+			return (int) (bufferCapacity * ConfigProvider.joule2rf);
+		}
+
+        @Override
+        public int getEnergyStored() {
+            return (int) (owner.bufferedEnergy * ConfigProvider.joule2rf);
+        }
+
+        @Override
+        public boolean canExtract() {
+            return true;
         }
 
         @Override
         public boolean canReceive() {
             return false;
-            //return this.maxReceive > 0;
-        }
-
-        public void setBuffer(int value) {
-            this.energy = value;
         }
     }
-
-    RFBuffer rfBuf = new RFBuffer(100000);
-
-    @Override
-    public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-        if (capability == CapabilityEnergy.ENERGY) {
-            return (T) rfBuf;
-        }
-        return super.getCapability(capability, facing);
-    }
-
+    
     ///////////////////////////////////
     /// ISEEnergyNetUpdateHandler
     ///////////////////////////////////
@@ -135,19 +205,19 @@ public class TileSE2RF extends SESinglePortMachine implements ISEConstantPowerLo
     /// ISEConstantPowerLoad
     ///////////////////////////////////
     public double getRatedPower() {
-        return 100;
+        return ouputPowerSetPoint;
     }
 
     public double getMinimumResistance() {
-        return 180*180/ getRatedPower();
+        return minInputVoltage * minInputVoltage / ratedOutputPower;
     }
 
     public double getMaximumResistance() {
-        return 265*265/ getRatedPower();
+        return maxInputVoltage * maxInputVoltage / ratedOutputPower;
     }
 
     public boolean isEnabled() {
-        return true;
+        return enabled;
     }
     
     ///////////////////////////////////

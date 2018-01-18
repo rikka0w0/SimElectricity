@@ -1,19 +1,23 @@
 package simelectricity.essential.machines.tile;
 
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.Container;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import rikka.librikka.tileentity.IGuiProviderTile;
 import simelectricity.api.ISEEnergyNetUpdateHandler;
 import simelectricity.api.SEAPI;
 import simelectricity.api.components.ISESwitch;
 import simelectricity.essential.common.semachine.ISESocketProvider;
 import simelectricity.essential.common.semachine.SETwoPortMachine;
+import simelectricity.essential.machines.gui.ContainerRelay;
 
 /**
  * Created by manageryzy on 12/18/2017.
  */
-public class TileRelay extends SETwoPortMachine implements ISESwitch, ISEEnergyNetUpdateHandler, ISESocketProvider {
+public class TileRelay extends SETwoPortMachine implements ISESwitch, ISEEnergyNetUpdateHandler, ISESocketProvider, IGuiProviderTile {
     public volatile double current;
 
     public volatile double resistance = 0.001;
@@ -113,8 +117,8 @@ public class TileRelay extends SETwoPortMachine implements ISESwitch, ISEEnergyN
     ///////////////////////////////////
     /// IGuiProviderTile
     ///////////////////////////////////
-    //@Override
-    //public Container getContainer(EntityPlayer player, EnumFacing side) {
-    //    return new ContainerSwitch(this);
-    //}
+    @Override
+    public Container getContainer(EntityPlayer player, EnumFacing side) {
+        return new ContainerRelay(this);
+    }
 }
