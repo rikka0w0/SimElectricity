@@ -74,25 +74,31 @@ public class TileSE2RF extends SESinglePortMachine implements ISEConstantPowerLo
         if (world.isRemote)
             return;
         
+        boolean paramChanged = false;
         
         int offeredAmount = (int)(ratedOutputPower / 20 * ConfigProvider.joule2rf);	// Energy per tick, RF
         int rfDemand = calcRFPowerDemand(offeredAmount, outputSide);	// Energy per tick, RF
-        if (this.enabled) {
+        if (((ISEConstantPowerLoad) circuit).isEnabled()) {
         	this.bufferedEnergy += actualInputPower / 20;	// Energy per tick, J
+        	
+        	double ouputPowerSetPoint = rfDemand * 20 / ConfigProvider.joule2rf;
+	        if (ouputPowerSetPoint < 1) {
+	        	ouputPowerSetPoint = 1;
+	        }
+	        
+	        if (Math.abs(ouputPowerSetPoint - this.ouputPowerSetPoint) > 1e-6) {
+	        	this.ouputPowerSetPoint = ouputPowerSetPoint;
+	        	paramChanged = true;
+	        }
         	
             if (this.bufferedEnergy * ConfigProvider.joule2rf > rfDemand) {
     	        int rfAccepted = outpurRFPower(offeredAmount, outputSide);	// Energy per tick, RF
     	        this.bufferedEnergy -= rfAccepted / ConfigProvider.joule2rf;
     	        
-    	        this.ouputPowerSetPoint = rfDemand * 20 / ConfigProvider.joule2rf;
-    	        
-    	        if (this.ouputPowerSetPoint < 1)
-    	        	this.ouputPowerSetPoint = 1;
-    	        
-    	        if (this.bufferedEnergy > this.bufferCapacity)
+    	        if (this.bufferedEnergy > this.bufferCapacity) {
     	        	this.enabled = false;
-    	        
-    	        SEAPI.energyNetAgent.updateTileParameter(this);
+    	        	paramChanged = true;
+    	        }
             }
         } else {
         	if (this.bufferedEnergy * ConfigProvider.joule2rf > rfDemand) {
@@ -102,9 +108,12 @@ public class TileSE2RF extends SESinglePortMachine implements ISEConstantPowerLo
         	
             if (this.bufferedEnergy < this.bufferCapacity * 0.25) {
             	this.enabled = true;
-            	SEAPI.energyNetAgent.updateTileParameter(this);
+	        	paramChanged = true;
             }
         }
+        
+        if (paramChanged)
+        	SEAPI.energyNetAgent.updateTileParameter(this);
     }
 
     @Override
@@ -115,32 +124,61 @@ public class TileSE2RF extends SESinglePortMachine implements ISEConstantPowerLo
         return super.hasCapability(capability, facing);
     }
 
-    public static class RFBuffer extends EnergyStorage{
-        public RFBuffer(int capacity) {
-            super(capacity);
+    @Override
+    public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+        if (capability == CapabilityEnergy.ENERGY) {
+            return (T) rfBufferHandler;
+        }
+        return super.getCapability(capability, facing);
+    }
+
+    ///////////////////////////////////
+    /// IEnergyStorage
+    ///////////////////////////////////
+    RFBufferHandler rfBufferHandler = new RFBufferHandler(this);
+    protected static class RFBufferHandler implements IEnergyStorage {
+    	protected TileSE2RF owner;
+    	public RFBufferHandler(TileSE2RF owner) {
+    		this.owner = owner;
+    	}
+    	
+        @Override
+        public int receiveEnergy(int maxReceive, boolean simulate) {
+        	return 0;	// Can not receive
+        }
+
+        @Override
+        public int extractEnergy(int maxExtract, boolean simulate) {
+            if (!canExtract())
+                return 0;
+
+            int energyExtracted = Math.min(getEnergyStored(), Math.min((int)(owner.ratedOutputPower / 20 * ConfigProvider.joule2rf), maxExtract));
+            if (!simulate)
+            	owner.bufferedEnergy -= energyExtracted / ConfigProvider.joule2rf;
+            return energyExtracted;
+        }
+        
+		@Override
+		public int getMaxEnergyStored() {
+			return (int) (bufferCapacity * ConfigProvider.joule2rf);
+		}
+
+        @Override
+        public int getEnergyStored() {
+            return (int) (owner.bufferedEnergy * ConfigProvider.joule2rf);
+        }
+
+        @Override
+        public boolean canExtract() {
+            return true;
         }
 
         @Override
         public boolean canReceive() {
             return false;
-            //return this.maxReceive > 0;
-        }
-
-        public void setBuffer(int value) {
-            this.energy = value;
         }
     }
-
-    RFBuffer rfBuf = new RFBuffer(100000);
-
-    @Override
-    public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-        if (capability == CapabilityEnergy.ENERGY) {
-            return (T) rfBuf;
-        }
-        return super.getCapability(capability, facing);
-    }
-
+    
     ///////////////////////////////////
     /// ISEEnergyNetUpdateHandler
     ///////////////////////////////////
