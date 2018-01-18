@@ -22,11 +22,13 @@ public final class GuiSE2RF extends SEGuiContainer<ContainerSE2RF>{
 
         this.fontRenderer.drawString(I18n.translateToLocal("tile.sime_essential:essential_two_port_electronics.se2rf.name"), 8, 6, 4210752);
 
-        int ybase = 22;
-        this.fontRenderer.drawString(I18n.translateToLocal("gui.sime:buffered_energy"), 18, 85, 4210752);
-        this.fontRenderer.drawString(SEUnitHelper.getStringWithoutUnit(this.container.bufferedEnergy) + "RF", 85, ybase + 8, 4210752);
-        this.fontRenderer.drawString(I18n.translateToLocal("gui.sime:power_input"), 18, 124, 4210752);
-        this.fontRenderer.drawString(SEUnitHelper.getPowerStringWithUnit(this.container.actualInputPower), 18, 140, 4210752);
+        this.fontRenderer.drawString(I18n.translateToLocal("gui.sime:voltage_input"), 8, 22, 4210752);
+        this.fontRenderer.drawString(SEUnitHelper.getVoltageStringWithUnit(this.container.voltage), 8, 30, 4210752);
+        this.fontRenderer.drawString(I18n.translateToLocal("gui.sime:power_input"), 8, 38, 4210752);
+        this.fontRenderer.drawString(SEUnitHelper.getPowerStringWithUnit(this.container.actualInputPower), 8, 46, 4210752);
+        this.fontRenderer.drawString(I18n.translateToLocal("gui.sime:buffered_energy"), 8, 54, 4210752);
+        this.fontRenderer.drawString(SEUnitHelper.getEnergyStringInJ(this.container.bufferedEnergy), 8, 62, 4210752);
+
     }
 	
 	@Override
