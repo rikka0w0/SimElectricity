@@ -21,6 +21,19 @@ dependencies {
     runtime fileTree(dir: 'libs', include: '*.jar')
 }
 
+repositories {
+    mavenCentral()
+    jcenter()
+    maven{
+        url = 'https://dl.bintray.com/manageryzy/librikka'
+    }
+}
+
+dependencies {
+    compile 'rikka.librikka:librikka:+:dev'
+}
+
+
 version = "1.0.0"
 group = "simelectricity" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "SimElectricity"
@@ -60,7 +73,6 @@ sourceSets {
     main {
         java {
             srcDir "src/main/java"
-            srcDir "librikka/src"
         }
         resources {
             srcDir "src/main/resources"
@@ -164,7 +176,8 @@ dependencies {
 
 task clearMOD << {
     println 'clear mods'
-    delete "run/mods"
+//    delete "run/mods/buildcraft*"
+    delete "run/mods*"
     mkdir 'run/mods'
 }
 
