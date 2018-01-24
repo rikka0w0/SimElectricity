@@ -7,7 +7,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
-import net.minecraftforge.energy.EnergyStorage;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -33,6 +32,8 @@ public class TileSE2RF extends SESinglePortMachine implements ISEConstantPowerLo
     public volatile double voltage;				// V
     public volatile double actualInputPower;    // J per sec = J per 20-tick
     public double bufferedEnergy;				// J
+    public int rfDemandRateDisplay;
+    public int rfOutputRateDisplay;
     
     public EnumFacing outputSide = EnumFacing.UP;
 
@@ -78,6 +79,7 @@ public class TileSE2RF extends SESinglePortMachine implements ISEConstantPowerLo
         
         int offeredAmount = (int)(ratedOutputPower / 20 * ConfigProvider.joule2rf);	// Energy per tick, RF
         int rfDemand = calcRFPowerDemand(offeredAmount, outputSide);	// Energy per tick, RF
+        this.rfDemandRateDisplay = rfDemand;
         if (((ISEConstantPowerLoad) circuit).isEnabled()) {
         	this.bufferedEnergy += actualInputPower / 20;	// Energy per tick, J
         	
@@ -93,18 +95,24 @@ public class TileSE2RF extends SESinglePortMachine implements ISEConstantPowerLo
         	
             if (this.bufferedEnergy * ConfigProvider.joule2rf > rfDemand) {
     	        int rfAccepted = outpurRFPower(offeredAmount, outputSide);	// Energy per tick, RF
+        		this.rfDemandRateDisplay = rfAccepted;
     	        this.bufferedEnergy -= rfAccepted / ConfigProvider.joule2rf;
     	        
     	        if (this.bufferedEnergy > this.bufferCapacity) {
     	        	this.enabled = false;
     	        	paramChanged = true;
     	        }
+            } else {
+            	this.rfOutputRateDisplay = 0;
             }
         } else {
         	if (this.bufferedEnergy * ConfigProvider.joule2rf > rfDemand) {
         		int rfAccepted = outpurRFPower(offeredAmount, outputSide);
+        		this.rfDemandRateDisplay = rfAccepted;
         		this.bufferedEnergy -= rfAccepted / ConfigProvider.joule2rf;
-        	}
+        	} else {
+            	this.rfOutputRateDisplay = 0;
+            }
         	
             if (this.bufferedEnergy < this.bufferCapacity * 0.25) {
             	this.enabled = true;

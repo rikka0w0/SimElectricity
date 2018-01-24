@@ -17,7 +17,10 @@ public class ContainerSE2RF extends ContainerNoInvAutoSync<TileSE2RF> implements
     public double voltage;
     @ContainerSynchronizer.SyncField
     public double actualInputPower;
-
+    @ContainerSynchronizer.SyncField
+    public int rfDemandRateDisplay;
+    @ContainerSynchronizer.SyncField
+    public int rfOutputRateDisplay;
 
     public ContainerSE2RF(TileEntity tileEntity) {
 		super(tileEntity);

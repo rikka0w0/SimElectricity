@@ -20,7 +20,7 @@ public final class GuiSE2RF extends SEGuiContainer<ContainerSE2RF>{
         //draw text and stuff here
         //the parameters for drawString are: string, x, y, color
 
-        this.fontRenderer.drawString(I18n.translateToLocal("tile.sime_essential:essential_two_port_electronics.se2rf.name"), 8, 6, 4210752);
+        this.fontRenderer.drawString(I18n.translateToLocal("tile.sime_essential:essential_electronics.transformer_se2rf.name"), 8, 6, 4210752);
 
         this.fontRenderer.drawString(I18n.translateToLocal("gui.sime:voltage_input"), 8, 22, 4210752);
         this.fontRenderer.drawString(SEUnitHelper.getVoltageStringWithUnit(this.container.voltage), 8, 30, 4210752);
@@ -28,7 +28,10 @@ public final class GuiSE2RF extends SEGuiContainer<ContainerSE2RF>{
         this.fontRenderer.drawString(SEUnitHelper.getPowerStringWithUnit(this.container.actualInputPower), 8, 46, 4210752);
         this.fontRenderer.drawString(I18n.translateToLocal("gui.sime:buffered_energy"), 8, 54, 4210752);
         this.fontRenderer.drawString(SEUnitHelper.getEnergyStringInJ(this.container.bufferedEnergy), 8, 62, 4210752);
-
+        this.fontRenderer.drawString(I18n.translateToLocal("gui.sime_essential:rf_demand"), 8, 70, 4210752);
+        this.fontRenderer.drawString(this.container.rfDemandRateDisplay + "RF", 8, 78, 4210752);
+        this.fontRenderer.drawString(I18n.translateToLocal("gui.sime_essential:rf_power"), 8, 86, 4210752);
+        this.fontRenderer.drawString(this.container.rfOutputRateDisplay + "RF", 8, 94, 4210752);
     }
 	
 	@Override
