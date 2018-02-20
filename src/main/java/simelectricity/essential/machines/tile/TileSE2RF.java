@@ -95,7 +95,7 @@ public class TileSE2RF extends SESinglePortMachine implements ISEConstantPowerLo
         	
             if (this.bufferedEnergy * ConfigProvider.joule2rf > rfDemand) {
     	        int rfAccepted = outpurRFPower(offeredAmount, outputSide);	// Energy per tick, RF
-        		this.rfDemandRateDisplay = rfAccepted;
+        		this.rfOutputRateDisplay = rfAccepted;
     	        this.bufferedEnergy -= rfAccepted / ConfigProvider.joule2rf;
     	        
     	        if (this.bufferedEnergy > this.bufferCapacity) {
@@ -108,7 +108,7 @@ public class TileSE2RF extends SESinglePortMachine implements ISEConstantPowerLo
         } else {
         	if (this.bufferedEnergy * ConfigProvider.joule2rf > rfDemand) {
         		int rfAccepted = outpurRFPower(offeredAmount, outputSide);
-        		this.rfDemandRateDisplay = rfAccepted;
+        		this.rfOutputRateDisplay = rfAccepted;
         		this.bufferedEnergy -= rfAccepted / ConfigProvider.joule2rf;
         	} else {
             	this.rfOutputRateDisplay = 0;
