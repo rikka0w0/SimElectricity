@@ -39,7 +39,7 @@ public class AR10kVType0Branch implements ISEAccessoryRenderer {
 			boolean has2PoleCon = pole.connectionList.size() > 1;
 			float angleFrom = poleConnection[1].calcAngleFromXInDegree();			
 			float angleDiff = angleTo-angleFrom;
-			
+
 			if (has2PoleCon) {
 				PowerPoleRenderHelper.ConnectionInfo[] secondPoleConnection = pole.connectionList.getLast();
 				float angleFrom2 = secondPoleConnection[1].calcAngleFromXInDegree();		
@@ -59,13 +59,13 @@ public class AR10kVType0Branch implements ISEAccessoryRenderer {
 			}
 			
 			final float angle = angleDiff < 0 ? angleDiff + 360 : angleDiff;
-			final float middle = angle<180 ? 180+(angleFrom+angleTo)/2 : (angleFrom+angleTo)/2;
+			final float middle = 180+(angleFrom+angleTo)/2;
 			
 			Sorter.minDist(poleConnection, accessoryConnection, (from, to) ->{
 				if ((0<=angle && angle<=67.5F) || (292.5F<=angle && angle<=360F)) {		
-					pole.addExtraWire(from[0].pointOnCable(0.5F), to[0].fixedFrom, 0.1F, true);
+					pole.addExtraWire(from[0].pointOnCable(0.5F), to[0].pointOnCable(0.5F), 0.05F, true);
 					pole.addExtraWire(from[1].pointOnCable(0.5F), to[1].fixedFrom, 0);
-					pole.addExtraWire(from[2].pointOnCable(0.5F), to[2].fixedFrom, 0.6F, true);
+					pole.addExtraWire(from[2].pointOnCable(0.5F), to[2].fixedFrom, 0.4F, true);
 				} else if (angle >= 112.5F && angle <= 247.5F) {
 					pole.addExtraWire(from[0].pointOnCable(0.5F), to[0].fixedFrom, 0.5F, true);
 					pole.addExtraWire(from[2].pointOnCable(0.5F), to[2].fixedFrom, 0.5F, true);
@@ -84,11 +84,17 @@ public class AR10kVType0Branch implements ISEAccessoryRenderer {
 					.translateCoord(0, 0.125F, 0).rotateToVec(0.5F, 0, 0.5F, pt.x, 0, pt.z).translateCoord(0.5F, pt.y, 0.5F).bake(pole.quadBuffer);
 					
 					pt = pt.add(pole.pos);
-					pole.addExtraWire(from[0].pointOnCable(0.5F), to[0].fixedFrom, 0.1F, true);
-					pole.addExtraWire(from[2].pointOnCable(0.5F), pt, 0.4F, true);
-					pole.addExtraWire(pt, to[2].fixedFrom, 0.4F, true);
-					
-					
+
+					if (pt.distanceTo(to[0].fixedFrom) < pt.distanceTo(to[2].fixedFrom)) {
+						pole.addExtraWire(from[0].pointOnCable(0.5F), to[2].fixedFrom, 0.1F, true);
+						pole.addExtraWire(from[2].pointOnCable(0.5F), pt, 0.4F, true);
+						pole.addExtraWire(pt, to[0].fixedFrom, 0.4F, true);
+					} else {
+						pole.addExtraWire(from[0].pointOnCable(0.5F), to[0].fixedFrom, 0.1F, true);
+						pole.addExtraWire(from[2].pointOnCable(0.5F), pt, 0.4F, true);
+						pole.addExtraWire(pt, to[2].fixedFrom, 0.4F, true);
+					}
+
 					pt = (new Vec3f(0.5F,1.5F,0.5F)).add(pole.pos);
 					if (!has2PoleCon) {
 						pole.addExtraWire(from[1].fixedFrom, pt, -0.3F);
