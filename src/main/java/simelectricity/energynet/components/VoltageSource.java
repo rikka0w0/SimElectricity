@@ -7,6 +7,7 @@ import simelectricity.energynet.components.SEComponent.Tile;
 
 public class VoltageSource extends Tile<ISEVoltageSource> implements ISESubComponent, ISEVoltageSource {
     private volatile double v, r;
+    private volatile boolean enabled;
 
     public VoltageSource(ISEVoltageSource dataProvider, TileEntity te) {
         super(dataProvider, te);
@@ -16,6 +17,7 @@ public class VoltageSource extends Tile<ISEVoltageSource> implements ISESubCompo
     public synchronized void updateComponentParameters() {
         v = this.dataProvider.getOutputVoltage();
         r = this.dataProvider.getResistance();
+        enabled = this.dataProvider.isOn();
     }
 
     @Override
@@ -32,9 +34,15 @@ public class VoltageSource extends Tile<ISEVoltageSource> implements ISESubCompo
 	public ISESubComponent getComplement() {
 		return null;
 	}
+
+	@Override
+    public boolean isOn() {
+        return enabled;
+    }
     
     @Override
     public String toString() {
         return "V";
     }
+
 }

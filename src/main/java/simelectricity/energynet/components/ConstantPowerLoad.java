@@ -18,7 +18,7 @@ public class ConstantPowerLoad extends Tile<ISEConstantPowerLoad> implements ISE
         pRated = this.dataProvider.getRatedPower();
         rMin = this.dataProvider.getMinimumResistance();
         rMax = this.dataProvider.getMaximumResistance();
-        enabled = this.dataProvider.isEnabled();
+        enabled = this.dataProvider.isOn();
     }
 
     @Override
@@ -37,7 +37,7 @@ public class ConstantPowerLoad extends Tile<ISEConstantPowerLoad> implements ISE
     }
 
     @Override
-    public synchronized boolean isEnabled() {
+    public synchronized boolean isOn() {
         return this.enabled;
     }
 

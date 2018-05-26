@@ -63,6 +63,11 @@ public class TileAdjustableResistor extends SESinglePortMachine implements ISEVo
         return this.resistance;
     }
 
+    @Override
+    public boolean isOn() {
+        return true;
+    }
+
     ///////////////////////////////////
     /// ISEEnergyNetUpdateHandler
     ///////////////////////////////////

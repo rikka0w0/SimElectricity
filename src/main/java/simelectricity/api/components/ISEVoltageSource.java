@@ -4,7 +4,7 @@ package simelectricity.api.components;
 /**
  * A voltage source in series with a resistance, a simple model for machines or generators.
  */
-public interface ISEVoltageSource extends ISEComponentParameter {
+public interface ISEVoltageSource extends ISEComponentParameter, ISESwitchable {
     /**
      * @return the voltage of the internal voltage source
      * <p/>

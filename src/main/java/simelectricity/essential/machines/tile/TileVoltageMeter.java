@@ -27,6 +27,11 @@ public class TileVoltageMeter extends SESinglePortMachine implements ISEVoltageS
     }
 
     @Override
+    public boolean isOn() {
+        return true;
+    }
+
+    @Override
     public void onEnergyNetUpdate() {
         this.voltage = SEAPI.energyNetAgent.getVoltage(circuit);
     }

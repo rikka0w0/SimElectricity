@@ -80,7 +80,7 @@ public class TileSE2RF extends SESinglePortMachine implements ISEConstantPowerLo
         int offeredAmount = (int)(ratedOutputPower / 20 * ConfigProvider.joule2rf);	// Energy per tick, RF
         int rfDemand = calcRFPowerDemand(offeredAmount, outputSide);	// Energy per tick, RF
         this.rfDemandRateDisplay = rfDemand;
-        if (((ISEConstantPowerLoad) circuit).isEnabled()) {
+        if (((ISEConstantPowerLoad) circuit).isOn()) {
         	this.bufferedEnergy += actualInputPower / 20;	// Energy per tick, J
         	
         	double ouputPowerSetPoint = rfDemand * 20 / ConfigProvider.joule2rf;
@@ -195,7 +195,7 @@ public class TileSE2RF extends SESinglePortMachine implements ISEConstantPowerLo
         this.voltage = SEAPI.energyNetAgent.getVoltage(circuit);
         ISEConstantPowerLoad cachedParam = (ISEConstantPowerLoad) circuit;
 
-        if (!cachedParam.isEnabled()) {
+        if (!cachedParam.isOn()) {
             this.actualInputPower = 0;
         } else {
             double Rcal = voltage * voltage / cachedParam.getRatedPower();
@@ -224,7 +224,7 @@ public class TileSE2RF extends SESinglePortMachine implements ISEConstantPowerLo
         return maxInputVoltage * maxInputVoltage / ratedOutputPower;
     }
 
-    public boolean isEnabled() {
+    public boolean isOn() {
         return enabled;
     }
     

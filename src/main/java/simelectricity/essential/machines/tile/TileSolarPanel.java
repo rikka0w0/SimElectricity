@@ -79,6 +79,11 @@ public class TileSolarPanel extends SESinglePortMachine implements ISEVoltageSou
         return this.resistance;
     }
 
+    @Override
+    public boolean isOn() {
+        return true;
+    }
+
     ///////////////////////////////////
     /// ISESocketProvider
     ///////////////////////////////////

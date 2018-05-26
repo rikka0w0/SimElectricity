@@ -212,7 +212,9 @@ public class EnergyNetSimulator extends Thread {
             //Node - shunt and two port networks
             else if (columnNode instanceof VoltageSource) {
                 VoltageSource vs = (VoltageSource) columnNode;
-                currents[columnNode.index] -= (voltages[vs.index] - vs.getOutputVoltage()) / vs.getResistance();
+
+                if (vs.isOn())
+                    currents[columnNode.index] -= (voltages[vs.index] - vs.getOutputVoltage()) / vs.getResistance();
             } else if (columnNode instanceof ConstantPowerLoad) {
                 ConstantPowerLoad load = (ConstantPowerLoad) columnNode;
 
@@ -224,7 +226,7 @@ public class EnergyNetSimulator extends Thread {
                 if (Rcal < load.getMinimumResistance())
                     Rcal = load.getMinimumResistance();
 
-                if (load.isEnabled())
+                if (load.isOn())
                     currents[columnNode.index] -= V / Rcal;
             }
 
@@ -355,7 +357,10 @@ public class EnergyNetSimulator extends Thread {
 
             //Process voltage sources and resistive loads
             else if (columnNode instanceof VoltageSource) {
-                diagonalElement += 1.0D / ((VoltageSource) columnNode).getResistance();
+                VoltageSource vs = (VoltageSource) columnNode;
+
+                if (vs.isOn())
+                    diagonalElement += 1.0D / vs.getResistance();
             }
 
             //Constant power load
@@ -370,7 +375,7 @@ public class EnergyNetSimulator extends Thread {
                 if (Rcal < load.getMinimumResistance())
                     Rcal = load.getMinimumResistance();
 
-                if (load.isEnabled())
+                if (load.isOn())
                     diagonalElement += 1.0D / Rcal;
             }
 

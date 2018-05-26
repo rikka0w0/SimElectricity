@@ -55,6 +55,11 @@ public class TileQuantumGenerator extends SESinglePortMachine implements ISEVolt
         return this.resistance;
     }
 
+    @Override
+    public boolean isOn() {
+        return true;
+    }
+
     ///////////////////////////////////
     /// ISEEnergyNetUpdateHandler
     ///////////////////////////////////

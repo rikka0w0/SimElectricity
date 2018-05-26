@@ -10,7 +10,7 @@ package simelectricity.api.components;
  * <p/>
  * See SimElectricity wikipedia for circuit models and more details
  */
-public interface ISEConstantPowerLoad extends ISEComponentParameter {
+public interface ISEConstantPowerLoad extends ISEComponentParameter, ISESwitchable {
     /**
      * @return regulated power level
      */
@@ -29,9 +29,4 @@ public interface ISEConstantPowerLoad extends ISEComponentParameter {
      * Usually equals to the square of the maximum input voltage on the rated power
      */
     double getMaximumResistance();
-
-    /**
-     * @return true if the load is turned on
-     */
-    boolean isEnabled();
 }

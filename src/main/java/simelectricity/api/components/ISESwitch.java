@@ -1,12 +1,7 @@
 package simelectricity.api.components;
 
 
-public interface ISESwitch extends ISEComponentParameter {
-    /**
-     * @return true to allow current to flow though
-     */
-    boolean isOn();
-
+public interface ISESwitch extends ISEComponentParameter, ISESwitchable {
     /**
      * @return the contact resistance
      */
