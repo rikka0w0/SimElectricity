@@ -228,6 +228,24 @@ public class EnergyNetSimulator extends Thread {
 
                 if (load.isOn())
                     currents[columnNode.index] -= V / Rcal;
+            } else if (columnNode instanceof ConstantPowerSource) {
+                ConstantPowerSource source = (ConstantPowerSource) columnNode;
+
+                double V = voltages[source.index];
+
+                double Vint = 2*source.getMinimumOutputVoltage();
+                double Po = source.getRatedPower();
+                double Rmax = Vint*Vint/Po/4;
+                double Rmin = (Vint-source.getMaximumOutputVoltage())*source.getMaximumOutputVoltage()/Po;
+
+                double Rcal = (Vint-V)*V/Po;
+                if (Rcal > Rmax)
+                    Rcal = Rmax;
+                if (Rcal < Rmin)
+                    Rcal = Rmin;
+
+                if (source.isOn())
+                    currents[columnNode.index] -= (V - Vint) / Rcal;
             }
 
             //Switch
@@ -376,6 +394,27 @@ public class EnergyNetSimulator extends Thread {
                     Rcal = load.getMinimumResistance();
 
                 if (load.isOn())
+                    diagonalElement += 1.0D / Rcal;
+            }
+
+            //Constant power source
+            else if (columnNode instanceof ConstantPowerSource) {
+                ConstantPowerSource source = (ConstantPowerSource) columnNode;
+
+                double V = voltages[source.index];
+
+                double Vint = 2*source.getMinimumOutputVoltage();
+                double Po = source.getRatedPower();
+                double Rmax = Vint*Vint/Po/4;
+                double Rmin = (Vint-source.getMaximumOutputVoltage())*source.getMaximumOutputVoltage()/Po;
+
+                double Rcal = (Vint-V)*V/Po;
+                if (Rcal > Rmax)
+                    Rcal = Rmax;
+                if (Rcal < Rmin)
+                    Rcal = Rmin;
+
+                if (source.isOn())
                     diagonalElement += 1.0D / Rcal;
             }
 

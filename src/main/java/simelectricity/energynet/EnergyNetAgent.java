@@ -133,6 +133,8 @@ public class EnergyNetAgent implements ISEEnergyNetAgent {
             return new TransformerPrimary((ISETransformer) dataProvider, parent);
         else if (dataProvider instanceof ISEConstantPowerLoad)
             return new ConstantPowerLoad((ISEConstantPowerLoad) dataProvider, parent);
+        else if (dataProvider instanceof ISEConstantPowerSource)
+            return new ConstantPowerSource((ISEConstantPowerSource) dataProvider, parent);
         else if (dataProvider instanceof ISEVoltageSource)
             return new VoltageSource((ISEVoltageSource) dataProvider, parent);
         else if (dataProvider instanceof ISESwitch)
