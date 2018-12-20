@@ -233,19 +233,20 @@ public class EnergyNetSimulator extends Thread {
 
                 double V = voltages[source.index];
 
-                double Vint = 2*source.getMinimumOutputVoltage();
-                double Po = source.getRatedPower();
-                double Rmax = Vint*Vint/Po/4;
-                double Rmin = (Vint-source.getMaximumOutputVoltage())*source.getMaximumOutputVoltage()/Po;
-
-                double Rcal = (Vint-V)*V/Po;
-                if (Rcal > Rmax)
-                    Rcal = Rmax;
-                if (Rcal < Rmin)
-                    Rcal = Rmin;
+                double Isrc, G;
+                if (V<source.getMinimumOutputVoltage()) {
+                    Isrc = 2 * source.getRatedPower() / source.getMinimumOutputVoltage();
+                    G = source.getRatedPower() / source.getMinimumOutputVoltage() / source.getMinimumOutputVoltage();
+                } else if (V>source.getMaximumOutputVoltage()) {
+                    Isrc = 2 * source.getRatedPower() / source.getMaximumOutputVoltage();
+                    G = source.getRatedPower() / source.getMaximumOutputVoltage() / source.getMaximumOutputVoltage();
+                } else {
+                    Isrc = 2 * source.getRatedPower() / V;
+                    G = source.getRatedPower() / V / V;
+                }
 
                 if (source.isOn())
-                    currents[columnNode.index] -= (V - Vint) / Rcal;
+                    currents[columnNode.index] -= (V*G - Isrc);
             }
 
             //Switch
@@ -403,19 +404,17 @@ public class EnergyNetSimulator extends Thread {
 
                 double V = voltages[source.index];
 
-                double Vint = 2*source.getMinimumOutputVoltage();
-                double Po = source.getRatedPower();
-                double Rmax = Vint*Vint/Po/4;
-                double Rmin = (Vint-source.getMaximumOutputVoltage())*source.getMaximumOutputVoltage()/Po;
-
-                double Rcal = (Vint-V)*V/Po;
-                if (Rcal > Rmax)
-                    Rcal = Rmax;
-                if (Rcal < Rmin)
-                    Rcal = Rmin;
+                double G;
+                if (V<source.getMinimumOutputVoltage()) {
+                    G = source.getRatedPower() / source.getMinimumOutputVoltage() / source.getMinimumOutputVoltage();
+                } else if (V>source.getMaximumOutputVoltage()) {
+                    G = source.getRatedPower() / source.getMaximumOutputVoltage() / source.getMaximumOutputVoltage();
+                } else {
+                    G = source.getRatedPower() / V / V;
+                }
 
                 if (source.isOn())
-                    diagonalElement += 1.0D / Rcal;
+                    diagonalElement += G;
             }
 
             //Two port networks
