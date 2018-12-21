@@ -49,12 +49,14 @@ public class EnergyNetSimulator extends Thread {
     private volatile boolean processing;    	//An indicator of the EnergyNet state
     private volatile long duration;            	//Time taken for the latest simulation, in milliseconds
     private volatile boolean suicide;
+    private volatile boolean newResultAvaliable;
     
     protected EnergyNetSimulator(EnergyNetDataProvider dataProvider, String name) {
     	this.dataProvider = dataProvider;
     	this.setName(name);
     	this.processing = false;
     	this.suicide = false;
+    	this.newResultAvaliable = false;
     }
     
 	/////////////////////////////////////////////////
@@ -87,6 +89,14 @@ public class EnergyNetSimulator extends Thread {
 	/////////////////////////////////////////////////
 	/// Threading
 	/////////////////////////////////////////////////
+    public boolean isNewResultAvaliable() {
+        if (this.newResultAvaliable) {
+            this.newResultAvaliable = false;
+            return true;
+        }
+        return false;
+    }
+
     public void suicide() {
     	this.suicide = true;
     	this.interrupt();
@@ -122,21 +132,8 @@ public class EnergyNetSimulator extends Thread {
                 SELogger.logInfo(SELogger.simulator, this.getName() + " Done");
                 this.duration = System.currentTimeMillis() - startAt;
 
-                //Execute Handlers
-                Iterator<TileEntity> iterator = this.dataProvider.getLoadedTileIterator();
-                while (iterator.hasNext()) {
-                    TileEntity te = iterator.next();
-                    if (te instanceof ISEEnergyNetUpdateHandler)
-                        ((ISEEnergyNetUpdateHandler) te).onEnergyNetUpdate();
-                }
-                iterator = this.dataProvider.getLoadedGridTileIterator();
-                while (iterator.hasNext()) {
-                    TileEntity te = iterator.next();
-                    if (te instanceof ISEEnergyNetUpdateHandler)
-                        ((ISEEnergyNetUpdateHandler) te).onEnergyNetUpdate();
-                }
-
                 processing = false;
+                newResultAvaliable = true;
                 SELogger.logInfo(SELogger.simulator, this.getName() + " sleep");
             	
                 synchronized (this) {  
@@ -559,9 +556,8 @@ public class EnergyNetSimulator extends Thread {
 
 
         //Update voltage cache
-        circuit.clearVoltageCache();
         for (SEComponent node : unknownVoltageNodes) {
-            node.voltageCache = voltages[node.index];
+            node.newVoltage = voltages[node.index];
         }
 
         SELogger.logInfo(SELogger.simulator, "Simulation converges in "+ this.iterations + " iterations.");

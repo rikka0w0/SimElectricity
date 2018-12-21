@@ -82,7 +82,7 @@ public class TileRF2SE extends SESinglePortMachine implements ISEConstantPowerSo
 
     @Override
     public double getMaximumOutputVoltage() {
-        return 265;
+        return 265/2.0F;
     }
 
     @Override

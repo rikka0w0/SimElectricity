@@ -304,11 +304,11 @@ public class SEGraph {
         node.resistance = 0;
     }
 
-    public void clearVoltageCache() {
+    public void updateVoltageCache() {
         for (SEComponent node : this.terminalNodes)
-            node.voltageCache = 0;
+            node.voltageCache = node.newVoltage;
         for (SEComponent wire : this.wires)
-            wire.voltageCache = 0;
+            wire.voltageCache = wire.newVoltage;
     }
 
     public void optimizGraph() {

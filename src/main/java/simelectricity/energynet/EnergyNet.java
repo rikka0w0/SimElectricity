@@ -72,14 +72,18 @@ public final class EnergyNet {
     public synchronized void onPreTick() {
         if (this.simulator.isAlive() && this.simulator.isWorking()) {
             SELogger.logWarn(SELogger.simulator, "Simulation takes longer than usual!");
-            
+
             while (this.simulator.isWorking()) {
-            	try {
-					Thread.sleep(1);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
+                try {
+                    Thread.sleep(1);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
+        }
+
+        if (this.simulator.isNewResultAvaliable()) {
+            this.dataProvider.onNewResultAvailable();
         }
 
         boolean needOptimize = false;    //Due to connection changes

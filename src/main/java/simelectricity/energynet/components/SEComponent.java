@@ -21,7 +21,7 @@ public abstract class SEComponent implements ISESimulatable, ISEComponentParamet
     public LinkedList<Double> optimizedResistance = new LinkedList<Double>();
     public int index;
 
-
+    public volatile double newVoltage;
     public volatile double voltageCache;
     /**
      * Adjacency lists, part of graph

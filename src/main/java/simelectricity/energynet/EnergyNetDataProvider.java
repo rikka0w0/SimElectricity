@@ -13,6 +13,7 @@ import net.minecraft.world.WorldSavedData;
 import net.minecraft.world.storage.MapStorage;
 import net.minecraftforge.common.util.Constants.NBT;
 import simelectricity.SimElectricity;
+import simelectricity.api.ISEEnergyNetUpdateHandler;
 import simelectricity.api.node.ISESubComponent;
 import simelectricity.api.tile.ISECableTile;
 import simelectricity.api.tile.ISEGridTile;
@@ -71,13 +72,23 @@ public class EnergyNetDataProvider extends WorldSavedData {
     public static TileEntity getTileEntityOnDirection(TileEntity te, EnumFacing direction) {
         return te.getWorld().getTileEntity(te.getPos().offset(direction));
     }
-    
-    public Iterator<TileEntity> getLoadedTileIterator() {
-        return this.loadedTiles.iterator();
-    }
 
-    public Iterator<TileEntity> getLoadedGridTileIterator() {
-        return this.loadedGridTiles.iterator();
+    public void onNewResultAvailable() {
+        this.tileEntityGraph.updateVoltageCache();
+
+        //Execute Handlers
+        Iterator<TileEntity> iterator = this.loadedTiles.iterator();
+        while (iterator.hasNext()) {
+            TileEntity te = iterator.next();
+            if (te instanceof ISEEnergyNetUpdateHandler)
+                ((ISEEnergyNetUpdateHandler) te).onEnergyNetUpdate();
+        }
+        iterator = this.loadedGridTiles.iterator();
+        while (iterator.hasNext()) {
+            TileEntity te = iterator.next();
+            if (te instanceof ISEEnergyNetUpdateHandler)
+                ((ISEEnergyNetUpdateHandler) te).onEnergyNetUpdate();
+        }
     }
 
     public int getGridObjectCount() {
