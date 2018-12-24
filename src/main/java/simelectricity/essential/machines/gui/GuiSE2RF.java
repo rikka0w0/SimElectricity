@@ -1,5 +1,6 @@
 package simelectricity.essential.machines.gui;
 
+import net.minecraft.client.gui.GuiButton;
 import net.minecraft.inventory.Container;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.translation.I18n;
@@ -32,6 +33,9 @@ public final class GuiSE2RF extends SEGuiContainer<ContainerSE2RF>{
         this.fontRenderer.drawString(this.container.rfDemandRateDisplay + "RF", 8, 78, 4210752);
         this.fontRenderer.drawString(I18n.translateToLocal("gui.sime_essential:rf_power"), 8, 86, 4210752);
         this.fontRenderer.drawString(this.container.rfOutputRateDisplay + "RF", 8, 94, 4210752);
+
+        this.fontRenderer.drawString(I18n.translateToLocal("gui.sime:power_rated") + ": " +
+                SEUnitHelper.getPowerStringWithUnit(this.container.ratedOutputPower), 18, 124, 4210752);
     }
 	
 	@Override
@@ -44,7 +48,15 @@ public final class GuiSE2RF extends SEGuiContainer<ContainerSE2RF>{
     @Override
     public void initGui() {
         super.initGui();
-        
+        int xbase = 18;
+        int ybase = 97;
+
+        this.buttonList.add(new GuiButton(0, this.guiLeft + xbase, this.guiTop + ybase + 38, 30, 20, "-100"));
+        this.buttonList.add(new GuiButton(1, this.guiLeft + xbase + 30, this.guiTop + ybase + 38, 20, 20, "-10"));
+        this.buttonList.add(new GuiButton(2, this.guiLeft + xbase + 50, this.guiTop + ybase + 38, 20, 20, "-1"));
+        this.buttonList.add(new GuiButton(3, this.guiLeft + xbase + 70, this.guiTop + ybase + 38, 20, 20, "+1"));
+        this.buttonList.add(new GuiButton(4, this.guiLeft + xbase + 90, this.guiTop + ybase + 38, 20, 20, "+10"));
+        this.buttonList.add(new GuiButton(5, this.guiLeft + xbase + 110, this.guiTop + ybase + 38, 30, 20, "+100"));
     }
 
 }

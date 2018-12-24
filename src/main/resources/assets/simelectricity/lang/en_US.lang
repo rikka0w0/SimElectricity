@@ -17,6 +17,7 @@ gui.sime:current_trip=Trip Current
 gui.sime:current_threshold=Threshold Current
 gui.sime:power_input=Input Power
 gui.sime:power_output=Output Power
+gui.sime:power_rated=Rated Power
 gui.sime:buffered_energy=Buffered Energy
 gui.sime:resistance_output=Output Resistance
 gui.sime:resistance_internal=Internal Resistance

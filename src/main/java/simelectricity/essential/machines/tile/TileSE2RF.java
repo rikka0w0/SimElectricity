@@ -2,6 +2,7 @@ package simelectricity.essential.machines.tile;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
@@ -21,10 +22,8 @@ import simelectricity.essential.common.semachine.SESinglePortMachine;
 import simelectricity.essential.machines.gui.ContainerSE2RF;
 
 public class TileSE2RF extends SESinglePortMachine implements ISEConstantPowerLoad, ISEEnergyNetUpdateHandler, ITickable, IGuiProviderTile, ISESocketProvider {
-    public final static double ratedOutputPower = 100;	// W
-    public final static double minInputVoltage = 85;	// V
-    public final static double maxInputVoltage = 265;	// V
     public final static double bufferCapacity = 1000;	// J
+    public double ratedOutputPower = 100;	            // W
 
     public double ouputPowerSetPoint = 1;
     public boolean enabled = true;
@@ -34,8 +33,6 @@ public class TileSE2RF extends SESinglePortMachine implements ISEConstantPowerLo
     public double bufferedEnergy;				// J
     public int rfDemandRateDisplay;
     public int rfOutputRateDisplay;
-    
-    public EnumFacing outputSide = EnumFacing.UP;
 
     public int calcRFPowerDemand(int offeredAmount, EnumFacing side) {
         int rfDemand = 0;
@@ -78,7 +75,7 @@ public class TileSE2RF extends SESinglePortMachine implements ISEConstantPowerLo
         boolean paramChanged = false;
         
         int offeredAmount = (int)(ratedOutputPower / 20 * ConfigProvider.joule2rf);	// Energy per tick, RF
-        int rfDemand = calcRFPowerDemand(offeredAmount, outputSide);	// Energy per tick, RF
+        int rfDemand = calcRFPowerDemand(offeredAmount, this.facing);	// Energy per tick, RF
         this.rfDemandRateDisplay = rfDemand;
         if (((ISEConstantPowerLoad) circuit).isOn()) {
         	this.bufferedEnergy += actualInputPower / 20;	// Energy per tick, J
@@ -94,7 +91,7 @@ public class TileSE2RF extends SESinglePortMachine implements ISEConstantPowerLo
 	        }
         	
             if (this.bufferedEnergy * ConfigProvider.joule2rf > rfDemand) {
-    	        int rfAccepted = outpurRFPower(offeredAmount, outputSide);	// Energy per tick, RF
+    	        int rfAccepted = outpurRFPower(offeredAmount, this.facing);	// Energy per tick, RF
         		this.rfOutputRateDisplay = rfAccepted;
     	        this.bufferedEnergy -= rfAccepted / ConfigProvider.joule2rf;
     	        
@@ -107,7 +104,7 @@ public class TileSE2RF extends SESinglePortMachine implements ISEConstantPowerLo
             }
         } else {
         	if (this.bufferedEnergy * ConfigProvider.joule2rf > rfDemand) {
-        		int rfAccepted = outpurRFPower(offeredAmount, outputSide);
+        		int rfAccepted = outpurRFPower(offeredAmount, this.facing);
         		this.rfOutputRateDisplay = rfAccepted;
         		this.bufferedEnergy -= rfAccepted / ConfigProvider.joule2rf;
         	} else {
@@ -125,8 +122,28 @@ public class TileSE2RF extends SESinglePortMachine implements ISEConstantPowerLo
     }
 
     @Override
+    public void readFromNBT(NBTTagCompound tagCompound) {
+        super.readFromNBT(tagCompound);
+
+        this.ratedOutputPower = tagCompound.getDouble("ratedOutputPower");
+        this.ouputPowerSetPoint = tagCompound.getDouble("ouputPowerSetPoint");
+        this.enabled = tagCompound.getBoolean("enabled");
+        this.bufferedEnergy = tagCompound.getDouble("bufferedEnergy");
+    }
+
+    @Override
+    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
+        tagCompound.setDouble("ratedOutputPower", this.ratedOutputPower);
+        tagCompound.setDouble("ouputPowerSetPoint", this.ouputPowerSetPoint);
+        tagCompound.setBoolean("enabled", this.enabled);
+        tagCompound.setDouble("bufferedEnergy", this.bufferedEnergy);
+
+        return super.writeToNBT(tagCompound);
+    }
+
+    @Override
     public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-        if (capability == CapabilityEnergy.ENERGY) {
+        if (capability == CapabilityEnergy.ENERGY && facing == this.facing) {
             return true;
         }
         return super.hasCapability(capability, facing);
@@ -134,10 +151,22 @@ public class TileSE2RF extends SESinglePortMachine implements ISEConstantPowerLo
 
     @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-        if (capability == CapabilityEnergy.ENERGY) {
+        if (capability == CapabilityEnergy.ENERGY && facing == this.facing) {
             return (T) rfBufferHandler;
         }
         return super.getCapability(capability, facing);
+    }
+
+    ///////////////////////////////////
+    /// ISESidedFacing
+    ///////////////////////////////////
+    @Override
+    public void setFacing(EnumFacing newFacing) {
+        EnumFacing oldFacing = this.facing;
+        super.setFacing(newFacing);
+
+        world.neighborChanged(this.pos.offset(oldFacing), this.blockType, this.pos);
+        world.neighborChanged(this.pos.offset(newFacing), this.blockType, this.pos);
     }
 
     ///////////////////////////////////
@@ -217,11 +246,11 @@ public class TileSE2RF extends SESinglePortMachine implements ISEConstantPowerLo
     }
 
     public double getMinimumResistance() {
-        return minInputVoltage * minInputVoltage / ratedOutputPower;
+        return 1;
     }
 
     public double getMaximumResistance() {
-        return maxInputVoltage * maxInputVoltage / ratedOutputPower;
+        return 1e6;
     }
 
     public boolean isOn() {
