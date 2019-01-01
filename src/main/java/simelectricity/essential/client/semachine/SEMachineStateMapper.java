@@ -11,6 +11,7 @@ import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import rikka.librikka.model.loader.IModelLoader;
+import simelectricity.essential.client.ObjModel;
 import simelectricity.essential.common.semachine.SEMachineBlock;
 
 @SideOnly(Side.CLIENT)
@@ -56,6 +57,10 @@ public class SEMachineStateMapper extends StateMapperBase implements IModelLoade
         String blockName = splited[0];
         int facing = Integer.parseInt(splited[1]);
         boolean is2State = Boolean.parseBoolean(splited[2]);
+
+        if (blockName.startsWith("electronics_transformer_se2rf")) {
+            return new ObjModel(domain, blockName, EnumFacing.getFront(facing), is2State);
+        }
 
         IModel model = new SEMachineRawModel(domain, blockName, EnumFacing.getFront(facing), is2State);
         return model;

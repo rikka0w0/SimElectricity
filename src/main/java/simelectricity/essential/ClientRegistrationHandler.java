@@ -3,6 +3,7 @@ package simelectricity.essential;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
+import net.minecraftforge.client.model.obj.OBJLoader;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -41,6 +42,7 @@ public class ClientRegistrationHandler {
         loader.registerInventoryIcon(ItemRegistry.itemMisc);
         loader.registerInventoryIcon(ItemRegistry.itemTools);
 
+        OBJLoader.INSTANCE.addDomain(Essential.MODID);
         SEMachineStateMapper semStateMapper = new SEMachineStateMapper(Essential.MODID);
         loader.registerModelLoader(semStateMapper);
         semStateMapper.register(BlockRegistry.blockElectronics);
