@@ -27,7 +27,7 @@ import simelectricity.essential.utils.RedstoneHelper;
 import javax.annotation.Nullable;
 
 public class BlockTwoPortElectronics extends SEMachineBlock implements ISESidedTextureBlock {
-    public static String subNames[] = {"adjustable_transformer", "current_sensor", "diode", "switch", "relay"};
+    public static String subNames[] = {"adjustable_transformer", "current_sensor", "diode", "switch", "relay", "power_meter"};
 
     ///////////////////////////////
     ///Block Properties
@@ -49,6 +49,8 @@ public class BlockTwoPortElectronics extends SEMachineBlock implements ISESidedT
                 return new TileSwitch();
             case 4:
                 return new TileRelay();
+            case 5:
+                return new TilePowerMeter();
         }
         return null;
     }

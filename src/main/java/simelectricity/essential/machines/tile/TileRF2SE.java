@@ -66,8 +66,8 @@ public class TileRF2SE extends SESinglePortMachine implements ISEConstantPowerSo
             }
 
             double RFConsumed = actualOutputPower / 20.0 * ConfigProvider.joule2rf;
-            //if (RFConsumed < 1.0)
-                //RFConsumed = 1.0;
+            if (RFConsumed < 1.0)
+                RFConsumed = 1.0;
             bufferedEnergy -= MathHelper.floor(RFConsumed);
 
             if (this.bufferedEnergy < 2.0*RFConsumed) {

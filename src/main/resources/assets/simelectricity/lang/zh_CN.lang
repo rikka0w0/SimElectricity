@@ -19,6 +19,7 @@ gui.sime:power_input=输入功率
 gui.sime:power_output=输出功率
 gui.sime:power_rated=额定功率
 gui.sime:buffered_energy=已缓冲能量
+gui.sime:used_energy=已使用电量
 gui.sime:resistance_output=输出电阻
 gui.sime:resistance_internal=内阻
 gui.sime:voltage_internal=电源电压

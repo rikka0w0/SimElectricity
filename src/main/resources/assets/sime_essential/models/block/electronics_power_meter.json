@@ -1,0 +1,10 @@
+{
+    "parent": "sime_essential:block/machine",
+    "textures": {
+        "bottom": "sime_essential:blocks/machines/machine_bottom",
+        "top": "sime_essential:blocks/machines/machine_top",
+        "front": "sime_essential:blocks/machines/power_meter_front",
+        "back": "sime_essential:blocks/machines/machine_side",
+        "side": "sime_essential:blocks/machines/machine_side"
+    }
+}

@@ -108,6 +108,7 @@ public class BlockRegistry {
         registerTile(TileDiode.class);
         registerTile(TileSwitch.class);
         registerTile(TileRelay.class);
+        registerTile(TilePowerMeter.class);
     }
     
     private static void registerBlocks(IForgeRegistry registry, boolean isItemBlock, BlockBase... blocks) {

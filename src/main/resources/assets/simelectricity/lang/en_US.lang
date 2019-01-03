@@ -19,6 +19,7 @@ gui.sime:power_input=Input Power
 gui.sime:power_output=Output Power
 gui.sime:power_rated=Rated Power
 gui.sime:buffered_energy=Buffered Energy
+gui.sime:used_energy=Used Energy
 gui.sime:resistance_output=Output Resistance
 gui.sime:resistance_internal=Internal Resistance
 gui.sime:voltage_internal=Internal Voltage

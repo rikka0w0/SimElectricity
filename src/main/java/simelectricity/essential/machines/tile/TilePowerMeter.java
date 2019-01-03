@@ -4,6 +4,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ITickable;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import rikka.librikka.tileentity.IGuiProviderTile;
@@ -12,31 +13,35 @@ import simelectricity.api.SEAPI;
 import simelectricity.api.components.ISESwitch;
 import simelectricity.essential.common.semachine.ISESocketProvider;
 import simelectricity.essential.common.semachine.SETwoPortMachine;
-import simelectricity.essential.machines.gui.ContainerSwitch;
+import simelectricity.essential.machines.gui.ContainerPowerMeter;
 
-public class TileSwitch extends SETwoPortMachine implements ISESwitch, ISEEnergyNetUpdateHandler, ISESocketProvider, IGuiProviderTile {
-    public double current;
-
-    public double resistance = 0.001;
-    public double maxCurrent = 1;
+public class TilePowerMeter extends SETwoPortMachine implements ISESwitch, ISEEnergyNetUpdateHandler, ISESocketProvider, IGuiProviderTile, ITickable {
     public boolean isOn;
+    public double current, voltage, bufferedEnergy;
 
-    /////////////////////////////////////////////////////////
-    ///TileEntity
-    /////////////////////////////////////////////////////////
+    ///////////////////////////////////
+    /// TileEntity
+    ///////////////////////////////////
+    @Override
+    public void update() {
+        if (this.world.isRemote)
+            return;
+
+        if (this.isOn)
+            this.bufferedEnergy += voltage * current / 20;
+    }
+
     @Override
     public void readFromNBT(NBTTagCompound tagCompound) {
         super.readFromNBT(tagCompound);
 
-        this.resistance = tagCompound.getDouble("resistance");
-        this.maxCurrent = tagCompound.getDouble("maxCurrent");
+        this.bufferedEnergy = tagCompound.getDouble("bufferedEnergy");
         this.isOn = tagCompound.getBoolean("isOn");
     }
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
-        tagCompound.setDouble("resistance", this.resistance);
-        tagCompound.setDouble("maxCurrent", this.maxCurrent);
+        tagCompound.setDouble("bufferedEnergy", this.bufferedEnergy);
         tagCompound.setBoolean("isOn", this.isOn);
 
         return super.writeToNBT(tagCompound);
@@ -47,14 +52,11 @@ public class TileSwitch extends SETwoPortMachine implements ISESwitch, ISEEnergy
     /////////////////////////////////////////////////////////
     @Override
     public void onEnergyNetUpdate() {
+        this.voltage = SEAPI.energyNetAgent.getVoltage(input);
         if (this.isOn) {
-            this.current = SEAPI.energyNetAgent.getCurrentMagnitude(input);
+            this.current = (voltage - SEAPI.energyNetAgent.getVoltage(input.getComplement())) / this.getResistance();
         } else {
             this.current = 0;
-        }
-
-        if (this.current > this.maxCurrent) {
-            setSwitchStatus(false);
         }
     }
 
@@ -68,27 +70,7 @@ public class TileSwitch extends SETwoPortMachine implements ISESwitch, ISEEnergy
 
     @Override
     public double getResistance() {
-        return this.resistance;
-    }
-
-    /////////////////////////////////////////////////////////
-    ///Sync
-    /////////////////////////////////////////////////////////
-    @Override
-    public void prepareS2CPacketData(NBTTagCompound nbt) {
-        super.prepareS2CPacketData(nbt);
-
-        nbt.setBoolean("isOn", this.isOn);
-    }
-
-    @SideOnly(Side.CLIENT)
-    @Override
-    public void onSyncDataFromServerArrived(NBTTagCompound nbt) {
-        this.isOn = nbt.getBoolean("isOn");
-
-        markForRenderUpdate();
-
-        super.onSyncDataFromServerArrived(nbt);
+        return 0.01;
     }
 
     ///////////////////////////////////
@@ -106,20 +88,10 @@ public class TileSwitch extends SETwoPortMachine implements ISESwitch, ISEEnergy
     }
 
     ///////////////////////////////////
-    /// Utils
-    ///////////////////////////////////
-    public void setSwitchStatus(boolean isOn) {
-        this.isOn = isOn;
-        SEAPI.energyNetAgent.updateTileParameter(this);
-
-        markTileEntityForS2CSync();
-    }
-    
-    ///////////////////////////////////
     /// IGuiProviderTile
     ///////////////////////////////////
-	@Override
-	public Container getContainer(EntityPlayer player, EnumFacing side) {
-		return new ContainerSwitch(this);
-	}
+    @Override
+    public Container getContainer(EntityPlayer player, EnumFacing side) {
+        return new ContainerPowerMeter(this);
+    }
 }
