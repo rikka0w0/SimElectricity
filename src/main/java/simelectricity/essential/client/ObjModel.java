@@ -38,7 +38,6 @@ public class ObjModel implements IModel, IBakedModel {
     private final Set<ResourceLocation> textures = Sets.newHashSet();
     private final IModel model;
     private final IModelState defaultState;
-    private final ResourceLocation particleTexture;
     private final List<BakedQuad> quads = new ArrayList();
 
     public ObjModel(String domain, String modelName, EnumFacing facing, boolean is2State) throws Exception {
@@ -66,9 +65,6 @@ public class ObjModel implements IModel, IBakedModel {
         builder.add(Pair.of(model, variant.getState()));
 
         defaultState = new MultiModelState(builder.build());
-
-        particleTexture = new ResourceLocation("sime_essential:blocks/machines/motor");
-        textures.add(particleTexture);
     }
 
     @Override
@@ -103,8 +99,8 @@ public class ObjModel implements IModel, IBakedModel {
         IBakedModel bakedModel = this.model.bake(transformation, format, bakedTextureGetter);
 
         this.quads.addAll(bakedModel.getQuads(null, null, 0));
+        this.particle = bakedModel.getParticleTexture();
 
-        this.particle = bakedTextureGetter.apply(particleTexture);
         return this;
     }
 

@@ -33,11 +33,12 @@ public class SEMachineStateMapper extends StateMapperBase implements IModelLoade
             String modelName = stBlock.getModelNameFrom(state);
             EnumFacing facing = state.getValue(SEMachineBlock.propertyFacing);
             boolean is2State = state.getValue(SEMachineBlock.propertyIs2state);
+            boolean useObjModel = stBlock.useObjModel(state);
 
             if (!stBlock.hasSecondState(state))
                 is2State = false;
 
-            String varStr = modelName + "," + facing.ordinal() + "," + is2State;
+            String varStr = modelName + "," + facing.ordinal() + "," + is2State + "," + useObjModel;
 
             ModelResourceLocation res = new ModelResourceLocation(domain + ":" + SEMachineStateMapper.VPATH, varStr);
             return res;
@@ -57,13 +58,13 @@ public class SEMachineStateMapper extends StateMapperBase implements IModelLoade
         String blockName = splited[0];
         int facing = Integer.parseInt(splited[1]);
         boolean is2State = Boolean.parseBoolean(splited[2]);
+        boolean useObjModel = Boolean.parseBoolean(splited[3]);
 
-        if (blockName.startsWith("electronics_transformer_se2rf")) {
+        if (useObjModel) {
             return new ObjModel(domain, blockName, EnumFacing.getFront(facing), is2State);
+        } else {
+            return new SEMachineRawModel(domain, blockName, EnumFacing.getFront(facing), is2State);
         }
-
-        IModel model = new SEMachineRawModel(domain, blockName, EnumFacing.getFront(facing), is2State);
-        return model;
     }
 
     public void register(SEMachineBlock block) {

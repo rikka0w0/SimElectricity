@@ -13,13 +13,15 @@ import simelectricity.essential.utils.network.ISEButtonEventHandler;
 
 public class ContainerRF2SE extends ContainerNoInvAutoSync<TileRF2SE> implements ISEButtonEventHandler, IContainerWithGui {
     @ContainerSynchronizer.SyncField
-    public double internalVoltage;
-    @ContainerSynchronizer.SyncField
-    public double resistance;
+    public double ratedOutputPower;
     @ContainerSynchronizer.SyncField
     public double voltage;
     @ContainerSynchronizer.SyncField
-    public double current;
+    public double actualOutputPower;
+    @ContainerSynchronizer.SyncField
+    public int bufferedEnergy;
+    @ContainerSynchronizer.SyncField
+    public int rfInputRateDisplay;
 
     public ContainerRF2SE(TileEntity tileEntity) {
         super(tileEntity);
@@ -33,56 +35,35 @@ public class ContainerRF2SE extends ContainerNoInvAutoSync<TileRF2SE> implements
 
     @Override
     public void onButtonPressed(int buttonID, boolean isCtrlPressed) {
-        double resistance = host.resistance;
-        double internalVoltage = host.internalVoltage;
+        double ratedOutputPower = host.ratedOutputPower;
 
         switch (buttonID) {
             case 0:
-                resistance -= 1;
+                ratedOutputPower -= 100;
                 break;
             case 1:
-                resistance -= 0.1;
+                ratedOutputPower -= 10;
                 break;
             case 2:
-                resistance -= 0.01;
-                break;
+                ratedOutputPower -= 1;
             case 3:
-                resistance += 0.01;
+                ratedOutputPower += 1;
                 break;
             case 4:
-                resistance += 0.1;
+                ratedOutputPower += 10;
                 break;
             case 5:
-                resistance += 1;
-                break;
-
-            case 7:
-                internalVoltage -= 10;
-                break;
-            case 8:
-                internalVoltage -= 1;
-                break;
-            case 9:
-                internalVoltage += 1;
-                break;
-            case 10:
-                internalVoltage += 10;
+                ratedOutputPower += 100;
                 break;
         }
 
-        if (resistance < 0.01)
-            resistance = 0.01;
-        if (resistance > 10)
-            resistance = 10;
+        if (ratedOutputPower < 10)
+            ratedOutputPower = 10;
+        if (ratedOutputPower > TileRF2SE.bufferCapacity / 2)
+            ratedOutputPower = TileRF2SE.bufferCapacity / 2;
 
-        if (internalVoltage < 180)
-            internalVoltage = 180;
-        if (internalVoltage > 265)
-            internalVoltage = 265;
+        host.ratedOutputPower = ratedOutputPower;
 
-        host.resistance = resistance;
-        host.internalVoltage = internalVoltage;
-
-        SEAPI.energyNetAgent.updateTileParameter(this.host);
+        // SEAPI.energyNetAgent.updateTileParameter(this.host);
     }
 }

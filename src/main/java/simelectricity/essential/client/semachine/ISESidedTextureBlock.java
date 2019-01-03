@@ -10,4 +10,9 @@ public interface ISESidedTextureBlock {
 
     @SideOnly(Side.CLIENT)
     String getModelNameFrom(IBlockState blockState);
+
+    @SideOnly(Side.CLIENT)
+    default boolean useObjModel(IBlockState blockState) {
+        return false;
+    }
 }

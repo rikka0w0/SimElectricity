@@ -61,10 +61,17 @@ public class BlockElectronics extends SEMachineBlock implements ISESidedTextureB
     }
 
     @Override
-    public boolean hasSecondState(IBlockState state) {
-        int meta = getMetaFromState(state);
+    public boolean hasSecondState(IBlockState blockState) {
+        int meta = getMetaFromState(blockState);
 
         return meta == 3;
+    }
+
+    @Override
+    public boolean useObjModel(IBlockState blockState) {
+        int meta = getMetaFromState(blockState);
+
+        return meta == 5 || meta == 6;
     }
 
     //////////////////////////////////////

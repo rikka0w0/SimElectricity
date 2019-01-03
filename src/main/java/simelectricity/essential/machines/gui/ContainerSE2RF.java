@@ -61,13 +61,13 @@ public class ContainerSE2RF extends ContainerNoInvAutoSync<TileSE2RF> implements
                 break;
         }
 
-        if (ratedOutputPower < 50)
-            ratedOutputPower = 50;
+        if (ratedOutputPower < 10)
+            ratedOutputPower = 10;
         if (ratedOutputPower > TileSE2RF.bufferCapacity / 2)
             ratedOutputPower = TileSE2RF.bufferCapacity / 2;
 
         host.ratedOutputPower = ratedOutputPower;
 
-        SEAPI.energyNetAgent.updateTileParameter(this.host);
+        // SEAPI.energyNetAgent.updateTileParameter(this.host);
     }
 }
