@@ -32,4 +32,11 @@ public abstract class SEEnergyTile extends TileEntityBase {
     public void onChunkUnload() {
         this.invalidate();
     }
+
+    /**
+     * A helper function
+     */
+    protected final void updateTileParameter() {
+        SEAPI.energyNetAgent.updateTileParameter(this);
+    }
 }

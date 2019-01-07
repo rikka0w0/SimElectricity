@@ -15,6 +15,7 @@ tile.sime_essential:essential_cable.gold_thick.name=Thick Gold Cable
 tile.sime_essential:essential_electronics.voltage_meter.name=Voltage Meter
 tile.sime_essential:essential_electronics.quantum_generator.name=Quantum Generator
 tile.sime_essential:essential_electronics.adjustable_resistor.name=Adjustable Resistor
+tile.sime_essential:essential_electronics.electric_furnace.name=Electric Furnace
 tile.sime_essential:essential_electronics.incandescent_lamp.name=Incandescent Lamp
 tile.sime_essential:essential_electronics.transformer_se2rf.name=SE to RF converter
 tile.sime_essential:essential_electronics.transformer_rf2se.name=RF to SE converter

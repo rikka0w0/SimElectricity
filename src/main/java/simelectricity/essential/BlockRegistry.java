@@ -99,7 +99,7 @@ public class BlockRegistry {
         registerTile(TileQuantumGenerator.class);
         registerTile(TileAdjustableResistor.class);
         registerTile(TileIncandescentLamp.class);
-        registerTile(TileSolarPanel.class);
+        registerTile(TileElectricFurnace.class);
         registerTile(TileSE2RF.class);
         registerTile(TileRF2SE.class);
 

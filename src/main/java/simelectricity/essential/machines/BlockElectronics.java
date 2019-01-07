@@ -20,7 +20,7 @@ import simelectricity.essential.common.semachine.SESinglePortMachine;
 import simelectricity.essential.machines.tile.*;
 
 public class BlockElectronics extends SEMachineBlock implements ISESidedTextureBlock {
-    public static String subNames[] = {"voltage_meter", "quantum_generator", "adjustable_resistor", "incandescent_lamp", "solar_panel", "transformer_se2rf", "transformer_rf2se"};
+    public static String subNames[] = {"voltage_meter", "quantum_generator", "adjustable_resistor", "incandescent_lamp", "electric_furnace", "transformer_se2rf", "transformer_rf2se"};
 
     ///////////////////////////////
     ///Block Properties
@@ -41,7 +41,7 @@ public class BlockElectronics extends SEMachineBlock implements ISESidedTextureB
             case 3:
                 return new TileIncandescentLamp();
             case 4:
-                return new TileSolarPanel();
+                return new TileElectricFurnace();
             case 5:
                 return new TileSE2RF();
             case 6:
@@ -64,7 +64,7 @@ public class BlockElectronics extends SEMachineBlock implements ISESidedTextureB
     public boolean hasSecondState(IBlockState blockState) {
         int meta = getMetaFromState(blockState);
 
-        return meta == 3;
+        return meta == 3 || meta == 4;
     }
 
     @Override
@@ -79,7 +79,11 @@ public class BlockElectronics extends SEMachineBlock implements ISESidedTextureB
     //////////////////////////////////////
     @Override
     protected boolean isSecondState(TileEntity te) {
-        return te instanceof TileIncandescentLamp && ((TileIncandescentLamp) te).lightLevel < 8;
+        if (te instanceof TileIncandescentLamp)
+            return ((TileIncandescentLamp) te).lightLevel < 8;
+        if (te instanceof TileElectricFurnace)
+            return !((TileElectricFurnace) te).isWorking();
+        return false;
     }
 
     @Override
@@ -98,7 +102,7 @@ public class BlockElectronics extends SEMachineBlock implements ISESidedTextureB
             return false;
 
         int meta = state.getBlock().getMetaFromState(state);
-        if (meta == 3 || meta == 4)
+        if (meta == 3)
             return false;    //Incandescent Lamp doesn't have an Gui!
 
         //When openGui() is call on the server side, Forge seems automatically send a packet to client side

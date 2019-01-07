@@ -12,7 +12,7 @@ import simelectricity.essential.common.semachine.ISESocketProvider;
 import simelectricity.essential.common.semachine.SESinglePortMachine;
 
 public class TileIncandescentLamp extends SESinglePortMachine implements ISEVoltageSource, ISEEnergyNetUpdateHandler, ISESocketProvider {
-    public volatile byte lightLevel;
+    public byte lightLevel;
 
     @Override
     public double getResistance() {
@@ -38,13 +38,7 @@ public class TileIncandescentLamp extends SESinglePortMachine implements ISEVolt
             lightLevel = 15;
 
         this.lightLevel = (byte) lightLevel;
-
-        ((WorldServer) world).addScheduledTask(new Runnable() {
-            @Override
-            public void run() {
-            	markTileEntityForS2CSync();
-            }
-        });
+        markTileEntityForS2CSync();
     }
 
     @Override
