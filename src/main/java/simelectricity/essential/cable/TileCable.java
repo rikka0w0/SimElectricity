@@ -312,7 +312,7 @@ public class TileCable extends SEEnergyTile implements ISEGenericCable, ISEIumin
     ////////////////////////////////////////
     @Override
     public void onEnergyNetUpdate() {
-		this.voltage = SEAPI.energyNetAgent.getVoltage(node);
+		this.voltage = this.node.getVoltage();
 
         for (ISECoverPanel coverPanel : installedCoverPanels) {
             if (coverPanel instanceof ISEElectricalCoverPanel)

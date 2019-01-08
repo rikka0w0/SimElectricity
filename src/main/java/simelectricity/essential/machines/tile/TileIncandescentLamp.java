@@ -11,7 +11,7 @@ import simelectricity.api.components.ISEVoltageSource;
 import simelectricity.essential.common.semachine.ISESocketProvider;
 import simelectricity.essential.common.semachine.SESinglePortMachine;
 
-public class TileIncandescentLamp extends SESinglePortMachine implements ISEVoltageSource, ISEEnergyNetUpdateHandler, ISESocketProvider {
+public class TileIncandescentLamp extends SESinglePortMachine<ISEVoltageSource> implements ISEVoltageSource, ISEEnergyNetUpdateHandler, ISESocketProvider {
     public byte lightLevel;
 
     @Override
@@ -31,8 +31,8 @@ public class TileIncandescentLamp extends SESinglePortMachine implements ISEVolt
 
     @Override
     public void onEnergyNetUpdate() {
-        double voltage = SEAPI.energyNetAgent.getVoltage(circuit);
-        double lightLevel = voltage * voltage / this.getResistance() / 0.3D;
+        double voltage = this.circuit.getVoltage();
+        double lightLevel = voltage * voltage / this.cachedParam.getResistance() / 0.3D;
 
         if (lightLevel > 15)
             lightLevel = 15;

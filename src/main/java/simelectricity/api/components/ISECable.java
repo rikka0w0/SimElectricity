@@ -28,7 +28,7 @@ public interface ISECable extends ISEComponentParameter {
     boolean canConnectOnSide(EnumFacing side);
 
     /**
-     * @return true to link to cable node to the grid node at the same location
+     * @return true to allow the link to cable node to the grid node at the same location
      */
     boolean isGridLinkEnabled();
 
@@ -36,7 +36,8 @@ public interface ISECable extends ISEComponentParameter {
 
     /**
      * Shunt resistance is the resistance placed between the cable node and the ground (0V reference)
-     * @return must be a non-zero value
+     * Sometimes used by cover panels
+     * @return must be a non-zero value, if shunt resistance is not applicable, hasShuntResistance() should return false.
      */
     double getShuntResistance();
 }

@@ -14,7 +14,7 @@ import simelectricity.essential.common.semachine.ISESocketProvider;
 import simelectricity.essential.common.semachine.SETwoPortMachine;
 import simelectricity.essential.machines.gui.ContainerSwitch;
 
-public class TileSwitch extends SETwoPortMachine implements ISESwitch, ISEEnergyNetUpdateHandler, ISESocketProvider, IGuiProviderTile {
+public class TileSwitch extends SETwoPortMachine<ISESwitch> implements ISESwitch, ISEEnergyNetUpdateHandler, ISESocketProvider, IGuiProviderTile {
     public double current;
 
     public double resistance = 0.001;
@@ -47,8 +47,8 @@ public class TileSwitch extends SETwoPortMachine implements ISESwitch, ISEEnergy
     /////////////////////////////////////////////////////////
     @Override
     public void onEnergyNetUpdate() {
-        if (this.isOn) {
-            this.current = SEAPI.energyNetAgent.getCurrentMagnitude(input);
+        if (this.cachedParam.isOn()) {
+            this.current = this.input.getCurrentMagnitude();
         } else {
             this.current = 0;
         }

@@ -8,20 +8,19 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import rikka.librikka.tileentity.IGuiProviderTile;
 import simelectricity.api.ISEEnergyNetUpdateHandler;
-import simelectricity.api.SEAPI;
 import simelectricity.api.components.ISEVoltageSource;
 import simelectricity.essential.common.semachine.ISESocketProvider;
 import simelectricity.essential.common.semachine.SESinglePortMachine;
 import simelectricity.essential.machines.gui.ContainerQuantumGenerator;
 
-public class TileQuantumGenerator extends SESinglePortMachine implements ISEVoltageSource, ISEEnergyNetUpdateHandler, ISESocketProvider, IGuiProviderTile {
+public class TileQuantumGenerator extends SESinglePortMachine<ISEVoltageSource> implements ISEVoltageSource, ISEEnergyNetUpdateHandler, ISESocketProvider, IGuiProviderTile {
     //Component parameters
-    public volatile double internalVoltage = 230;
-    public volatile double resistance = 0.1;
+    public double internalVoltage = 230;
+    public double resistance = 0.1;
 
     //Calculated values
-    public volatile double voltage;
-    public volatile double current;
+    public double voltage;
+    public double current;
 
     ///////////////////////////////////
     /// TileEntity
@@ -65,11 +64,11 @@ public class TileQuantumGenerator extends SESinglePortMachine implements ISEVolt
     ///////////////////////////////////
     @Override
     public void onEnergyNetUpdate() {
-        this.voltage = SEAPI.energyNetAgent.getVoltage(circuit);
+        this.voltage = this.circuit.getVoltage();
 
         //Get the resistance (in the state) when the voltage is calculated
-        double internalVoltage = ((ISEVoltageSource) circuit).getOutputVoltage();
-        double resistance = ((ISEVoltageSource) circuit).getResistance();
+        double internalVoltage = this.cachedParam.getOutputVoltage();
+        double resistance = this.cachedParam.getResistance();
         this.current = (internalVoltage - this.voltage) / resistance;
     }
 

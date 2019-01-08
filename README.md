@@ -6,11 +6,15 @@ A Minecraft mod aiming to bring real world electrical systems into the Minecraft
 
 Presented by the Chinese Institution of Scientific Minecraft Mod (CISM)
 
-![Image](/documentation/hvpole.png)
+Currently Supported Version: Minecraft Forge 1.11.2
+
+![Image](/documentation/grid.jpg)
 
 # Addons: ![Image](/src/main/resources/assets/sime_essential/textures/items/cell_vita.png)
-[BuildCraft Extension](https://github.com/RoyalAliceAcademyOfSciences/SimElectricity_BuildCraft_Extension):
-Install BuildCraft facade to SimElectricity cable
+1. [BuildCraft Extension](https://github.com/RoyalAliceAcademyOfSciences/SimElectricity_BuildCraft_Extension):
+Install BuildCraft facades to SimElectricity cable. This Mod must be installed with BuildCraft and SimElectricity Essential at the sametime,
+otherwise BuildCraft API will not work.
+1. ThermalExpension Extension: Install ThermalDynamics facades to SimElectricity cable, already included in the SimElectricity Essential Mod.
 
 # Setup the Environment ![Image](/src/main/resources/assets/sime_essential/textures/items/tool_multimeter.png)
 1. Ensure `Java` (found [here](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)) and `Git` (found [here](http://git-scm.com/)) are properly installed on your system.
@@ -38,6 +42,9 @@ and type the following commands:
 * `SimElectricity-full.jar` includes LibRikka
 
 # For Developers ![Image](/src/main/resources/assets/sime_essential/textures/items/tool_wrench.png)
+For API Usage, Please refer to the [SimElectricity Github Wiki Pages](https://github.com/RoyalAliceAcademyOfSciences/SimElectricity/wiki)
+and comments in the API source code (`package simelectricity.api`).
+
 ## Eclipse
 1. Setup the environment first (See section "Setup Environment")
 1. In the SimElectricity directory execute `gradlew eclipse` to generate the workspace and launch configuration

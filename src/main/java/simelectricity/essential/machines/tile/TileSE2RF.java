@@ -21,15 +21,15 @@ import simelectricity.essential.common.semachine.ISESocketProvider;
 import simelectricity.essential.common.semachine.SESinglePortMachine;
 import simelectricity.essential.machines.gui.ContainerSE2RF;
 
-public class TileSE2RF extends SESinglePortMachine implements ISEConstantPowerLoad, ISEEnergyNetUpdateHandler, ITickable, IGuiProviderTile, ISESocketProvider {
+public class TileSE2RF extends SESinglePortMachine<ISEConstantPowerLoad> implements ISEConstantPowerLoad, ISEEnergyNetUpdateHandler, ITickable, IGuiProviderTile, ISESocketProvider {
     public final static double bufferCapacity = 1000;	// J
     public double ratedOutputPower = 100;	            // W
 
     public double ouputPowerSetPoint = 1;
     public boolean enabled = true;
     
-    public volatile double voltage;				// V
-    public volatile double actualInputPower;    // J per sec = J per 20-tick
+    public double voltage;				// V
+    public double actualInputPower;    // J per sec = J per 20-tick
     public double bufferedEnergy;				// J
     public int rfDemandRateDisplay;
     public int rfOutputRateDisplay;
@@ -221,8 +221,7 @@ public class TileSE2RF extends SESinglePortMachine implements ISEConstantPowerLo
     ///////////////////////////////////
     @Override
     public void onEnergyNetUpdate() {
-        this.voltage = SEAPI.energyNetAgent.getVoltage(circuit);
-        ISEConstantPowerLoad cachedParam = (ISEConstantPowerLoad) circuit;
+        this.voltage = this.circuit.getVoltage();
 
         if (!cachedParam.isOn()) {
             this.actualInputPower = 0;

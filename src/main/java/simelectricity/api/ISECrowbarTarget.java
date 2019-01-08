@@ -2,6 +2,9 @@ package simelectricity.api;
 
 import net.minecraft.util.EnumFacing;
 
+/**
+ * For TileEntities only, example: cable implement this to allow crowbar remove installed cover panels
+ */
 public interface ISECrowbarTarget {
     /**
      * @return false to reject the action

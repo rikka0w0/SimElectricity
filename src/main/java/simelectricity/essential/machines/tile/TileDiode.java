@@ -13,8 +13,8 @@ import simelectricity.essential.common.semachine.ISESocketProvider;
 import simelectricity.essential.common.semachine.SETwoPortMachine;
 import simelectricity.essential.machines.gui.ContainerDiode;
 
-public class TileDiode extends SETwoPortMachine implements ISEDiode, ISEEnergyNetUpdateHandler, ISESocketProvider, IGuiProviderTile {
-    public volatile double inputVoltage, outputVoltage;
+public class TileDiode extends SETwoPortMachine<ISEDiode> implements ISEDiode, ISEEnergyNetUpdateHandler, ISESocketProvider, IGuiProviderTile {
+    public double inputVoltage, outputVoltage;
 
     /////////////////////////////////////////////////////////
     ///ISEDiodeData
@@ -39,8 +39,8 @@ public class TileDiode extends SETwoPortMachine implements ISEDiode, ISEEnergyNe
     ///////////////////////////////////
     @Override
     public void onEnergyNetUpdate() {
-        this.inputVoltage = SEAPI.energyNetAgent.getVoltage(input);
-        this.outputVoltage = SEAPI.energyNetAgent.getVoltage(input.getComplement());
+        this.inputVoltage = this.input.getVoltage();
+        this.outputVoltage = this.input.getComplement().getVoltage();
     }
 
     ///////////////////////////////////

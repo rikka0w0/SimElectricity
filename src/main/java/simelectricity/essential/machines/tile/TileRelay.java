@@ -18,10 +18,10 @@ import simelectricity.essential.machines.gui.ContainerRelay;
  * Created by manageryzy on 12/18/2017.
  */
 public class TileRelay extends SETwoPortMachine implements ISESwitch, ISEEnergyNetUpdateHandler, ISESocketProvider, IGuiProviderTile {
-    public volatile double current;
+    public double current;
 
-    public volatile double resistance = 0.001;
-    public volatile boolean isOn;
+    public double resistance = 0.001;
+    public boolean isOn;
 
     /////////////////////////////////////////////////////////
     ///TileEntity
@@ -48,7 +48,7 @@ public class TileRelay extends SETwoPortMachine implements ISESwitch, ISEEnergyN
     @Override
     public void onEnergyNetUpdate() {
         if (this.isOn) {
-            this.current = SEAPI.energyNetAgent.getCurrentMagnitude(input);
+            this.current = this.input.getCurrentMagnitude();
         } else {
             this.current = 0;
         }

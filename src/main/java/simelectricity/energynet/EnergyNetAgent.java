@@ -86,16 +86,6 @@ public class EnergyNetAgent implements ISEEnergyNetAgent {
     }
 
     @Override
-    public double getVoltage(ISESimulatable Tile) {
-        return EnergyNet.getVoltage(Tile);
-    }
-
-    @Override
-    public double getCurrentMagnitude(ISESimulatable Tile) {
-        return EnergyNet.getCurrentMagnitude(Tile);
-    }
-
-    @Override
     public boolean canConnectTo(TileEntity tileEntity, EnumFacing direction) {
         if (tileEntity instanceof ISECableTile) {
             ISECableTile cableTile = (ISECableTile) tileEntity;

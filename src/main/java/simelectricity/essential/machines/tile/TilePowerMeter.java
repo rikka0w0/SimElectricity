@@ -9,13 +9,12 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import rikka.librikka.tileentity.IGuiProviderTile;
 import simelectricity.api.ISEEnergyNetUpdateHandler;
-import simelectricity.api.SEAPI;
 import simelectricity.api.components.ISESwitch;
 import simelectricity.essential.common.semachine.ISESocketProvider;
 import simelectricity.essential.common.semachine.SETwoPortMachine;
 import simelectricity.essential.machines.gui.ContainerPowerMeter;
 
-public class TilePowerMeter extends SETwoPortMachine implements ISESwitch, ISEEnergyNetUpdateHandler, ISESocketProvider, IGuiProviderTile, ITickable {
+public class TilePowerMeter extends SETwoPortMachine<ISESwitch> implements ISESwitch, ISEEnergyNetUpdateHandler, ISESocketProvider, IGuiProviderTile, ITickable {
     public boolean isOn;
     public double current, voltage, bufferedEnergy;
 
@@ -52,9 +51,9 @@ public class TilePowerMeter extends SETwoPortMachine implements ISESwitch, ISEEn
     /////////////////////////////////////////////////////////
     @Override
     public void onEnergyNetUpdate() {
-        this.voltage = SEAPI.energyNetAgent.getVoltage(input);
+        this.voltage = this.input.getVoltage();
         if (this.isOn) {
-            this.current = (voltage - SEAPI.energyNetAgent.getVoltage(input.getComplement())) / this.getResistance();
+            this.current = (voltage - this.input.getComplement().getVoltage()) / this.cachedParam.getResistance();
         } else {
             this.current = 0;
         }

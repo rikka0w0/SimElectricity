@@ -9,6 +9,8 @@ import net.minecraft.util.math.BlockPos;
  * <p/>
  * Once the host chunk is loaded, the EnergyNet will assign this ISEGridNode to the {@link simelectricity.api.tile.ISEGridTile}
  * at the same location
+ *
+ * API users should NOT implement this interface!.
  */
 public interface ISEGridNode extends ISESimulatable {
     int ISEGridNode_Wire = 0;

@@ -47,4 +47,62 @@ public abstract class SEComponent implements ISESimulatable, ISEComponentParamet
          */
         public abstract void updateComponentParameters();
     }
+
+    @Override
+    public double getVoltage() {
+        if (this.eliminated) {
+            if (this.optimizedNeighbors.size() == 2) {
+                SEComponent A = this.optimizedNeighbors.getFirst();
+                SEComponent B = this.optimizedNeighbors.getLast();
+                double vA = A.voltageCache;
+                double vB = B.voltageCache;
+                double rA = this.optimizedResistance.getFirst();
+                double rB = this.optimizedResistance.getLast();
+                return vA - (vA - vB) * rA / (rA + rB);
+            } else if (this.optimizedNeighbors.size() == 1) {
+                return this.optimizedNeighbors.getFirst().voltageCache;
+            } else if (this.optimizedNeighbors.size() == 0) {
+                return 0;
+            } else {
+                throw new RuntimeException("WTF mate whats going on?!");
+            }
+        } else {
+            return this.voltageCache;
+        }
+    }
+
+    public double getCurrentMagnitude() {
+        if (this.eliminated) {
+            if (this.optimizedNeighbors.size() == 2) {
+                SEComponent A = this.optimizedNeighbors.getFirst();
+                SEComponent B = this.optimizedNeighbors.getLast();
+                double vA = A.voltageCache;
+                double vB = B.voltageCache;
+                double rA = this.optimizedResistance.getFirst();
+                double rB = this.optimizedResistance.getLast();
+                return Math.abs((vA - vB) / (rA + rB));
+            } else if (this.optimizedNeighbors.size() == 1) {
+                return 0;
+            } else if (this.optimizedNeighbors.size() == 0) {
+                return 0;
+            } else {
+                throw new RuntimeException("WTF mate whats going on?!");
+            }
+        } else if (this instanceof SwitchA) {
+            SwitchA switchA = (SwitchA) this;
+            double vA = switchA.voltageCache;
+            double vB = switchA.getComplement().voltageCache;
+            return Math.abs((vA - vB) / switchA.getResistance());
+        } else if (this instanceof SwitchB) {
+            SwitchB switchB = (SwitchB) this;
+            double vA = switchB.voltageCache;
+            double vB = switchB.getComplement().voltageCache;
+            return Math.abs((vA - vB) / switchB.getResistance());
+        } else if (this instanceof VoltageSource) {
+            VoltageSource vs = (VoltageSource) this;
+            return Math.abs((vs.voltageCache - vs.getOutputVoltage()) / vs.getResistance());
+        }
+
+        return Double.NaN;
+    }
 }

@@ -4,19 +4,17 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import rikka.librikka.tileentity.IGuiProviderTile;
 import simelectricity.api.ISEEnergyNetUpdateHandler;
-import simelectricity.api.SEAPI;
 import simelectricity.api.components.ISESwitch;
 import simelectricity.essential.common.semachine.ISESocketProvider;
 import simelectricity.essential.common.semachine.SETwoPortMachine;
 import simelectricity.essential.machines.gui.ContainerCurrentSensor;
 
-public class TileCurrentSensor extends SETwoPortMachine implements ISESwitch, ISEEnergyNetUpdateHandler, ISESocketProvider, IGuiProviderTile {
-    public volatile double current;
+public class TileCurrentSensor extends SETwoPortMachine<ISESwitch> implements ISESwitch, ISEEnergyNetUpdateHandler, ISESocketProvider, IGuiProviderTile {
+    public double current;
     public boolean emitRedstoneSignal;
 
     public double resistance = 0.001;
@@ -52,15 +50,9 @@ public class TileCurrentSensor extends SETwoPortMachine implements ISESwitch, IS
     /////////////////////////////////////////////////////////
     @Override
     public void onEnergyNetUpdate() {
-        this.current = SEAPI.energyNetAgent.getCurrentMagnitude(input);
+        this.current = this.input.getCurrentMagnitude();
 
-        WorldServer world = (WorldServer) this.world;
-        world.addScheduledTask(new Runnable() {
-            @Override
-            public void run() {
-                TileCurrentSensor.this.checkRedstoneStatus();    //Update the world from the server thread
-            }
-        });
+        TileCurrentSensor.this.checkRedstoneStatus();    //Update the world from the server thread
     }
 
     /////////////////////////////////////////////////////////

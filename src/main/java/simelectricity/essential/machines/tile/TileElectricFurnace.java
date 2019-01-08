@@ -27,8 +27,8 @@ import simelectricity.essential.machines.gui.ContainerElectricFurnace;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class TileElectricFurnace extends SESinglePortMachine implements ISEVoltageSource, ISEEnergyNetUpdateHandler, ISESocketProvider, ITickable, ISidedInventory, IGuiProviderTile {
-    public static float energyPerItem = 1000F;
+public class TileElectricFurnace extends SESinglePortMachine<ISEVoltageSource> implements ISEVoltageSource, ISEEnergyNetUpdateHandler, ISESocketProvider, ITickable, ISidedInventory, IGuiProviderTile {
+    public static float energyPerItem = 5000F;
 
     //Component parameters
     private double resistance = 100;
@@ -366,8 +366,8 @@ public class TileElectricFurnace extends SESinglePortMachine implements ISEVolta
     ///////////////////////////////////
     @Override
     public void onEnergyNetUpdate() {
-        this.voltage = SEAPI.energyNetAgent.getVoltage(circuit);
-        this.powerLevel = this.voltage * this.voltage / ((ISEVoltageSource)this.circuit).getResistance();
+        this.voltage = this.circuit.getVoltage();
+        this.powerLevel = this.voltage * this.voltage / this.cachedParam.getResistance();
     }
 
     ///////////////////////////////////

@@ -148,7 +148,7 @@ public class ItemTools extends ItemBase implements ISimpleTexture {
                 if (comp != null && comp != delegatedNode) {
                     String[] temp = comp.toString().split("[.]");
                     Utils.chat(player, temp[temp.length - 1].split("@")[0] + ": " +
-                            SEUnitHelper.getVoltageStringWithUnit(SEAPI.energyNetAgent.getVoltage(comp)));
+                            SEUnitHelper.getVoltageStringWithUnit(comp.getVoltage()));
                 }
             }
 
@@ -178,10 +178,9 @@ public class ItemTools extends ItemBase implements ISimpleTexture {
     			s = "TransformerSecondary";
     	}
     	
-    	s += ", " + SEUnitHelper.getVoltageStringWithUnit(
-                SEAPI.energyNetAgent.getVoltage(node));
+    	s += ", " + SEUnitHelper.getVoltageStringWithUnit(node.getVoltage());
     	
-        double currentMagnitude = SEAPI.energyNetAgent.getCurrentMagnitude(node);
+        double currentMagnitude = node.getCurrentMagnitude();
         if (!Double.isNaN(currentMagnitude))
         	s += ", I=" + SEUnitHelper.getCurrentStringWithUnit(currentMagnitude);
         

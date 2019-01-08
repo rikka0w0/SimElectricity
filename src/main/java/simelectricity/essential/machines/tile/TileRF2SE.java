@@ -3,7 +3,6 @@ package simelectricity.essential.machines.tile;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.MathHelper;
@@ -12,19 +11,16 @@ import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import rikka.librikka.Utils;
 import rikka.librikka.tileentity.IGuiProviderTile;
-import scala.tools.nsc.settings.RC;
 import simelectricity.api.ISEEnergyNetUpdateHandler;
 import simelectricity.api.SEAPI;
 import simelectricity.api.components.ISEConstantPowerSource;
-import simelectricity.api.components.ISEVoltageSource;
 import simelectricity.essential.ConfigProvider;
 import simelectricity.essential.common.semachine.ISESocketProvider;
 import simelectricity.essential.common.semachine.SESinglePortMachine;
 import simelectricity.essential.machines.gui.ContainerRF2SE;
 
-public class TileRF2SE extends SESinglePortMachine implements ISEConstantPowerSource, ISEEnergyNetUpdateHandler, ITickable, IGuiProviderTile, ISESocketProvider {
+public class TileRF2SE extends SESinglePortMachine<ISEConstantPowerSource> implements ISEConstantPowerSource, ISEEnergyNetUpdateHandler, ITickable, IGuiProviderTile, ISESocketProvider {
     public final static int bufferCapacity = 1000;	// RF
     public double ratedOutputPower = 100;	            // W
 
@@ -197,8 +193,7 @@ public class TileRF2SE extends SESinglePortMachine implements ISEConstantPowerSo
     ///////////////////////////////////
     @Override
     public void onEnergyNetUpdate() {
-        this.voltage = SEAPI.energyNetAgent.getVoltage(circuit);
-        ISEConstantPowerSource cachedParam = (ISEConstantPowerSource) circuit;
+        this.voltage = this.circuit.getVoltage();
 
         if (!cachedParam.isOn()) {
             this.actualOutputPower = 0;

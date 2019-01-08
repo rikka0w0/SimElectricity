@@ -12,11 +12,12 @@ import simelectricity.api.node.ISESubComponent;
 import simelectricity.api.tile.ISETile;
 import simelectricity.essential.common.SEEnergyTile;
 
-public class SETwoPortMachine extends SEEnergyTile implements ISESidedFacing, ISETile, ISEComponentParameter {
+public class SETwoPortMachine<T extends ISEComponentParameter> extends SEEnergyTile implements ISESidedFacing, ISETile, ISEComponentParameter {
     public EnumFacing inputSide = EnumFacing.SOUTH;
     public EnumFacing outputSide = EnumFacing.NORTH;
     protected EnumFacing facing = EnumFacing.NORTH;
-    protected ISESubComponent input = SEAPI.energyNetAgent.newComponent(this, this);
+    protected final ISESubComponent input = SEAPI.energyNetAgent.newComponent(this, this);
+    protected final T cachedParam = (T) input;
 
     ///////////////////////////////////
     /// TileEntity

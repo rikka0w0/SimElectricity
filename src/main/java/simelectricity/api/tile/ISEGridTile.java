@@ -6,7 +6,8 @@ import net.minecraft.util.math.BlockPos;
 import simelectricity.api.node.ISEGridNode;
 
 /**
- * For TileEntities only.
+ * For TileEntities only. Once the containing chunk is loaded,
+ * A tileEntity implemented this interface will be associated with its corresponding ISEGridObject.
  */
 public interface ISEGridTile {
     ISEGridNode getGridNode();
@@ -30,7 +31,7 @@ public interface ISEGridTile {
     void onGridNeighborUpdated();
     
     /**
-     * 
+     * Called by HV cables or others to determine if the node can accept more connections
      * @param toPos null - selected by player, non-null - target position
      * @return false to reject
      */

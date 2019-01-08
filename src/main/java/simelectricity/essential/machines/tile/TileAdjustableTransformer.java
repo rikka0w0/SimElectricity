@@ -14,11 +14,11 @@ import simelectricity.essential.common.semachine.ISESocketProvider;
 import simelectricity.essential.common.semachine.SETwoPortMachine;
 import simelectricity.essential.machines.gui.ContainerAdjustableTransformer;
 
-public class TileAdjustableTransformer extends SETwoPortMachine implements ISETransformer, ISEEnergyNetUpdateHandler, ISESocketProvider, IGuiProviderTile {
+public class TileAdjustableTransformer extends SETwoPortMachine<ISETransformer> implements ISETransformer, ISEEnergyNetUpdateHandler, ISESocketProvider, IGuiProviderTile {
     //Input - primary, output - secondary
     public double ratio = 10, outputResistance = 1;
 
-    public volatile double vPri, vSec;
+    public double vPri, vSec;
 
     /////////////////////////////////////////////////////////
     ///TileEntity
@@ -44,8 +44,8 @@ public class TileAdjustableTransformer extends SETwoPortMachine implements ISETr
     /////////////////////////////////////////////////////////
     @Override
     public void onEnergyNetUpdate() {
-		this.vPri = SEAPI.energyNetAgent.getVoltage(this.input);
-		this.vSec = SEAPI.energyNetAgent.getVoltage(this.input.getComplement());
+		this.vPri = this.input.getVoltage();
+		this.vSec = this.input.getComplement().getVoltage();
     }
 
     /////////////////////////////////////////////////////////

@@ -179,29 +179,6 @@ public final class EnergyNet {
     public void notifyServerShuttingdown() {
         this.simulator.suicide();
     }
-    
-    public static final double getVoltage(ISESimulatable Tile) {
-        SEComponent node = (SEComponent) Tile;
-        if (node.eliminated) {
-            if (node.optimizedNeighbors.size() == 2) {
-                SEComponent A = node.optimizedNeighbors.getFirst();
-                SEComponent B = node.optimizedNeighbors.getLast();
-                double vA = A.voltageCache;
-                double vB = B.voltageCache;
-                double rA = node.optimizedResistance.getFirst();
-                double rB = node.optimizedResistance.getLast();
-                return vA - (vA - vB) * rA / (rA + rB);
-            } else if (node.optimizedNeighbors.size() == 1) {
-                return node.optimizedNeighbors.getFirst().voltageCache;
-            } else if (node.optimizedNeighbors.size() == 0) {
-                return 0;
-            } else {
-                throw new RuntimeException("WTF mate whats going on?!");
-            }
-        } else {
-            return node.voltageCache;
-        }
-    }
 
     public static final double getCurrentMagnitude(ISESimulatable Tile) {
         SEComponent node = (SEComponent) Tile;

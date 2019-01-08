@@ -13,10 +13,11 @@ import simelectricity.api.node.ISESubComponent;
 import simelectricity.api.tile.ISETile;
 import simelectricity.essential.common.SEEnergyTile;
 
-public abstract class SESinglePortMachine extends SEEnergyTile implements ISESidedFacing, ISEWrenchable, ISETile, ISEComponentParameter {
+public abstract class SESinglePortMachine<T extends ISEComponentParameter> extends SEEnergyTile implements ISESidedFacing, ISEWrenchable, ISETile, ISEComponentParameter {
     protected EnumFacing functionalSide = EnumFacing.SOUTH;
     protected EnumFacing facing = EnumFacing.NORTH;
-    protected ISESubComponent circuit = SEAPI.energyNetAgent.newComponent(this, this);
+    protected final ISESubComponent circuit = SEAPI.energyNetAgent.newComponent(this, this);
+    protected final T cachedParam = (T) circuit;
 
     ///////////////////////////////////
     /// TileEntity

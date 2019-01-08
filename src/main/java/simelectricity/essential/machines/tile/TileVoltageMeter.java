@@ -13,8 +13,8 @@ import simelectricity.essential.common.semachine.ISESocketProvider;
 import simelectricity.essential.common.semachine.SESinglePortMachine;
 import simelectricity.essential.machines.gui.ContainerVoltageMeter;
 
-public class TileVoltageMeter extends SESinglePortMachine implements ISEVoltageSource, ISEEnergyNetUpdateHandler, ISESocketProvider, IGuiProviderTile {
-    public volatile double voltage;
+public class TileVoltageMeter extends SESinglePortMachine<ISEVoltageSource> implements ISEVoltageSource, ISEEnergyNetUpdateHandler, ISESocketProvider, IGuiProviderTile {
+    public double voltage;
 
     @Override
     public double getResistance() {
@@ -33,7 +33,7 @@ public class TileVoltageMeter extends SESinglePortMachine implements ISEVoltageS
 
     @Override
     public void onEnergyNetUpdate() {
-        this.voltage = SEAPI.energyNetAgent.getVoltage(circuit);
+        this.voltage = this.circuit.getVoltage();
     }
 
 

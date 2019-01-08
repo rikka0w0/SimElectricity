@@ -9,20 +9,19 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import rikka.librikka.tileentity.IGuiProviderTile;
 import simelectricity.api.ISEEnergyNetUpdateHandler;
-import simelectricity.api.SEAPI;
 import simelectricity.api.components.ISEVoltageSource;
 import simelectricity.essential.common.semachine.ISESocketProvider;
 import simelectricity.essential.common.semachine.SESinglePortMachine;
 import simelectricity.essential.machines.gui.ContainerAdjustableResistor;
 
-public class TileAdjustableResistor extends SESinglePortMachine implements ISEVoltageSource, ISEEnergyNetUpdateHandler, ISESocketProvider, ITickable, IGuiProviderTile {
+public class TileAdjustableResistor extends SESinglePortMachine<ISEVoltageSource> implements ISEVoltageSource, ISEEnergyNetUpdateHandler, ISESocketProvider, ITickable, IGuiProviderTile {
     //Component parameters
     public double resistance = 100;
 
     //Calculated values
-    public volatile double voltage;
-    public volatile double current;
-    public volatile double powerLevel;
+    public double voltage;
+    public double current;
+    public double powerLevel;
     public double bufferedEnergy;
 
     ///////////////////////////////////
@@ -73,10 +72,10 @@ public class TileAdjustableResistor extends SESinglePortMachine implements ISEVo
     ///////////////////////////////////
     @Override
     public void onEnergyNetUpdate() {
-        this.voltage = SEAPI.energyNetAgent.getVoltage(circuit);
+        this.voltage = this.circuit.getVoltage();
 
         //Get the resistance (in the state) when the voltage is calculated
-        double resistance = ((ISEVoltageSource) circuit).getResistance();
+        double resistance = this.cachedParam.getResistance();
         this.current = this.voltage / resistance;
         this.powerLevel = this.voltage * this.current;
     }
