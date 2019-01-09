@@ -29,8 +29,12 @@ import simelectricity.essential.api.ISENodeDelegateBlock;
 import simelectricity.essential.api.coverpanel.ISECoverPanel;
 import simelectricity.essential.utils.SEUnitHelper;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class ItemTools extends ItemBase implements ISimpleTexture {
-    private static final String[] subNames = {"crowbar", "wrench", "glove", "multimeter"};
+    private static final String[] subNames = {"crowbar", "wrench", "glove", "multimeter", "cablecutter_hv"};
+    private static Map<EntityPlayer, BlockPos> lastCoordinates_cablecutter_hv = new HashMap<>();
 
     public ItemTools() {
         super("essential_tools", true);
@@ -187,6 +191,72 @@ public class ItemTools extends ItemBase implements ISimpleTexture {
         Utils.chat(player, s);
     }
 
+    private static EnumActionResult useHVCableCutter(World world, BlockPos pos, EntityPlayer player) {
+        if (world.isRemote)
+            return EnumActionResult.PASS;
+
+        TileEntity te = world.getTileEntity(pos);
+        Block block = world.getBlockState(pos).getBlock();
+
+        ISEGridNode gridNode = null;
+        ISESimulatable delegatedNode = null;
+        if (block instanceof ISENodeDelegateBlock)
+            delegatedNode = ((ISENodeDelegateBlock) block).getNode(world, pos);
+
+        if (delegatedNode instanceof ISEGridNode) {
+            gridNode = (ISEGridNode) delegatedNode;
+        } else if (te instanceof ISEGridTile) {
+            gridNode = ((ISEGridTile)te).getGridNode();
+        }
+
+        if (gridNode == null) {
+            Utils.chatWithLocalization(player, "chat.sime_essential:powerpole_current_selection_invalid");
+            return EnumActionResult.FAIL;
+        }
+
+        if (player.isSneaking()) {
+            for (ISEGridNode neighbor : gridNode.getNeighborList()) {
+                SEAPI.energyNetAgent.breakGridConnection(world, neighbor, gridNode);
+            }
+            lastCoordinates_cablecutter_hv.put(player, null);
+            return EnumActionResult.SUCCESS;
+        }
+
+        BlockPos lastSelectedPos = lastCoordinates_cablecutter_hv.get(player);
+        if (lastSelectedPos == null) {
+            Utils.chatWithLocalization(player, "chat.sime_essential:powerpole_selected");
+            lastCoordinates_cablecutter_hv.put(player, pos);
+        } else {
+            lastCoordinates_cablecutter_hv.put(player, null);
+            TileEntity lastTE = world.getTileEntity(lastSelectedPos);
+            Block lastBlock = world.getBlockState(lastSelectedPos).getBlock();
+            if (lastBlock instanceof ISENodeDelegateBlock)
+                delegatedNode = ((ISENodeDelegateBlock) lastBlock).getNode(world, lastSelectedPos);
+
+            ISEGridNode lastNode = null;
+            if (delegatedNode instanceof ISEGridNode) {
+                lastNode = (ISEGridNode) delegatedNode;
+            } else if (lastTE instanceof ISEGridTile) {
+                lastNode = ((ISEGridTile)lastTE).getGridNode();
+            }
+
+            if (lastNode == null) {
+                Utils.chatWithLocalization(player, "chat.sime_essential:powerpole_last_selection_invalid");
+            } else if (lastNode == gridNode) {
+                Utils.chatWithLocalization(player, "chat.sime_essential:powerpole_selected");
+                lastCoordinates_cablecutter_hv.put(player, pos);
+            } else {
+                if (gridNode.hasResistiveConnection(lastNode)) {
+                    SEAPI.energyNetAgent.breakGridConnection(world, lastNode, gridNode);
+                } else {
+                    Utils.chatWithLocalization(player, "chat.sime_essential:powerpole_not_adjacent");
+                }
+            }
+        }
+
+        return EnumActionResult.SUCCESS;
+    }
+
     @Override
     public String[] getSubItemUnlocalizedNames() {
         return ItemTools.subNames;
@@ -218,6 +288,8 @@ public class ItemTools extends ItemBase implements ISimpleTexture {
                 return ItemTools.useGlove(te, player, side);
             case 3:
                 return ItemTools.useMultimeter(world, pos, player, side);
+            case 4:
+                return ItemTools.useHVCableCutter(world, pos, player);
         }
 
         return EnumActionResult.PASS;

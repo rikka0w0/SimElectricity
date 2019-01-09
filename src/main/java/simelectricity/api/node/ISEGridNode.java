@@ -38,4 +38,22 @@ public interface ISEGridNode extends ISESimulatable {
      * 4 - AC   (Electrical Rail Systems)
      */
     byte numOfParallelConductor();
+
+    /**
+     * @return the other half of the ISEGridNode, either primary or seconday,
+     *          null if not applicable (getType() != 1 && getType() != 2)
+     */
+    ISEGridNode getComplement();
+
+    /**
+     * Get the turns ratio between the primary and secondary of a grid transformer
+     * @return turns ratio, NaN if not applicable (getType() != 1 && getType() != 2)
+     */
+    double getRatio();
+
+    /**
+     * @return the resistance between two adjacent grid nodes, NaN if not applicable (getType() != 1 && getType() != 2)
+     * Note: this method does NOT work for cable interconnections or winding resistance of grid transformers!
+     */
+    double getResistance(ISEGridNode neighbor);
 }

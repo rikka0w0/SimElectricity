@@ -68,6 +68,7 @@ item.sime_essential:essential_tools.crowbar.name=撬棍
 item.sime_essential:essential_tools.wrench.name=扳手
 item.sime_essential:essential_tools.glove.name=手套
 item.sime_essential:essential_tools.multimeter.name=万用表
+item.sime_essential:essential_tools.cablecutter_hv.name=高压线缆剪线钳
 
 # Message
 chat.sime_essential:powerpole_selected=你选择了一个输电塔
@@ -78,6 +79,7 @@ chat.sime_essential:powerpole_too_far==太远了!
 chat.sime_essential:powerpole_current_selection_invalid=当前选择的输电塔是无效的!
 chat.sime_essential:powerpole_last_selection_invalid=前选择的输电塔已经无效了!
 chat.sime_essential:powerpole_type_mismatch=两个电线杆的导线数量不一致!
+chat.sime_essential:powerpole_not_adjacent=无法剪线!两个电线杆之间并没有连线!
 
 # Gui
 gui.sime_essential:redstone_toggle_behavior=反转行为

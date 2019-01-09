@@ -69,6 +69,7 @@ item.sime_essential:essential_tools.crowbar.name=Crowbar
 item.sime_essential:essential_tools.wrench.name=Wrench
 item.sime_essential:essential_tools.glove.name=Glove
 item.sime_essential:essential_tools.multimeter.name=Multimeter
+item.sime_essential:essential_tools.cablecutter_hv.name=Cable Cutter (HV)
 
 # Message
 chat.sime_essential:powerpole_selected=Pole Selected
@@ -78,7 +79,8 @@ chat.sime_essential:powerpole_too_close=Too close!
 chat.sime_essential:powerpole_too_far=Too far!
 chat.sime_essential:powerpole_current_selection_invalid=Current selection is invalid!
 chat.sime_essential:powerpole_last_selection_invalid=Previous selected pole has been removed!
-chat.sime_essential:powerpole_type_mismatch=Number of conductor doesn't match!
+chat.sime_essential:powerpole_type_mismatch=Number of conductor mismatch!
+chat.sime_essential:powerpole_not_adjacent=Cannot cut cable: there's no cable connection between these poles!
 
 # Gui
 gui.sime_essential:redstone_toggle_behavior=Toggle Behavior

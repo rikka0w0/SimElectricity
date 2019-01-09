@@ -9,7 +9,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.World;
 import rikka.librikka.Utils;
 import rikka.librikka.item.ISimpleTexture;
@@ -31,7 +30,7 @@ public class ItemHighVoltageCable extends ItemBase implements ISimpleTexture {
     public ItemHighVoltageCable() {
         super("essential_hv_cable", true);
         setCreativeTab(SEAPI.SETab);
-        lastCoordinates = new HashMap<EntityPlayer, BlockPos>();
+        lastCoordinates = new HashMap<>();
     }
 
     private static boolean numberOfConductorMatched(ISEGridNode node1, ISEGridNode node2) {
@@ -118,9 +117,9 @@ public class ItemHighVoltageCable extends ItemBase implements ISimpleTexture {
                 		boolean isCreative = player.isCreative();
                 		if (!flag1 && !flag2){
                 			if (distance < 5) {
-                				Utils.chatWithLocalization(player, I18n.translateToLocal("chat.sime_essential:powerpole_too_close"));
+                				Utils.chatWithLocalization(player, "chat.sime_essential:powerpole_too_close");
                 			} else if (distance > 200) {
-                				Utils.chatWithLocalization(player, I18n.translateToLocal("chat.sime_essential:powerpole_too_far"));
+                				Utils.chatWithLocalization(player, "chat.sime_essential:powerpole_too_far");
                 			} else {
                 				connect(world, node1, node2, resistance, itemStack, isCreative);
                 			}
@@ -130,7 +129,7 @@ public class ItemHighVoltageCable extends ItemBase implements ISimpleTexture {
                 	//}
                 }
             } else {
-                Utils.chatWithLocalization(player, I18n.translateToLocal("chat.sime_essential:powerpole_current_selection_invalid"));
+                Utils.chatWithLocalization(player, "chat.sime_essential:powerpole_current_selection_invalid");
             }
 
             this.lastCoordinates.put(player, null);

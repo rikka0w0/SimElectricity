@@ -71,6 +71,7 @@ public abstract class SEComponent implements ISESimulatable, ISEComponentParamet
         }
     }
 
+    @Override
     public double getCurrentMagnitude() {
         if (this.eliminated) {
             if (this.optimizedNeighbors.size() == 2) {
@@ -104,5 +105,12 @@ public abstract class SEComponent implements ISESimulatable, ISEComponentParamet
         }
 
         return Double.NaN;
+    }
+
+
+
+    @Override
+    public boolean hasResistiveConnection(ISESimulatable neighbor) {
+        return neighbors.contains(neighbor);
     }
 }

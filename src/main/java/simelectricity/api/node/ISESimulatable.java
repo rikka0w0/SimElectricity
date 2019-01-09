@@ -15,4 +15,9 @@ public interface ISESimulatable {
      * @return the magnitude of current flow through device/cable, refer to ground, NaN if not applicable
      */
     double getCurrentMagnitude();
+
+    /**
+     * @return true if the given ISESimulatable has DIRECT RESISTIVE connection with the current ISESimulatable
+     */
+    boolean hasResistiveConnection(ISESimulatable neighbor);
 }

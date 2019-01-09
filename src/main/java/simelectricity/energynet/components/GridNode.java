@@ -21,7 +21,7 @@ public class GridNode extends SEComponent implements ISEGridNode {
     public GridNode complement;
     public double ratio, resistance;
     //Only stores resistances between GridNodes!
-    public LinkedList<Double> neighborR = new LinkedList<Double>();
+    public LinkedList<Double> neighborR = new LinkedList<>();
     //Simulation & Optimization
     public Cable interConnection;
     
@@ -127,8 +127,8 @@ public class GridNode extends SEComponent implements ISEGridNode {
         nbt.setDouble("resistance", this.resistance);
     }
 
-
-    public double getResistance(GridNode neighbor) {
+    @Override
+    public double getResistance(ISEGridNode neighbor) {
         Iterator<SEComponent> iterator1 = this.neighbors.iterator();
         Iterator<Double> iterator2 = this.neighborR.iterator();
         while (iterator1.hasNext()) {
@@ -170,5 +170,21 @@ public class GridNode extends SEComponent implements ISEGridNode {
     @Override
     public byte numOfParallelConductor() {
         return this.numOfParallelConductor;
+    }
+
+    @Override
+    public ISEGridNode getComplement() {
+        if (type != 1 || type != 2)
+            return null;
+
+        return complement;
+    }
+
+    @Override
+    public double getRatio() {
+        if (type != 1 || type != 2)
+            return Double.NaN;
+
+        return ratio;
     }
 }
