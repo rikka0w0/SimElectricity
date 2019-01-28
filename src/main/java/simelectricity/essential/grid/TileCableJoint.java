@@ -53,6 +53,11 @@ public abstract class TileCableJoint extends TilePoleAccessory implements ISECab
     ///ISECableTile
     /////////////////////////////////////////////////////////
     @Override
+    public void setColor(int newColor) {
+
+    }
+
+    @Override
     public int getColor() {
         return 0;
     }

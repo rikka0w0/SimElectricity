@@ -10,6 +10,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -512,22 +513,27 @@ public class BlockCable extends MetaBlock implements ISimpleTexture {
 
         ISEGenericCable cable = (ISEGenericCable) te;
 
+        if (itemStack.getItem() == Items.DYE) {
+            if (!player.capabilities.isCreativeMode)
+                itemStack.shrink(1);
+
+            if (!world.isRemote)
+                cable.setColor(itemStack.getItemDamage() + 1);
+            return true;
+        }
+
+
         ISECoverPanel coverPanel = SEEAPI.coverPanelRegistry.fromItemStack(itemStack);
         if (coverPanel == null)
             return this.attemptOpenCoverPanelGui(world, pos, player);
 
         //Attempt to install cover panel
         if (cable.canInstallCoverPanelOnSide(side, coverPanel)) {
-            if (!player.capabilities.isCreativeMode) {
+            if (!player.capabilities.isCreativeMode)
                 itemStack.shrink(1);
-            }
 
-            if (!world.isRemote) {    //Handle on server side
+            if (!world.isRemote)    //Handle on server side
                 cable.installCoverPanel(side, coverPanel);
-
-                if (!coverPanel.isHollow())
-                    world.neighborChanged(pos.offset(side), this, pos);
-            }
             return true;
         }
 

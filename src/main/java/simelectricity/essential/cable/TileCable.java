@@ -138,6 +138,9 @@ public class TileCable extends SEEnergyTile implements ISEGenericCable, ISEIumin
         if (coverPanel instanceof ISEElectricalLoadCoverPanel)
             SEAPI.energyNetAgent.updateTileConnection(this);
 
+        if (!coverPanel.isHollow())
+            world.neighborChanged(pos.offset(side), this.blockType, pos);
+
 		this.onCableRenderingUpdateRequested();
     }
 
@@ -213,6 +216,14 @@ public class TileCable extends SEEnergyTile implements ISEGenericCable, ISEIumin
     ///ISECableTile
     ///////////////////////////////////////
     @Override
+    public void setColor(int newColor) {
+        this.color = newColor;
+        this.updateTileConnection();
+        this.onCableRenderingUpdateRequested();
+        world.notifyNeighborsOfStateChange(this.pos, this.blockType, true);
+    }
+
+    @Override
     public int getColor() {
         return this.color;
     }
@@ -275,6 +286,7 @@ public class TileCable extends SEEnergyTile implements ISEGenericCable, ISEIumin
         if (this.connections[5]) bc |= 32;
 
         nbt.setByte("connections", bc);
+        nbt.setInteger("color", color);
 
         nbt.setTag("coverPanels", this.coverPanelsToNBT());
 
@@ -292,6 +304,7 @@ public class TileCable extends SEEnergyTile implements ISEGenericCable, ISEIumin
 		connections[3] = (connectionsBinary & 8) > 0;
 		connections[4] = (connectionsBinary & 16) > 0;
 		connections[5] = (connectionsBinary & 32) > 0;
+		this.color = nbt.getInteger("color");
 
 		this.coverPanelsFromNBT(nbt.getTagList("coverPanels", NBT.TAG_COMPOUND));
 

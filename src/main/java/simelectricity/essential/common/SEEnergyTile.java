@@ -39,4 +39,6 @@ public abstract class SEEnergyTile extends TileEntityBase {
     protected final void updateTileParameter() {
         SEAPI.energyNetAgent.updateTileParameter(this);
     }
+
+    protected final void updateTileConnection() {SEAPI.energyNetAgent.updateTileConnection(this); }
 }
