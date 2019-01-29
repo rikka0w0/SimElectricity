@@ -2,7 +2,7 @@ package simelectricity.essential;
 
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.fml.common.registry.IForgeRegistry;
+import net.minecraftforge.registries.IForgeRegistry;
 import rikka.librikka.block.BlockBase;
 import simelectricity.essential.cable.BlockCable;
 import simelectricity.essential.cable.TileCable;

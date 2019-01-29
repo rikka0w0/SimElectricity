@@ -8,8 +8,14 @@ import simelectricity.api.ISEConfigHandler;
 import simelectricity.api.SEAPI;
 
 public class ConfigProvider implements ISEConfigHandler {
-	public ConfigProvider() {
+	private final Configuration config;
+
+	public ConfigProvider(boolean isClient) {
+		this.config = SEAPI.configManager.getSEConfiguration();
 		SEAPI.configManager.addConfigHandler(this);
+
+		// Load the config for the first time
+		onConfigChanged(isClient);
 	};
 	
 	@SideOnly(Side.CLIENT)
@@ -19,7 +25,7 @@ public class ConfigProvider implements ISEConfigHandler {
 	public static float joule2rf; 
 	
 	@Override
-	public void onConfigChanged(Configuration config, boolean isClient) {
+	public void onConfigChanged(boolean isClient) {
         //Client-only configurations
         if (isClient) {
         	this.parabolaRenderSteps = config.getInt("Cable Render Step Size", Configuration.CATEGORY_CLIENT, 12, 0, Integer.MAX_VALUE, "The higher this number is, the smoother the catenary cable will be. (must be EVEN! CLIENT ONLY!)");

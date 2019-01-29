@@ -110,8 +110,6 @@ public abstract class SESinglePortMachine<T extends ISEComponentParameter> exten
 
         markTileEntityForS2CSync();
         this.world.notifyNeighborsOfStateChange(this.pos, getBlockType(), true);
-        //this.worldObj.notifyBlockChange(xCoord, yCoord, zCoord, this.getBlockType());
-        //TODO: QAQ!
 
         if (isAddedToEnergyNet)
             SEAPI.energyNetAgent.updateTileConnection(this);

@@ -6,7 +6,7 @@ A Minecraft mod aiming to bring real world electrical systems into the Minecraft
 
 Presented by the Chinese Institution of Scientific Minecraft Mod (CISM)
 
-Currently Supported Version: Minecraft Forge 1.11.2
+Currently Supported Version: Minecraft Forge 1.12.2
 
 ![Image](/documentation/grid.jpg)
 

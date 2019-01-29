@@ -12,9 +12,10 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
-import net.minecraftforge.fml.common.registry.IForgeRegistry;
+import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import rikka.librikka.AutoGuiHandler;
+import simelectricity.SimElectricity;
 import simelectricity.essential.api.SEEAPI;
 import simelectricity.essential.cable.CableWatchEventHandler;
 import simelectricity.essential.coverpanel.CoverPanelRegistry;
@@ -22,7 +23,7 @@ import simelectricity.essential.coverpanel.SECoverPanelFactory;
 import simelectricity.essential.utils.network.MessageContainerSync;
 
 
-@Mod(modid = Essential.MODID, name = "SimElectricity Essential", dependencies = "required-after:simelectricity")
+@Mod(modid = Essential.MODID, name = "SimElectricity Essential", dependencies = "required-after:"+ SimElectricity.MODID)
 public class Essential {
     public static final String MODID = "sime_essential";
 
@@ -39,7 +40,7 @@ public class Essential {
      */
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
-    	new ConfigProvider();
+    	new ConfigProvider(event.getSide().isClient());
     	
         SEEAPI.coverPanelRegistry = new CoverPanelRegistry();
 

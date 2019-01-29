@@ -2,8 +2,8 @@ package simelectricity.essential.client.grid.transformer;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 
-import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 
 import net.minecraft.block.state.IBlockState;

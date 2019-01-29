@@ -18,7 +18,7 @@ import rikka.librikka.model.quadbuilder.RawQuadGroup;
 
 import org.lwjgl.util.vector.Vector3f;
 
-import com.google.common.base.Function;
+import java.util.function.Function;
 import com.google.common.collect.ImmutableList;
 
 import simelectricity.essential.client.ResourcePaths;

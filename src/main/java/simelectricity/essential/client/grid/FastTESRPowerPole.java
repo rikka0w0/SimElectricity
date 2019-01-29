@@ -2,7 +2,7 @@ package simelectricity.essential.client.grid;
 
 import java.util.List;
 
-import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
@@ -175,7 +175,7 @@ public class FastTESRPowerPole<T extends TileEntity & ISEPowerPole> extends Fast
     }
     
 	@Override
-	public void renderTileEntityFast(T te, double x, double y, double z, float partialTicks, int destroyStage, VertexBuffer buffer) {
+	public void renderTileEntityFast(T te, double x, double y, double z, float partialTicks, int destroyStage, float partial, BufferBuilder buffer) {
 		if (te.isInvalid())
 			return;
 		

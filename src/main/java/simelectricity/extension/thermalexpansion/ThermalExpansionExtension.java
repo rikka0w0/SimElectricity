@@ -5,12 +5,13 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
+import simelectricity.essential.Essential;
 import simelectricity.essential.api.ISECoverPanelFactory;
 import simelectricity.essential.api.SEEAPI;
 
 import java.lang.reflect.Constructor;
 
-@Mod(modid = ThermalExpansionExtension.modID, name = ThermalExpansionExtension.modName, version = ThermalExpansionExtension.version)
+@Mod(modid = ThermalExpansionExtension.modID, name = ThermalExpansionExtension.modName, version = ThermalExpansionExtension.version, dependencies = "required-after:"+Essential.MODID)
 public class ThermalExpansionExtension {
     public static final String modID = "sime_thermalexpansion";
     public static final String modName = "SimElectricity ThermalExpansion Extension";

@@ -34,20 +34,10 @@ public class SimEGuiFactory implements IModGuiFactory {
     }
 
     @Override
-    public Class<? extends GuiScreen> mainConfigGuiClass() {
-        return SimEGuiConfig.class;
-    }
-
-    @Override
     public Set<IModGuiFactory.RuntimeOptionCategoryElement> runtimeGuiCategories() {
         return null;
     }
-
-    @Override
-    public RuntimeOptionGuiHandler getHandlerFor(IModGuiFactory.RuntimeOptionCategoryElement element) {
-        return null;
-    }
-
+    
     @Override
     public boolean hasConfigGui() {
         return true;

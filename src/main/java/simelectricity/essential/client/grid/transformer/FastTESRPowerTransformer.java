@@ -2,7 +2,7 @@ package simelectricity.essential.client.grid.transformer;
 
 import java.util.List;
 
-import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.client.model.animation.FastTESR;
@@ -25,7 +25,7 @@ public class FastTESRPowerTransformer extends FastTESR<TilePowerTransformerPlace
     }
 	
 	@Override
-	public void renderTileEntityFast(TilePowerTransformerPlaceHolder.Render te, double x, double y, double z, float partialTicks, int destroyStage, VertexBuffer buffer) {
+	public void renderTileEntityFast(TilePowerTransformerPlaceHolder.Render te, double x, double y, double z, float partialTicks, int destroyStage, float partial, BufferBuilder buffer) {
 		BlockPos pos = te.getPos();    
 		buffer.setTranslation(x-pos.getX(), y-pos.getY(), z-pos.getZ());
 		

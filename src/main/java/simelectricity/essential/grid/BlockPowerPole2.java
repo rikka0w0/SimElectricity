@@ -11,7 +11,6 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -113,7 +112,7 @@ public class BlockPowerPole2 extends BlockBase implements ISubBlock, ISEHVCableC
 
     @Override
     @SideOnly(Side.CLIENT)
-    public final void getSubBlocks(Item itemIn, CreativeTabs tab, NonNullList<ItemStack> subItems) {
+    public final void getSubBlocks(CreativeTabs tab, NonNullList<ItemStack> subItems) {
         subItems.add(new ItemStack(this, 1, 0));
         subItems.add(new ItemStack(this, 1, 1));
     }

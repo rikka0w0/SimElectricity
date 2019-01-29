@@ -2,7 +2,7 @@ package simelectricity.essential.client.grid.pole;
 
 import java.util.List;
 
-import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.util.math.BlockPos;
@@ -22,7 +22,7 @@ public class FastTESRPowerPoleBottom extends FastTESR<BlockPowerPoleBottom.Tile>
     }
 	
 	@Override
-	public void renderTileEntityFast(BlockPowerPoleBottom.Tile te, double x, double y, double z, float partialTicks, int destroyStage, VertexBuffer buffer) {
+	public void renderTileEntityFast(BlockPowerPoleBottom.Tile te, double x, double y, double z, float partialTicks, int destroyStage, float partial, BufferBuilder buffer) {
 		int facing = te.getFacing();
 		BlockPos pos = te.getPos();
 		

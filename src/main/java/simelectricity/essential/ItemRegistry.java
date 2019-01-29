@@ -1,6 +1,6 @@
 package simelectricity.essential;
 
-import net.minecraftforge.fml.common.registry.IForgeRegistry;
+import net.minecraftforge.registries.IForgeRegistry;
 import simelectricity.essential.items.ItemHighVoltageCable;
 import simelectricity.essential.items.ItemMisc;
 import simelectricity.essential.items.ItemTools;

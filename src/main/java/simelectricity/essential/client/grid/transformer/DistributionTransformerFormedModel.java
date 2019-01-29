@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import com.google.common.base.Function;
+import java.util.function.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Sets;
 
@@ -63,7 +63,11 @@ public class DistributionTransformerFormedModel extends CodeBasedModel {
 	public List<BakedQuad> getQuads(IBlockState state, EnumFacing side, long rand) {
     	if (side != null)
             return ImmutableList.of();
-    	
+
+		//bake(null);
+
+
+
 		return quads;
 	}
 

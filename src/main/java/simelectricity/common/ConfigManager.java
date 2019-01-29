@@ -54,7 +54,7 @@ public class ConfigManager implements ISEConfigManager{
         EnergyNetSimulator.config();
         
         for (ISEConfigHandler handler: handlers) {
-        	handler.onConfigChanged(config, isClient);
+        	handler.onConfigChanged(isClient);
         }
     }
 
@@ -74,4 +74,9 @@ public class ConfigManager implements ISEConfigManager{
 	public void addConfigHandler(ISEConfigHandler handler) {
 		handlers.add(handler);
 	}
+
+    @Override
+    public Configuration getSEConfiguration() {
+        return SimElectricity.config;
+    }
 }

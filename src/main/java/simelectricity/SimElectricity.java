@@ -69,11 +69,13 @@ public class SimElectricity {
 
         //Register event buses
         new EnergyNetEventHandler();
+
+        ConfigManager.syncConfig(event.getSide().isClient());
     }
     
     @Mod.EventHandler
-    public void postInit(FMLInitializationEvent event) {
-    	ConfigManager.syncConfig(event.getSide().isClient());
+    public void init(FMLInitializationEvent event) {
+
     }
     
     @Mod.EventHandler
@@ -95,13 +97,13 @@ public class SimElectricity {
                 }
             };
     	}
-    	
-    	@SubscribeEvent
-		public static void registerItems(RegistryEvent.Register<Item> event) {
-    		//Register items
-    		SEAPI.managementToolItem = new ItemSEMgrTool();
-        	GameRegistry.register(SEAPI.managementToolItem);
-    	}
+
+        @SubscribeEvent
+        public static void registerItems(RegistryEvent.Register<Item> event) {
+            //Register items
+            SEAPI.managementToolItem = new ItemSEMgrTool();
+    	    event.getRegistry().register(SEAPI.managementToolItem);
+        }
     }
     
     @Mod.EventHandler

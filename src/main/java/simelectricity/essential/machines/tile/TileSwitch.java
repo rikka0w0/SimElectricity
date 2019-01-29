@@ -18,7 +18,7 @@ public class TileSwitch extends SETwoPortMachine<ISESwitch> implements ISESwitch
     public double current;
 
     public double resistance = 0.001;
-    public double maxCurrent = 1;
+    public double maxCurrent = 10;
     public boolean isOn;
 
     /////////////////////////////////////////////////////////
