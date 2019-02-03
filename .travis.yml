@@ -2,6 +2,7 @@ language: java
 before_install:
  - chmod +x gradlew
  - ./gradlew setupDevWorkspace
+ - git submodule update --init --remote --recursive
 install: true
 script:
  - ./gradlew build
