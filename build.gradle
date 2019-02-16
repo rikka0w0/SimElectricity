@@ -103,6 +103,24 @@ task standaloneJar(type: Jar, dependsOn: reobfJar) {
     }
 }
 
+task librikkaJar(type: Jar, dependsOn: [standaloneJar, reobfJar]) {
+    destinationDir = libsDir
+    String oldArchivesBaseName = archivesBaseName;
+
+    doFirst {
+        archivesBaseName = 'librikka'
+        from(project.ext.jarFile) {
+            includes.addAll(["rikka/**"])
+            excludes.addAll(["simelectricity/**"])
+            excludes.addAll(["edu/**"])
+        }
+    }
+
+    doLast {
+        archivesBaseName = oldArchivesBaseName;
+    }
+}
+
 task apiSrcJar(type: Jar) {
     destinationDir = libsDir
     appendix = "api"
@@ -163,7 +181,7 @@ task energyNetJar(type: Jar, dependsOn: reobfJar) {
     }
 }
 
-build.dependsOn deobfJar, standaloneJar, apiJar, apiDevJar, apiSrcJar, energyNetDevJar, energyNetJar
+build.dependsOn deobfJar, standaloneJar, librikkaJar, apiJar, apiDevJar, apiSrcJar, energyNetDevJar, energyNetJar
 
 dependencies {
 
