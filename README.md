@@ -11,9 +11,8 @@ Currently Supported Version: Minecraft Forge 1.12.2
 ![Image](/documentation/grid.jpg)
 
 # Addons: ![Image](/src/main/resources/assets/sime_essential/textures/items/cell_vita.png)
-1. [BuildCraft Extension](https://github.com/RoyalAliceAcademyOfSciences/SimElectricity_BuildCraft_Extension):
-Install BuildCraft facades to SimElectricity cable. This Mod must be installed with BuildCraft and SimElectricity Essential at the sametime,
-otherwise BuildCraft API will not work.
+1. BuildCraft Extension:
+Install BuildCraft facades to SimElectricity cable, already included in the SimElectricity Essential Mod.
 1. ThermalExpension Extension: Install ThermalDynamics facades to SimElectricity cable, already included in the SimElectricity Essential Mod.
 
 # Setup the Environment ![Image](/src/main/resources/assets/sime_essential/textures/items/tool_multimeter.png)

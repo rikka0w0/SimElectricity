@@ -70,8 +70,7 @@ public class BCCoverFactory implements ISECoverPanelFactory{
 	@Override
 	public boolean acceptItemStack(ItemStack itemStack) {
 		Item item = itemStack.getItem();
-		boolean ret = clsIFacadeItem.isAssignableFrom(item.getClass());
-		return ret;
+		return clsIFacadeItem.isAssignableFrom(item.getClass());
 	}
 	
 	@Override
