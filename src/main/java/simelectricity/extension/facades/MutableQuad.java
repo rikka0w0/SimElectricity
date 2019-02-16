@@ -1,4 +1,4 @@
-package simelectricity.extension.thermalexpansion;
+package simelectricity.extension.facades;
 
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;

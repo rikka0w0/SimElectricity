@@ -1,4 +1,4 @@
-package simelectricity.extension.thermalexpansion;
+package simelectricity.extension.facades;
 
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;

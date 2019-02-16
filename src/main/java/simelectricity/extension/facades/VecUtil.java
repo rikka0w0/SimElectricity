@@ -1,4 +1,4 @@
-package simelectricity.extension.thermalexpansion;
+package simelectricity.extension.facades;
 
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.math.Vec3d;

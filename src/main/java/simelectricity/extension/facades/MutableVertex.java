@@ -1,4 +1,4 @@
-package simelectricity.extension.thermalexpansion;
+package simelectricity.extension.facades;
 
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -134,6 +134,12 @@ public class MutableVertex {
     public MutableVertex lighti(int block, int sky) {
         light_block = (byte) block;
         light_sky = (byte) sky;
+        return this;
+    }
+
+    public MutableVertex texf(float u, float v) {
+        tex_u = u;
+        tex_v = v;
         return this;
     }
 }

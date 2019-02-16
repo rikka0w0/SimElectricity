@@ -1,4 +1,4 @@
-package simelectricity.extension.thermalexpansion;
+package simelectricity.extension.facades;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
