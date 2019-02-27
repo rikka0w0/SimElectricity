@@ -6,7 +6,7 @@ import simelectricity.api.components.ISECable;
 import simelectricity.api.tile.ISECableTile;
 import simelectricity.energynet.components.SEComponent.Tile;
 
-public class Cable extends Tile<ISECable> implements ISECable {
+public class Cable extends Tile<ISECableTile> implements ISECable {
     //Properties, do not modify their value!
     public final boolean isGridInterConnectionPoint;
     

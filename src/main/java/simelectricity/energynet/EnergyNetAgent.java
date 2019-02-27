@@ -32,6 +32,7 @@ import simelectricity.api.node.ISESubComponent;
 import simelectricity.api.tile.ISECableTile;
 import simelectricity.api.tile.ISEGridTile;
 import simelectricity.api.tile.ISETile;
+import simelectricity.api.tile.ISEWireTile;
 import simelectricity.common.SELogger;
 import simelectricity.energynet.GridEvent.*;
 import simelectricity.energynet.TileEvent.Attach;
@@ -129,6 +130,8 @@ public class EnergyNetAgent implements ISEEnergyNetAgent {
             return new VoltageSource((ISEVoltageSource) dataProvider, parent);
         else if (dataProvider instanceof ISESwitch)
             return new SwitchA((ISESwitch) dataProvider, parent);
+        else if (dataProvider instanceof ISEWire && parent instanceof ISEWireTile)
+            return new Wire((ISEWire)dataProvider, parent);
         return null;
     }
 
@@ -146,8 +149,7 @@ public class EnergyNetAgent implements ISEEnergyNetAgent {
 
     @Override
     public ISEGridNode getGridNodeAt(World world, BlockPos pos) {
-        getEnergyNetForWorld(world).dataProvider.getGridObjectAtCoord(pos);
-        return null;
+        return getEnergyNetForWorld(world).dataProvider.getGridObjectAtCoord(pos);
     }
 
     @Override
