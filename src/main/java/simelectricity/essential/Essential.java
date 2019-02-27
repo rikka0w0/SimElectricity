@@ -2,8 +2,10 @@ package simelectricity.essential;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.event.world.ChunkWatchEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -16,8 +18,8 @@ import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import rikka.librikka.AutoGuiHandler;
 import simelectricity.SimElectricity;
+import simelectricity.essential.api.ISEChunkWatchSensitiveTile;
 import simelectricity.essential.api.SEEAPI;
-import simelectricity.essential.cable.CableWatchEventHandler;
 import simelectricity.essential.coverpanel.CoverPanelRegistry;
 import simelectricity.essential.coverpanel.SECoverPanelFactory;
 import simelectricity.essential.utils.network.MessageContainerSync;
@@ -79,7 +81,17 @@ public class Essential {
 
         proxy.init();
 
-        MinecraftForge.EVENT_BUS.register(new CableWatchEventHandler());
+        MinecraftForge.EVENT_BUS.register(new Object() {
+            @SubscribeEvent
+            public void onChunkWatchEvent(ChunkWatchEvent.Watch event) {
+                Chunk chunk = event.getPlayer().world.getChunkFromChunkCoords(event.getChunk().x, event.getChunk().z);
+
+                for (Object tileEntity : chunk.getTileEntityMap().values()) {
+                    if (tileEntity instanceof ISEChunkWatchSensitiveTile)
+                        ((ISEChunkWatchSensitiveTile) tileEntity).onRenderingUpdateRequested();
+                }
+            }
+        });
 
         //Register GUI handler
         NetworkRegistry.INSTANCE.registerGuiHandler(instance, new AutoGuiHandler());

@@ -6,6 +6,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -102,7 +103,8 @@ public class BlockCable extends MetaBlock implements ISimpleTexture {
     }
 
     @SideOnly(Side.CLIENT)
-    public void addInformation(ItemStack stack, EntityPlayer player, List<String> tooltip, boolean advanced) {
+    @Override
+    public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, ITooltipFlag advanced) {
         int type = stack.getItemDamage();
         tooltip.add(I18n.translateToLocal("gui.sime:resistivity") + ": " + SEUnitHelper.getStringWithoutUnit(2F*resistances[type]) + "\u03a9/m");
     }
@@ -452,12 +454,12 @@ public class BlockCable extends MetaBlock implements ISimpleTexture {
     @Nullable
     @Override
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
-    	int meta = state.getValue(this.propertyMeta);
-    	TileEntity te = source.getTileEntity(pos);
-        
+        int meta = state.getValue(this.propertyMeta);
+        TileEntity te = source.getTileEntity(pos);
+
         if (!(te instanceof ISEGenericCable))
             return cableBoundingBoxes[meta][6]; 	       //For block placing
-    	
+
         ISEGenericCable cable = (ISEGenericCable) te;
 
         return getBoundingBox(cable, this.thickness[meta], false);
@@ -550,7 +552,7 @@ public class BlockCable extends MetaBlock implements ISimpleTexture {
             return;        //Normally this could not happen, but just in case!
 
         ISEGenericCable cable = (ISEGenericCable) te;
-        cable.onCableRenderingUpdateRequested();
+        cable.onRenderingUpdateRequested();
     }
 
     @Override
@@ -563,7 +565,7 @@ public class BlockCable extends MetaBlock implements ISimpleTexture {
             return;        //Normally this could not happen, but just in case!
 
         ISEGenericCable cable = (ISEGenericCable) te;
-        cable.onCableRenderingUpdateRequested();
+        cable.onRenderingUpdateRequested();
     }
 
     ///////////////////////

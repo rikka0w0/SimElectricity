@@ -52,6 +52,8 @@ public class ClientRegistrationHandler {
         loader.registerModelLoader(cStateMapper);
         cStateMapper.register(BlockRegistry.blockCable);
         loader.registerInventoryIcon(BlockRegistry.blockCable.itemBlock);
+        cStateMapper.register(BlockRegistry.blockWire);
+        loader.registerInventoryIcon(BlockRegistry.blockWire.itemBlock);
 
         GridStateMapper gStateMapper = new GridStateMapper(Essential.MODID);
         loader.registerModelLoader(gStateMapper);

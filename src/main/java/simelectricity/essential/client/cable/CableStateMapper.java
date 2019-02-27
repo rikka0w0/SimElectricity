@@ -10,10 +10,11 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import rikka.librikka.model.loader.IModelLoader;
 import simelectricity.essential.cable.BlockCable;
+import simelectricity.essential.cable.BlockWire;
 
 @SideOnly(Side.CLIENT)
 public class CableStateMapper extends StateMapperBase implements IModelLoader {
-    public static final String VPATH = "virtual/blockstates/standardcable";
+    public static final String VPATH = "virtual/blockstates/cablestatemapper";
     public final String domain;
 
     public CableStateMapper(String domain) {
@@ -32,13 +33,26 @@ public class CableStateMapper extends StateMapperBase implements IModelLoader {
             double thickness = cable.thickness[meta];
 
             //Encode relative information in the variant name part
-            String varStr = name + "_" + subName + "," + thickness;
+            String varStr = "cable," + name + "_" + subName + "," + thickness;
 
             //The resource path indicates the loader
             ModelResourceLocation res = new ModelResourceLocation(
                     domain + ":" + CableStateMapper.VPATH,
                     varStr
             );
+            return res;
+        } else if (block instanceof BlockWire) {
+            BlockWire wire = (BlockWire) block;
+            String name = wire.getRegistryName().getResourcePath();
+
+            String varStr = "wire," + name;
+
+            //The resource path indicates the loader
+            ModelResourceLocation res = new ModelResourceLocation(
+                    domain + ":" + CableStateMapper.VPATH,
+                    varStr
+            );
+
             return res;
         }
 
@@ -53,12 +67,18 @@ public class CableStateMapper extends StateMapperBase implements IModelLoader {
     @Override
     public IModel loadModel(String domain, String resPath, String variantStr) throws Exception {
         String[] splited = variantStr.split(",");
-        String name = splited[0];
-        float thickness = Float.parseFloat(splited[1]);
-        return new CableModel(domain, "cable/" + name, thickness);
+        String type = splited[0];
+        String name = splited[1];
+        if (type.equals("cable")) {
+            float thickness = Float.parseFloat(splited[2]);
+            return new CableModel(domain, "cable/" + name, thickness);
+        } else if (type.equals("wire")) {
+            return new WireModel(domain, "wire/" + name);
+        }
+        return null;
     }
 
-    public void register(BlockCable block) {
+    public void register(Block block) {
         ModelLoader.setCustomStateMapper(block, this);
     }
 }

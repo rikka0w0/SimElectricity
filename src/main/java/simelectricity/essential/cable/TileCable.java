@@ -79,7 +79,7 @@ public class TileCable extends SEEnergyTile implements ISEGenericCable, ISEIumin
     //ISEGenericCable
     ////////////////////////////////////////
     @Override
-    public void onCableRenderingUpdateRequested() {
+    public void onRenderingUpdateRequested() {
         //Update connection
         EnumFacing[] dirs = EnumFacing.VALUES;
         for (int i = 0; i < 6; i++) {
@@ -141,7 +141,7 @@ public class TileCable extends SEEnergyTile implements ISEGenericCable, ISEIumin
         if (!coverPanel.isHollow())
             world.neighborChanged(pos.offset(side), this.blockType, pos);
 
-		this.onCableRenderingUpdateRequested();
+		this.onRenderingUpdateRequested();
     }
 
     @Override
@@ -171,7 +171,7 @@ public class TileCable extends SEEnergyTile implements ISEGenericCable, ISEIumin
         if (coverPanel instanceof ISERedstoneEmitterCoverPanel)
 			this.world.notifyNeighborsOfStateChange(this.pos, this.blockType, false);
 
-		this.onCableRenderingUpdateRequested();
+		this.onRenderingUpdateRequested();
 
         if (!coverPanel.isHollow())
 			this.world.neighborChanged(this.pos.offset(side), getBlockType(), this.pos);
@@ -219,7 +219,7 @@ public class TileCable extends SEEnergyTile implements ISEGenericCable, ISEIumin
     public void setColor(int newColor) {
         this.color = newColor;
         this.updateTileConnection();
-        this.onCableRenderingUpdateRequested();
+        this.onRenderingUpdateRequested();
         world.notifyNeighborsOfStateChange(this.pos, this.blockType, true);
     }
 

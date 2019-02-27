@@ -5,7 +5,9 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.registries.IForgeRegistry;
 import rikka.librikka.block.BlockBase;
 import simelectricity.essential.cable.BlockCable;
+import simelectricity.essential.cable.BlockWire;
 import simelectricity.essential.cable.TileCable;
+import simelectricity.essential.cable.TileWire;
 import simelectricity.essential.grid.*;
 import simelectricity.essential.grid.TilePowerPole3.Pole10Kv;
 import simelectricity.essential.grid.TilePowerPole3.Pole415vType0;
@@ -23,6 +25,7 @@ import simelectricity.essential.machines.tile.*;
 //@GameRegistry.ObjectHolder(SETemplate.MODID)
 public class BlockRegistry {
 	public static BlockCable blockCable;
+	public static BlockWire blockWire;
 
     public static BlockPowerPoleTop powerPoleTop;
     public static BlockPowerPoleBottom powerPoleBottom;
@@ -38,6 +41,7 @@ public class BlockRegistry {
     
     public static void initBlocks() {
         BlockRegistry.blockCable = new BlockCable();
+        BlockRegistry.blockWire = new BlockWire();
 
         BlockRegistry.powerPoleTop = new BlockPowerPoleTop();
         BlockRegistry.powerPoleBottom = new BlockPowerPoleBottom();
@@ -55,6 +59,7 @@ public class BlockRegistry {
     public static void registerBlocks(IForgeRegistry registry, boolean isItemBlock) {
     	registerBlocks(registry, isItemBlock,
     			blockCable,
+    			blockWire,
     			
     			powerPoleTop,
     			powerPoleBottom,
@@ -72,6 +77,7 @@ public class BlockRegistry {
     
     public static void registerTileEntities() {
     	registerTile(TileCable.class);
+    	registerTile(TileWire.class);
     	registerTile(BlockPowerPoleBottom.Tile.class);
         registerTile(TilePowerPole.class);
         registerTile(TileCableJoint.Type10kV.class);
