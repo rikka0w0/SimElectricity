@@ -7,7 +7,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import simelectricity.api.SEAPI;
 import simelectricity.api.components.ISEWire;
 import simelectricity.api.node.ISESubComponent;
-import simelectricity.api.tile.ISEWireTile;
 import simelectricity.essential.api.ISEGenericWire;
 import simelectricity.essential.common.SEEnergyTile;
 
@@ -47,7 +46,7 @@ public class TileWire extends SEEnergyTile implements ISEGenericWire {
         }
 
         @SideOnly(Side.CLIENT)
-        public void setConnectionForRendering(EnumFacing branch, boolean connection) {
+        public void setConnection(EnumFacing branch, boolean connection) {
             this.connections[branch.ordinal()] = connection;
         }
 
@@ -74,11 +73,6 @@ public class TileWire extends SEEnergyTile implements ISEGenericWire {
         this.wires = new Wire[EnumFacing.VALUES.length];
         for (EnumFacing side : EnumFacing.VALUES)
             this.wires[side.ordinal()] = new Wire(this, side);
-
-        for (EnumFacing side : EnumFacing.VALUES)
-            for (EnumFacing to : EnumFacing.VALUES)
-                if (side != to)
-                    this.wires[side.ordinal()].setConnectionForRendering(to, true);
     }
 
     @Override
@@ -157,12 +151,20 @@ public class TileWire extends SEEnergyTile implements ISEGenericWire {
         return 0.2F;
     }
 
+    @Override
+    public void addBranch(EnumFacing side, EnumFacing to) {
+        this.wires[side.ordinal()].setConnection(to, true);
+
+        // Flag 1 - update Rendering Only!
+        this.markForRenderUpdate();
+    }
+
     public void removeBranch(EnumFacing side, EnumFacing to) {
         if (to == null) {
             for (EnumFacing facing: EnumFacing.VALUES)
-                this.wires[side.ordinal()].setConnectionForRendering(facing, false);
+                this.wires[side.ordinal()].setConnection(facing, false);
         } else {
-            this.wires[side.ordinal()].setConnectionForRendering(to, false);
+            this.wires[side.ordinal()].setConnection(to, false);
         }
 
         // Flag 1 - update Rendering Only!

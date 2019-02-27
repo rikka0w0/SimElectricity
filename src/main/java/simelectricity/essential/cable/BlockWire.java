@@ -14,11 +14,10 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.*;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -28,15 +27,14 @@ import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import rikka.librikka.RayTraceHelper;
+import rikka.librikka.Utils;
 import rikka.librikka.block.BlockBase;
-import rikka.librikka.block.MetaBlock;
 import rikka.librikka.item.ISimpleTexture;
 import rikka.librikka.item.ItemBlockBase;
 import rikka.librikka.properties.UnlistedPropertyRef;
 import simelectricity.api.SEAPI;
 import simelectricity.api.tile.ISEWireTile;
 import simelectricity.essential.api.ISEChunkWatchSensitiveTile;
-import simelectricity.essential.api.ISEGenericCable;
 import simelectricity.essential.api.ISEGenericWire;
 import simelectricity.essential.utils.SEUnitHelper;
 
@@ -50,7 +48,7 @@ public class BlockWire extends BlockBase implements ISimpleTexture {
     /// Wire Properties
     ///////////////////////////////
     public BlockWire() {
-        this("essential_wire", Material.GLASS, ItemBlockBase.class,
+        this("essential_wire", Material.GLASS, ItemBlockWire.class,
                 new String[]{"copper_thin", "copper_medium"},
                 new float[]{0.22F, 0.32F},
                 new float[]{0.1F, 0.01F},
@@ -67,13 +65,105 @@ public class BlockWire extends BlockBase implements ISimpleTexture {
         return "essential_wire";
     }
 
+    protected static ThreadLocal<EnumFacing> nextPlacedSide = new ThreadLocal<>();
+    protected static ThreadLocal<EnumFacing> nextPlacedto = new ThreadLocal<>();
+
+    protected static class ItemBlockWire extends ItemBlockBase {
+        public ItemBlockWire(Block block) {
+            super(block);
+        }
+
+        @Override
+        @SideOnly(Side.CLIENT)
+        public boolean canPlaceBlockOnSide(World world, BlockPos pos, EnumFacing side, EntityPlayer placer, ItemStack stack) {
+            TileEntity teSelected = world.getTileEntity(pos);
+            TileEntity teNew = world.getTileEntity(pos.offset(side));
+
+            if (teSelected instanceof ISEGenericWire) {
+                return true;
+            } else if (teNew instanceof ISEGenericWire) {
+                return true;
+            }
+
+            return super.canPlaceBlockOnSide(world, pos, side, placer, stack);
+        }
+
+        @Override
+        public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+            IBlockState block = world.getBlockState(pos);
+
+            float x = hitX-facing.getFrontOffsetX()-0.5f;
+            float y = hitY-facing.getFrontOffsetY()-0.5f;
+            float z = hitZ-facing.getFrontOffsetZ()-0.5f;
+
+            EnumFacing wire_side = facing.getOpposite();
+            EnumFacing to = null;
+            if (facing.getAxis() == EnumFacing.Axis.Y) {
+                if (MathHelper.abs(x) > MathHelper.abs(z)) {
+                    if (x>0)
+                        to = EnumFacing.EAST;
+                    else
+                        to = EnumFacing.WEST;
+                } else {
+                    if (z>0)
+                        to = EnumFacing.SOUTH;
+                    else
+                        to = EnumFacing.NORTH;
+                }
+            } else if (facing.getAxis() == EnumFacing.Axis.X) {
+                if (MathHelper.abs(y) > MathHelper.abs(z)) {
+                    if (y>0)
+                        to = EnumFacing.UP;
+                    else
+                        to = EnumFacing.DOWN;
+                } else {
+                    if (z>0)
+                        to = EnumFacing.SOUTH;
+                    else
+                        to = EnumFacing.NORTH;
+                }
+            } else if (facing.getAxis() == EnumFacing.Axis.Z) {
+                if (MathHelper.abs(x) > MathHelper.abs(y)) {
+                    if (x>0)
+                        to = EnumFacing.EAST;
+                    else
+                        to = EnumFacing.WEST;
+                } else {
+                    if (y>0)
+                        to = EnumFacing.UP;
+                    else
+                        to = EnumFacing.DOWN;
+                }
+            }
+
+            if (!world.isRemote) {
+                TileEntity teSelected = Utils.getTileEntitySafely(world, pos);
+                TileEntity teNew = Utils.getTileEntitySafely(world, pos.offset(facing));
+
+                if (teSelected instanceof ISEGenericWire) {
+                    ISEGenericWire wireTile = (ISEGenericWire)teSelected;
+                    wireTile.addBranch(to, facing);
+                } else if (teNew instanceof ISEGenericWire) {
+                    ISEGenericWire wireTile = (ISEGenericWire) teNew;
+                    wireTile.addBranch(wire_side, to);
+                    return EnumActionResult.SUCCESS;
+                }
+            }
+
+            nextPlacedSide.set(wire_side);
+            nextPlacedto.set(to);
+
+            return super.onItemUse(player, world, pos, hand, facing, hitX, hitY, hitZ);
+        }
+    }
+
     ///////////////////////////////
     ///Block Properties
     ///////////////////////////////
     public final float[] thickness;
     public final float[] resistances;
     private final Class<? extends TileWire> tileEntityClass;
-    protected BlockWire(String name, Material material, Class<? extends ItemBlockBase> itemBlockClass,
+    protected BlockWire(String name, Material material, Class<? extends ItemBlockWire> itemBlockClass,
                          String[] cableTypes, float[] thicknessList, float[] resistanceList, Class<? extends TileWire> tileEntityClass) {
         super(name, material, itemBlockClass);
         thickness = thicknessList;
@@ -383,6 +473,20 @@ public class BlockWire extends BlockBase implements ISimpleTexture {
     /////Item drops and Block activities
     //////////////////////////////////////
     @Override
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand,
+                                    EnumFacing side, float hitX, float hitY, float hitZ) {
+        TileEntity te = world.getTileEntity(pos);
+
+        if (!(te instanceof ISEGenericWire))
+            return false;        //Normally this could not happen, but just in case!
+
+
+
+
+        return false;
+    }
+
+    @Override
     public void neighborChanged(IBlockState state, World world, BlockPos pos, Block blockIn, BlockPos fromPos) {
         if (world.isRemote)
             return;
@@ -398,8 +502,12 @@ public class BlockWire extends BlockBase implements ISimpleTexture {
             return;
 
         TileEntity te = world.getTileEntity(pos);
-        if (te instanceof ISEChunkWatchSensitiveTile)
-            ((ISEChunkWatchSensitiveTile) te).onRenderingUpdateRequested();
+        if (!(te instanceof ISEGenericWire))
+            return;
+
+        ISEGenericWire wireTile = (ISEGenericWire) te;
+        wireTile.addBranch(nextPlacedSide.get(), nextPlacedto.get());
+        wireTile.onRenderingUpdateRequested();
     }
 
     ///////////////////////
