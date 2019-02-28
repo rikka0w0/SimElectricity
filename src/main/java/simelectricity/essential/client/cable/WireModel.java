@@ -69,7 +69,7 @@ public class WireModel extends CodeBasedModel {
                     RawQuadGroup group = new RawQuadGroup();
 
                     for (EnumFacing direction : EnumFacing.VALUES) {
-                        if (wireTile.connectedOnSide(wire_side, direction)) {
+                        if (wireTile.hasBranch(wire_side, direction)) {
                             group.add(genBranch(wire_side, direction, thickness));
                             centerTexture[direction.ordinal()] = null;
                             conSide = direction;

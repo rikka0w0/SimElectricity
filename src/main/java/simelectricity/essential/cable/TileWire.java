@@ -142,7 +142,15 @@ public class TileWire extends SEEnergyTile implements ISEGenericWire {
 
     // @SideOnly(Side.CLIENT)
     @Override
-    public boolean connectedOnSide(EnumFacing side, EnumFacing to) {
+    public boolean hasBranch(EnumFacing side, EnumFacing to) {
+        if (to == null){
+            for (EnumFacing dir: EnumFacing.VALUES)
+                if (this.wires[side.ordinal()].hasBranchOnSide(dir))
+                    return true;
+
+            return false;
+        }
+
         return this.wires[side.ordinal()].hasBranchOnSide(to);
     }
 
@@ -155,6 +163,8 @@ public class TileWire extends SEEnergyTile implements ISEGenericWire {
     public void addBranch(EnumFacing side, EnumFacing to) {
         this.wires[side.ordinal()].setConnection(to, true);
 
+        updateTileConnection();
+
         // Flag 1 - update Rendering Only!
         this.markForRenderUpdate();
     }
@@ -166,6 +176,8 @@ public class TileWire extends SEEnergyTile implements ISEGenericWire {
         } else {
             this.wires[side.ordinal()].setConnection(to, false);
         }
+
+        updateTileConnection();
 
         // Flag 1 - update Rendering Only!
         this.markForRenderUpdate();
