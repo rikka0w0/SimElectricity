@@ -324,7 +324,7 @@ public class BlockWire extends BlockBase implements ISimpleTexture {
     //////////////////////////////////
     ///CollisionBoxes
     //////////////////////////////////
-    public static Vec3d getBrachVecOffset(EnumFacing side, float thickness) {
+    public static Vec3d getBranchVecOffset(EnumFacing side, float thickness) {
         double x = 0, y = 0, z = 0;
         switch (side) {
             case DOWN:
@@ -363,8 +363,8 @@ public class BlockWire extends BlockBase implements ISimpleTexture {
             yMax = thickness;
 
         return (branch == null) ?
-                new AxisAlignedBB(min, min, min, max, max, max).offset(getBrachVecOffset(side,thickness)) : // Center
-                RayTraceHelper.createAABB(branch, min, yMin, min, max, yMax, max).offset(getBrachVecOffset(side,thickness));
+                new AxisAlignedBB(min, min, min, max, max, max).offset(getBranchVecOffset(side,thickness)) : // Center
+                RayTraceHelper.createAABB(branch, min, yMin, min, max, yMax, max).offset(getBranchVecOffset(side,thickness));
     }
 
     public static AxisAlignedBB getCenterBoundingBox(ISEGenericWire wireTile, EnumFacing side, float thickness) {
@@ -395,11 +395,78 @@ public class BlockWire extends BlockBase implements ISimpleTexture {
         if (wireTile.hasBranch(side, EnumFacing.EAST))
             x2 = 1;
 
-        return new AxisAlignedBB(x1, y1, z1, x2, y2, z2).offset(getBrachVecOffset(side,thickness));
+        return new AxisAlignedBB(x1, y1, z1, x2, y2, z2).offset(getBranchVecOffset(side,thickness));
     }
 
     public static AxisAlignedBB getCornerBoundingBox(ISEGenericWire wireTile, EnumFacing side1, EnumFacing side2, float thickness) {
-        return null;
+        EnumFacing e1 = null;
+        EnumFacing e2 = null;
+        if (side1.getAxis() == EnumFacing.Axis.Y) {
+            e1 = side1;
+            e2 = side2;
+        } else if (side2.getAxis() == EnumFacing.Axis.Y) {
+            e1 = side2;
+            e2 = side1;
+        } else  if (side1.getAxis() == EnumFacing.Axis.Z) {
+            e1 = side1;
+            e2 = side2;
+        } else if (side2.getAxis() == EnumFacing.Axis.Z) {
+            e1 = side2;
+            e2 = side1;
+        }
+
+        double x1, y1, z1, x2, y2, z2;
+        x1 = 0.5 + thickness / 2;
+        y1 = x1;
+        z1 = x1;
+        x2 = 0.5 - thickness / 2;
+        y2 = x2;
+        z2 = x2;
+
+
+        if (e1 == EnumFacing.DOWN) {
+            y1 = 0;
+
+            if (e2 == EnumFacing.NORTH) {
+                z1 = 0;
+            } else if (e2 == EnumFacing.SOUTH) {
+                z2 = 1;
+            } else if (e2 == EnumFacing.WEST) {
+                x1 = 0;
+            } else if (e2 == EnumFacing.EAST) {
+                x2 = 1;
+            }
+        } else if (e1 == EnumFacing.UP) {
+            y2 = 1;
+
+            if (e2 == EnumFacing.NORTH) {
+                z1 = 0;
+            } else if (e2 == EnumFacing.SOUTH) {
+                z2 = 1;
+            } else if (e2 == EnumFacing.WEST) {
+                x1 = 0;
+            } else if (e2 == EnumFacing.EAST) {
+                x2 = 1;
+            }
+        } else if (e1 == EnumFacing.NORTH) {
+            z1 = 0;
+
+            if (e2 == EnumFacing.WEST) {
+                x1 = 0;
+            } else if (e2 == EnumFacing.EAST) {
+                x2 = 1;
+            }
+        } else if (e1 == EnumFacing.SOUTH) {
+            z2 = 1;
+
+            if (e2 == EnumFacing.WEST) {
+                x1 = 0;
+            } else if (e2 == EnumFacing.EAST) {
+                x2 = 1;
+            }
+        }
+
+        return new AxisAlignedBB(x1, y1, z1, x2, y2, z2);
     }
 
     public static EnumFacing subHit_side(int subHit) {
@@ -598,24 +665,24 @@ public class BlockWire extends BlockBase implements ISimpleTexture {
         }
 
         AxisAlignedBB aabb = null;
-        if (trace.subHit > 256) {    //CoverPanel
-            // aabb = coverPanelBoundingBoxes[trace.subHit - 7].offset(pos).expand(0.01, 0.01, 0.01);
-        } else if (subHit_isBranch(trace.subHit)) {    //Center or branches
+        if (subHit_isBranch(trace.subHit)) {    //Center, corner or branches
             boolean isCorner = subHit_isCorner(trace.subHit);
             EnumFacing wire_side = subHit_side(trace.subHit);
             EnumFacing to = subHit_branch(trace.subHit);
 
             if (isCorner) {
                 // Corner
-                aabb = getBranchBoundingBox(wire_side, to, wireTile.getWireThickness(wire_side), false, true).offset(pos).expand(0.01, 0.01, 0.01);
+                aabb = getCornerBoundingBox(wireTile, wire_side, to, wireTile.getWireThickness(wire_side));
             } else {
                 if (to == null) {
                     // Center
-                    aabb = getCenterBoundingBox(wireTile, wire_side, wireTile.getWireThickness(wire_side)).offset(pos).expand(0.01, 0.01, 0.01);
+                    aabb = getCenterBoundingBox(wireTile, wire_side, wireTile.getWireThickness(wire_side));
                 } else {
-                    aabb = getBranchBoundingBox(wire_side, to, wireTile.getWireThickness(wire_side), wireTile.hasBranch(to, wire_side), false).offset(pos).expand(0.01, 0.01, 0.01);
+                    aabb = getBranchBoundingBox(wire_side, to, wireTile.getWireThickness(wire_side), wireTile.hasBranch(to, wire_side), false);
                 }
             }
+
+            aabb = aabb.offset(pos).expand(0.01, 0.01, 0.01);
         }
 
         return aabb;
@@ -624,8 +691,6 @@ public class BlockWire extends BlockBase implements ISimpleTexture {
     @Nullable
     @Override
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
-        TileEntity te = source.getTileEntity(pos);
-
         return new AxisAlignedBB(0,0,0,0,0,0);
     }
 
