@@ -70,7 +70,8 @@ public class WireModel extends CodeBasedModel {
 
                     for (EnumFacing direction : EnumFacing.VALUES) {
                         if (wireTile.hasBranch(wire_side, direction)) {
-                            group.add(genBranch(wire_side, direction, thickness));
+                            group.add(genCorner(direction));
+                            group.add(genBranch(direction, true));
                             centerTexture[direction.ordinal()] = null;
                             conSide = direction;
                             numOfCon++;
@@ -117,61 +118,113 @@ public class WireModel extends CodeBasedModel {
         return quads;
     }
 
-    private RawQuadCube genBranch(EnumFacing wire_side, EnumFacing branch, float thickness) {
-        RawQuadCube cube;
+    private RawQuadCube genCorner(EnumFacing branch) {
+        RawQuadCube cube = null;
+        float thickness = 0.2F;
+
+        float yMax = 0.5F - thickness * 3 / 2;
 
         switch (branch) {
             case DOWN:
-                cube = new RawQuadCube(thickness, 0.5F - thickness / 2, thickness,
+                cube = new RawQuadCube(thickness, thickness, thickness,
                         new TextureAtlasSprite[]{conductorTexture, null,
                                 insulatorTexture, insulatorTexture, insulatorTexture, insulatorTexture});
                 cube.translateCoord(0, -0.5F, 0);
-                cube.translateCoord(0.5F, 0.5F, 0.5F);
                 break;
 
             case UP:
-                cube = new RawQuadCube(thickness, 0.5F - thickness / 2, thickness,
+                cube = new RawQuadCube(thickness, thickness, thickness,
                         new TextureAtlasSprite[]{null, conductorTexture,
                                 insulatorTexture, insulatorTexture, insulatorTexture, insulatorTexture});
-                cube.translateCoord(0, thickness / 2, 0);
-                cube.translateCoord(0.5F, 0.5F, 0.5F);
+                cube.translateCoord(0, 0.5F - thickness, 0);
                 break;
 
             case NORTH:
-                cube = new RawQuadCube(thickness, thickness, 0.5F - thickness / 2,
+                cube = new RawQuadCube(thickness, thickness, thickness,
                         new TextureAtlasSprite[]{insulatorTexture, insulatorTexture,
                                 conductorTexture, null, insulatorTexture, insulatorTexture});
-                cube.translateCoord(0, -thickness / 2, -0.25F - thickness / 4);
-                cube.translateCoord(0.5F, 0.5F, 0.5F);
+                cube.translateCoord(0, -thickness / 2, -0.5F + thickness / 2);
                 break;
 
             case SOUTH:
-                cube = new RawQuadCube(thickness, thickness, 0.5F - thickness / 2,
+                cube = new RawQuadCube(thickness, thickness, thickness,
                         new TextureAtlasSprite[]{insulatorTexture, insulatorTexture,
                                 null, conductorTexture, insulatorTexture, insulatorTexture});
-                cube.translateCoord(0, -thickness / 2, 0.25F + thickness / 4);
-                cube.translateCoord(0.5F, 0.5F, 0.5F);
+                cube.translateCoord(0, -thickness / 2, 0.5F - thickness / 2);
                 break;
 
             case WEST:
-                cube = new RawQuadCube(0.5F - thickness / 2, thickness, thickness,
+                cube = new RawQuadCube(thickness, thickness, thickness,
                         new TextureAtlasSprite[]{insulatorTexture, insulatorTexture,
                                 insulatorTexture, insulatorTexture, conductorTexture, null});
-                cube.translateCoord(-0.25F - thickness / 4, -thickness / 2, 0);
-                cube.translateCoord(0.5F, 0.5F, 0.5F);
+                cube.translateCoord(-0.5F + thickness / 2, -thickness / 2, 0);
                 break;
 
             case EAST:
-                cube = new RawQuadCube(0.5F - thickness / 2, thickness, thickness,
+                cube = new RawQuadCube(thickness, thickness, thickness,
                         new TextureAtlasSprite[]{insulatorTexture, insulatorTexture,
                                 insulatorTexture, insulatorTexture, null, conductorTexture});
-                cube.translateCoord(0.25F + thickness / 4, -thickness / 2, 0);
-                cube.translateCoord(0.5F, 0.5F, 0.5F);
+                cube.translateCoord(0.5F - thickness / 2, -thickness / 2, 0);
+                break;
+        }
+
+        cube.translateCoord(0.5F, 0.5F, 0.5F);
+
+        return cube;
+    }
+
+    private RawQuadCube genBranch(EnumFacing branch, boolean noCorner) {
+        RawQuadCube cube = null;
+        float thickness = 0.2F;
+
+        float yMax = noCorner ? 0.5F - thickness * 3 / 2 : 0.5F - thickness / 2;
+
+        switch (branch) {
+            case DOWN:
+                cube = new RawQuadCube(thickness, yMax, thickness,
+                        new TextureAtlasSprite[]{noCorner?null:conductorTexture, null,
+                                insulatorTexture, insulatorTexture, insulatorTexture, insulatorTexture});
+                cube.translateCoord(0, noCorner ? -0.5F + thickness : -0.5F, 0);
                 break;
 
-            default:
-                cube = null;
+            case UP:
+                cube = new RawQuadCube(thickness, yMax, thickness,
+                        new TextureAtlasSprite[]{null, noCorner?null:conductorTexture,
+                                insulatorTexture, insulatorTexture, insulatorTexture, insulatorTexture});
+                cube.translateCoord(0, thickness / 2, 0);
+                break;
+
+            case NORTH:
+                cube = new RawQuadCube(thickness, thickness, yMax,
+                        new TextureAtlasSprite[]{insulatorTexture, insulatorTexture,
+                                noCorner?null:conductorTexture, null, insulatorTexture, insulatorTexture});
+                cube.translateCoord(0, -thickness / 2, -0.25F - thickness / 4 + (noCorner ? thickness/2 : 0));
+                break;
+
+            case SOUTH:
+                cube = new RawQuadCube(thickness, thickness, yMax,
+                        new TextureAtlasSprite[]{insulatorTexture, insulatorTexture,
+                                null, noCorner?null:conductorTexture, insulatorTexture, insulatorTexture});
+                cube.translateCoord(0, -thickness / 2, 0.25F + thickness / 4 - (noCorner ? thickness/2 : 0));
+                break;
+
+            case WEST:
+                cube = new RawQuadCube(yMax, thickness, thickness,
+                        new TextureAtlasSprite[]{insulatorTexture, insulatorTexture,
+                                insulatorTexture, insulatorTexture, noCorner?null:conductorTexture, null});
+                cube.translateCoord(-0.25F - thickness / 4 + (noCorner ? thickness/2 : 0), -thickness / 2, 0);
+                break;
+
+            case EAST:
+                cube = new RawQuadCube(yMax, thickness, thickness,
+                        new TextureAtlasSprite[]{insulatorTexture, insulatorTexture,
+                                insulatorTexture, insulatorTexture, null, noCorner?null:conductorTexture});
+                cube.translateCoord(0.25F + thickness / 4 - (noCorner ? thickness/2 : 0), -thickness / 2, 0);
+                break;
         }
+
+
+        cube.translateCoord(0.5F, 0.5F, 0.5F);
 
         return cube;
     }
