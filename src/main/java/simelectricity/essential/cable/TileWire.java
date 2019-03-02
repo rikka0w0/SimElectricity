@@ -1,5 +1,6 @@
 package simelectricity.essential.cable;
 
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fml.relauncher.Side;
@@ -7,8 +8,11 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import simelectricity.api.SEAPI;
 import simelectricity.api.components.ISEWire;
 import simelectricity.api.node.ISESubComponent;
+import simelectricity.essential.BlockRegistry;
 import simelectricity.essential.api.ISEGenericWire;
 import simelectricity.essential.common.SEEnergyTile;
+
+import java.util.List;
 
 public class TileWire extends SEEnergyTile implements ISEGenericWire {
     private final Wire[] wires;
@@ -155,12 +159,7 @@ public class TileWire extends SEEnergyTile implements ISEGenericWire {
     }
 
     @Override
-    public float getWireThickness(EnumFacing side) {
-        return 0.2F;
-    }
-
-    @Override
-    public void addBranch(EnumFacing side, EnumFacing to) {
+    public void addBranch(EnumFacing side, EnumFacing to, ItemStack itemStack) {
         this.wires[side.ordinal()].setConnection(to, true);
 
         updateTileConnection();
@@ -169,12 +168,18 @@ public class TileWire extends SEEnergyTile implements ISEGenericWire {
         this.markForRenderUpdate();
     }
 
-    public void removeBranch(EnumFacing side, EnumFacing to) {
+    @Override
+    public void removeBranch(EnumFacing side, EnumFacing to, List<ItemStack> drops) {
         if (to == null) {
-            for (EnumFacing facing: EnumFacing.VALUES)
-                this.wires[side.ordinal()].setConnection(facing, false);
+            for (EnumFacing facing: EnumFacing.VALUES) {
+                if (this.wires[side.ordinal()].hasBranchOnSide(facing)) {
+                    drops.add(new ItemStack(BlockRegistry.blockWire.itemBlock));
+                    this.wires[side.ordinal()].setConnection(facing, false);
+                }
+            }
         } else {
             this.wires[side.ordinal()].setConnection(to, false);
+            drops.add(new ItemStack(BlockRegistry.blockWire.itemBlock));
         }
 
         updateTileConnection();

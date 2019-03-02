@@ -44,8 +44,9 @@ public class CableStateMapper extends StateMapperBase implements IModelLoader {
         } else if (block instanceof BlockWire) {
             BlockWire wire = (BlockWire) block;
             String name = wire.getRegistryName().getResourcePath();
+            float thickness = wire.thickness;
 
-            String varStr = "wire," + name;
+            String varStr = "wire," + name + "," + thickness;
 
             //The resource path indicates the loader
             ModelResourceLocation res = new ModelResourceLocation(
@@ -73,7 +74,8 @@ public class CableStateMapper extends StateMapperBase implements IModelLoader {
             float thickness = Float.parseFloat(splited[2]);
             return new CableModel(domain, "cable/" + name, thickness);
         } else if (type.equals("wire")) {
-            return new WireModel(domain, "wire/" + name);
+            float thickness = Float.parseFloat(splited[2]);
+            return new WireModel(domain, "wire/" + name, thickness);
         }
         return null;
     }

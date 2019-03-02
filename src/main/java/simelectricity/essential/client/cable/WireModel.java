@@ -13,6 +13,7 @@ import rikka.librikka.model.quadbuilder.RawQuadCube;
 import rikka.librikka.model.quadbuilder.RawQuadGroup;
 import rikka.librikka.properties.UnlistedPropertyRef;
 import simelectricity.essential.api.ISEGenericWire;
+import simelectricity.essential.cable.BlockWire;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -22,8 +23,10 @@ import java.util.function.Function;
 public class WireModel extends CodeBasedModel {
     private final ResourceLocation insulatorTextureLoc, conductorTextureLoc;
     private TextureAtlasSprite insulatorTexture, conductorTexture;
+    public final float thickness;
 
-    public WireModel(String domain, String name) {
+    public WireModel(String domain, String name, float thickness) {
+        this.thickness = thickness;
 //        this.insulatorTextureLoc = this.registerTexture(domain + ":blocks/" + name + "_insulator");    // We just want to bypass the ModelBakery
 //        this.conductorTextureLoc = this.registerTexture(domain + ":blocks/" + name + "_conductor");    // and load our texture
         this.insulatorTextureLoc = this.registerTexture(domain + ":blocks/cable/essential_cable_aluminum_thin_insulator");    // We just want to bypass the ModelBakery
@@ -57,8 +60,6 @@ public class WireModel extends CodeBasedModel {
             //Render center & branches in SOLID layer
             if (MinecraftForgeClient.getRenderLayer() == BlockRenderLayer.SOLID) {
                 for (EnumFacing wire_side: EnumFacing.VALUES) {
-                    float thickness = wireTile.getWireThickness(wire_side);
-
                     byte numOfCon = 0;
                     EnumFacing conSide = EnumFacing.DOWN;
 
@@ -120,8 +121,6 @@ public class WireModel extends CodeBasedModel {
 
     private RawQuadCube genCorner(EnumFacing branch) {
         RawQuadCube cube = null;
-        float thickness = 0.2F;
-
         float yMax = 0.5F - thickness * 3 / 2;
 
         switch (branch) {
@@ -175,8 +174,6 @@ public class WireModel extends CodeBasedModel {
 
     private RawQuadCube genBranch(EnumFacing branch, boolean noCorner) {
         RawQuadCube cube = null;
-        float thickness = 0.2F;
-
         float yMax = noCorner ? 0.5F - thickness * 3 / 2 : 0.5F - thickness / 2;
 
         switch (branch) {
