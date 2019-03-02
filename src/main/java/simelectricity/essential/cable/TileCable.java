@@ -138,7 +138,7 @@ public class TileCable extends SEEnergyTile implements ISEGenericCable, ISEIumin
         if (coverPanel instanceof ISEElectricalLoadCoverPanel)
             SEAPI.energyNetAgent.updateTileConnection(this);
 
-        world.neighborChanged(pos.offset(side), getBlockType(), pos);
+        world.notifyNeighborsOfStateChange(pos, getBlockType(), true);
 
 		this.onRenderingUpdateRequested();
     }
@@ -166,13 +166,9 @@ public class TileCable extends SEEnergyTile implements ISEGenericCable, ISEIumin
 
 		this.onLightValueUpdated();
 
-        //Notify neighbor block that this side no longer emits redstone signal
-        if (coverPanel instanceof ISERedstoneEmitterCoverPanel)
-			this.world.notifyNeighborsOfStateChange(this.pos, this.blockType, false);
-
 		this.onRenderingUpdateRequested();
 
-        this.world.neighborChanged(this.pos.offset(side), getBlockType(), this.pos);
+        world.notifyNeighborsOfStateChange(pos, getBlockType(), true);
 
         //Spawn an item entity for player to pick up
         if (dropItem)

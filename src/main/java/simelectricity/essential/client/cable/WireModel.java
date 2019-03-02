@@ -80,7 +80,7 @@ public class WireModel extends CodeBasedModel {
                     }
 
                     if (numOfCon > 0) {
-                        if (numOfCon == 1) {
+                        if (numOfCon == 1 && !wireTile.connectedOnSide(wire_side)) {
                             centerTexture[conSide.getOpposite().ordinal()] = this.conductorTexture;
                         }
 

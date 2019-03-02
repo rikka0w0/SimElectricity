@@ -15,4 +15,13 @@ public interface ISEGenericWire extends ISEWireTile, ISEChunkWatchSensitiveTile{
 
     @SideOnly(Side.CLIENT)
     boolean hasExtConnection(EnumFacing f1, EnumFacing f2);
+
+    /**
+     * Called by cable render (may be custom implementation) to
+     * determine if the cable block has connection on the given side
+     * @param side
+     * @return ture if electrically connected
+     */
+    boolean connectedOnSide(EnumFacing side);
+
 }

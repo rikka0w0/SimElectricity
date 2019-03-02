@@ -116,7 +116,7 @@ public class EnergyNetAgent implements ISEEnergyNetAgent {
             else if (neighborTileEntity instanceof ISEWireTile)
                 return (((ISEWireTile) neighborTileEntity).getWireParam(direction.getOpposite())).hasBranchOnSide(null);
         } else if (tileEntity instanceof ISEWireTile) {
-            if (((ISEWireTile) tileEntity).getWireParam(direction).hasBranchOnSide(null))
+            if (!((ISEWireTile) tileEntity).getWireParam(direction).hasBranchOnSide(null))
                 return false;
 
             TileEntity neighborTileEntity = EnergyNetDataProvider.getTileEntityOnDirection(tileEntity, direction);

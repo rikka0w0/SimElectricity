@@ -153,6 +153,8 @@ public class TileWire extends SEEnergyTile implements ISEGenericWire {
                     externalConnections[index] = false;
                 }
             }
+
+            connectedOnSide[wire_side.ordinal()] = SEAPI.energyNetAgent.canConnectTo(this, wire_side);
         }
 
         //Initiate Server->Client synchronization
@@ -163,15 +165,22 @@ public class TileWire extends SEEnergyTile implements ISEGenericWire {
     //Server->Client sync
     ////////////////////////////////////////
     private boolean[] externalConnections = new boolean[BlockWire.corners.length];
+    private boolean[] connectedOnSide = new boolean[EnumFacing.VALUES.length];
+
     @Override
     public void prepareS2CPacketData(NBTTagCompound tagCompound) {
         super.prepareS2CPacketData(tagCompound);
 
+        byte connections = 0;
         for (EnumFacing side : EnumFacing.values()) {
             NBTTagCompound nbt = new NBTTagCompound();
             wires[side.ordinal()].writeToNBT(nbt);
             tagCompound.setTag(side.getName(), nbt);
+
+            if (connectedOnSide[side.ordinal()])
+                connections |= (1 << side.ordinal());
         }
+        tagCompound.setByte("connections", connections);
 
         int extcon = 0;
         for (int i=0; i<externalConnections.length; i++) {
@@ -184,8 +193,11 @@ public class TileWire extends SEEnergyTile implements ISEGenericWire {
     @SideOnly(Side.CLIENT)
     @Override
     public void onSyncDataFromServerArrived(NBTTagCompound tagCompound) {
-        for (EnumFacing side : EnumFacing.values())
+        byte connections = tagCompound.getByte("connections");
+        for (EnumFacing side : EnumFacing.VALUES) {
             wires[side.ordinal()].readFromNBT(tagCompound.getCompoundTag(side.getName()));
+            connectedOnSide[side.ordinal()] = (connections & (1 << side.ordinal())) > 0;
+        }
 
         int extcon = tagCompound.getInteger("extcon");
         for (int i=0; i<externalConnections.length; i++)
@@ -202,6 +214,11 @@ public class TileWire extends SEEnergyTile implements ISEGenericWire {
     public boolean hasExtConnection(EnumFacing f1, EnumFacing f2) {
         int index = BlockWire.cornerIdOf(f1, f2);
         return index<0 ? false : externalConnections[index];
+    }
+
+    @Override
+    public boolean connectedOnSide(EnumFacing side) {
+        return connectedOnSide[side.ordinal()];
     }
 
     @Override
