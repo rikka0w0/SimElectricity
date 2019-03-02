@@ -9,6 +9,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.MinecraftForgeClient;
 import rikka.librikka.model.CodeBasedModel;
+import rikka.librikka.model.quadbuilder.IRawModel;
 import rikka.librikka.model.quadbuilder.RawQuadCube;
 import rikka.librikka.model.quadbuilder.RawQuadGroup;
 import rikka.librikka.properties.UnlistedPropertyRef;
@@ -70,9 +71,8 @@ public class WireModel extends CodeBasedModel {
                     RawQuadGroup group = new RawQuadGroup();
 
                     for (EnumFacing direction : EnumFacing.VALUES) {
-                        if (wireTile.hasBranch(wire_side, direction)) {
-                            group.add(genCorner(direction));
-                            group.add(genBranch(direction, true));
+                        if (wireTile.getWireParam(wire_side).hasBranchOnSide(direction)) {
+                            group.add(genBranch(direction, wireTile.getWireParam(direction).hasBranchOnSide(wire_side)));
                             centerTexture[direction.ordinal()] = null;
                             conSide = direction;
                             numOfCon++;
@@ -90,28 +90,53 @@ public class WireModel extends CodeBasedModel {
                         group.add(cube);
                     }
 
-                    switch (wire_side) {
-                        case DOWN:
-                            group.translateCoord(0, thickness / 2 - 0.5F , 0);
-                            break;
-                        case UP:
-                            group.translateCoord(0, 0.5F-thickness / 2 , 0);
-                            break;
-                        case NORTH:
-                            group.translateCoord(0, 0 , thickness / 2 - 0.5F);
-                            break;
-                        case SOUTH:
-                            group.translateCoord(0, 0 , 0.5F - thickness / 2);
-                            break;
-                        case WEST:
-                            group.translateCoord(thickness / 2 - 0.5F, 0 , 0);
-                            break;
-                        case EAST:
-                            group.translateCoord(0.5F - thickness / 2, 0 , 0);
-                            break;
-                    }
+                    translateGroupCoord(wire_side, group);
 
                     group.bake(quads);
+                }
+            }
+
+            // Corners
+            for (EnumFacing[] pair: BlockWire.corners) {
+                EnumFacing wire_side = pair[0];
+                EnumFacing to = pair[1];
+
+                if (
+                        wireTile.getWireParam(wire_side).hasBranchOnSide(to) &&
+                        wireTile.getWireParam(to).hasBranchOnSide(wire_side)
+                        ) {
+                    // Corner - interior
+                    RawQuadCube cube = genCorner(to, false);
+                    translateGroupCoord(wire_side, cube);
+                    cube.bake(quads);
+                }
+            }
+
+
+            for (EnumFacing side: EnumFacing.VALUES) {
+                for (EnumFacing to : EnumFacing.VALUES) {
+                    if (wireTile.hasExtConnection(side, to)) {
+                        int index = BlockWire.cornerIdOf(side, to);
+                        if (index < 0)
+                            continue;
+
+                        EnumFacing f0 = BlockWire.corners[index][0];
+                        EnumFacing f1 = BlockWire.corners[index][1];
+
+                        RawQuadCube cube = genCorner(to, false);
+                        if (f0 == EnumFacing.UP)
+                            cube.translateCoord(0, thickness, 0);
+                        if (f0 == EnumFacing.DOWN)
+                            cube.translateCoord(0, -thickness, 0);
+                        if (f0 == EnumFacing.NORTH)
+                            cube.translateCoord(0, 0, -thickness);
+                        if (f0 == EnumFacing.SOUTH)
+                            cube.translateCoord(0, 0, +thickness);
+                        translateGroupCoord(f1, cube);
+
+                        cube.bake(quads);
+                    }
+
                 }
             }
         }
@@ -119,21 +144,43 @@ public class WireModel extends CodeBasedModel {
         return quads;
     }
 
-    private RawQuadCube genCorner(EnumFacing branch) {
+    private void translateGroupCoord(EnumFacing wire_side, IRawModel group) {
+        switch (wire_side) {
+            case DOWN:
+                group.translateCoord(0, thickness / 2 - 0.5F , 0);
+                break;
+            case UP:
+                group.translateCoord(0, 0.5F-thickness / 2 , 0);
+                break;
+            case NORTH:
+                group.translateCoord(0, 0 , thickness / 2 - 0.5F);
+                break;
+            case SOUTH:
+                group.translateCoord(0, 0 , 0.5F - thickness / 2);
+                break;
+            case WEST:
+                group.translateCoord(thickness / 2 - 0.5F, 0 , 0);
+                break;
+            case EAST:
+                group.translateCoord(0.5F - thickness / 2, 0 , 0);
+                break;
+        }
+    }
+
+    private RawQuadCube genCorner(EnumFacing branch, boolean displayConductor) {
         RawQuadCube cube = null;
-        float yMax = 0.5F - thickness * 3 / 2;
 
         switch (branch) {
             case DOWN:
                 cube = new RawQuadCube(thickness, thickness, thickness,
-                        new TextureAtlasSprite[]{conductorTexture, null,
+                        new TextureAtlasSprite[]{displayConductor ? conductorTexture : insulatorTexture, null,
                                 insulatorTexture, insulatorTexture, insulatorTexture, insulatorTexture});
                 cube.translateCoord(0, -0.5F, 0);
                 break;
 
             case UP:
                 cube = new RawQuadCube(thickness, thickness, thickness,
-                        new TextureAtlasSprite[]{null, conductorTexture,
+                        new TextureAtlasSprite[]{null, displayConductor ? conductorTexture : insulatorTexture,
                                 insulatorTexture, insulatorTexture, insulatorTexture, insulatorTexture});
                 cube.translateCoord(0, 0.5F - thickness, 0);
                 break;
@@ -141,28 +188,28 @@ public class WireModel extends CodeBasedModel {
             case NORTH:
                 cube = new RawQuadCube(thickness, thickness, thickness,
                         new TextureAtlasSprite[]{insulatorTexture, insulatorTexture,
-                                conductorTexture, null, insulatorTexture, insulatorTexture});
+                                displayConductor ? conductorTexture : insulatorTexture, null, insulatorTexture, insulatorTexture});
                 cube.translateCoord(0, -thickness / 2, -0.5F + thickness / 2);
                 break;
 
             case SOUTH:
                 cube = new RawQuadCube(thickness, thickness, thickness,
                         new TextureAtlasSprite[]{insulatorTexture, insulatorTexture,
-                                null, conductorTexture, insulatorTexture, insulatorTexture});
+                                null, displayConductor ? conductorTexture : insulatorTexture, insulatorTexture, insulatorTexture});
                 cube.translateCoord(0, -thickness / 2, 0.5F - thickness / 2);
                 break;
 
             case WEST:
                 cube = new RawQuadCube(thickness, thickness, thickness,
                         new TextureAtlasSprite[]{insulatorTexture, insulatorTexture,
-                                insulatorTexture, insulatorTexture, conductorTexture, null});
+                                insulatorTexture, insulatorTexture, displayConductor ? conductorTexture : insulatorTexture, null});
                 cube.translateCoord(-0.5F + thickness / 2, -thickness / 2, 0);
                 break;
 
             case EAST:
                 cube = new RawQuadCube(thickness, thickness, thickness,
                         new TextureAtlasSprite[]{insulatorTexture, insulatorTexture,
-                                insulatorTexture, insulatorTexture, null, conductorTexture});
+                                insulatorTexture, insulatorTexture, null, displayConductor ? conductorTexture : insulatorTexture});
                 cube.translateCoord(0.5F - thickness / 2, -thickness / 2, 0);
                 break;
         }

@@ -138,8 +138,7 @@ public class TileCable extends SEEnergyTile implements ISEGenericCable, ISEIumin
         if (coverPanel instanceof ISEElectricalLoadCoverPanel)
             SEAPI.energyNetAgent.updateTileConnection(this);
 
-        if (!coverPanel.isHollow())
-            world.neighborChanged(pos.offset(side), this.blockType, pos);
+        world.neighborChanged(pos.offset(side), getBlockType(), pos);
 
 		this.onRenderingUpdateRequested();
     }
@@ -173,8 +172,7 @@ public class TileCable extends SEEnergyTile implements ISEGenericCable, ISEIumin
 
 		this.onRenderingUpdateRequested();
 
-        if (!coverPanel.isHollow())
-			this.world.neighborChanged(this.pos.offset(side), getBlockType(), this.pos);
+        this.world.neighborChanged(this.pos.offset(side), getBlockType(), this.pos);
 
         //Spawn an item entity for player to pick up
         if (dropItem)

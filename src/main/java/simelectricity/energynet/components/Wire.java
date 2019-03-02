@@ -32,8 +32,12 @@ public final class Wire extends Tile<ISEWire> implements ISESubComponent, ISEWir
 
     @Override
     public boolean hasBranchOnSide(EnumFacing side) {
-        if (hasBranchOnSide == null)
+        if (hasBranchOnSide == null) {
+            for (EnumFacing facing: EnumFacing.VALUES)
+                if (hasBranchOnSide[facing.ordinal()])
+                    return true;
             return false;
+        }
 
         return hasBranchOnSide[side.ordinal()];
     }

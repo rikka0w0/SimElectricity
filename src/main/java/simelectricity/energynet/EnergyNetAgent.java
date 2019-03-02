@@ -92,14 +92,19 @@ public class EnergyNetAgent implements ISEEnergyNetAgent {
             ISECableTile cableTile = (ISECableTile) tileEntity;
             TileEntity neighborTileEntity = EnergyNetDataProvider.getTileEntityOnDirection(tileEntity, direction);
 
+
+            if (!cableTile.canConnectOnSide(direction))
+                return false;
+
             if (neighborTileEntity instanceof ISECableTile) {
                 ISECableTile neighborCableTile = (ISECableTile) neighborTileEntity;
                 return (
                         cableTile.getColor() == 0 ||
                                 neighborCableTile.getColor() == 0 ||
                                 cableTile.getColor() == neighborCableTile.getColor()
-                ) && cableTile.canConnectOnSide(direction) &&
-                        neighborCableTile.canConnectOnSide(direction.getOpposite());
+                ) &&     neighborCableTile.canConnectOnSide(direction.getOpposite());
+            } else if (neighborTileEntity instanceof ISEWireTile) {
+                return (((ISEWireTile) neighborTileEntity).getWireParam(direction.getOpposite())).hasBranchOnSide(null);
             } else if (neighborTileEntity instanceof ISETile) {
                 return ((ISETile) neighborTileEntity).getComponent(direction.getOpposite()) != null;
             }
@@ -107,9 +112,21 @@ public class EnergyNetAgent implements ISEEnergyNetAgent {
             TileEntity neighborTileEntity = EnergyNetDataProvider.getTileEntityOnDirection(tileEntity, direction);
 
             if (neighborTileEntity instanceof ISECableTile)
-                return ((Cable) ((ISECableTile) neighborTileEntity).getNode()).canConnectOnSide(direction.getOpposite());
+                return  ((ISECableTile) neighborTileEntity).canConnectOnSide(direction.getOpposite());
+            else if (neighborTileEntity instanceof ISEWireTile)
+                return (((ISEWireTile) neighborTileEntity).getWireParam(direction.getOpposite())).hasBranchOnSide(null);
+        } else if (tileEntity instanceof ISEWireTile) {
+            if (((ISEWireTile) tileEntity).getWireParam(direction).hasBranchOnSide(null))
+                return false;
+
+            TileEntity neighborTileEntity = EnergyNetDataProvider.getTileEntityOnDirection(tileEntity, direction);
+
+            if (neighborTileEntity instanceof ISECableTile)
+                return ((ISECableTile) neighborTileEntity).canConnectOnSide(direction.getOpposite());
+            else if (neighborTileEntity instanceof ISETile)
+                return ((ISETile) neighborTileEntity).getComponent(direction.getOpposite()) != null;
         } else {
-            throw new RuntimeException("canConnectTo: input parameter \"tileEntity\" must implement either ISECableTile or ISETile");
+            throw new RuntimeException("canConnectTo: input parameter \"tileEntity\" must implement either ISECableTile, ISEWireTile or ISETile");
         }
 
         return false;

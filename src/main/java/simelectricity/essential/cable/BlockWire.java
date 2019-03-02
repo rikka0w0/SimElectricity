@@ -4,6 +4,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -31,6 +32,7 @@ import rikka.librikka.item.ISimpleTexture;
 import rikka.librikka.item.ItemBlockBase;
 import rikka.librikka.properties.UnlistedPropertyRef;
 import simelectricity.api.SEAPI;
+import simelectricity.api.tile.ISECableTile;
 import simelectricity.api.tile.ISEWireTile;
 import simelectricity.essential.api.ISEGenericWire;
 import simelectricity.essential.utils.SEUnitHelper;
@@ -154,7 +156,10 @@ public class BlockWire extends BlockBase implements ISimpleTexture {
                 } else {
 
                     if (facing == tr_side || facing == tr_side.getOpposite()) {
-                        if (!wireTile.hasBranch(to, facing.getOpposite()) && world.isSideSolid(pos.offset(to), to.getOpposite())) {
+
+                        if (!wireTile.hasBranch(to, facing.getOpposite()) &&
+                                (world.isSideSolid(pos.offset(to), to.getOpposite()) ||
+                                world.getTileEntity(pos.offset(to)) instanceof ISECableTile)) {
                             shrinkItem = true;
                             wireTile.addBranch(to, facing.getOpposite(), itemStack);
                         }
@@ -214,6 +219,95 @@ public class BlockWire extends BlockBase implements ISimpleTexture {
     ///////////////////////////////
     ///Block Properties
     ///////////////////////////////
+    public static EnumFacing[][] corners = new EnumFacing[][] {
+            {EnumFacing.DOWN, EnumFacing.NORTH},
+            {EnumFacing.DOWN, EnumFacing.SOUTH},
+            {EnumFacing.DOWN, EnumFacing.WEST},
+            {EnumFacing.DOWN, EnumFacing.EAST},
+            {EnumFacing.UP, EnumFacing.NORTH},
+            {EnumFacing.UP, EnumFacing.SOUTH},
+            {EnumFacing.UP, EnumFacing.WEST},
+            {EnumFacing.UP, EnumFacing.EAST},
+            {EnumFacing.NORTH, EnumFacing.WEST},
+            {EnumFacing.NORTH, EnumFacing.EAST},
+            {EnumFacing.SOUTH, EnumFacing.WEST},
+            {EnumFacing.SOUTH, EnumFacing.EAST},
+    };
+
+    public static boolean isCornerIdNormal(EnumFacing f1, EnumFacing f2) {
+        if (f1.getAxis() == f2.getAxis())
+            return false;
+
+        if (f1.getAxis() == EnumFacing.Axis.Y) {
+            return true;
+        } else if (f1.getAxis() == EnumFacing.Axis.Z) {
+            return f2.getAxis() != EnumFacing.Axis.Y;
+        } else {
+            return false;
+        }
+    }
+
+    public static int cornerIdOf(EnumFacing f1, EnumFacing f2) {
+        int index = -1;
+
+        if (f1.getAxis() == f2.getAxis())
+            return -1;
+
+        EnumFacing wire_side = null, branch = null;
+        if (f1.getAxis() == EnumFacing.Axis.Y) {
+            wire_side = f1;
+            branch = f2;
+        } else if (f1.getAxis() == EnumFacing.Axis.Z) {
+            if (f2.getAxis() == EnumFacing.Axis.Y) {
+                wire_side = f2;
+                branch = f1;
+            } else {
+                wire_side = f1;
+                branch = f2;
+            }
+        } else {
+            // f1.getAxis() == EnumFacing.Axis.X
+            wire_side = f2;
+            branch = f1;
+        }
+
+        if (wire_side == EnumFacing.DOWN) {
+            if (branch == EnumFacing.NORTH) {
+                index = 0;
+            } else if (branch == EnumFacing.SOUTH) {
+                index = 1;
+            } else if (branch == EnumFacing.WEST) {
+                index = 2;
+            } else if (branch == EnumFacing.EAST) {
+                index = 3;
+            }
+        } else if (wire_side == EnumFacing.UP) {
+            if (branch == EnumFacing.NORTH) {
+                index = 4;
+            } else if (branch == EnumFacing.SOUTH) {
+                index = 5;
+            } else if (branch == EnumFacing.WEST) {
+                index = 6;
+            } else if (branch == EnumFacing.EAST) {
+                index = 7;
+            }
+        } else if (wire_side == EnumFacing.NORTH) {
+            if (branch == EnumFacing.WEST) {
+                index = 8;
+            } else if (branch == EnumFacing.EAST) {
+                index = 9;
+            }
+        } else if (wire_side == EnumFacing.SOUTH) {
+            if (branch == EnumFacing.WEST) {
+                index = 10;
+            } else if (branch == EnumFacing.EAST) {
+                index = 11;
+            }
+        }
+
+        return index;
+    }
+
     public final float thickness;
     public final float[] resistances;
     private final Class<? extends TileWire> tileEntityClass;
@@ -294,6 +388,12 @@ public class BlockWire extends BlockBase implements ISimpleTexture {
     @SideOnly(Side.CLIENT)
     public boolean shouldSideBeRendered(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side) {
         return false;
+    }
+
+    @Deprecated
+    public BlockFaceShape getBlockFaceShape(IBlockAccess worldIn, IBlockState state, BlockPos pos, EnumFacing face)
+    {
+        return BlockFaceShape.UNDEFINED;
     }
 
     ///////////////////////////////
@@ -538,18 +638,6 @@ public class BlockWire extends BlockBase implements ISimpleTexture {
                 best = RayTraceHelper.computeTrace(best, pos, start, end, getBranchBoundingBox(wire_side,null, false, false), (wire_side.ordinal() << 4) | 7);
         }
 
-        //CoverPanel
-//        for (EnumFacing side : EnumFacing.VALUES) {
-//            ISECoverPanel coverPanel = cable.getCoverPanelOnSide(side);
-//            if (coverPanel != null) {
-//                best = RayTraceHelper.computeTrace(best, pos, start, end, coverPanelBoundingBoxes[side.ordinal()], side.ordinal() + 1 + 6);
-//            }
-//        }
-
-        //if (best == null) {
-        //    return RayTraceHelper.computeTrace(null, pos, start, end, Block.FULL_BLOCK_AABB, 400);
-        //}
-
         return best;
     }
 
@@ -706,6 +794,9 @@ public class BlockWire extends BlockBase implements ISimpleTexture {
             int x = fromPos.getX() - pos.getX();
             int y = fromPos.getY() - pos.getY();
             int z = fromPos.getZ() - pos.getZ();
+            if (x*x+y*y+z*z != 1)
+                return; // the change is not send from neighbor block!!!
+
             EnumFacing side = EnumFacing.getFacingFromVector(x, y, z);
 
             if (wireTile.hasBranch(side, null) && !world.isSideSolid(fromPos, side.getOpposite())) {
@@ -776,8 +867,9 @@ public class BlockWire extends BlockBase implements ISimpleTexture {
                 wireTile.removeBranch(to, wire_side, drops);
             }
 
-            for (ItemStack stack: drops)
-                Utils.dropItemIntoWorld(world, pos, stack);
+            if (!player.isCreative())
+                for (ItemStack stack: drops)
+                    Utils.dropItemIntoWorld(world, pos, stack);
 
             for (EnumFacing side: EnumFacing.VALUES) {
                 if (wireTile.hasBranch(side, null))
