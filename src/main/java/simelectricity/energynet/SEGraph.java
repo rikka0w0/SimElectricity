@@ -1,6 +1,7 @@
 package simelectricity.energynet;
 
 import simelectricity.energynet.components.Cable;
+import simelectricity.energynet.components.CableBase;
 import simelectricity.energynet.components.GridNode;
 import simelectricity.energynet.components.SEComponent;
 
@@ -18,26 +19,27 @@ public class SEGraph {
     private final LinkedList<SEComponent> terminalNodes;
 
     public SEGraph() {
-        this.components = new LinkedList<SEComponent>();
-        this.wires = new LinkedList<SEComponent>();
+        this.components = new LinkedList<>();
+        this.wires = new LinkedList<>();
 
-        this.terminalNodes = new LinkedList<SEComponent>();
+        this.terminalNodes = new LinkedList<>();
     }
 
     ////////////////////////////////////////////////
     ///Optimizer
     ////////////////////////////////////////////////
     private static boolean isWire(SEComponent node) {
-        return node instanceof Cable || node instanceof GridNode;
+        return node instanceof CableBase || node instanceof GridNode;
     }
 
     private static boolean shouldCalcVoltage(SEComponent node) {
         if (node.neighbors.size() > 2)                //A node has more than 2 connections
             return true;
+
         if (SEGraph.isInterconnectionTerminal(node))        //A interconnection terminal
             return true;
 
-        if (node instanceof Cable && ((Cable) node).hasShuntResistance())
+        if (node instanceof CableBase && ((CableBase) node).hasShuntResistance())
             return true;
 
         return node instanceof GridNode && ((GridNode) node).type != GridNode.ISEGridNode_Wire;
@@ -47,7 +49,8 @@ public class SEGraph {
     private static boolean isInterconnectionTerminal(SEComponent node) {
         if (node instanceof Cable && ((Cable) node).connectedGridNode != null)
             return true;
-        else return node instanceof GridNode && ((GridNode) node).interConnection != null;
+        else
+            return node instanceof GridNode && ((GridNode) node).interConnection != null;
     }
 
     //////////////////////////
@@ -55,10 +58,10 @@ public class SEGraph {
     //////////////////////////
 
     public static double calcR(SEComponent cur, SEComponent neighbor) {
-        if (cur instanceof Cable) {
-            Cable curConductor = (Cable) cur;
-            if (neighbor instanceof Cable) {
-                return curConductor.getResistance() + ((Cable) neighbor).getResistance();
+        if (cur instanceof CableBase) {
+            CableBase curConductor = (CableBase) cur;
+            if (neighbor instanceof CableBase) {
+                return curConductor.getResistance() + ((CableBase) neighbor).getResistance();
             } else {
                 return curConductor.getResistance();
             }
@@ -70,8 +73,8 @@ public class SEGraph {
                 throw new RuntimeException("Unaccptable conntection");
             }
         } else {
-            if (neighbor instanceof Cable) {
-                return ((Cable) neighbor).getResistance();
+            if (neighbor instanceof CableBase) {
+                return ((CableBase) neighbor).getResistance();
             }
         }
 

@@ -19,7 +19,7 @@ public abstract class TileEvent extends EnergyEventBase {
 
         @Override
         public void process(EnergyNetDataProvider dataProvider, int pass) {
-        	if (this.te instanceof ISETile || this.te instanceof ISECableTile) {
+        	if (EnergyNetAgent.isNormalTile(this.te)) {
             	if (pass == TADD) {
             		dataProvider.addTile(te);
             	} else if (pass == TPARAMCHANGE) {
@@ -36,12 +36,12 @@ public abstract class TileEvent extends EnergyEventBase {
 
 		@Override
 		public boolean changedStructure() {
-			return this.te instanceof ISETile || this.te instanceof ISECableTile;
+			return EnergyNetAgent.isNormalTile(this.te);
 		}
 
 		@Override
 		public boolean needUpdate() {
-			return this.te instanceof ISETile || this.te instanceof ISECableTile;
+			return EnergyNetAgent.isNormalTile(this.te);
 		}
     }
 
@@ -53,7 +53,7 @@ public abstract class TileEvent extends EnergyEventBase {
         @Override
         public void process(EnergyNetDataProvider dataProvider, int pass) {
         	if (pass == TADD || pass == TDEL) {
-        		if (this.te instanceof ISETile || this.te instanceof ISECableTile) {
+        		if (EnergyNetAgent.isNormalTile(this.te)) {
                     dataProvider.removeTile(this.te);
             	}
         		
@@ -67,12 +67,12 @@ public abstract class TileEvent extends EnergyEventBase {
 
 		@Override
 		public boolean changedStructure() {
-			return this.te instanceof ISETile || this.te instanceof ISECableTile;
+			return EnergyNetAgent.isNormalTile(this.te);
 		}
 
 		@Override
 		public boolean needUpdate() {
-			return this.te instanceof ISETile || this.te instanceof ISECableTile;
+			return EnergyNetAgent.isNormalTile(this.te);
 		}
     }
 

@@ -1,6 +1,5 @@
 package simelectricity.energynet;
 
-import simelectricity.api.ISEEnergyNetUpdateHandler;
 import simelectricity.common.ConfigManager;
 import simelectricity.common.SELogger;
 import simelectricity.energynet.components.*;
@@ -9,9 +8,6 @@ import simelectricity.energynet.matrix.IMatrixSolver.MatrixHelper;
 
 import java.util.Iterator;
 import java.util.LinkedList;
-
-import net.minecraft.tileentity.TileEntity;
-
 
 public class EnergyNetSimulator extends Thread {
 	/////////////////////////////////////////////////
@@ -172,15 +168,19 @@ public class EnergyNetSimulator extends Thread {
             }
 
 
-            if (columnNode instanceof Cable) {
-                Cable cable = (Cable) columnNode;
+            if (columnNode instanceof CableBase) {
+                CableBase cableBase = (CableBase) columnNode;
 
-                if (cable.hasShuntResistance())
-                    currents[columnNode.index] -= voltages[cable.index] / cable.getShuntResistance();
+                if (cableBase.hasShuntResistance())
+                    currents[columnNode.index] -= voltages[cableBase.index] / cableBase.getShuntResistance();
 
                 //Cable - GridNode interconnection
-                if (cable.connectedGridNode != null && cable.isGridLinkEnabled())
-                    currents[columnNode.index] -= (voltages[cable.index] - voltages[cable.connectedGridNode.index]) / cable.getResistance();
+                if (cableBase instanceof Cable) {
+                    Cable cable = (Cable) cableBase;
+                    if (cable.connectedGridNode != null && cable.isGridLinkEnabled())
+                        currents[columnNode.index] -= (voltages[cable.index] - voltages[cable.connectedGridNode.index]) / cable.getResistance();
+                }
+
             } else if (columnNode instanceof GridNode) {
                 GridNode gridNode = (GridNode) columnNode;
 
@@ -319,22 +319,25 @@ public class EnergyNetSimulator extends Thread {
 
 
             //Cable - GridNode
-            if (columnNode instanceof Cable) {
-                Cable cable = (Cable) columnNode;
+            if (columnNode instanceof CableBase) {
+                CableBase cableBase = (CableBase) columnNode;
 
-                if (cable.hasShuntResistance())
-                    diagonalElement += 1.0D / cable.getShuntResistance();
+                if (cableBase.hasShuntResistance())
+                    diagonalElement += 1.0D / cableBase.getShuntResistance();
 
-                if (cable.connectedGridNode != null && cable.isGridLinkEnabled()) {
-                    int iCable = cable.index;
-                    int iGridNode = cable.connectedGridNode.index;
+                if (cableBase instanceof Cable) {
+                    Cable cable = (Cable) cableBase;
+                    if (cable.connectedGridNode != null && cable.isGridLinkEnabled()) {
+                        int iCable = cable.index;
+                        int iGridNode = cable.connectedGridNode.index;
 
-                    //Diagonal element
-                    diagonalElement += 1.0D / cable.getResistance();
+                        //Diagonal element
+                        diagonalElement += 1.0D / cable.getResistance();
 
-                    //Off-diagonal elements
-                    this.matrix.setElementValue(iCable, iGridNode, -1.0D / cable.getResistance());
-                    this.matrix.setElementValue(iGridNode, iCable, -1.0D / cable.getResistance());
+                        //Off-diagonal elements
+                        this.matrix.setElementValue(iCable, iGridNode, -1.0D / cable.getResistance());
+                        this.matrix.setElementValue(iGridNode, iCable, -1.0D / cable.getResistance());
+                    }
                 }
             } else if (columnNode instanceof GridNode) {
                 GridNode gridNode = (GridNode) columnNode;

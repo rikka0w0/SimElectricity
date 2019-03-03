@@ -4,12 +4,8 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import simelectricity.api.components.ISEWire;
 import simelectricity.api.node.ISESubComponent;
-import simelectricity.energynet.components.SEComponent.Tile;
 
-public final class Wire extends Tile<ISEWire> implements ISESubComponent, ISEWire {
-    private volatile double resistance;
-    private volatile boolean hasShuntResistance;
-    private volatile double shuntResistance;
+public final class Wire extends CableBase<ISEWire> implements ISESubComponent, ISEWire {
     private volatile boolean[] hasBranchOnSide;        //Use canConnectOnSide() instead
 
     public Wire(ISEWire dataProvider, TileEntity te) {
@@ -18,9 +14,7 @@ public final class Wire extends Tile<ISEWire> implements ISESubComponent, ISEWir
 
     @Override
     public synchronized void updateComponentParameters() {
-        resistance = this.dataProvider.getResistance();
-        hasShuntResistance = this.dataProvider.hasShuntResistance();
-        shuntResistance = this.dataProvider.getShuntResistance();
+        super.updateComponentParameters();
 
         hasBranchOnSide = new boolean[6];
         int i = 0;
@@ -32,7 +26,7 @@ public final class Wire extends Tile<ISEWire> implements ISESubComponent, ISEWir
 
     @Override
     public boolean hasBranchOnSide(EnumFacing side) {
-        if (hasBranchOnSide == null) {
+        if (side == null) {
             for (EnumFacing facing: EnumFacing.VALUES)
                 if (hasBranchOnSide[facing.ordinal()])
                     return true;
@@ -40,21 +34,6 @@ public final class Wire extends Tile<ISEWire> implements ISESubComponent, ISEWir
         }
 
         return hasBranchOnSide[side.ordinal()];
-    }
-
-    @Override
-    public synchronized double getResistance() {
-        return this.resistance;
-    }
-
-    @Override
-    public synchronized boolean hasShuntResistance() {
-        return this.hasShuntResistance;
-    }
-
-    @Override
-    public synchronized double getShuntResistance() {
-        return this.shuntResistance;
     }
 
     @Override

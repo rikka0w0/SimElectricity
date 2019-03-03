@@ -4,7 +4,8 @@ import net.minecraft.util.EnumFacing;
 
 public interface ISEWire extends ISECableBase{
     /**
-     * @return false to block any connection from the given side
+     * @param side if null, the result will be true if the wire has at least one branch
+     * @return true if the wire has a branch on the given side
      */
     boolean hasBranchOnSide(EnumFacing side);
 }

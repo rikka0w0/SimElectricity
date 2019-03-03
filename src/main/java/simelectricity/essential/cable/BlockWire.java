@@ -150,7 +150,8 @@ public class BlockWire extends BlockBase implements ISimpleTexture {
                     if (facing != tr_side && facing != tr_side.getOpposite()) {
                         if (!wireTile.hasBranch(tr_side, facing) && world.isSideSolid(pos.offset(tr_side), tr_side.getOpposite())) {
                             shrinkItem = true;
-                            wireTile.addBranch(tr_side, facing, itemStack);
+                            if (!world.isRemote)
+                                wireTile.addBranch(tr_side, facing, itemStack);
                         }
                     }
                 } else {
@@ -161,7 +162,8 @@ public class BlockWire extends BlockBase implements ISimpleTexture {
                                 (world.isSideSolid(pos.offset(to), to.getOpposite()) ||
                                 world.getTileEntity(pos.offset(to)) instanceof ISECableTile)) {
                             shrinkItem = true;
-                            wireTile.addBranch(to, facing.getOpposite(), itemStack);
+                            if (!world.isRemote)
+                                wireTile.addBranch(to, facing.getOpposite(), itemStack);
                         }
                     } else {
                         if (wireTile.hasBranch(tr_side, facing)) {
@@ -170,7 +172,8 @@ public class BlockWire extends BlockBase implements ISimpleTexture {
                                 if (!((ISEGenericWire) teNew).hasBranch(tr_side, tr_branch.getOpposite()) &&
                                         world.isSideSolid(pos.offset(facing).offset(tr_side), tr_side.getOpposite())) {
                                     shrinkItem = true;
-                                    ((ISEGenericWire) teNew).addBranch(tr_side, tr_branch.getOpposite(), itemStack);
+                                    if (!world.isRemote)
+                                        ((ISEGenericWire) teNew).addBranch(tr_side, tr_branch.getOpposite(), itemStack);
                                 }
                             } else {
                                 // Block edge, try to place a new neighbor wire
@@ -184,7 +187,8 @@ public class BlockWire extends BlockBase implements ISimpleTexture {
                         } else {
                             if (!wireTile.hasBranch(tr_side, facing) && world.isSideSolid(pos.offset(tr_side), tr_side.getOpposite())) {
                                 shrinkItem = true;
-                                wireTile.addBranch(tr_side, facing, itemStack);
+                                if (!world.isRemote)
+                                    wireTile.addBranch(tr_side, facing, itemStack);
                             }
                         }
                     }
@@ -194,7 +198,8 @@ public class BlockWire extends BlockBase implements ISimpleTexture {
                 // Selecting the block after the ISEGenericWire block
                 if (!((ISEGenericWire) teNew).hasBranch(wire_side, to) && world.isSideSolid(pos, wire_side.getOpposite())) {
                     shrinkItem = true;
-                    ((ISEGenericWire) teNew).addBranch(wire_side, to, itemStack);
+                    if (!world.isRemote)
+                        ((ISEGenericWire) teNew).addBranch(wire_side, to, itemStack);
                 }
             } else {
                 // Attempt to place fresh wire

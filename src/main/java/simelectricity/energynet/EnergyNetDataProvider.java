@@ -18,11 +18,13 @@ import simelectricity.api.node.ISESubComponent;
 import simelectricity.api.tile.ISECableTile;
 import simelectricity.api.tile.ISEGridTile;
 import simelectricity.api.tile.ISETile;
+import simelectricity.api.tile.ISEWireTile;
 import simelectricity.common.SELogger;
 import simelectricity.energynet.components.Cable;
 import simelectricity.energynet.components.GridNode;
 import simelectricity.energynet.components.SEComponent;
 import simelectricity.energynet.components.SEComponent.Tile;
+import simelectricity.energynet.components.Wire;
 
 import java.util.*;
 
@@ -34,10 +36,10 @@ public class EnergyNetDataProvider extends WorldSavedData {
     ///////////////////////////////////////
     private final Set<ISEGridTile> updatedGridTile = new HashSet();
     //Map between coord and GridNode
-    private final HashMap<BlockPos, GridNode> gridNodeMap = new HashMap<BlockPos, GridNode>();
-    private final List<TileEntity> loadedTiles = new LinkedList<TileEntity>();
+    private final HashMap<BlockPos, GridNode> gridNodeMap = new HashMap<>();
+    private final List<TileEntity> loadedTiles = new LinkedList<>();
     //Records TE that associated with grid nodes
-    private final List<TileEntity> loadedGridTiles = new LinkedList<TileEntity>();
+    private final List<TileEntity> loadedGridTiles = new LinkedList<>();
     //Records the connection between components
     private final SEGraph tileEntityGraph = new SEGraph();
 
@@ -71,6 +73,10 @@ public class EnergyNetDataProvider extends WorldSavedData {
     //Utils ------------------------------------------------------------------------------
     public static TileEntity getTileEntityOnDirection(TileEntity te, EnumFacing direction) {
         return te.getWorld().getTileEntity(te.getPos().offset(direction));
+    }
+
+    public static TileEntity getTileEntityOnDirection(TileEntity te, EnumFacing direction, EnumFacing direction2) {
+        return te.getWorld().getTileEntity(te.getPos().offset(direction).offset(direction2));
     }
 
     public void onNewResultAvailable() {
@@ -179,24 +185,80 @@ public class EnergyNetDataProvider extends WorldSavedData {
             }
         } else if (te instanceof ISETile) {
             ISETile tile = (ISETile) te;
-            
+
             for (EnumFacing direction : EnumFacing.VALUES) {
                 ISESubComponent subComponent = tile.getComponent(direction);
                 if (subComponent != null) {
                     this.tileEntityGraph.isolateVertex((SEComponent) subComponent);
                 }
             }
-            
-            for (EnumFacing direction : EnumFacing.VALUES) {
-                ISESubComponent subComponent = tile.getComponent(direction);
-                if (subComponent != null) {
-                    TileEntity neighborTileEntity = getTileEntityOnDirection(te, direction);
 
-                    if (neighborTileEntity instanceof ISECableTile) {
-                    	Cable cable = (Cable) ((ISECableTile) neighborTileEntity).getNode();
-                        // Connected properly
-                        if (cable.canConnectOnSide(direction.getOpposite()))
-                            this.tileEntityGraph.addEdge(cable, (SEComponent) subComponent);
+            if (te instanceof ISEWireTile) {
+                ISEWireTile wireTile = (ISEWireTile) te;
+                for (EnumFacing side : EnumFacing.VALUES) {
+                    Wire wire = (Wire) wireTile.getComponent(side);
+
+                    // Solve connections with cable and ISETile
+                    if (wire.hasBranchOnSide(null)) {
+                        TileEntity neighborTileEntity = getTileEntityOnDirection(te, side);
+                        if (neighborTileEntity instanceof ISECableTile) {
+                            Cable cable = (Cable) ((ISECableTile) neighborTileEntity).getNode();
+                            // Connected properly
+                            if (cable.canConnectOnSide(side.getOpposite()))
+                                this.tileEntityGraph.addEdge(cable, wire);
+                        } else if (neighborTileEntity instanceof ISETile && !(neighborTileEntity instanceof ISEWireTile)) {
+                            this.tileEntityGraph.addEdge((SEComponent) ((ISETile) neighborTileEntity).getComponent(side.getOpposite()), wire);
+                        }
+                    }
+
+                    for (EnumFacing branch: EnumFacing.VALUES) {
+                        if (branch.getAxis() == side.getAxis())
+                            continue;
+
+                        if (!wire.hasBranchOnSide(branch))
+                            continue;
+
+                        Wire wireNeighbor = (Wire) wireTile.getComponent(branch);
+                        // Connections within the ISEWireTile
+                        if (wireNeighbor.hasBranchOnSide(side))
+                            this.tileEntityGraph.addEdge(wire, wireNeighbor);
+
+                        // Co-planar Connections
+                        TileEntity neighborTileEntity = getTileEntityOnDirection(te, branch);
+                        if (neighborTileEntity instanceof ISEWireTile) {
+                            wireNeighbor = (Wire) ((ISEWireTile) neighborTileEntity).getComponent(side);
+                            if (wireNeighbor.hasBranchOnSide(branch.getOpposite()))
+                                this.tileEntityGraph.addEdge(wire, wireNeighbor);
+                        }
+
+                        // Corner connections
+                        neighborTileEntity = getTileEntityOnDirection(te, side, branch);
+                        if (neighborTileEntity instanceof ISEWireTile) {
+                            wireNeighbor = (Wire) ((ISEWireTile) neighborTileEntity).getComponent(branch.getOpposite());
+                            if (wireNeighbor.hasBranchOnSide(side.getOpposite()) &&
+                                    !te.getWorld().isSideSolid(te.getPos().offset(branch), side) &&
+                                    !te.getWorld().isSideSolid(te.getPos().offset(branch), branch.getOpposite()))
+                                this.tileEntityGraph.addEdge(wire, wireNeighbor);
+                        }
+                    }
+                }
+            } else {
+                // ISETile
+                for (EnumFacing direction : EnumFacing.VALUES) {
+                    ISESubComponent subComponent = tile.getComponent(direction);
+                    if (subComponent != null) {
+                        TileEntity neighborTileEntity = getTileEntityOnDirection(te, direction);
+
+                        if (neighborTileEntity instanceof ISECableTile) {
+                            Cable cable = (Cable) ((ISECableTile) neighborTileEntity).getNode();
+                            // Connected properly
+                            if (cable.canConnectOnSide(direction.getOpposite()))
+                                this.tileEntityGraph.addEdge(cable, (SEComponent) subComponent);
+                        } else if (neighborTileEntity instanceof ISEWireTile) {
+                            Wire wire = (Wire) ((ISEWireTile) neighborTileEntity).getComponent(direction.getOpposite());
+                            if (wire.hasBranchOnSide(null))
+                                this.tileEntityGraph.addEdge(wire, (SEComponent) subComponent);
+                        }
                     }
                 }
             }
