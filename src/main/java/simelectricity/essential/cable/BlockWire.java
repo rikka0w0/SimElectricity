@@ -158,49 +158,51 @@ public class BlockWire extends BlockBase implements ISubBlock, ISimpleTexture {
 
             if (teSelected instanceof ISEGenericWire) {
                 RayTraceResult trace = this.rayTrace(world, player, false);
-                ISEGenericWire wireTile = (ISEGenericWire) teSelected;
-                EnumFacing tr_side = subHit_side(trace.subHit);
-                EnumFacing tr_branch = subHit_branch(trace.subHit);
+                if (trace.getBlockPos().equals(pos) && subHit_isBranch(trace.subHit)) {
+                    ISEGenericWire wireTile = (ISEGenericWire) teSelected;
+                    EnumFacing tr_side = subHit_side(trace.subHit);
+                    EnumFacing tr_branch = subHit_branch(trace.subHit);
 
-                if (tr_branch == null) {
-                    // Center
-                    if (facing != tr_side && facing != tr_side.getOpposite()) {
-                        if (!wireTile.hasBranch(tr_side, facing) && world.isSideSolid(pos.offset(tr_side), tr_side.getOpposite())) {
-                            shrinkItem = blockWire.addBranch(wireTile,tr_side, facing, itemStack, world.isRemote);
-                        }
-                    }
-                } else {
-
-                    if (facing == tr_side || facing == tr_side.getOpposite()) {
-
-                        if (!wireTile.hasBranch(to, facing.getOpposite()) &&
-                                (world.isSideSolid(pos.offset(to), to.getOpposite()) ||
-                                world.getTileEntity(pos.offset(to)) instanceof ISECableTile)) {
-                            shrinkItem = blockWire.addBranch(wireTile, to, facing.getOpposite(), itemStack, world.isRemote);
-                        }
-                    } else {
-                        if (wireTile.hasBranch(tr_side, facing)) {
-                            if (teNew instanceof ISEGenericWire) {
-                                // Add branch in neighbor
-                                if (!((ISEGenericWire) teNew).hasBranch(tr_side, tr_branch.getOpposite()) &&
-                                        (world.isSideSolid(pos.offset(facing).offset(tr_side), tr_side.getOpposite()) ||
-                                        world.getTileEntity(pos.offset(tr_branch).offset(tr_side)) instanceof ISECableTile)) {
-                                    shrinkItem = blockWire.addBranch((ISEGenericWire) teNew, tr_side, tr_branch.getOpposite(), itemStack, world.isRemote);
-                                }
-                            } else {
-                                // Block edge, try to place a new neighbor wire
-                                if (world.isSideSolid(pos.offset(tr_branch).offset(tr_side), tr_side.getOpposite()) ||
-                                        world.getTileEntity(pos.offset(tr_branch).offset(tr_side)) instanceof ISECableTile) {
-                                    nextPlacedSide.set(tr_side);
-                                    nextPlacedto.set(tr_branch.getOpposite());
-                                    nextPlacedItemStack.set(itemStack);
-
-                                    return super.onItemUse(player, world, pos, hand, facing, hitX, hitY, hitZ);
-                                }
-                            }
-                        } else {
+                    if (tr_branch == null) {
+                        // Center
+                        if (facing != tr_side && facing != tr_side.getOpposite()) {
                             if (!wireTile.hasBranch(tr_side, facing) && world.isSideSolid(pos.offset(tr_side), tr_side.getOpposite())) {
                                 shrinkItem = blockWire.addBranch(wireTile, tr_side, facing, itemStack, world.isRemote);
+                            }
+                        }
+                    } else {
+
+                        if (facing == tr_side || facing == tr_side.getOpposite()) {
+
+                            if (!wireTile.hasBranch(to, facing.getOpposite()) &&
+                                    (world.isSideSolid(pos.offset(to), to.getOpposite()) ||
+                                            world.getTileEntity(pos.offset(to)) instanceof ISECableTile)) {
+                                shrinkItem = blockWire.addBranch(wireTile, to, facing.getOpposite(), itemStack, world.isRemote);
+                            }
+                        } else {
+                            if (wireTile.hasBranch(tr_side, facing)) {
+                                if (teNew instanceof ISEGenericWire) {
+                                    // Add branch in neighbor
+                                    if (!((ISEGenericWire) teNew).hasBranch(tr_side, tr_branch.getOpposite()) &&
+                                            (world.isSideSolid(pos.offset(facing).offset(tr_side), tr_side.getOpposite()) ||
+                                                    world.getTileEntity(pos.offset(tr_branch).offset(tr_side)) instanceof ISECableTile)) {
+                                        shrinkItem = blockWire.addBranch((ISEGenericWire) teNew, tr_side, tr_branch.getOpposite(), itemStack, world.isRemote);
+                                    }
+                                } else {
+                                    // Block edge, try to place a new neighbor wire
+                                    if (world.isSideSolid(pos.offset(tr_branch).offset(tr_side), tr_side.getOpposite()) ||
+                                            world.getTileEntity(pos.offset(tr_branch).offset(tr_side)) instanceof ISECableTile) {
+                                        nextPlacedSide.set(tr_side);
+                                        nextPlacedto.set(tr_branch.getOpposite());
+                                        nextPlacedItemStack.set(itemStack);
+
+                                        return super.onItemUse(player, world, pos, hand, facing, hitX, hitY, hitZ);
+                                    }
+                                }
+                            } else {
+                                if (!wireTile.hasBranch(tr_side, facing) && world.isSideSolid(pos.offset(tr_side), tr_side.getOpposite())) {
+                                    shrinkItem = blockWire.addBranch(wireTile, tr_side, facing, itemStack, world.isRemote);
+                                }
                             }
                         }
                     }
@@ -864,9 +866,8 @@ public class BlockWire extends BlockBase implements ISubBlock, ISimpleTexture {
     @Override
     public boolean removedByPlayer(IBlockState state, World world, BlockPos pos, EntityPlayer player,
                                    boolean willHarvest) {
-        if (world.isRemote) {
+        if (world.isRemote)
             return false;
-        }
 
         TileEntity te = world.getTileEntity(pos);
         if (!(te instanceof ISEGenericWire))
@@ -878,7 +879,7 @@ public class BlockWire extends BlockBase implements ISubBlock, ISimpleTexture {
         if (trace == null)
             return super.removedByPlayer(state, world, pos, player, willHarvest);
 
-        if (subHit_isBranch(trace.subHit)) {
+        if (subHit_isBranch(trace.subHit) && trace.getBlockPos().equals(pos)) {
             // Remove cable branch
             LinkedList<ItemStack> drops = new LinkedList<>();
             boolean isCorner = subHit_isCorner(trace.subHit);
@@ -920,7 +921,7 @@ public class BlockWire extends BlockBase implements ISubBlock, ISimpleTexture {
 
         RayTraceResult trace = this.rayTrace(world, pos, player);
 
-        if (subHit_isBranch(trace.subHit)) {    //Center, corner or branches
+        if (subHit_isBranch(trace.subHit) && trace.getBlockPos().equals(pos)) {    //Center, corner or branches
             EnumFacing wire_side = subHit_side(trace.subHit);
 
             if (wireTile.getWireParam(wire_side).hasBranchOnSide(null)) {

@@ -485,6 +485,9 @@ public class BlockCable extends MetaBlock implements ISimpleTexture {
         if (trace == null)
             return false;    //This is not suppose to happen, but just in case!
 
+        if (!trace.getBlockPos().equals(pos))
+            return false;
+
         if (trace.subHit < 7)
             return false;    //The player is looking at the cable
 
@@ -581,9 +584,8 @@ public class BlockCable extends MetaBlock implements ISimpleTexture {
     @Override
     public boolean removedByPlayer(IBlockState state, World world, BlockPos pos, EntityPlayer player,
                                    boolean willHarvest) {
-        if (world.isRemote) {
+        if (world.isRemote)
             return false;
-        }
 
         TileEntity te = world.getTileEntity(pos);
         if (!(te instanceof ISEGenericCable))
@@ -593,6 +595,8 @@ public class BlockCable extends MetaBlock implements ISimpleTexture {
 
         RayTraceResult trace = this.rayTrace(world, pos, player);
         if (trace == null)
+            return super.removedByPlayer(state, world, pos, player, willHarvest);
+        if (!trace.getBlockPos().equals(pos))
             return super.removedByPlayer(state, world, pos, player, willHarvest);
 
         if (trace.subHit > 6 && trace.subHit < 13) {
@@ -620,6 +624,8 @@ public class BlockCable extends MetaBlock implements ISimpleTexture {
         ISEGenericCable cable = (ISEGenericCable) te;
 
         RayTraceResult trace = this.rayTrace(world, pos, player);
+        if (!trace.getBlockPos().equals(pos))
+            return new ItemStack(Item.getItemFromBlock(this), 1, damageDropped(state));
 
         if (trace.subHit > 6 && trace.subHit < 13) {
             EnumFacing side = EnumFacing.getFront(trace.subHit - 7);
