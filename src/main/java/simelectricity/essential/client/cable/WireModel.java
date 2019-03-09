@@ -22,27 +22,35 @@ import java.util.List;
 import java.util.function.Function;
 
 public class WireModel extends CodeBasedModel {
-    private final ResourceLocation insulatorTextureLoc, conductorTextureLoc;
-    private TextureAtlasSprite insulatorTexture, conductorTexture;
+    private final ResourceLocation insulatorTextureLoc;
+    private TextureAtlasSprite insulatorTexture;
+    private final ResourceLocation[] conductorTextureLoc;
+    private final TextureAtlasSprite[] conductorTexture;
+
     public final float thickness;
 
-    public WireModel(String domain, String name, float thickness) {
+    public WireModel(String domain, String name, String[] subTypes, float thickness) {
         this.thickness = thickness;
-//        this.insulatorTextureLoc = this.registerTexture(domain + ":blocks/" + name + "_insulator");    // We just want to bypass the ModelBakery
-//        this.conductorTextureLoc = this.registerTexture(domain + ":blocks/" + name + "_conductor");    // and load our texture
-        this.insulatorTextureLoc = this.registerTexture(domain + ":blocks/cable/essential_cable_aluminum_thin_insulator");    // We just want to bypass the ModelBakery
-        this.conductorTextureLoc = this.registerTexture(domain + ":blocks/cable/essential_cable_aluminum_thin_conductor");    // and load our texture
+        this.insulatorTextureLoc = this.registerTexture(domain + ":blocks/" + name + "_insulator");    // We just want to bypass the ModelBakery
+
+        this.conductorTextureLoc = new ResourceLocation[subTypes.length];                             // and load our texture
+        for (int i=0; i<subTypes.length; i++) {
+            this.conductorTextureLoc[i] = this.registerTexture(domain + ":blocks/" + name + "_" + subTypes[i] + "_conductor");
+        }
+        this.conductorTexture = new TextureAtlasSprite[subTypes.length];
     }
 
     @Override
     public TextureAtlasSprite getParticleTexture() {
-        return this.conductorTexture;
+        return this.insulatorTexture;
     }
 
     @Override
     protected void bake(Function<ResourceLocation, TextureAtlasSprite> textureRegistry) {
-        this.conductorTexture = textureRegistry.apply(conductorTextureLoc);
         this.insulatorTexture = textureRegistry.apply(insulatorTextureLoc);
+        for (int i = 0; i< conductorTextureLoc.length; i++) {
+            this.conductorTexture[i] = textureRegistry.apply(conductorTextureLoc[i]);
+        }
     }
 
     @Override
@@ -70,9 +78,10 @@ public class WireModel extends CodeBasedModel {
 
                     RawQuadGroup group = new RawQuadGroup();
 
+                    int meta = wireTile.getWireType(wire_side);
                     for (EnumFacing direction : EnumFacing.VALUES) {
                         if (wireTile.getWireParam(wire_side).hasBranchOnSide(direction)) {
-                            group.add(genBranch(direction, wireTile.getWireParam(direction).hasBranchOnSide(wire_side)));
+                            group.add(genBranch(direction, wireTile.getWireParam(direction).hasBranchOnSide(wire_side), meta));
                             centerTexture[direction.ordinal()] = null;
                             conSide = direction;
                             numOfCon++;
@@ -81,7 +90,7 @@ public class WireModel extends CodeBasedModel {
 
                     if (numOfCon > 0) {
                         if (numOfCon == 1 && !wireTile.connectedOnSide(wire_side)) {
-                            centerTexture[conSide.getOpposite().ordinal()] = this.conductorTexture;
+                            centerTexture[conSide.getOpposite().ordinal()] = this.conductorTexture[meta];
                         }
 
                         // Center
@@ -106,7 +115,7 @@ public class WireModel extends CodeBasedModel {
                         wireTile.getWireParam(to).hasBranchOnSide(wire_side)
                         ) {
                     // Corner - interior
-                    RawQuadCube cube = genCorner(to, false);
+                    RawQuadCube cube = genCorner(to);
                     translateGroupCoord(wire_side, cube);
                     cube.bake(quads);
                 }
@@ -123,7 +132,7 @@ public class WireModel extends CodeBasedModel {
                         EnumFacing f0 = BlockWire.corners[index][0];
                         EnumFacing f1 = BlockWire.corners[index][1];
 
-                        RawQuadCube cube = genCorner(to, false);
+                        RawQuadCube cube = genCorner(to);
                         if (f0 == EnumFacing.UP)
                             cube.translateCoord(0, thickness, 0);
                         if (f0 == EnumFacing.DOWN)
@@ -167,20 +176,20 @@ public class WireModel extends CodeBasedModel {
         }
     }
 
-    private RawQuadCube genCorner(EnumFacing branch, boolean displayConductor) {
+    private RawQuadCube genCorner(EnumFacing branch) {
         RawQuadCube cube = null;
 
         switch (branch) {
             case DOWN:
                 cube = new RawQuadCube(thickness, thickness, thickness,
-                        new TextureAtlasSprite[]{displayConductor ? conductorTexture : insulatorTexture, null,
+                        new TextureAtlasSprite[]{insulatorTexture, null,
                                 insulatorTexture, insulatorTexture, insulatorTexture, insulatorTexture});
                 cube.translateCoord(0, -0.5F, 0);
                 break;
 
             case UP:
                 cube = new RawQuadCube(thickness, thickness, thickness,
-                        new TextureAtlasSprite[]{null, displayConductor ? conductorTexture : insulatorTexture,
+                        new TextureAtlasSprite[]{null, insulatorTexture,
                                 insulatorTexture, insulatorTexture, insulatorTexture, insulatorTexture});
                 cube.translateCoord(0, 0.5F - thickness, 0);
                 break;
@@ -188,28 +197,28 @@ public class WireModel extends CodeBasedModel {
             case NORTH:
                 cube = new RawQuadCube(thickness, thickness, thickness,
                         new TextureAtlasSprite[]{insulatorTexture, insulatorTexture,
-                                displayConductor ? conductorTexture : insulatorTexture, null, insulatorTexture, insulatorTexture});
+                                insulatorTexture, null, insulatorTexture, insulatorTexture});
                 cube.translateCoord(0, -thickness / 2, -0.5F + thickness / 2);
                 break;
 
             case SOUTH:
                 cube = new RawQuadCube(thickness, thickness, thickness,
                         new TextureAtlasSprite[]{insulatorTexture, insulatorTexture,
-                                null, displayConductor ? conductorTexture : insulatorTexture, insulatorTexture, insulatorTexture});
+                                null, insulatorTexture, insulatorTexture, insulatorTexture});
                 cube.translateCoord(0, -thickness / 2, 0.5F - thickness / 2);
                 break;
 
             case WEST:
                 cube = new RawQuadCube(thickness, thickness, thickness,
                         new TextureAtlasSprite[]{insulatorTexture, insulatorTexture,
-                                insulatorTexture, insulatorTexture, displayConductor ? conductorTexture : insulatorTexture, null});
+                                insulatorTexture, insulatorTexture, insulatorTexture, null});
                 cube.translateCoord(-0.5F + thickness / 2, -thickness / 2, 0);
                 break;
 
             case EAST:
                 cube = new RawQuadCube(thickness, thickness, thickness,
                         new TextureAtlasSprite[]{insulatorTexture, insulatorTexture,
-                                insulatorTexture, insulatorTexture, null, displayConductor ? conductorTexture : insulatorTexture});
+                                insulatorTexture, insulatorTexture, null, insulatorTexture});
                 cube.translateCoord(0.5F - thickness / 2, -thickness / 2, 0);
                 break;
         }
@@ -219,21 +228,21 @@ public class WireModel extends CodeBasedModel {
         return cube;
     }
 
-    private RawQuadCube genBranch(EnumFacing branch, boolean noCorner) {
+    private RawQuadCube genBranch(EnumFacing branch, boolean noCorner, int meta) {
         RawQuadCube cube = null;
         float yMax = noCorner ? 0.5F - thickness * 3 / 2 : 0.5F - thickness / 2;
 
         switch (branch) {
             case DOWN:
                 cube = new RawQuadCube(thickness, yMax, thickness,
-                        new TextureAtlasSprite[]{noCorner?null:conductorTexture, null,
+                        new TextureAtlasSprite[]{noCorner?null:conductorTexture[meta], null,
                                 insulatorTexture, insulatorTexture, insulatorTexture, insulatorTexture});
                 cube.translateCoord(0, noCorner ? -0.5F + thickness : -0.5F, 0);
                 break;
 
             case UP:
                 cube = new RawQuadCube(thickness, yMax, thickness,
-                        new TextureAtlasSprite[]{null, noCorner?null:conductorTexture,
+                        new TextureAtlasSprite[]{null, noCorner?null:conductorTexture[meta],
                                 insulatorTexture, insulatorTexture, insulatorTexture, insulatorTexture});
                 cube.translateCoord(0, thickness / 2, 0);
                 break;
@@ -241,28 +250,28 @@ public class WireModel extends CodeBasedModel {
             case NORTH:
                 cube = new RawQuadCube(thickness, thickness, yMax,
                         new TextureAtlasSprite[]{insulatorTexture, insulatorTexture,
-                                noCorner?null:conductorTexture, null, insulatorTexture, insulatorTexture});
+                                noCorner?null:conductorTexture[meta], null, insulatorTexture, insulatorTexture});
                 cube.translateCoord(0, -thickness / 2, -0.25F - thickness / 4 + (noCorner ? thickness/2 : 0));
                 break;
 
             case SOUTH:
                 cube = new RawQuadCube(thickness, thickness, yMax,
                         new TextureAtlasSprite[]{insulatorTexture, insulatorTexture,
-                                null, noCorner?null:conductorTexture, insulatorTexture, insulatorTexture});
+                                null, noCorner?null:conductorTexture[meta], insulatorTexture, insulatorTexture});
                 cube.translateCoord(0, -thickness / 2, 0.25F + thickness / 4 - (noCorner ? thickness/2 : 0));
                 break;
 
             case WEST:
                 cube = new RawQuadCube(yMax, thickness, thickness,
                         new TextureAtlasSprite[]{insulatorTexture, insulatorTexture,
-                                insulatorTexture, insulatorTexture, noCorner?null:conductorTexture, null});
+                                insulatorTexture, insulatorTexture, noCorner?null:conductorTexture[meta], null});
                 cube.translateCoord(-0.25F - thickness / 4 + (noCorner ? thickness/2 : 0), -thickness / 2, 0);
                 break;
 
             case EAST:
                 cube = new RawQuadCube(yMax, thickness, thickness,
                         new TextureAtlasSprite[]{insulatorTexture, insulatorTexture,
-                                insulatorTexture, insulatorTexture, null, noCorner?null:conductorTexture});
+                                insulatorTexture, insulatorTexture, null, noCorner?null:conductorTexture[meta]});
                 cube.translateCoord(0.25F + thickness / 4 - (noCorner ? thickness/2 : 0), -thickness / 2, 0);
                 break;
         }

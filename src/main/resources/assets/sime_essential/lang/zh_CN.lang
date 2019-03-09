@@ -12,6 +12,9 @@ tile.sime_essential:essential_cable.gold_thin.name=细金线
 tile.sime_essential:essential_cable.gold_medium.name=金线
 tile.sime_essential:essential_cable.gold_thick.name=粗金线
 
+tile.sime_essential:essential_wire.aluminum.name=铝线(贴墙)
+tile.sime_essential:essential_wire.copper.name=铜线(贴墙)
+
 tile.sime_essential:essential_electronics.voltage_meter.name=电压表
 tile.sime_essential:essential_electronics.quantum_generator.name=量子发电机
 tile.sime_essential:essential_electronics.adjustable_resistor.name=可调负载电阻

@@ -28,6 +28,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import rikka.librikka.RayTraceHelper;
 import rikka.librikka.Utils;
 import rikka.librikka.block.BlockBase;
+import rikka.librikka.block.ISubBlock;
 import rikka.librikka.item.ISimpleTexture;
 import rikka.librikka.item.ItemBlockBase;
 import rikka.librikka.properties.UnlistedPropertyRef;
@@ -43,15 +44,15 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
-public class BlockWire extends BlockBase implements ISimpleTexture {
+public class BlockWire extends BlockBase implements ISubBlock, ISimpleTexture {
     ///////////////////////////////
     /// Wire Properties
     ///////////////////////////////
     public BlockWire() {
         this("essential_wire", Material.GLASS, ItemBlockWire.class,
-                new String[]{"copper_thin", "copper_medium"},
+                new String[]{"copper", "aluminum"},
                 0.1F,
-                new float[]{0.1F, 0.01F},
+                new float[]{0.05F, 0.075F},
                 TileWire.class);
         setCreativeTab(SEAPI.SETab);
         setHardness(0.2F);
@@ -59,14 +60,30 @@ public class BlockWire extends BlockBase implements ISimpleTexture {
         setSoundType(SoundType.METAL);
     }
 
-    @Override
-    @SideOnly(Side.CLIENT)
-    public String getIconName(int damage) {
-        return "essential_wire";
-    }
 
     protected static ThreadLocal<EnumFacing> nextPlacedSide = new ThreadLocal<>();
     protected static ThreadLocal<EnumFacing> nextPlacedto = new ThreadLocal<>();
+    protected static ThreadLocal<ItemStack> nextPlacedItemStack = new ThreadLocal<>();
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public final String[] getSubBlockUnlocalizedNames() {
+        return this.subNames;
+    }
+
+    public boolean addBranch(ISEGenericWire wireTile, EnumFacing side, EnumFacing to, ItemStack itemStack, boolean isRemote) {
+        int type = itemStack.getItemDamage();
+        if (type > this.resistances.length)
+            return false;
+
+        if (!wireTile.canAddBranch(side, to, itemStack))
+            return false;
+
+        if (!isRemote)
+            wireTile.addBranch(side, to, itemStack, this.resistances[type]);
+
+        return true;
+    }
 
     protected static class ItemBlockWire extends ItemBlockBase {
         public ItemBlockWire(Block block) {
@@ -134,6 +151,7 @@ public class BlockWire extends BlockBase implements ISimpleTexture {
                 }
             }
 
+            BlockWire blockWire = (BlockWire) block;
             ItemStack itemStack = player.getHeldItem(hand);
             boolean shrinkItem = false;
             TileEntity teSelected = Utils.getTileEntitySafely(world, pos);
@@ -149,9 +167,7 @@ public class BlockWire extends BlockBase implements ISimpleTexture {
                     // Center
                     if (facing != tr_side && facing != tr_side.getOpposite()) {
                         if (!wireTile.hasBranch(tr_side, facing) && world.isSideSolid(pos.offset(tr_side), tr_side.getOpposite())) {
-                            shrinkItem = true;
-                            if (!world.isRemote)
-                                wireTile.addBranch(tr_side, facing, itemStack);
+                            shrinkItem = blockWire.addBranch(wireTile,tr_side, facing, itemStack, world.isRemote);
                         }
                     }
                 } else {
@@ -161,34 +177,31 @@ public class BlockWire extends BlockBase implements ISimpleTexture {
                         if (!wireTile.hasBranch(to, facing.getOpposite()) &&
                                 (world.isSideSolid(pos.offset(to), to.getOpposite()) ||
                                 world.getTileEntity(pos.offset(to)) instanceof ISECableTile)) {
-                            shrinkItem = true;
-                            if (!world.isRemote)
-                                wireTile.addBranch(to, facing.getOpposite(), itemStack);
+                            shrinkItem = blockWire.addBranch(wireTile, to, facing.getOpposite(), itemStack, world.isRemote);
                         }
                     } else {
                         if (wireTile.hasBranch(tr_side, facing)) {
                             if (teNew instanceof ISEGenericWire) {
                                 // Add branch in neighbor
                                 if (!((ISEGenericWire) teNew).hasBranch(tr_side, tr_branch.getOpposite()) &&
-                                        world.isSideSolid(pos.offset(facing).offset(tr_side), tr_side.getOpposite())) {
-                                    shrinkItem = true;
-                                    if (!world.isRemote)
-                                        ((ISEGenericWire) teNew).addBranch(tr_side, tr_branch.getOpposite(), itemStack);
+                                        (world.isSideSolid(pos.offset(facing).offset(tr_side), tr_side.getOpposite()) ||
+                                        world.getTileEntity(pos.offset(tr_branch).offset(tr_side)) instanceof ISECableTile)) {
+                                    shrinkItem = blockWire.addBranch((ISEGenericWire) teNew, tr_side, tr_branch.getOpposite(), itemStack, world.isRemote);
                                 }
                             } else {
                                 // Block edge, try to place a new neighbor wire
-                                if (world.isSideSolid(pos.offset(tr_branch).offset(tr_side), tr_side.getOpposite())) {
+                                if (world.isSideSolid(pos.offset(tr_branch).offset(tr_side), tr_side.getOpposite()) ||
+                                        world.getTileEntity(pos.offset(tr_branch).offset(tr_side)) instanceof ISECableTile) {
                                     nextPlacedSide.set(tr_side);
                                     nextPlacedto.set(tr_branch.getOpposite());
+                                    nextPlacedItemStack.set(itemStack);
 
                                     return super.onItemUse(player, world, pos, hand, facing, hitX, hitY, hitZ);
                                 }
                             }
                         } else {
                             if (!wireTile.hasBranch(tr_side, facing) && world.isSideSolid(pos.offset(tr_side), tr_side.getOpposite())) {
-                                shrinkItem = true;
-                                if (!world.isRemote)
-                                    wireTile.addBranch(tr_side, facing, itemStack);
+                                shrinkItem = blockWire.addBranch(wireTile, tr_side, facing, itemStack, world.isRemote);
                             }
                         }
                     }
@@ -197,15 +210,14 @@ public class BlockWire extends BlockBase implements ISimpleTexture {
                 EnumFacing wire_side = facing.getOpposite();
                 // Selecting the block after the ISEGenericWire block
                 if (!((ISEGenericWire) teNew).hasBranch(wire_side, to) && world.isSideSolid(pos, wire_side.getOpposite())) {
-                    shrinkItem = true;
-                    if (!world.isRemote)
-                        ((ISEGenericWire) teNew).addBranch(wire_side, to, itemStack);
+                    shrinkItem = blockWire.addBranch((ISEGenericWire) teNew, wire_side, to, itemStack, world.isRemote);
                 }
             } else {
                 // Attempt to place fresh wire
 
                 nextPlacedSide.set(facing.getOpposite());
                 nextPlacedto.set(to);
+                nextPlacedItemStack.set(itemStack);
 
                 return super.onItemUse(player, world, pos, hand, facing, hitX, hitY, hitZ);
             }
@@ -314,13 +326,15 @@ public class BlockWire extends BlockBase implements ISimpleTexture {
     }
 
     public final float thickness;
-    public final float[] resistances;
+    private final float[] resistances;
+    private final String[] subNames;
     private final Class<? extends TileWire> tileEntityClass;
     protected BlockWire(String name, Material material, Class<? extends ItemBlockWire> itemBlockClass,
                          String[] cableTypes, float thickness, float[] resistanceList, Class<? extends TileWire> tileEntityClass) {
         super(name, material, itemBlockClass);
         this.thickness = thickness;
-        resistances = resistanceList;
+        this.resistances = resistanceList;
+        this.subNames = cableTypes;
         this.tileEntityClass = tileEntityClass;
 
         //Calc. collision boxes and cache them
@@ -335,6 +349,12 @@ public class BlockWire extends BlockBase implements ISimpleTexture {
 //
 //            cableBoundingBoxes[i][6] = new AxisAlignedBB(min, min, min, max, max, max);
 //        }
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public String getIconName(int damage) {
+        return "essential_wire_" + subNames[damage];
     }
 
     @SideOnly(Side.CLIENT)
@@ -834,7 +854,7 @@ public class BlockWire extends BlockBase implements ISimpleTexture {
             return;
 
         ISEGenericWire wireTile = (ISEGenericWire) te;
-        wireTile.addBranch(nextPlacedSide.get(), nextPlacedto.get(), stack);
+        addBranch(wireTile, nextPlacedSide.get(), nextPlacedto.get(), nextPlacedItemStack.get(), world.isRemote);
         wireTile.onRenderingUpdateRequested();
     }
 

@@ -10,7 +10,6 @@ import simelectricity.api.SEAPI;
 import simelectricity.api.components.ISEWire;
 import simelectricity.api.node.ISESubComponent;
 import simelectricity.api.tile.ISEWireTile;
-import simelectricity.essential.BlockRegistry;
 import simelectricity.essential.api.ISEGenericWire;
 import simelectricity.essential.common.SEEnergyTile;
 
@@ -25,10 +24,15 @@ public class TileWire extends SEEnergyTile implements ISEGenericWire {
         public final EnumFacing side;
         private final boolean[] connections;
 
+        public double resistance;
+        public ItemStack itemStack;
+
         public Wire(TileWire parent, EnumFacing side) {
             this.parent = parent;
             this.side = side;
             this.connections = new boolean[EnumFacing.values().length];
+
+            this.itemStack = ItemStack.EMPTY;
         }
 
         @Override
@@ -46,7 +50,7 @@ public class TileWire extends SEEnergyTile implements ISEGenericWire {
 
         @Override
         public double getResistance() {
-            return 0.1;
+            return resistance;
         }
 
         @Override
@@ -59,9 +63,25 @@ public class TileWire extends SEEnergyTile implements ISEGenericWire {
             return 0;
         }
 
-        @SideOnly(Side.CLIENT)
         public void setConnection(EnumFacing branch, boolean connection) {
             this.connections[branch.ordinal()] = connection;
+        }
+
+        public ItemStack getItemToDrop() {
+            ItemStack stack = this.itemStack.copy();
+            stack.setCount(1);
+            return stack;
+        }
+
+        public ItemStack getItemToDropAll() {
+            int count = 0;
+            for (EnumFacing branch: EnumFacing.VALUES)
+                if (connections[branch.ordinal()])
+                    count++;
+
+            ItemStack stack = this.itemStack.copy();
+            stack.setCount(count);
+            return stack;
         }
 
         private void readFromNBT(NBTTagCompound tagCompound) {
@@ -69,6 +89,13 @@ public class TileWire extends SEEnergyTile implements ISEGenericWire {
             for (EnumFacing side: EnumFacing.VALUES) {
                 this.connections[side.ordinal()] = (connection_dat & (1<<side.ordinal())) > 0;
             }
+
+            if (tagCompound.hasKey("resistance"))
+                this.resistance = tagCompound.getDouble("resistance");
+            else
+                this.resistance = 0.1;
+
+            this.itemStack = new ItemStack(tagCompound.getCompoundTag("itemStack"));
         }
 
         private void writeToNBT(NBTTagCompound compound) {
@@ -78,6 +105,12 @@ public class TileWire extends SEEnergyTile implements ISEGenericWire {
                     connection_dat |= (1 << side.ordinal());
             }
             compound.setByte("connections", connection_dat);
+
+
+            compound.setDouble("resistance", this.resistance);
+            NBTTagCompound itemStackCompound = new NBTTagCompound();
+            this.itemStack.writeToNBT(itemStackCompound);
+            compound.setTag("itemStack", itemStackCompound);
         }
     }
 
@@ -89,22 +122,16 @@ public class TileWire extends SEEnergyTile implements ISEGenericWire {
             this.wires[side.ordinal()] = new Wire(this, side);
     }
 
+    ///////////////////////////////////
+    /// TileEntity
+    ///////////////////////////////////
+
     @Override
     public void onLoad() {
         for (EnumFacing side : EnumFacing.VALUES)
             this.nodes[side.ordinal()] = SEAPI.energyNetAgent.newComponent(this.wires[side.ordinal()], this);
 
         super.onLoad();
-    }
-
-    @Override
-    public ISESubComponent getComponent(EnumFacing side) {
-        return this.nodes[side.ordinal()];
-    }
-
-    @Override
-    public ISEWire getWireParam(EnumFacing side) {
-        return this.wires[side.ordinal()];
     }
 
     @Override
@@ -127,6 +154,22 @@ public class TileWire extends SEEnergyTile implements ISEGenericWire {
         return super.writeToNBT(tagCompound);
     }
 
+    ///////////////////////////////////
+    /// ISEWireTile
+    ///////////////////////////////////
+    @Override
+    public ISESubComponent getComponent(EnumFacing side) {
+        return this.nodes[side.ordinal()];
+    }
+
+    @Override
+    public ISEWire getWireParam(EnumFacing side) {
+        return this.wires[side.ordinal()];
+    }
+
+    ///////////////////////////////////
+    /// ISEChunkWatchSensitiveTile
+    ///////////////////////////////////
     @Override
     public void onRenderingUpdateRequested() {
         for (EnumFacing wire_side: EnumFacing.VALUES) {
@@ -162,7 +205,7 @@ public class TileWire extends SEEnergyTile implements ISEGenericWire {
     }
 
     ////////////////////////////////////////
-    //Server->Client sync
+    /// Server->Client sync
     ////////////////////////////////////////
     private boolean[] externalConnections = new boolean[BlockWire.corners.length];
     private boolean[] connectedOnSide = new boolean[EnumFacing.VALUES.length];
@@ -209,7 +252,9 @@ public class TileWire extends SEEnergyTile implements ISEGenericWire {
         this.markForRenderUpdate();
     }
 
-    @SideOnly(Side.CLIENT)
+    ////////////////////////////////////////
+    /// ISEGenericWire
+    ////////////////////////////////////////
     @Override
     public boolean hasExtConnection(EnumFacing f1, EnumFacing f2) {
         int index = BlockWire.cornerIdOf(f1, f2);
@@ -222,12 +267,27 @@ public class TileWire extends SEEnergyTile implements ISEGenericWire {
     }
 
     @Override
-    public boolean hasBranch(EnumFacing side, EnumFacing to) {
-        return this.wires[side.ordinal()].hasBranchOnSide(to);
+    public int getWireType(EnumFacing side) {
+        return this.wires[side.ordinal()].itemStack.getItemDamage();
     }
 
     @Override
-    public void addBranch(EnumFacing side, EnumFacing to, ItemStack itemStack) {
+    public boolean canAddBranch(EnumFacing side, EnumFacing to, ItemStack itemStack) {
+        if (this.wires[side.ordinal()].hasBranchOnSide(null)) {
+            // Already have some branches
+            return itemStack.isItemEqual(this.wires[side.ordinal()].itemStack);
+        } else {
+            return true;
+        }
+    }
+
+    @Override
+    public void addBranch(EnumFacing side, EnumFacing to, ItemStack itemStack, double resistance) {
+        if (!this.wires[side.ordinal()].hasBranchOnSide(null)) {
+            // No branch exist
+            this.wires[side.ordinal()].itemStack = itemStack;
+            this.wires[side.ordinal()].resistance = resistance;
+        }
         this.wires[side.ordinal()].setConnection(to, true);
 
         world.neighborChanged(pos.offset(side), getBlockType(), pos);
@@ -252,16 +312,16 @@ public class TileWire extends SEEnergyTile implements ISEGenericWire {
     @Override
     public void removeBranch(EnumFacing side, EnumFacing to, List<ItemStack> drops) {
         if (to == null) {
+            drops.add(this.wires[side.ordinal()].getItemToDropAll());
             for (EnumFacing facing: EnumFacing.VALUES) {
                 if (this.wires[side.ordinal()].hasBranchOnSide(facing)) {
                     this.wires[side.ordinal()].setConnection(facing, false);
-                    drops.add(new ItemStack(BlockRegistry.blockWire.itemBlock));
                     notifyExtCornerOfStateChange(side, facing);
                 }
             }
         } else {
+            drops.add(this.wires[side.ordinal()].getItemToDrop());
             this.wires[side.ordinal()].setConnection(to, false);
-            drops.add(new ItemStack(BlockRegistry.blockWire.itemBlock));
             notifyExtCornerOfStateChange(side, to);
         }
 

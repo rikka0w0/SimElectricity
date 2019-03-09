@@ -12,6 +12,9 @@ tile.sime_essential:essential_cable.gold_thin.name=Thin Gold Cable
 tile.sime_essential:essential_cable.gold_medium.name=Medium Gold Cable
 tile.sime_essential:essential_cable.gold_thick.name=Thick Gold Cable
 
+tile.sime_essential:essential_wire.aluminum.name=Aluminum Wire
+tile.sime_essential:essential_wire.copper.name=Copper Wire
+
 tile.sime_essential:essential_electronics.voltage_meter.name=Voltage Meter
 tile.sime_essential:essential_electronics.quantum_generator.name=Quantum Generator
 tile.sime_essential:essential_electronics.adjustable_resistor.name=Adjustable Resistor

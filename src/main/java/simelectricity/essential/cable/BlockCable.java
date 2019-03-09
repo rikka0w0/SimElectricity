@@ -66,7 +66,7 @@ public class BlockCable extends MetaBlock implements ISimpleTexture {
         this("essential_cable", Material.GLASS, ItemBlockBase.class,
                 new String[]{"copper_thin", "copper_medium", "copper_thick", "aluminum_thin", "aluminum_medium", "aluminum_thick", "silver_thin", "silver_medium", "silver_thick", "gold_thin", "gold_medium", "gold_thick"},
                 new float[]{0.22F, 0.32F, 0.42F, 0.22F, 0.32F, 0.42F , 0.22F, 0.32F, 0.42F , 0.22F, 0.32F, 0.42F},
-                new float[]{0.1F, 0.01F, 0.001F, 0.1F, 0.01F, 0.001F, 0.1F, 0.01F, 0.001F, 0.1F, 0.01F, 0.001F},
+                new float[]{0.05F, 0.005F, 0.0005F, 0.075F, 0.0075F, 0.00075F, 0.04F, 0.004F, 0.0004F, 0.02F, 0.002F, 0.0002F},
                 TileCable.class);
 		setCreativeTab(SEAPI.SETab);
 		setHardness(0.2F);

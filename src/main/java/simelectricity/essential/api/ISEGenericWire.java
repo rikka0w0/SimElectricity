@@ -2,18 +2,26 @@ package simelectricity.essential.api;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import simelectricity.api.tile.ISEWireTile;
 
 import java.util.List;
 
 public interface ISEGenericWire extends ISEWireTile, ISEChunkWatchSensitiveTile{
-    boolean hasBranch(EnumFacing side, EnumFacing to);
-    void addBranch(EnumFacing side, EnumFacing to, ItemStack itemStack);
+    // Server-Only functions
+    void addBranch(EnumFacing side, EnumFacing to, ItemStack itemStack, double resistance);
     void removeBranch(EnumFacing side, EnumFacing to, List<ItemStack> drops);
 
-    @SideOnly(Side.CLIENT)
+    // Common functions
+    default boolean hasBranch(EnumFacing side, EnumFacing to) {
+        return getWireParam(side).hasBranchOnSide(to);
+    }
+    boolean canAddBranch(EnumFacing side, EnumFacing to, ItemStack itemStack);
+
+    // The following functions are more likely to be called on client-side for rendering purpose
+
+    /**
+     * @return true if the wire has a exterior connection on the given side
+     */
     boolean hasExtConnection(EnumFacing f1, EnumFacing f2);
 
     /**
@@ -24,4 +32,5 @@ public interface ISEGenericWire extends ISEWireTile, ISEChunkWatchSensitiveTile{
      */
     boolean connectedOnSide(EnumFacing side);
 
+    int getWireType(EnumFacing side);
 }
