@@ -10,6 +10,10 @@ public interface ISEGenericWire extends ISEWireTile, ISEChunkWatchSensitiveTile{
     // Server-Only functions
     void addBranch(EnumFacing side, EnumFacing to, ItemStack itemStack, double resistance);
     void removeBranch(EnumFacing side, EnumFacing to, List<ItemStack> drops);
+    /**
+     * Drop the wire on the given side as item, note that the number of item maybe more than 1!
+     */
+    ItemStack getItemDrop(EnumFacing side);
 
     // Common functions
     default boolean hasBranch(EnumFacing side, EnumFacing to) {

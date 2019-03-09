@@ -331,4 +331,9 @@ public class TileWire extends SEEnergyTile implements ISEGenericWire {
 
         onRenderingUpdateRequested();
     }
+
+    @Override
+    public ItemStack getItemDrop(EnumFacing side) {
+        return this.wires[side.ordinal()].getItemToDropAll();
+    }
 }

@@ -66,7 +66,6 @@ public class BlockWire extends BlockBase implements ISubBlock, ISimpleTexture {
     protected static ThreadLocal<ItemStack> nextPlacedItemStack = new ThreadLocal<>();
 
     @Override
-    @SideOnly(Side.CLIENT)
     public final String[] getSubBlockUnlocalizedNames() {
         return this.subNames;
     }
@@ -909,5 +908,28 @@ public class BlockWire extends BlockBase implements ISubBlock, ISimpleTexture {
 
     public int quantityDropped(Random random) {
         return 0;
+    }
+
+    @Override
+    public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player) {
+        TileEntity te = world.getTileEntity(pos);
+        if (!(te instanceof ISEGenericWire))
+            return ItemStack.EMPTY;
+
+        ISEGenericWire wireTile = (ISEGenericWire) te;
+
+        RayTraceResult trace = this.rayTrace(world, pos, player);
+
+        if (subHit_isBranch(trace.subHit)) {    //Center, corner or branches
+            EnumFacing wire_side = subHit_side(trace.subHit);
+
+            if (wireTile.getWireParam(wire_side).hasBranchOnSide(null)) {
+                ItemStack stack = wireTile.getItemDrop(wire_side);
+                stack.setCount(1);
+                return stack;
+            }
+        }
+
+        return ItemStack.EMPTY;
     }
 }
