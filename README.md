@@ -23,7 +23,8 @@ launch a terminal, then navigate to the directory just created,
 and type the following commands:
 1. `git clone https://github.com/RoyalAliceAcademyOfSciences/SimElectricity`
 1. `git submodule init` and `git submodule update` to get LibRikka
-1. `gradlew setupDecompWorkspace` to setup a complete development environment.
+1. `chmod +x gradlew` unnecessary in windows OS
+1. `./gradlew setupDecompWorkspace` to setup a complete development environment.
 * On Windows: use `gradlew.bat` instead of `gradlew`
 * If you don't need the source code of Minecraft and Minecraft Forge, or just want to build the code, use 
 `gradlew setupDeVWorkspace` instead.
@@ -31,9 +32,10 @@ and type the following commands:
 # Compile and Test ![Image](/src/main/resources/assets/sime_essential/textures/items/tool_crowbar.png)
 1. On Windows, open either 'CMD' or Windows PowerShell, on Linux and MacOS, 
    launch a terminal, then navigate to the SimElectricity directory (the one contains README.MD and Jenkinsfile)
-1. Execute `gradlew build` to generate SimElectricity jars
-1. Switch to the librikka directory under the SimElectricity directory
-1. Execute `gradlew build` again to build LibRikka jars
+1. Execute `./gradlew build` to generate SimElectricity jars
+1. `cd librikka` Switch to the librikka directory under the SimElectricity directory
+1. `chmod +x gradlew` unnecessary in windows OS
+1. Execute `./gradlew build` again to build LibRikka jars
 1. Jars files are in `SimElectricity/build/libs` and `SimElectricity\librikka\build\libs`
 1. Copy `SimElectricity-xx.xx.xx.jar` and `LibRikka-1.0.0.jar` to the `mods` folder under your `.minecraft` directory
 1. Launch your Minecraft and enjoy
@@ -58,7 +60,7 @@ and comments in the API source code (`package simelectricity.api`).
 1. You are ready to go
 ## Notes
 1. You MUST set the compatibility level of Java compiler to 1.8. By default, 
-Minecraft Forge(1.11.2 - 13.20.1.2386) sets the compatibility level to 1.6. 
+Minecraft Forge(forge-1.12.2-14.23.5.2768) sets the compatibility level to 1.6. 
 To do this, change `sourceCompatibility = targetCompatibility = "1.6"` in `build.gradle`
  to `sourceCompatibility = targetCompatibility = "1.8"`.
 1. Advanced users only: There are two hidden gradlew tasks: `energyNetDevJar` and `energyNetJar`, 
