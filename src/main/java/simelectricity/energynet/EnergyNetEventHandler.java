@@ -19,29 +19,28 @@
 
 package simelectricity.energynet;
 
-import net.minecraftforge.common.MinecraftForge;
+import net.minecraft.world.World;
+//import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.WorldEvent.Unload;
-import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
-import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.LogicalSide;
+//import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.fml.common.Mod;
+import simelectricity.SimElectricity;
 
-
+@Mod.EventBusSubscriber(modid = SimElectricity.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class EnergyNetEventHandler {
-    public EnergyNetEventHandler() {
-        MinecraftForge.EVENT_BUS.register(this);
-        FMLCommonHandler.instance().bus().register(this);
-    }
-
     @SubscribeEvent
-    public void onWorldUnload(Unload event) {
-        EnergyNetAgent.onWorldUnload(event.getWorld());
+    public static void onWorldUnload(Unload event) {
+        // TODO: Check Type: World
+        EnergyNetAgent.onWorldUnload((World)event.getWorld());
     }
 
     //Pre -> Entities -> TileEntitis -> Post
     @SubscribeEvent
-    public void tick(TickEvent.WorldTickEvent event) {
-        if (event.side != Side.SERVER)
+    public static void tick(TickEvent.WorldTickEvent event) {
+        if (event.side != LogicalSide.SERVER)
             return;
         if (event.phase != TickEvent.Phase.START)
             return;

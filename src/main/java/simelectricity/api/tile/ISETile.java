@@ -1,6 +1,6 @@
 package simelectricity.api.tile;
 
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import simelectricity.api.node.ISESubComponent;
 
 /**
@@ -12,5 +12,5 @@ public interface ISETile {
     /**
      * @return the component on the given side, null if not applicable
      */
-    ISESubComponent getComponent(EnumFacing side);
+    ISESubComponent getComponent(Direction side);
 }

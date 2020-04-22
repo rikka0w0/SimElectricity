@@ -19,7 +19,7 @@
 
 package simelectricity.energynet;
 
-import net.minecraft.world.WorldServer;
+import net.minecraft.world.server.ServerWorld;
 import simelectricity.api.node.ISESimulatable;
 import simelectricity.common.ConfigManager;
 import simelectricity.common.SELogger;
@@ -31,7 +31,7 @@ import simelectricity.energynet.components.VoltageSource;
 import java.util.LinkedList;
 
 public final class EnergyNet {
-    private final WorldServer world;
+    private final ServerWorld world;
     //Contains information about the grid
     protected final EnergyNetDataProvider dataProvider;
     //////////////////////////
@@ -48,14 +48,15 @@ public final class EnergyNet {
     //////////////////////////
     /// Constructor
     //////////////////////////
-    public EnergyNet(WorldServer world) {
+    public EnergyNet(ServerWorld world) {
         this.world = world;
         this.dataProvider = EnergyNetDataProvider.get(world);
 
         //Initialize thread
-        this.simulator = new EnergyNetSimulator(dataProvider, "SEEnergyNet_DIM" + String.valueOf(world.provider.getDimension()));
+        this.simulator = new EnergyNetSimulator(dataProvider, "SEEnergyNet_DIM" + String.valueOf(world.getDimension().getType().getId()));
 
-        SELogger.logInfo(SELogger.general, "EnergyNet has been created for DIM" + world.provider.getDimension());
+        SELogger.logInfo(SELogger.general, "EnergyNet has been created for DIM" + String.valueOf(world.getDimension().getType().getId())
+        + world.getDimension().getType().toString());
     }
 
     public synchronized boolean isNodeValid(ISESimulatable node) {

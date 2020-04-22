@@ -1,7 +1,7 @@
 package simelectricity.energynet.components;
 
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import simelectricity.api.components.ISECable;
 
 public class Cable extends CableBase<ISECable> implements ISECable {
@@ -31,7 +31,7 @@ public class Cable extends CableBase<ISECable> implements ISECable {
 
         canConnectOnSide = new boolean[6];
         int i = 0;
-        for (EnumFacing dir : EnumFacing.VALUES) {
+        for (Direction dir : Direction.values()) {
             canConnectOnSide[i] = this.dataProvider.canConnectOnSide(dir);
             i++;
         }
@@ -41,7 +41,7 @@ public class Cable extends CableBase<ISECable> implements ISECable {
     ///ISECableParameter
     /////////////////////////
     @Override
-    public synchronized boolean canConnectOnSide(EnumFacing direction) {
+    public synchronized boolean canConnectOnSide(Direction direction) {
     	if (canConnectOnSide == null)
     		return false;
         

@@ -1,6 +1,6 @@
 package simelectricity.api.components;
 
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 
 /**
  * Provides necessary parameters for a cable node
@@ -18,7 +18,7 @@ public interface ISECable extends ISECableBase {
     /**
      * @return false to block any connection from the given side
      */
-    boolean canConnectOnSide(EnumFacing side);
+    boolean canConnectOnSide(Direction side);
 
     /**
      * @return true to allow the link to cable node to the grid node at the same location

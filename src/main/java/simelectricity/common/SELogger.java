@@ -19,8 +19,9 @@
 
 package simelectricity.common;
 
-import net.minecraftforge.fml.common.FMLLog;
 import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import simelectricity.SimElectricity;
 
 /**
@@ -37,7 +38,7 @@ public enum SELogger {
     sync("Sync", true),
     client("Client", true);
 
-
+    private final static Logger logger = LogManager.getLogger(SimElectricity.MODID);
     private final String text;
     public final boolean isDebugInfo;
 
@@ -49,23 +50,23 @@ public enum SELogger {
     public static void logInfo(SELogger source, Object object) {
         if (!ConfigManager.showDebugOutput && source.isDebugInfo)
         	return;
-        
+
         if (!ConfigManager.showEnergyNetInfo && (source == SELogger.energyNet || source == SELogger.simulator))
             return;
-        
-        FMLLog.log(SimElectricity.NAME, Level.INFO, source + "|" + object);
+
+        logger.log(Level.INFO, source + "|" + object);
     }
 
     public static void logWarn(SELogger source, Object object) {
-        FMLLog.log(SimElectricity.NAME, Level.WARN, source + "|" + object);
+        logger.log(Level.WARN,source + "|" + object);
     }
 
     public static void logError(SELogger source, Object object) {
-        FMLLog.log(SimElectricity.NAME, Level.ERROR, source + "|" + object);
+        logger.log(Level.ERROR, source + "|" + object);
     }
 
     public static void logFatal(SELogger source, Object object) {
-        FMLLog.log(SimElectricity.NAME, Level.FATAL, source + "|" + object);
+        logger.log(Level.FATAL, source + "|" + object);
     }
 
     @Override

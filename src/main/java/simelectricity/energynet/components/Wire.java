@@ -1,7 +1,7 @@
 package simelectricity.energynet.components;
 
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import simelectricity.api.components.ISEWire;
 import simelectricity.api.node.ISESubComponent;
 
@@ -18,16 +18,16 @@ public final class Wire extends CableBase<ISEWire> implements ISESubComponent, I
 
         hasBranchOnSide = new boolean[6];
         int i = 0;
-        for (EnumFacing dir : EnumFacing.VALUES) {
+        for (Direction dir : Direction.values()) {
             hasBranchOnSide[i] = this.dataProvider.hasBranchOnSide(dir);
             i++;
         }
     }
 
     @Override
-    public boolean hasBranchOnSide(EnumFacing side) {
+    public boolean hasBranchOnSide(Direction side) {
         if (side == null) {
-            for (EnumFacing facing: EnumFacing.VALUES)
+            for (Direction facing: Direction.values())
                 if (hasBranchOnSide[facing.ordinal()])
                     return true;
             return false;

@@ -1,6 +1,6 @@
 package simelectricity.energynet.components;
 
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import simelectricity.api.node.ISEGridNode;
 import simelectricity.energynet.SEGraph;
@@ -42,11 +42,11 @@ public class GridNode extends SEComponent implements ISEGridNode {
     /// Read from NBT
     ///////////////////////
 
-    public GridNode(NBTTagCompound nbt) {
+    public GridNode(CompoundNBT nbt) {
         pos = new BlockPos(
-                nbt.getInteger("x"),
-                nbt.getInteger("y"),
-                nbt.getInteger("z")
+                nbt.getInt("x"),
+                nbt.getInt("y"),
+                nbt.getInt("z")
         );
         type = nbt.getByte("type");
         numOfParallelConductor = nbt.getByte("numOfParallelConductor");
@@ -55,10 +55,10 @@ public class GridNode extends SEComponent implements ISEGridNode {
         neighborY = nbt.getIntArray("neigborY");
         neighborZ = nbt.getIntArray("neigborZ");
 
-        complementY = nbt.getInteger("complementY");
+        complementY = nbt.getInt("complementY");
         if (this.complementY > 0) {
-            complementX = nbt.getInteger("complementX");
-            complementZ = nbt.getInteger("complementZ");
+            complementX = nbt.getInt("complementX");
+            complementZ = nbt.getInt("complementZ");
             ratio = nbt.getDouble("ratio");
             resistance = nbt.getDouble("resistance");
         }
@@ -84,12 +84,12 @@ public class GridNode extends SEComponent implements ISEGridNode {
     ///////////////////////
     /// Save to NBT
     ///////////////////////
-    public void writeToNBT(NBTTagCompound nbt) {
-        nbt.setInteger("x", this.pos.getX());
-        nbt.setInteger("y", this.pos.getY());
-        nbt.setInteger("z", this.pos.getZ());
-        nbt.setByte("type", this.type);
-        nbt.setByte("numOfParallelConductor", this.numOfParallelConductor);
+    public void writeToNBT(CompoundNBT nbt) {
+        nbt.putInt("x", this.pos.getX());
+        nbt.putInt("y", this.pos.getY());
+        nbt.putInt("z", this.pos.getZ());
+        nbt.putByte("type", this.type);
+        nbt.putByte("numOfParallelConductor", this.numOfParallelConductor);
 
         int length = 0;
         for (SEComponent neighbor : this.neighbors) {
@@ -108,23 +108,23 @@ public class GridNode extends SEComponent implements ISEGridNode {
                 this.neighborX[i] = gridNode.pos.getX();
                 this.neighborY[i] = gridNode.pos.getY();
                 this.neighborZ[i] = gridNode.pos.getZ();
-                nbt.setDouble("R" + String.valueOf(i), iterator.next());
+                nbt.putDouble("R" + String.valueOf(i), iterator.next());
                 i++;
             }
         }
-        nbt.setIntArray("neigborX", this.neighborX);
-        nbt.setIntArray("neigborY", this.neighborY);
-        nbt.setIntArray("neigborZ", this.neighborZ);
+        nbt.putIntArray("neigborX", this.neighborX);
+        nbt.putIntArray("neigborY", this.neighborY);
+        nbt.putIntArray("neigborZ", this.neighborZ);
 
         if (this.complement != null) {
-            nbt.setInteger("complementX", this.complement.getPos().getX());
-            nbt.setInteger("complementY", this.complement.getPos().getY());
-            nbt.setInteger("complementZ", this.complement.getPos().getZ());
+            nbt.putInt("complementX", this.complement.getPos().getX());
+            nbt.putInt("complementY", this.complement.getPos().getY());
+            nbt.putInt("complementZ", this.complement.getPos().getZ());
         } else {
-            nbt.setInteger("complementY", -1);
+            nbt.putInt("complementY", -1);
         }
-        nbt.setDouble("ratio", this.ratio);
-        nbt.setDouble("resistance", this.resistance);
+        nbt.putDouble("ratio", this.ratio);
+        nbt.putDouble("resistance", this.resistance);
     }
 
     @Override

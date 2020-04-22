@@ -1,7 +1,7 @@
 package simelectricity.api.internal;
 
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import simelectricity.api.components.ISEComponentParameter;
@@ -22,7 +22,7 @@ public interface ISEEnergyNetAgent {
      * @param direction
      * @return true if the connection can be made
      */
-    boolean canConnectTo(TileEntity tileEntity, EnumFacing direction);
+    boolean canConnectTo(TileEntity tileEntity, Direction direction);
 
     /**
      * Create a new component, WITHOUT register it.

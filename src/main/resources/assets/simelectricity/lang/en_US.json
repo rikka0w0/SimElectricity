@@ -1,0 +1,33 @@
+{
+  "itemGroup.simelectricity": "SimElectricity",
+
+  "item.simelectricity.semanagementtool": "Energy Net Management Tool",
+
+  "gui.simelectricity.voltage": "Voltage",
+  "gui.simelectricity.voltage_input": "Input Voltage",
+  "gui.simelectricity.voltage_output": "Output Voltage",
+  "gui.simelectricity.voltage_regulated": "Regulated Voltage",
+  "gui.simelectricity.voltage_threshold": "Threshold Voltage",
+  "gui.simelectricity.current": "Current",
+  "gui.simelectricity.current_input": "Input Current",
+  "gui.simelectricity.current_output": "Output Current",
+  "gui.simelectricity.current_trip": "Trip Current",
+  "gui.simelectricity.current_threshold": "Threshold Current",
+  "gui.simelectricity.power_input": "Input Power",
+  "gui.simelectricity.power_output": "Output Power",
+  "gui.simelectricity.power_rated": "Rated Power",
+  "gui.simelectricity.buffered_energy": "Buffered Energy",
+  "gui.simelectricity.used_energy": "Used Energy",
+  "gui.simelectricity.resistance_output": "Output Resistance",
+  "gui.simelectricity.resistance_internal": "Internal Resistance",
+  "gui.simelectricity.voltage_internal": "Internal Voltage",
+  "gui.simelectricity.ratio_step_up": "Step-up ratio",
+  "gui.simelectricity.resistivity": "Resistivity",
+  "gui.simelectricity.resistance_secondary": "Resistance(Ref. to Sec.)",
+  "gui.simelectricity.forward_biased": "Forward Biased",
+  "gui.simelectricity.reverse_biased": "Reverse Biased",
+  "gui.simelectricity.condition_threshold": "Threshold Condition",
+
+  "seconfig.category:energynet": "EnergyNet",
+  "seconfig.category:energynet.tooltip": "Configure the simulator"
+}

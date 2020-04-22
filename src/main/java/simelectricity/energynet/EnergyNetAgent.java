@@ -20,10 +20,10 @@
 package simelectricity.energynet;
 
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
+import net.minecraft.world.server.ServerWorld;
 import simelectricity.api.components.*;
 import simelectricity.api.internal.ISEEnergyNetAgent;
 import simelectricity.api.node.ISEGridNode;
@@ -55,14 +55,14 @@ public class EnergyNetAgent implements ISEEnergyNetAgent {
      * If target not exist, it will automatically be created
      */
     public static EnergyNet getEnergyNetForWorld(World world) {
-        if (!(world instanceof WorldServer)) {
+        if (!(world instanceof ServerWorld)) {
             throw new IllegalArgumentException("This world is not an instanceof WorldServer!");
         }
 
         EnergyNet ret = mapping.get(world);
 
         if (ret == null) {
-            ret = new EnergyNet((WorldServer) world);
+            ret = new EnergyNet((ServerWorld) world);
             mapping.put(world, ret);
         }
 
@@ -78,7 +78,7 @@ public class EnergyNetAgent implements ISEEnergyNetAgent {
 
         if (energyNet == null) {
             SELogger.logWarn(SELogger.energyNet, "Attempt to unload the EnergyNet associated with DIM" +
-                    world.provider.getDimension() + " but it does not exist!");
+                    String.valueOf(world.dimension) + " but it does not exist!");
             return;
         }
 
@@ -91,7 +91,7 @@ public class EnergyNetAgent implements ISEEnergyNetAgent {
     }
 
     @Override
-    public boolean canConnectTo(TileEntity tileEntity, EnumFacing direction) {
+    public boolean canConnectTo(TileEntity tileEntity, Direction direction) {
         if (tileEntity instanceof ISECableTile) {
             ISECableTile cableTile = (ISECableTile) tileEntity;
             TileEntity neighborTileEntity = EnergyNetDataProvider.getTileEntityOnDirection(tileEntity, direction);
@@ -195,7 +195,7 @@ public class EnergyNetAgent implements ISEEnergyNetAgent {
 
     @Override
     public void attachTile(TileEntity te) {
-        if (te.isInvalid()) {
+        if (te.isRemoved()) {
             SELogger.logInfo(SELogger.energyNet, "Invalid tileentity " + te + " tried to attach, abort!");
             return;
         }

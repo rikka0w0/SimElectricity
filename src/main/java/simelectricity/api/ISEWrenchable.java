@@ -1,6 +1,6 @@
 package simelectricity.api;
 
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 
 /**
  * For TileEntities only, implementing this makes it a target for wrenches,
@@ -10,12 +10,12 @@ public interface ISEWrenchable {
     /**
      * @return false to reject the action
      */
-    boolean canWrenchBeUsed(EnumFacing side);
+    boolean canWrenchBeUsed(Direction side);
 
     /**
      * Called when the functional side is about be set by the wrench
      * </p>
      * Note: Called from SERVER ONLY! Initiate a server->client sync if needed
      */
-    void onWrenchAction(EnumFacing side, boolean isCreativePlayer);
+    void onWrenchAction(Direction side, boolean isCreativePlayer);
 }

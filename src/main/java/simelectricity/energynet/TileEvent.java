@@ -1,9 +1,7 @@
 package simelectricity.energynet;
 
 import net.minecraft.tileentity.TileEntity;
-import simelectricity.api.tile.ISECableTile;
 import simelectricity.api.tile.ISEGridTile;
-import simelectricity.api.tile.ISETile;
 
 public abstract class TileEvent extends EnergyEventBase {
     protected final TileEntity te;

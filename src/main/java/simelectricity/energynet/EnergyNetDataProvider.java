@@ -3,14 +3,15 @@
  */
 package simelectricity.energynet;
 
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraft.world.storage.WorldSavedData;
-import net.minecraft.world.storage.MapStorage;
+import net.minecraft.world.storage.DimensionSavedDataManager;
 import net.minecraftforge.common.util.Constants.NBT;
 import simelectricity.SimElectricity;
 import simelectricity.api.ISEEnergyNetUpdateHandler;
@@ -57,12 +58,12 @@ public class EnergyNetDataProvider extends WorldSavedData {
             throw new RuntimeException("Not allowed to create WiWorldData in client");
 
         // The IS_GLOBAL constant is there for clarity, and should be simplified into the right branch.
-        MapStorage storage = world.getPerWorldStorage();
-        EnergyNetDataProvider instance = (EnergyNetDataProvider) storage.getOrLoadData(EnergyNetDataProvider.class, EnergyNetDataProvider.DATA_NAME);
+        DimensionSavedDataManager storage = ((ServerWorld)world).getSavedData();
+        EnergyNetDataProvider instance = storage.getOrCreate(EnergyNetDataProvider::new, EnergyNetDataProvider.DATA_NAME);
 
         if (instance == null) {
             instance = new EnergyNetDataProvider();
-            storage.setData(EnergyNetDataProvider.DATA_NAME, instance);
+            storage.set(instance);
         }
         return instance;
     }
@@ -71,11 +72,11 @@ public class EnergyNetDataProvider extends WorldSavedData {
     //Tile Event handling ----------------------------------------------------------------------------
 
     //Utils ------------------------------------------------------------------------------
-    public static TileEntity getTileEntityOnDirection(TileEntity te, EnumFacing direction) {
+    public static TileEntity getTileEntityOnDirection(TileEntity te, Direction direction) {
         return te.getWorld().getTileEntity(te.getPos().offset(direction));
     }
 
-    public static TileEntity getTileEntityOnDirection(TileEntity te, EnumFacing direction, EnumFacing direction2) {
+    public static TileEntity getTileEntityOnDirection(TileEntity te, Direction direction, Direction direction2) {
         return te.getWorld().getTileEntity(te.getPos().offset(direction).offset(direction2));
     }
 
@@ -116,7 +117,7 @@ public class EnergyNetDataProvider extends WorldSavedData {
             } if (te instanceof ISETile) {
                 ISETile tile = (ISETile) te;
                 
-                for (EnumFacing direction : EnumFacing.VALUES) {
+                for (Direction direction : Direction.values()) {
                     ISESubComponent subComponent = tile.getComponent(direction);
                     if (subComponent != null) {
                         this.tileEntityGraph.addVertex((SEComponent) subComponent);
@@ -125,6 +126,10 @@ public class EnergyNetDataProvider extends WorldSavedData {
             }
             this.loadedTiles.add(te);
         }
+    }
+
+    private static boolean isSideSolid(World world, BlockPos pos, Direction facing) {
+        return world.getBlockState(pos).isSolidSide(world, pos, facing);
     }
 
     public void updateTileConnection(TileEntity te) {
@@ -143,7 +148,7 @@ public class EnergyNetDataProvider extends WorldSavedData {
             }
 
             //Build connection with neighbors
-            for (EnumFacing direction : EnumFacing.VALUES) {
+            for (Direction direction : Direction.values()) {
                 TileEntity neighborTileEntity = getTileEntityOnDirection(te, direction);
 
                 if (!cable.canConnectOnSide(direction))
@@ -186,7 +191,7 @@ public class EnergyNetDataProvider extends WorldSavedData {
         } else if (te instanceof ISETile) {
             ISETile tile = (ISETile) te;
 
-            for (EnumFacing direction : EnumFacing.VALUES) {
+            for (Direction direction : Direction.values()) {
                 ISESubComponent subComponent = tile.getComponent(direction);
                 if (subComponent != null) {
                     this.tileEntityGraph.isolateVertex((SEComponent) subComponent);
@@ -195,7 +200,7 @@ public class EnergyNetDataProvider extends WorldSavedData {
 
             if (te instanceof ISEWireTile) {
                 ISEWireTile wireTile = (ISEWireTile) te;
-                for (EnumFacing side : EnumFacing.VALUES) {
+                for (Direction side : Direction.values()) {
                     Wire wire = (Wire) wireTile.getComponent(side);
 
                     // Solve connections with cable and ISETile
@@ -211,7 +216,7 @@ public class EnergyNetDataProvider extends WorldSavedData {
                         }
                     }
 
-                    for (EnumFacing branch: EnumFacing.VALUES) {
+                    for (Direction branch: Direction.values()) {
                         if (branch.getAxis() == side.getAxis())
                             continue;
 
@@ -236,15 +241,15 @@ public class EnergyNetDataProvider extends WorldSavedData {
                         if (neighborTileEntity instanceof ISEWireTile) {
                             wireNeighbor = (Wire) ((ISEWireTile) neighborTileEntity).getComponent(branch.getOpposite());
                             if (wireNeighbor.hasBranchOnSide(side.getOpposite()) &&
-                                    !te.getWorld().isSideSolid(te.getPos().offset(branch), side) &&
-                                    !te.getWorld().isSideSolid(te.getPos().offset(branch), branch.getOpposite()))
+                                    !isSideSolid(te.getWorld(), te.getPos().offset(branch), side) &&
+                                    !isSideSolid(te.getWorld(), te.getPos().offset(branch), branch.getOpposite()))
                                 this.tileEntityGraph.addEdge(wire, wireNeighbor);
                         }
                     }
                 }
             } else {
                 // ISETile
-                for (EnumFacing direction : EnumFacing.VALUES) {
+                for (Direction direction : Direction.values()) {
                     ISESubComponent subComponent = tile.getComponent(direction);
                     if (subComponent != null) {
                         TileEntity neighborTileEntity = getTileEntityOnDirection(te, direction);
@@ -276,7 +281,7 @@ public class EnergyNetDataProvider extends WorldSavedData {
             cable.updateComponentParameters();
         } else if (te instanceof ISETile) {
             ISETile tile = (ISETile) te;
-            for (EnumFacing direction : EnumFacing.VALUES) {
+            for (Direction direction : Direction.values()) {
                 ISESubComponent subComponent = tile.getComponent(direction);
 
                 if (subComponent instanceof Tile)
@@ -297,7 +302,7 @@ public class EnergyNetDataProvider extends WorldSavedData {
             this.tileEntityGraph.removeVertex(cable);
         } else if (te instanceof ISETile) {
             ISETile tile = (ISETile) te;
-            for (EnumFacing direction : EnumFacing.VALUES) {
+            for (Direction direction : Direction.values()) {
                 ISESubComponent subComponent = tile.getComponent(direction);
                 if (subComponent != null) {
                     this.tileEntityGraph.removeVertex((SEComponent) subComponent);
@@ -436,12 +441,12 @@ public class EnergyNetDataProvider extends WorldSavedData {
      * Read grid data from world NBT, 1.Read grid nodes, 2. Read connections
      */
     @Override
-    public void readFromNBT(NBTTagCompound nbt) {
+    public void read(CompoundNBT nbt) {
         this.gridNodeMap.clear();
 
-        NBTTagList NBTObjects = nbt.getTagList("Objects", NBT.TAG_COMPOUND);
-        for (int i = 0; i < NBTObjects.tagCount(); i++) {
-            NBTTagCompound compound = NBTObjects.getCompoundTagAt(i);
+        ListNBT NBTObjects = nbt.getList("Objects", NBT.TAG_COMPOUND);
+        for (int i = 0; i < NBTObjects.size(); i++) {
+            CompoundNBT compound = NBTObjects.getCompound(i);
             GridNode obj = new GridNode(compound);
             //byte type = compound.getByte("type");
 
@@ -464,14 +469,14 @@ public class EnergyNetDataProvider extends WorldSavedData {
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
-        NBTTagList NBTNodes = new NBTTagList();
+    public CompoundNBT write(CompoundNBT nbt) {
+        ListNBT NBTNodes = new ListNBT();
         for (GridNode gridNode : this.gridNodeMap.values()) {
-            NBTTagCompound tag = new NBTTagCompound();
+            CompoundNBT tag = new CompoundNBT();
             gridNode.writeToNBT(tag);
-            NBTNodes.appendTag(tag);
+            NBTNodes.add(tag);
         }
-        nbt.setTag("Objects", NBTNodes);
+        nbt.put("Objects", NBTNodes);
 
         return nbt;
     }

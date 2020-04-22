@@ -19,22 +19,22 @@
 
 package simelectricity.api;
 
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 
 /**
  * For TileEntities only, implementing this allows glove item to change the facing, all machines are recommended to implement this!
  */
 public interface ISESidedFacing {
-    EnumFacing getFacing();
+    Direction getFacing();
 
     /**
      * Called when the facing is about to be set
      * Note: Called from SERVER ONLY! Initiate a server->client sync if needed
      */
-    void setFacing(EnumFacing newFacing);
+    void setFacing(Direction newFacing);
 
     /**
      * return true only for valid new facing, return false otherwise
      */
-    boolean canSetFacing(EnumFacing newFacing);
+    boolean canSetFacing(Direction newFacing);
 }

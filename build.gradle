@@ -11,13 +11,19 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
     }
 }
 
-apply plugin: 'net.minecraftforge.gradle.forge'
+apply plugin: 'net.minecraftforge.gradle'
 
 dependencies {
+    // Specify the version of Minecraft to use, If this is any group other then 'net.minecraft' it is assumed
+    // that the dep is a ForgeGradle 'patcher' dependency. And it's patches will be applied.
+    // The userdev artifact is a special name and will get all sorts of transformations applied to it.
+    // minecraft 'net.minecraftforge:forge:1.15.1-30.0.41'
+    minecraft 'net.minecraftforge:forge:1.15.2-31.1.47'
+
     runtime fileTree(dir: 'libs', include: '*.jar')
 }
 
@@ -25,49 +31,99 @@ version = "1.0.0"
 group = "simelectricity" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "SimElectricity"
 
-sourceCompatibility = targetCompatibility = "1.8" // Need this here so eclipse task generates correctly.
-compileJava {
-    sourceCompatibility = targetCompatibility = "1.8"
-}
+// Need this here so eclipse task generates correctly.
+sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8'
 
 minecraft {
-    version = "1.12.2-14.23.5.2768"
-    runDir = "run"
-
     // the mappings can be changed at any time, and must be in the following format.
     // snapshot_YYYYMMDD   snapshot are built nightly.
     // stable_#            stables are built at the discretion of the MCP team.
     // Use non-default mappings at your own risk. they may not always work.
     // simply re-run your setup task after changing the mappings to update your workspace.
-    mappings = "snapshot_20171003"
+    // mappings channel: 'snapshot', version: '20190719-1.14.3'
+    mappings channel: 'snapshot', version: '20200225-1.15.1'
     // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
+
+    // Default run configurations.
+    // These can be tweaked, removed, or duplicated as needed.
+    runs {
+        client {
+            workingDirectory project.file('run')
+
+            // Recommended logging data for a userdev environment
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+
+            // Recommended logging level for the console
+            property 'forge.logging.console.level', 'debug'
+
+            mods {
+                simelectricity {
+                    source sourceSets.main
+                }
+            }
+        }
+
+        server {
+            workingDirectory project.file('run')
+
+            // Recommended logging data for a userdev environment
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+
+            // Recommended logging level for the console
+            property 'forge.logging.console.level', 'debug'
+
+            mods {
+                simelectricity {
+                    source sourceSets.main
+                }
+            }
+        }
+
+        data {
+            workingDirectory project.file('run')
+
+            // Recommended logging data for a userdev environment
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+
+            // Recommended logging level for the console
+            property 'forge.logging.console.level', 'debug'
+
+            args '--mod', 'simelectricity', '--all', '--output', file('src/generated/resources/')
+
+            mods {
+                simelectricity {
+                    source sourceSets.main
+                }
+            }
+        }
+    }
 }
 
-processResources {
-    // this will ensure that this task is redone when the versions change.
-    inputs.property "version", project.version
-    inputs.property "mcversion", project.minecraft.version
-
-    // replace stuff in mcmod.info, nothing else
-    from(sourceSets.main.resources.srcDirs) {
-        include 'mcmod.info'
-
-        // replace version and mcversion
-        expand 'version':project.version, 'mcversion':project.minecraft.version
-    }
-
-    // copy everything else except the mcmod.info
-    from(sourceSets.main.resources.srcDirs) {
-        exclude 'mcmod.info'
-    }
-}
+//processResources {
+//    // this will ensure that this task is redone when the versions change.
+//    inputs.property "version", project.version
+//    inputs.property "mcversion", project.minecraft.version
+//
+//    // replace stuff in mcmod.info, nothing else
+//    from(sourceSets.main.resources.srcDirs) {
+//        include 'mcmod.info'
+//
+//        // replace version and mcversion
+//        expand 'version':project.version, 'mcversion':project.minecraft.version
+//    }
+//
+//    // copy everything else except the mcmod.info
+//    from(sourceSets.main.resources.srcDirs) {
+//        exclude 'mcmod.info'
+//    }
+//}
 
 // configure  the source folders
 sourceSets {
     main {
         java {
             srcDir "src/main/java"
-            srcDir "librikka/src"
+//            srcDir "librikka/src"
         }
         resources {
             srcDir "src/main/resources"
@@ -76,171 +132,187 @@ sourceSets {
     }
 }
 
-
 jar.classifier = 'full'
+jar.version = '2.0'
+jar {
+    manifest {
+        attributes([
+                "Specification-Title": "simelectricity",
+                "Specification-Vendor": "CISM",
+                "Specification-Version": "1", // We are version 1 of ourselves
+                "Implementation-Title": project.name,
+                "Implementation-Version": "${version}",
+                "Implementation-Vendor" :"CISM",
+                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+        ])
+    }
+}
+
+
 ext.jarFile = zipTree(jar.archivePath)
 def libsDir = new File(System.getenv("LIBS_DIR") ?: "build/libs/")
-sourceJar.excludes.addAll(["rikka/**"])
-
-task deobfJar(type: Jar) {
-    destinationDir = libsDir
-
-    doFirst {
-        from(sourceSets.main.output) {
-            excludes.addAll(["rikka/**"])
-        }
-    }
-    classifier = 'dev'
-}
-
-task standaloneJar(type: Jar, dependsOn: reobfJar) {
-    destinationDir = libsDir
-
-    doFirst {
-        from(project.ext.jarFile) {
-            excludes.addAll(["rikka/**"])
-        }
-    }
-}
-
-task librikkaJar(type: Jar, dependsOn: [standaloneJar, reobfJar]) {
-    destinationDir = libsDir
-    String oldArchivesBaseName = archivesBaseName;
-
-    doFirst {
-        archivesBaseName = 'librikka'
-        from(project.ext.jarFile) {
-            includes.addAll(["rikka/**"])
-            excludes.addAll(["simelectricity/**"])
-            excludes.addAll(["edu/**"])
-        }
-    }
-
-    doLast {
-        archivesBaseName = oldArchivesBaseName;
-    }
-}
-
-task apiSrcJar(type: Jar) {
-    destinationDir = libsDir
-    appendix = "api"
-    classifier = 'sources'
-
-    doFirst {
-        from (sourceSets.main.allSource) {
-           includes.addAll(["simelectricity/api/**", "simelectricity/essential/api/**"])
-        }
-    }
-}
-
-task apiDevJar(type: Jar, dependsOn: reobfJar) {
-    destinationDir = libsDir
-    appendix = 'api'
-    classifier = 'dev'
-
-    doFirst {
-        from(sourceSets.main.output) {
-            includes.addAll(["simelectricity/api/**", "simelectricity/essential/api/**"])
-        }
-    }
-}
-
-task apiJar(type: Jar, dependsOn: reobfJar) {
-    destinationDir = libsDir
-    appendix = 'api'
-
-    doFirst {
-        from(project.ext.jarFile) {
-            includes.addAll(["simelectricity/api/**", "simelectricity/essential/api/**"])
-        }
-    }
-}
-
-task energyNetDevJar(type: Jar, dependsOn: reobfJar) {
-    destinationDir = libsDir
-    appendix = 'energyNet'
-    classifier = 'dev'
-
-    doFirst {
-        from(sourceSets.main.output) {
-            includes.addAll(["simelectricity/**"])
-            excludes.addAll(["simelectricity/essential/**"])
-        }
-    }
-}
-
-task energyNetJar(type: Jar, dependsOn: reobfJar) {
-    destinationDir = libsDir
-    appendix = 'energyNet'
-
-    doFirst {
-        from(project.ext.jarFile) {
-            includes.addAll(["simelectricity/**"])
-            excludes.addAll(["simelectricity/essential/**"])
-        }
-    }
-}
-
-build.dependsOn deobfJar, standaloneJar, librikkaJar, apiJar, apiDevJar, apiSrcJar, energyNetDevJar, energyNetJar
-
-dependencies {
-
-}
-
-task clearMOD << {
-    println 'clear mods'
-//    delete "run/mods/buildcraft*"
-    delete "run/mods*"
-    mkdir 'run/mods'
-}
-
-task copyIC << {
-    println 'copying ic'
-    copy{
-        into 'run/mods'
-        from('archive/devLibs'){
-            include 'industrialcraft-2-2.7.83-ex111-dev.jar'
-        }
-    }
-}
-
-task copyBC << {
-    println 'copying bc'
-    copy{
-        into 'run/mods'
-        from('archive/devLibs'){
-            include 'buildcraft-7.99.7.jar'
-        }
-    }
-}
+//sourceJar.excludes.addAll(["rikka/**"])
 
 
-task runWithBC {
-    doFirst {
-        clearMOD.execute()
-        copyBC.execute()
-    }
-    group = 'forgegradle'
-    finalizedBy runClient
-}
+//task deobfJar(type: Jar) {
+//    destinationDir = libsDir
+//
+//    doFirst {
+//        from(sourceSets.main.output) {
+//            excludes.addAll(["rikka/**"])
+//        }
+//    }
+//    classifier = 'dev'
+//}
 
-
-task runWithIC {
-    doFirst {
-        clearMOD.execute()
-        copyIC.execute()
-    }
-    group = 'forgegradle'
-    finalizedBy runClient
-}
-
-
-task runWithALL {
-    doFirst {
-        clearMOD.execute()
-        copyIC.execute()
-        copyBC.execute()
-    }
-    group = 'forgegradle'
-    finalizedBy runClient
-}
+//task standaloneJar(type: Jar, dependsOn: reobfJar) {
+//    destinationDir = libsDir
+//
+//    doFirst {
+//        from(project.ext.jarFile) {
+//            excludes.addAll(["rikka/**"])
+//        }
+//    }
+//}
+//
+//task librikkaJar(type: Jar, dependsOn: [standaloneJar, reobfJar]) {
+//    destinationDir = libsDir
+//    String oldArchivesBaseName = archivesBaseName;
+//
+//    doFirst {
+//        archivesBaseName = 'librikka'
+//        from(project.ext.jarFile) {
+//            includes.addAll(["rikka/**"])
+//            excludes.addAll(["simelectricity/**"])
+//            excludes.addAll(["edu/**"])
+//        }
+//    }
+//
+//    doLast {
+//        archivesBaseName = oldArchivesBaseName;
+//    }
+//}
+//
+//task apiSrcJar(type: Jar) {
+//    destinationDir = libsDir
+//    appendix = "api"
+//    classifier = 'sources'
+//
+//    doFirst {
+//        from (sourceSets.main.allSource) {
+//           includes.addAll(["simelectricity/api/**", "simelectricity/essential/api/**"])
+//        }
+//    }
+//}
+//
+//task apiDevJar(type: Jar, dependsOn: reobfJar) {
+//    destinationDir = libsDir
+//    appendix = 'api'
+//    classifier = 'dev'
+//
+//    doFirst {
+//        from(sourceSets.main.output) {
+//            includes.addAll(["simelectricity/api/**", "simelectricity/essential/api/**"])
+//        }
+//    }
+//}
+//
+//task apiJar(type: Jar, dependsOn: reobfJar) {
+//    destinationDir = libsDir
+//    appendix = 'api'
+//
+//    doFirst {
+//        from(project.ext.jarFile) {
+//            includes.addAll(["simelectricity/api/**", "simelectricity/essential/api/**"])
+//        }
+//    }
+//}
+//
+//task energyNetDevJar(type: Jar, dependsOn: reobfJar) {
+//    destinationDir = libsDir
+//    appendix = 'energyNet'
+//    classifier = 'dev'
+//
+//    doFirst {
+//        from(sourceSets.main.output) {
+//            includes.addAll(["simelectricity/**"])
+//            excludes.addAll(["simelectricity/essential/**"])
+//        }
+//    }
+//}
+//
+//task energyNetJar(type: Jar, dependsOn: reobfJar) {
+//    destinationDir = libsDir
+//    appendix = 'energyNet'
+//
+//    doFirst {
+//        from(project.ext.jarFile) {
+//            includes.addAll(["simelectricity/**"])
+//            excludes.addAll(["simelectricity/essential/**"])
+//        }
+//    }
+//}
+//
+//build.dependsOn deobfJar, standaloneJar, librikkaJar, apiJar, apiDevJar, apiSrcJar, energyNetDevJar, energyNetJar
+//
+//dependencies {
+//
+//}
+//
+//task clearMOD << {
+//    println 'clear mods'
+////    delete "run/mods/buildcraft*"
+//    delete "run/mods*"
+//    mkdir 'run/mods'
+//}
+//
+//task copyIC << {
+//    println 'copying ic'
+//    copy{
+//        into 'run/mods'
+//        from('archive/devLibs'){
+//            include 'industrialcraft-2-2.7.83-ex111-dev.jar'
+//        }
+//    }
+//}
+//
+//task copyBC << {
+//    println 'copying bc'
+//    copy{
+//        into 'run/mods'
+//        from('archive/devLibs'){
+//            include 'buildcraft-7.99.7.jar'
+//        }
+//    }
+//}
+//
+//
+//task runWithBC {
+//    doFirst {
+//        clearMOD.execute()
+//        copyBC.execute()
+//    }
+//    group = 'forgegradle'
+//    finalizedBy runClient
+//}
+//
+//
+//task runWithIC {
+//    doFirst {
+//        clearMOD.execute()
+//        copyIC.execute()
+//    }
+//    group = 'forgegradle'
+//    finalizedBy runClient
+//}
+//
+//
+//task runWithALL {
+//    doFirst {
+//        clearMOD.execute()
+//        copyIC.execute()
+//        copyBC.execute()
+//    }
+//    group = 'forgegradle'
+//    finalizedBy runClient
+//}
