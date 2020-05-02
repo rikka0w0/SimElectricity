@@ -20,42 +20,35 @@
 package simelectricity.essential.grid;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.IProperty;
-import net.minecraft.block.state.BlockStateContainer;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.fluid.IFluidState;
+import net.minecraft.item.BlockItemUseContext;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.state.StateContainer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.util.math.shapes.ISelectionContext;
+import net.minecraft.util.math.shapes.VoxelShape;
+import net.minecraft.util.math.shapes.VoxelShapes;
+import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
-import net.minecraftforge.common.property.ExtendedBlockState;
-import net.minecraftforge.common.property.IExtendedBlockState;
-import net.minecraftforge.common.property.IUnlistedProperty;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-import rikka.librikka.block.ISubBlock;
+import rikka.librikka.DirHorizontal8;
 import rikka.librikka.block.BlockBase;
-import rikka.librikka.item.ISimpleTexture;
 import rikka.librikka.item.ItemBlockBase;
-import rikka.librikka.properties.Properties;
-import rikka.librikka.properties.UnlistedPropertyRef;
 import simelectricity.api.SEAPI;
 import simelectricity.api.tile.ISEGridTile;
 import simelectricity.essential.BlockRegistry;
-import simelectricity.essential.client.grid.ISEPowerPole;
 
-import java.lang.ref.WeakReference;
 import java.util.LinkedList;
 
-public class BlockPowerPoleTop extends BlockBase implements ISubBlock {
-    public static final String[] subNames = {"0", "1"};
+import javax.annotation.Nullable;
+
+public class BlockPowerPoleTop extends BlockBase {
     ///////////////////////////////////////
     /// Utils
     ///////////////////////////////////////
@@ -70,23 +63,30 @@ public class BlockPowerPoleTop extends BlockBase implements ISubBlock {
     ///////////////////
     /// Initialize
     ///////////////////
-    public BlockPowerPoleTop() {
-        super("essential_powerpole", Material.ROCK, BlockPowerPoleTop.ItemBlock.class);
-        
-        setHardness(3.0F);
-        setResistance(10.0F);
-        setSoundType(SoundType.METAL);
-		setCreativeTab(SEAPI.SETab);
+    public final int type;
+    private BlockPowerPoleTop(int type) {
+        super("essential_powerpole_" + String.valueOf(type), 
+        		Block.Properties.create(Material.ROCK)
+        		.hardnessAndResistance(3.0F, 10.0F)
+        		.sound(SoundType.METAL)
+        		, BlockPowerPoleTop.ItemBlock.class
+        		, (new Item.Properties()).group(SEAPI.SETab));
+        this.type = type;
+    }
+    
+    public static BlockPowerPoleTop[] create() {
+    	return new BlockPowerPoleTop[] {new BlockPowerPoleTop(0), new BlockPowerPoleTop(1)};
     }
 
     private static BlockInfo createCollisionBoxCoordOffset(int facing, int x, int y, int z, int part) {
-        return new BlockInfo(BlockPowerPoleBottom.rotateCoord(facing, x, y, z), BlockPowerPoleTop.collisionBoxCoordOffsetMatrix[facing][part]);
+        return new BlockInfo(BlockPowerPoleBottom.rotateCoord(facing, x, y, z), 
+        		BlockRegistry.powerPoleCollisionBox.forPart(collisionBoxCoordOffsetMatrix[facing][part]));
     }
 
-    public static LinkedList<BlockInfo> getCollisionBoxBlockOffsets(IBlockState state) {
+    public static LinkedList<BlockInfo> getCollisionBoxBlockOffsets(BlockState state) {
         LinkedList<BlockInfo> list = new LinkedList();
 
-        int facing = state.getValue(Properties.facing3bit);
+        int facing = getFacingInt(state);
         if ((facing & 1) == 0) {    // 90 x n
             facing = facing >> 1;
 
@@ -155,85 +155,50 @@ public class BlockPowerPoleTop extends BlockBase implements ISubBlock {
 
         return list;
     }
-
-    @Override
-    public String[] getSubBlockUnlocalizedNames() {
-        return BlockPowerPoleTop.subNames;
-    }
-
+    
     ///////////////////////////////
     /// TileEntity
     ///////////////////////////////
 	@Override
-	public boolean hasTileEntity(IBlockState state) {return true;}
+	public boolean hasTileEntity(BlockState state) {return true;}
 	
     @Override
-    public TileEntity createTileEntity(World world, IBlockState state) {
+    public TileEntity createTileEntity(BlockState state, IBlockReader world) {
         return new TilePowerPole();
     }
-
+    
     @Override
-    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
-        return new AxisAlignedBB(0.0, 0.0, 0.0, 1, 0.05, 1);
+    public VoxelShape getShape(BlockState state, IBlockReader world, BlockPos pos, ISelectionContext context) {
+    	return VoxelShapes.create(0.0, 0.0, 0.0, 1, 0.05, 1);
     }
 
     ///////////////////////////////
     ///BlockStates
     ///////////////////////////////
     @Override
-    protected final BlockStateContainer createBlockState() {
-        return new ExtendedBlockState(this,
-                new IProperty[]{Properties.type1bit, Properties.facing3bit},
-                new IUnlistedProperty[]{UnlistedPropertyRef.propertyTile});
-    }
-
+	protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
+    	builder.add(DirHorizontal8.prop);
+	}
+    
     @Override
-    public final IBlockState getStateFromMeta(int meta) {
-        meta &= 15;
-        return getDefaultState().withProperty(Properties.type1bit, meta >> 3).withProperty(Properties.facing3bit, meta & 7);
+    public BlockState getStateForPlacement(BlockItemUseContext context) {
+    	PlayerEntity placer = context.getPlayer();
+    	return this.getDefaultState().with(DirHorizontal8.prop, DirHorizontal8.fromSight(placer));
     }
-
-    @Override
-    public final int getMetaFromState(IBlockState state) {
-        int type = state.getValue(Properties.type1bit);
-        int facing = state.getValue(Properties.facing3bit);
-        int meta = type << 3 | facing;
-        return meta;
+    
+    public static int getFacingInt(BlockState blockstate) {
+    	return (8 - blockstate.get(DirHorizontal8.prop).ordinal()) & 7;
     }
-
-    @Override
-    public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
-        if (state instanceof IExtendedBlockState) {
-            IExtendedBlockState retval = (IExtendedBlockState) state;
-
-            TileEntity te = world.getTileEntity(pos);
-
-            if (te instanceof ISEPowerPole)
-                retval = retval.withProperty(UnlistedPropertyRef.propertyTile, new WeakReference<>(te));
-
-            return retval;
-        }
-        return state;
+    
+    public static DirHorizontal8 toDir8(int facingId) {
+		return DirHorizontal8.values()[(8 - facingId) & 7];
     }
-
+    
     //////////////////////////////////////
     /////Item drops and Block activities
     //////////////////////////////////////
     @Override
-    public int damageDropped(IBlockState state) {
-        return state.getValue(Properties.type1bit);
-    }
-
-    @Override
-    public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int damage, EntityLivingBase placer) {
-        IBlockState state = super.getStateForPlacement(world, pos, facing, hitX, hitY, hitZ, damage, placer);
-        int facingInt = 8 - MathHelper.floor(placer.rotationYaw * 8.0F / 360.0F + 0.5D) & 7;
-        int type = damage;
-        return state.withProperty(Properties.type1bit, type).withProperty(Properties.facing3bit, facingInt);
-    }
-
-    @Override
-    public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
+    public void onBlockPlacedBy(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
         if (world.isRemote)
             return;
 
@@ -243,7 +208,7 @@ public class BlockPowerPoleTop extends BlockBase implements ISubBlock {
     }
 
     @Override
-    public void breakBlock(World world, BlockPos pos, IBlockState state) {
+    public boolean removedByPlayer(BlockState state, World world, BlockPos pos, PlayerEntity player, boolean willHarvest, IFluidState fluid) {
         LinkedList<BlockInfo> list = BlockPowerPoleTop.getCollisionBoxBlockOffsets(state);
 
         //Attempt to remove any collision box block and bottom(base) block
@@ -251,76 +216,55 @@ public class BlockPowerPoleTop extends BlockBase implements ISubBlock {
         for (BlockInfo info : list) {
             BlockPos realPos = info.getRealPos(pos);
             if (world.getBlockState(realPos).getBlock() == BlockRegistry.powerPoleCollisionBox)
-                world.setBlockToAir(realPos);
+                world.removeBlock(realPos, false);
         }
 
-        list = BlockPowerPoleBottom.getBaseBlockCoordOffsets(state);
+        list = BlockRegistry.powerPoleBottom.getBaseBlockCoordOffsets(state);
         for (BlockInfo info : list) {
             BlockPos realPos = info.getRealPos(pos).add(0, -18, 0);
             if (world.getBlockState(realPos).getBlock() == BlockRegistry.powerPoleBottom)
-                world.setBlockToAir(realPos);
+                world.removeBlock(realPos, false);
         }
 
         TileEntity te = world.getTileEntity(pos);    //Do this before the tileEntity is removed!
         if (te instanceof ISEGridTile)
             SEAPI.energyNetAgent.detachGridNode(world, ((ISEGridTile) te).getGridNode());
 
-        super.breakBlock(world, pos, state);
+        return super.removedByPlayer(state, world, pos, player, willHarvest, fluid);
     }
 
     ////////////////////////////////////
     /// Rendering
     ////////////////////////////////////
-    //This will tell minecraft not to render any side of our cube.
     @Override
-    @SideOnly(Side.CLIENT)
-    public boolean shouldSideBeRendered(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side) {
+    public boolean isNormalCube(BlockState state, IBlockReader worldIn, BlockPos pos) {
         return false;
     }
 
-    //And this tell it that you can see through this block, and neighbor blocks should be rendered.
-    @Override
-    public boolean isOpaqueCube(IBlockState state) {
-        return false;
-    }
-
-    @Override
-    public boolean isNormalCube(IBlockState state) {
-        return false;
-    }
-
-    @Override
-    public boolean isFullCube(IBlockState state) {
-        return false;
-    }
-
-    public static class ItemBlock extends ItemBlockBase implements ISimpleTexture {
-        public ItemBlock(Block block) {
-            super(block);
-        }
+    public static class ItemBlock extends ItemBlockBase {
+    	public ItemBlock(Block block, Item.Properties props) {
+    		super(block, props);
+    	}
 
         @Override
-        @SideOnly(Side.CLIENT)
-        public String getIconName(int damage) {
-            return "essential_powerpole_" + damage;
-        }
-
-        @Override
-        public boolean placeBlockAt(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ, IBlockState newState) {
+        public boolean placeBlock(BlockItemUseContext context, BlockState newState) {
+        	World world = context.getWorld();
+        	BlockPos pos = context.getPos();
+        	
             //Place center block
             BlockPos centerPos = pos.add(0, 18, 0);
 
             for (BlockInfo info : BlockPowerPoleTop.getCollisionBoxBlockOffsets(newState)) {
                 BlockPos realPos = info.getRealPos(centerPos);
-                world.setBlockState(realPos, BlockRegistry.powerPoleCollisionBox.getStateFromMeta(info.part));
+                world.setBlockState(realPos, info.state);
             }
 
-            boolean ret = super.placeBlockAt(stack, player, world, centerPos, side, hitX, hitY, hitZ, newState);
+            boolean ret = super.placeBlock(context, newState);
 
             //Place base blocks
-            for (BlockInfo info : BlockPowerPoleBottom.getBaseBlockCoordOffsets(newState)) {
+            for (BlockInfo info : BlockRegistry.powerPoleBottom.getBaseBlockCoordOffsets(newState)) {
                 BlockPos realPos = info.getRealPos(pos);
-                world.setBlockState(realPos, BlockRegistry.powerPoleBottom.getStateFromMeta(info.part));
+                world.setBlockState(realPos, info.state);
             }
 
             return ret;

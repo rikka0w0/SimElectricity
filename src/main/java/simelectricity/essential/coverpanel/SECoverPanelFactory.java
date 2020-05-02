@@ -1,7 +1,8 @@
 package simelectricity.essential.coverpanel;
 
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import simelectricity.essential.api.ISECoverPanelFactory;
 import simelectricity.essential.api.coverpanel.ISECoverPanel;
 import simelectricity.essential.items.ItemMisc;
@@ -10,41 +11,28 @@ public class SECoverPanelFactory implements ISECoverPanelFactory {
 
     @Override
     public boolean acceptItemStack(ItemStack itemStack) {
-        if (itemStack.getItem() instanceof ItemMisc) {
-            switch (itemStack.getItemDamage()) {
-                case 0:    //LED Panel
-                    return true;
-                case 1:
-                    return true;
-            }
-        }
-
-        return false;
+        return itemStack.getItem() instanceof ItemMisc;
     }
 
     @Override
     public ISECoverPanel fromItemStack(ItemStack itemStack) {
-        if (itemStack.getItem() instanceof ItemMisc) {
-            switch (itemStack.getItemDamage()) {
-                case 0:    //LED Panel
-                    return new LedPanel();
-                case 1:
-                    return new VoltageSensorPanel();
-            }
+    	Item item = itemStack.getItem();
+        if (item instanceof ItemMisc) {
+        	return ((ItemMisc) item).itemType.constructor.get();
         }
 
         return null;
     }
 
     @Override
-    public boolean acceptNBT(NBTTagCompound nbt) {
+    public boolean acceptNBT(CompoundNBT nbt) {
         String coverPanelType = nbt.getString("coverPanelType");
         return coverPanelType.equals("LedPanel") ||
                 coverPanelType.equals("VoltageSensorPanel");
     }
 
     @Override
-    public ISECoverPanel fromNBT(NBTTagCompound nbt) {
+    public ISECoverPanel fromNBT(CompoundNBT nbt) {
         String coverPanelType = nbt.getString("coverPanelType");
 
         if (coverPanelType.equals("LedPanel"))

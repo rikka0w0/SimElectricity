@@ -1,52 +1,39 @@
 package simelectricity.essential.grid;
 
-import net.minecraft.block.properties.PropertyEnum;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IStringSerializable;
+import rikka.librikka.ITileMeta;
 
-public enum EnumBlockTypePole3 implements IStringSerializable {
-    Pole(0, "pole", true, 0),
-    Crossarm10kVT0(1, "crossarm10kvt0", false, 3),
-    Crossarm10kVT1(2, "crossarm10kvt1", false, 3),
-    Crossarm415VT0(3, "crossarm415vt0", false, 4),
-    Branching10kV(4, "branching10kv", false, 3),
-    Branching415V(5, "branching415v", false, 4);
+public enum EnumBlockTypePole3 implements IStringSerializable, ITileMeta {
+	pole(null, 0),
+	crossarm10kvt0(TilePowerPole3.Pole10Kv.Type0.class,3),
+	crossarm10kvt1(TilePowerPole3.Pole10Kv.Type1.class, 3),
+	crossarm415vt0(TilePowerPole3.Pole415vType0.class, 4),
+	branching10kv(TilePoleBranch.Type10kV.class, 3),
+	branching415v(TilePoleBranch.Type415V.class, 4);
 
-    public static final PropertyEnum<EnumBlockTypePole3> property = PropertyEnum.create("blocktype", EnumBlockTypePole3.class);
-
-    public static final EnumBlockTypePole3[] values;
-    public static final String[] names;
-
-    static {
-        values = new EnumBlockTypePole3[EnumBlockTypePole3.values().length];
-        names = new String[EnumBlockTypePole3.values().length];
-        for (EnumBlockTypePole3 value : EnumBlockTypePole3.values()) {
-            int index = value.ordinal();
-            EnumBlockTypePole3.values[index] = value;
-            EnumBlockTypePole3.names[index] = value.name;
-        }
-    }
-
-    public final int index;
-    public final boolean ignoreFacing;
+	public final Class<? extends TileEntity> teCls;
     public final int numOfConductor;
-    private final String name;
 
-    EnumBlockTypePole3(int index, String name, boolean ignoreFacing, int numOfConductor) {
-        this.index = index;
-        this.name = name;
-        this.ignoreFacing = ignoreFacing;
+    EnumBlockTypePole3(Class<? extends TileEntity> teCls, int numOfConductor) {
+    	this.teCls = teCls;
         this.numOfConductor = numOfConductor;
     }
 
     public static EnumBlockTypePole3 fromInt(int in) {
-        if (in >= EnumBlockTypePole3.values.length || in < 0)
+        if (in >= EnumBlockTypePole3.values().length || in < 0)
             return null;
 
-        return EnumBlockTypePole3.values[in];
+        return EnumBlockTypePole3.values()[in];
     }
 
     @Override
     public String getName() {
-        return this.name;
+        return this.name();
     }
+
+	@Override
+	public Class<? extends TileEntity> teCls() {
+		return this.teCls;
+	}
 }

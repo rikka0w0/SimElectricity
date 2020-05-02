@@ -1,11 +1,11 @@
 package simelectricity.essential.api.coverpanel;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraft.util.Direction;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.api.distmarker.Dist;
 import simelectricity.essential.api.client.ISECoverPanelRender;
 
 public interface ISECoverPanel {
@@ -21,9 +21,9 @@ public interface ISECoverPanel {
      *
      * @param nbt
      */
-    void toNBT(NBTTagCompound nbt);
+    void toNBT(CompoundNBT nbt);
 
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     ISECoverPanelRender getCoverPanelRender();
 
 
@@ -33,7 +33,7 @@ public interface ISECoverPanel {
      * @param hostTileEntity
      * @param side
      */
-    void setHost(TileEntity hostTileEntity, EnumFacing side);
+    void setHost(TileEntity hostTileEntity, Direction side);
 
     /**
      * @return a copy or new instance of the item to be dropped into the world

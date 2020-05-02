@@ -2,12 +2,12 @@ package simelectricity.essential.grid;
 
 import javax.annotation.Nonnull;
 
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import rikka.librikka.Utils;
 import simelectricity.api.node.ISEGridNode;
 import simelectricity.api.tile.ISEGridTile;
@@ -20,29 +20,29 @@ public abstract class TilePoleAccessory extends SEEnergyTile implements ISEPoleA
     protected BlockPos host;
     
     @Nonnull
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     protected abstract PowerPoleRenderHelper createRenderHelper();
     
     /////////////////////////////////////////////////////////
     /////ISEPowerPole
     /////////////////////////////////////////////////////////
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     protected PowerPoleRenderHelper renderHelper;
     
     @Override
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public BlockPos[] getNeighborPosArray() {
         return new BlockPos[] {};
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public BlockPos getAccessoryPos() {
     	return null;
     }
     
     @Override
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public PowerPoleRenderHelper getRenderHelper() {
         return this.renderHelper;
     }
@@ -80,13 +80,13 @@ public abstract class TilePoleAccessory extends SEEnergyTile implements ISEPoleA
     //////////////////////////////
     /////TileEntity
     //////////////////////////////
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     @Override
     public double getMaxRenderDistanceSquared() {
         return 100000;
     }
 
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     @Override
     @Nonnull
     public AxisAlignedBB getRenderBoundingBox() {
@@ -102,13 +102,13 @@ public abstract class TilePoleAccessory extends SEEnergyTile implements ISEPoleA
     ///Sync
     /////////////////////////////////////////////////////////
     @Override
-    public void prepareS2CPacketData(NBTTagCompound nbt) {
+    public void prepareS2CPacketData(CompoundNBT nbt) {
         Utils.saveToNbt(nbt, "host", this.host);
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
-    public void onSyncDataFromServerArrived(NBTTagCompound nbt) {
+    @OnlyIn(Dist.CLIENT)
+    public void onSyncDataFromServerArrived(CompoundNBT nbt) {
     	host = Utils.posFromNbt(nbt, "host");
     	
         if (this.renderHelper == null) 

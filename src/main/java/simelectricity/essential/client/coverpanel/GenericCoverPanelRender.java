@@ -1,17 +1,17 @@
 package simelectricity.essential.client.coverpanel;
 
-import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.model.BakedQuad;
+import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.MinecraftForgeClient;
-import net.minecraftforge.client.event.TextureStitchEvent.Pre;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.client.event.TextureStitchEvent;
+import rikka.librikka.model.loader.EasyTextureLoader;
+import rikka.librikka.model.loader.IModelBakeHandler;
 import rikka.librikka.model.quadbuilder.RawQuadCube;
 import simelectricity.essential.Essential;
 import simelectricity.essential.api.client.ISECoverPanelRender;
@@ -20,26 +20,28 @@ import simelectricity.essential.api.coverpanel.ISECoverPanel;
 import java.util.ArrayList;
 import java.util.List;
 
-@SideOnly(Side.CLIENT)
-public abstract class GenericCoverPanelRender<T extends ISECoverPanel> implements ISECoverPanelRender<T> {
+@OnlyIn(Dist.CLIENT)
+public abstract class GenericCoverPanelRender<T extends ISECoverPanel> implements ISECoverPanelRender<T>, IModelBakeHandler {
     private final ResourceLocation textureRes;
     protected TextureAtlasSprite texture;
     protected List<BakedQuad>[] bakedQuads = new List[6];    //BakedQuads for all 6 directions
 
     protected GenericCoverPanelRender(String textureName) {
-        MinecraftForge.EVENT_BUS.register(this);
-        textureRes = new ResourceLocation(Essential.MODID + ":blocks/coverpanel/" + textureName);
+    	this(Essential.MODID, textureName);
+    }
+    
+    protected GenericCoverPanelRender(String modId, String textureName) {
+        textureRes = new ResourceLocation(Essential.MODID, "block/coverpanel/" + textureName);
     }
 
-    @SubscribeEvent
-    public void stitcherEventPre(Pre event) {
-        //Register textures
-        TextureMap map = event.getMap();
-
-        texture = map.registerSprite(this.textureRes);
+    @Override
+    public void onPreTextureStitchEvent(TextureStitchEvent.Pre event) {
+        event.addSprite(textureRes);
     }
-
-    public void bake() {
+    
+    @Override
+    public IBakedModel onModelBakeEvent() {
+    	this.texture = EasyTextureLoader.blockTextureGetter().apply(textureRes);
         float thickness = ISECoverPanel.thickness;
         float[][] vertexes;
         TextureAtlasSprite[] textures = {this.texture, this.texture, this.texture, this.texture, this.texture, this.texture};
@@ -122,16 +124,14 @@ public abstract class GenericCoverPanelRender<T extends ISECoverPanel> implement
         vertexes[7] = new float[]{1 - thickness, thickness, 1 - thickness};
         this.bakedQuads[5] = new ArrayList<BakedQuad>();
         new RawQuadCube(vertexes, textures).bake(this.bakedQuads[5]);
+        
+    	return null;
     }
 
     @Override
-    public void renderCoverPanel(ISECoverPanel coverPanel, EnumFacing side, List quads) {
-        if (MinecraftForgeClient.getRenderLayer() != BlockRenderLayer.SOLID)
+    public void renderCoverPanel(ISECoverPanel coverPanel, Direction side, List quads) {
+        if (MinecraftForgeClient.getRenderLayer() != RenderType.getSolid())
             return;
-
-        if (this.bakedQuads[side.ordinal()] == null) {
-            this.bake();
-        }
 
         quads.addAll(this.bakedQuads[side.ordinal()]);
 

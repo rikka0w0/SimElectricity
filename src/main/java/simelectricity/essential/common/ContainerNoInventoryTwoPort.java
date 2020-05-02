@@ -1,19 +1,26 @@
 package simelectricity.essential.common;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import simelectricity.api.SEAPI;
+import simelectricity.essential.Essential;
 import simelectricity.essential.common.semachine.SETwoPortMachine;
 import simelectricity.essential.utils.network.ISEDirectionSelectorEventHandler;
 
 public abstract class ContainerNoInventoryTwoPort<TYPE extends SETwoPortMachine> extends ContainerNoInvAutoSync<TYPE> implements ISEDirectionSelectorEventHandler {
-    public ContainerNoInventoryTwoPort(TileEntity tileEntity) {
-        super(tileEntity);
-    }
+	public ContainerNoInventoryTwoPort(@Nullable TileEntity host, int windowID) {
+		this(host, Essential.MODID, windowID);
+	}
+	
+    public ContainerNoInventoryTwoPort(@Nullable TileEntity host, String namespace, int windowID) {
+		super(host, namespace, windowID);
+	}
 
     @Override
-    public void onDirectionSelected(EnumFacing direction, int mouseButton) {
-        EnumFacing inputSide = this.host.inputSide, outputSide = this.host.outputSide;
+    public void onDirectionSelected(Direction direction, int mouseButton) {
+        Direction inputSide = this.host.inputSide, outputSide = this.host.outputSide;
 
         if (mouseButton == 0) {        //Left key
             if (outputSide == direction)

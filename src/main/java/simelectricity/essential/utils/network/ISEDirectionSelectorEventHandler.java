@@ -1,7 +1,7 @@
 package simelectricity.essential.utils.network;
 
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 
 public interface ISEDirectionSelectorEventHandler {
-    void onDirectionSelected(EnumFacing direction, int mouseButton);
+    void onDirectionSelected(Direction direction, int mouseButton);
 }

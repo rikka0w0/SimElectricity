@@ -1,30 +1,31 @@
 package simelectricity.essential.grid;
 
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import rikka.librikka.math.MathAssitant;
 import rikka.librikka.math.Vec3f;
+import simelectricity.essential.BlockRegistry;
 import simelectricity.essential.client.grid.PowerPoleRenderHelper;
+import simelectricity.essential.common.ISEFacing8;
 
-public class TilePowerPole extends TilePowerPoleBase {
-    @SideOnly(Side.CLIENT)
+public class TilePowerPole extends TilePowerPoleBase implements ISEFacing8 {
+    @OnlyIn(Dist.CLIENT)
     public boolean isType0() {
-        return this.getBlockMetadata() >> 3 == 0;
+        return this.getBlockState().getBlock() == BlockRegistry.powerPoleTop[0];
     }
     
     @Override
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public BlockPos getAccessoryPos() {
     	return null;
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     protected PowerPoleRenderHelper createRenderHelper() {
         PowerPoleRenderHelper helper;
-        int rotation = this.getBlockMetadata() & 7;
-
+        int rotation = (8 - this.getRotation().ordinal()) & 7;
         if (this.isType0()) {
             helper = new PowerPoleRenderHelper(this.pos, rotation, 2, 3) {
                 @Override

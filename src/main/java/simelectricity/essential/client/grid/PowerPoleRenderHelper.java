@@ -1,28 +1,24 @@
 package simelectricity.essential.client.grid;
 
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3i;
-import net.minecraft.world.IBlockAccess;
-import net.minecraftforge.common.property.IExtendedBlockState;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraft.world.IBlockReader;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import rikka.librikka.DirHorizontal8;
 import rikka.librikka.math.MathAssitant;
 import rikka.librikka.math.Vec3f;
-import rikka.librikka.properties.UnlistedPropertyRef;
 
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.annotation.Nullable;
 
-@SideOnly(Side.CLIENT)
+@OnlyIn(Dist.CLIENT)
 public class PowerPoleRenderHelper {
     public final BlockPos pos;    //Real MC pos
     public final boolean mirroredAboutZ;
@@ -41,11 +37,16 @@ public class PowerPoleRenderHelper {
     
     private int addedGroup;
 
+    // Grid = 8-DirHorizontal8.ordinal() : east6 south4 west2 north0
+    public PowerPoleRenderHelper(BlockPos pos, DirHorizontal8 dir8, int numOfGroup, int insulatorPerGroup) {
+        this(pos, (8-dir8.ordinal()) & 7, false, numOfGroup, insulatorPerGroup);
+    }
+    
     public PowerPoleRenderHelper(BlockPos pos, int rotationMC, int numOfGroup, int insulatorPerGroup) {
         this(pos, rotationMC, false, numOfGroup, insulatorPerGroup);
     }
 
-    public PowerPoleRenderHelper(BlockPos pos, EnumFacing facing, boolean mirroredAboutZ, int numOfGroup, int insulatorPerGroup) {
+    public PowerPoleRenderHelper(BlockPos pos, Direction facing, boolean mirroredAboutZ, int numOfGroup, int insulatorPerGroup) {
         this(pos, PowerPoleRenderHelper.facing2rotation(facing), mirroredAboutZ, numOfGroup, insulatorPerGroup);
     }
 
@@ -58,7 +59,7 @@ public class PowerPoleRenderHelper {
         this.addedGroup = 0;
     }
 
-    public static int facing2rotation(EnumFacing facing) {
+    public static int facing2rotation(Direction facing) {
         switch (facing) {
             case SOUTH:
                 return 0;
@@ -163,25 +164,7 @@ public class PowerPoleRenderHelper {
     public static void notifyChanged(ISEPowerPole... list) {
         GridRenderMonitor.instance.notifyChanged(list);
     }
-
-    @Deprecated
-    @Nullable
-    public static PowerPoleRenderHelper fromState(IBlockState blockState) {
-        if (!(blockState instanceof IExtendedBlockState))
-            //Normally this should not happen, just in case, to prevent crashing
-            return null;
-
-        IExtendedBlockState exBlockState = (IExtendedBlockState) blockState;
-        WeakReference<TileEntity> ref = exBlockState.getValue(UnlistedPropertyRef.propertyTile);
-        TileEntity gridTile = ref == null ? null : ref.get();
-
-        if (!(gridTile instanceof ISEPowerPole))
-            //Normally this should not happen, just in case, to prevent crashing
-            return null;
-
-        return ((ISEPowerPole) gridTile).getRenderHelper();
-    }
-    
+   
     public final PowerPoleRenderHelper.Insulator createInsulator(float length, float tension, float offsetX, float offsetY, float offsetZ) {
         if (this.mirroredAboutZ)
             offsetX = -offsetX;
@@ -220,7 +203,7 @@ public class PowerPoleRenderHelper {
     	return false;
     }
     
-    public final void updateRenderData(IBlockAccess world, BlockPos... neighborPosList) {
+    public final void updateRenderData(IBlockReader world, BlockPos... neighborPosList) {
         this.connectionList.clear();
         this.extraWireList.clear();
         addNeighors(world, neighborPosList);
@@ -242,7 +225,7 @@ public class PowerPoleRenderHelper {
     
     protected BlockPos getAccessoryPos() {return null;}
 
-    private final void addNeighors(IBlockAccess world, BlockPos... neighborPosList) {
+    private final void addNeighors(IBlockReader world, BlockPos... neighborPosList) {
         for (BlockPos neighborPos : neighborPosList) {
             if (neighborPos == null)
                 continue;

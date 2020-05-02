@@ -1,24 +1,29 @@
 package simelectricity.essential.client.semachine;
 
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.IBakedModel;
-import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
-import net.minecraft.client.renderer.block.model.ItemOverrideList;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.client.renderer.BlockModelShapes;
+import net.minecraft.client.renderer.model.BakedQuad;
+import net.minecraft.client.renderer.model.IBakedModel;
+import net.minecraft.client.renderer.model.ItemCameraTransforms;
+import net.minecraft.client.renderer.model.ItemOverrideList;
+import net.minecraft.client.renderer.model.ModelResourceLocation;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.util.EnumFacing;
-import net.minecraftforge.common.property.IExtendedBlockState;
-import net.minecraftforge.common.property.IUnlistedProperty;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-import simelectricity.essential.common.semachine.SEMachineBlock;
+import net.minecraft.util.Direction;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.model.data.IDynamicBakedModel;
+import net.minecraftforge.client.model.data.IModelData;
+import simelectricity.essential.common.semachine.ISESocketProvider;
 
-import javax.annotation.Nullable;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
-@SideOnly(Side.CLIENT)
-public class SEMachineModel implements IBakedModel {
+@OnlyIn(Dist.CLIENT)
+public final class SEMachineModel implements IDynamicBakedModel {
     private final IBakedModel bakedModel;
 
     public SEMachineModel(IBakedModel bakedModel) {
@@ -50,45 +55,37 @@ public class SEMachineModel implements IBakedModel {
     public ItemCameraTransforms getItemCameraTransforms() {
         return this.bakedModel.getItemCameraTransforms();
     }
+    
+	@Override
+	public boolean func_230044_c_() {
+		return this.bakedModel.func_230044_c_();
+	}
 
     @Override
     public ItemOverrideList getOverrides() {
-        return ItemOverrideList.NONE;
+        return ItemOverrideList.EMPTY;
     }
-
-    private int[] getSocketIconArray(IExtendedBlockState exBlockState) {
-        int[] ret = new int[6];
-        int i = 0;
-        for (IUnlistedProperty<Integer> prop : SEMachineBlock.propertySockets) {
-            Integer val = exBlockState.getValue(prop);
-            if (val == null)
-                return null;
-            ret[i] = val - 1;    //-1: no socket icon
-            i++;
-        }
-        return ret;
-    }
-
-    @Override
-    public List<BakedQuad> getQuads(@Nullable IBlockState blockState, @Nullable EnumFacing side, long rand) {
-    	if (side == null) {
-            List<BakedQuad> generalQuads = this.bakedModel.getQuads(blockState, side, rand);
-
-            if (!(blockState instanceof IExtendedBlockState))
-                return generalQuads;   //Item Model
-
-            IExtendedBlockState exBlockState = (IExtendedBlockState) blockState;
-            int[] socketIcon = this.getSocketIconArray(exBlockState);
-
-            if (socketIcon == null)
-                return generalQuads;
-
-            List<BakedQuad> quads = new ArrayList<BakedQuad>();
-            quads.addAll(generalQuads);
-            SocketRender.getBaked(quads, socketIcon);
-            return quads;
-    	} else {
-    		return this.bakedModel.getQuads(blockState, side, rand); 
+    
+	@Override
+	public List<BakedQuad> getQuads(BlockState state, Direction side, Random rand, IModelData extraData) {
+		// Create a copy of the original quads
+		List<BakedQuad> quads = new LinkedList<>(this.bakedModel.getQuads(state, side, rand, extraData));
+    	
+		if (side == null) {
+    		ISESocketProvider sp = extraData.getData(ISESocketProvider.prop);
+    		if (sp != null)
+    			SocketRender.getBaked(quads, sp);
     	}
-    }
+    	
+    	return quads;
+	}
+	
+	public static void replace(Map<ResourceLocation, IBakedModel> registry, Block block) {
+		for (BlockState blockstate: block.getStateContainer().getValidStates()) {
+			ModelResourceLocation resLoc = BlockModelShapes.getModelLocation(blockstate);
+			IBakedModel original = registry.get(resLoc);
+			IBakedModel newModel = new SEMachineModel(original);
+			registry.put(resLoc, newModel);
+		}
+	}
 }

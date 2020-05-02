@@ -3,25 +3,25 @@ package simelectricity.essential.grid;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import rikka.librikka.Utils;
 import rikka.librikka.math.Vec3f;
 import simelectricity.api.node.ISEGridNode;
 import simelectricity.essential.client.grid.PowerPoleRenderHelper;
 import simelectricity.essential.common.ISEFacing8;
 
-public abstract class TilePowerPole3 extends TilePowerPoleBase implements ISEFacing8{
+public abstract class TilePowerPole3 extends TilePowerPoleBase implements ISEFacing8 {
 	protected BlockPos accessory;
 	private int facing;
     
 	protected abstract boolean acceptAccessory(TileEntity accessory);
 	
 	@Override
-	@SideOnly(Side.CLIENT)
+	@OnlyIn(Dist.CLIENT)
     public BlockPos getAccessoryPos() {
 		return accessory;
 	}
@@ -58,46 +58,19 @@ public abstract class TilePowerPole3 extends TilePowerPoleBase implements ISEFac
         
         markTileEntityForS2CSync();
     }
-    
-    @Override
-	public void setFacingOnPlacement(int facing) {
-		this.facing = facing;
-	}
-	
-    @Override
-	public int getRotation() {
-    	return this.facing;
-    }
-    
-    //////////////////////////////
-    /////TileEntity
-    //////////////////////////////
-    @Override
-    public void readFromNBT(NBTTagCompound nbt) {
-        super.readFromNBT(nbt);
-		this.facing = nbt.getInteger("facing");
-    }
-
-    @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
-        nbt.setInteger("facing", this.facing);
-        return super.writeToNBT(nbt);
-    }
 
     /////////////////////////////////////////////////////////
     ///Sync
     /////////////////////////////////////////////////////////
     @Override
-    public void prepareS2CPacketData(NBTTagCompound nbt) {
+    public void prepareS2CPacketData(CompoundNBT nbt) {
         super.prepareS2CPacketData(nbt);
-        nbt.setInteger("facing", this.facing);
         Utils.saveToNbt(nbt, "accessory", this.accessory);
     }
 
     @Override
-	@SideOnly(Side.CLIENT)
-    public void onSyncDataFromServerArrived(NBTTagCompound nbt) {
-		this.facing = nbt.getInteger("facing");
+	@OnlyIn(Dist.CLIENT)
+    public void onSyncDataFromServerArrived(CompoundNBT nbt) {
 		this.accessory = Utils.posFromNbt(nbt, "accessory");
         super.onSyncDataFromServerArrived(nbt);
         this.updateRenderInfo(this.accessory);
@@ -119,7 +92,7 @@ public abstract class TilePowerPole3 extends TilePowerPoleBase implements ISEFac
         public static class Type0 extends Pole10Kv {
             @Override
             @Nonnull
-            @SideOnly(Side.CLIENT)
+            @OnlyIn(Dist.CLIENT)
             protected PowerPoleRenderHelper createRenderHelper() {
             	final TilePowerPole3 pole = this;
                 PowerPoleRenderHelper helper = new PowerPoleRenderHelper(pos, getRotation(), 1, 3);
@@ -135,7 +108,7 @@ public abstract class TilePowerPole3 extends TilePowerPoleBase implements ISEFac
         public static class Type1 extends Pole10Kv {
             @Override
             @Nonnull
-            @SideOnly(Side.CLIENT)
+            @OnlyIn(Dist.CLIENT)
             protected PowerPoleRenderHelper createRenderHelper() {
                 PowerPoleRenderHelper helper = new PowerPoleRenderHelper(this.pos, getRotation(), 2, 3) {
                     @Override
@@ -180,11 +153,7 @@ public abstract class TilePowerPole3 extends TilePowerPoleBase implements ISEFac
         }
 
     }
-    
-    public void invalidate() {
-    	super.invalidate();
-    }
-    
+        
     public static class Pole415vType0 extends TilePowerPole3 {
 		@Override
 		protected boolean acceptAccessory(TileEntity accessory)  {
@@ -200,7 +169,7 @@ public abstract class TilePowerPole3 extends TilePowerPoleBase implements ISEFac
     	
         @Override
         @Nonnull
-        @SideOnly(Side.CLIENT)
+        @OnlyIn(Dist.CLIENT)
         protected PowerPoleRenderHelper createRenderHelper() {
         	final TilePowerPole3 pole = this;
             PowerPoleRenderHelper helper = new PowerPoleRenderHelper(this.pos, getRotation(), 1, 4);

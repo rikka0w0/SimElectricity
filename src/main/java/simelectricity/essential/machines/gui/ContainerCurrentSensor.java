@@ -1,22 +1,22 @@
 package simelectricity.essential.machines.gui;
 
-import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraft.util.Direction;
 import rikka.librikka.container.ContainerSynchronizer;
-import rikka.librikka.container.IContainerWithGui;
+import rikka.librikka.gui.AutoGuiHandler;
 import simelectricity.api.SEAPI;
 import simelectricity.essential.common.ContainerNoInventoryTwoPort;
 import simelectricity.essential.machines.tile.TileCurrentSensor;
 import simelectricity.essential.utils.network.ISEButtonEventHandler;
 
-public class ContainerCurrentSensor extends ContainerNoInventoryTwoPort<TileCurrentSensor> implements ISEButtonEventHandler, IContainerWithGui {
+@AutoGuiHandler.Marker(GuiCurrentSensor.class)
+public class ContainerCurrentSensor extends ContainerNoInventoryTwoPort<TileCurrentSensor> implements ISEButtonEventHandler {
 	@ContainerSynchronizer.SyncField
 	public double thresholdCurrent, resistance;
 	@ContainerSynchronizer.SyncField
-	public EnumFacing inputSide, outputSide;
+	public Direction inputSide, outputSide;
 	@ContainerSynchronizer.SyncField
 	public boolean absMode, inverted;
 	@ContainerSynchronizer.SyncField
@@ -24,8 +24,14 @@ public class ContainerCurrentSensor extends ContainerNoInventoryTwoPort<TileCurr
 	@ContainerSynchronizer.SyncField
     public boolean emitRedstoneSignal;
 
-    public ContainerCurrentSensor(TileEntity tileEntity) {
-        super(tileEntity);
+    // Server side
+    public ContainerCurrentSensor(TileEntity tileEntity, int windowId) {
+    	super(tileEntity, windowId);
+    }
+
+    // Client side
+    public ContainerCurrentSensor(int windowId, PlayerInventory inv, PacketBuffer data) {
+    	this(null, windowId);
     }
 
     @Override
@@ -127,11 +133,5 @@ public class ContainerCurrentSensor extends ContainerNoInventoryTwoPort<TileCurr
             this.host.absMode = absMode;
             this.host.checkRedstoneStatus();
         }
-    }
-    
-    @Override
-    @SideOnly(Side.CLIENT)
-    public GuiScreen createGui() {
-    	return new GuiCurrentSensor(this);
     }
 }

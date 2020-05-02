@@ -1,17 +1,17 @@
 package simelectricity.essential.items;
 
 import net.minecraft.block.Block;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.item.ItemUseContext;
+import net.minecraft.util.ActionResultType;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
+import rikka.librikka.IMetaProvider;
+import rikka.librikka.IMetaBase;
 import rikka.librikka.Utils;
-import rikka.librikka.item.ISimpleTexture;
 import rikka.librikka.item.ItemBase;
 import simelectricity.api.SEAPI;
 import simelectricity.api.node.ISEGridNode;
@@ -22,15 +22,37 @@ import simelectricity.essential.api.ISEPoleAccessory;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ItemHighVoltageCable extends ItemBase implements ISimpleTexture {
-    private static final String[] subNames = {"copper", "aluminum"};
-    private static final double[] resistivityList = {0.1, 0.2};
-    private final Map<EntityPlayer, BlockPos> lastCoordinates;
+public final class ItemHighVoltageCable extends ItemBase implements IMetaProvider<IMetaBase> {
+    private final Map<PlayerEntity, BlockPos> lastCoordinates;
 
-    public ItemHighVoltageCable() {
-        super("essential_hv_cable", true);
-        setCreativeTab(SEAPI.SETab);
+    public static enum ItemType implements IMetaBase {
+    	copper(0.1),
+    	aluminum(0.2);
+    	
+    	public final double resistivity;
+    	ItemType(double resistivity) {
+    		this.resistivity = resistivity;
+    	}
+    }
+    
+    public final ItemType itemType;
+    private ItemHighVoltageCable(ItemType itemType) {
+        super("hvcable_" + itemType.name(), (new Item.Properties())
+        		.group(SEAPI.SETab));
         lastCoordinates = new HashMap<>();
+        this.itemType = itemType;
+    }
+    
+    @Override
+	public IMetaBase meta() {
+		return itemType;
+	}
+    
+    public static ItemHighVoltageCable[] create() {
+    	ItemHighVoltageCable[] ret = new ItemHighVoltageCable[ItemType.values().length];
+    	for (ItemType info: ItemType.values())
+    		ret[info.ordinal()] = new ItemHighVoltageCable(info);
+    	return ret;
     }
 
     private static boolean numberOfConductorMatched(ISEGridNode node1, ISEGridNode node2) {
@@ -40,27 +62,14 @@ public class ItemHighVoltageCable extends ItemBase implements ISimpleTexture {
     }
 
     @Override
-    public String[] getSubItemUnlocalizedNames() {
-        return ItemHighVoltageCable.subNames;
-    }
-
-    @Override
-    public String getIconName(int damage) {
-        return "hvcable_" + ItemHighVoltageCable.subNames[damage];
-    }
-
-    @Override
-    public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
-        ItemStack itemStack = player.getItemStackFromSlot(EntityEquipmentSlot.MAINHAND);
-
-        if (itemStack.getItem() != this) {
-            itemStack = player.getItemStackFromSlot(EntityEquipmentSlot.OFFHAND);
-            if (itemStack.getItem() != this)
-                return EnumActionResult.FAIL;
-        }
-
+    public ActionResultType onItemUse(ItemUseContext context) {
+        PlayerEntity player = context.getPlayer();
+    	World world = context.getWorld();
+    	BlockPos pos = context.getPos();
+    	ItemStack itemStack = context.getItem();
+        
         if (world.isRemote)
-            return EnumActionResult.SUCCESS;
+            return ActionResultType.SUCCESS;
 
         int x = pos.getX();
         int y = pos.getY();
@@ -68,7 +77,7 @@ public class ItemHighVoltageCable extends ItemBase implements ISimpleTexture {
         Block block = world.getBlockState(pos).getBlock();
 
         if (!(block instanceof ISEHVCableConnector))
-            return EnumActionResult.SUCCESS;
+            return ActionResultType.SUCCESS;
 
         ISEHVCableConnector connector1 = (ISEHVCableConnector) block;
 
@@ -113,7 +122,7 @@ public class ItemHighVoltageCable extends ItemBase implements ISimpleTexture {
                 		//Utils.chatWithLocalization(player, "chat.sime_essential:powerpole_connection_denied");
                 	//} else {
             			double distance = MathHelper.sqrt(node1.getPos().distanceSq(node2.getPos()));
-        				double resistance = distance * ItemHighVoltageCable.resistivityList[itemStack.getItemDamage()];    //Calculate the resistance
+        				double resistance = distance * this.itemType.resistivity;    //Calculate the resistance
                 		boolean isCreative = player.isCreative();
                 		if (!flag1 && !flag2){
                 			if (distance < 5) {
@@ -135,7 +144,7 @@ public class ItemHighVoltageCable extends ItemBase implements ISimpleTexture {
             this.lastCoordinates.put(player, null);
         }
 
-        return EnumActionResult.SUCCESS;
+        return ActionResultType.SUCCESS;
     }
     
     private static boolean canConnect(ISEHVCableConnector connector, World world, BlockPos from, BlockPos to) {

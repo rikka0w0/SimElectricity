@@ -1,20 +1,17 @@
 package simelectricity.essential.coverpanel;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import simelectricity.essential.api.ISECoverPanelFactory;
 import simelectricity.essential.api.coverpanel.ISECoverPanel;
 import simelectricity.essential.api.internal.ISECoverPanelRegistry;
 
 import java.util.LinkedList;
 
-public class CoverPanelRegistry implements ISECoverPanelRegistry {
-    public static ISECoverPanelRegistry instance;
-    private final LinkedList<ISECoverPanelFactory> factories = new LinkedList<ISECoverPanelFactory>();
-
-    public CoverPanelRegistry() {
-        CoverPanelRegistry.instance = this;
-    }
+public enum CoverPanelRegistry implements ISECoverPanelRegistry {
+    INSTANCE;
+    
+	private final LinkedList<ISECoverPanelFactory> factories = new LinkedList<ISECoverPanelFactory>();
 
     @Override
     public void registerCoverPanelFactory(ISECoverPanelFactory factory) {
@@ -25,7 +22,7 @@ public class CoverPanelRegistry implements ISECoverPanelRegistry {
     }
 
     @Override
-    public ISECoverPanel fromNBT(NBTTagCompound nbt) {
+    public ISECoverPanel fromNBT(CompoundNBT nbt) {
         ISECoverPanelFactory selectedFactory = null;
         for (ISECoverPanelFactory factory : this.factories) {
             if (factory.acceptNBT(nbt)) {

@@ -1,19 +1,19 @@
 package simelectricity.essential.machines.tile;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.Container;
-import net.minecraft.util.EnumFacing;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-import rikka.librikka.tileentity.IGuiProviderTile;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.INamedContainerProvider;
+import net.minecraft.util.Direction;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import simelectricity.api.ISEEnergyNetUpdateHandler;
-import simelectricity.api.SEAPI;
 import simelectricity.api.components.ISEVoltageSource;
 import simelectricity.essential.common.semachine.ISESocketProvider;
 import simelectricity.essential.common.semachine.SESinglePortMachine;
 import simelectricity.essential.machines.gui.ContainerVoltageMeter;
 
-public class TileVoltageMeter extends SESinglePortMachine<ISEVoltageSource> implements ISEVoltageSource, ISEEnergyNetUpdateHandler, ISESocketProvider, IGuiProviderTile {
+public class TileVoltageMeter extends SESinglePortMachine<ISEVoltageSource> implements ISEVoltageSource, ISEEnergyNetUpdateHandler, ISESocketProvider, INamedContainerProvider {
     public double voltage;
 
     @Override
@@ -41,16 +41,16 @@ public class TileVoltageMeter extends SESinglePortMachine<ISEVoltageSource> impl
     /// ISESocketProvider
     ///////////////////////////////////
     @Override
-    @SideOnly(Side.CLIENT)
-    public int getSocketIconIndex(EnumFacing side) {
+    @OnlyIn(Dist.CLIENT)
+    public int getSocketIconIndex(Direction side) {
         return side == functionalSide ? 0 : -1;
     }
     
     ///////////////////////////////////
-    /// IGuiProviderTile
+    /// INamedContainerProvider
     ///////////////////////////////////
 	@Override
-	public Container getContainer(EntityPlayer player, EnumFacing side) {
-		return new ContainerVoltageMeter(this);
+	public Container createMenu(int windowID, PlayerInventory playerInv, PlayerEntity player) {
+		return new ContainerVoltageMeter(this, windowID);
 	}
 }

@@ -1,36 +1,79 @@
 package simelectricity.essential;
 
+import org.apache.commons.lang3.tuple.Pair;
 
-import net.minecraftforge.common.config.Configuration;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-import simelectricity.api.ISEConfigHandler;
-import simelectricity.api.SEAPI;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.ForgeConfigSpec;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModLoadingContext;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.thread.EffectiveSide;
+import net.minecraftforge.fml.config.ModConfig;
 
-public class ConfigProvider implements ISEConfigHandler {
-	private final Configuration config;
+@Mod.EventBusSubscriber(modid = Essential.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
+public class ConfigProvider {
+	public final static String CATEGORY_ENERGYNET = "energynet";
+	public final static String CATEGORY_RENDERING = "rendering";
 
-	public ConfigProvider(boolean isClient) {
-		this.config = SEAPI.configManager.getSEConfiguration();
-		SEAPI.configManager.addConfigHandler(this);
-
-		// Load the config for the first time
-		onConfigChanged(isClient);
-	};
-	
-	@SideOnly(Side.CLIENT)
+    public static ForgeConfigSpec.IntValue parabolaRenderSteps_Spec;
+    public static ForgeConfigSpec.DoubleValue joule2rf_Spec;
+    
+    @OnlyIn(Dist.CLIENT)
     public static int parabolaRenderSteps;
 	
-	public static final String CATEGORY_CONVERSION = "conversion";
-	public static float joule2rf; 
-	
-	@Override
-	public void onConfigChanged(boolean isClient) {
-        //Client-only configurations
-        if (isClient) {
-        	this.parabolaRenderSteps = config.getInt("Cable Render Step Size", Configuration.CATEGORY_CLIENT, 12, 0, Integer.MAX_VALUE, "The higher this number is, the smoother the catenary cable will be. (must be EVEN! CLIENT ONLY!)");
+	public static double joule2rf; 
+    
+    private static ConfigProvider instace;
+    private static ForgeConfigSpec configSpec;
+    
+    public static void register() {
+        Pair<ConfigProvider, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(ConfigProvider::new);
+        configSpec = specPair.getRight();
+        instace = specPair.getLeft();
+
+        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ConfigProvider.configSpec);
+    }
+
+    public static void syncConfig() {
+    	joule2rf = joule2rf_Spec.get();
+    	
+    	if (EffectiveSide.get().isClient()) {
+    		parabolaRenderSteps = parabolaRenderSteps_Spec.get();
+    	}
+    }
+
+    @SubscribeEvent
+    public static void onModConfigEvent(final ModConfig.ModConfigEvent configEvent) {
+        if (configEvent.getConfig().getSpec() == ConfigProvider.configSpec) {
+            syncConfig();
+            return;
         }
-        
-        this.joule2rf = config.getFloat("Joule to RF conversion ratio", CATEGORY_CONVERSION, 1, 0, Float.MAX_VALUE, "This number determines how many RF equal to 1 Joule");
-	}
+    }
+
+    public static ForgeConfigSpec.IntValue buildInt(ForgeConfigSpec.Builder builder, String modID, String key, int defaultVal, int min, int max, String comment) {
+        return builder
+                .comment(comment + "\r\nDefault: "+ defaultVal)
+                .translation(modID + ".config." + key.toLowerCase().replace(' ', '_'))
+                .defineInRange(key, defaultVal, min, max);
+    }
+    
+    public static ForgeConfigSpec.DoubleValue buildDouble(ForgeConfigSpec.Builder builder, String modID, String key, double defaultVal, double min, double max, String comment) {
+        return builder
+                .comment(comment + "\r\nDefault: "+ defaultVal)
+                .translation(modID + ".config." + key.toLowerCase().replace(' ', '_'))
+                .defineInRange(key, defaultVal, min, max);
+    }
+
+    private ConfigProvider(ForgeConfigSpec.Builder builder) {
+    	builder.push(CATEGORY_ENERGYNET);
+        joule2rf_Spec = buildDouble(builder, Essential.MODID, "Joule to RF conversion ratio", 1, 0, Double.MAX_VALUE, "This number determines how many RF equal to 1 Joule");
+    	builder.pop();
+    	
+    	if (EffectiveSide.get().isClient()) {
+	        builder.push(CATEGORY_RENDERING);
+	        parabolaRenderSteps_Spec = buildInt(builder, Essential.MODID, "Cable Render Step Size", 12, 0, Integer.MAX_VALUE, "The higher this number is, the smoother the catenary cable will be. (must be EVEN! CLIENT ONLY!)");
+	        builder.pop();
+    	}
+    }      
 }

@@ -1,0 +1,6 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "sime_essential:item/futa_lemon_tea"
+  }
+}

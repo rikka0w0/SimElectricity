@@ -1,28 +1,27 @@
 package simelectricity.essential.client.grid;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.WorldClient;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
+import net.minecraftforge.event.TickEvent.ClientTickEvent;
+import net.minecraftforge.event.TickEvent.Phase;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
 import simelectricity.common.SELogger;
-import simelectricity.essential.client.grid.accessory.PoleAccessoryRendererDispatcher;
+//import simelectricity.essential.client.grid.accessory.PoleAccessoryRendererDispatcher;
+import simelectricity.essential.Essential;
 
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-public class GridRenderMonitor {
-    public static GridRenderMonitor instance;
-    private final Set<ISEPowerPole> affactedTiles = new HashSet();
+@Mod.EventBusSubscriber(modid = Essential.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
+public enum GridRenderMonitor {
+	instance;
+
+	private final Set<ISEPowerPole> affactedTiles = new HashSet();
     private final Set<ISEPowerPole> processedTiles = new HashSet();
 
-    public GridRenderMonitor() {
-        MinecraftForge.EVENT_BUS.register(this);
-        GridRenderMonitor.instance = this;
-    }
 
     public synchronized void notifyChanged(ISEPowerPole... list) {
             for (int i = 0; i < list.length; i++)
@@ -37,7 +36,7 @@ public class GridRenderMonitor {
         if (this.affactedTiles.isEmpty())
             return;
 
-        WorldClient theWorld = Minecraft.getMinecraft().world;
+        ClientWorld theWorld = Minecraft.getInstance().world;
 
         if (theWorld == null)
             return;        //Not in game yet;
@@ -48,7 +47,7 @@ public class GridRenderMonitor {
                 ISEPowerPole tile = iterator.next();
                 TileEntity te = (TileEntity) tile;
 
-                if (te.getWorld() != theWorld || te.isInvalid()) {
+                if (te.getWorld() != theWorld || te.isRemoved()) {
                     iterator.remove();
                     continue;
                 }
@@ -65,7 +64,7 @@ public class GridRenderMonitor {
             while (iterator.hasNext()) {
             	ISEPowerPole pole = iterator.next();
             	pole.getRenderHelper().postUpdate();
-            	PoleAccessoryRendererDispatcher.render(theWorld, pole, pole.getAccessoryPos());
+//            	PoleAccessoryRendererDispatcher.render(theWorld, pole, pole.getAccessoryPos());
             	iterator.remove();
             }
             this.processedTiles.clear();
@@ -75,7 +74,7 @@ public class GridRenderMonitor {
     }
 
     public void markLoadedPowerPoleForRenderingUpdate() {
-        WorldClient theWorld = Minecraft.getMinecraft().world;
+        ClientWorld theWorld = Minecraft.getInstance().world;
 
         if (theWorld == null)
             return;        //Not in game yet;

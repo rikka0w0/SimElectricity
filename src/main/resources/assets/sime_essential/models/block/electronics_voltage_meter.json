@@ -1,10 +1,10 @@
 {
     "parent": "sime_essential:block/machine",
     "textures": {
-        "bottom": "sime_essential:blocks/machines/machine_bottom",
-        "top": "sime_essential:blocks/machines/machine_top",
-        "front": "sime_essential:blocks/machines/voltage_meter_front",
-        "back": "sime_essential:blocks/machines/machine_side",
-        "side": "sime_essential:blocks/machines/machine_side"
+        "bottom": "sime_essential:block/machines/machine_bottom",
+        "top": "sime_essential:block/machines/machine_top",
+        "front": "sime_essential:block/machines/voltage_meter_front",
+        "back": "sime_essential:block/machines/machine_side",
+        "side": "sime_essential:block/machines/machine_side"
     }
 }

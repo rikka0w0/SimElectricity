@@ -3,95 +3,129 @@ package simelectricity.essential.cable;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.IProperty;
-import net.minecraft.block.state.BlockFaceShape;
-import net.minecraft.block.state.BlockStateContainer;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.IWaterLoggable;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.fluid.Fluids;
+import net.minecraft.fluid.IFluidState;
+import net.minecraft.item.BlockItemUseContext;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemUseContext;
+import net.minecraft.state.StateContainer;
+import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.*;
-import net.minecraft.util.text.translation.I18n;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.util.math.shapes.IBooleanFunction;
+import net.minecraft.util.math.shapes.ISelectionContext;
+import net.minecraft.util.math.shapes.VoxelShape;
+import net.minecraft.util.math.shapes.VoxelShapes;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.client.resources.I18n;
+import net.minecraft.world.IBlockReader;
+import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
-import net.minecraftforge.common.property.ExtendedBlockState;
-import net.minecraftforge.common.property.IExtendedBlockState;
-import net.minecraftforge.common.property.IUnlistedProperty;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import rikka.librikka.IMetaProvider;
 import rikka.librikka.RayTraceHelper;
 import rikka.librikka.Utils;
 import rikka.librikka.block.BlockBase;
-import rikka.librikka.block.ISubBlock;
-import rikka.librikka.item.ISimpleTexture;
+import rikka.librikka.block.ICustomBoundingBox;
 import rikka.librikka.item.ItemBlockBase;
-import rikka.librikka.properties.UnlistedPropertyRef;
 import simelectricity.api.SEAPI;
 import simelectricity.api.tile.ISECableTile;
 import simelectricity.api.tile.ISEWireTile;
+import simelectricity.essential.api.ISEGenericCable;
 import simelectricity.essential.api.ISEGenericWire;
 import simelectricity.essential.utils.SEUnitHelper;
 
 import javax.annotation.Nullable;
-import java.lang.ref.WeakReference;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Random;
 
-public class BlockWire extends BlockBase implements ISubBlock, ISimpleTexture {
+public class BlockWire extends BlockBase implements ICustomBoundingBox, IMetaProvider<ISECableMeta>, IWaterLoggable  {
     ///////////////////////////////
     /// Wire Properties
     ///////////////////////////////
-    public BlockWire() {
-        this("essential_wire", Material.GLASS, ItemBlockWire.class,
-                new String[]{"copper", "aluminum"},
-                0.1F,
-                new float[]{0.05F, 0.075F},
+	public static enum Type implements ISECableMeta {
+		copper(0.05F),
+		aluminum(0.075F);
+
+		public final float resistivity;
+		Type(float resistivity) {
+			this.resistivity = resistivity;
+		}
+		
+		@Override
+		public float thickness() {
+			return 0.1F;
+		}
+
+		@Override
+		public float resistivity() {
+			return resistivity;
+		}
+		
+	}
+	
+	
+    private BlockWire(ISECableMeta meta) {
+        this("essential_wire", meta, 
+        		Block.Properties.create(Material.GLASS)
+        		.hardnessAndResistance(0.2F, 10.0F)
+        		.sound(SoundType.METAL),
+        		ItemBlockWire.class,
+        		(new Item.Properties()).group(SEAPI.SETab),
                 TileWire.class);
-        setCreativeTab(SEAPI.SETab);
-        setHardness(0.2F);
-        setResistance(10.0F);
-        setSoundType(SoundType.METAL);
     }
+    
+    public static BlockWire[] create() {
+    	BlockWire[] ret = new BlockWire[Type.values().length];
+    	for (ISECableMeta cableData: Type.values()) {
+    		ret[cableData.ordinal()] = new BlockWire(cableData);
+    	}
+    	return ret;
+    }
+    
 
-
-    protected static ThreadLocal<EnumFacing> nextPlacedSide = new ThreadLocal<>();
-    protected static ThreadLocal<EnumFacing> nextPlacedto = new ThreadLocal<>();
+    public final ISECableMeta meta;
+    protected static ThreadLocal<Direction> nextPlacedSide = new ThreadLocal<>();
+    protected static ThreadLocal<Direction> nextPlacedto = new ThreadLocal<>();
     protected static ThreadLocal<ItemStack> nextPlacedItemStack = new ThreadLocal<>();
 
     @Override
-    public final String[] getSubBlockUnlocalizedNames() {
-        return this.subNames;
+    public ISECableMeta meta() {
+    	return meta;
     }
 
-    public boolean addBranch(ISEGenericWire wireTile, EnumFacing side, EnumFacing to, ItemStack itemStack, boolean isRemote) {
-        int type = itemStack.getItemDamage();
-        if (type > this.resistances.length)
-            return false;
-
+    public boolean addBranch(ISEGenericWire wireTile, Direction side, Direction to, ItemStack itemStack, boolean isRemote) {
         if (!wireTile.canAddBranch(side, to, itemStack))
             return false;
 
         if (!isRemote)
-            wireTile.addBranch(side, to, itemStack, this.resistances[type]);
+            wireTile.addBranch(side, to, itemStack, meta.resistivity());
 
         return true;
     }
 
     protected static class ItemBlockWire extends ItemBlockBase {
-        public ItemBlockWire(Block block) {
-            super(block);
+        public ItemBlockWire(Block block, Item.Properties props) {
+            super(block, props);
         }
 
-        @Override
-        @SideOnly(Side.CLIENT)
-        public boolean canPlaceBlockOnSide(World world, BlockPos pos, EnumFacing side, EntityPlayer placer, ItemStack stack) {
+        @Override	// Was canPlaceBlockOnSide
+        protected boolean canPlace(BlockItemUseContext context, BlockState stateForPlace) {
+        	World world = context.getWorld();
+        	BlockPos pos = context.getPos();
+        	Direction side = context.getFace();
+        	
             TileEntity teSelected = world.getTileEntity(pos);
             TileEntity teNew = world.getTileEntity(pos.offset(side));
 
@@ -101,72 +135,85 @@ public class BlockWire extends BlockBase implements ISubBlock, ISimpleTexture {
                 return true;
             }
 
-            return super.canPlaceBlockOnSide(world, pos, side, placer, stack);
+            return super.canPlace(context, stateForPlace);
         }
 
         @Override
-        public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
-            float x = hitX-facing.getFrontOffsetX()-0.5f;
-            float y = hitY-facing.getFrontOffsetY()-0.5f;
-            float z = hitZ-facing.getFrontOffsetZ()-0.5f;
+        public ActionResultType onItemUse(ItemUseContext context) {
+        	PlayerEntity player = context.getPlayer();
+            World world = context.getWorld();
+            BlockPos pos = context.getPos();
+            Hand hand = context.getHand();
+            Direction facing = context.getFace();
+            Vec3d vec3d = context.getHitVec().subtract(pos.getX(), pos.getY(), pos.getZ());
+            float hitX = (float) vec3d.x;
+            float hitY = (float) vec3d.y;
+            float hitZ = (float) vec3d.z;
+            
+            
+        	float x = hitX-facing.getXOffset()-0.5f;
+            float y = hitY-facing.getYOffset()-0.5f;
+            float z = hitZ-facing.getZOffset()-0.5f;
 
 
-            EnumFacing to = null;
-            if (facing.getAxis() == EnumFacing.Axis.Y) {
+            Direction to = null;
+            if (facing.getAxis() == Direction.Axis.Y) {
                 if (MathHelper.abs(x) > MathHelper.abs(z)) {
                     if (x>0)
-                        to = EnumFacing.EAST;
+                        to = Direction.EAST;
                     else
-                        to = EnumFacing.WEST;
+                        to = Direction.WEST;
                 } else {
                     if (z>0)
-                        to = EnumFacing.SOUTH;
+                        to = Direction.SOUTH;
                     else
-                        to = EnumFacing.NORTH;
+                        to = Direction.NORTH;
                 }
-            } else if (facing.getAxis() == EnumFacing.Axis.X) {
+            } else if (facing.getAxis() == Direction.Axis.X) {
                 if (MathHelper.abs(y) > MathHelper.abs(z)) {
                     if (y>0)
-                        to = EnumFacing.UP;
+                        to = Direction.UP;
                     else
-                        to = EnumFacing.DOWN;
+                        to = Direction.DOWN;
                 } else {
                     if (z>0)
-                        to = EnumFacing.SOUTH;
+                        to = Direction.SOUTH;
                     else
-                        to = EnumFacing.NORTH;
+                        to = Direction.NORTH;
                 }
-            } else if (facing.getAxis() == EnumFacing.Axis.Z) {
+            } else if (facing.getAxis() == Direction.Axis.Z) {
                 if (MathHelper.abs(x) > MathHelper.abs(y)) {
                     if (x>0)
-                        to = EnumFacing.EAST;
+                        to = Direction.EAST;
                     else
-                        to = EnumFacing.WEST;
+                        to = Direction.WEST;
                 } else {
                     if (y>0)
-                        to = EnumFacing.UP;
+                        to = Direction.UP;
                     else
-                        to = EnumFacing.DOWN;
+                        to = Direction.DOWN;
                 }
             }
 
-            BlockWire blockWire = (BlockWire) block;
+            BlockWire blockWire = (BlockWire) getBlock();
             ItemStack itemStack = player.getHeldItem(hand);
             boolean shrinkItem = false;
             TileEntity teSelected = Utils.getTileEntitySafely(world, pos);
             TileEntity teNew = Utils.getTileEntitySafely(world, pos.offset(facing));
 
             if (teSelected instanceof ISEGenericWire) {
-                RayTraceResult trace = this.rayTrace(world, player, false);
-                if (trace.getBlockPos().equals(pos) && subHit_isBranch(trace.subHit)) {
+            	// TODO: fix this
+            	BlockRayTraceResult trace = blockWire.rayTrace(world, pos, player);
+//                RayTraceResult trace = this.rayTrace(world, player, RayTraceContext.FluidMode.NONE);
+                if (trace.getPos().equals(pos) && subHit_isBranch(trace.subHit)) {
                     ISEGenericWire wireTile = (ISEGenericWire) teSelected;
-                    EnumFacing tr_side = subHit_side(trace.subHit);
-                    EnumFacing tr_branch = subHit_branch(trace.subHit);
+                    Direction tr_side = subHit_side(trace.subHit);
+                    Direction tr_branch = subHit_branch(trace.subHit);
 
                     if (tr_branch == null) {
                         // Center
                         if (facing != tr_side && facing != tr_side.getOpposite()) {
-                            if (!wireTile.hasBranch(tr_side, facing) && world.isSideSolid(pos.offset(tr_side), tr_side.getOpposite())) {
+                            if (!wireTile.hasBranch(tr_side, facing) && Utils.isSideSolid(world, pos.offset(tr_side), tr_side.getOpposite())) {
                                 shrinkItem = blockWire.addBranch(wireTile, tr_side, facing, itemStack, world.isRemote);
                             }
                         }
@@ -175,7 +222,7 @@ public class BlockWire extends BlockBase implements ISubBlock, ISimpleTexture {
                         if (facing == tr_side || facing == tr_side.getOpposite()) {
 
                             if (!wireTile.hasBranch(to, facing.getOpposite()) &&
-                                    (world.isSideSolid(pos.offset(to), to.getOpposite()) ||
+                                    (Utils.isSideSolid(world, pos.offset(to), to.getOpposite()) ||
                                             world.getTileEntity(pos.offset(to)) instanceof ISECableTile)) {
                                 shrinkItem = blockWire.addBranch(wireTile, to, facing.getOpposite(), itemStack, world.isRemote);
                             }
@@ -184,23 +231,23 @@ public class BlockWire extends BlockBase implements ISubBlock, ISimpleTexture {
                                 if (teNew instanceof ISEGenericWire) {
                                     // Add branch in neighbor
                                     if (!((ISEGenericWire) teNew).hasBranch(tr_side, tr_branch.getOpposite()) &&
-                                            (world.isSideSolid(pos.offset(facing).offset(tr_side), tr_side.getOpposite()) ||
+                                            (Utils.isSideSolid(world, pos.offset(facing).offset(tr_side), tr_side.getOpposite()) ||
                                                     world.getTileEntity(pos.offset(tr_branch).offset(tr_side)) instanceof ISECableTile)) {
                                         shrinkItem = blockWire.addBranch((ISEGenericWire) teNew, tr_side, tr_branch.getOpposite(), itemStack, world.isRemote);
                                     }
                                 } else {
                                     // Block edge, try to place a new neighbor wire
-                                    if (world.isSideSolid(pos.offset(tr_branch).offset(tr_side), tr_side.getOpposite()) ||
+                                    if (Utils.isSideSolid(world, pos.offset(tr_branch).offset(tr_side), tr_side.getOpposite()) ||
                                             world.getTileEntity(pos.offset(tr_branch).offset(tr_side)) instanceof ISECableTile) {
                                         nextPlacedSide.set(tr_side);
                                         nextPlacedto.set(tr_branch.getOpposite());
                                         nextPlacedItemStack.set(itemStack);
 
-                                        return super.onItemUse(player, world, pos, hand, facing, hitX, hitY, hitZ);
+                                        return super.onItemUse(context);
                                     }
                                 }
                             } else {
-                                if (!wireTile.hasBranch(tr_side, facing) && world.isSideSolid(pos.offset(tr_side), tr_side.getOpposite())) {
+                                if (!wireTile.hasBranch(tr_side, facing) && Utils.isSideSolid(world, pos.offset(tr_side), tr_side.getOpposite())) {
                                     shrinkItem = blockWire.addBranch(wireTile, tr_side, facing, itemStack, world.isRemote);
                                 }
                             }
@@ -208,9 +255,9 @@ public class BlockWire extends BlockBase implements ISubBlock, ISimpleTexture {
                     }
                 }
             } else if (teNew instanceof ISEGenericWire) {
-                EnumFacing wire_side = facing.getOpposite();
+                Direction wire_side = facing.getOpposite();
                 // Selecting the block after the ISEGenericWire block
-                if (!((ISEGenericWire) teNew).hasBranch(wire_side, to) && world.isSideSolid(pos, wire_side.getOpposite())) {
+                if (!((ISEGenericWire) teNew).hasBranch(wire_side, to) && Utils.isSideSolid(world, pos, wire_side.getOpposite())) {
                     shrinkItem = blockWire.addBranch((ISEGenericWire) teNew, wire_side, to, itemStack, world.isRemote);
                 }
             } else {
@@ -220,16 +267,16 @@ public class BlockWire extends BlockBase implements ISubBlock, ISimpleTexture {
                 nextPlacedto.set(to);
                 nextPlacedItemStack.set(itemStack);
 
-                return super.onItemUse(player, world, pos, hand, facing, hitX, hitY, hitZ);
+                return super.onItemUse(context);
             }
 
             if (shrinkItem) {
                 if (!player.isCreative())
                     itemStack.shrink(1);
 
-                return EnumActionResult.SUCCESS;
+                return ActionResultType.SUCCESS;
             } else {
-                return EnumActionResult.FAIL;
+                return ActionResultType.FAIL;
             }
         }
     }
@@ -237,46 +284,46 @@ public class BlockWire extends BlockBase implements ISubBlock, ISimpleTexture {
     ///////////////////////////////
     ///Block Properties
     ///////////////////////////////
-    public static EnumFacing[][] corners = new EnumFacing[][] {
-            {EnumFacing.DOWN, EnumFacing.NORTH},
-            {EnumFacing.DOWN, EnumFacing.SOUTH},
-            {EnumFacing.DOWN, EnumFacing.WEST},
-            {EnumFacing.DOWN, EnumFacing.EAST},
-            {EnumFacing.UP, EnumFacing.NORTH},
-            {EnumFacing.UP, EnumFacing.SOUTH},
-            {EnumFacing.UP, EnumFacing.WEST},
-            {EnumFacing.UP, EnumFacing.EAST},
-            {EnumFacing.NORTH, EnumFacing.WEST},
-            {EnumFacing.NORTH, EnumFacing.EAST},
-            {EnumFacing.SOUTH, EnumFacing.WEST},
-            {EnumFacing.SOUTH, EnumFacing.EAST},
+    public static Direction[][] corners = new Direction[][] {
+            {Direction.DOWN, Direction.NORTH},
+            {Direction.DOWN, Direction.SOUTH},
+            {Direction.DOWN, Direction.WEST},
+            {Direction.DOWN, Direction.EAST},
+            {Direction.UP, Direction.NORTH},
+            {Direction.UP, Direction.SOUTH},
+            {Direction.UP, Direction.WEST},
+            {Direction.UP, Direction.EAST},
+            {Direction.NORTH, Direction.WEST},
+            {Direction.NORTH, Direction.EAST},
+            {Direction.SOUTH, Direction.WEST},
+            {Direction.SOUTH, Direction.EAST},
     };
 
-    public static boolean isCornerIdNormal(EnumFacing f1, EnumFacing f2) {
+    public static boolean isCornerIdNormal(Direction f1, Direction f2) {
         if (f1.getAxis() == f2.getAxis())
             return false;
 
-        if (f1.getAxis() == EnumFacing.Axis.Y) {
+        if (f1.getAxis() == Direction.Axis.Y) {
             return true;
-        } else if (f1.getAxis() == EnumFacing.Axis.Z) {
-            return f2.getAxis() != EnumFacing.Axis.Y;
+        } else if (f1.getAxis() == Direction.Axis.Z) {
+            return f2.getAxis() != Direction.Axis.Y;
         } else {
             return false;
         }
     }
 
-    public static int cornerIdOf(EnumFacing f1, EnumFacing f2) {
+    public static int cornerIdOf(Direction f1, Direction f2) {
         int index = -1;
 
         if (f1.getAxis() == f2.getAxis())
             return -1;
 
-        EnumFacing wire_side = null, branch = null;
-        if (f1.getAxis() == EnumFacing.Axis.Y) {
+        Direction wire_side = null, branch = null;
+        if (f1.getAxis() == Direction.Axis.Y) {
             wire_side = f1;
             branch = f2;
-        } else if (f1.getAxis() == EnumFacing.Axis.Z) {
-            if (f2.getAxis() == EnumFacing.Axis.Y) {
+        } else if (f1.getAxis() == Direction.Axis.Z) {
+            if (f2.getAxis() == Direction.Axis.Y) {
                 wire_side = f2;
                 branch = f1;
             } else {
@@ -284,41 +331,41 @@ public class BlockWire extends BlockBase implements ISubBlock, ISimpleTexture {
                 branch = f2;
             }
         } else {
-            // f1.getAxis() == EnumFacing.Axis.X
+            // f1.getAxis() == Direction.Axis.X
             wire_side = f2;
             branch = f1;
         }
 
-        if (wire_side == EnumFacing.DOWN) {
-            if (branch == EnumFacing.NORTH) {
+        if (wire_side == Direction.DOWN) {
+            if (branch == Direction.NORTH) {
                 index = 0;
-            } else if (branch == EnumFacing.SOUTH) {
+            } else if (branch == Direction.SOUTH) {
                 index = 1;
-            } else if (branch == EnumFacing.WEST) {
+            } else if (branch == Direction.WEST) {
                 index = 2;
-            } else if (branch == EnumFacing.EAST) {
+            } else if (branch == Direction.EAST) {
                 index = 3;
             }
-        } else if (wire_side == EnumFacing.UP) {
-            if (branch == EnumFacing.NORTH) {
+        } else if (wire_side == Direction.UP) {
+            if (branch == Direction.NORTH) {
                 index = 4;
-            } else if (branch == EnumFacing.SOUTH) {
+            } else if (branch == Direction.SOUTH) {
                 index = 5;
-            } else if (branch == EnumFacing.WEST) {
+            } else if (branch == Direction.WEST) {
                 index = 6;
-            } else if (branch == EnumFacing.EAST) {
+            } else if (branch == Direction.EAST) {
                 index = 7;
             }
-        } else if (wire_side == EnumFacing.NORTH) {
-            if (branch == EnumFacing.WEST) {
+        } else if (wire_side == Direction.NORTH) {
+            if (branch == Direction.WEST) {
                 index = 8;
-            } else if (branch == EnumFacing.EAST) {
+            } else if (branch == Direction.EAST) {
                 index = 9;
             }
-        } else if (wire_side == EnumFacing.SOUTH) {
-            if (branch == EnumFacing.WEST) {
+        } else if (wire_side == Direction.SOUTH) {
+            if (branch == Direction.WEST) {
                 index = 10;
-            } else if (branch == EnumFacing.EAST) {
+            } else if (branch == Direction.EAST) {
                 index = 11;
             }
         }
@@ -326,16 +373,13 @@ public class BlockWire extends BlockBase implements ISubBlock, ISimpleTexture {
         return index;
     }
 
-    public final float thickness;
-    private final float[] resistances;
-    private final String[] subNames;
+    
     private final Class<? extends TileWire> tileEntityClass;
-    protected BlockWire(String name, Material material, Class<? extends ItemBlockWire> itemBlockClass,
-                         String[] cableTypes, float thickness, float[] resistanceList, Class<? extends TileWire> tileEntityClass) {
-        super(name, material, itemBlockClass);
-        this.thickness = thickness;
-        this.resistances = resistanceList;
-        this.subNames = cableTypes;
+    protected BlockWire(String name, ISECableMeta meta, Block.Properties props, Class<? extends ItemBlockBase> itemBlockClass,
+    		Item.Properties itemProps, Class<? extends TileWire> tileEntityClass) {
+    	super(name+"_"+meta.name(), props, itemBlockClass, itemProps);
+    	this.setDefaultState(this.getDefaultState().with(BlockStateProperties.WATERLOGGED, false));
+        this.meta = meta;
         this.tileEntityClass = tileEntityClass;
 
         //Calc. collision boxes and cache them
@@ -344,7 +388,7 @@ public class BlockWire extends BlockBase implements ISubBlock, ISimpleTexture {
 //            float min = 0.5F - thicknessList[i] / 2F;
 //            float max = 0.5F + thicknessList[i] / 2F;
 //
-//            for (EnumFacing side: EnumFacing.VALUES) {
+//            for (Direction side: Direction.values()) {
 //                cableBoundingBoxes[i][side.ordinal()] = RayTraceHelper.createAABB(side, min, 0, min, max, min, max);
 //            }
 //
@@ -352,24 +396,47 @@ public class BlockWire extends BlockBase implements ISubBlock, ISimpleTexture {
 //        }
     }
 
+	@Override
+	protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
+		builder.add(BlockStateProperties.WATERLOGGED);
+	}
+
+	@Override
+	public IFluidState getFluidState(BlockState state) {
+		return state.get(BlockStateProperties.WATERLOGGED) ? Fluids.WATER.getStillFluidState(false)
+				: super.getFluidState(state);
+	}
+	
+	@Override
+	public BlockState getStateForPlacement(BlockItemUseContext context) {
+		IFluidState ifluidstate = context.getWorld().getFluidState(context.getPos());
+		return this.getDefaultState().with(BlockStateProperties.WATERLOGGED, ifluidstate.getFluid() == Fluids.WATER);
+	}
+	
+	@Override
+	public BlockState updatePostPlacement(BlockState stateIn, Direction facing, BlockState facingState, IWorld worldIn,
+			BlockPos currentPos, BlockPos facingPos) {
+		if (stateIn.get(BlockStateProperties.WATERLOGGED)) {
+			worldIn.getPendingFluidTicks().scheduleTick(currentPos, Fluids.WATER, Fluids.WATER.getTickRate(worldIn));
+		}
+		
+		return super.updatePostPlacement(stateIn, facing, facingState, worldIn, currentPos, facingPos);
+	}
+    
     @Override
-    @SideOnly(Side.CLIENT)
-    public String getIconName(int damage) {
-        return "essential_wire_" + subNames[damage];
+    @OnlyIn(Dist.CLIENT)
+    public void addInformation(ItemStack stack, @Nullable IBlockReader worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
+    	tooltip.add(new StringTextComponent(
+    			I18n.format("gui.simelectricity.resistivity") + ": " + 
+    			SEUnitHelper.getStringWithoutUnit(2F*meta.resistivity()) + "\u03a9/m"
+    			));;
     }
 
-    @SideOnly(Side.CLIENT)
     @Override
-    public void addInformation(ItemStack stack, @Nullable World player, List<String> tooltip, ITooltipFlag advanced) {
-        int type = stack.getItemDamage();
-        tooltip.add(I18n.translateToLocal("gui.sime:resistivity") + ": " + SEUnitHelper.getStringWithoutUnit(2F*resistances[type]) + "\u03a9/m");
-    }
+    public boolean hasTileEntity(BlockState state) {return true;}
 
     @Override
-    public boolean hasTileEntity(IBlockState state) {return true;}
-
-    @Override
-    public TileEntity createTileEntity(World world, IBlockState state) {
+    public TileEntity createTileEntity(BlockState state, IBlockReader world) {
         TileWire wire;
         try {
             wire = tileEntityClass.getConstructor().newInstance();
@@ -384,73 +451,15 @@ public class BlockWire extends BlockBase implements ISubBlock, ISimpleTexture {
     }
 
     @Override
-    public boolean isFullCube(IBlockState state) {
+    public boolean isNormalCube(BlockState state, IBlockReader worldIn, BlockPos pos) {
         return false;
-    }
-
-    @Override
-    public boolean isFullBlock(IBlockState state) {
-        return false;
-    }
-
-    @Override
-    public boolean isOpaqueCube(IBlockState state) {
-        return false;
-    }
-
-    @Override
-    public boolean isNormalCube(IBlockState state) {
-        return false;
-    }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public boolean canRenderInLayer(IBlockState state, BlockRenderLayer layer) {
-        return true;
-    }
-
-    @Override
-    @Deprecated
-    @SideOnly(Side.CLIENT)
-    public boolean shouldSideBeRendered(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side) {
-        return false;
-    }
-
-    @Deprecated
-    public BlockFaceShape getBlockFaceShape(IBlockAccess worldIn, IBlockState state, BlockPos pos, EnumFacing face)
-    {
-        return BlockFaceShape.UNDEFINED;
-    }
-
-    ///////////////////////////////
-    ///BlockStates
-    ///////////////////////////////
-    @Override
-    protected final BlockStateContainer createBlockState() {
-        return new ExtendedBlockState(this, new IProperty[0],
-                new IUnlistedProperty[] {UnlistedPropertyRef.propertyTile});
-    }
-
-    @Override
-    public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
-        if (state instanceof IExtendedBlockState) {
-            IExtendedBlockState retval = (IExtendedBlockState) state;
-
-            TileEntity te = world.getTileEntity(pos);
-
-            if (te instanceof ISEWireTile) {
-                retval = retval.withProperty(UnlistedPropertyRef.propertyTile, new WeakReference<>(te));
-            }
-
-            return retval;
-        }
-        return state;
     }
 
     //////////////////////////////////
     ///CollisionBoxes
     //////////////////////////////////
-    public Vec3d getBranchVecOffset(EnumFacing side) {
+    public Vec3d getBranchVecOffset(Direction side) {
+        float thickness = meta.thickness();
         double x = 0, y = 0, z = 0;
         switch (side) {
             case DOWN:
@@ -476,8 +485,9 @@ public class BlockWire extends BlockBase implements ISubBlock, ISimpleTexture {
         return new Vec3d(x, y, z);
     }
 
-    public AxisAlignedBB getBranchBoundingBox(EnumFacing side, EnumFacing branch, boolean ignoreCorner, boolean onlyCorner) {
-        float min = 0.5F - thickness / 2.0F;
+    public AxisAlignedBB getBranchBoundingBox(Direction side, Direction branch, boolean ignoreCorner, boolean onlyCorner) {
+        float thickness = meta.thickness();
+    	float min = 0.5F - thickness / 2.0F;
         float max = 0.5F + thickness / 2.0F;
 
         float yMin = 0;
@@ -493,7 +503,8 @@ public class BlockWire extends BlockBase implements ISubBlock, ISimpleTexture {
                 RayTraceHelper.createAABB(branch, min, yMin, min, max, yMax, max).offset(getBranchVecOffset(side));
     }
 
-    public AxisAlignedBB getCenterBoundingBox(ISEGenericWire wireTile, EnumFacing side) {
+    public AxisAlignedBB getCenterBoundingBox(ISEGenericWire wireTile, Direction side) {
+        float thickness = meta.thickness();
         double x1, y1, z1, x2, y2, z2;
         x1 = 0.5 - thickness / 2;
         y1 = x1;
@@ -503,44 +514,45 @@ public class BlockWire extends BlockBase implements ISubBlock, ISimpleTexture {
         z2 = x2;
 
         //Branches
-        if (wireTile.hasBranch(side, EnumFacing.DOWN))
+        if (wireTile.hasBranch(side, Direction.DOWN))
             y1 = 0;
 
-        if (wireTile.hasBranch(side, EnumFacing.UP))
+        if (wireTile.hasBranch(side, Direction.UP))
             y2 = 1;
 
-        if (wireTile.hasBranch(side, EnumFacing.NORTH))
+        if (wireTile.hasBranch(side, Direction.NORTH))
             z1 = 0;
 
-        if (wireTile.hasBranch(side, EnumFacing.SOUTH))
+        if (wireTile.hasBranch(side, Direction.SOUTH))
             z2 = 1;
 
-        if (wireTile.hasBranch(side, EnumFacing.WEST))
+        if (wireTile.hasBranch(side, Direction.WEST))
             x1 = 0;
 
-        if (wireTile.hasBranch(side, EnumFacing.EAST))
+        if (wireTile.hasBranch(side, Direction.EAST))
             x2 = 1;
 
         return new AxisAlignedBB(x1, y1, z1, x2, y2, z2).offset(getBranchVecOffset(side));
     }
 
-    public AxisAlignedBB getCornerBoundingBox(ISEGenericWire wireTile, EnumFacing side1, EnumFacing side2) {
-        EnumFacing e1 = null;
-        EnumFacing e2 = null;
-        if (side1.getAxis() == EnumFacing.Axis.Y) {
+    public AxisAlignedBB getCornerBoundingBox(ISEGenericWire wireTile, Direction side1, Direction side2) {
+        Direction e1 = null;
+        Direction e2 = null;
+        if (side1.getAxis() == Direction.Axis.Y) {
             e1 = side1;
             e2 = side2;
-        } else if (side2.getAxis() == EnumFacing.Axis.Y) {
+        } else if (side2.getAxis() == Direction.Axis.Y) {
             e1 = side2;
             e2 = side1;
-        } else  if (side1.getAxis() == EnumFacing.Axis.Z) {
+        } else  if (side1.getAxis() == Direction.Axis.Z) {
             e1 = side1;
             e2 = side2;
-        } else if (side2.getAxis() == EnumFacing.Axis.Z) {
+        } else if (side2.getAxis() == Direction.Axis.Z) {
             e1 = side2;
             e2 = side1;
         }
 
+        double thickness = meta.thickness();
         double x1, y1, z1, x2, y2, z2;
         x1 = 0.5 + thickness / 2;
         y1 = x1;
@@ -550,44 +562,44 @@ public class BlockWire extends BlockBase implements ISubBlock, ISimpleTexture {
         z2 = x2;
 
 
-        if (e1 == EnumFacing.DOWN) {
+        if (e1 == Direction.DOWN) {
             y1 = 0;
 
-            if (e2 == EnumFacing.NORTH) {
+            if (e2 == Direction.NORTH) {
                 z1 = 0;
-            } else if (e2 == EnumFacing.SOUTH) {
+            } else if (e2 == Direction.SOUTH) {
                 z2 = 1;
-            } else if (e2 == EnumFacing.WEST) {
+            } else if (e2 == Direction.WEST) {
                 x1 = 0;
-            } else if (e2 == EnumFacing.EAST) {
+            } else if (e2 == Direction.EAST) {
                 x2 = 1;
             }
-        } else if (e1 == EnumFacing.UP) {
+        } else if (e1 == Direction.UP) {
             y2 = 1;
 
-            if (e2 == EnumFacing.NORTH) {
+            if (e2 == Direction.NORTH) {
                 z1 = 0;
-            } else if (e2 == EnumFacing.SOUTH) {
+            } else if (e2 == Direction.SOUTH) {
                 z2 = 1;
-            } else if (e2 == EnumFacing.WEST) {
+            } else if (e2 == Direction.WEST) {
                 x1 = 0;
-            } else if (e2 == EnumFacing.EAST) {
+            } else if (e2 == Direction.EAST) {
                 x2 = 1;
             }
-        } else if (e1 == EnumFacing.NORTH) {
+        } else if (e1 == Direction.NORTH) {
             z1 = 0;
 
-            if (e2 == EnumFacing.WEST) {
+            if (e2 == Direction.WEST) {
                 x1 = 0;
-            } else if (e2 == EnumFacing.EAST) {
+            } else if (e2 == Direction.EAST) {
                 x2 = 1;
             }
-        } else if (e1 == EnumFacing.SOUTH) {
+        } else if (e1 == Direction.SOUTH) {
             z2 = 1;
 
-            if (e2 == EnumFacing.WEST) {
+            if (e2 == Direction.WEST) {
                 x1 = 0;
-            } else if (e2 == EnumFacing.EAST) {
+            } else if (e2 == Direction.EAST) {
                 x2 = 1;
             }
         }
@@ -595,14 +607,14 @@ public class BlockWire extends BlockBase implements ISubBlock, ISimpleTexture {
         return new AxisAlignedBB(x1, y1, z1, x2, y2, z2);
     }
 
-    public static EnumFacing subHit_side(int subHit) {
-        return EnumFacing.VALUES[(subHit>>4) & 0x07];
+    public static Direction subHit_side(int subHit) {
+        return Direction.byIndex((subHit>>4) & 0x07);
     }
 
     @Nullable
-    public static EnumFacing subHit_branch(int subHit) {
+    public static Direction subHit_branch(int subHit) {
         int to_int = subHit & 0x0F;
-        return to_int > EnumFacing.VALUES.length ? null : EnumFacing.VALUES[to_int];
+        return to_int > Direction.values().length ? null : Direction.byIndex(to_int);
     }
 
     public static boolean subHit_isBranch(int subHit) {
@@ -613,37 +625,39 @@ public class BlockWire extends BlockBase implements ISubBlock, ISimpleTexture {
         return (subHit & 0x80) > 0;
     }
 
-    @Override
-    @Nullable
-    public RayTraceResult collisionRayTrace(IBlockState state, World world, BlockPos pos, Vec3d start, Vec3d end) {
-        return this.rayTrace(world, pos, start, end);
-    }
+    // TODO: Check collisionRayTrace (getRayTraceResult) and getRaytraceShape
+    // Was RayTraceResult collisionRayTrace(IBlockState state, World world, BlockPos pos, Vec3d start, Vec3d end)
+//    @Override
+//    public RayTraceResult getRayTraceResult(BlockState state, World world, BlockPos pos, Vec3d start, Vec3d end, RayTraceResult original) {
+//    	return this.rayTrace(world, pos, start, end);
+//    }
 
     @Nullable
-    public RayTraceResult rayTrace(IBlockAccess world, BlockPos pos, EntityPlayer player) {
-        Vec3d start = player.getPositionVector().addVector(0, player.getEyeHeight(), 0);
+    public BlockRayTraceResult rayTrace(IBlockReader world, BlockPos pos, PlayerEntity player) {
+        Vec3d start = player.getPositionVector().add(0, player.getEyeHeight(), 0);
         double reachDistance = 5;
-        if (player instanceof EntityPlayerMP)
-            reachDistance = ((EntityPlayerMP) player).interactionManager.getBlockReachDistance();
+        
+//        if (player instanceof EntityPlayerMP)
+//            reachDistance = ((EntityPlayerMP) player).interactionManager.getBlockReachDistance();
 
         Vec3d end = start.add(player.getLookVec().normalize().scale(reachDistance));
         return this.rayTrace(world, pos, start, end);
     }
 
     @Nullable
-    public RayTraceResult rayTrace(IBlockAccess world, BlockPos pos, Vec3d start, Vec3d end) {
+    public BlockRayTraceResult rayTrace(IBlockReader world, BlockPos pos, Vec3d start, Vec3d end) {
         TileEntity tile = world.getTileEntity(pos);
         if (!(tile instanceof ISEGenericWire))
-            return RayTraceHelper.computeTrace(null, pos, start, end, Block.FULL_BLOCK_AABB, -1);
+            return RayTraceHelper.computeTrace(null, pos, start, end, VoxelShapes.fullCube().getBoundingBox(), -1);
 
         ISEGenericWire wireTile = (ISEGenericWire) tile;
 
-        RayTraceResult best = null;
-        for (EnumFacing wire_side:  EnumFacing.VALUES) {
+        BlockRayTraceResult best = null;
+        for (Direction wire_side:  Direction.values()) {
             boolean hasConnection = false;
 
             // Branches
-            for (EnumFacing to : EnumFacing.VALUES) {
+            for (Direction to : Direction.values()) {
                 if (wireTile.hasBranch(wire_side, to)) {
                     hasConnection = true;
 
@@ -668,16 +682,17 @@ public class BlockWire extends BlockBase implements ISubBlock, ISimpleTexture {
     }
 
     @Override
-    public void addCollisionBoxToList(IBlockState state, World world, BlockPos pos, AxisAlignedBB axisAlignedBB,
-                                      List<AxisAlignedBB> collidingBoxes, Entity entityIn, boolean isPistonMoving) {
+    public VoxelShape getShape(BlockState state, IBlockReader world, BlockPos pos, ISelectionContext context) {
         TileEntity te = world.getTileEntity(pos);
 
+        VoxelShape vs = VoxelShapes.empty();
         if (!(te instanceof ISEWireTile))
-            return;
+            return vs;
 
         ISEGenericWire wireTile = (ISEGenericWire) te;
+        float thickness = meta.thickness();
 
-        for (EnumFacing wire_side: EnumFacing.VALUES) {
+        for (Direction wire_side: Direction.values()) {
             double min = 0.5 - thickness / 2;
             double max = 0.5 + thickness / 2;
 
@@ -706,65 +721,67 @@ public class BlockWire extends BlockBase implements ISubBlock, ISimpleTexture {
             boolean hasConnection = false;
 
             //Branches
-            if (wireTile.hasBranch(wire_side, EnumFacing.DOWN)) {
+            if (wireTile.hasBranch(wire_side, Direction.DOWN)) {
                 hasConnection = true;
-                Block.addCollisionBoxToList(pos, axisAlignedBB, collidingBoxes, new AxisAlignedBB(min+x, y, min+z, max+x, max+y, max+z));
+                vs = VoxelShapes.combine(vs, VoxelShapes.create(min+x, y, min+z, max+x, max+y, max+z), IBooleanFunction.OR);
             }
 
-            if (wireTile.hasBranch(wire_side, EnumFacing.UP)) {
+            if (wireTile.hasBranch(wire_side, Direction.UP)) {
                 hasConnection = true;
-                Block.addCollisionBoxToList(pos, axisAlignedBB, collidingBoxes, new AxisAlignedBB(min+x, min+y, min+z, max+x, 1+y, max+z));
+                vs = VoxelShapes.combine(vs, VoxelShapes.create(min+x, min+y, min+z, max+x, 1+y, max+z), IBooleanFunction.OR);
             }
 
-            if (wireTile.hasBranch(wire_side, EnumFacing.NORTH)) {
+            if (wireTile.hasBranch(wire_side, Direction.NORTH)) {
                 hasConnection = true;
-                Block.addCollisionBoxToList(pos, axisAlignedBB, collidingBoxes, new AxisAlignedBB(min+x, min+y, z, max+x, max+y, max+z));
+                vs = VoxelShapes.combine(vs, VoxelShapes.create(min+x, min+y, z, max+x, max+y, max+z), IBooleanFunction.OR);
             }
 
-            if (wireTile.hasBranch(wire_side, EnumFacing.SOUTH)) {
+            if (wireTile.hasBranch(wire_side, Direction.SOUTH)) {
                 hasConnection = true;
-                Block.addCollisionBoxToList(pos, axisAlignedBB, collidingBoxes, new AxisAlignedBB(min+x, min+y, min+z, max+x, max+y, 1+z));
+                vs = VoxelShapes.combine(vs, VoxelShapes.create(min+x, min+y, min+z, max+x, max+y, 1+z), IBooleanFunction.OR);
             }
 
-            if (wireTile.hasBranch(wire_side, EnumFacing.WEST)) {
+            if (wireTile.hasBranch(wire_side, Direction.WEST)) {
                 hasConnection = true;
-                Block.addCollisionBoxToList(pos, axisAlignedBB, collidingBoxes, new AxisAlignedBB(x, min+y, min+z, max+x, max+y, max+z));
+                vs = VoxelShapes.combine(vs, VoxelShapes.create(x, min+y, min+z, max+x, max+y, max+z), IBooleanFunction.OR);
             }
 
-            if (wireTile.hasBranch(wire_side, EnumFacing.EAST)) {
+            if (wireTile.hasBranch(wire_side, Direction.EAST)) {
                 hasConnection = true;
-                Block.addCollisionBoxToList(pos, axisAlignedBB, collidingBoxes, new AxisAlignedBB(min+x, min+y, min+z, 1+x, max+y, max+z));
+                vs = VoxelShapes.combine(vs, VoxelShapes.create(min+x, min+y, min+z, 1+x, max+y, max+z), IBooleanFunction.OR);
             }
 
             if (hasConnection) {
                 //Center
-                Block.addCollisionBoxToList(pos, axisAlignedBB, collidingBoxes, new AxisAlignedBB(min+x, min+y, min+z, max+x, max+y, max+z));
+                vs = VoxelShapes.combine(vs, VoxelShapes.create(min+x, min+y, min+z, max+x, max+y, max+z), IBooleanFunction.OR);
             }
         }
+        
+		return vs;
     }
 
+    // Was AxisAlignedBB getSelectedBoundingBox(IBlockState state, World world, BlockPos pos)
     @Override
-    @Deprecated
-    @SideOnly(Side.CLIENT)
-    public AxisAlignedBB getSelectedBoundingBox(IBlockState state, World world, BlockPos pos) {
+    public VoxelShape getBoundingShape(BlockState state, IBlockReader world, BlockPos pos, ISelectionContext context) {
+    	VoxelShape ret = VoxelShapes.empty();
         TileEntity te = world.getTileEntity(pos);
 
         if (!(te instanceof ISEGenericWire))
-            return new AxisAlignedBB(0,0,0,1,1,1);  //This is not supposed to happen
+            return ret;  //This is not supposed to happen
 
         ISEGenericWire wireTile = (ISEGenericWire) te;
-        RayTraceResult trace = Minecraft.getMinecraft().objectMouseOver;
+		BlockRayTraceResult trace = rayTrace(world, pos, Minecraft.getInstance().player);
 
-        if (trace == null || trace.subHit < 0 || !pos.equals(trace.getBlockPos())) {
+        if (trace == null || trace.subHit < 0 || !pos.equals(trace.getPos())) {
             // Perhaps we aren't the object the mouse is over
-            return new AxisAlignedBB(0,0,0,1,1,1);
+            return ret;
         }
 
         AxisAlignedBB aabb = null;
         if (subHit_isBranch(trace.subHit)) {    //Center, corner or branches
             boolean isCorner = subHit_isCorner(trace.subHit);
-            EnumFacing wire_side = subHit_side(trace.subHit);
-            EnumFacing to = subHit_branch(trace.subHit);
+            Direction wire_side = subHit_side(trace.subHit);
+            Direction to = subHit_branch(trace.subHit);
 
             if (isCorner) {
                 // Corner
@@ -778,37 +795,17 @@ public class BlockWire extends BlockBase implements ISubBlock, ISimpleTexture {
                 }
             }
 
-            aabb = aabb.offset(pos).expand(0.01, 0.01, 0.01);
+            aabb = aabb.grow(0.025);
         }
 
-        return aabb;
-    }
-
-    @Nullable
-    @Override
-    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
-        return new AxisAlignedBB(0,0,0,0,0,0);
+        return aabb==null ? VoxelShapes.empty() : VoxelShapes.create(aabb);
     }
 
     //////////////////////////////////////
     /////Item drops and Block activities
     //////////////////////////////////////
     @Override
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand,
-                                    EnumFacing side, float hitX, float hitY, float hitZ) {
-        TileEntity te = world.getTileEntity(pos);
-
-        if (!(te instanceof ISEGenericWire))
-            return false;        //Normally this could not happen, but just in case!
-
-
-
-
-        return false;
-    }
-
-    @Override
-    public void neighborChanged(IBlockState state, World world, BlockPos pos, Block blockIn, BlockPos fromPos) {
+    public void neighborChanged(BlockState state, World world, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving) {
         if (world.isRemote)
             return;
 
@@ -823,9 +820,12 @@ public class BlockWire extends BlockBase implements ISubBlock, ISimpleTexture {
             if (x*x+y*y+z*z != 1)
                 return; // the change is not send from neighbor block!!!
 
-            EnumFacing side = EnumFacing.getFacingFromVector(x, y, z);
-
-            if (wireTile.hasBranch(side, null) && !world.isSideSolid(fromPos, side.getOpposite())) {
+            TileEntity teFrom = world.getTileEntity(fromPos);
+            if (teFrom instanceof ISEGenericCable)
+            	return;
+            
+            Direction side = Direction.getFacingFromVector(x, y, z);
+            if (wireTile.hasBranch(side, null) && !Utils.isSideSolid(world, fromPos, side.getOpposite())) {
                 // The opposite side is no longer solid
 
                 // Drop wires as items
@@ -834,20 +834,21 @@ public class BlockWire extends BlockBase implements ISubBlock, ISimpleTexture {
                 for (ItemStack stack: drops)
                     Utils.dropItemIntoWorld(world, pos, stack);
 
-                for (EnumFacing wire_side: EnumFacing.VALUES) {
+                for (Direction wire_side: Direction.values()) {
                     if (wireTile.hasBranch(wire_side, null))
                         return;
                 }
 
                 // All branches have been removed, set the wire block to air.
-                world.setBlockToAir(pos);
+                world.setBlockState(pos, Blocks.AIR.getDefaultState());
             }
         }
     }
 
     @Override
-    public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
-        if (world.isRemote)
+    public void onBlockPlacedBy(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
+        super.onBlockPlacedBy(world, pos, state, placer, stack);
+    	if (world.isRemote)
             return;
 
         TileEntity te = world.getTileEntity(pos);
@@ -864,27 +865,26 @@ public class BlockWire extends BlockBase implements ISubBlock, ISimpleTexture {
     ///////////////////////
     ThreadLocal<List<ItemStack>> itemDrops = new ThreadLocal<>();
     @Override
-    public boolean removedByPlayer(IBlockState state, World world, BlockPos pos, EntityPlayer player,
-                                   boolean willHarvest) {
+    public boolean removedByPlayer(BlockState state, World world, BlockPos pos, PlayerEntity player, boolean willHarvest, IFluidState fluid) {
         if (world.isRemote)
             return false;
 
         TileEntity te = world.getTileEntity(pos);
         if (!(te instanceof ISEGenericWire))
-            return super.removedByPlayer(state, world, pos, player, willHarvest);
+            return super.removedByPlayer(state, world, pos, player, willHarvest, fluid);
 
         ISEGenericWire wireTile = (ISEGenericWire) te;
 
-        RayTraceResult trace = this.rayTrace(world, pos, player);
+        BlockRayTraceResult trace = this.rayTrace(world, pos, player);
         if (trace == null)
-            return super.removedByPlayer(state, world, pos, player, willHarvest);
+            return super.removedByPlayer(state, world, pos, player, willHarvest, fluid);
 
-        if (subHit_isBranch(trace.subHit) && trace.getBlockPos().equals(pos)) {
+        if (subHit_isBranch(trace.subHit) && trace.getPos().equals(pos)) {
             // Remove cable branch
             LinkedList<ItemStack> drops = new LinkedList<>();
             boolean isCorner = subHit_isCorner(trace.subHit);
-            EnumFacing wire_side = subHit_side(trace.subHit);
-            EnumFacing to = subHit_branch(trace.subHit);
+            Direction wire_side = subHit_side(trace.subHit);
+            Direction to = subHit_branch(trace.subHit);
             wireTile.removeBranch(wire_side, to, drops);
 
             if (isCorner && wireTile.hasBranch(to, wire_side)) {
@@ -896,33 +896,29 @@ public class BlockWire extends BlockBase implements ISubBlock, ISimpleTexture {
                 for (ItemStack stack: drops)
                     Utils.dropItemIntoWorld(world, pos, stack);
 
-            for (EnumFacing side: EnumFacing.VALUES) {
+            for (Direction side: Direction.values()) {
                 if (wireTile.hasBranch(side, null))
                         return false;
             }
 
-            return super.removedByPlayer(state, world, pos, player, willHarvest);
+            return super.removedByPlayer(state, world, pos, player, willHarvest, fluid);
         }
 
-        return super.removedByPlayer(state, world, pos, player, willHarvest);
-    }
-
-    public int quantityDropped(Random random) {
-        return 0;
+        return super.removedByPlayer(state, world, pos, player, willHarvest, fluid);
     }
 
     @Override
-    public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player) {
+    public ItemStack getPickBlock(BlockState state, RayTraceResult target, IBlockReader world, BlockPos pos, PlayerEntity player) {
         TileEntity te = world.getTileEntity(pos);
         if (!(te instanceof ISEGenericWire))
             return ItemStack.EMPTY;
 
         ISEGenericWire wireTile = (ISEGenericWire) te;
 
-        RayTraceResult trace = this.rayTrace(world, pos, player);
+        BlockRayTraceResult trace = this.rayTrace(world, pos, player);
 
-        if (subHit_isBranch(trace.subHit) && trace.getBlockPos().equals(pos)) {    //Center, corner or branches
-            EnumFacing wire_side = subHit_side(trace.subHit);
+        if (subHit_isBranch(trace.subHit) && trace.getPos().equals(pos)) {    //Center, corner or branches
+            Direction wire_side = subHit_side(trace.subHit);
 
             if (wireTile.getWireParam(wire_side).hasBranchOnSide(null)) {
                 ItemStack stack = wireTile.getItemDrop(wire_side);

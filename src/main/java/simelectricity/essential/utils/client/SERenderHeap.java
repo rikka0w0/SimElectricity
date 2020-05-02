@@ -1,17 +1,17 @@
 package simelectricity.essential.utils.client;
 
-import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-import rikka.librikka.model.quadbuilder.RawQuadCube;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+//import rikka.librikka.model.quadbuilder.RawQuadCube;
 
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
 @Deprecated
-@SideOnly(Side.CLIENT)
+@OnlyIn(Dist.CLIENT)
 public class SERenderHeap {
     private final LinkedList<double[][]> cubes = new LinkedList();
     private final LinkedList<TextureAtlasSprite[]> textures = new LinkedList();
@@ -104,14 +104,14 @@ public class SERenderHeap {
     }
 
     public void bake(List<BakedQuad> list) {
-        Iterator<double[][]> cubeIterator = this.cubes.iterator();
-        Iterator<TextureAtlasSprite[]> textureIterator = this.textures.iterator();
-        while (cubeIterator.hasNext()) {
-            double[][] cube = cubeIterator.next();
-            TextureAtlasSprite[] textureArray = textureIterator.next();
-
-            RawQuadCube rawCube = new RawQuadCube(cube, textureArray);
-            rawCube.bake(list);
-        }
+//        Iterator<double[][]> cubeIterator = this.cubes.iterator();
+//        Iterator<TextureAtlasSprite[]> textureIterator = this.textures.iterator();
+//        while (cubeIterator.hasNext()) {
+//            double[][] cube = cubeIterator.next();
+//            TextureAtlasSprite[] textureArray = textureIterator.next();
+//
+//            RawQuadCube rawCube = new RawQuadCube(cube, textureArray);
+//            rawCube.bake(list);
+//        }
     }
 }

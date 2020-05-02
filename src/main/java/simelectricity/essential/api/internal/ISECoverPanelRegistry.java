@@ -1,7 +1,7 @@
 package simelectricity.essential.api.internal;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import simelectricity.essential.api.ISECoverPanelFactory;
 import simelectricity.essential.api.coverpanel.ISECoverPanel;
 
@@ -10,5 +10,5 @@ public interface ISECoverPanelRegistry {
 
     ISECoverPanel fromItemStack(ItemStack itemStack);
 
-    ISECoverPanel fromNBT(NBTTagCompound nbt);
+    ISECoverPanel fromNBT(CompoundNBT nbt);
 }

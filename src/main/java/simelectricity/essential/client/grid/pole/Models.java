@@ -1,14 +1,14 @@
 package simelectricity.essential.client.grid.pole;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import rikka.librikka.model.quadbuilder.RawQuadCube;
 import rikka.librikka.model.quadbuilder.RawQuadGroup;
 import simelectricity.essential.utils.client.SERenderHeap;
 import simelectricity.essential.utils.client.SERenderHelper;
 
-@SideOnly(Side.CLIENT)
+@OnlyIn(Dist.CLIENT)
 public class Models {
 	public static RawQuadGroup render10kVInsulator(TextureAtlasSprite textureMetal, TextureAtlasSprite textureInsulator) {
 		RawQuadGroup insulator = new RawQuadGroup();

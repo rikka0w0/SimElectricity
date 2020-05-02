@@ -1,32 +1,35 @@
 package simelectricity.essential.api;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
+import net.minecraftforge.client.model.data.ModelProperty;
 import simelectricity.api.tile.ISEWireTile;
 
 import java.util.List;
 
 public interface ISEGenericWire extends ISEWireTile, ISEChunkWatchSensitiveTile{
+	public static ModelProperty<ISEGenericWire> prop = new ModelProperty<>();
+	
     // Server-Only functions
-    void addBranch(EnumFacing side, EnumFacing to, ItemStack itemStack, double resistance);
-    void removeBranch(EnumFacing side, EnumFacing to, List<ItemStack> drops);
+    void addBranch(Direction side, Direction to, ItemStack itemStack, double resistance);
+    void removeBranch(Direction side, Direction to, List<ItemStack> drops);
     /**
      * Drop the wire on the given side as item, note that the number of item maybe more than 1!
      */
-    ItemStack getItemDrop(EnumFacing side);
+    ItemStack getItemDrop(Direction side);
 
     // Common functions
-    default boolean hasBranch(EnumFacing side, EnumFacing to) {
+    default boolean hasBranch(Direction side, Direction to) {
         return getWireParam(side).hasBranchOnSide(to);
     }
-    boolean canAddBranch(EnumFacing side, EnumFacing to, ItemStack itemStack);
+    boolean canAddBranch(Direction side, Direction to, ItemStack itemStack);
 
     // The following functions are more likely to be called on client-side for rendering purpose
 
     /**
      * @return true if the wire has a exterior connection on the given side
      */
-    boolean hasExtConnection(EnumFacing f1, EnumFacing f2);
+    boolean hasExtConnection(Direction f1, Direction f2);
 
     /**
      * Called by cable render (may be custom implementation) to
@@ -34,7 +37,5 @@ public interface ISEGenericWire extends ISEWireTile, ISEChunkWatchSensitiveTile{
      * @param side
      * @return ture if electrically connected
      */
-    boolean connectedOnSide(EnumFacing side);
-
-    int getWireType(EnumFacing side);
+    boolean connectedOnSide(Direction side);
 }

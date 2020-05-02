@@ -1,108 +1,125 @@
 package simelectricity.essential;
 
 import net.minecraft.block.Block;
+import net.minecraft.data.DataGenerator;
+import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.Item;
+import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.chunk.Chunk;
-import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.client.event.DrawHighlightEvent;
+import net.minecraftforge.client.model.generators.ExistingFileHelper;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.world.ChunkWatchEvent;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.SidedProxy;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.network.NetworkRegistry;
-import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.network.NetworkRegistry;
+import net.minecraftforge.fml.network.simple.SimpleChannel;
 import net.minecraftforge.registries.IForgeRegistry;
-import net.minecraftforge.fml.relauncher.Side;
-import rikka.librikka.AutoGuiHandler;
-import simelectricity.SimElectricity;
+import rikka.librikka.block.ICustomBoundingBox;
 import simelectricity.essential.api.ISEChunkWatchSensitiveTile;
 import simelectricity.essential.api.SEEAPI;
+import simelectricity.essential.client.ModelDataProvider;
 import simelectricity.essential.coverpanel.CoverPanelRegistry;
 import simelectricity.essential.coverpanel.SECoverPanelFactory;
 import simelectricity.essential.utils.network.MessageContainerSync;
 
 
-@Mod(modid = Essential.MODID, name = "SimElectricity Essential", dependencies = "required-after:"+ SimElectricity.MODID)
+@Mod(Essential.MODID)
 public class Essential {
     public static final String MODID = "sime_essential";
 
-    @SidedProxy(clientSide = "simelectricity.essential.ClientProxy", serverSide = "simelectricity.essential.CommonProxy")
-    public static CommonProxy proxy;
+    @Deprecated
+    public static CommonProxy proxy = DistExecutor.runForDist(()->()->new ClientProxy(), ()->()->new CommonProxy());
 
-    @Mod.Instance(Essential.MODID)
     public static Essential instance;
 
-    public SimpleNetworkWrapper networkChannel;
-        
-    /**
-     * PreInitialize
-     */
-    @Mod.EventHandler
-    public void preInit(FMLPreInitializationEvent event) {
-    	new ConfigProvider(event.getSide().isClient());
+	private static final String PROTOCOL_VERSION = "1";
+    public SimpleChannel networkChannel;
+    
+    public Essential() {
+    	if (instance == null) 
+            instance = this;
+        else
+            throw new RuntimeException("Duplicated Class Instantiation: simelectricity.essential.Essential");
     	
-        SEEAPI.coverPanelRegistry = new CoverPanelRegistry();
-
-        networkChannel = NetworkRegistry.INSTANCE.newSimpleChannel(Essential.MODID);
-        networkChannel.registerMessage(MessageContainerSync.HandlerClient.class, MessageContainerSync.class, 0, Side.CLIENT);
-        networkChannel.registerMessage(MessageContainerSync.HandlerServer.class, MessageContainerSync.class, 1, Side.SERVER);
-        
-        proxy.preInit();
+    	SEEAPI.coverPanelRegistry = CoverPanelRegistry.INSTANCE;
     }
-
-    @Mod.EventBusSubscriber(modid = Essential.MODID)
-    public static class RegistrationHandler {
+    
+    @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
+    public final static class ModEventBusHandler {
     	@SubscribeEvent
-		public static void registerBlocks(RegistryEvent.Register<Block> event) {
+    	public static void gatherData(GatherDataEvent event) {
+    		DataGenerator generator = event.getGenerator();
+    		ExistingFileHelper exfh = event.getExistingFileHelper();
+    		if (event.includeServer()) {
+
+    		}
+    		if (event.includeClient()) {
+    			generator.addProvider(new ModelDataProvider(generator, exfh));
+    		}
+    	}
+    	
+    	@SubscribeEvent
+		public static void registerBlocks(final RegistryEvent.Register<Block> event) {
     		IForgeRegistry registry = event.getRegistry();
     		BlockRegistry.initBlocks();
         	BlockRegistry.registerBlocks(registry, false);
     	}
     	
     	@SubscribeEvent
-		public static void registerItems(RegistryEvent.Register<Item> event) {
+		public static void registerItems(final RegistryEvent.Register<Item> event) {
     		IForgeRegistry registry = event.getRegistry();
     		ItemRegistry.initItems();
         	BlockRegistry.registerBlocks(registry, true);
             ItemRegistry.registerItems(registry);
     	}
+    	
+    	@SubscribeEvent
+    	public static void onTileEntityTypeRegistration(final RegistryEvent.Register<TileEntityType<?>> event) {
+    		BlockRegistry.registerTileEntities(event.getRegistry());
+    	}
+    	
+    	@SubscribeEvent
+    	public static void registerContainers(final RegistryEvent.Register<ContainerType<?>> event) {
+    		BlockRegistry.registerContainers(event.getRegistry());
+    	}
+    	
+    	@SubscribeEvent
+    	public static void onCommonSetup(FMLCommonSetupEvent event) {
+    		Essential.instance.networkChannel = NetworkRegistry.newSimpleChannel(
+    			    new ResourceLocation(MODID, "network_channel"),
+    			    () -> PROTOCOL_VERSION,
+    			    PROTOCOL_VERSION::equals,
+    			    PROTOCOL_VERSION::equals
+    			);
+    		
+    		Essential.instance.networkChannel.registerMessage(0, 
+    				MessageContainerSync.class, MessageContainerSync.processor::toBytes, MessageContainerSync.processor::fromBytes, 
+    				MessageContainerSync.processor::handler);
+
+        	SEEAPI.coverPanelRegistry.registerCoverPanelFactory(new SECoverPanelFactory());
+    	}
     }
     
-    
-    /**
-     * Initialize
-     */
-    @Mod.EventHandler
-    public void init(FMLInitializationEvent event) {
-        BlockRegistry.registerTileEntities();
+    @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
+    public final static class ForgeEventBusHandler {
+		@SubscribeEvent
+		public static void onChunkWatchEvent(ChunkWatchEvent.Watch event) {
+			Chunk chunk = event.getPlayer().world.getChunk(event.getPos().x, event.getPos().z);
 
-        proxy.init();
-
-        MinecraftForge.EVENT_BUS.register(new Object() {
-            @SubscribeEvent
-            public void onChunkWatchEvent(ChunkWatchEvent.Watch event) {
-                Chunk chunk = event.getPlayer().world.getChunkFromChunkCoords(event.getChunk().x, event.getChunk().z);
-
-                for (Object tileEntity : chunk.getTileEntityMap().values()) {
-                    if (tileEntity instanceof ISEChunkWatchSensitiveTile)
-                        ((ISEChunkWatchSensitiveTile) tileEntity).onRenderingUpdateRequested();
-                }
-            }
-        });
-
-        //Register GUI handler
-        NetworkRegistry.INSTANCE.registerGuiHandler(instance, new AutoGuiHandler());
-    }
-
-    /**
-     * PostInitialize
-     */
-    @Mod.EventHandler
-    public void postInit(FMLPostInitializationEvent event) {
-    	proxy.postInit();
-        SEEAPI.coverPanelRegistry.registerCoverPanelFactory(new SECoverPanelFactory());
+			for (Object tileEntity : chunk.getTileEntityMap().values()) {
+				if (tileEntity instanceof ISEChunkWatchSensitiveTile)
+					((ISEChunkWatchSensitiveTile) tileEntity).onRenderingUpdateRequested();
+			}
+		}
+		
+		@SubscribeEvent
+		public static void onBlockHighLight(DrawHighlightEvent.HighlightBlock event) {
+			ICustomBoundingBox.onBlockHighLight(event);
+		}
     }
 }

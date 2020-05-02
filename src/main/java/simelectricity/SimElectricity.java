@@ -39,7 +39,7 @@ import simelectricity.energynet.EnergyNetAgent;
 public class SimElectricity {
     public static final String MODID = "simelectricity";
 //    public static final String NAME = "SimElectricity";
-//    public static final String version = "1.0.0";
+    public static final String version = "1.0.0";
 
     public static SimElectricity instance = null;
 

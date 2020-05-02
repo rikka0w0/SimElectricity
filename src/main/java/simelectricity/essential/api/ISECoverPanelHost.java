@@ -1,7 +1,7 @@
 package simelectricity.essential.api;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.Direction;
 import simelectricity.essential.api.coverpanel.ISECoverPanel;
 
 public interface ISECoverPanelHost {
@@ -11,9 +11,9 @@ public interface ISECoverPanelHost {
      * @param player
      * @return the side which the player is actually looking at, null - the cable
      */
-    ISECoverPanel getSelectedCoverPanel(EntityPlayer player);
+    ISECoverPanel getSelectedCoverPanel(PlayerEntity player);
 
-    ISECoverPanel getCoverPanelOnSide(EnumFacing side);
+    ISECoverPanel getCoverPanelOnSide(Direction side);
 
     /**
      * Handle on SERVER side ONLY!
@@ -22,9 +22,9 @@ public interface ISECoverPanelHost {
      * @param coverPanel
      * @return
      */
-    void installCoverPanel(EnumFacing side, ISECoverPanel coverPanel);
+    void installCoverPanel(Direction side, ISECoverPanel coverPanel);
 
-    boolean canInstallCoverPanelOnSide(EnumFacing side, ISECoverPanel coverPanel);
+    boolean canInstallCoverPanelOnSide(Direction side, ISECoverPanel coverPanel);
 
     /**
      * Handle on SERVER side ONLY!

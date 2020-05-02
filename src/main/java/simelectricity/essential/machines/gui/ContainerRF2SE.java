@@ -1,17 +1,16 @@
 package simelectricity.essential.machines.gui;
 
-import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import rikka.librikka.container.ContainerSynchronizer;
-import rikka.librikka.container.IContainerWithGui;
-import simelectricity.api.SEAPI;
+import rikka.librikka.gui.AutoGuiHandler;
 import simelectricity.essential.common.ContainerNoInvAutoSync;
 import simelectricity.essential.machines.tile.TileRF2SE;
 import simelectricity.essential.utils.network.ISEButtonEventHandler;
 
-public class ContainerRF2SE extends ContainerNoInvAutoSync<TileRF2SE> implements ISEButtonEventHandler, IContainerWithGui {
+@AutoGuiHandler.Marker(GuiRF2SE.class)
+public class ContainerRF2SE extends ContainerNoInvAutoSync<TileRF2SE> implements ISEButtonEventHandler {
     @ContainerSynchronizer.SyncField
     public double ratedOutputPower;
     @ContainerSynchronizer.SyncField
@@ -23,14 +22,14 @@ public class ContainerRF2SE extends ContainerNoInvAutoSync<TileRF2SE> implements
     @ContainerSynchronizer.SyncField
     public int rfInputRateDisplay;
 
-    public ContainerRF2SE(TileEntity tileEntity) {
-        super(tileEntity);
+    // Server side
+    public ContainerRF2SE(TileEntity tileEntity, int windowId) {
+        super(tileEntity, windowId);
     }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public GuiScreen createGui() {
-        return new GuiRF2SE(this);
+    
+    // Client side
+    public ContainerRF2SE(int windowId, PlayerInventory inv, PacketBuffer data) {
+    	this(null, windowId);
     }
 
     @Override

@@ -1,27 +1,33 @@
 package simelectricity.essential.machines.gui;
 
-import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraft.util.Direction;
 import rikka.librikka.container.ContainerSynchronizer;
-import rikka.librikka.container.IContainerWithGui;
+import rikka.librikka.gui.AutoGuiHandler;
 import simelectricity.api.SEAPI;
 import simelectricity.essential.common.ContainerNoInventoryTwoPort;
 import simelectricity.essential.machines.tile.TileAdjustableTransformer;
 import simelectricity.essential.utils.network.ISEButtonEventHandler;
 
-public class ContainerAdjustableTransformer extends ContainerNoInventoryTwoPort<TileAdjustableTransformer> implements ISEButtonEventHandler, IContainerWithGui {
+@AutoGuiHandler.Marker(GuiAdjustableTransformer.class)
+public class ContainerAdjustableTransformer extends ContainerNoInventoryTwoPort<TileAdjustableTransformer> implements ISEButtonEventHandler {
 	@ContainerSynchronizer.SyncField
 	public double ratio, outputResistance;
 	@ContainerSynchronizer.SyncField
-    public EnumFacing inputSide, outputSide;
+    public Direction inputSide, outputSide;
 	@ContainerSynchronizer.SyncField
     public double vPri, vSec;
 
-    public ContainerAdjustableTransformer(TileEntity tileEntity) {
-        super(tileEntity);
+	// Server side
+    public ContainerAdjustableTransformer(TileEntity tileEntity, int windowID) {
+        super(tileEntity, windowID);
+    }
+    
+    // Client side
+    public ContainerAdjustableTransformer(int windowId, PlayerInventory inv, PacketBuffer data) {
+    	this(null, windowId);
     }
 
     @Override
@@ -108,11 +114,5 @@ public class ContainerAdjustableTransformer extends ContainerNoInventoryTwoPort<
         this.host.outputResistance = outputResistance;
 
         SEAPI.energyNetAgent.updateTileParameter(this.host);
-    }
-    
-    @Override
-    @SideOnly(Side.CLIENT)
-    public GuiScreen createGui() {
-    	return new GuiAdjustableTransformer(this);
     }
 }

@@ -2,12 +2,12 @@ package simelectricity.essential.grid;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import rikka.librikka.Utils;
 import simelectricity.api.node.ISEGridNode;
 import simelectricity.api.tile.ISEGridTile;
@@ -18,23 +18,23 @@ import simelectricity.essential.common.SEEnergyTile;
 public abstract class TilePowerPoleBase extends SEEnergyTile implements ISEGridTile, ISEPowerPole {
     protected BlockPos neighbor1, neighbor2;
 
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     protected abstract PowerPoleRenderHelper createRenderHelper();
     
     //////////////////////////////
     /////ISEPowerPole
     //////////////////////////////
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     private PowerPoleRenderHelper renderHelper;
     
     @Override
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public BlockPos[] getNeighborPosArray() {
         return new BlockPos[] {this.neighbor1, this.neighbor2};
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public PowerPoleRenderHelper getRenderHelper() {
         return this.renderHelper;
     }
@@ -77,13 +77,13 @@ public abstract class TilePowerPoleBase extends SEEnergyTile implements ISEGridT
     //////////////////////////////
     /////TileEntity
     //////////////////////////////
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     @Override
     public double getMaxRenderDistanceSquared() {
         return 100000;
     }
 
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     @Override
     public AxisAlignedBB getRenderBoundingBox() {
         return TileEntity.INFINITE_EXTENT_AABB;
@@ -98,14 +98,14 @@ public abstract class TilePowerPoleBase extends SEEnergyTile implements ISEGridT
     ///Sync
     /////////////////////////////////////////////////////////
     @Override
-    public void prepareS2CPacketData(NBTTagCompound nbt) {
+    public void prepareS2CPacketData(CompoundNBT nbt) {
         Utils.saveToNbt(nbt, "neighbor1", this.neighbor1);
         Utils.saveToNbt(nbt, "neighbor2", this.neighbor2);
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
-    public void onSyncDataFromServerArrived(NBTTagCompound nbt) {
+    @OnlyIn(Dist.CLIENT)
+    public void onSyncDataFromServerArrived(CompoundNBT nbt) {
         this.neighbor1 = Utils.posFromNbt(nbt, "neighbor1");
         this.neighbor2 = Utils.posFromNbt(nbt, "neighbor2");
         if (this.renderHelper == null)
@@ -118,7 +118,7 @@ public abstract class TilePowerPoleBase extends SEEnergyTile implements ISEGridT
         this.updateRenderInfo(this.neighbor2);
     }
 
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     protected void updateRenderInfo(BlockPos neighborPos) {
         if (neighborPos == null)
             return;

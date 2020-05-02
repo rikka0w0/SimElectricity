@@ -1,17 +1,17 @@
 package simelectricity.essential.items;
 
 import net.minecraft.block.Block;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraft.item.ItemStack;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemUseContext;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import rikka.librikka.IMetaProvider;
+import rikka.librikka.IMetaBase;
 import rikka.librikka.Utils;
-import rikka.librikka.item.ISimpleTexture;
 import rikka.librikka.item.ItemBase;
 import simelectricity.api.ISECrowbarTarget;
 import simelectricity.api.ISESidedFacing;
@@ -31,90 +31,140 @@ import simelectricity.essential.utils.SEUnitHelper;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 
-public class ItemTools extends ItemBase implements ISimpleTexture {
-    private static final String[] subNames = {"crowbar", "wrench", "glove", "multimeter", "cablecutter_hv"};
-    private static Map<EntityPlayer, BlockPos> lastCoordinates_cablecutter_hv = new HashMap<>();
+public final class ItemTools extends ItemBase implements IMetaProvider<IMetaBase> {
+	private final ItemType itemType;
+    private static Map<PlayerEntity, BlockPos> lastCoordinates_cablecutter_hv = new HashMap<>();
 
-    public ItemTools() {
-        super("essential_tools", true);
-        setMaxStackSize(1);
-        setCreativeTab(SEAPI.SETab);
+    public static enum ItemType implements IMetaBase{
+    	crowbar(ItemTools::useCrowbar),
+    	wrench(ItemTools::useWrench),
+    	glove(ItemTools::useGlove),
+    	multimeter(ItemTools::useMultimeter),
+    	cablecutter_hv(ItemTools::useHVCableCutter);
+    	
+    	private final Function<ItemUseContext, ActionResultType> handler;
+    	ItemType(Function<ItemUseContext, ActionResultType> handler) {
+    		this.handler = handler;
+    	}
+    }
+    
+    private ItemTools(ItemType itemType) {
+        super("tool_" + itemType.name(), (new Item.Properties())
+        		.maxStackSize(1)
+        		.group(SEAPI.SETab));
+        this.itemType = itemType;
     }
 
-    public static EnumActionResult useCrowbar(TileEntity te, EntityPlayer player, EnumFacing side) {
+    @Override
+	public IMetaBase meta() {
+		return itemType;
+	}
+    
+    @Override
+    public ActionResultType onItemUse(ItemUseContext context) {
+    	return itemType.handler.apply(context);
+    }
+    
+    public static ItemTools[] create() {
+    	ItemTools[] ret = new ItemTools[ItemType.values().length];
+    	for (ItemType itemType: ItemType.values())
+    		ret[itemType.ordinal()] = new ItemTools(itemType);
+    	return ret;
+    }
+    
+    public static ActionResultType useCrowbar(ItemUseContext context) {
+    	TileEntity te = context.getWorld().getTileEntity(context.getPos());
+    	PlayerEntity player = context.getPlayer();
+    	Direction side = context.getFace();
+    	
+    	
         if (te instanceof ISECoverPanelHost) {
             ISECoverPanel coverPanel = ((ISECoverPanelHost) te).getSelectedCoverPanel(player);
 
             if (coverPanel == null)
-                return EnumActionResult.FAIL;
+                return ActionResultType.FAIL;
 
             if (te.getWorld().isRemote) {
-                return EnumActionResult.PASS;
+                return ActionResultType.PASS;
             } else {
-                boolean ret = ((ISECoverPanelHost) te).removeCoverPanel(coverPanel, !player.capabilities.isCreativeMode);
-                return ret ? EnumActionResult.PASS : EnumActionResult.FAIL;
+                boolean ret = ((ISECoverPanelHost) te).removeCoverPanel(coverPanel, !player.isCreative());
+                return ret ? ActionResultType.PASS : ActionResultType.FAIL;
             }
         } else if (te instanceof ISECrowbarTarget) {
             ISECrowbarTarget crowbarTarget = (ISECrowbarTarget) te;
 
-            EnumFacing selectedDirection = side;
+            Direction selectedDirection = side;
 
             if (crowbarTarget.canCrowbarBeUsed(selectedDirection)) {
                 if (te.getWorld().isRemote) {
-                    return EnumActionResult.PASS;
+                    return ActionResultType.PASS;
                 } else {
-                    crowbarTarget.onCrowbarAction(selectedDirection, player.capabilities.isCreativeMode);
-                    return EnumActionResult.PASS;
+                    crowbarTarget.onCrowbarAction(selectedDirection, player.isCreative());
+                    return ActionResultType.PASS;
                 }
 
             }
 
-            return EnumActionResult.FAIL;
+            return ActionResultType.FAIL;
         }
 
-        return EnumActionResult.FAIL;
+        return ActionResultType.FAIL;
     }
 
-    public static EnumActionResult useWrench(TileEntity te, EntityPlayer player, EnumFacing side) {
+    public static ActionResultType useWrench(ItemUseContext context) {
+    	TileEntity te = context.getWorld().getTileEntity(context.getPos());
+    	PlayerEntity player = context.getPlayer();
+    	Direction side = context.getFace();
+    	
         if (te instanceof ISEWrenchable) {
             ISEWrenchable wrenchTarget = (ISEWrenchable) te;
 
             if (wrenchTarget.canWrenchBeUsed(side)) {
                 if (te.getWorld().isRemote) {
-                    return EnumActionResult.PASS;
+                    return ActionResultType.PASS;
                 } else {
-                    wrenchTarget.onWrenchAction(side, player.capabilities.isCreativeMode);
-                    return EnumActionResult.PASS;
+                    wrenchTarget.onWrenchAction(side, player.isCreative());
+                    return ActionResultType.PASS;
                 }
             }
-            return EnumActionResult.FAIL;
+            return ActionResultType.FAIL;
         }
 
-        return EnumActionResult.FAIL;
+        return ActionResultType.FAIL;
     }
 
-    public static EnumActionResult useGlove(TileEntity te, EntityPlayer player, EnumFacing side) {
+    public static ActionResultType useGlove(ItemUseContext context) {
+    	TileEntity te = context.getWorld().getTileEntity(context.getPos());
+    	PlayerEntity player = context.getPlayer();
+    	Direction side = context.getFace();
+    	
         if (te instanceof ISESidedFacing) {
             ISESidedFacing target = (ISESidedFacing) te;
 
             if (target.canSetFacing(side)) {
                 if (te.getWorld().isRemote) {
-                    return EnumActionResult.PASS;
+                    return ActionResultType.PASS;
                 } else {
                     target.setFacing(side);
-                    return EnumActionResult.PASS;
+                    return ActionResultType.PASS;
                 }
             }
-            return EnumActionResult.FAIL;
+            return ActionResultType.FAIL;
         }
 
-        return EnumActionResult.FAIL;
+        return ActionResultType.FAIL;
     }
 
-    public static EnumActionResult useMultimeter(World world, BlockPos pos, EntityPlayer player, EnumFacing side) {
+    public static ActionResultType useMultimeter(ItemUseContext context) {
+    	World world = context.getWorld();
+    	BlockPos pos = context.getPos();
+        PlayerEntity player = context.getPlayer();
+        Direction side = context.getFace();
+        
         if (world.isRemote)
-            return EnumActionResult.PASS;
+            return ActionResultType.PASS;
         
         TileEntity te = world.getTileEntity(pos);
         Block block = world.getBlockState(pos).getBlock();
@@ -127,7 +177,7 @@ public class ItemTools extends ItemBase implements ISimpleTexture {
         if (!(	te instanceof ISECableTile ||
         		te instanceof ISETile ||
         		te instanceof ISETile) && delegatedNode == null)
-            return EnumActionResult.PASS;
+            return ActionResultType.PASS;
         
         Utils.chat(player, "------------------");
         
@@ -147,7 +197,7 @@ public class ItemTools extends ItemBase implements ISimpleTexture {
         if (te instanceof ISETile) {
             ISETile tile = (ISETile) te;
 
-            for (EnumFacing dir : EnumFacing.VALUES) {
+            for (Direction dir : Direction.values()) {
                 ISESubComponent comp = tile.getComponent(dir);
                 if (comp != null && comp != delegatedNode) {
                     String[] temp = comp.toString().split("[.]");
@@ -164,10 +214,10 @@ public class ItemTools extends ItemBase implements ISimpleTexture {
             	ItemTools.printVI(node, player);
         }
         
-        return EnumActionResult.PASS;
+        return ActionResultType.PASS;
     }
 
-    public static void printVI(ISESimulatable node, EntityPlayer player) {
+    public static void printVI(ISESimulatable node, PlayerEntity player) {
     	String s = "WTF";
     	
     	if (node instanceof ISECable) {
@@ -191,9 +241,13 @@ public class ItemTools extends ItemBase implements ISimpleTexture {
         Utils.chat(player, s);
     }
 
-    private static EnumActionResult useHVCableCutter(World world, BlockPos pos, EntityPlayer player) {
+    private static ActionResultType useHVCableCutter(ItemUseContext context) {
+    	World world = context.getWorld();
+    	BlockPos pos = context.getPos();
+        PlayerEntity player = context.getPlayer();
+        
         if (world.isRemote)
-            return EnumActionResult.PASS;
+            return ActionResultType.PASS;
 
         TileEntity te = world.getTileEntity(pos);
         Block block = world.getBlockState(pos).getBlock();
@@ -211,15 +265,15 @@ public class ItemTools extends ItemBase implements ISimpleTexture {
 
         if (gridNode == null) {
             Utils.chatWithLocalization(player, "chat.sime_essential:powerpole_current_selection_invalid");
-            return EnumActionResult.FAIL;
+            return ActionResultType.FAIL;
         }
 
-        if (player.isSneaking()) {
+        if (player.isCrouching()) {
             for (ISEGridNode neighbor : gridNode.getNeighborList()) {
                 SEAPI.energyNetAgent.breakGridConnection(world, neighbor, gridNode);
             }
             lastCoordinates_cablecutter_hv.put(player, null);
-            return EnumActionResult.SUCCESS;
+            return ActionResultType.SUCCESS;
         }
 
         BlockPos lastSelectedPos = lastCoordinates_cablecutter_hv.get(player);
@@ -254,44 +308,6 @@ public class ItemTools extends ItemBase implements ISimpleTexture {
             }
         }
 
-        return EnumActionResult.SUCCESS;
-    }
-
-    @Override
-    public String[] getSubItemUnlocalizedNames() {
-        return ItemTools.subNames;
-    }
-
-    @Override
-    public String getIconName(int damage) {
-        return "tool_" + ItemTools.subNames[damage];
-    }
-
-    @Override
-    public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
-        ItemStack itemStack = player.getItemStackFromSlot(EntityEquipmentSlot.MAINHAND);
-
-        if (itemStack.getItem() != this) {
-            itemStack = player.getItemStackFromSlot(EntityEquipmentSlot.OFFHAND);
-            if (itemStack.getItem() != this)
-                return EnumActionResult.FAIL;
-        }
-
-        TileEntity te = world.getTileEntity(pos);
-
-        switch (itemStack.getItemDamage()) {
-            case 0:
-                return ItemTools.useCrowbar(te, player, side);
-            case 1:
-                return ItemTools.useWrench(te, player, side);
-            case 2:
-                return ItemTools.useGlove(te, player, side);
-            case 3:
-                return ItemTools.useMultimeter(world, pos, player, side);
-            case 4:
-                return ItemTools.useHVCableCutter(world, pos, player);
-        }
-
-        return EnumActionResult.PASS;
+        return ActionResultType.SUCCESS;
     }
 }

@@ -1,18 +1,19 @@
 package simelectricity.essential.machines.tile;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.Container;
-import net.minecraft.util.EnumFacing;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-import rikka.librikka.tileentity.IGuiProviderTile;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.INamedContainerProvider;
+import net.minecraft.util.Direction;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import simelectricity.api.ISEEnergyNetUpdateHandler;
 import simelectricity.api.components.ISEDiode;
 import simelectricity.essential.common.semachine.ISESocketProvider;
 import simelectricity.essential.common.semachine.SETwoPortMachine;
 import simelectricity.essential.machines.gui.ContainerDiode;
 
-public class TileDiode extends SETwoPortMachine<ISEDiode> implements ISEDiode, ISEEnergyNetUpdateHandler, ISESocketProvider, IGuiProviderTile {
+public class TileDiode extends SETwoPortMachine<ISEDiode> implements ISEDiode, ISEEnergyNetUpdateHandler, ISESocketProvider, INamedContainerProvider {
     public double inputVoltage, outputVoltage;
 
     /////////////////////////////////////////////////////////
@@ -47,8 +48,8 @@ public class TileDiode extends SETwoPortMachine<ISEDiode> implements ISEDiode, I
     ///////////////////////////////////
 
     @Override
-    @SideOnly(Side.CLIENT)
-    public int getSocketIconIndex(EnumFacing side) {
+    @OnlyIn(Dist.CLIENT)
+    public int getSocketIconIndex(Direction side) {
         if (side == this.inputSide)
             return 2;
         else if (side == this.outputSide)
@@ -58,10 +59,10 @@ public class TileDiode extends SETwoPortMachine<ISEDiode> implements ISEDiode, I
     }
     
     ///////////////////////////////////
-    /// IGuiProviderTile
+    /// INamedContainerProvider
     ///////////////////////////////////
 	@Override
-	public Container getContainer(EntityPlayer player, EnumFacing side) {
-		return new ContainerDiode(this);
+	public Container createMenu(int windowID, PlayerInventory inv, PlayerEntity player) {
+		return new ContainerDiode(this, windowID);
 	}
 }

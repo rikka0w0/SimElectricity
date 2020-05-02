@@ -1,14 +1,14 @@
 package simelectricity.essential.coverpanel;
 
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.network.PacketBuffer;
 import rikka.librikka.container.ContainerSynchronizer;
-import rikka.librikka.container.IContainerWithGui;
+import rikka.librikka.gui.AutoGuiHandler;
 import simelectricity.essential.common.ContainerNoInvAutoSync;
 import simelectricity.essential.utils.network.ISEButtonEventHandler;
 
-public class ContainerVoltageSensor extends ContainerNoInvAutoSync<VoltageSensorPanel> implements ISEButtonEventHandler, IContainerWithGui {
+@AutoGuiHandler.Marker(GuiVoltageSensor.class)
+public class ContainerVoltageSensor extends ContainerNoInvAutoSync<VoltageSensorPanel> implements ISEButtonEventHandler {
 	@ContainerSynchronizer.SyncField
 	public boolean emitRedStoneSignal;
     @ContainerSynchronizer.SyncField
@@ -16,16 +16,16 @@ public class ContainerVoltageSensor extends ContainerNoInvAutoSync<VoltageSensor
     @ContainerSynchronizer.SyncField
     public double thresholdVoltage;
 
-    public ContainerVoltageSensor(VoltageSensorPanel panel) {
-    	super(panel);
+    // Server side
+    public ContainerVoltageSensor(VoltageSensorPanel panel, int windowId) {
+    	super(panel, windowId);
     }
 
-	@Override
-	@SideOnly(Side.CLIENT)
-	public GuiScreen createGui() {
-		return new GuiVoltageSensor(this);
-	}
-
+    // Client side
+    public ContainerVoltageSensor(int windowId, PlayerInventory inv, PacketBuffer data) {
+    	this(null, windowId);
+    }
+    
     @Override
     public void onButtonPressed(int buttonID, boolean isCtrlPressed) {
         double thresholdVoltage = this.thresholdVoltage;

@@ -1,19 +1,19 @@
 package simelectricity.essential.client.grid;
 
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 public interface ISEPowerPole {
-    @SideOnly(Side.CLIENT)
+	@OnlyIn(Dist.CLIENT)
     BlockPos[] getNeighborPosArray();
     
-    @SideOnly(Side.CLIENT)
+	@OnlyIn(Dist.CLIENT)
     BlockPos getAccessoryPos();
 
     /**
      * @return an immutable instance of PowerPoleRenderHelper, created before updateRenderInfo()
      */
-    @SideOnly(Side.CLIENT)
+	@OnlyIn(Dist.CLIENT)
     PowerPoleRenderHelper getRenderHelper();
 }

@@ -1,17 +1,16 @@
 package simelectricity.essential.machines.gui;
 
-import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import rikka.librikka.container.ContainerSynchronizer;
-import rikka.librikka.container.IContainerWithGui;
-import simelectricity.api.SEAPI;
+import rikka.librikka.gui.AutoGuiHandler;
 import simelectricity.essential.common.ContainerNoInvAutoSync;
 import simelectricity.essential.machines.tile.TileSE2RF;
 import simelectricity.essential.utils.network.ISEButtonEventHandler;
 
-public class ContainerSE2RF extends ContainerNoInvAutoSync<TileSE2RF> implements ISEButtonEventHandler, IContainerWithGui {
+@AutoGuiHandler.Marker(GuiSE2RF.class)
+public class ContainerSE2RF extends ContainerNoInvAutoSync<TileSE2RF> implements ISEButtonEventHandler {
 	@ContainerSynchronizer.SyncField
 	public double bufferedEnergy;
 
@@ -27,16 +26,16 @@ public class ContainerSE2RF extends ContainerNoInvAutoSync<TileSE2RF> implements
     @ContainerSynchronizer.SyncField
     public double ratedOutputPower;
 
-    public ContainerSE2RF(TileEntity tileEntity) {
-		super(tileEntity);
+    // Server side
+    public ContainerSE2RF(TileEntity tileEntity, int windowId) {
+		super(tileEntity, windowId);
 	}
-
-    @Override
-    @SideOnly(Side.CLIENT)
-	public GuiScreen createGui() {
-		return new GuiSE2RF(this);
-	}
-
+    
+    // Client side
+    public ContainerSE2RF(int windowId, PlayerInventory inv, PacketBuffer data) {
+    	this(null, windowId);
+    }
+    
     @Override
     public void onButtonPressed(int buttonID, boolean isCtrlPressed) {
         double ratedOutputPower = host.ratedOutputPower;

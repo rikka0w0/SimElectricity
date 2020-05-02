@@ -1,6 +1,6 @@
 package simelectricity.essential.utils;
 
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -9,6 +9,6 @@ import net.minecraft.world.World;
  */
 public class RedstoneHelper {
     public static boolean isBlockPowered(World world, BlockPos pos, int threshold) {
-        return world.getRedstonePower(pos.down(), EnumFacing.DOWN) > threshold ? true : (world.getRedstonePower(pos.up(), EnumFacing.UP) > threshold ? true : (world.getRedstonePower(pos.north(), EnumFacing.NORTH) > threshold ? true : (world.getRedstonePower(pos.south(), EnumFacing.SOUTH) > threshold ? true : (world.getRedstonePower(pos.west(), EnumFacing.WEST) > threshold ? true : world.getRedstonePower(pos.east(), EnumFacing.EAST) > threshold))));
+        return world.getRedstonePower(pos.down(), Direction.DOWN) > threshold ? true : (world.getRedstonePower(pos.up(), Direction.UP) > threshold ? true : (world.getRedstonePower(pos.north(), Direction.NORTH) > threshold ? true : (world.getRedstonePower(pos.south(), Direction.SOUTH) > threshold ? true : (world.getRedstonePower(pos.west(), Direction.WEST) > threshold ? true : world.getRedstonePower(pos.east(), Direction.EAST) > threshold))));
     }
 }

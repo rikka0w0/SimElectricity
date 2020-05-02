@@ -1,25 +1,25 @@
 package simelectricity.essential.machines.gui;
 
-import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import rikka.librikka.container.ContainerSynchronizer;
-import rikka.librikka.container.IContainerWithGui;
+import rikka.librikka.gui.AutoGuiHandler;
 import simelectricity.essential.common.ContainerNoInvAutoSync;
 import simelectricity.essential.machines.tile.TileVoltageMeter;
 
-public class ContainerVoltageMeter extends ContainerNoInvAutoSync<TileVoltageMeter> implements IContainerWithGui {
+@AutoGuiHandler.Marker(GuiVoltageMeter.class)
+public class ContainerVoltageMeter extends ContainerNoInvAutoSync<TileVoltageMeter> {
 	@ContainerSynchronizer.SyncField
     public double voltage;
 
-    public ContainerVoltageMeter(TileEntity tileEntity) {
-        super(tileEntity);
+    // Server side
+    public ContainerVoltageMeter(TileEntity tileEntity, int windowId) {
+    	super(tileEntity, windowId);
     }
 
-    @Override
-    @SideOnly(Side.CLIENT)
-    public GuiScreen createGui() {
-    	return new GuiVoltageMeter(this);
+    // Client side
+    public ContainerVoltageMeter(int windowId, PlayerInventory inv, PacketBuffer data) {
+    	this(null, windowId);
     }
 }

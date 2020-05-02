@@ -1,28 +1,28 @@
 package simelectricity.essential.machines.gui;
 
-import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraft.util.Direction;
 import rikka.librikka.container.ContainerSynchronizer;
-import rikka.librikka.container.IContainerWithGui;
+import rikka.librikka.gui.AutoGuiHandler;
 import simelectricity.essential.common.ContainerNoInventoryTwoPort;
 import simelectricity.essential.machines.tile.TileDiode;
 
-public class ContainerDiode extends ContainerNoInventoryTwoPort<TileDiode> implements IContainerWithGui {
+@AutoGuiHandler.Marker(GuiDiode.class)
+public class ContainerDiode extends ContainerNoInventoryTwoPort<TileDiode> {
 	@ContainerSynchronizer.SyncField
     public double inputVoltage, outputVoltage;
     @ContainerSynchronizer.SyncField
-    public EnumFacing inputSide, outputSide;
+    public Direction inputSide, outputSide;
 
-    public ContainerDiode(TileEntity tileEntity) {
-        super(tileEntity);
+    // Server side
+    public ContainerDiode(TileEntity tileEntity, int windowId) {
+    	super(tileEntity, windowId);
     }
-    
-    @Override
-    @SideOnly(Side.CLIENT)
-    public GuiScreen createGui() {
-    	return new GuiDiode(this);
+
+    // Client side
+    public ContainerDiode(int windowId, PlayerInventory inv, PacketBuffer data) {
+    	this(null, windowId);
     }
 }

@@ -1,20 +1,23 @@
 package simelectricity.essential.coverpanel;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.Container;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.container.Container;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.world.WorldServer;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraft.util.Direction;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import rikka.librikka.Utils;
 import simelectricity.essential.ItemRegistry;
 import simelectricity.essential.api.client.ISECoverPanelRender;
 import simelectricity.essential.api.coverpanel.ISEElectricalCoverPanel;
 import simelectricity.essential.api.coverpanel.ISEGuiCoverPanel;
 import simelectricity.essential.api.coverpanel.ISERedstoneEmitterCoverPanel;
 import simelectricity.essential.client.coverpanel.VoltageSensorRender;
+import simelectricity.essential.items.ItemMisc;
 
 public class VoltageSensorPanel implements ISEElectricalCoverPanel, ISERedstoneEmitterCoverPanel, ISEGuiCoverPanel{
     public boolean emitRedStoneSignal;
@@ -22,13 +25,13 @@ public class VoltageSensorPanel implements ISEElectricalCoverPanel, ISERedstoneE
     public double thresholdVoltage = 100;
 
     private TileEntity hostTileEntity;
-    private EnumFacing installedSide;
+    private Direction installedSide;
     private double voltage;
 
     public VoltageSensorPanel() {
     }
 
-    public VoltageSensorPanel(NBTTagCompound nbt) {
+    public VoltageSensorPanel(CompoundNBT nbt) {
         this.inverted = nbt.getBoolean("inverted");
         this.thresholdVoltage = nbt.getDouble("thresholdVoltage");
     }
@@ -50,28 +53,28 @@ public class VoltageSensorPanel implements ISEElectricalCoverPanel, ISERedstoneE
     }
 
     @Override
-    public void toNBT(NBTTagCompound nbt) {
-        nbt.setString("coverPanelType", "VoltageSensorPanel");
+    public void toNBT(CompoundNBT nbt) {
+        nbt.putString("coverPanelType", "VoltageSensorPanel");
 
-        nbt.setBoolean("inverted", this.inverted);
-        nbt.setDouble("thresholdVoltage", this.thresholdVoltage);
+        nbt.putBoolean("inverted", this.inverted);
+        nbt.putDouble("thresholdVoltage", this.thresholdVoltage);
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public ISECoverPanelRender getCoverPanelRender() {
         return VoltageSensorRender.instance;
     }
 
     @Override
-    public void setHost(TileEntity hostTileEntity, EnumFacing side) {
+    public void setHost(TileEntity hostTileEntity, Direction side) {
         this.hostTileEntity = hostTileEntity;
         installedSide = side;
     }
 
     @Override
     public ItemStack getDroppedItemStack() {
-        return new ItemStack(ItemRegistry.itemMisc, 1, 1);
+        return new ItemStack(ItemRegistry.itemMisc[1], 1);
     }
 
     @Override
@@ -85,9 +88,14 @@ public class VoltageSensorPanel implements ISEElectricalCoverPanel, ISERedstoneE
     ///ISEGuiCoverPanel
     /////////////////////////
     @Override
-    public Container getContainer(EntityPlayer player, TileEntity te) {
-        return new ContainerVoltageSensor(this);
+    public Container createMenu(int windowId, PlayerInventory inv, PlayerEntity player) {
+        return new ContainerVoltageSensor(this, windowId);
     }
+
+	@Override
+	public ITextComponent getDisplayName() {
+		return ItemRegistry.itemMisc[ItemMisc.ItemType.voltagesensor.ordinal()].getName();
+	}
 
     /////////////////////////
     ///ISEElectricalCoverPanel
@@ -96,13 +104,7 @@ public class VoltageSensorPanel implements ISEElectricalCoverPanel, ISERedstoneE
     public void onEnergyNetUpdate(double voltage) {
         this.voltage = voltage;
 
-        WorldServer world = (WorldServer) this.hostTileEntity.getWorld();
-        world.addScheduledTask(new Runnable() {
-            @Override
-            public void run() {
-                VoltageSensorPanel.this.checkRedStoneSignal();
-            }
-        });
+        Utils.enqueueServerWork(this::checkRedStoneSignal);
     }
 
     /**
@@ -116,7 +118,7 @@ public class VoltageSensorPanel implements ISEElectricalCoverPanel, ISERedstoneE
         if (emitRedStoneSignal != this.emitRedStoneSignal) {
             this.emitRedStoneSignal = emitRedStoneSignal;
             //Notify neighbor blocks if redstone signal polarity changes
-            this.hostTileEntity.getWorld().neighborChanged(this.hostTileEntity.getPos().offset(this.installedSide), this.hostTileEntity.getBlockType(), this.hostTileEntity.getPos());
+            this.hostTileEntity.getWorld().neighborChanged(this.hostTileEntity.getPos().offset(this.installedSide), this.hostTileEntity.getBlockState().getBlock(), this.hostTileEntity.getPos());
 
             return true;
         }

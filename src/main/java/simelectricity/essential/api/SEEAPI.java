@@ -1,8 +1,8 @@
 package simelectricity.essential.api;
 
 import net.minecraft.block.Block;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import simelectricity.essential.api.internal.ISECoverPanelRegistry;
 
 import java.util.LinkedList;
@@ -16,6 +16,6 @@ public class SEEAPI {
     /**
      * Register new colored blocks during the FMLInitializationEvent event
      */
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public static LinkedList<Block> coloredBlocks;
 }

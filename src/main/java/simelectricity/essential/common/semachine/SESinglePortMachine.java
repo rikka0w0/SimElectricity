@@ -1,9 +1,11 @@
 package simelectricity.essential.common.semachine;
 
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.state.properties.BlockStateProperties;
+import net.minecraft.util.Direction;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.model.data.ModelDataMap;
 import rikka.librikka.Utils;
 import simelectricity.api.ISEWrenchable;
 import simelectricity.api.ISESidedFacing;
@@ -14,8 +16,7 @@ import simelectricity.api.tile.ISETile;
 import simelectricity.essential.common.SEEnergyTile;
 
 public abstract class SESinglePortMachine<T extends ISEComponentParameter> extends SEEnergyTile implements ISESidedFacing, ISEWrenchable, ISETile, ISEComponentParameter {
-    protected EnumFacing functionalSide = EnumFacing.SOUTH;
-    protected EnumFacing facing = EnumFacing.NORTH;
+    protected Direction functionalSide = Direction.SOUTH;
     protected final ISESubComponent circuit = SEAPI.energyNetAgent.newComponent(this, this);
     protected final T cachedParam = (T) circuit;
 
@@ -23,37 +24,33 @@ public abstract class SESinglePortMachine<T extends ISEComponentParameter> exten
     /// TileEntity
     ///////////////////////////////////
     @Override
-    public void readFromNBT(NBTTagCompound tagCompound) {
-        super.readFromNBT(tagCompound);
+    public void read(CompoundNBT tagCompound) {
+        super.read(tagCompound);
 
         this.functionalSide = Utils.facingFromNbt(tagCompound, "functionalSide");
-        this.facing = Utils.facingFromNbt(tagCompound, "facing");
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
-        tagCompound.setByte("functionalSide", (byte) this.functionalSide.ordinal());
-        tagCompound.setByte("facing", (byte) this.facing.ordinal());
-        return super.writeToNBT(tagCompound);
+    public CompoundNBT write(CompoundNBT tagCompound) {
+        Utils.saveToNbt(tagCompound, "functionalSide", this.functionalSide);
+        return super.write(tagCompound);
     }
 
     @Override
-    public EnumFacing getFacing() {
-        return this.facing;
+    public Direction getFacing() {
+        return getBlockState().get(BlockStateProperties.FACING);
     }
 
     ///////////////////////////////////
     /// ISESidedFacing
     ///////////////////////////////////
     @Override
-    public void setFacing(EnumFacing newFacing) {
-        this.facing = newFacing;
-
-        markTileEntityForS2CSync();
+    public void setFacing(Direction newFacing) {
+    	world.setBlockState(pos, getBlockState().with(BlockStateProperties.FACING, newFacing));
     }
 
     @Override
-    public boolean canSetFacing(EnumFacing newFacing) {
+    public boolean canSetFacing(Direction newFacing) {
         return true;
     }
 
@@ -62,12 +59,12 @@ public abstract class SESinglePortMachine<T extends ISEComponentParameter> exten
     /// ISEWrenchable
     ///////////////////////////////////
     @Override
-    public void onWrenchAction(EnumFacing side, boolean isCreativePlayer) {
+    public void onWrenchAction(Direction side, boolean isCreativePlayer) {
         this.SetFunctionalSide(side);
     }
 
     @Override
-    public boolean canWrenchBeUsed(EnumFacing side) {
+    public boolean canWrenchBeUsed(Direction side) {
         return true;
     }
 
@@ -75,18 +72,16 @@ public abstract class SESinglePortMachine<T extends ISEComponentParameter> exten
     ///Sync
     /////////////////////////////////////////////////////////
     @Override
-    public void prepareS2CPacketData(NBTTagCompound nbt) {
+    public void prepareS2CPacketData(CompoundNBT nbt) {
         super.prepareS2CPacketData(nbt);
 
-        nbt.setByte("functionalSide", (byte) this.functionalSide.ordinal());
-        nbt.setByte("facing", (byte) this.facing.ordinal());
+        Utils.saveToNbt(nbt, "functionalSide", this.functionalSide);
     }
 
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     @Override
-    public void onSyncDataFromServerArrived(NBTTagCompound nbt) {
-        this.functionalSide = EnumFacing.getFront(nbt.getByte("functionalSide"));
-        this.facing = EnumFacing.getFront(nbt.getByte("facing"));
+    public void onSyncDataFromServerArrived(CompoundNBT nbt) {
+        this.functionalSide = Utils.facingFromNbt(nbt, "functionalSide");
 
         // Flag 1 - update Rendering Only!
         this.markForRenderUpdate();
@@ -98,20 +93,27 @@ public abstract class SESinglePortMachine<T extends ISEComponentParameter> exten
     ///ISETile
     /////////////////////////////////////////////////////////
     @Override
-    public ISESubComponent getComponent(EnumFacing side) {
+    public ISESubComponent getComponent(Direction side) {
         return side == this.functionalSide ? this.circuit : null;
     }
 
     /////////////////////////////////////////////////////////
     ///Utils
     /////////////////////////////////////////////////////////
-    public void SetFunctionalSide(EnumFacing side) {
+    public void SetFunctionalSide(Direction side) {
         this.functionalSide = side;
 
         markTileEntityForS2CSync();
-        this.world.notifyNeighborsOfStateChange(this.pos, getBlockType(), true);
+        this.world.notifyNeighborsOfStateChange(this.pos, getBlockState().getBlock());
 
         if (isAddedToEnergyNet)
             SEAPI.energyNetAgent.updateTileConnection(this);
     }
+    
+    protected void collectModelData(ModelDataMap.Builder builder) {
+    	builder.withInitial(ISESocketProvider.prop, (ISESocketProvider) this);
+    }
+//    protected void setSecondState(boolean val) {
+//    	this.world.setBlockState(this.getPos(), this.getBlockState().with(BlockStateProperties.POWERED, val));
+//    }
 }

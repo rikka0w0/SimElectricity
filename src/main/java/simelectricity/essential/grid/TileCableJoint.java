@@ -2,10 +2,10 @@ package simelectricity.essential.grid;
 
 import javax.annotation.Nonnull;
 
-import net.minecraft.util.EnumFacing;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-import rikka.librikka.properties.Properties;
+import net.minecraft.util.Direction;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import rikka.librikka.DirHorizontal8;
 import simelectricity.api.SEAPI;
 import simelectricity.api.node.ISESimulatable;
 import simelectricity.api.tile.ISECableTile;
@@ -17,11 +17,10 @@ public abstract class TileCableJoint extends TilePoleAccessory implements ISECab
     public static class Type10kV extends TileCableJoint {
         @Override
         @Nonnull
-        @SideOnly(Side.CLIENT)
+        @OnlyIn(Dist.CLIENT)
         protected PowerPoleRenderHelper createRenderHelper() {
             //Create renderHelper on client side
-            int rotation = this.world.getBlockState(this.pos).getValue(Properties.facing3bit);
-            PowerPoleRenderHelper renderHelper = new PowerPoleRenderHelper(this.pos, rotation, 1, 3);
+            PowerPoleRenderHelper renderHelper = new PowerPoleRenderHelper(this.pos, getHorizontalDirection(), 1, 3);
             renderHelper.addInsulatorGroup(0F, 1.45F, 0.6F,
                     renderHelper.createInsulator(0, 2, -0.95F, 1.17F, -0.3F),
                     renderHelper.createInsulator(0, 2, 0F, 1.45F, 0.6F),
@@ -34,11 +33,10 @@ public abstract class TileCableJoint extends TilePoleAccessory implements ISECab
     public static class Type415V extends TileCableJoint {
         @Override
         @Nonnull
-        @SideOnly(Side.CLIENT)
+        @OnlyIn(Dist.CLIENT)
         protected PowerPoleRenderHelper createRenderHelper() {
             //Create renderHelper on client side
-            int rotation = this.world.getBlockState(this.pos).getValue(Properties.facing3bit);
-            PowerPoleRenderHelper renderHelper = new PowerPoleRenderHelper(this.pos, rotation, 1, 4);
+            PowerPoleRenderHelper renderHelper = new PowerPoleRenderHelper(this.pos, getHorizontalDirection(), 1, 4);
             renderHelper.addInsulatorGroup(0F, 1.45F, 0.6F,
             		renderHelper.createInsulator(0, 1.2F, -0.75F, 0.65F, -0.275F),
             		renderHelper.createInsulator(0, 1.2F, -0.275F, 0.9F, 0.35F),
@@ -47,6 +45,10 @@ public abstract class TileCableJoint extends TilePoleAccessory implements ISECab
 
             return renderHelper;
         }
+    }
+    
+    protected DirHorizontal8 getHorizontalDirection() {
+    	return this.world.getBlockState(this.pos).get(DirHorizontal8.prop);
     }
     
     /////////////////////////////////////////////////////////
@@ -73,8 +75,8 @@ public abstract class TileCableJoint extends TilePoleAccessory implements ISECab
     }
 
     @Override
-    public boolean canConnectOnSide(EnumFacing direction) {
-        return direction == EnumFacing.DOWN;
+    public boolean canConnectOnSide(Direction direction) {
+        return direction == Direction.DOWN;
     }
 
     @Override

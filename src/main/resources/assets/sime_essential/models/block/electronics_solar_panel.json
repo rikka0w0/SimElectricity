@@ -1,12 +1,12 @@
 {
   "parent": "block/cube",
   "textures": {
-    "down": "sime_essential:blocks/machines/machine_bottom",
-    "up": "sime_essential:blocks/machines/solar_panel_top",
-    "north": "sime_essential:blocks/machines/machine_side",
-    "south": "sime_essential:blocks/machines/machine_side",
-    "west": "sime_essential:blocks/machines/machine_side",
-    "east": "sime_essential:blocks/machines/machine_side",
-    "particle": "sime_essential:blocks/machines/solar_panel_top"
+    "down": "sime_essential:block/machines/machine_bottom",
+    "up": "sime_essential:block/machines/solar_panel_top",
+    "north": "sime_essential:block/machines/machine_side",
+    "south": "sime_essential:block/machines/machine_side",
+    "west": "sime_essential:block/machines/machine_side",
+    "east": "sime_essential:block/machines/machine_side",
+    "particle": "sime_essential:block/machines/solar_panel_top"
   }
 }

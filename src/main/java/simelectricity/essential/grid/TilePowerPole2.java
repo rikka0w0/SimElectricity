@@ -2,29 +2,30 @@ package simelectricity.essential.grid;
 
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import rikka.librikka.math.MathAssitant;
 import rikka.librikka.math.Vec3f;
+import simelectricity.essential.BlockRegistry;
 import simelectricity.essential.client.grid.PowerPoleRenderHelper;
 
 public class TilePowerPole2 extends TilePowerPoleBase {
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public boolean isType0() {
-        return this.getBlockMetadata() >> 3 == 0;
+        return getBlockState().getBlock() == BlockRegistry.powerPole2[0];
     }
 	
     @Override
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public BlockPos getAccessoryPos() {
     	return null;
     }
     
     @Override
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     protected PowerPoleRenderHelper createRenderHelper() {
         PowerPoleRenderHelper helper;
-        int rotation = (this.getBlockMetadata() & 3) * 2;
+        int rotation = BlockPowerPole2.getFacingInt(getBlockState()) * 2;
 
         if (this.isType0()) {
             helper = new PowerPoleRenderHelper(this.pos, rotation, 2, 3) {

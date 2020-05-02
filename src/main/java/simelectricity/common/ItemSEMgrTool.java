@@ -13,15 +13,8 @@ public class ItemSEMgrTool extends Item {
                 .maxStackSize(1)
                 .maxDamage(0)
                 .group(SEAPI.SETab));
-        /// this.setUnlocalizedName(ItemSEMgrTool.name); getDefaultTranslationKey getTranslationKey
         this.setRegistryName(ItemSEMgrTool.name);
-        //this.setHasSubtypes(true);
     }
-
-//    @Override
-//    public String getUnlocalizedNameInefficiently(ItemStack itemStack) {
-//        return super.getUnlocalizedNameInefficiently(itemStack).replaceAll("item.", "item.sime:");
-//    }
 
     @Override
     public ActionResultType onItemUse(ItemUseContext context) {

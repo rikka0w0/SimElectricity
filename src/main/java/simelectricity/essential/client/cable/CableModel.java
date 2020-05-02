@@ -1,36 +1,44 @@
 package simelectricity.essential.client.cable;
 
+
 import java.util.function.Function;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.renderer.block.model.BakedQuad;
+
+import net.minecraft.block.BlockState;
+import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.client.MinecraftForgeClient;
 import rikka.librikka.model.CodeBasedModel;
 import rikka.librikka.model.quadbuilder.RawQuadCube;
-import rikka.librikka.properties.UnlistedPropertyRef;
 import simelectricity.essential.api.ISEGenericCable;
 import simelectricity.essential.api.client.ISECoverPanelRender;
 import simelectricity.essential.api.coverpanel.ISECoverPanel;
-
-import javax.annotation.Nullable;
+import simelectricity.essential.cable.BlockCable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
+@OnlyIn(Dist.CLIENT)
 public class CableModel extends CodeBasedModel {
     private final float thickness;
     private final ResourceLocation insulatorTextureLoc, conductorTextureLoc;
-    private TextureAtlasSprite insulatorTexture, conductorTexture;
+    public TextureAtlasSprite insulatorTexture, conductorTexture;
 
     private final List<BakedQuad>[] branches = new List[6];
 
+    public CableModel(BlockCable cable) {
+    	this(cable.getRegistryName().getNamespace(), cable.getRegistryName().getPath(), cable.meta().thickness());
+    }
+    
     public CableModel(String domain, String name, float thickness) {
-        this.insulatorTextureLoc = this.registerTexture(domain + ":blocks/" + name + "_insulator");    // We just want to bypass the ModelBakery
-        this.conductorTextureLoc = this.registerTexture(domain + ":blocks/" + name + "_conductor");    // and load our texture
+        this.insulatorTextureLoc = registerTexture(domain, "block/cable/" + name + "_insulator");    // We just want to bypass the ModelBakery
+        this.conductorTextureLoc = registerTexture(domain,"block/cable/" + name + "_conductor");    // and load our texture
         this.thickness = thickness;
     }
 
@@ -40,27 +48,25 @@ public class CableModel extends CodeBasedModel {
     }
 
     @Override
-    public List<BakedQuad> getQuads(@Nullable IBlockState blockState,
-                                    @Nullable EnumFacing cullingSide, long rand) {
+	public List<BakedQuad> getQuads(BlockState blockState, Direction cullingSide, Random rand,
+			IModelData extraData) {
     	List<BakedQuad> quads = new ArrayList<BakedQuad>();
-
-		TileEntity te = UnlistedPropertyRef.get(blockState);
-        if (!(te instanceof ISEGenericCable))
-            return quads;
         
-        ISEGenericCable cable = (ISEGenericCable) te;
-    	
+        ISEGenericCable cable = extraData.getData(ISEGenericCable.prop);
+    	if (cable == null)
+    		return quads;
+        
     	if (cullingSide == null) {
             //Render center & branches in SOLID layer
-            if (MinecraftForgeClient.getRenderLayer() == BlockRenderLayer.SOLID) {
+            if (MinecraftForgeClient.getRenderLayer() == RenderType.getCutoutMipped()) {
                 byte numOfCon = 0;
-                EnumFacing conSide = EnumFacing.DOWN;
+                Direction conSide = Direction.DOWN;
 
                 TextureAtlasSprite[] centerTexture = {this.insulatorTexture, this.insulatorTexture,
                         this.insulatorTexture, this.insulatorTexture,
                         this.insulatorTexture, this.insulatorTexture};
 
-                for (EnumFacing direction : EnumFacing.VALUES) {
+                for (Direction direction : Direction.values()) {
                     if (cable.connectedOnSide(direction)) {
                         quads.addAll(this.branches[direction.ordinal()]);
                         centerTexture[direction.ordinal()] = null;
@@ -80,7 +86,7 @@ public class CableModel extends CodeBasedModel {
     	}
     	
         //CoverPanel can be rendered in any layer
-        for (EnumFacing side : EnumFacing.VALUES) {
+        for (Direction side : Direction.values()) {
             ISECoverPanel coverPanel = cable.getCoverPanelOnSide(side);
             if (coverPanel != null) {
                 ISECoverPanelRender render = coverPanel.getCoverPanelRender();

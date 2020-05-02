@@ -6,6 +6,6 @@ Kd 1 1 1
 newmtl fdj
 Ka 1 1 1
 Kd 0.80000001192093 0.80000001192093 0.80000001192093
-map_Kd sime_essential:blocks/machines/motor_case_blue
+map_Kd sime_essential:block/machines/motor_case_blue
 illum 7
 

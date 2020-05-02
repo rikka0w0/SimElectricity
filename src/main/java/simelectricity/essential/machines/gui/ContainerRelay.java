@@ -1,17 +1,17 @@
 package simelectricity.essential.machines.gui;
 
-import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraft.util.Direction;
 import rikka.librikka.container.ContainerSynchronizer;
-import rikka.librikka.container.IContainerWithGui;
+import rikka.librikka.gui.AutoGuiHandler;
 import simelectricity.essential.common.ContainerNoInventoryTwoPort;
 import simelectricity.essential.machines.tile.TileRelay;
 import simelectricity.essential.utils.network.ISEButtonEventHandler;
 
-public class ContainerRelay extends ContainerNoInventoryTwoPort<TileRelay> implements ISEButtonEventHandler, IContainerWithGui {
+@AutoGuiHandler.Marker(GuiRelay.class)
+public class ContainerRelay extends ContainerNoInventoryTwoPort<TileRelay> implements ISEButtonEventHandler {
     @ContainerSynchronizer.SyncField
     public volatile double resistance;
     @ContainerSynchronizer.SyncField
@@ -19,18 +19,18 @@ public class ContainerRelay extends ContainerNoInventoryTwoPort<TileRelay> imple
     @ContainerSynchronizer.SyncField
     public volatile double current;
     @ContainerSynchronizer.SyncField
-    public volatile EnumFacing inputSide, outputSide;
+    public volatile Direction inputSide, outputSide;
 
-    public ContainerRelay(TileEntity tileEntity) {
-        super(tileEntity);
+    // Server side
+    public ContainerRelay(TileEntity tileEntity, int windowId) {
+    	super(tileEntity, windowId);
     }
 
-    @Override
-    @SideOnly(Side.CLIENT)
-    public GuiScreen createGui() {
-        return new GuiRelay(this);
+    // Client side
+    public ContainerRelay(int windowId, PlayerInventory inv, PacketBuffer data) {
+    	this(null, windowId);
     }
-
+    
     @Override
     public void onButtonPressed(int buttonID, boolean isCtrlPressed) {
         double resistance = host.resistance;

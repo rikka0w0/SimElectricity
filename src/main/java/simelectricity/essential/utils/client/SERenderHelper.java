@@ -1,11 +1,11 @@
 package simelectricity.essential.utils.client;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import rikka.librikka.math.MathAssitant;
 
 import org.lwjgl.opengl.GL11;
@@ -17,13 +17,13 @@ import simelectricity.essential.Essential;
  * @author Rikka0_0
  */
 @Deprecated
-@SideOnly(Side.CLIENT)
+@OnlyIn(Dist.CLIENT)
 public class SERenderHelper {
     public static ResourceLocation createResourceLocation(String path) {
         return new ResourceLocation(Essential.MODID, path);
     }
 
-    public static void rotateUpwardCoordSysTo(EnumFacing direction) {
+    public static void rotateUpwardCoordSysTo(Direction direction) {
         switch (direction) {
             case DOWN:
                 GL11.glRotatef(180, 1, 0, 0);
@@ -72,7 +72,7 @@ public class SERenderHelper {
         return vertexes;
     }
 
-    public static void rotateCubeToDirection(double[][] cubeVertexes, EnumFacing direction) {
+    public static void rotateCubeToDirection(double[][] cubeVertexes, Direction direction) {
         switch (direction) {
             case DOWN:
                 SERenderHelper.rotateAroundX(cubeVertexes, 180);

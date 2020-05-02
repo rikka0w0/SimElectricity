@@ -1,10 +1,10 @@
 package simelectricity.essential.grid;
 
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import rikka.librikka.Utils;
 import simelectricity.api.node.ISEGridNode;
 import simelectricity.essential.client.grid.ISEPowerPole;
@@ -13,23 +13,12 @@ import simelectricity.essential.common.ISEFacing8;
 
 public abstract class TilePoleBranch extends TilePoleAccessory implements ISEFacing8{
 	protected BlockPos neighbor;
-	private int facing;
-	
-	@Override
-	public void setFacingOnPlacement(int facing) {
-		this.facing = facing;
-	}
-
-	@Override
-	public int getRotation() {
-		return facing;
-	}
 	
     /////////////////////////////////////////////////////////
     /////ISEPowerPole
     /////////////////////////////////////////////////////////
     @Override
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public BlockPos[] getNeighborPosArray() {
         return new BlockPos[] {this.neighbor};
     }
@@ -66,16 +55,14 @@ public abstract class TilePoleBranch extends TilePoleAccessory implements ISEFac
     ///Sync
     /////////////////////////////////////////////////////////
     @Override
-    public void prepareS2CPacketData(NBTTagCompound nbt) {
+    public void prepareS2CPacketData(CompoundNBT nbt) {
     	super.prepareS2CPacketData(nbt);
-    	nbt.setInteger("facing", this.facing);
     	Utils.saveToNbt(nbt, "neighbor", this.neighbor);
     }
     
     @Override
-    @SideOnly(Side.CLIENT)
-    public void onSyncDataFromServerArrived(NBTTagCompound nbt) {
-    	this.facing = nbt.getInteger("facing");
+    @OnlyIn(Dist.CLIENT)
+    public void onSyncDataFromServerArrived(CompoundNBT nbt) {
     	this.neighbor = Utils.posFromNbt(nbt, "neighbor");
     	super.onSyncDataFromServerArrived(nbt);
     	
@@ -88,19 +75,7 @@ public abstract class TilePoleBranch extends TilePoleAccessory implements ISEFac
 	
     //////////////////////////////
     /////TileEntity
-    //////////////////////////////
-    @Override
-    public void readFromNBT(NBTTagCompound nbt) {
-        super.readFromNBT(nbt);
-		this.facing = nbt.getInteger("facing");
-    }
-
-    @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
-        nbt.setInteger("facing", this.facing);
-        return super.writeToNBT(nbt);
-    }
-    
+    //////////////////////////////    
 	public static class Type10kV extends TilePoleBranch {
 		@Override
 		protected PowerPoleRenderHelper createRenderHelper() {

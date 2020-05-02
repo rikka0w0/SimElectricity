@@ -1,12 +1,13 @@
 package simelectricity.essential.coverpanel;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.world.WorldServer;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraft.util.Direction;
+import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import rikka.librikka.Utils;
 import simelectricity.essential.ItemRegistry;
 import simelectricity.essential.api.ISEIuminousCoverPanelHost;
 import simelectricity.essential.api.client.ISECoverPanelRender;
@@ -24,24 +25,24 @@ public class LedPanel implements ISEElectricalLoadCoverPanel, ISEIuminousCoverPa
     }
 
     @Override
-    public void toNBT(NBTTagCompound nbt) {
-        nbt.setString("coverPanelType", "LedPanel");
+    public void toNBT(CompoundNBT nbt) {
+        nbt.putString("coverPanelType", "LedPanel");
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public ISECoverPanelRender getCoverPanelRender() {
         return LedPanelRender.instance;
     }
 
     @Override
-    public void setHost(TileEntity hostTileEntity, EnumFacing side) {
+    public void setHost(TileEntity hostTileEntity, Direction side) {
         this.hostTileEntity = hostTileEntity;
     }
 
     @Override
     public ItemStack getDroppedItemStack() {
-        return new ItemStack(ItemRegistry.itemMisc, 1, 0);
+        return new ItemStack(ItemRegistry.itemMisc[0], 1);
     }
 
     @Override
@@ -65,13 +66,11 @@ public class LedPanel implements ISEElectricalLoadCoverPanel, ISEIuminousCoverPa
             this.lightLevel = lightLevel;
 
             if (this.hostTileEntity instanceof ISEIuminousCoverPanelHost) {
-                WorldServer world = (WorldServer) this.hostTileEntity.getWorld();
-                world.addScheduledTask(new Runnable() {
-                    @Override
-                    public void run() {
-                        ((ISEIuminousCoverPanelHost) LedPanel.this.hostTileEntity).onLightValueUpdated();
-                    }
-                });
+                ServerWorld world = (ServerWorld) this.hostTileEntity.getWorld();
+
+                Utils.enqueueServerWork(() -> 
+                	((ISEIuminousCoverPanelHost) LedPanel.this.hostTileEntity).onLightValueUpdated()
+                	);
             }
 
         }

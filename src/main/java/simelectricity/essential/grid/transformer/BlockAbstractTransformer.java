@@ -7,7 +7,7 @@ import javax.annotation.Nonnull;
 import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -41,19 +41,19 @@ public abstract class BlockAbstractTransformer extends BlockBase implements ISub
     
     protected abstract MultiBlockStructure createStructureTemplate();
     
-    protected abstract ItemStack getItemToDrop(IBlockState state);
+    protected abstract ItemStack getItemToDrop(BlockState state);
 
 	///////////////////////////////
     /// TileEntity
     ///////////////////////////////
 	@Override
-	public boolean hasTileEntity(IBlockState state) {return true;}
+	public boolean hasTileEntity(BlockState state) {return true;}
 	
     ///////////////////////////////
     ///BlockStates
     ///////////////////////////////
     @Override
-    public IBlockState getActualState(@Nonnull IBlockState state, IBlockAccess world, BlockPos pos) {
+    public BlockState getActualState(@Nonnull BlockState state, IBlockAccess world, BlockPos pos) {
     	TileEntity te = world.getTileEntity(pos);
         if (te instanceof SEMultiBlockEnergyTile) {
         	SEMultiBlockEnergyTile render = (SEMultiBlockEnergyTile) te;
@@ -73,7 +73,7 @@ public abstract class BlockAbstractTransformer extends BlockBase implements ISub
     /// Block activities
     ///////////////////////////////
     @Override
-    public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
+    public void onBlockPlacedBy(World world, BlockPos pos, BlockState state, EntityLivingBase placer, ItemStack stack) {
         if (world.isRemote)
             return;
 
@@ -85,7 +85,7 @@ public abstract class BlockAbstractTransformer extends BlockBase implements ISub
     }
 
     @Override
-    public void breakBlock(World world, BlockPos pos, IBlockState state) {
+    public void breakBlock(World world, BlockPos pos, BlockState state) {
         TileEntity te = world.getTileEntity(pos);
         if (te != null) {
             this.structureTemplate.restoreStructure(te, state, true);
@@ -95,12 +95,12 @@ public abstract class BlockAbstractTransformer extends BlockBase implements ISub
     }
 
     @Override
-    public int damageDropped(IBlockState state) {
+    public int damageDropped(BlockState state) {
     	return getItemToDrop(state).getItemDamage();
     }
 
     @Override
-    public List<ItemStack> getDrops(IBlockAccess world, BlockPos pos, IBlockState state, int fortune) {
+    public List<ItemStack> getDrops(IBlockAccess world, BlockPos pos, BlockState state, int fortune) {
     	List<ItemStack> ret = new java.util.ArrayList<ItemStack>();
     	
     	ItemStack itemStack = getItemToDrop(state);
@@ -114,7 +114,7 @@ public abstract class BlockAbstractTransformer extends BlockBase implements ISub
      * Creative-mode middle mouse button clicks
      */
     @Override
-    public ItemStack getItem(World world, BlockPos pos, IBlockState state) {
+    public ItemStack getItem(World world, BlockPos pos, BlockState state) {
     	return getItemToDrop(state);
     }
 }

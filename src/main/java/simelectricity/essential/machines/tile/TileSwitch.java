@@ -1,20 +1,22 @@
 package simelectricity.essential.machines.tile;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.Container;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-import rikka.librikka.tileentity.IGuiProviderTile;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.INamedContainerProvider;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.Direction;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import simelectricity.api.ISEEnergyNetUpdateHandler;
 import simelectricity.api.SEAPI;
 import simelectricity.api.components.ISESwitch;
+import simelectricity.essential.common.semachine.ISE2StateTile;
 import simelectricity.essential.common.semachine.ISESocketProvider;
 import simelectricity.essential.common.semachine.SETwoPortMachine;
 import simelectricity.essential.machines.gui.ContainerSwitch;
 
-public class TileSwitch extends SETwoPortMachine<ISESwitch> implements ISESwitch, ISEEnergyNetUpdateHandler, ISESocketProvider, IGuiProviderTile {
+public class TileSwitch extends SETwoPortMachine<ISESwitch> implements ISESwitch, ISE2StateTile, ISEEnergyNetUpdateHandler, ISESocketProvider, INamedContainerProvider {
     public double current;
 
     public double resistance = 0.001;
@@ -25,8 +27,8 @@ public class TileSwitch extends SETwoPortMachine<ISESwitch> implements ISESwitch
     ///TileEntity
     /////////////////////////////////////////////////////////
     @Override
-    public void readFromNBT(NBTTagCompound tagCompound) {
-        super.readFromNBT(tagCompound);
+    public void read(CompoundNBT tagCompound) {
+        super.read(tagCompound);
 
         this.resistance = tagCompound.getDouble("resistance");
         this.maxCurrent = tagCompound.getDouble("maxCurrent");
@@ -34,12 +36,12 @@ public class TileSwitch extends SETwoPortMachine<ISESwitch> implements ISESwitch
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
-        tagCompound.setDouble("resistance", this.resistance);
-        tagCompound.setDouble("maxCurrent", this.maxCurrent);
-        tagCompound.setBoolean("isOn", this.isOn);
+    public CompoundNBT write(CompoundNBT tagCompound) {
+        tagCompound.putDouble("resistance", this.resistance);
+        tagCompound.putDouble("maxCurrent", this.maxCurrent);
+        tagCompound.putBoolean("isOn", this.isOn);
 
-        return super.writeToNBT(tagCompound);
+        return super.write(tagCompound);
     }
 
     /////////////////////////////////////////////////////////
@@ -75,15 +77,15 @@ public class TileSwitch extends SETwoPortMachine<ISESwitch> implements ISESwitch
     ///Sync
     /////////////////////////////////////////////////////////
     @Override
-    public void prepareS2CPacketData(NBTTagCompound nbt) {
+    public void prepareS2CPacketData(CompoundNBT nbt) {
         super.prepareS2CPacketData(nbt);
 
-        nbt.setBoolean("isOn", this.isOn);
+        nbt.putBoolean("isOn", this.isOn);
     }
 
-    @SideOnly(Side.CLIENT)
     @Override
-    public void onSyncDataFromServerArrived(NBTTagCompound nbt) {
+    @OnlyIn(Dist.CLIENT)
+    public void onSyncDataFromServerArrived(CompoundNBT nbt) {
         this.isOn = nbt.getBoolean("isOn");
 
         markForRenderUpdate();
@@ -95,8 +97,8 @@ public class TileSwitch extends SETwoPortMachine<ISESwitch> implements ISESwitch
     /// ISESocketProvider
     ///////////////////////////////////
     @Override
-    @SideOnly(Side.CLIENT)
-    public int getSocketIconIndex(EnumFacing side) {
+    @OnlyIn(Dist.CLIENT)
+    public int getSocketIconIndex(Direction side) {
         if (side == this.inputSide)
             return 2;
         else if (side == this.outputSide)
@@ -109,17 +111,20 @@ public class TileSwitch extends SETwoPortMachine<ISESwitch> implements ISESwitch
     /// Utils
     ///////////////////////////////////
     public void setSwitchStatus(boolean isOn) {
-        this.isOn = isOn;
+    	if (this.isOn != isOn) {
+            this.isOn = isOn;
+            this.setSecondState(isOn);
+    	}
         SEAPI.energyNetAgent.updateTileParameter(this);
 
         markTileEntityForS2CSync();
     }
-    
+
     ///////////////////////////////////
-    /// IGuiProviderTile
+    /// INamedContainerProvider
     ///////////////////////////////////
 	@Override
-	public Container getContainer(EntityPlayer player, EnumFacing side) {
-		return new ContainerSwitch(this);
+	public Container createMenu(int windowId, PlayerInventory inv, PlayerEntity player) {
+		return new ContainerSwitch(this, windowId);
 	}
 }

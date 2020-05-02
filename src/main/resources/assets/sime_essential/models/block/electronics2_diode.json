@@ -1,0 +1,7 @@
+{
+  "parent": "block/cube_all",
+  "textures": {
+    "all": "sime_essential:block/machines/diode",
+    "particle": "sime_essential:block/machines/diode"
+  }
+}

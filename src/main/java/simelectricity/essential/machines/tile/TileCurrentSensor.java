@@ -1,19 +1,21 @@
 package simelectricity.essential.machines.tile;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.Container;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-import rikka.librikka.tileentity.IGuiProviderTile;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.INamedContainerProvider;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.Direction;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import rikka.librikka.Utils;
 import simelectricity.api.ISEEnergyNetUpdateHandler;
 import simelectricity.api.components.ISESwitch;
 import simelectricity.essential.common.semachine.ISESocketProvider;
 import simelectricity.essential.common.semachine.SETwoPortMachine;
 import simelectricity.essential.machines.gui.ContainerCurrentSensor;
 
-public class TileCurrentSensor extends SETwoPortMachine<ISESwitch> implements ISESwitch, ISEEnergyNetUpdateHandler, ISESocketProvider, IGuiProviderTile {
+public class TileCurrentSensor extends SETwoPortMachine<ISESwitch> implements ISESwitch, ISEEnergyNetUpdateHandler, ISESocketProvider, INamedContainerProvider {
     public double current;
     public boolean emitRedstoneSignal;
 
@@ -26,8 +28,8 @@ public class TileCurrentSensor extends SETwoPortMachine<ISESwitch> implements IS
     ///TileEntity
     /////////////////////////////////////////////////////////
     @Override
-    public void readFromNBT(NBTTagCompound tagCompound) {
-        super.readFromNBT(tagCompound);
+    public void read(CompoundNBT tagCompound) {
+        super.read(tagCompound);
 
         this.resistance = tagCompound.getDouble("resistance");
         this.thresholdCurrent = tagCompound.getDouble("thresholdCurrent");
@@ -36,13 +38,13 @@ public class TileCurrentSensor extends SETwoPortMachine<ISESwitch> implements IS
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
-        tagCompound.setDouble("resistance", this.resistance);
-        tagCompound.setDouble("thresholdCurrent", this.thresholdCurrent);
-        tagCompound.setBoolean("absMode", this.absMode);
-        tagCompound.setBoolean("inverted", this.inverted);
+    public CompoundNBT write(CompoundNBT tagCompound) {
+        tagCompound.putDouble("resistance", this.resistance);
+        tagCompound.putDouble("thresholdCurrent", this.thresholdCurrent);
+        tagCompound.putBoolean("absMode", this.absMode);
+        tagCompound.putBoolean("inverted", this.inverted);
 
-        return super.writeToNBT(tagCompound);
+        return super.write(tagCompound);
     }
 
     /////////////////////////////////////////////////////////
@@ -52,7 +54,8 @@ public class TileCurrentSensor extends SETwoPortMachine<ISESwitch> implements IS
     public void onEnergyNetUpdate() {
         this.current = this.input.getCurrentMagnitude();
 
-        TileCurrentSensor.this.checkRedstoneStatus();    //Update the world from the server thread
+      //Update the world from the server thread
+        Utils.enqueueServerWork(this::checkRedstoneStatus);
     }
 
     /////////////////////////////////////////////////////////
@@ -72,8 +75,8 @@ public class TileCurrentSensor extends SETwoPortMachine<ISESwitch> implements IS
     /// ISESocketProvider
     ///////////////////////////////////
     @Override
-    @SideOnly(Side.CLIENT)
-    public int getSocketIconIndex(EnumFacing side) {
+    @OnlyIn(Dist.CLIENT)
+    public int getSocketIconIndex(Direction side) {
         if (side == this.inputSide)
             return 2;
         else if (side == this.outputSide)
@@ -83,10 +86,12 @@ public class TileCurrentSensor extends SETwoPortMachine<ISESwitch> implements IS
     }
 
     ///////////////////////////////////
+    /// Redstone
+    ///////////////////////////////////
     private boolean setRedstone(boolean status) {
         if (this.emitRedstoneSignal != status) {
             this.emitRedstoneSignal = status;
-            this.world.notifyNeighborsOfStateChange(this.getPos(), this.getBlockType(), true);
+            this.world.notifyNeighborsOfStateChange(this.getPos(), this.getBlockState().getBlock());
             return true;
         }
         return false;
@@ -98,10 +103,10 @@ public class TileCurrentSensor extends SETwoPortMachine<ISESwitch> implements IS
     }
     
     ///////////////////////////////////
-    /// IGuiProviderTile
+    /// INamedContainerProvider
     ///////////////////////////////////
 	@Override
-	public Container getContainer(EntityPlayer player, EnumFacing side) {
-		return new ContainerCurrentSensor(this);
+	public Container createMenu(int windowId, PlayerInventory inv, PlayerEntity player) {
+		return new ContainerCurrentSensor(this, windowId);
 	}
 }

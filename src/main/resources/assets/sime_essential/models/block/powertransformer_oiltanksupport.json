@@ -1,12 +1,12 @@
 {
   "parent": "block/cube",
   "textures": {
-    "down": "sime_essential:blocks/powertransformer_oiltank",
-    "up": "sime_essential:blocks/powertransformer_oiltank",
-    "north": "sime_essential:blocks/powertransformer_oiltanksupport",
-    "south": "sime_essential:blocks/powertransformer_oiltanksupport",
-    "west": "sime_essential:blocks/powertransformer_oiltanksupport",
-    "east": "sime_essential:blocks/powertransformer_oiltanksupport",
-    "particle": "sime_essential:blocks/powertransformer_oiltanksupport"
+    "down": "sime_essential:block/powertransformer_oiltank",
+    "up": "sime_essential:block/powertransformer_oiltank",
+    "north": "sime_essential:block/powertransformer_oiltanksupport",
+    "south": "sime_essential:block/powertransformer_oiltanksupport",
+    "west": "sime_essential:block/powertransformer_oiltanksupport",
+    "east": "sime_essential:block/powertransformer_oiltanksupport",
+    "particle": "sime_essential:block/powertransformer_oiltanksupport"
   }
 }

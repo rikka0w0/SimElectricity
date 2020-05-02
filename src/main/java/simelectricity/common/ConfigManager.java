@@ -8,6 +8,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
 import simelectricity.SimElectricity;
+import simelectricity.energynet.EnergyNetSimulator;
 
 @Mod.EventBusSubscriber(modid = SimElectricity.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ConfigManager {
@@ -46,7 +47,7 @@ public class ConfigManager {
         maxIteration = maxIteration_Spec.get();
         shuntPN = shuntPN_Spec.get();
 
-//                EnergyNetSimulator.config();
+        EnergyNetSimulator.config();
 
 //        for (ISEConfigHandler handler: handlers) {
 //            handler.onConfigChanged(isClient);

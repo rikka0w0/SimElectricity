@@ -1,93 +1,100 @@
 package simelectricity.essential.machines;
 
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import javax.annotation.Nullable;
+
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import rikka.librikka.IMetaProvider;
+import rikka.librikka.ITileMeta;
 import rikka.librikka.Utils;
-import simelectricity.essential.Essential;
-import simelectricity.essential.client.semachine.ISESidedTextureBlock;
 import simelectricity.essential.common.semachine.SEMachineBlock;
 import simelectricity.essential.common.semachine.SESinglePortMachine;
 import simelectricity.essential.machines.tile.*;
 
-public class BlockElectronics extends SEMachineBlock implements ISESidedTextureBlock {
-    public static String subNames[] = {"voltage_meter", "quantum_generator", "adjustable_resistor", "incandescent_lamp", "electric_furnace", "transformer_se2rf", "transformer_rf2se"};
+public abstract class BlockElectronics extends SEMachineBlock implements IMetaProvider<ITileMeta> {
+	public static enum Type implements ITileMeta {
+		voltage_meter(TileVoltageMeter.class),
+		quantum_generator(TileQuantumGenerator.class),
+		adjustable_resistor(TileAdjustableResistor.class),
+		incandescent_lamp(TileIncandescentLamp.class),
+		electric_furnace(TileElectricFurnace.class),
+		transformer_se2rf(TileSE2RF.class),
+		transformer_rf2se(TileRF2SE.class);
+		
+		Type(Class<? extends TileEntity> teCls) {
+			this.teCls = teCls;
+		}
 
+		public final Class<? extends TileEntity> teCls;
+		
+		@Override
+		public final Class<? extends TileEntity> teCls() {
+			return teCls;
+		}
+	}
+
+	private final Type meta;
+	@Override
+	public final ITileMeta meta() {
+		return meta;
+	}
+	
     ///////////////////////////////
     ///Block Properties
     ///////////////////////////////
-    public BlockElectronics() {
-        super("essential_electronics", BlockElectronics.subNames);
+    private BlockElectronics(Type meta) {
+        super("electronics_" + meta.name());
+        this.meta = meta;
     }
-
-    @Override
-    public TileEntity createTileEntity(World world, IBlockState state) {
-        switch (this.getMetaFromState(state)) {
-            case 0:
-                return new TileVoltageMeter();
-            case 1:
-                return new TileQuantumGenerator();
-            case 2:
-                return new TileAdjustableResistor();
-            case 3:
-                return new TileIncandescentLamp();
-            case 4:
-                return new TileElectricFurnace();
-            case 5:
-                return new TileSE2RF();
-            case 6:
-            	return new TileRF2SE();
-        }
-        return null;
+    
+    public static BlockElectronics[] create() {
+    	BlockElectronics[] ret = new BlockElectronics[Type.values().length];
+    	
+    	for (Type meta: Type.values()) {
+    		ret[meta.ordinal()] = new BlockElectronics(meta) {
+    			@Override
+    			public boolean hasSecondState() {
+    				return meta == Type.incandescent_lamp || 
+    						meta == Type.electric_furnace;
+    			}
+    			
+    		    @Override
+    		    public boolean useObjModel() {
+    				return meta == Type.transformer_se2rf || 
+    						meta == Type.transformer_rf2se;
+    		    }
+    		};
+    	}
+    	
+    	return ret;
     }
-
-    ///////////////////////////////
-    ///ISESidedTextureBlock
-    ///////////////////////////////
+    
     @Override
-    @SideOnly(Side.CLIENT)
-    public String getModelNameFrom(IBlockState blockState) {
-        int meta = blockState.getValue(propertyMeta);
-        return "electronics_" + BlockElectronics.subNames[meta];
-    }
-
-    @Override
-    public boolean hasSecondState(IBlockState blockState) {
-        int meta = getMetaFromState(blockState);
-
-        return meta == 3 || meta == 4;
-    }
-
-    @Override
-    public boolean useObjModel(IBlockState blockState) {
-        int meta = getMetaFromState(blockState);
-
-        return meta == 5 || meta == 6;
+    public TileEntity createTileEntity(BlockState state, IBlockReader world) {
+    	try {
+			return meta.teCls().getConstructor().newInstance();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
     }
 
     //////////////////////////////////////
     /////Item drops and Block activities
     //////////////////////////////////////
     @Override
-    protected boolean isSecondState(TileEntity te) {
-        if (te instanceof TileIncandescentLamp)
-            return ((TileIncandescentLamp) te).lightLevel < 8;
-        if (te instanceof TileElectricFurnace)
-            return !((TileElectricFurnace) te).isWorking();
-        return false;
-    }
-
-    @Override
-    public int getLightValue(IBlockState state, IBlockAccess world, BlockPos pos) {
+    public int getLightValue(BlockState state, IBlockReader world, BlockPos pos) {
         TileEntity te = world.getTileEntity(pos);
 
         if (te instanceof TileIncandescentLamp) {
@@ -97,35 +104,37 @@ public class BlockElectronics extends SEMachineBlock implements ISESidedTextureB
     }
 
     @Override
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
-        if (player.isSneaking())
-            return false;
+    public ActionResultType onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult rtResult) {
+        if (player.isCrouching())
+            return ActionResultType.PASS;
 
-        int meta = state.getBlock().getMetaFromState(state);
-        if (meta == 3)
-            return false;    //Incandescent Lamp doesn't have an Gui!
+        if (meta == Type.incandescent_lamp)
+            return ActionResultType.PASS;    //Incandescent Lamp doesn't have an Gui!
 
-        //When openGui() is call on the server side, Forge seems automatically send a packet to client side
-        //in order to notify the client to set up the container and show the Gui.
-        if (!world.isRemote)
-            player.openGui(Essential.instance, 0, world, pos.getX(), pos.getY(), pos.getZ());
-        return true;
+        TileEntity te = world.getTileEntity(pos);
+        if (te instanceof INamedContainerProvider) {
+        	player.openContainer((INamedContainerProvider) te);
+        	return ActionResultType.SUCCESS;
+        }
+        
+        return ActionResultType.PASS;
     }
 
     @Override
-    public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
+    public void onBlockPlacedBy(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
         super.onBlockPlacedBy(world, pos, state, placer, stack);
         if (world.isRemote)
             return;
 
+        
         TileEntity te = world.getTileEntity(pos);
 
         if (te instanceof SESinglePortMachine) {
-            EnumFacing sight = Utils.getPlayerSight(placer);
+            Direction sight = Utils.getPlayerSight(placer);
             ((SESinglePortMachine) te).setFacing(sight.getOpposite());
 
-            if (sight == EnumFacing.UP && te instanceof TileSolarPanel)
-                sight = EnumFacing.DOWN;
+            if (sight == Direction.UP && te instanceof TileSolarPanel)
+                sight = Direction.DOWN;
 
             ((SESinglePortMachine) te).SetFunctionalSide(sight);
         }

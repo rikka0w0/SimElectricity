@@ -1,11 +1,11 @@
 package simelectricity.essential;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.IThreadListener;
+import net.minecraft.entity.player.PlayerEntity;
+//import net.minecraft.util.IThreadListener;
 import net.minecraft.world.World;
 
 public class CommonProxy  {
-    public EntityPlayer getClientPlayer() {
+    public PlayerEntity getClientPlayer() {
         return null;
     }
 
@@ -13,16 +13,7 @@ public class CommonProxy  {
         return null;
     }
 
-    public IThreadListener getClientThread() {
-        return null;
-    }
-
-    public void preInit() {
-    }
-
-    public void init() {
-    }
-
-    public void postInit() {
-    }
+//    public IThreadListener getClientThread() {
+//        return null;
+//    }
 }

@@ -3,34 +3,33 @@ package simelectricity.essential.grid;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.state.BlockStateContainer;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.fluid.IFluidState;
+import net.minecraft.block.BlockState;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.state.StateContainer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3i;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import rikka.librikka.DirHorizontal8;
 import rikka.librikka.block.BlockBase;
-import rikka.librikka.item.ISimpleTexture;
-import rikka.librikka.item.ItemBlockBase;
-import rikka.librikka.properties.Properties;
 import rikka.librikka.tileentity.TileEntityBase;
 import simelectricity.api.tile.ISEGridTile;
-import simelectricity.essential.BlockRegistry;
+import simelectricity.essential.Essential;
 import simelectricity.essential.api.ISEHVCableConnector;
 
 import java.util.LinkedList;
 
 import javax.annotation.Nonnull;
 
-public class BlockPowerPoleBottom extends BlockBase implements ISEHVCableConnector, ISimpleTexture {
+public class BlockPowerPoleBottom extends BlockBase implements ISEHVCableConnector {
     ///////////////////
     /// Utils
     ///////////////////
@@ -51,11 +50,11 @@ public class BlockPowerPoleBottom extends BlockBase implements ISEHVCableConnect
     /// Initialize
     ///////////////////
     public BlockPowerPoleBottom() {
-        super("essential_powerpole_bottom", Material.ROCK, ItemBlockBase.class);
-        
-        setHardness(3.0F);
-        setResistance(10.0F);
-        setSoundType(SoundType.METAL);
+        super("essential_powerpole_bottom", 
+        		Block.Properties.create(Material.ROCK)
+        		.hardnessAndResistance(3.0F, 10.0F)
+        		.sound(SoundType.METAL), 
+        		new Item.Properties());
     }
 
     /**
@@ -81,22 +80,46 @@ public class BlockPowerPoleBottom extends BlockBase implements ISEHVCableConnect
      * @param state blockstate which contains facing of the center block
      * @return offsets from center
      */
-    public static LinkedList<BlockInfo> getBaseBlockCoordOffsets(IBlockState state) {
+    public LinkedList<BlockInfo> getBaseBlockCoordOffsets(BlockState state) {
         LinkedList<BlockInfo> list = new LinkedList();
 
-        int facing = state.getValue(Properties.facing3bit);
+        int facing = BlockPowerPoleTop.getFacingInt(state);
         if ((facing & 1) == 0) {    // 90 x n
             facing = facing >> 1;
-            list.add(new BlockInfo(BlockPowerPoleBottom.rotateCoord(facing, -2, 0, -2), BlockPowerPoleBottom.baseCoordOffsetMatrix90[facing][0]));
-            list.add(new BlockInfo(BlockPowerPoleBottom.rotateCoord(facing, -2, 0, 2), BlockPowerPoleBottom.baseCoordOffsetMatrix90[facing][1]));
-            list.add(new BlockInfo(BlockPowerPoleBottom.rotateCoord(facing, 2, 0, 2), BlockPowerPoleBottom.baseCoordOffsetMatrix90[facing][2]));
-            list.add(new BlockInfo(BlockPowerPoleBottom.rotateCoord(facing, 2, 0, -2), BlockPowerPoleBottom.baseCoordOffsetMatrix90[facing][3]));
+            list.add(new BlockInfo(BlockPowerPoleBottom.rotateCoord(facing, -2, 0, -2), 
+            			this.getDefaultState().with(DirHorizontal8.prop, 
+            			BlockPowerPoleTop.toDir8(BlockPowerPoleBottom.baseCoordOffsetMatrix90[facing][0])))
+            		);
+            list.add(new BlockInfo(BlockPowerPoleBottom.rotateCoord(facing, -2, 0, 2), 
+        			this.getDefaultState().with(DirHorizontal8.prop, 
+        			BlockPowerPoleTop.toDir8(BlockPowerPoleBottom.baseCoordOffsetMatrix90[facing][1])))
+            		);
+            list.add(new BlockInfo(BlockPowerPoleBottom.rotateCoord(facing, 2, 0, 2), 
+        			this.getDefaultState().with(DirHorizontal8.prop, 
+        			BlockPowerPoleTop.toDir8(BlockPowerPoleBottom.baseCoordOffsetMatrix90[facing][2])))
+            		);
+            list.add(new BlockInfo(BlockPowerPoleBottom.rotateCoord(facing, 2, 0, -2), 
+        			this.getDefaultState().with(DirHorizontal8.prop, 
+        			BlockPowerPoleTop.toDir8(BlockPowerPoleBottom.baseCoordOffsetMatrix90[facing][3])))
+            		);
         } else {
             facing = facing >> 1;
-            list.add(new BlockInfo(BlockPowerPoleBottom.rotateCoord(facing, 0, 0, 3), BlockPowerPoleBottom.baseCoordOffsetMatrix45[facing][0]));
-            list.add(new BlockInfo(BlockPowerPoleBottom.rotateCoord(facing, 3, 0, 0), BlockPowerPoleBottom.baseCoordOffsetMatrix45[facing][1]));
-            list.add(new BlockInfo(BlockPowerPoleBottom.rotateCoord(facing, 0, 0, -3), BlockPowerPoleBottom.baseCoordOffsetMatrix45[facing][2]));
-            list.add(new BlockInfo(BlockPowerPoleBottom.rotateCoord(facing, -3, 0, 0), BlockPowerPoleBottom.baseCoordOffsetMatrix45[facing][3]));
+            list.add(new BlockInfo(BlockPowerPoleBottom.rotateCoord(facing, 0, 0, 3), 
+        			this.getDefaultState().with(DirHorizontal8.prop, 
+        			BlockPowerPoleTop.toDir8(BlockPowerPoleBottom.baseCoordOffsetMatrix45[facing][0])))
+            		);
+            list.add(new BlockInfo(BlockPowerPoleBottom.rotateCoord(facing, 3, 0, 0), 
+        			this.getDefaultState().with(DirHorizontal8.prop, 
+        			BlockPowerPoleTop.toDir8(BlockPowerPoleBottom.baseCoordOffsetMatrix45[facing][1])))
+            		);
+            list.add(new BlockInfo(BlockPowerPoleBottom.rotateCoord(facing, 0, 0, -3), 
+        			this.getDefaultState().with(DirHorizontal8.prop, 
+        			BlockPowerPoleTop.toDir8(BlockPowerPoleBottom.baseCoordOffsetMatrix45[facing][2])))
+            		);
+            list.add(new BlockInfo(BlockPowerPoleBottom.rotateCoord(facing, -3, 0, 0), 
+        			this.getDefaultState().with(DirHorizontal8.prop, 
+        			BlockPowerPoleTop.toDir8(BlockPowerPoleBottom.baseCoordOffsetMatrix45[facing][3])))
+            		);
         }
         return list;
     }
@@ -131,39 +154,37 @@ public class BlockPowerPoleBottom extends BlockBase implements ISEHVCableConnect
      * @param state
      * @return coord of the center block
      */
-    public static BlockPos getCenterBoxCoord(BlockPos basePos, IBlockState state) {
-        int facing = state.getValue(Properties.facing3bit);
+    public static BlockPos getCenterBoxCoord(BlockPos basePos, BlockState state) {
+        int facing = BlockPowerPoleTop.getFacingInt(state);
         Vec3i offset = BlockPowerPoleBottom.getCenterBoxOffset(facing);
         return basePos.add(offset);
-    }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public String getIconName(int damage) {
-        return "essential_powerpole_0";    //There's no way to obtain this block, so just return a existing texture
     }
 
     ///////////////////////////////
     /// TileEntity
     ///////////////////////////////
 	@Override
-	public boolean hasTileEntity(IBlockState state) {return true;}
+	public boolean hasTileEntity(BlockState state) {return true;}
 	
     @Override
-    public TileEntity createTileEntity(World world, IBlockState state) {
+    public TileEntity createTileEntity(BlockState state, IBlockReader world) {
         return new Tile();
     }
     
     public static class Tile extends TileEntityBase {
-        @SideOnly(Side.CLIENT)
+        public Tile() {
+			super(Essential.MODID);
+		}
+
         @Override
+        @OnlyIn(Dist.CLIENT)
         public double getMaxRenderDistanceSquared() {
             return 100000;
         }
 
-        @SideOnly(Side.CLIENT)
         @Override
         @Nonnull
+        @OnlyIn(Dist.CLIENT)
         public AxisAlignedBB getRenderBoundingBox() {
             return TileEntity.INFINITE_EXTENT_AABB;
         }
@@ -173,9 +194,9 @@ public class BlockPowerPoleBottom extends BlockBase implements ISEHVCableConnect
             return true;
         }
     	
-    	@SideOnly(Side.CLIENT)
+    	@OnlyIn(Dist.CLIENT)
     	public int getFacing() {
-    		return this.getBlockMetadata() & 7;
+    		return BlockPowerPoleTop.getFacingInt(getBlockState());
     	}
     }
     
@@ -183,48 +204,34 @@ public class BlockPowerPoleBottom extends BlockBase implements ISEHVCableConnect
     ///BlockStates
     ///////////////////////////////
     @Override
-    protected final BlockStateContainer createBlockState() {
-        return new BlockStateContainer(this, Properties.facing3bit);
-    }
-
-    @Override
-    public final IBlockState getStateFromMeta(int meta) {
-        return getDefaultState().withProperty(Properties.facing3bit, meta & 7);
-    }
-
-    @Override
-    public final int getMetaFromState(IBlockState state) {
-        return state.getValue(Properties.facing3bit);
-    }
+	protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
+    	builder.add(DirHorizontal8.prop);
+	}
 
     //////////////////////////////////////
     /////Item drops and Block activities
     //////////////////////////////////////
     @Override
-    public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player) {
+    public ItemStack getPickBlock(BlockState state, RayTraceResult target, IBlockReader world, BlockPos pos, PlayerEntity player) {
         BlockPos centerPos = BlockPowerPoleBottom.getCenterBoxCoord(pos, state);
-        IBlockState centerState = world.getBlockState(centerPos);
+        BlockState centerState = world.getBlockState(centerPos);
+        Block block = centerState.getBlock();
+        
+        if (block instanceof BlockPowerPoleTop)
+            return block.getPickBlock(centerState, null, world, centerPos, player);
 
-        if (centerState.getBlock() == BlockRegistry.powerPoleTop)
-            return BlockRegistry.powerPoleTop.getPickBlock(centerState, null, world, centerPos, player);
-
-        return null;
+        return ItemStack.EMPTY;
     }
 
     @Override
-    public int damageDropped(IBlockState state) {
-        return 0;    //Prevent crash QAQ!!!
-    }
-
-    @Override
-    public void breakBlock(World world, BlockPos pos, IBlockState state) {
+    public boolean removedByPlayer(BlockState state, World world, BlockPos pos, PlayerEntity player, boolean willHarvest, IFluidState fluid) {
         BlockPos centerPos = BlockPowerPoleBottom.getCenterBoxCoord(pos, state);
         Block centerBlock = world.getBlockState(centerPos).getBlock();
 
-        if (centerBlock == BlockRegistry.powerPoleTop)
-            world.setBlockToAir(centerPos);
+        if (centerBlock instanceof BlockPowerPoleTop)
+            world.removeBlock(centerPos, false);
 
-        super.breakBlock(world, pos, state);
+        return super.removedByPlayer(state, world, pos, player, willHarvest, fluid);
     }
 
     //////////////////////////////////////
@@ -232,7 +239,7 @@ public class BlockPowerPoleBottom extends BlockBase implements ISEHVCableConnect
     //////////////////////////////////////
     @Override
     public ISEGridTile getGridTile(World world, BlockPos pos) {
-        IBlockState state = world.getBlockState(pos);
+        BlockState state = world.getBlockState(pos);
         BlockPos centerPos = BlockPowerPoleBottom.getCenterBoxCoord(pos, state);
         TileEntity te = world.getTileEntity(centerPos);
         
@@ -242,26 +249,8 @@ public class BlockPowerPoleBottom extends BlockBase implements ISEHVCableConnect
     ////////////////////////////////////
     /// Rendering
     ////////////////////////////////////
-    //This will tell minecraft not to render any side of our cube.
     @Override
-    @SideOnly(Side.CLIENT)
-    public boolean shouldSideBeRendered(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side) {
-        return false;
-    }
-
-    //And this tell it that you can see through this block, and neighbor blocks should be rendered.
-    @Override
-    public boolean isOpaqueCube(IBlockState state) {
-        return false;
-    }
-
-    @Override
-    public boolean isNormalCube(IBlockState state) {
-        return true;
-    }
-
-    @Override
-    public boolean isFullCube(IBlockState state) {
+    public boolean isNormalCube(BlockState state, IBlockReader worldIn, BlockPos pos) {
         return false;
     }
 }

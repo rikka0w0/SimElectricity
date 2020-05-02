@@ -1,0 +1,10 @@
+{
+    "parent": "sime_essential:block/machine",
+    "textures": {
+        "bottom": "sime_essential:block/machines/switch_side",
+        "top": "sime_essential:block/machines/switch_side",
+        "front": "sime_essential:block/machines/switch_front_off",
+        "back": "sime_essential:block/machines/switch_side",
+        "side": "sime_essential:block/machines/switch_side"
+    }
+}

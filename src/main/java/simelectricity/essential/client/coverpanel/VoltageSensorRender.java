@@ -1,15 +1,13 @@
 package simelectricity.essential.client.coverpanel;
 
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-import simelectricity.essential.api.client.ISECoverPanelRender;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
-@SideOnly(Side.CLIENT)
+@OnlyIn(Dist.CLIENT)
 public class VoltageSensorRender extends GenericCoverPanelRender {
-    public static ISECoverPanelRender instance;
+    public final static VoltageSensorRender instance = new VoltageSensorRender();
 
-    public VoltageSensorRender() {
+    private VoltageSensorRender() {
         super("voltagesensor");
-        VoltageSensorRender.instance = this;
     }
 }

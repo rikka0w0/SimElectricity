@@ -1,18 +1,18 @@
 package simelectricity.essential.machines.gui;
 
-import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraft.util.Direction;
 import rikka.librikka.container.ContainerSynchronizer;
-import rikka.librikka.container.IContainerWithGui;
+import rikka.librikka.gui.AutoGuiHandler;
 import simelectricity.api.SEAPI;
 import simelectricity.essential.common.ContainerNoInventoryTwoPort;
 import simelectricity.essential.machines.tile.TilePowerMeter;
 import simelectricity.essential.utils.network.ISEButtonEventHandler;
 
-public class ContainerPowerMeter extends ContainerNoInventoryTwoPort<TilePowerMeter> implements ISEButtonEventHandler, IContainerWithGui {
+@AutoGuiHandler.Marker(GuiPowerMeter.class)
+public class ContainerPowerMeter extends ContainerNoInventoryTwoPort<TilePowerMeter> implements ISEButtonEventHandler {
     @ContainerSynchronizer.SyncField
     public volatile boolean isOn;
     @ContainerSynchronizer.SyncField
@@ -22,11 +22,17 @@ public class ContainerPowerMeter extends ContainerNoInventoryTwoPort<TilePowerMe
     @ContainerSynchronizer.SyncField
     public volatile double bufferedEnergy;
     @ContainerSynchronizer.SyncField
-    public volatile EnumFacing inputSide, outputSide;
+    public volatile Direction inputSide, outputSide;
 
 
-    public ContainerPowerMeter(TileEntity tileEntity) {
-        super(tileEntity);
+    // Server side
+    public ContainerPowerMeter(TileEntity tileEntity, int windowId) {
+    	super(tileEntity, windowId);
+    }
+
+    // Client side
+    public ContainerPowerMeter(int windowId, PlayerInventory inv, PacketBuffer data) {
+    	this(null, windowId);
     }
 
     @Override
@@ -42,11 +48,5 @@ public class ContainerPowerMeter extends ContainerNoInventoryTwoPort<TilePowerMe
             default:
                 break;
         }
-    }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public GuiScreen createGui() {
-        return new GuiPowerMeter(this);
     }
 }

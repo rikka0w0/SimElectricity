@@ -1,20 +1,21 @@
 package simelectricity.essential.machines.tile;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.Container;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ITickable;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-import rikka.librikka.tileentity.IGuiProviderTile;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.INamedContainerProvider;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.Direction;
+import net.minecraft.tileentity.ITickableTileEntity;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import simelectricity.api.ISEEnergyNetUpdateHandler;
 import simelectricity.api.components.ISESwitch;
 import simelectricity.essential.common.semachine.ISESocketProvider;
 import simelectricity.essential.common.semachine.SETwoPortMachine;
 import simelectricity.essential.machines.gui.ContainerPowerMeter;
 
-public class TilePowerMeter extends SETwoPortMachine<ISESwitch> implements ISESwitch, ISEEnergyNetUpdateHandler, ISESocketProvider, IGuiProviderTile, ITickable {
+public class TilePowerMeter extends SETwoPortMachine<ISESwitch> implements ISESwitch, ISEEnergyNetUpdateHandler, ISESocketProvider, ITickableTileEntity, INamedContainerProvider {
     public boolean isOn;
     public double current, voltage, bufferedEnergy;
 
@@ -22,7 +23,7 @@ public class TilePowerMeter extends SETwoPortMachine<ISESwitch> implements ISESw
     /// TileEntity
     ///////////////////////////////////
     @Override
-    public void update() {
+    public void tick() {
         if (this.world.isRemote)
             return;
 
@@ -31,19 +32,19 @@ public class TilePowerMeter extends SETwoPortMachine<ISESwitch> implements ISESw
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound tagCompound) {
-        super.readFromNBT(tagCompound);
+    public void read(CompoundNBT tagCompound) {
+        super.read(tagCompound);
 
         this.bufferedEnergy = tagCompound.getDouble("bufferedEnergy");
         this.isOn = tagCompound.getBoolean("isOn");
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound tagCompound) {
-        tagCompound.setDouble("bufferedEnergy", this.bufferedEnergy);
-        tagCompound.setBoolean("isOn", this.isOn);
+    public CompoundNBT write(CompoundNBT tagCompound) {
+        tagCompound.putDouble("bufferedEnergy", this.bufferedEnergy);
+        tagCompound.putBoolean("isOn", this.isOn);
 
-        return super.writeToNBT(tagCompound);
+        return super.write(tagCompound);
     }
 
     /////////////////////////////////////////////////////////
@@ -76,8 +77,8 @@ public class TilePowerMeter extends SETwoPortMachine<ISESwitch> implements ISESw
     /// ISESocketProvider
     ///////////////////////////////////
     @Override
-    @SideOnly(Side.CLIENT)
-    public int getSocketIconIndex(EnumFacing side) {
+    @OnlyIn(Dist.CLIENT)
+    public int getSocketIconIndex(Direction side) {
         if (side == this.inputSide)
             return 2;
         else if (side == this.outputSide)
@@ -87,10 +88,10 @@ public class TilePowerMeter extends SETwoPortMachine<ISESwitch> implements ISESw
     }
 
     ///////////////////////////////////
-    /// IGuiProviderTile
+    /// INamedContainerProvider
     ///////////////////////////////////
-    @Override
-    public Container getContainer(EntityPlayer player, EnumFacing side) {
-        return new ContainerPowerMeter(this);
+	@Override
+	public Container createMenu(int windowId, PlayerInventory inv, PlayerEntity player) {
+        return new ContainerPowerMeter(this, windowId);
     }
 }

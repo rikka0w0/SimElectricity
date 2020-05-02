@@ -1,9 +1,9 @@
 package simelectricity.essential.common;
 
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.Direction;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import rikka.librikka.multiblock.IMultiBlockTile;
 import rikka.librikka.multiblock.MultiBlockTileInfo;
 
@@ -15,15 +15,15 @@ public abstract class SEMultiBlockEnergyTile extends SEEnergyTile implements IMu
     /////TileEntity
     //////////////////////////////
     @Override
-    public void readFromNBT(NBTTagCompound nbt) {
-        super.readFromNBT(nbt);
+    public void read(CompoundNBT nbt) {
+        super.read(nbt);
         this.mbInfo = new MultiBlockTileInfo(nbt);
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound nbt) {
+    public CompoundNBT write(CompoundNBT nbt) {
         this.mbInfo.saveToNBT(nbt);
-        return super.writeToNBT(nbt);
+        return super.write(nbt);
     }
     
     @Override
@@ -45,14 +45,14 @@ public abstract class SEMultiBlockEnergyTile extends SEEnergyTile implements IMu
     /////Sync
     /////////////////////////////////////////////////////////
     @Override
-    public void prepareS2CPacketData(NBTTagCompound nbt) {
+    public void prepareS2CPacketData(CompoundNBT nbt) {
         super.prepareS2CPacketData(nbt);
     	mbInfo.saveToNBT(nbt);
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
-    public void onSyncDataFromServerArrived(NBTTagCompound nbt) {
+    @OnlyIn(Dist.CLIENT)
+    public void onSyncDataFromServerArrived(CompoundNBT nbt) {
     	mbInfo = new MultiBlockTileInfo(nbt);
         
         super.onSyncDataFromServerArrived(nbt);
@@ -65,7 +65,7 @@ public abstract class SEMultiBlockEnergyTile extends SEEnergyTile implements IMu
     	return this.mbInfo==null? false : this.mbInfo.mirrored;
     }
     
-    public EnumFacing getFacing() {
+    public Direction getFacing() {
     	return this.mbInfo==null? null : this.mbInfo.facing;
     }
     

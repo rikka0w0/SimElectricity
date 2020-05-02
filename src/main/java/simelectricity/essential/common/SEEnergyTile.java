@@ -2,9 +2,14 @@ package simelectricity.essential.common;
 
 import rikka.librikka.tileentity.TileEntityBase;
 import simelectricity.api.SEAPI;
+import simelectricity.essential.Essential;
 
 public abstract class SEEnergyTile extends TileEntityBase {
-    protected boolean isAddedToEnergyNet;
+	public SEEnergyTile() {
+		super(Essential.MODID);
+	}
+
+	protected boolean isAddedToEnergyNet;
 
     /**
      * Called just before joining the energyNet, do some initialization here </p>
@@ -12,6 +17,7 @@ public abstract class SEEnergyTile extends TileEntityBase {
      */
     @Override
     public void onLoad() {
+    	super.onLoad();
         if (!this.world.isRemote && !this.isAddedToEnergyNet) {
             SEAPI.energyNetAgent.attachTile(this);
             isAddedToEnergyNet = true;
@@ -19,18 +25,13 @@ public abstract class SEEnergyTile extends TileEntityBase {
     }
 
     @Override
-    public void invalidate() {
-        super.invalidate();
+    public void remove() {
+        super.remove();
 
         if (!this.world.isRemote && this.isAddedToEnergyNet) {
             SEAPI.energyNetAgent.detachTile(this);
             isAddedToEnergyNet = false;
         }
-    }
-
-    @Override
-    public void onChunkUnload() {
-        this.invalidate();
     }
 
     /**

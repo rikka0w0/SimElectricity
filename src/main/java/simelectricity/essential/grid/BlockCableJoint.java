@@ -1,121 +1,118 @@
 package simelectricity.essential.grid;
 
+import javax.annotation.Nullable;
+
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.IProperty;
-import net.minecraft.block.state.BlockStateContainer;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.fluid.IFluidState;
+import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
+import net.minecraft.state.StateContainer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.util.math.shapes.ISelectionContext;
+import net.minecraft.util.math.shapes.VoxelShape;
+import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import rikka.librikka.DirHorizontal8;
+import rikka.librikka.IMetaProvider;
+import rikka.librikka.ITileMeta;
 import rikka.librikka.block.BlockBase;
-import rikka.librikka.block.ISubBlock;
-import rikka.librikka.item.ISimpleTexture;
-import rikka.librikka.item.ItemBlockBase;
-import rikka.librikka.properties.Properties;
 import simelectricity.api.SEAPI;
 import simelectricity.api.tile.ISEGridTile;
 import simelectricity.essential.api.ISEHVCableConnector;
 
-public class BlockCableJoint extends BlockBase implements ISubBlock, ISEHVCableConnector, ISimpleTexture {
-	private final static String[] subNames = new String[] {"10kv", "415v"};
-	
-    public BlockCableJoint() {
-        super("essential_cable_joint", Material.GLASS, ItemBlockBase.class);
-		setCreativeTab(SEAPI.SETab);
-		setHardness(0.2F);
-        setResistance(10.0F);
-        setSoundType(SoundType.METAL);
-    }
+public class BlockCableJoint extends BlockBase implements IMetaProvider<ITileMeta>, ISEHVCableConnector {	
+	public static enum Type implements ITileMeta {
+		_10kv(TileCableJoint.Type10kV.class),
+		_415v(TileCableJoint.Type415V.class);
+		
+		Type(Class<? extends TileEntity> teCls) {
+			this.teCls = teCls;
+		}
 
-    @Override
-    @SideOnly(Side.CLIENT)
-    public String getIconName(int damage) {
-        return "essential_cable_joint_" + subNames[damage];
-    }
-
-	@Override
-	public String[] getSubBlockUnlocalizedNames() {
-		return subNames;
+		public final Class<? extends TileEntity> teCls;
+		
+		@Override
+		public final Class<? extends TileEntity> teCls() {
+			return teCls;
+		}
 	}
+	
+	private final Type meta;
+	@Override
+	public final ITileMeta meta() {
+		return meta;
+	}
+	
+    private BlockCableJoint(Type meta) {
+        super("essential_cable_joint" + meta.name(), 
+        		Block.Properties.create(Material.GLASS)
+        		.hardnessAndResistance(0.2F, 10.0F)
+        		.sound(SoundType.METAL), SEAPI.SETab);
+        this.meta = meta;
+    }
+
+    public static BlockCableJoint[] create() {
+    	BlockCableJoint[] ret = new BlockCableJoint[Type.values().length];
+    	for (Type meta: Type.values()) {
+    		ret[meta.ordinal()] = new BlockCableJoint(meta);
+    	}
+    	return ret;
+    }
+    
     ///////////////////////////////
     ///BlockStates
     ///////////////////////////////
     @Override
-    protected final BlockStateContainer createBlockState() {
-        return new BlockStateContainer(this, new IProperty[]{Properties.facing3bit, Properties.type1bit});
-    }
-
-    @Override
-    public final IBlockState getStateFromMeta(int meta) {
-    	int facing = meta & 7;
-    	int type = (meta&8)>>3;
-        return getDefaultState().withProperty(Properties.facing3bit, facing).withProperty(Properties.type1bit, type);
-    }
-
-    @Override
-    public final int getMetaFromState(IBlockState state) {
-        int facing = state.getValue(Properties.facing3bit);
-        int type = state.getValue(Properties.type1bit);
-        return (type<<3)&8 | facing&7;
-    }
+	protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
+    	builder.add(DirHorizontal8.prop);
+	}
 
     ///////////////////////////////
     /// TileEntity
     ///////////////////////////////
 	@Override
-	public boolean hasTileEntity(IBlockState state) {return true;}
+	public boolean hasTileEntity(BlockState state) {return true;}
 	
     @Override
-    public TileEntity createTileEntity(World world, IBlockState state) {
-        int type = state.getValue(Properties.type1bit);
-        return type==0 ? new TileCableJoint.Type10kV() : new TileCableJoint.Type415V();
+    public TileEntity createTileEntity(BlockState state, IBlockReader world) {
+    	try {
+			return meta.teCls().getConstructor().newInstance();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
     }
 
     ////////////////////////////////////
     /// Rendering
     ////////////////////////////////////
-    //This will tell minecraft not to render any side of our cube.
     @Override
-    @SideOnly(Side.CLIENT)
-    public boolean shouldSideBeRendered(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side) {
+    public boolean isNormalCube(BlockState state, IBlockReader worldIn, BlockPos pos) {
         return false;
     }
-
-    //And this tell it that you can see through this block, and neighbor blocks should be rendered.
+    
     @Override
-    public boolean isOpaqueCube(IBlockState state) {
-        return false;
-    }
-
-    @Override
-    public boolean isNormalCube(IBlockState state) {
-        return false;
+    public VoxelShape getShape(BlockState state, IBlockReader world, BlockPos pos, ISelectionContext context) {
+    	return makeCuboidShape(0.0D, 0.0D, 0.0D, 15.0D, 15.0D, 15.0D);
     }
 
     //////////////////////////////////////
     /////Item drops and Block activities
     //////////////////////////////////////
     @Override
-    public int damageDropped(IBlockState state) {
-        return state.getValue(Properties.type1bit);
+    public BlockState getStateForPlacement(BlockItemUseContext context) {
+    	PlayerEntity placer = context.getPlayer();
+        return this.getDefaultState().with(DirHorizontal8.prop, DirHorizontal8.fromSight(placer));
     }
 
     @Override
-    public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
-        int facingInt = 8 - MathHelper.floor(placer.rotationYaw * 8.0F / 360.0F + 0.5D - 4) & 7;
-        return this.getDefaultState().withProperty(Properties.type1bit, meta & 1).withProperty(Properties.facing3bit, facingInt);
-    }
-
-    @Override
-    public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
+    public void onBlockPlacedBy(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
         if (world.isRemote)
             return;
 
@@ -128,12 +125,12 @@ public class BlockCableJoint extends BlockBase implements ISubBlock, ISEHVCableC
     }
 
     @Override
-    public void breakBlock(World world, BlockPos pos, IBlockState state) {
+    public boolean removedByPlayer(BlockState state, World world, BlockPos pos, PlayerEntity player, boolean willHarvest, IFluidState fluid) {
         TileEntity te = world.getTileEntity(pos);    //Do this before the tileEntity is removed!
         if (te instanceof ISEGridTile)
             SEAPI.energyNetAgent.detachGridNode(world, ((ISEGridTile) te).getGridNode());
 
-        super.breakBlock(world, pos, state);
+        return super.removedByPlayer(state, world, pos, player, willHarvest, fluid);
     }
 
     //////////////////////////////////////
@@ -142,8 +139,8 @@ public class BlockCableJoint extends BlockBase implements ISubBlock, ISEHVCableC
     @Override
     public ISEGridTile getGridTile(World world, BlockPos pos) {
         TileEntity te = world.getTileEntity(pos);
-        if (te instanceof TileCableJoint)
-            return (TileCableJoint) te;
+        if (te instanceof ISEGridTile)
+            return (ISEGridTile) te;
         else
             return null;
     }

@@ -1,17 +1,17 @@
 package simelectricity.essential.machines.gui;
 
-import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import rikka.librikka.container.ContainerSynchronizer;
-import rikka.librikka.container.IContainerWithGui;
+import rikka.librikka.gui.AutoGuiHandler;
 import simelectricity.api.SEAPI;
 import simelectricity.essential.common.ContainerNoInvAutoSync;
 import simelectricity.essential.machines.tile.TileQuantumGenerator;
 import simelectricity.essential.utils.network.ISEButtonEventHandler;
 
-public class ContainerQuantumGenerator extends ContainerNoInvAutoSync<TileQuantumGenerator> implements ISEButtonEventHandler, IContainerWithGui {
+@AutoGuiHandler.Marker(GuiQuantumGenerator.class)
+public class ContainerQuantumGenerator extends ContainerNoInvAutoSync<TileQuantumGenerator> implements ISEButtonEventHandler {
 	@ContainerSynchronizer.SyncField
 	public double internalVoltage;
     @ContainerSynchronizer.SyncField
@@ -21,8 +21,14 @@ public class ContainerQuantumGenerator extends ContainerNoInvAutoSync<TileQuantu
     @ContainerSynchronizer.SyncField
     public double current;
 
-    public ContainerQuantumGenerator(TileEntity tileEntity) {
-        super(tileEntity);
+    // Server side
+    public ContainerQuantumGenerator(TileEntity tileEntity, int windowId) {
+        super(tileEntity, windowId);
+    }
+    
+    // Client side
+    public ContainerQuantumGenerator(int windowId, PlayerInventory inv, PacketBuffer data) {
+    	this(null, windowId);
     }
     
     @Override
@@ -97,11 +103,5 @@ public class ContainerQuantumGenerator extends ContainerNoInvAutoSync<TileQuantu
         host.internalVoltage = internalVoltage;
 
         SEAPI.energyNetAgent.updateTileParameter(this.host);
-    }
-    
-    @Override
-    @SideOnly(Side.CLIENT)
-    public GuiScreen createGui() {
-    	return new GuiQuantumGenerator(this);
     }
 }
