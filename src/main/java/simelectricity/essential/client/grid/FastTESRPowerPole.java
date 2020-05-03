@@ -6,6 +6,7 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 
 import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -18,10 +19,10 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3i;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.MinecraftForgeClient;
-
+import net.minecraftforge.client.event.TextureStitchEvent;
 import rikka.librikka.math.MathAssitant;
 import rikka.librikka.math.Vec3f;
+import rikka.librikka.model.loader.EasyTextureLoader;
 import rikka.librikka.model.quadbuilder.RawQuadCube;
 import rikka.librikka.model.quadbuilder.RawQuadGroup;
 import simelectricity.essential.ConfigProvider;
@@ -41,9 +42,14 @@ public class FastTESRPowerPole<T extends TileEntity & ISEPowerPole> extends Tile
     /**
      * Do not call this
      */
-//    public static void stitchTexture(TextureMap map) {
-//        texture = map.registerSprite();
-//    }
+    public static void onPreTextureStitchEvent(TextureStitchEvent.Pre event) {
+    	if (EasyTextureLoader.isBlockAtlas(event))
+    		event.addSprite(hvcable_texture_loc);
+    }
+
+	public static void onModelBakeEvent() {
+		texture = EasyTextureLoader.blockTextureGetter().apply(hvcable_texture_loc);
+	}
 
     public static RawQuadGroup renderParabolicCable(Object[] vertexAndTension, float thickness) {
     	return renderParabolicCable(vertexAndTension, thickness, texture);
@@ -190,7 +196,7 @@ public class FastTESRPowerPole<T extends TileEntity & ISEPowerPole> extends Tile
         if (helper.needBake())
         	bake(te, helper);
         
-        IVertexBuilder buffer = bufferIn.getBuffer(MinecraftForgeClient.getRenderLayer());
+        IVertexBuilder buffer = bufferIn.getBuffer(RenderType.getSolid());
 //        buffer.setTranslation(x, y, z);
 //        matrix.translate(x, y, z);
 		
@@ -210,7 +216,7 @@ public class FastTESRPowerPole<T extends TileEntity & ISEPowerPole> extends Tile
 //			
 //			buffer.putPosition(0, 0, 0);
 			matrixStack.push();
-			buffer.addQuad(matrixStack.getLast(), quad, 1, 1, 1, 15728640, OverlayTexture.NO_OVERLAY);
+			buffer.addQuad(matrixStack.getLast(), quad, 1, 1, 1, i, OverlayTexture.NO_OVERLAY);
 			matrixStack.pop();
 		}
 	}

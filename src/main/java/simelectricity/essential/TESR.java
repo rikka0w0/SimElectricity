@@ -55,7 +55,8 @@ public class TESR extends TileEntityRenderer<TESRTestBlock.Tile>{
 
 
         Random rand = new Random();
-		List<BakedQuad> quads = new LinkedList<>();
+        rand.setSeed(42L);
+		List<BakedQuad> quads = new LinkedList<>(model.getQuads(state, null, rand));
 		for (Direction side: Direction.values()) {
 			rand.setSeed(42L);
 			quads.addAll(model.getQuads(state, side, rand));

@@ -6,16 +6,13 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.event.TickEvent.ClientTickEvent;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
 import simelectricity.common.SELogger;
 //import simelectricity.essential.client.grid.accessory.PoleAccessoryRendererDispatcher;
-import simelectricity.essential.Essential;
 
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-@Mod.EventBusSubscriber(modid = Essential.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public enum GridRenderMonitor {
 	instance;
 

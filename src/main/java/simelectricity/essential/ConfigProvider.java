@@ -2,8 +2,6 @@ package simelectricity.essential;
 
 import org.apache.commons.lang3.tuple.Pair;
 
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -19,7 +17,6 @@ public class ConfigProvider {
     public static ForgeConfigSpec.IntValue parabolaRenderSteps_Spec;
     public static ForgeConfigSpec.DoubleValue joule2rf_Spec;
     
-    @OnlyIn(Dist.CLIENT)
     public static int parabolaRenderSteps;
 	
 	public static double joule2rf; 
@@ -37,10 +34,7 @@ public class ConfigProvider {
 
     public static void syncConfig() {
     	joule2rf = joule2rf_Spec.get();
-    	
-    	if (EffectiveSide.get().isClient()) {
-    		parabolaRenderSteps = parabolaRenderSteps_Spec.get();
-    	}
+    	parabolaRenderSteps = parabolaRenderSteps_Spec.get();
     }
 
     @SubscribeEvent

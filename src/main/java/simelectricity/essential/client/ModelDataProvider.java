@@ -16,8 +16,6 @@ import rikka.librikka.model.loader.ISimpleItemDataProvider;
 import simelectricity.essential.BlockRegistry;
 import simelectricity.essential.Essential;
 import simelectricity.essential.ItemRegistry;
-import simelectricity.essential.cable.BlockCable;
-import simelectricity.essential.cable.BlockWire;
 import simelectricity.essential.common.semachine.SEMachineBlock;
 
 public final class ModelDataProvider extends BlockStateProvider implements ISimpleItemDataProvider {
@@ -35,12 +33,14 @@ public final class ModelDataProvider extends BlockStateProvider implements ISimp
 		for (SEMachineBlock sem: BlockRegistry.blockTwoPortElectronics)
 			registerSEMBlock(sem);
 		
-		for (BlockCable cable: BlockRegistry.blockCable)
+		for (Block cable: BlockRegistry.blockCable)
 			registerDynamic(cable);
-		for (BlockWire wire: BlockRegistry.blockWire)
+		for (Block wire: BlockRegistry.blockWire)
 			registerDynamic(wire);
 		
 		for (Block block: BlockRegistry.cableJoint)
+			registerDynamic(block);
+		for (Block block: BlockRegistry.concretePole35Kv)
 			registerDynamic(block);
 		
 		// Items
@@ -55,9 +55,9 @@ public final class ModelDataProvider extends BlockStateProvider implements ISimp
 		String namespace = block.getRegistryName().getNamespace();
 		String blockName =  block.getRegistryName().getPath();
 
-		BlockModelBuilder cableDummyModel = models().getBuilder("block/"+blockName);
-		cableDummyModel.parent(new ModelFile.ExistingModelFile(mcLoc("block/cube_all"), exfh));
-		cableDummyModel.texture("all", mcLoc("block/stone"));
+//		BlockModelBuilder cableDummyModel = models().getBuilder("block/"+blockName);
+//		cableDummyModel.parent(new ModelFile.ExistingModelFile(mcLoc("block/cube_all"), exfh));
+//		cableDummyModel.texture("all", mcLoc("block/stone"));
 		
 		final ModelFile modelFile = new ModelFile.ExistingModelFile(mcLoc("block/torch"), exfh);
 		builder.forAllStates((blockstate)->ConfiguredModel.builder().modelFile(modelFile).build());

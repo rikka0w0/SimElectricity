@@ -15,7 +15,6 @@ import rikka.librikka.container.ContainerHelper;
 import rikka.librikka.tileentity.TileEntityHelper;
 import simelectricity.essential.cable.*;
 import simelectricity.essential.coverpanel.ContainerVoltageSensor;
-import simelectricity.essential.grid.BlockPowerPole2;
 import simelectricity.essential.grid.*;
 //import simelectricity.essential.grid.TilePowerPole3.Pole10Kv;
 //import simelectricity.essential.grid.TilePowerPole3.Pole415vType0;
@@ -32,14 +31,15 @@ import simelectricity.essential.machines.gui.*;
 public class BlockRegistry {    
 	public final static List<Class<? extends Container>> registeredGuiContainers = new LinkedList<>();
 	
+	
 	public static BlockCable[] blockCable;
 	public static BlockWire[] blockWire;
-//
+
+	public static BlockPoleConcrete35kV[] concretePole35Kv;
     public static BlockPowerPoleTop[] powerPoleTop;
     public static BlockPowerPoleBottom powerPoleBottom;
     public static BlockPowerPoleCollisionBox powerPoleCollisionBox;
     public static BlockCableJoint[] cableJoint;
-    public static BlockPowerPole2[] powerPole2;
     public static BlockPowerPole3[] powerPole3;
 //    public static BlockPowerTransformer powerTransformer;
 //    public static BlockDistributionTransformer distributionTransformer;
@@ -55,7 +55,7 @@ public class BlockRegistry {
 //        BlockRegistry.powerPoleBottom = new BlockPowerPoleBottom();
         BlockRegistry.powerPoleCollisionBox = new BlockPowerPoleCollisionBox();
         BlockRegistry.cableJoint = BlockCableJoint.create();
-        BlockRegistry.powerPole2 = BlockPowerPole2.create();
+        BlockRegistry.concretePole35Kv = BlockPoleConcrete35kV.create();
         BlockRegistry.powerPole3 = BlockPowerPole3.create();
 //        BlockRegistry.powerTransformer = new BlockPowerTransformer();
 //        BlockRegistry.distributionTransformer = new BlockDistributionTransformer();
@@ -68,7 +68,9 @@ public class BlockRegistry {
     public static void registerBlocks(final IForgeRegistry<Block> registry, boolean isItemBlock) {
     	registerBlocks(registry, isItemBlock, blockCable);
     	registerBlocks(registry, isItemBlock, blockWire);
-
+    	
+    	
+    	registerBlocks(registry, isItemBlock, concretePole35Kv);
 //    			powerPoleTop,
 //    			powerPoleBottom,
 //    			powerPoleCollisionBox,
@@ -92,12 +94,14 @@ public class BlockRegistry {
     	TileEntityHelper.registerTileEntity(registry, TileCable.class, blockCable);
     	TileEntityHelper.registerTileEntity(registry, TileWire.class, blockWire);
 
+    	TileEntityHelper.registerTileEntity(registry, TilePoleConcrete35kV.class, concretePole35Kv);
+    	TileEntityHelper.registerTileEntity(registry, TileMultiBlockPlaceHolder.class, concretePole35Kv);
 //    	registerTile(BlockPowerPoleBottom.Tile.class);
-//        registerTile(TilePowerPole.class);
+//      registerTile(TilePowerPole.class);
     	TileEntityHelper.registerTileEntity(registry, TileCableJoint.Type10kV.class, cableJoint[BlockCableJoint.Type._10kv.ordinal()]);
     	TileEntityHelper.registerTileEntity(registry, TileCableJoint.Type415V.class, cableJoint[BlockCableJoint.Type._415v.ordinal()]);
-//        registerTile(TilePowerPole2.class);
-//        
+
+
 //        registerTile(TilePowerTransformerPlaceHolder.class);
 //        registerTile(TilePowerTransformerPlaceHolder.Primary.class);
 //        registerTile(TilePowerTransformerPlaceHolder.Secondary.class);

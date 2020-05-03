@@ -12,17 +12,21 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.inventory.container.Container;
+import net.minecraft.state.properties.BlockStateProperties;
+import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import rikka.librikka.gui.AutoGuiHandler;
 import rikka.librikka.model.CodeBasedModel;
+import rikka.librikka.model.loader.TERHelper;
 import simelectricity.essential.api.SEEAPI;
 import simelectricity.essential.cable.BlockCable;
 import simelectricity.essential.cable.BlockWire;
@@ -34,15 +38,11 @@ import simelectricity.essential.client.coverpanel.VoltageSensorRender;
 import simelectricity.essential.client.semachine.SEMachineModel;
 import simelectricity.essential.client.semachine.SocketRender;
 import simelectricity.essential.common.semachine.SEMachineBlock;
-//import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-//import net.minecraftforge.fml.relauncher.Side;
-//import rikka.librikka.model.loader.AdvancedModelLoader;
-//import simelectricity.essential.client.cable.CableStateMapper;
-//import simelectricity.essential.client.coverpanel.SupportRender;
 import simelectricity.essential.client.grid.pole.CableJointModel;
-//import simelectricity.essential.client.grid.FastTESRPowerPole;
-//import simelectricity.essential.client.grid.GridStateMapper;
-//import simelectricity.essential.client.grid.pole.FastTESRPowerPole2;
+import simelectricity.essential.client.grid.pole.ConcretePole35kVModel;
+import simelectricity.essential.client.grid.pole.ConcretePole35kVTER;
+import simelectricity.essential.client.grid.FastTESRPowerPole;
+import simelectricity.essential.client.grid.GridRenderMonitor;
 //import simelectricity.essential.client.grid.pole.FastTESRPowerPole3;
 //import simelectricity.essential.client.grid.pole.FastTESRPowerPoleBottom;
 //import simelectricity.essential.client.grid.pole.FastTESRPowerPoleTop;
@@ -61,12 +61,17 @@ import simelectricity.essential.client.grid.pole.CableJointModel;
 //import simelectricity.essential.grid.transformer.TilePowerTransformerWinding.Primary;
 //import simelectricity.essential.grid.transformer.TilePowerTransformerWinding.Secondary;
 import simelectricity.essential.grid.BlockCableJoint;
+import simelectricity.essential.grid.BlockPoleConcrete35kV;
+import simelectricity.essential.grid.TilePoleConcrete35kV;
 
 @Mod.EventBusSubscriber(modid = Essential.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ClientRegistrationHandler {
     public static Map<BlockState, CodeBasedModel> dynamicModels = new HashMap<>();
 	
 	public static void registerTileEntityRenders() {
+		TERHelper.bind(TilePoleConcrete35kV.class, ConcretePole35kVTER::new);
+//		TERHelper.bind(TileCableJoint.Type415V.class, FastTESRPowerPole::new);
+//		TERHelper.bind(TileCableJoint.Type10kV.class, FastTESRPowerPole::new);
 		ClientRegistry.bindTileEntityRenderer(BlockRegistry.ttb_tetype, TESR::new);
 //        FastTESRPowerPole.register(Primary.class);
 //        FastTESRPowerPole.register(Secondary.class);
@@ -94,7 +99,8 @@ public class ClientRegistrationHandler {
     	SupportRender.INSTANCE.onPreTextureStitchEvent(event);
     	VoltageSensorRender.instance.onPreTextureStitchEvent(event);
     	LedPanelRender.instance.onPreTextureStitchEvent(event);
-//    	FastTESRPowerPole.stitchTexture(map);
+    	
+    	FastTESRPowerPole.onPreTextureStitchEvent(event);
     }
     
     @SubscribeEvent
@@ -121,7 +127,7 @@ public class ClientRegistrationHandler {
     	VoltageSensorRender.instance.onModelBakeEvent();
     	LedPanelRender.instance.onModelBakeEvent();
     	
-
+    	FastTESRPowerPole.onModelBakeEvent();
 //      event.getModelRegistry().put(new ModelResourceLocation(), null);
 //  	Minecraft.getInstance().getModelManager().getModel(location)
 //  	net.minecraft.client.renderer.model.BlockModel
@@ -140,6 +146,13 @@ public class ClientRegistrationHandler {
 	public static void onClientSetup(FMLClientSetupEvent event){
         //Initialize client-side API
         SEEAPI.coloredBlocks = new LinkedList<Block>();
+        
+		// Register Gui
+//		ScreenManager.registerFactory(BlockRegistry.cAdjustableResistor, GuiAdjustableResistor::new);
+		for (Class<? extends Container> containerCls: BlockRegistry.registeredGuiContainers) {
+			AutoGuiHandler.registerContainerGui(containerCls);
+		}
+        
         Minecraft.getInstance().getBlockColors().register((blockstate, lightreader, pos, tintIndex) -> {
         	return Minecraft.getInstance().getBlockColors().getColor(lightreader.getBlockState(pos.down()), lightreader, pos, tintIndex);
         }, BlockRegistry.ttb);
@@ -186,11 +199,20 @@ public class ClientRegistrationHandler {
 			dynamicModels.put(blockstate, new CableJointModel.Type415V(blockstate));
 		});
 		
-		// Register Gui
-//		ScreenManager.registerFactory(BlockRegistry.cAdjustableResistor, GuiAdjustableResistor::new);
-		for (Class<? extends Container> containerCls: BlockRegistry.registeredGuiContainers) {
-			AutoGuiHandler.registerContainerGui(containerCls);
+		for (int i=0; i<BlockRegistry.concretePole35Kv.length; i++) {
+			final int modelType = i;
+			BlockRegistry.concretePole35Kv[i].getStateContainer().getValidStates().forEach((blockstate) -> {
+				Direction facing = blockstate.get(BlockStateProperties.HORIZONTAL_FACING);
+				BlockPoleConcrete35kV.Type type = blockstate.get(BlockPoleConcrete35kV.propType);
+				
+				if (type == BlockPoleConcrete35kV.Type.pole || type == BlockPoleConcrete35kV.Type.pole_collisionbox)
+					dynamicModels.put(blockstate, new ConcretePole35kVModel(facing, modelType, true));
+				else if (type == BlockPoleConcrete35kV.Type.host)
+					dynamicModels.put(blockstate, new ConcretePole35kVModel(facing, modelType, false));
+			});
 		}
+
+		MinecraftForge.EVENT_BUS.register(GridRenderMonitor.instance);
 		
 //		new ResourceLocation("minecraft","elements")
 //    	ModelLoaderRegistry.registerLoader(new ResourceLocation("librikka","virtual"), loader);

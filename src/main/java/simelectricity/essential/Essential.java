@@ -46,6 +46,8 @@ public class Essential {
         else
             throw new RuntimeException("Duplicated Class Instantiation: simelectricity.essential.Essential");
     	
+    	ConfigProvider.register();
+    	
     	SEEAPI.coverPanelRegistry = CoverPanelRegistry.INSTANCE;
     }
     
