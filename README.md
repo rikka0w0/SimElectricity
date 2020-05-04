@@ -6,16 +6,16 @@ A Minecraft mod aiming to bring real world electrical systems into the Minecraft
 
 Presented by the Chinese Institution of Scientific Minecraft Mod (CISM)
 
-Currently Supported Version: Minecraft Forge 1.12.2
+Current Supported Version: Minecraft Forge 1.15.2
 
 ![Image](/documentation/grid.jpg)
 
-# Addons: ![Image](/src/main/resources/assets/sime_essential/textures/items/cell_vita.png)
+# Addons: ![Image](/src/main/resources/assets/sime_essential/textures/item/cell_vita.png)
 1. BuildCraft Extension:
 Install BuildCraft facades to SimElectricity cable, already included in the SimElectricity Essential Mod.
 1. ThermalExpension Extension: Install ThermalDynamics facades to SimElectricity cable, already included in the SimElectricity Essential Mod.
 
-# Setup the Environment ![Image](/src/main/resources/assets/sime_essential/textures/items/tool_multimeter.png)
+# Setup the Environment ![Image](/src/main/resources/assets/sime_essential/textures/item/tool_multimeter.png)
 1. Ensure `Java` (found [here](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)) and `Git` (found [here](http://git-scm.com/)) are properly installed on your system.
 1. Create a base directory for the repo (anywhere you like)
 1. On Windows, open either 'CMD' or Windows PowerShell, on Linux and MacOS, 
@@ -40,29 +40,29 @@ and type the following commands:
 * __Both Obfuscated and deobfuscated jars needs corresponding version of LibRikka to work properly__
 * `SimElectricity-full.jar` includes LibRikka
 
-# For Developers ![Image](/src/main/resources/assets/sime_essential/textures/items/tool_wrench.png)
+# For Developers ![Image](/src/main/resources/assets/sime_essential/textures/item/tool_wrench.png)
 For API Usage, Please refer to the [SimElectricity Github Wiki Pages](https://github.com/RoyalAliceAcademyOfSciences/SimElectricity/wiki)
 and comments in the API source code (`package simelectricity.api`).
 
 ## Eclipse
 1. Setup the environment first (See section "Setup Environment")
-1. In the SimElectricity directory execute `gradlew eclipse` to generate the workspace and launch configuration
-1. Launch Eclipse and set your workspace to `.eclipse` folder under the SimElectricity directory
-1. Open any source file and hit the debug button to test if it works
+1. In the SimElectricity directory execute `gradlew genEclipseRuns` to generate the workspace and launch configuration
+1. Launch Eclipse, then Import > Existing Gradle Project > Select Folder
 ## IntelliJ IDEA
 1. Launch IDEA and clone the SimElectricity git repository to your local disk
 1. IDEA should prompt you for importing Gradle project, choose YES
 1. After IDEA finishes setting up Gradle, open Gradle panel
 1. Double click `setupDecompWorkspace` under `Tasks->forgegradle`
 1. After finish this, double click `genIntellijRuns`
-1. You are ready to go
 ## Notes
 1. You MUST set the compatibility level of Java compiler to 1.8. By default, 
-Minecraft Forge(1.11.2 - 13.20.1.2386) sets the compatibility level to 1.6. 
+Minecraft Forge sets the compatibility level to 1.6. 
 To do this, change `sourceCompatibility = targetCompatibility = "1.6"` in `build.gradle`
  to `sourceCompatibility = targetCompatibility = "1.8"`.
 1. Advanced users only: There are two hidden gradlew tasks: `energyNetDevJar` and `energyNetJar`, 
  which can generate Jars without the essential mod.
+1. __Since 1.15.2, Mojang introduces "DataGenerators", they generate json resource files such as blockstates and models.
+They are invoked seperately. To test or run this mod, you have to execute the gradle task "runData".__
 
 ## Special Thanks To: ![Image](/src/main/resources/assets/sime_essential/textures/items/tool_glove.png)
 * [LibRikka](https://github.com/rikka0w0/librikka) - A code pack designed to simplify Minecraft Modding
