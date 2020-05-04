@@ -4,7 +4,7 @@ import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-//import rikka.librikka.model.quadbuilder.RawQuadCube;
+import rikka.librikka.model.quadbuilder.RawQuadCube;
 
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -104,14 +104,14 @@ public class SERenderHeap {
     }
 
     public void bake(List<BakedQuad> list) {
-//        Iterator<double[][]> cubeIterator = this.cubes.iterator();
-//        Iterator<TextureAtlasSprite[]> textureIterator = this.textures.iterator();
-//        while (cubeIterator.hasNext()) {
-//            double[][] cube = cubeIterator.next();
-//            TextureAtlasSprite[] textureArray = textureIterator.next();
-//
-//            RawQuadCube rawCube = new RawQuadCube(cube, textureArray);
-//            rawCube.bake(list);
-//        }
+        Iterator<double[][]> cubeIterator = this.cubes.iterator();
+        Iterator<TextureAtlasSprite[]> textureIterator = this.textures.iterator();
+        while (cubeIterator.hasNext()) {
+            double[][] cube = cubeIterator.next();
+            TextureAtlasSprite[] textureArray = textureIterator.next();
+
+            RawQuadCube rawCube = new RawQuadCube(cube, textureArray);
+            rawCube.bake(list);
+        }
     }
 }

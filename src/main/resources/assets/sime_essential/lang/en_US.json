@@ -34,8 +34,8 @@
 "block.sime_essential.essential_cable_joint_10kv": "Three Phase Cable Joint (10kV)",
 "block.sime_essential.essential_cable_joint_415v": "Three Phase Cable Joint (415V)",
 
-"block.sime_essential.essential_powerpole.0.name": "35kV Power Pole Type 0",
-"block.sime_essential.essential_powerpole.1.name": "35kV Power Pole Type 1",
+"block.sime_essential.essential_pole_metal_35kv_0": "35kV Metal Power Pole Type 0",
+"block.sime_essential.essential_pole_metal_35kv_1": "35kV Metal Power Pole Type 1",
 "block.sime_essential.essential_pole_concrete_35kv_0": "35kV Concrete Power Pole Type 0",
 "block.sime_essential.essential_pole_concrete_35kv_1": "35kV Concrete Power Pole Type 1",
 "block.sime_essential.essential_powerpole3.pole.name": "Power Pole",

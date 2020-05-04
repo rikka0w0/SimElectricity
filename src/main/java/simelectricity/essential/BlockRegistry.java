@@ -35,6 +35,7 @@ public class BlockRegistry {
 	public static BlockCable[] blockCable;
 	public static BlockWire[] blockWire;
 
+	public static BlockPoleMetal35kV[] metalPole35kV;
 	public static BlockPoleConcrete35kV[] concretePole35Kv;
     public static BlockPowerPoleTop[] powerPoleTop;
     public static BlockPowerPoleBottom powerPoleBottom;
@@ -55,6 +56,7 @@ public class BlockRegistry {
 //        BlockRegistry.powerPoleBottom = new BlockPowerPoleBottom();
         BlockRegistry.powerPoleCollisionBox = new BlockPowerPoleCollisionBox();
         BlockRegistry.cableJoint = BlockCableJoint.create();
+        BlockRegistry.metalPole35kV = BlockPoleMetal35kV.create();
         BlockRegistry.concretePole35Kv = BlockPoleConcrete35kV.create();
         BlockRegistry.powerPole3 = BlockPowerPole3.create();
 //        BlockRegistry.powerTransformer = new BlockPowerTransformer();
@@ -69,7 +71,7 @@ public class BlockRegistry {
     	registerBlocks(registry, isItemBlock, blockCable);
     	registerBlocks(registry, isItemBlock, blockWire);
     	
-    	
+    	registerBlocks(registry, isItemBlock, metalPole35kV);
     	registerBlocks(registry, isItemBlock, concretePole35Kv);
 //    			powerPoleTop,
 //    			powerPoleBottom,
@@ -94,8 +96,10 @@ public class BlockRegistry {
     	TileEntityHelper.registerTileEntity(registry, TileCable.class, blockCable);
     	TileEntityHelper.registerTileEntity(registry, TileWire.class, blockWire);
 
+    	TileEntityHelper.registerTileEntity(registry, TilePoleMetal35kV.class, metalPole35kV);
     	TileEntityHelper.registerTileEntity(registry, TilePoleConcrete35kV.class, concretePole35Kv);
-    	TileEntityHelper.registerTileEntity(registry, TileMultiBlockPlaceHolder.class, concretePole35Kv);
+
+    	TileEntityHelper.registerTileEntity(registry, TileMultiBlockPlaceHolder.class, makeBlockArray(concretePole35Kv, metalPole35kV));
 //    	registerTile(BlockPowerPoleBottom.Tile.class);
 //      registerTile(TilePowerPole.class);
     	TileEntityHelper.registerTileEntity(registry, TileCableJoint.Type10kV.class, cableJoint[BlockCableJoint.Type._10kv.ordinal()]);
@@ -161,5 +165,22 @@ public class BlockRegistry {
     public static void registerGuiContainer(final IForgeRegistry<ContainerType<?>> registry, Class<? extends Container> containerCls) {
     	ContainerHelper.register(registry, containerCls);
     	registeredGuiContainers.add(containerCls);
+    }
+    
+    private static Block[] makeBlockArray(Block[]... blockArrays) {
+    	int size = 0;
+    	for (int i=0; i<blockArrays.length; i++)
+    		size += blockArrays[i].length;
+
+    	int k=0;
+    	Block[] blocks = new Block[size];
+    	for (int i=0; i<blockArrays.length; i++) {
+    		for (int j=0; j<blockArrays[i].length; j++) {
+    			blocks[k] = blockArrays[i][j];
+    			k++;
+    		}
+    	}
+    	
+    	return blocks;
     }
 }

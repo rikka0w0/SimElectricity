@@ -41,18 +41,14 @@ import simelectricity.essential.common.semachine.SEMachineBlock;
 import simelectricity.essential.client.grid.pole.CableJointModel;
 import simelectricity.essential.client.grid.pole.ConcretePole35kVModel;
 import simelectricity.essential.client.grid.pole.ConcretePole35kVTER;
+import simelectricity.essential.client.grid.pole.MetalPole35kVModel;
+import simelectricity.essential.client.grid.pole.MetalPole35kVTER;
 import simelectricity.essential.client.grid.FastTESRPowerPole;
 import simelectricity.essential.client.grid.GridRenderMonitor;
 //import simelectricity.essential.client.grid.pole.FastTESRPowerPole3;
-//import simelectricity.essential.client.grid.pole.FastTESRPowerPoleBottom;
-//import simelectricity.essential.client.grid.pole.FastTESRPowerPoleTop;
 //import simelectricity.essential.client.grid.transformer.FastTESRPowerTransformer;
-//import simelectricity.essential.client.semachine.SEMachineStateMapper;
-//import simelectricity.essential.client.semachine.SocketRender;
 //import simelectricity.essential.grid.BlockPowerPoleBottom;
 //import simelectricity.essential.grid.TilePoleBranch;
-//import simelectricity.essential.grid.TilePowerPole;
-//import simelectricity.essential.grid.TilePowerPole2;
 //import simelectricity.essential.grid.TilePowerPole3;
 //import simelectricity.essential.grid.TilePowerPole3.Pole10Kv;
 //import simelectricity.essential.grid.TilePowerPole3.Pole415vType0;
@@ -63,6 +59,7 @@ import simelectricity.essential.client.grid.GridRenderMonitor;
 import simelectricity.essential.grid.BlockCableJoint;
 import simelectricity.essential.grid.BlockPoleConcrete35kV;
 import simelectricity.essential.grid.TilePoleConcrete35kV;
+import simelectricity.essential.grid.TilePoleMetal35kV;
 
 @Mod.EventBusSubscriber(modid = Essential.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ClientRegistrationHandler {
@@ -70,6 +67,7 @@ public class ClientRegistrationHandler {
 	
 	public static void registerTileEntityRenders() {
 		TERHelper.bind(TilePoleConcrete35kV.class, ConcretePole35kVTER::new);
+		TERHelper.bind(TilePoleMetal35kV.class, MetalPole35kVTER::new);
 //		TERHelper.bind(TileCableJoint.Type415V.class, FastTESRPowerPole::new);
 //		TERHelper.bind(TileCableJoint.Type10kV.class, FastTESRPowerPole::new);
 		ClientRegistry.bindTileEntityRenderer(BlockRegistry.ttb_tetype, TESR::new);
@@ -94,6 +92,8 @@ public class ClientRegistrationHandler {
     public static void onTextureStitch(TextureStitchEvent.Pre event) {   	
     	for (CodeBasedModel dynamicModel: dynamicModels.values())
     		dynamicModel.onPreTextureStitchEvent(event);
+    	
+    	MetalPole35kVModel.instance.onPreTextureStitchEvent(event);
     	
     	SocketRender.INSTANCE.onPreTextureStitchEvent(event);
     	SupportRender.INSTANCE.onPreTextureStitchEvent(event);
@@ -121,6 +121,13 @@ public class ClientRegistrationHandler {
     		dynamicModel.onModelBakeEvent();
     		registry.put(BlockModelShapes.getModelLocation(blockstate), dynamicModel);
     	});
+    	
+    	MetalPole35kVModel.instance.onModelBakeEvent();
+		for (int i=0; i<BlockRegistry.metalPole35kV.length; i++) {
+			BlockRegistry.metalPole35kV[i].getStateContainer().getValidStates().forEach((blockstate) -> {
+				registry.put(BlockModelShapes.getModelLocation(blockstate), MetalPole35kVModel.instance);
+			});
+		}
     	
     	SocketRender.INSTANCE.onModelBakeEvent();
     	SupportRender.INSTANCE.onModelBakeEvent();

@@ -42,6 +42,8 @@ public final class ModelDataProvider extends BlockStateProvider implements ISimp
 			registerDynamic(block);
 		for (Block block: BlockRegistry.concretePole35Kv)
 			registerDynamic(block);
+		for (Block block: BlockRegistry.metalPole35kV)
+			registerDynamic(block);
 		
 		// Items
 		registerSimpleItems(ItemRegistry.itemHVCable);
