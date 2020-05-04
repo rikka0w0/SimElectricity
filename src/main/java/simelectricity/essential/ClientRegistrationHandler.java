@@ -41,6 +41,7 @@ import simelectricity.essential.common.semachine.SEMachineBlock;
 import simelectricity.essential.client.grid.pole.CableJointModel;
 import simelectricity.essential.client.grid.pole.ConcretePole35kVModel;
 import simelectricity.essential.client.grid.pole.ConcretePole35kVTER;
+import simelectricity.essential.client.grid.pole.MetalPole35kVBottomTER;
 import simelectricity.essential.client.grid.pole.MetalPole35kVModel;
 import simelectricity.essential.client.grid.pole.MetalPole35kVTER;
 import simelectricity.essential.client.grid.FastTESRPowerPole;
@@ -68,6 +69,7 @@ public class ClientRegistrationHandler {
 	public static void registerTileEntityRenders() {
 		TERHelper.bind(TilePoleConcrete35kV.class, ConcretePole35kVTER::new);
 		TERHelper.bind(TilePoleMetal35kV.class, MetalPole35kVTER::new);
+		TERHelper.bind(TilePoleMetal35kV.Bottom.class, MetalPole35kVBottomTER::new);
 //		TERHelper.bind(TileCableJoint.Type415V.class, FastTESRPowerPole::new);
 //		TERHelper.bind(TileCableJoint.Type10kV.class, FastTESRPowerPole::new);
 		ClientRegistry.bindTileEntityRenderer(BlockRegistry.ttb_tetype, TESR::new);

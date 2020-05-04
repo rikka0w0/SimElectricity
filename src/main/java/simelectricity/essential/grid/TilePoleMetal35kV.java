@@ -1,8 +1,11 @@
 package simelectricity.essential.grid;
 
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import rikka.librikka.DirHorizontal8;
 import rikka.librikka.math.MathAssitant;
 import rikka.librikka.math.Vec3f;
 import simelectricity.api.SEAPI;
@@ -97,5 +100,42 @@ public class TilePoleMetal35kV extends TileMultiBlockPole  implements ISEFacing8
 	@Override
 	protected void onStructureCreating() {
 
+	}
+	
+	public static class Bottom extends TileMultiBlockPlaceHolder {
+	    @OnlyIn(Dist.CLIENT)
+		public int xOffset() {
+			return this.mbInfo.xOffset;
+		}
+	    
+	    @OnlyIn(Dist.CLIENT)
+		public int zOffset() {
+			return this.mbInfo.zOffset;
+		}
+	    
+	    @OnlyIn(Dist.CLIENT)
+	    public DirHorizontal8 facing() {
+	        return BlockPoleMetal35kV.getFacing(getBlockState());
+	    }
+	    
+	    @OnlyIn(Dist.CLIENT)
+	    public int getPartId() {
+			return BlockPoleMetal35kV.getPartId(facing(), this.mbInfo.xOffset, this.mbInfo.zOffset);
+	    }
+	    
+	    //////////////////////////////
+	    /////TileEntity
+	    //////////////////////////////
+	    @OnlyIn(Dist.CLIENT)
+	    @Override
+	    public double getMaxRenderDistanceSquared() {
+	        return 100000;
+	    }
+
+	    @OnlyIn(Dist.CLIENT)
+	    @Override
+	    public AxisAlignedBB getRenderBoundingBox() {
+	        return TileEntity.INFINITE_EXTENT_AABB;
+	    }
 	}
 }

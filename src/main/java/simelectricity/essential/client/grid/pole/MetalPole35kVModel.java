@@ -26,10 +26,13 @@ public class MetalPole35kVModel extends CodeBasedModel {
     private final TextureAtlasSprite textureMetal = null;
 	@EasyTextureLoader.Mark(ResourcePaths.glass_insulator)
     private final TextureAtlasSprite textureInsulator = null;
-
+	
+	// [(8-DirHorizontal8.ordinal)&7]
 	public final static List<BakedQuad>[] insulator35Kv = new List[8];
 	public final static List<BakedQuad>[] bakedModelType0 = new List[8];
 	public final static List<BakedQuad>[] bakedModelType1 = new List[8];
+	// [(8-DirHorizontal8.ordinal)&7][partId]
+	public final static List<BakedQuad>[][] bakedModelBasePart = new List[8][4];
 	public static RawQuadGroup modelInsulator = null;
 	
 	@Override
@@ -48,11 +51,13 @@ public class MetalPole35kVModel extends CodeBasedModel {
 		
         modelInsulator = Models.render35KvInsulator(textureMetal, textureInsulator);		
         
-    	for (int facing=0; facing< 8; facing ++) {
+    	for (int facing=0; facing<8; facing++) {
     		List<BakedQuad> type0 = new LinkedList();
         	List<BakedQuad> insulator35Kv = new LinkedList();
     		List<BakedQuad> type1 = new LinkedList();
-    		
+    		List<BakedQuad>[] baseParts = new LinkedList[] {
+    				new LinkedList(), new LinkedList(), 
+    				new LinkedList(), new LinkedList()};
 
     		//Type 0
             RawQuadGroup insulator = modelInsulator.clone();
@@ -63,25 +68,43 @@ public class MetalPole35kVModel extends CodeBasedModel {
             insulator.bake(insulator35Kv);    		
 
             //Legacy Rotation
-    		int rotation = facing * 45 + 90;
-            model.clone().rotateAroundY(rotation).transform(0.5, -18, 0.5).bake(type0);
-    		Models.renderTower0Bottom(textureMetal).rotateAroundY(rotation).transform(0.5, -18, 0.5).bake(type0);
-    		Models.renderTower0Bottom(textureMetal).rotateAroundY(rotation+90).transform(0.5, -18, 0.5).bake(type0);
-    		Models.renderTower0Bottom(textureMetal).rotateAroundY(rotation+180).transform(0.5, -18, 0.5).bake(type0);
-    		Models.renderTower0Bottom(textureMetal).rotateAroundY(rotation+270).transform(0.5, -18, 0.5).bake(type0);
-            
+    		int rotation = facing * 45;
+            model.clone().rotateAroundY(rotation+90).transform(0.5, -18, 0.5).bake(type0);
             
             //Type 1
             RawQuadGroup insulators = new RawQuadGroup();
             insulators.merge(modelInsulator.clone().translateCoord(0, -2F, -4.9F));
             insulators.merge(modelInsulator.clone().translateCoord(0, -2F, 4.9F));
             insulators.merge(modelInsulator.clone().translateCoord(0, 5F, 3.95F));
-            insulators.rotateAroundY(rotation).translateCoord(0.5F, 0, 0.5F).bake(type1);
+            insulators.rotateAroundY(rotation+90).translateCoord(0.5F, 0, 0.5F).bake(type1);
             type1.addAll(type0);
+            
+            // Base
+            if ((facing>>1)<<1 == facing) {
+				Models.renderTower0Bottom(textureMetal).transform(2, 0, 2).rotateAroundY(rotation)
+						.transform(0.5F, 0, 0.5F).bake(baseParts[3]);
+				Models.renderTower0Bottom(textureMetal).transform(2, 0, 2).rotateAroundY(rotation + 90)
+						.transform(0.5F, 0, 0.5F).bake(baseParts[2]);
+				Models.renderTower0Bottom(textureMetal).transform(2, 0, 2).rotateAroundY(rotation + 180)
+						.transform(0.5F, 0, 0.5F).bake(baseParts[1]);
+				Models.renderTower0Bottom(textureMetal).transform(2, 0, 2).rotateAroundY(rotation + 270)
+						.transform(0.5F, 0, 0.5F).bake(baseParts[0]);
+            } else {
+				Models.renderTower0Bottom(textureMetal).transform(2.12, 0, 2.12).rotateAroundY(rotation)
+						.transform(0.5F, 0, 0.5F).bake(baseParts[3]);
+				Models.renderTower0Bottom(textureMetal).transform(2.12, 0, 2.12).rotateAroundY(rotation + 90)
+						.transform(0.5F, 0, 0.5F).bake(baseParts[2]);
+				Models.renderTower0Bottom(textureMetal).transform(2.12, 0, 2.12).rotateAroundY(rotation + 180)
+						.transform(0.5F, 0, 0.5F).bake(baseParts[1]);
+				Models.renderTower0Bottom(textureMetal).transform(2.12, 0, 2.12).rotateAroundY(rotation + 270)
+						.transform(0.5F, 0, 0.5F).bake(baseParts[0]);          	
+            }
+
             
             MetalPole35kVModel.bakedModelType0[facing] = type0;
             MetalPole35kVModel.insulator35Kv[facing] = insulator35Kv;
             MetalPole35kVModel.bakedModelType1[facing] = type1;
+            MetalPole35kVModel.bakedModelBasePart[facing] = baseParts;
     	}
     }
 }

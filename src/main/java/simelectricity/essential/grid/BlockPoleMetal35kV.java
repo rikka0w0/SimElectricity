@@ -3,7 +3,6 @@ package simelectricity.essential.grid;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.PlayerEntity;
@@ -30,6 +29,7 @@ import rikka.librikka.item.ItemBlockBase;
 import rikka.librikka.multiblock.BlockMapping;
 import rikka.librikka.multiblock.IMultiBlockTile;
 import rikka.librikka.multiblock.MultiBlockStructure;
+import rikka.librikka.multiblock.MultiBlockTileInfo;
 import simelectricity.api.SEAPI;
 import simelectricity.api.tile.ISEGridTile;
 import simelectricity.essential.api.ISEHVCableConnector;
@@ -179,7 +179,7 @@ public class BlockPoleMetal35kV extends BlockBase implements ICustomBoundingBox,
     	BlockState toState = this.getDefaultState().with(propType, type);
     	final Block blockThis = this;
     	
-    	return new BlockMapping(Blocks.AIR.getDefaultState(), toState) {
+    	return new BlockMapping(toState) {
     		@Override
     	    protected boolean cancelPlacement(BlockState state) {
     			return !state.isAir();
@@ -201,7 +201,7 @@ public class BlockPoleMetal35kV extends BlockBase implements ICustomBoundingBox,
     	BlockState toState = this.getDefaultState().with(propType, type);
     	final Block blockThis = this;
     	
-    	return new BlockMapping(Blocks.AIR.getDefaultState(), toState) {
+    	return new BlockMapping(toState) {
     		@Override
     	    protected boolean cancelPlacement(BlockState state) {
     			return !state.isAir();
@@ -219,6 +219,77 @@ public class BlockPoleMetal35kV extends BlockBase implements ICustomBoundingBox,
     	};
     }
     
+    public static DirHorizontal8 getFacing(BlockState blockstate) {
+    	return blockstate.get(DirHorizontal8.prop);
+    }
+    
+
+    /**
+     * Standing at center, looking at facing
+     * return	meaning (when is45 is true)<p>
+     * 0		Upper-Right<p>
+     * 1		Lower-Right<p>
+     * 2		Lower-Left<p>
+     * 3		Upper-Left<p>
+     * 
+     * @param xOffset
+     * @param zOffset
+     * @param xCenter
+     * @param zCenter
+     * @return the relative position to the center block
+     */
+    public static int getPartId(int xOffset, int zOffset, int xCenter, int zCenter) {
+    	int partId = -1;
+    	
+		if (xOffset < xCenter) {
+			if (zOffset < zCenter) {
+				partId = 3;
+			} else {
+				partId = 2;
+			}
+		} else {
+			if (zOffset < zCenter) {
+				partId = 0;
+			} else {
+				partId = 1;
+			}
+		}
+		
+		return partId;
+    }
+    
+    public static int getPartId45(int xOffset, int zOffset, int xCenter, int zCenter) {
+    	int partId = -1;
+    	
+		if (xOffset == xCenter) {
+			if (zOffset < zCenter) {
+				partId = 3;
+			} else {
+				partId = 1;
+			}
+		} else {
+			if (xOffset < xCenter) {
+				partId = 2;
+			} else {
+				partId = 0;
+			}
+		}
+		
+		return partId;
+    }
+ 
+    /**
+     * @param blockstate
+     * @param xOffset the x of a given block in the blueprint
+     * @param zOffset the z of a given block in the blueprint
+     * @param isOnAxis the default facing of the blueprint is N rather than NE
+     * @return the relative position to the center block
+     */
+    public static int getPartId(DirHorizontal8 facing, int xOffset, int zOffset) {
+		return facing.isOnAxis() ? 
+				getPartId(xOffset, zOffset, BlockPoleMetal35kV.hostOffset.getX(), BlockPoleMetal35kV.hostOffset.getZ()) :
+				getPartId45(xOffset, zOffset, BlockPoleMetal35kV.hostOffset45.getX(), BlockPoleMetal35kV.hostOffset45.getZ());
+    }
     
 	
     @Override
@@ -234,7 +305,12 @@ public class BlockPoleMetal35kV extends BlockBase implements ICustomBoundingBox,
 	@Override
 	public TileEntity createTileEntity(BlockState state, IBlockReader world) {
 		Type type = state.get(propType);
-		return type == Type.host ? new TilePoleMetal35kV() : new TileMultiBlockPlaceHolder();
+		if (type == Type.host)
+			return new TilePoleMetal35kV();
+		else if (type == Type.pole)
+			return new TilePoleMetal35kV.Bottom();
+		else
+			return new TileMultiBlockPlaceHolder();
 	}
 	
     @Override
@@ -254,18 +330,67 @@ public class BlockPoleMetal35kV extends BlockBase implements ICustomBoundingBox,
     ///////////////////
     /// BoundingBoxes
     ///////////////////
+    private final static VoxelShape[] poleShapes = new VoxelShape[4];
+    private final static VoxelShape[] poleShapes45 = new VoxelShape[4];
+    
+    private static void initPoleShapes() {
+		double x1 = 0.4, y1 = 0, z1 = 0;
+		double x2 = 1, y2 = 0.8, z2 = 0.6;
+
+		poleShapes[0] = VoxelShapes.create(x1, y1, z1, x2, y2, z2);
+		poleShapes[1] = VoxelShapes.create(x1, y1, 1 - z2, x2, y2, 1 - z1);
+		poleShapes[2] = VoxelShapes.create(1 - x2, y1, 1 - z2, 1 - x1, y2, 1 - z1);
+		poleShapes[3] = VoxelShapes.create(1 - x2, y1, z1, 1 - x1, y2, z2);
+    }
+    
+    private static void initPoleShapes45() {
+		double x1 = 0.4, y1 = 0, z1 = 0.2;
+		double x2 = 1, y2 = 0.8, z2 = 0.8;
+		
+		poleShapes45[0] = VoxelShapes.create(x1, y1, z1, x2, y2, z2);
+		poleShapes45[1] = VoxelShapes.create(z1, y1, x1, z2, y2, x2);
+		poleShapes45[2] = VoxelShapes.create(1 - x2, y1, 1 - z2, 1 - x1, y2, 1 - z1);
+		poleShapes45[3] = VoxelShapes.create(1 - z2, y1, 1 - x2, 1 - z1, y2, 1 - x1);
+    }
+    
+    static {
+    	initPoleShapes();
+    	initPoleShapes45();
+    }
+    
     @Override
     public VoxelShape getBoundingShape(BlockState state, IBlockReader world, BlockPos pos, ISelectionContext context) {
     	Type type = state.get(propType);
+    	DirHorizontal8 facing = getFacing(state);
+    	TileEntity te = world.getTileEntity(pos);
+    	
+    	if (!(te instanceof IMultiBlockTile))
+    		return VoxelShapes.empty();
+    	
+    	MultiBlockTileInfo mbInfo = ((IMultiBlockTile) te).getMultiBlockTileInfo();
+    	
         VoxelShape vs = VoxelShapes.fullCube();
 
+        if (type == Type.pole) {
+        	if (facing.isOnAxis()) {
+        		BlockPos centerPos = mbInfo.getPartPos(hostOffset);
+        		int partId = getPartId(pos.getX(), pos.getZ(), centerPos.getX(), centerPos.getZ());
+        		vs = poleShapes[partId];
+        	} else {
+        		BlockPos centerPos = mbInfo.getPartPos(hostOffset45);
+        		int partId = getPartId45(pos.getX(), pos.getZ(), centerPos.getX(), centerPos.getZ());
+        		vs = poleShapes45[partId];    		
+        	}
+        }
+        
         return vs;
     }
 
     @Override
     public VoxelShape getShape(BlockState state, IBlockReader world, BlockPos pos, ISelectionContext context) {
     	Type type = state.get(propType);
-        VoxelShape vs = VoxelShapes.fullCube();
+        VoxelShape vs = getBoundingShape(state, world, pos, context);
+        
         
         return vs;
     }
