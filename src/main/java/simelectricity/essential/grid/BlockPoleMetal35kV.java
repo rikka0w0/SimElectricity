@@ -24,7 +24,6 @@ import net.minecraft.world.World;
 import rikka.librikka.DirHorizontal8;
 import rikka.librikka.IMetaBase;
 import rikka.librikka.block.BlockBase;
-import rikka.librikka.block.ICustomBoundingBox;
 import rikka.librikka.item.ItemBlockBase;
 import rikka.librikka.multiblock.BlockMapping;
 import rikka.librikka.multiblock.IMultiBlockTile;
@@ -34,7 +33,7 @@ import simelectricity.api.SEAPI;
 import simelectricity.api.tile.ISEGridTile;
 import simelectricity.essential.api.ISEHVCableConnector;
 
-public class BlockPoleMetal35kV extends BlockBase implements ICustomBoundingBox, ISEHVCableConnector {
+public class BlockPoleMetal35kV extends BlockBase implements ISEHVCableConnector {
 	public final MultiBlockStructure structureTemplate;
 	public final MultiBlockStructure structureTemplate45;
 	public final static EnumProperty<Type> propType = EnumProperty.create("type", Type.class);
@@ -42,14 +41,8 @@ public class BlockPoleMetal35kV extends BlockBase implements ICustomBoundingBox,
 	public static enum Type implements IMetaBase, IStringSerializable {
 		pole, 
 		collisionbox_full,
-		collisionbox_half_xn,
-		collisionbox_half_xp,
-		collisionbox_half_zn,
-		collisionbox_half_zp,
-		collisionbox_quarter_q,
-		collisionbox_quarter_w,
-		collisionbox_quarter_s,
-		collisionbox_quarter_a,
+		collisionbox_half,
+		collisionbox_quarter,
 		host;
 
 		@Override
@@ -81,14 +74,14 @@ public class BlockPoleMetal35kV extends BlockBase implements ICustomBoundingBox,
         
         BlockMapping p = blockMappingFromType(Type.pole);
         BlockMapping cf = blockMappingFromType(Type.collisionbox_full);
-        BlockMapping cxn = blockMappingFromType(Type.collisionbox_half_xn);
-        BlockMapping cxp = blockMappingFromType(Type.collisionbox_half_xp);
-        BlockMapping czn = blockMappingFromType(Type.collisionbox_half_zn);
-        BlockMapping czp = blockMappingFromType(Type.collisionbox_half_zp);
-        BlockMapping cq = blockMappingFromType(Type.collisionbox_quarter_q);
-        BlockMapping cw = blockMappingFromType(Type.collisionbox_quarter_w);
-        BlockMapping cs = blockMappingFromType(Type.collisionbox_quarter_s);
-        BlockMapping ca = blockMappingFromType(Type.collisionbox_quarter_a);
+        BlockMapping cxn = blockMappingFromType(Type.collisionbox_half);
+        BlockMapping cxp = cxn;
+        BlockMapping czn = cxn;
+        BlockMapping czp = cxn;
+        BlockMapping cq = blockMappingFromType(Type.collisionbox_quarter);
+        BlockMapping cw = cq;
+        BlockMapping cs = cq;
+        BlockMapping ca = cq;
         BlockMapping h = blockMappingFromType(Type.host);
         //  .-->x+ (East)
         //  |                           Facing/Looking at North(z-)
@@ -330,9 +323,11 @@ public class BlockPoleMetal35kV extends BlockBase implements ICustomBoundingBox,
     ///////////////////
     /// BoundingBoxes
     ///////////////////
-    private final static VoxelShape[] poleShapes = new VoxelShape[4];
-    private final static VoxelShape[] poleShapes45 = new VoxelShape[4];
-    
+    private final static VoxelShape[] poleShapes = new VoxelShape[4];		// partId
+    private final static VoxelShape[] poleShapes45 = new VoxelShape[4];		// partId
+    private final static VoxelShape[] quarterCollShape = new VoxelShape[4];	// partId
+    private final static VoxelShape[] halfCollShape = new VoxelShape[4];	// NESW
+    private final static VoxelShape fullCollShape = VoxelShapes.create(0, 0, 0, 1, 0.3, 1);
     private static void initPoleShapes() {
 		double x1 = 0.4, y1 = 0, z1 = 0;
 		double x2 = 1, y2 = 0.8, z2 = 0.6;
@@ -356,10 +351,20 @@ public class BlockPoleMetal35kV extends BlockBase implements ICustomBoundingBox,
     static {
     	initPoleShapes();
     	initPoleShapes45();
+    	
+    	quarterCollShape[0] = VoxelShapes.create(0, 0, 0.4, 0.6, 0.3, 1);
+    	quarterCollShape[1] = VoxelShapes.create(0, 0, 0, 0.6, 0.3, 0.6);
+    	quarterCollShape[2] = VoxelShapes.create(0.4, 0, 0, 1, 0.3, 0.6);
+    	quarterCollShape[3] = VoxelShapes.create(0.4, 0, 0.4, 1, 0.3, 1);
+    	
+    	halfCollShape[0] = VoxelShapes.create(0, 0, 0.4, 1, 0.3, 1);	//N
+    	halfCollShape[1] = VoxelShapes.create(0, 0, 0, 0.6, 0.3, 1);	//E
+    	halfCollShape[2] = VoxelShapes.create(0, 0, 0, 1, 0.3, 0.6);	//S
+    	halfCollShape[3] = VoxelShapes.create(0.4, 0, 0, 1, 0.3, 1);	//W
     }
     
     @Override
-    public VoxelShape getBoundingShape(BlockState state, IBlockReader world, BlockPos pos, ISelectionContext context) {
+    public VoxelShape getShape(BlockState state, IBlockReader world, BlockPos pos, ISelectionContext context) {
     	Type type = state.get(propType);
     	DirHorizontal8 facing = getFacing(state);
     	TileEntity te = world.getTileEntity(pos);
@@ -368,29 +373,45 @@ public class BlockPoleMetal35kV extends BlockBase implements ICustomBoundingBox,
     		return VoxelShapes.empty();
     	
     	MultiBlockTileInfo mbInfo = ((IMultiBlockTile) te).getMultiBlockTileInfo();
-    	
-        VoxelShape vs = VoxelShapes.fullCube();
-
+    	BlockPos centerPos = mbInfo.getPartPos(facing.isOnAxis()?hostOffset:hostOffset45);
+		int partId = getPartId(pos.getX(), pos.getZ(), centerPos.getX(), centerPos.getZ());
+       
+		VoxelShape vs = fullCollShape;
         if (type == Type.pole) {
         	if (facing.isOnAxis()) {
-        		BlockPos centerPos = mbInfo.getPartPos(hostOffset);
-        		int partId = getPartId(pos.getX(), pos.getZ(), centerPos.getX(), centerPos.getZ());
         		vs = poleShapes[partId];
         	} else {
-        		BlockPos centerPos = mbInfo.getPartPos(hostOffset45);
-        		int partId = getPartId45(pos.getX(), pos.getZ(), centerPos.getX(), centerPos.getZ());
         		vs = poleShapes45[partId];    		
         	}
+        } else if (type == Type.collisionbox_quarter) {
+        	vs = quarterCollShape[partId];
+        } else if (type == Type.collisionbox_half) {
+    		if (facing == DirHorizontal8.NORTH || facing == DirHorizontal8.SOUTH) {
+    			if (pos.getZ() == centerPos.getZ()) {
+    				if (pos.getX() < centerPos.getX())
+    					vs = halfCollShape[3];	//W
+    				else
+    					vs = halfCollShape[1];	//E
+    			} else {
+        			if (partId == 0 || partId == 3)
+    					vs = halfCollShape[0];	//N
+    				else
+    					vs = halfCollShape[2];	//S
+    			}
+    		}  else if (facing == DirHorizontal8.EAST || facing == DirHorizontal8.WEST) {
+    			if (pos.getX() == centerPos.getX()) {
+        			if (pos.getZ() < centerPos.getZ())
+    					vs = halfCollShape[0];	//N
+    				else
+    					vs = halfCollShape[2];	//S
+    			} else {
+        			if (partId == 2 || partId == 3)
+    					vs = halfCollShape[3];	//W
+    				else
+    					vs = halfCollShape[1];	//E
+    			}
+    		}
         }
-        
-        return vs;
-    }
-
-    @Override
-    public VoxelShape getShape(BlockState state, IBlockReader world, BlockPos pos, ISelectionContext context) {
-    	Type type = state.get(propType);
-        VoxelShape vs = getBoundingShape(state, world, pos, context);
-        
         
         return vs;
     }
