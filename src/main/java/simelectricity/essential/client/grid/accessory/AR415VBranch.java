@@ -1,5 +1,6 @@
 package simelectricity.essential.client.grid.accessory;
 
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import rikka.librikka.math.Vec3f;
 import rikka.librikka.model.loader.EasyTextureLoader;
@@ -83,7 +84,9 @@ public class AR415VBranch implements ISEAccessoryRenderer {
 					pole.addExtraWire(from[0].pointOnCable(0.75F), to[0].fixedFrom, 0.1F, true);
 					pole.addExtraWire(from[1].pointOnCable(0.5F), to[1].pointOnCable(0.1F), 0.05F, false);
 
-					RawQuadGroup insulator = Models.render415VInsulator(EasyTextureLoader.getTexture(ResourcePaths.metal), EasyTextureLoader.getTexture(ResourcePaths.glass_insulator));
+					RawQuadGroup insulator = Models.render415VInsulator(
+							EasyTextureLoader.blockTextureGetter().apply(new ResourceLocation(ResourcePaths.metal)), 
+							EasyTextureLoader.blockTextureGetter().apply(new ResourceLocation(ResourcePaths.glass_insulator)));
 					
 					//PowerPoleRenderHelper.hasIntersection(from1, to1, from2, to2)
 					Vec3f pt0 = new Vec3f(-0.375F, -0.9F, 0).rotateAroundY(middle).add(0.5F, 0, 0.5F);

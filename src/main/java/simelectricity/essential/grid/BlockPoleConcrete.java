@@ -28,23 +28,45 @@ import simelectricity.essential.api.ISEHVCableConnector;
 
 import javax.annotation.Nullable;
 
-public class BlockPowerPole3 extends BlockBase implements IMetaProvider<ITileMeta>, ISEHVCableConnector {
-	public static BlockPowerPole3[] create() {
-		BlockPowerPole3[] ret = new BlockPowerPole3[EnumBlockTypePole3.values().length];
-		for (EnumBlockTypePole3 blockType: EnumBlockTypePole3.values()) {
-			ret[blockType.ordinal()] = new BlockPowerPole3(blockType);
+public class BlockPoleConcrete extends BlockBase implements IMetaProvider<ITileMeta>, ISEHVCableConnector {
+	public enum Type implements ITileMeta {
+		pole(null, 0),
+		crossarm10kvt0(TilePoleConcrete.Pole10Kv.Type0.class,3),
+		crossarm10kvt1(TilePoleConcrete.Pole10Kv.Type1.class, 3),
+		crossarm415vt0(TilePoleConcrete.Pole415vType0.class, 4),
+		branching10kv(TilePoleBranch.Type10kV.class, 3),
+		branching415v(TilePoleBranch.Type415V.class, 4);
+
+		public final Class<? extends TileEntity> teCls;
+	    public final int numOfConductor;
+
+	    Type(Class<? extends TileEntity> teCls, int numOfConductor) {
+	    	this.teCls = teCls;
+	        this.numOfConductor = numOfConductor;
+	    }
+
+		@Override
+		public Class<? extends TileEntity> teCls() {
+			return this.teCls;
+		}
+	}
+	
+	public static BlockPoleConcrete[] create() {
+		BlockPoleConcrete[] ret = new BlockPoleConcrete[Type.values().length];
+		for (Type blockType: Type.values()) {
+			ret[blockType.ordinal()] = new BlockPoleConcrete(blockType);
 		}
 		return ret;
 	}
     
-    private final EnumBlockTypePole3 blockType;
+    public final Type blockType;
 	@Override
 	public ITileMeta meta() {
 		return blockType;
 	}
 	
-    private BlockPowerPole3(EnumBlockTypePole3 blockType) {
-        super("essential_powerpole3_" + blockType.name(), 
+    private BlockPoleConcrete(Type blockType) {
+        super("essential_pole_concrete_" + blockType.name(), 
         		Block.Properties.create(Material.ROCK)
         		.hardnessAndResistance(3F, 10F)
         		.sound(SoundType.METAL), 

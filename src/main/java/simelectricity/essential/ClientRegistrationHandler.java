@@ -11,6 +11,7 @@ import net.minecraft.client.renderer.BlockModelShapes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraft.client.renderer.model.IBakedModel;
+import net.minecraft.client.renderer.model.ModelResourceLocation;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.util.Direction;
@@ -24,6 +25,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import rikka.librikka.DirHorizontal8;
 import rikka.librikka.gui.AutoGuiHandler;
 import rikka.librikka.model.CodeBasedModel;
 import rikka.librikka.model.loader.TERHelper;
@@ -41,24 +43,23 @@ import simelectricity.essential.common.semachine.SEMachineBlock;
 import simelectricity.essential.client.grid.pole.CableJointModel;
 import simelectricity.essential.client.grid.pole.ConcretePole35kVModel;
 import simelectricity.essential.client.grid.pole.ConcretePole35kVTER;
+import simelectricity.essential.client.grid.pole.ConcretePoleTER;
 import simelectricity.essential.client.grid.pole.MetalPole35kVBottomTER;
 import simelectricity.essential.client.grid.pole.MetalPole35kVModel;
 import simelectricity.essential.client.grid.pole.MetalPole35kVTER;
+import simelectricity.essential.client.grid.pole.ConcretePoleModel;
 import simelectricity.essential.client.grid.FastTESRPowerPole;
 import simelectricity.essential.client.grid.GridRenderMonitor;
-//import simelectricity.essential.client.grid.pole.FastTESRPowerPole3;
 //import simelectricity.essential.client.grid.transformer.FastTESRPowerTransformer;
-//import simelectricity.essential.grid.BlockPowerPoleBottom;
-//import simelectricity.essential.grid.TilePoleBranch;
-//import simelectricity.essential.grid.TilePowerPole3;
-//import simelectricity.essential.grid.TilePowerPole3.Pole10Kv;
-//import simelectricity.essential.grid.TilePowerPole3.Pole415vType0;
 //import simelectricity.essential.grid.transformer.TileDistributionTransformer;
 //import simelectricity.essential.grid.transformer.TilePowerTransformerPlaceHolder;
 //import simelectricity.essential.grid.transformer.TilePowerTransformerWinding.Primary;
 //import simelectricity.essential.grid.transformer.TilePowerTransformerWinding.Secondary;
 import simelectricity.essential.grid.BlockCableJoint;
 import simelectricity.essential.grid.BlockPoleConcrete35kV;
+import simelectricity.essential.grid.BlockPoleConcrete;
+import simelectricity.essential.grid.TilePoleBranch;
+import simelectricity.essential.grid.TilePoleConcrete;
 import simelectricity.essential.grid.TilePoleConcrete35kV;
 import simelectricity.essential.grid.TilePoleMetal35kV;
 
@@ -70,23 +71,19 @@ public class ClientRegistrationHandler {
 		TERHelper.bind(TilePoleConcrete35kV.class, ConcretePole35kVTER::new);
 		TERHelper.bind(TilePoleMetal35kV.class, MetalPole35kVTER::new);
 		TERHelper.bind(TilePoleMetal35kV.Bottom.class, MetalPole35kVBottomTER::new);
-//		TERHelper.bind(TileCableJoint.Type415V.class, FastTESRPowerPole::new);
-//		TERHelper.bind(TileCableJoint.Type10kV.class, FastTESRPowerPole::new);
+		TERHelper.bind(TilePoleConcrete.Pole10Kv.Type0.class, ConcretePoleTER::new);
+		TERHelper.bind(TilePoleConcrete.Pole10Kv.Type1.class, ConcretePoleTER::new);
+		TERHelper.bind(TilePoleConcrete.Pole415vType0.class, ConcretePoleTER::new);
+		TERHelper.bind(TilePoleBranch.Type10kV.class, ConcretePoleTER::new);
+		TERHelper.bind(TilePoleBranch.Type415V.class, ConcretePoleTER::new);
+
 		ClientRegistry.bindTileEntityRenderer(BlockRegistry.ttb_tetype, TESR::new);
 //        FastTESRPowerPole.register(Primary.class);
 //        FastTESRPowerPole.register(Secondary.class);
-//        FastTESRPowerPole.register(Pole10Kv.Type0.class);
-//        FastTESRPowerPole.register(Pole415vType0.class);
 //        
 //        FastTESRPowerPole.register(TileDistributionTransformer.Pole10kV.class);
 //        FastTESRPowerPole.register(TileDistributionTransformer.Pole415V.class);
-//        
-//        ClientRegistry.bindTileEntitySpecialRenderer(BlockPowerPoleBottom.Tile.class, FastTESRPowerPoleBottom.instance);
-//        ClientRegistry.bindTileEntitySpecialRenderer(TilePowerPole.class, FastTESRPowerPoleTop.instance);
-//        ClientRegistry.bindTileEntitySpecialRenderer(TilePowerPole2.class, FastTESRPowerPole2.instance);
-//        ClientRegistry.bindTileEntitySpecialRenderer(TilePowerPole3.Pole10Kv.Type1.class, FastTESRPowerPole3.instance);
-//        ClientRegistry.bindTileEntitySpecialRenderer(TilePoleBranch.Type10kV.class, FastTESRPowerPole3.instance);
-//        ClientRegistry.bindTileEntitySpecialRenderer(TilePoleBranch.Type415V.class, FastTESRPowerPole3.instance);
+
 //        ClientRegistry.bindTileEntitySpecialRenderer(TilePowerTransformerPlaceHolder.Render.class, FastTESRPowerTransformer.instance);
 	}
 	
@@ -137,6 +134,16 @@ public class ClientRegistrationHandler {
     	LedPanelRender.instance.onModelBakeEvent();
     	
     	FastTESRPowerPole.onModelBakeEvent();
+    	
+
+		// Assign item models
+    	for (int i=0; i<BlockRegistry.concretePole.length; i++) {
+    		Block block = BlockRegistry.concretePole[i];
+    		ModelResourceLocation resLoc = new ModelResourceLocation(block.getRegistryName(), "inventory");
+    		IBakedModel newItemModel = event.getModelRegistry().get(BlockModelShapes.getModelLocation(block.getDefaultState()));
+    		registry.put(resLoc, newItemModel);
+    	}
+    	
 //      event.getModelRegistry().put(new ModelResourceLocation(), null);
 //  	Minecraft.getInstance().getModelManager().getModel(location)
 //  	net.minecraft.client.renderer.model.BlockModel
@@ -208,9 +215,9 @@ public class ClientRegistrationHandler {
 			dynamicModels.put(blockstate, new CableJointModel.Type415V(blockstate));
 		});
 		
-		for (int i=0; i<BlockRegistry.concretePole35Kv.length; i++) {
+		for (int i=0; i<BlockRegistry.concretePole35kV.length; i++) {
 			final int modelType = i;
-			BlockRegistry.concretePole35Kv[i].getStateContainer().getValidStates().forEach((blockstate) -> {
+			BlockRegistry.concretePole35kV[i].getStateContainer().getValidStates().forEach((blockstate) -> {
 				Direction facing = blockstate.get(BlockStateProperties.HORIZONTAL_FACING);
 				BlockPoleConcrete35kV.Type type = blockstate.get(BlockPoleConcrete35kV.propType);
 				
@@ -218,6 +225,17 @@ public class ClientRegistrationHandler {
 					dynamicModels.put(blockstate, new ConcretePole35kVModel(facing, modelType, true));
 				else if (type == BlockPoleConcrete35kV.Type.host)
 					dynamicModels.put(blockstate, new ConcretePole35kVModel(facing, modelType, false));
+			});
+		}
+		
+		for (int i=0; i<BlockRegistry.concretePole.length; i++) {
+			final int modelType = i;
+			BlockRegistry.concretePole[i].getStateContainer().getValidStates().forEach((blockstate) -> {
+				DirHorizontal8 facing = blockstate.get(DirHorizontal8.prop);
+				BlockPoleConcrete block = (BlockPoleConcrete) blockstate.getBlock();
+				BlockPoleConcrete.Type type = block.blockType;
+
+				dynamicModels.put(blockstate, new ConcretePoleModel(type, facing));
 			});
 		}
 

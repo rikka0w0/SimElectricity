@@ -89,9 +89,9 @@ public final class ItemHighVoltageCable extends ItemBase implements IMetaProvide
         if (lastCoordinate == null) {    //First selection
             if (canConnect(connector1, world, pos, null)) {
                 lastCoordinate = new BlockPos(pos);
-                Utils.chatWithLocalization(player, "chat.sime_essential:powerpole_selected");
+                Utils.chatWithLocalization(player, "chat.sime_essential.powerpole_selected");
             } else {
-            	Utils.chatWithLocalization(player, "chat.sime_essential:powerpole_current_selection_invalid");
+            	Utils.chatWithLocalization(player, "chat.sime_essential.powerpole_current_selection_invalid");
             }
 
             this.lastCoordinates.put(player, lastCoordinate);
@@ -106,29 +106,29 @@ public final class ItemHighVoltageCable extends ItemBase implements IMetaProvide
                 ISEGridNode node2 = tile2==null ? null : tile2.getGridNode();
 
                 if (node1 == node2) {
-                    Utils.chatWithLocalization(player, "chat.sime_essential:powerpole_recursive_connection");
+                    Utils.chatWithLocalization(player, "chat.sime_essential.powerpole_recursive_connection");
                 } else if (!canConnect(connector1, world, pos, null)) {
-                    Utils.chatWithLocalization(player, "chat.sime_essential:powerpole_current_selection_invalid");
+                    Utils.chatWithLocalization(player, "chat.sime_essential.powerpole_current_selection_invalid");
                 } else if (!canConnect(connector2, world, lastCoordinate, null)) {
-                    Utils.chatWithLocalization(player, "chat.sime_essential:powerpole_last_selection_invalid");
+                    Utils.chatWithLocalization(player, "chat.sime_essential.powerpole_last_selection_invalid");
                 } else if (!ItemHighVoltageCable.numberOfConductorMatched(node1, node2)) {
-                    Utils.chatWithLocalization(player, "chat.sime_essential:powerpole_type_mismatch");
+                    Utils.chatWithLocalization(player, "chat.sime_essential.powerpole_type_mismatch");
                 } else if (!canConnect(connector1, world, pos, lastCoordinate) || !canConnect(connector2, world, lastCoordinate, pos)) {
-                	Utils.chatWithLocalization(player, "chat.sime_essential:powerpole_connection_denied");
+                	Utils.chatWithLocalization(player, "chat.sime_essential.powerpole_connection_denied");
                 } else {
                 	boolean flag1 = tile1 instanceof ISEPoleAccessory;
                 	boolean flag2 = tile2 instanceof ISEPoleAccessory;
                 	//if (flag1 && flag2) {
-                		//Utils.chatWithLocalization(player, "chat.sime_essential:powerpole_connection_denied");
+                		//Utils.chatWithLocalization(player, "chat.sime_essential.powerpole_connection_denied");
                 	//} else {
             			double distance = MathHelper.sqrt(node1.getPos().distanceSq(node2.getPos()));
         				double resistance = distance * this.itemType.resistivity;    //Calculate the resistance
                 		boolean isCreative = player.isCreative();
                 		if (!flag1 && !flag2){
                 			if (distance < 5) {
-                				Utils.chatWithLocalization(player, "chat.sime_essential:powerpole_too_close");
+                				Utils.chatWithLocalization(player, "chat.sime_essential.powerpole_too_close");
                 			} else if (distance > 200) {
-                				Utils.chatWithLocalization(player, "chat.sime_essential:powerpole_too_far");
+                				Utils.chatWithLocalization(player, "chat.sime_essential.powerpole_too_far");
                 			} else {
                 				connect(world, node1, node2, resistance, itemStack, isCreative);
                 			}
@@ -138,7 +138,7 @@ public final class ItemHighVoltageCable extends ItemBase implements IMetaProvide
                 	//}
                 }
             } else {
-                Utils.chatWithLocalization(player, "chat.sime_essential:powerpole_current_selection_invalid");
+                Utils.chatWithLocalization(player, "chat.sime_essential.powerpole_current_selection_invalid");
             }
 
             this.lastCoordinates.put(player, null);

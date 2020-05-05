@@ -40,10 +40,12 @@ public final class ModelDataProvider extends BlockStateProvider implements ISimp
 		
 		for (Block block: BlockRegistry.cableJoint)
 			registerDynamic(block);
-		for (Block block: BlockRegistry.concretePole35Kv)
+		for (Block block: BlockRegistry.concretePole35kV)
 			registerDynamic(block);
 		for (Block block: BlockRegistry.metalPole35kV)
 			registerDynamic(block);
+		for (Block block: BlockRegistry.concretePole)
+			registerDynamic2(block);
 		
 		// Items
 		registerSimpleItems(ItemRegistry.itemHVCable);
@@ -51,7 +53,28 @@ public final class ModelDataProvider extends BlockStateProvider implements ISimp
 		registerSimpleItems(ItemRegistry.itemMisc);
 		registerSimpleItems(ItemRegistry.itemTools);
 	}
+	/**
+	 * Both the block model and item model are dynamic
+	 * @param block
+	 */
+	private void registerDynamic2(Block block) {
+		VariantBlockStateBuilder builder = getVariantBuilder(block);
+		String namespace = block.getRegistryName().getNamespace();
+		String blockName =  block.getRegistryName().getPath();
+		
+		final ModelFile modelFile = new ModelFile.ExistingModelFile(mcLoc("block/torch"), exfh);
+		builder.forAllStates((blockstate)->ConfiguredModel.builder().modelFile(modelFile).build());
+		
+		String itemModelPath = "item/"+block.getRegistryName().getPath();
+		BlockModelBuilder itemModelBuilder = models().getBuilder(itemModelPath);
+		itemModelBuilder.parent(new ModelFile.ExistingModelFile(mcLoc("item/generated"), models().existingFileHelper));
+		itemModelBuilder.texture("layer0", "minecraft:block/stone");
+	}
 	
+	/**
+	 * Block model is dynamic, item model is from a png image
+	 * @param block
+	 */
 	private void registerDynamic(Block block) {
 		VariantBlockStateBuilder builder = getVariantBuilder(block);
 		String namespace = block.getRegistryName().getNamespace();

@@ -7,7 +7,7 @@ import net.minecraftforge.event.TickEvent.ClientTickEvent;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import simelectricity.common.SELogger;
-//import simelectricity.essential.client.grid.accessory.PoleAccessoryRendererDispatcher;
+import simelectricity.essential.client.grid.accessory.PoleAccessoryRendererDispatcher;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -61,7 +61,7 @@ public enum GridRenderMonitor {
             while (iterator.hasNext()) {
             	ISEPowerPole pole = iterator.next();
             	pole.getRenderHelper().postUpdate();
-//            	PoleAccessoryRendererDispatcher.render(theWorld, pole, pole.getAccessoryPos());
+            	PoleAccessoryRendererDispatcher.render(theWorld, pole, pole.getAccessoryPos());
             	iterator.remove();
             }
             this.processedTiles.clear();

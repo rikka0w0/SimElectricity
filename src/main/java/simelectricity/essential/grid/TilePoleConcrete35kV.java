@@ -14,7 +14,7 @@ import simelectricity.essential.client.grid.PowerPoleRenderHelper;
 public class TilePoleConcrete35kV extends TileMultiBlockPole {
     @OnlyIn(Dist.CLIENT)
     public boolean isType0() {
-        return getBlockState().getBlock() == BlockRegistry.concretePole35Kv[0];
+        return getBlockState().getBlock() == BlockRegistry.concretePole35kV[0];
     }
     
     @Override

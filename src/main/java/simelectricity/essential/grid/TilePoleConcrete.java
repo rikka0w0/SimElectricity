@@ -14,7 +14,7 @@ import simelectricity.api.node.ISEGridNode;
 import simelectricity.essential.client.grid.PowerPoleRenderHelper;
 import simelectricity.essential.common.ISEFacing8;
 
-public abstract class TilePowerPole3 extends TilePowerPoleBase implements ISEFacing8 {
+public abstract class TilePoleConcrete extends TilePowerPoleBase implements ISEFacing8 {
 	protected BlockPos accessory;
 	private int facing;
     
@@ -76,7 +76,7 @@ public abstract class TilePowerPole3 extends TilePowerPoleBase implements ISEFac
         this.updateRenderInfo(this.accessory);
     }
 
-    public static abstract class Pole10Kv extends TilePowerPole3 {
+    public static abstract class Pole10Kv extends TilePoleConcrete {
 		@Override
 		protected boolean acceptAccessory(TileEntity accessory)  {
 			if (accessory instanceof TileCableJoint.Type10kV)
@@ -94,7 +94,7 @@ public abstract class TilePowerPole3 extends TilePowerPoleBase implements ISEFac
             @Nonnull
             @OnlyIn(Dist.CLIENT)
             protected PowerPoleRenderHelper createRenderHelper() {
-            	final TilePowerPole3 pole = this;
+            	final TilePoleConcrete pole = this;
                 PowerPoleRenderHelper helper = new PowerPoleRenderHelper(pos, getRotation(), 1, 3);
                 helper.addInsulatorGroup(0, 0.5F, 0,
                         helper.createInsulator(0, 1.2F, -0.74F, 0.55F, 0),
@@ -154,7 +154,7 @@ public abstract class TilePowerPole3 extends TilePowerPoleBase implements ISEFac
 
     }
         
-    public static class Pole415vType0 extends TilePowerPole3 {
+    public static class Pole415vType0 extends TilePoleConcrete {
 		@Override
 		protected boolean acceptAccessory(TileEntity accessory)  {
 			if (accessory instanceof TileCableJoint.Type415V)
@@ -171,7 +171,7 @@ public abstract class TilePowerPole3 extends TilePowerPoleBase implements ISEFac
         @Nonnull
         @OnlyIn(Dist.CLIENT)
         protected PowerPoleRenderHelper createRenderHelper() {
-        	final TilePowerPole3 pole = this;
+        	final TilePoleConcrete pole = this;
             PowerPoleRenderHelper helper = new PowerPoleRenderHelper(this.pos, getRotation(), 1, 4);
             
             helper.addInsulatorGroup(0, 0.55F, 0,
