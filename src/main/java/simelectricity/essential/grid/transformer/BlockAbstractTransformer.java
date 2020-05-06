@@ -42,14 +42,6 @@ public abstract class BlockAbstractTransformer extends BlockBase {
     ///////////////////////////////
 	@Override
 	public boolean hasTileEntity(BlockState state) {return true;}
-	
-    ///////////////////////////////
-    ///BlockStates
-    ///////////////////////////////
-//    @Override
-//    protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
-//    	builder.add(BlockStateProperties.HORIZONTAL_FACING, BlockStateProperties.INVERTED);
-//    }
 
     ///////////////////////////////
     /// Block activities

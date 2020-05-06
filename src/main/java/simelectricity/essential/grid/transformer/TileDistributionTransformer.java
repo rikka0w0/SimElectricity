@@ -8,17 +8,23 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.model.data.ModelDataMap;
 import rikka.librikka.Utils;
+import rikka.librikka.multiblock.IMultiBlockTile;
 import simelectricity.api.SEAPI;
 import simelectricity.api.node.ISEGridNode;
 import simelectricity.essential.client.grid.PowerPoleRenderHelper;
-import simelectricity.essential.common.SEMultiBlockEnergyTile;
 import simelectricity.essential.grid.TileCableJoint;
 
-public abstract class TileDistributionTransformer extends SEMultiBlockGridTile{
+public abstract class TileDistributionTransformer extends SEMultiBlockGridTile{	
 	protected BlockPos accessory;
 	
 	protected abstract boolean acceptAccessory(TileEntity accessory);
+		
+	@Override
+    protected void collectModelData(ModelDataMap.Builder builder) {
+		builder.withInitial(IMultiBlockTile.prop, this);
+    }
 	
 	@Override
 	@OnlyIn(Dist.CLIENT)
@@ -43,6 +49,9 @@ public abstract class TileDistributionTransformer extends SEMultiBlockGridTile{
     public void onGridNeighborUpdated() {
     	this.neighbor = null;
         this.accessory = null;
+        
+        if (this.mbInfo == null)
+        	return;
         
     	BlockPos complementPos = getComplementPos();
     	for (ISEGridNode node: this.gridNode.getNeighborList()) {
@@ -185,18 +194,4 @@ public abstract class TileDistributionTransformer extends SEMultiBlockGridTile{
     public void onStructureRemoved() {
         SEAPI.energyNetAgent.detachGridNode(this.world, this.gridNode);
     }
-	
-	public static class PlaceHolder extends SEMultiBlockEnergyTile{
-	    @Override
-	    public void onLoad() {}
-		
-		@Override
-		public void onStructureCreated() {}
-
-		@Override
-		public void onStructureRemoved() {}
-
-		@Override
-		protected void onStructureCreating() {}
-	}
 }

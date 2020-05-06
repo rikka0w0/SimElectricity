@@ -48,6 +48,8 @@ import simelectricity.essential.client.grid.pole.ConcretePoleTER;
 import simelectricity.essential.client.grid.pole.MetalPole35kVBottomTER;
 import simelectricity.essential.client.grid.pole.MetalPole35kVModel;
 import simelectricity.essential.client.grid.pole.MetalPole35kVTER;
+import simelectricity.essential.client.grid.transformer.DistributionTransformerComponentModel;
+import simelectricity.essential.client.grid.transformer.DistributionTransformerFormedModel;
 import simelectricity.essential.client.grid.transformer.FastTESRPowerTransformer;
 import simelectricity.essential.client.grid.pole.ConcretePoleModel;
 import simelectricity.essential.client.grid.FastTESRPowerPole;
@@ -59,6 +61,9 @@ import simelectricity.essential.grid.TilePoleBranch;
 import simelectricity.essential.grid.TilePoleConcrete;
 import simelectricity.essential.grid.TilePoleConcrete35kV;
 import simelectricity.essential.grid.TilePoleMetal35kV;
+import simelectricity.essential.grid.transformer.BlockDistributionTransformer;
+import simelectricity.essential.grid.transformer.EnumDistributionTransformerBlockType;
+import simelectricity.essential.grid.transformer.TileDistributionTransformer;
 import simelectricity.essential.grid.transformer.TilePowerTransformerPlaceHolder;
 import simelectricity.essential.grid.transformer.TilePowerTransformerWinding;
 
@@ -87,9 +92,8 @@ public class ClientRegistrationHandler {
 		TERHelper.bind(TilePowerTransformerWinding.Secondary.class, FastTESRPowerPole::new);
 		
 		ClientRegistry.bindTileEntityRenderer(BlockRegistry.ttb_tetype, TESR::new);
-//        FastTESRPowerPole.register(TileDistributionTransformer.Pole10kV.class);
-//        FastTESRPowerPole.register(TileDistributionTransformer.Pole415V.class);
-
+		TERHelper.bind(TileDistributionTransformer.Pole10kV.class, FastTESRPowerPole::new);
+		TERHelper.bind(TileDistributionTransformer.Pole415V.class, FastTESRPowerPole::new);
 	}
 	
 	@OnlyIn(Dist.CLIENT)
@@ -112,6 +116,7 @@ public class ClientRegistrationHandler {
     	
     	FastTESRPowerPole.onPreTextureStitchEvent(event);
     	FastTESRPowerTransformer.onPreTextureStitchEvent(event);
+    	DistributionTransformerFormedModel.instance.onPreTextureStitchEvent(event);
     }
     
     @SubscribeEvent
@@ -147,18 +152,29 @@ public class ClientRegistrationHandler {
     	
     	FastTESRPowerPole.onModelBakeEvent();
     	FastTESRPowerTransformer.onModelBakeEvent();
+    	DistributionTransformerFormedModel.instance.onModelBakeEvent();
 
 		// Assign item models
     	for (int i=0; i<BlockRegistry.concretePole.length; i++) {
     		Block block = BlockRegistry.concretePole[i];
+			BlockState blockstate = block.getDefaultState();
     		ModelResourceLocation resLoc = new ModelResourceLocation(block.getRegistryName(), "inventory");
-    		IBakedModel newItemModel = event.getModelRegistry().get(BlockModelShapes.getModelLocation(block.getDefaultState()));
+    		IBakedModel newItemModel = event.getModelRegistry().get(BlockModelShapes.getModelLocation(blockstate));
     		registry.put(resLoc, newItemModel);
     	}
-
-//      event.getModelRegistry().put(new ModelResourceLocation(), null);
-//  	Minecraft.getInstance().getModelManager().getModel(location)
-//  	net.minecraft.client.renderer.model.BlockModel
+    	
+    	// Assign item models and formed block models
+		for (EnumDistributionTransformerBlockType blockType: EnumDistributionTransformerBlockType.values()) {
+			Block block = BlockRegistry.distributionTransformer[blockType.ordinal()];
+			if (blockType.formed) {
+				registry.put(BlockModelShapes.getModelLocation(block.getDefaultState()), DistributionTransformerFormedModel.instance);
+			} else {
+				BlockState blockstate = block.getDefaultState().with(BlockStateProperties.HORIZONTAL_FACING, Direction.EAST);
+	    		ModelResourceLocation resLoc = new ModelResourceLocation(block.getRegistryName(), "inventory");
+	    		IBakedModel newItemModel = event.getModelRegistry().get(BlockModelShapes.getModelLocation(blockstate));
+	    		registry.put(resLoc, newItemModel);
+			}
+		}
     }
     
     
@@ -250,17 +266,26 @@ public class ClientRegistrationHandler {
 				dynamicModels.put(blockstate, new ConcretePoleModel(type, facing));
 			});
 		}
-
-		MinecraftForge.EVENT_BUS.register(GridRenderMonitor.instance);
 		
-//		new ResourceLocation("minecraft","elements")
-//    	ModelLoaderRegistry.registerLoader(new ResourceLocation("librikka","virtual"), loader);
-//		ModelLoaderRegistry.getModel("", deserializationContext, data)
-
-		// Get unbaked model
-//		IUnbakedModel adj = ModelLoader.instance().getUnbakedModel(new ResourceLocation(Essential.MODID, "block/electronics_adjustable_resistor"));
-//		IUnbakedModel machine = ModelLoader.instance().getUnbakedModel(new ResourceLocation(Essential.MODID, "block/machine"));
-//		adj = null;
-		// ModelBakery public IUnbakedModel getUnbakedModel(ResourceLocation modelLocation)
+		for (int i=0; i<BlockRegistry.distributionTransformer.length; i++) {
+			BlockDistributionTransformer block = BlockRegistry.distributionTransformer[i];
+			final EnumDistributionTransformerBlockType blockType = block.blockType;
+			if (!blockType.formed)
+				block.getStateContainer().getValidStates().forEach((blockstate) -> {
+					Direction facing = blockstate.has(BlockStateProperties.HORIZONTAL_FACING) ? 
+							blockstate.get(BlockStateProperties.HORIZONTAL_FACING) : null;
+	
+					dynamicModels.put(blockstate, new DistributionTransformerComponentModel(blockType, facing));
+				});
+		}
+		MinecraftForge.EVENT_BUS.register(GridRenderMonitor.instance);
 	}
+//	ModelLoaderRegistry.registerLoader(new ResourceLocation("librikka","virtual"), loader);
+//	ModelLoaderRegistry.getModel("", deserializationContext, data)
+
+	// Get unbaked model
+//	IUnbakedModel adj = ModelLoader.instance().getUnbakedModel(new ResourceLocation(Essential.MODID, "block/electronics_adjustable_resistor"));
+//	IUnbakedModel machine = ModelLoader.instance().getUnbakedModel(new ResourceLocation(Essential.MODID, "block/machine"));
+//	adj = null;
+	// ModelBakery public IUnbakedModel getUnbakedModel(ResourceLocation modelLocation)
 }

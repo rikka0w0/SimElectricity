@@ -3,6 +3,7 @@ package simelectricity.essential.grid;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.model.data.ModelDataMap;
 import rikka.librikka.multiblock.IMultiBlockTile;
 import rikka.librikka.multiblock.MultiBlockTileInfo;
 import rikka.librikka.tileentity.TileEntityBase;
@@ -59,6 +60,11 @@ public class TileMultiBlockPlaceHolder extends TileEntityBase implements IMultiB
     	mbInfo = new MultiBlockTileInfo(nbt);
         
         super.onSyncDataFromServerArrived(nbt);
+    }
+    
+	@Override
+    protected void collectModelData(ModelDataMap.Builder builder) {
+		builder.withInitial(IMultiBlockTile.prop, this);
     }
 
     /////////////////////////////////////////////////////////

@@ -2,18 +2,20 @@ package simelectricity.essential.client.grid.transformer;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.function.Function;
 
 import com.google.common.collect.ImmutableList;
 
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
+import net.minecraft.block.BlockState;
+import net.minecraft.client.renderer.model.BakedQuad;
+import net.minecraft.client.renderer.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.model.data.IModelData;
 import rikka.librikka.math.Vec3f;
 import rikka.librikka.model.CodeBasedModel;
 import rikka.librikka.model.loader.EasyTextureLoader;
@@ -21,14 +23,14 @@ import rikka.librikka.model.quadbuilder.RawQuadCube;
 import rikka.librikka.model.quadbuilder.RawQuadGroup;
 import simelectricity.essential.client.ResourcePaths;
 import simelectricity.essential.client.grid.FastTESRPowerPole;
+import simelectricity.essential.client.grid.pole.ConcretePoleModel;
 import simelectricity.essential.client.grid.pole.Models;
-import simelectricity.essential.client.grid.pole.PowerPole3Model;
 import simelectricity.essential.grid.transformer.EnumDistributionTransformerBlockType;
 
-@SideOnly(Side.CLIENT)
+@OnlyIn(Dist.CLIENT)
 public class DistributionTransformerComponentModel extends CodeBasedModel {
 	private final EnumDistributionTransformerBlockType blockType;
-	private final boolean rotated;
+	private final Direction facing;
 
 	private final List<BakedQuad> quads = new ArrayList();
 	
@@ -46,13 +48,13 @@ public class DistributionTransformerComponentModel extends CodeBasedModel {
     @EasyTextureLoader.Mark(ResourcePaths.ceramic_insulator)
     private final TextureAtlasSprite textureCeramic = null;   
 	
-	public DistributionTransformerComponentModel(EnumDistributionTransformerBlockType blockType, boolean rotated) {
+	public DistributionTransformerComponentModel(EnumDistributionTransformerBlockType blockType, Direction facing) {
 		this.blockType = blockType;
-		this.rotated = rotated;
+		this.facing = facing;
 	}
 	
 	@Override
-	public List<BakedQuad> getQuads(IBlockState state, EnumFacing side, long rand) {
+	public List<BakedQuad> getQuads(BlockState state, Direction side, Random rand, IModelData extraData) {
     	if (side != null)
             return ImmutableList.of();
     	
@@ -136,14 +138,14 @@ public class DistributionTransformerComponentModel extends CodeBasedModel {
 		
 		}
 		
-		if (!rotated)
-			model.rotateAroundY(270);
+		if (this.facing != null)
+			model.rotateAroundY(90-facing.getHorizontalAngle());
         model.translateCoord(0.5F, 0, 0.5F);
         model.bake(this.quads);
 	}
 
     @Override
     public ItemCameraTransforms getItemCameraTransforms() {
-        return PowerPole3Model.itemCameraTransforms;
+        return ConcretePoleModel.itemCameraTransforms;
     }
 }

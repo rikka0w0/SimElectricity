@@ -175,7 +175,7 @@ public class BlockPoleMetal35kV extends BlockBase implements ISEHVCableConnector
     	return new BlockMapping(toState) {
     		@Override
     	    protected boolean cancelPlacement(BlockState state) {
-    			return state==null ? false : !state.isAir();
+    			return !state.isAir();
     		}
     		
     		@Override

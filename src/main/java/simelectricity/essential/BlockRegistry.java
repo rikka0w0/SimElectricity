@@ -16,9 +16,9 @@ import rikka.librikka.tileentity.TileEntityHelper;
 import simelectricity.essential.cable.*;
 import simelectricity.essential.coverpanel.ContainerVoltageSensor;
 import simelectricity.essential.grid.*;
-//import simelectricity.essential.grid.transformer.BlockDistributionTransformer;
+import simelectricity.essential.grid.transformer.BlockDistributionTransformer;
 import simelectricity.essential.grid.transformer.BlockPowerTransformer;
-//import simelectricity.essential.grid.transformer.TileDistributionTransformer;
+import simelectricity.essential.grid.transformer.TileDistributionTransformer;
 import simelectricity.essential.grid.transformer.TilePowerTransformerPlaceHolder;
 import simelectricity.essential.grid.transformer.TilePowerTransformerWinding;
 import simelectricity.essential.machines.*;
@@ -36,8 +36,8 @@ public class BlockRegistry {
     public static BlockCableJoint[] cableJoint;
     public static BlockPoleConcrete[] concretePole;
     public static BlockPowerTransformer[] powerTransformer;
-//    public static BlockDistributionTransformer distributionTransformer;
-//
+    public static BlockDistributionTransformer[] distributionTransformer;
+
 	public static BlockElectronics[] blockElectronics;
     public static BlockTwoPortElectronics[] blockTwoPortElectronics;
 
@@ -49,12 +49,14 @@ public class BlockRegistry {
         BlockRegistry.metalPole35kV = BlockPoleMetal35kV.create();
         BlockRegistry.concretePole35kV = BlockPoleConcrete35kV.create();
         BlockRegistry.concretePole = BlockPoleConcrete.create();
-        BlockRegistry.powerTransformer = BlockPowerTransformer.create();
-        BlockPowerTransformer.createBluePrint();
-//        BlockRegistry.distributionTransformer = new BlockDistributionTransformer();
+        
+		BlockRegistry.powerTransformer = BlockPowerTransformer.create();
+		BlockPowerTransformer.createBluePrint();
+		BlockRegistry.distributionTransformer = BlockDistributionTransformer.create();
+		BlockDistributionTransformer.createBluePrint();
 
-          BlockRegistry.blockElectronics = BlockElectronics.create();
-          BlockRegistry.blockTwoPortElectronics = BlockTwoPortElectronics.create();
+		BlockRegistry.blockElectronics = BlockElectronics.create();
+		BlockRegistry.blockTwoPortElectronics = BlockTwoPortElectronics.create();
     }
     
     public static void registerBlocks(final IForgeRegistry<Block> registry, boolean isItemBlock) {
@@ -66,7 +68,7 @@ public class BlockRegistry {
     	registerBlocks(registry, isItemBlock, concretePole);
     	registerBlocks(registry, isItemBlock, cableJoint);
     	registerBlocks(registry, isItemBlock, powerTransformer);
-//    			distributionTransformer,
+    	registerBlocks(registry, isItemBlock, distributionTransformer);
     	
     	registerBlocks(registry, isItemBlock, blockElectronics);
     	registerBlocks(registry, isItemBlock, blockTwoPortElectronics);
@@ -83,7 +85,7 @@ public class BlockRegistry {
     	TileEntityHelper.registerTileEntity(registry, TileWire.class, blockWire);
     	
     	TileEntityHelper.registerTileEntity(registry, TileMultiBlockPlaceHolder.class, 
-    			makeBlockArray(concretePole35kV, metalPole35kV));
+    			makeBlockArray(concretePole35kV, metalPole35kV, distributionTransformer));
     	TileEntityHelper.registerTileEntity(registry, TilePoleMetal35kV.class, metalPole35kV);
     	TileEntityHelper.registerTileEntity(registry, TilePoleMetal35kV.Bottom.class, metalPole35kV);
     	TileEntityHelper.registerTileEntity(registry, TilePoleConcrete35kV.class, concretePole35kV);
@@ -105,9 +107,8 @@ public class BlockRegistry {
     	TileEntityHelper.registerTileEntity(registry, TilePowerTransformerWinding.Primary.class, powerTransformer);
     	TileEntityHelper.registerTileEntity(registry, TilePowerTransformerWinding.Secondary.class, powerTransformer);
 
-//        registerTile(TileDistributionTransformer.Pole10kV.class);
-//        registerTile(TileDistributionTransformer.Pole415V.class);
-//        registerTile(TileDistributionTransformer.PlaceHolder.class);
+    	TileEntityHelper.registerTileEntity(registry, TileDistributionTransformer.Pole10kV.class, distributionTransformer);
+    	TileEntityHelper.registerTileEntity(registry, TileDistributionTransformer.Pole415V.class, distributionTransformer);
 
     	
     	RegisterTEs(registry, blockElectronics);

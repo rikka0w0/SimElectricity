@@ -99,7 +99,7 @@ public class BlockPoleConcrete35kV extends BlockBase implements ICustomBoundingB
     	return new BlockMapping(Blocks.AIR.getDefaultState(), toState) {
     		@Override
     	    protected boolean cancelPlacement(BlockState state) {
-    			return state==null ? false : !state.isAir();
+    			return !state.isAir();
     		}
     		
     		@Override

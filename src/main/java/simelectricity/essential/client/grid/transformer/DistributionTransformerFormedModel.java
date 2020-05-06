@@ -1,40 +1,40 @@
 package simelectricity.essential.client.grid.transformer;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 
 import java.util.function.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Sets;
 
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.block.BlockState;
+import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.model.data.IModelData;
 import rikka.librikka.math.Vec3f;
 import rikka.librikka.model.CodeBasedModel;
 import rikka.librikka.model.loader.EasyTextureLoader;
 import rikka.librikka.model.quadbuilder.RawQuadCube;
 import rikka.librikka.model.quadbuilder.RawQuadGroup;
+import rikka.librikka.multiblock.IMultiBlockTile;
+import rikka.librikka.multiblock.MultiBlockTileInfo;
 import simelectricity.essential.client.ResourcePaths;
 import simelectricity.essential.client.grid.FastTESRPowerPole;
 import simelectricity.essential.client.grid.pole.Models;
+import simelectricity.essential.grid.transformer.BlockDistributionTransformer;
 import simelectricity.essential.grid.transformer.EnumDistributionTransformerRenderPart;
 
-@SideOnly(Side.CLIENT)
+@OnlyIn(Dist.CLIENT)
 public class DistributionTransformerFormedModel extends CodeBasedModel {
-    public static final int[] rotationMatrix = {4, 0, 6, 2};    //NSWE
+	public final static DistributionTransformerFormedModel instance = new DistributionTransformerFormedModel();
 	
-	private final List<BakedQuad> quads = new ArrayList();
     private final Set<ResourceLocation> textures = Sets.newHashSet();
-	
-    private final EnumDistributionTransformerRenderPart part;
-    private final int rotation;
-    private final boolean mirrored;
     
     @EasyTextureLoader.Mark("sime_essential:render/distribution/transformer_heatsink_front_back")
     private final TextureAtlasSprite textureHeatSink = null;
@@ -52,23 +52,36 @@ public class DistributionTransformerFormedModel extends CodeBasedModel {
     @EasyTextureLoader.Mark(ResourcePaths.ceramic_insulator)
     private final TextureAtlasSprite textureCeramic = null;   
     
-    
-	public DistributionTransformerFormedModel(EnumDistributionTransformerRenderPart part, int facing, boolean mirrored) {
-		this.part = part;
-		this.rotation = rotationMatrix[facing] * 45 - 90;
-        this.mirrored = mirrored;
-	}
+    private final List<BakedQuad>[][] quads = new List[EnumDistributionTransformerRenderPart.values().length][4];
 	
+    private DistributionTransformerFormedModel() {
+    	for (EnumDistributionTransformerRenderPart part: EnumDistributionTransformerRenderPart.values()) {
+    		for (int i=2; i<Direction.values().length; i++) {
+    			this.quads[part.ordinal()][i-2] = new LinkedList<>();
+    		}
+    	}
+    }
+    
 	@Override
-	public List<BakedQuad> getQuads(IBlockState state, EnumFacing side, long rand) {
+	public List<BakedQuad> getQuads(BlockState state, Direction side, Random rand, IModelData extraData) {
     	if (side != null)
             return ImmutableList.of();
 
-		//bake(null);
+    	IMultiBlockTile te = extraData.getData(IMultiBlockTile.prop);
+    	if (te == null)
+            return ImmutableList.of();
 
-
-
-		return quads;
+    	MultiBlockTileInfo mbInfo = te.getMultiBlockTileInfo();
+    	if (mbInfo == null)
+            return ImmutableList.of();
+    		
+    	EnumDistributionTransformerRenderPart part = mbInfo.lookup( BlockDistributionTransformer.renderParts);
+    	Direction facing = mbInfo.facing;
+    	
+    	if (part == null || facing == null)
+            return ImmutableList.of();
+    	
+		return quads[part.ordinal()][facing.ordinal()-2];
 	}
 
 	@Override
@@ -77,9 +90,17 @@ public class DistributionTransformerFormedModel extends CodeBasedModel {
 	}
 
 	@Override
-	protected void bake(Function<ResourceLocation, TextureAtlasSprite> registry) {		
-		quads.clear();
-		
+	protected void bake(Function<ResourceLocation, TextureAtlasSprite> registry) {
+        for (EnumDistributionTransformerRenderPart part: EnumDistributionTransformerRenderPart.values()) {
+        	for (int i=2; i<Direction.values().length; i++) {
+        		Direction facing = Direction.byIndex(i);
+        		quads[part.ordinal()][i-2].clear();
+        		bakePart(part, facing, quads[part.ordinal()][i-2]);
+        	}
+        }
+	}
+	
+	private void bakePart(EnumDistributionTransformerRenderPart part, Direction facing, List<BakedQuad> list) {
 		RawQuadGroup insulator = null;
 		RawQuadGroup model = new RawQuadGroup();
 		switch (part) {
@@ -336,8 +357,9 @@ public class DistributionTransformerFormedModel extends CodeBasedModel {
 			break;
 		}
 		
-        model.rotateAroundY(rotation);
+		if (facing != null)
+			model.rotateAroundY(270-facing.getHorizontalAngle());
         model.translateCoord(0.5F, 0, 0.5F);
-        model.bake(this.quads);
+        model.bake(list);
 	}
 }
