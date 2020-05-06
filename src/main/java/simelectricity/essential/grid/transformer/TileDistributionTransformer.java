@@ -2,12 +2,12 @@ package simelectricity.essential.grid.transformer;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import rikka.librikka.Utils;
 import simelectricity.api.SEAPI;
 import simelectricity.api.node.ISEGridNode;
@@ -21,7 +21,7 @@ public abstract class TileDistributionTransformer extends SEMultiBlockGridTile{
 	protected abstract boolean acceptAccessory(TileEntity accessory);
 	
 	@Override
-	@SideOnly(Side.CLIENT)
+	@OnlyIn(Dist.CLIENT)
     public BlockPos getAccessoryPos() {
 		return accessory;
 	}
@@ -64,14 +64,14 @@ public abstract class TileDistributionTransformer extends SEMultiBlockGridTile{
     ///Sync
     /////////////////////////////////////////////////////////
     @Override
-    public void prepareS2CPacketData(NBTTagCompound nbt) {
+    public void prepareS2CPacketData(CompoundNBT nbt) {
         super.prepareS2CPacketData(nbt);
         Utils.saveToNbt(nbt, "accessory", this.accessory);
     }
 
     @Override
-	@SideOnly(Side.CLIENT)
-    public void onSyncDataFromServerArrived(NBTTagCompound nbt) {
+	@OnlyIn(Dist.CLIENT)
+    public void onSyncDataFromServerArrived(CompoundNBT nbt) {
 		this.accessory = Utils.posFromNbt(nbt, "accessory");
         super.onSyncDataFromServerArrived(nbt);
     }
@@ -111,7 +111,7 @@ public abstract class TileDistributionTransformer extends SEMultiBlockGridTile{
 		}
 		
         @Override
-        @SideOnly(Side.CLIENT)
+        @OnlyIn(Dist.CLIENT)
         protected PowerPoleRenderHelper createRenderHelper() {
         	final TileDistributionTransformer pole = this;
             PowerPoleRenderHelper helper = new PowerPoleRenderHelper(this.pos, PowerPoleRenderHelper.facing2rotation(mbInfo.facing) - 2, mbInfo.mirrored, 1, 4);
@@ -162,7 +162,7 @@ public abstract class TileDistributionTransformer extends SEMultiBlockGridTile{
 		}
 		
 		@Override
-		@SideOnly(Side.CLIENT)
+		@OnlyIn(Dist.CLIENT)
 		protected PowerPoleRenderHelper createRenderHelper() {
         	final TileDistributionTransformer pole = this;
             PowerPoleRenderHelper helper = new PowerPoleRenderHelper(pos, PowerPoleRenderHelper.facing2rotation(mbInfo.facing) - 2, mbInfo.mirrored, 1, 3);
@@ -175,7 +175,7 @@ public abstract class TileDistributionTransformer extends SEMultiBlockGridTile{
 		}
 		
 		@Override
-		@SideOnly(Side.CLIENT)
+		@OnlyIn(Dist.CLIENT)
 	    public BlockPos getAccessoryPos() {
 			return accessory;
 		}

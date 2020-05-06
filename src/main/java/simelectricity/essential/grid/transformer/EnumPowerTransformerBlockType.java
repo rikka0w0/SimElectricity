@@ -1,29 +1,26 @@
 package simelectricity.essential.grid.transformer;
 
-import net.minecraft.block.properties.PropertyEnum;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.math.Vec3i;
+import rikka.librikka.ITileMeta;
+import simelectricity.essential.grid.transformer.TilePowerTransformerPlaceHolder;
 
-import javax.annotation.Nonnull;
+public enum EnumPowerTransformerBlockType implements ITileMeta, IStringSerializable {
+    Casing,
+    IronCore,
+    Winding,
+    OilTank,
+    OilTankSupport,
+    OilPipe,
 
-public enum EnumPowerTransformerBlockType implements IStringSerializable {
-    Casing(0, false, "casing", null),
-    IronCore(1, false, "ironcore", null),
-    Winding(2, false, "winding", null),
-    OilTank(3, false, "oiltank", null),
-    OilTankSupport(4, false, "oiltanksupport", null),
-    OilPipe(5, false, "oilpipe", null),
+    PlaceholderPrimary(TilePowerTransformerPlaceHolder.Primary.class, null),        //Connection to primary
+    Primary(TilePowerTransformerWinding.Primary.class, new Vec3i(3, 2, 1)),         //Primary node
+    PlaceholderSecondary(TilePowerTransformerPlaceHolder.Secondary.class, null),    //Connection to secondary
+    Secondary(TilePowerTransformerWinding.Secondary.class, new Vec3i(4, 2, 3)),     //Secondary node
+    Placeholder(TilePowerTransformerPlaceHolder.class, null),
+    Render(TilePowerTransformerPlaceHolder.Render.class, new Vec3i(3, 2, 2));       //Render the structure
 
-    PlaceholderPrimary(6, true, "placeholderprimary", null),        //Connection to primary
-    Primary(7, true, "primary", new Vec3i(3, 2, 1)),                    //Primary node
-    PlaceholderSecondary(8, true, "placeholdersecondary", null),    //Connection to secondary
-    Secondary(9, true, "secondary", new Vec3i(4, 2, 3)),                //Secondary node
-    Placeholder(10, true, "placeholder", null),
-    Render(11, true, "render", new Vec3i(3, 2, 2));                    //Render the structure
-
-    public static final PropertyEnum<EnumPowerTransformerBlockType> property = PropertyEnum.create("blocktype", EnumPowerTransformerBlockType.class);
-
-    public static final EnumPowerTransformerBlockType[] values = new EnumPowerTransformerBlockType[12];
     static final EnumPowerTransformerBlockType[] rawStructure = new EnumPowerTransformerBlockType[6];
     static final EnumPowerTransformerBlockType[] formedStructure = new EnumPowerTransformerBlockType[6];
 
@@ -39,44 +36,37 @@ public enum EnumPowerTransformerBlockType implements IStringSerializable {
                 rawStructure[i] = value;
                 i++;
             }
-            values[value.index] = value;
         }
     }
 
-    public final int index;
     public final boolean formed;
+    public final Class<? extends TileEntity> teCls;
     public final Vec3i offset;
-    private final String name;
 
-    EnumPowerTransformerBlockType(int index, boolean formed, String name, Vec3i offset) {
-        this.index = index;
-        this.formed = formed;
-        this.name = name;
+    EnumPowerTransformerBlockType() {
+        this.formed = false;
+        this.teCls = null;
+        this.offset = null;
+    }
+    
+    EnumPowerTransformerBlockType(Class<? extends TileEntity> teCls, Vec3i offset) {
+        this.formed = true;
+        this.teCls = teCls;
         this.offset = offset;
     }
+    
+	@Override
+	public Class<? extends TileEntity> teCls() {
+		return teCls;
+	}
 
-    public static String[] getRawStructureNames() {
-        int length = rawStructure.length;
-        String[] ret = new String[length];
-
-        for (int i = 0; i < length; i++) {
-            ret[i] = rawStructure[i].name;
-        }
-
-        return ret;
-    }
-
-    public static EnumPowerTransformerBlockType fromInt(int in) {
-        if (in >= values.length || in < 0) {
-            return null;
-        }
-
-        return values[in];
-    }
-
-    @Override
-    @Nonnull
-    public String getName() {
-        return this.name;
-    }
+	@Override
+	public String toString() {
+		return this.getName();
+	}
+	
+	@Override
+	public String getName() {
+		return name().toLowerCase();
+	}
 }

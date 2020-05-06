@@ -1,11 +1,9 @@
 package simelectricity.essential.grid.transformer;
 
-import javax.annotation.Nonnull;
+import net.minecraft.tileentity.TileEntity;
+import rikka.librikka.ITileMeta;
 
-import net.minecraft.block.properties.PropertyEnum;
-import net.minecraft.util.IStringSerializable;
-
-public enum EnumDistributionTransformerBlockType implements IStringSerializable {
+public enum EnumDistributionTransformerBlockType implements ITileMeta {
 	Pole10kVNormal(0, false, "pole10kvnormal"),
 	Pole10kVSpec(1, false, "pole10kvspec"),
 	Pole10kVAux(2, false, "pole10kvaux"),
@@ -15,10 +13,7 @@ public enum EnumDistributionTransformerBlockType implements IStringSerializable 
 	Pole10kV(5, true, "pole10kv"),
 	PlaceHolder(6, true, "placeholder"),
 	Pole415V(7, true, "pole415v");
-	
-    public static final PropertyEnum<EnumDistributionTransformerBlockType> property = PropertyEnum.create("blocktype", EnumDistributionTransformerBlockType.class);
 
-    public static final EnumDistributionTransformerBlockType[] values = new EnumDistributionTransformerBlockType[8];
     static final EnumDistributionTransformerBlockType[] rawStructure = new EnumDistributionTransformerBlockType[5];
     static final EnumDistributionTransformerBlockType[] formedStructure = new EnumDistributionTransformerBlockType[3];
 
@@ -34,7 +29,6 @@ public enum EnumDistributionTransformerBlockType implements IStringSerializable 
                 rawStructure[i] = value;
                 i++;
             }
-            values[value.index] = value;
         }
     }
 
@@ -48,28 +42,9 @@ public enum EnumDistributionTransformerBlockType implements IStringSerializable 
         this.name = name;
     }
 
-    public static String[] getRawStructureNames() {
-        int length = rawStructure.length;
-        String[] ret = new String[length];
-
-        for (int i = 0; i < length; i++) {
-            ret[i] = rawStructure[i].name;
-        }
-
-        return ret;
-    }
-
-    public static EnumDistributionTransformerBlockType fromInt(int in) {
-        if (in >= values.length || in < 0) {
-            return null;
-        }
-
-        return values[in];
-    }
-
-    @Override
-    @Nonnull
-    public String getName() {
-        return this.name;
-    }
+	@Override
+	public Class<? extends TileEntity> teCls() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

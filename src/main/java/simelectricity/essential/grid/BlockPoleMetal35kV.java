@@ -52,7 +52,7 @@ public class BlockPoleMetal35kV extends BlockBase implements ISEHVCableConnector
 	}
 	
 	private BlockPoleMetal35kV(int type) {
-		super("essential_pole_metal_35kv_" + String.valueOf(type), Block.Properties.create(Material.ROCK)
+		super("pole_metal_35kv_" + String.valueOf(type), Block.Properties.create(Material.ROCK)
         		.hardnessAndResistance(0.2F, 10.0F)
         		.sound(SoundType.METAL), 
         		ItemBlock.class, 
@@ -175,7 +175,7 @@ public class BlockPoleMetal35kV extends BlockBase implements ISEHVCableConnector
     	return new BlockMapping(toState) {
     		@Override
     	    protected boolean cancelPlacement(BlockState state) {
-    			return !state.isAir();
+    			return state==null ? false : !state.isAir();
     		}
     		
     		@Override

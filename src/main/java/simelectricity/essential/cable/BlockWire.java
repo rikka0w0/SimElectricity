@@ -77,7 +77,7 @@ public class BlockWire extends BlockBase implements ICustomBoundingBox, IMetaPro
 	
 	
     private BlockWire(ISECableMeta meta) {
-        this("essential_wire", meta, 
+        this("wire", meta, 
         		Block.Properties.create(Material.GLASS)
         		.hardnessAndResistance(0.2F, 10.0F)
         		.sound(SoundType.METAL),

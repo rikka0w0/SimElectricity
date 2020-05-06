@@ -1,103 +1,84 @@
 package simelectricity.essential.grid.transformer;
 
-import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.state.BlockStateContainer;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockRenderType;
+import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import rikka.librikka.IMetaProvider;
+import rikka.librikka.ITileMeta;
 import rikka.librikka.multiblock.BlockMapping;
 import rikka.librikka.multiblock.MultiBlockStructure;
-import rikka.librikka.properties.Properties;
+import simelectricity.api.SEAPI;
 import simelectricity.api.tile.ISEGridTile;
+import simelectricity.essential.BlockRegistry;
 import simelectricity.essential.api.ISEHVCableConnector;
-import simelectricity.essential.grid.transformer.TilePowerTransformerPlaceHolder.Primary;
-import simelectricity.essential.grid.transformer.TilePowerTransformerPlaceHolder.Render;
-import simelectricity.essential.grid.transformer.TilePowerTransformerPlaceHolder.Secondary;
+import simelectricity.essential.grid.transformer.TilePowerTransformerPlaceHolder;
 
-public class BlockPowerTransformer extends BlockAbstractTransformer implements ISEHVCableConnector {
-    private static final String[] subNames = EnumPowerTransformerBlockType.getRawStructureNames();
-
-    public BlockPowerTransformer() {
-        super("essential_powertransformer", Material.IRON);
+public class BlockPowerTransformer extends BlockAbstractTransformer implements IMetaProvider<ITileMeta>, ISEHVCableConnector {
+    private static MultiBlockStructure blueprint;
+	public final EnumPowerTransformerBlockType blockType;
+    private BlockPowerTransformer(EnumPowerTransformerBlockType type) {
+        super("transformer_35kv_10kv_" + type.getName(), Material.IRON, type.formed ? null : SEAPI.SETab);
+        this.blockType = type;
     }
-
-    @Override
-    public String[] getSubBlockUnlocalizedNames() {
-        return this.subNames;
+	
+    public static BlockPowerTransformer[] create() {
+    	BlockPowerTransformer[] ret = new BlockPowerTransformer[EnumPowerTransformerBlockType.values().length];
+    	for (EnumPowerTransformerBlockType type: EnumPowerTransformerBlockType.values()) {
+    		ret[type.ordinal()] = new BlockPowerTransformer(type);
+    	}
+    	return ret;    	
     }
-
+    
+	@Override
+	public ITileMeta meta() {
+		return this.blockType;
+	}
+	
+	@Override
+	protected MultiBlockStructure getBlueprint() {
+		return blueprint;
+	}
     ///////////////////////////////
     /// TileEntity
     ///////////////////////////////
 	@Override
-	public boolean hasTileEntity(IBlockState state) {return true;}
+	public boolean hasTileEntity(BlockState state) {return this.meta().teCls() != null;}
 
     @Override
-    public TileEntity createTileEntity(World world, IBlockState state) {
-        EnumPowerTransformerBlockType blockType = state.getValue(EnumPowerTransformerBlockType.property);
-
+    public TileEntity createTileEntity(BlockState state, IBlockReader world) {
         if (!blockType.formed)
             return null;
-
-        switch (blockType) {
-            case Placeholder:
-                return new TilePowerTransformerPlaceHolder();
-            case PlaceholderPrimary:
-                return new Primary();
-            case PlaceholderSecondary:
-                return new Secondary();
-            case Primary:
-                return new TilePowerTransformerWinding.Primary();
-            case Secondary:
-                return new TilePowerTransformerWinding.Secondary();
-            case Render:
-                return new Render();
-            default:
-                return null;
-        }
+    	
+    	try {
+			return blockType.teCls().getConstructor().newInstance();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
     }
 
     ///////////////////////////////
     ///BlockStates
     ///////////////////////////////
-    @Override
-    protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer(this, EnumPowerTransformerBlockType.property, BlockHorizontal.FACING, Properties.propertyMirrored);
-    }
-    
-    @Override
-    public IBlockState getStateFromMeta(int meta) {
-        return this.stateFromType(EnumPowerTransformerBlockType.fromInt(meta));
-    }
-
-    @Override
-    public int getMetaFromState(IBlockState state) {
-        return state.getValue(EnumPowerTransformerBlockType.property).index;
-    }
-       
-    public IBlockState stateFromType(EnumPowerTransformerBlockType blockType) {
-        return getDefaultState().withProperty(EnumPowerTransformerBlockType.property, blockType);
+    private static BlockState stateFromType(EnumPowerTransformerBlockType type) {
+    	BlockPowerTransformer block = BlockRegistry.powerTransformer[type.ordinal()];
+    	return block.getDefaultState();
     }
     
 	@Override
-	protected ItemStack getItemToDrop(IBlockState state) {
-        EnumPowerTransformerBlockType blockType = state.getValue(EnumPowerTransformerBlockType.property);
-
+	protected ItemStack getItemToDrop(BlockState state) {
         if (blockType.formed)
         	return ItemStack.EMPTY;
-            
-        return new ItemStack(this.itemBlock, 1, this.getMetaFromState(state));
+
+        return new ItemStack(this);
 	}
     
-    @Override
-    protected MultiBlockStructure createStructureTemplate() {
+    public static void createBluePrint() {
         //y,z,x facing NORTH(Z-), do not change
         BlockMapping[][][] configuration = new BlockMapping[5][][];
 
@@ -158,7 +139,7 @@ public class BlockPowerTransformer extends BlockAbstractTransformer implements I
                 {tank2PH, null, null, null, null, null, null}
         };
 
-        return new MultiBlockStructure(configuration);
+        blueprint = new MultiBlockStructure(configuration);
     }
 
     //////////////////////////////////////
@@ -168,10 +149,10 @@ public class BlockPowerTransformer extends BlockAbstractTransformer implements I
     public ISEGridTile getGridTile(World world, BlockPos pos) {
         TileEntity te = world.getTileEntity(pos);
 
-        if (te instanceof Primary)
-            return ((Primary) te).getWinding();
-        else if (te instanceof Secondary)
-            return ((Secondary) te).getWinding();
+        if (te instanceof TilePowerTransformerPlaceHolder.Primary)
+            return ((TilePowerTransformerPlaceHolder.Primary) te).getWinding();
+        else if (te instanceof TilePowerTransformerPlaceHolder.Secondary)
+            return ((TilePowerTransformerPlaceHolder.Secondary) te).getWinding();
         else if (te instanceof TilePowerTransformerWinding)
             return (TilePowerTransformerWinding) te;
 
@@ -181,28 +162,13 @@ public class BlockPowerTransformer extends BlockAbstractTransformer implements I
     ////////////////////////////////////
     /// Rendering
     ////////////////////////////////////
-    //This will tell minecraft not to render any side of our cube.
     @Override
-    @SideOnly(Side.CLIENT)
-    public boolean shouldSideBeRendered(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side) {
-        EnumPowerTransformerBlockType blockType = blockState.getValue(EnumPowerTransformerBlockType.property);
-        return !blockType.formed;
-        //return true;
-    }
-
-    //And this tell it that you can see through this block, and neighbor blocks should be rendered.
-    @Override
-    public boolean isOpaqueCube(IBlockState state) {
+    public boolean isNormalCube(BlockState state, IBlockReader worldIn, BlockPos pos) {
         return false;
     }
-
-    @Override
-    public boolean isNormalCube(IBlockState state) {
-        return true;
-    }
-
-    @Override
-    public boolean isFullCube(IBlockState state) {
-        return false;
-    }
+    
+	@Override
+	public BlockRenderType getRenderType(BlockState state) {
+		return blockType.formed ? BlockRenderType.INVISIBLE : BlockRenderType.MODEL;
+	}
 }

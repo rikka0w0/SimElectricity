@@ -66,7 +66,7 @@ public class BlockPoleConcrete extends BlockBase implements IMetaProvider<ITileM
 	}
 	
     private BlockPoleConcrete(Type blockType) {
-        super("essential_pole_concrete_" + blockType.name(), 
+        super("pole_concrete_" + blockType.name(), 
         		Block.Properties.create(Material.ROCK)
         		.hardnessAndResistance(3F, 10F)
         		.sound(SoundType.METAL), 

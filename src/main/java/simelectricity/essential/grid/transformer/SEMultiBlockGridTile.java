@@ -1,11 +1,11 @@
 package simelectricity.essential.grid.transformer;
 
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import rikka.librikka.Utils;
 import simelectricity.api.node.ISEGridNode;
 import simelectricity.api.tile.ISEGridTile;
@@ -14,7 +14,7 @@ import simelectricity.essential.client.grid.PowerPoleRenderHelper;
 import simelectricity.essential.common.SEMultiBlockEnergyTile;
 
 public abstract class SEMultiBlockGridTile extends SEMultiBlockEnergyTile implements ISEGridTile, ISEPowerPole {
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     protected PowerPoleRenderHelper renderHelper;
     protected BlockPos neighbor;
     //////////////////////////////
@@ -48,14 +48,14 @@ public abstract class SEMultiBlockGridTile extends SEMultiBlockEnergyTile implem
     //////////////////////////////
     /////TileEntity
     //////////////////////////////
-    @SideOnly(Side.CLIENT)
     @Override
+    @OnlyIn(Dist.CLIENT)
     public double getMaxRenderDistanceSquared() {
         return 100000;
     }
 
-    @SideOnly(Side.CLIENT)
     @Override
+    @OnlyIn(Dist.CLIENT)
     public AxisAlignedBB getRenderBoundingBox() {
         return TileEntity.INFINITE_EXTENT_AABB;
     }
@@ -70,14 +70,14 @@ public abstract class SEMultiBlockGridTile extends SEMultiBlockEnergyTile implem
     /////Sync
     /////////////////////////////////////////////////////////
     @Override
-    public void prepareS2CPacketData(NBTTagCompound nbt) {
+    public void prepareS2CPacketData(CompoundNBT nbt) {
         Utils.saveToNbt(nbt, "neighbor", this.neighbor);
         super.prepareS2CPacketData(nbt);
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
-    public void onSyncDataFromServerArrived(NBTTagCompound nbt) {
+    @OnlyIn(Dist.CLIENT)
+    public void onSyncDataFromServerArrived(CompoundNBT nbt) {
         neighbor = Utils.posFromNbt(nbt, "neighbor");
         super.onSyncDataFromServerArrived(nbt);
 
@@ -97,17 +97,17 @@ public abstract class SEMultiBlockGridTile extends SEMultiBlockEnergyTile implem
     /////ISEPowerPole
     /////////////////////////////////////////////////////////
     @Override
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public PowerPoleRenderHelper getRenderHelper() {
         return this.renderHelper;
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public BlockPos[] getNeighborPosArray() {
         return new BlockPos[] {this.neighbor};
     }
 
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     protected abstract PowerPoleRenderHelper createRenderHelper();
 }

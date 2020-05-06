@@ -4,47 +4,53 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockHorizontal;
+import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.state.BlockStateContainer;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
+import net.minecraft.state.BooleanProperty;
+import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import rikka.librikka.IMetaProvider;
+import rikka.librikka.ITileMeta;
 import rikka.librikka.Utils;
 import rikka.librikka.multiblock.BlockMapping;
 import rikka.librikka.multiblock.IMultiBlockTile;
 import rikka.librikka.multiblock.MultiBlockStructure;
 import rikka.librikka.multiblock.MultiBlockTileInfo;
-import rikka.librikka.properties.Properties;
 import simelectricity.api.tile.ISEGridTile;
 import simelectricity.essential.api.ISEHVCableConnector;
 
-public class BlockDistributionTransformer extends BlockAbstractTransformer implements ISEHVCableConnector {
-	private static final String[] subNames = EnumDistributionTransformerBlockType.getRawStructureNames();	
-	public BlockDistributionTransformer() {
-		super("essential_disttransformer", Material.IRON);
+public class BlockDistributionTransformer extends BlockAbstractTransformer implements IMetaProvider<ITileMeta>, ISEHVCableConnector {
+	public static BooleanProperty mirrored = BlockStateProperties.EXTENDED;
+	
+	private final EnumDistributionTransformerBlockType blockType;
+	private BlockDistributionTransformer(EnumDistributionTransformerBlockType type) {
+		super("essential_disttransformer_"+type.name(), Material.IRON);
+		this.blockType = type;
 	}
 
     @Override
-    public String[] getSubBlockUnlocalizedNames() {
-        return this.subNames;
-    }
+	public ITileMeta meta() {
+		return this.blockType;
+	}
     
     ///////////////////////////////
     /// TileEntity
     ///////////////////////////////
     @Override
-    public TileEntity createTileEntity(World world, IBlockState state) {
-    	EnumDistributionTransformerBlockType blockType = state.getValue(EnumDistributionTransformerBlockType.property);
-    	
+    public TileEntity createTileEntity(BlockState state, IBlockReader world) {
         if (!blockType.formed)
             return null;
         
@@ -74,7 +80,7 @@ public class BlockDistributionTransformer extends BlockAbstractTransformer imple
     }
     
     @Override
-    protected IBlockState getBaseState(IBlockState firstValidState) {
+    protected BlockState getBaseState(BlockState firstValidState) {
 		return firstValidState.withProperty(Properties.propertyMirrored, false);
     }
     
@@ -102,7 +108,7 @@ public class BlockDistributionTransformer extends BlockAbstractTransformer imple
         return meta;
     }
 
-    public IBlockState stateFromType(EnumDistributionTransformerBlockType blockType) {
+    public BlockState stateFromType(EnumDistributionTransformerBlockType blockType) {
         return getDefaultState().withProperty(EnumDistributionTransformerBlockType.property, blockType);
     }
     
@@ -125,24 +131,23 @@ public class BlockDistributionTransformer extends BlockAbstractTransformer imple
     }
     
     @Override
-    public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
-    	IBlockState state = stateFromType(EnumDistributionTransformerBlockType.fromInt(meta&7));
-    	EnumFacing sight = Utils.getPlayerSightHorizontal(placer);
-    	return state.withProperty(Properties.propertyMirrored, facing2mirrored(sight));
+    public BlockState getStateForPlacement(BlockItemUseContext context) {
+    	BlockState state = super.getStateForPlacement(context);
+    	PlayerEntity placer = context.getPlayer();
+    	Direction sight = Utils.getPlayerSightHorizontal(placer);
+    	return state.with(mirrored, facing2mirrored(sight));
     }
     
-    private boolean facing2mirrored(EnumFacing facing) {
-    	return facing==EnumFacing.EAST || facing==EnumFacing.WEST;
+    private boolean facing2mirrored(Direction facing) {
+    	return facing==Direction.EAST || facing==Direction.WEST;
     }
     
     @Override
-	protected ItemStack getItemToDrop(IBlockState state) {
-    	EnumDistributionTransformerBlockType blockType = state.getValue(EnumDistributionTransformerBlockType.property);
-
+	protected ItemStack getItemToDrop(BlockState state) {
         if (blockType.formed)
         	return ItemStack.EMPTY;
             
-        return new ItemStack(this.itemBlock, 1, getMetaFromState(stateFromType(blockType)));
+        return new ItemStack(this);
     }
     
     ///////////////////
@@ -182,21 +187,14 @@ public class BlockDistributionTransformer extends BlockAbstractTransformer imple
     private BlockMapping createBlockMapping(EnumDistributionTransformerBlockType in, EnumDistributionTransformerBlockType out) {
     	return new BlockMapping(stateFromType(in), stateFromType(out)) {
     		@Override
-    	    protected boolean isDifferent(IBlockState state) {
-    			if (state.getBlock() != this.state.getBlock())
-    				return true;
-    			
-    	    	return this.state.getValue(EnumDistributionTransformerBlockType.property) != state.getValue(EnumDistributionTransformerBlockType.property);
+    	    protected boolean cancelPlacement(BlockState state) {
+    	    	return state.getBlock() != super.getStateForRestore(null).getBlock();
     		}
     		
     		@Override
-    		protected IBlockState getStateForRestore(@Nullable TileEntity tileEntity) {
-    			if (tileEntity instanceof IMultiBlockTile) {
-    				IMultiBlockTile tile = (IMultiBlockTile) tileEntity;
-    				EnumFacing facing = tile.getMultiBlockTileInfo().facing;
-    				return state.withProperty(Properties.propertyMirrored, !facing2mirrored(facing));
-    			}
-    			return state;
+    		protected BlockState getStateForRestore(Direction facing) {
+    			BlockState state = super.getStateForRestore(facing);
+    			return state.with(mirrored, !facing2mirrored(facing));
     		}
     	};
     }
@@ -293,36 +291,12 @@ public class BlockDistributionTransformer extends BlockAbstractTransformer imple
     /// Rendering
     ////////////////////////////////////
     @Override
-    public boolean isSideSolid(IBlockState base_state, IBlockAccess world, BlockPos pos, EnumFacing side)
-    {
-        return true;
-    }
-    
-    //This will tell minecraft not to render any side of our cube.
-    @Override
-    @SideOnly(Side.CLIENT)
-    public boolean shouldSideBeRendered(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side) {
+    public boolean isNormalCube(BlockState state, IBlockReader worldIn, BlockPos pos) {
         return false;
     }
     
-    //And this tell it that you can see through this block, and neighbor blocks should be rendered.
-    @Override
-    public boolean isOpaqueCube(IBlockState state) {
-        return false;
-    }
-
-    @Override
-    public boolean isNormalCube(IBlockState state) {
-        return false;
-    }
-
-    @Override
-    public boolean isFullCube(IBlockState state) {
-        return false;
-    }
-
-    @Override
-    public boolean isFullBlock(IBlockState state) {
-        return false;
-    }
+	@Override
+	public BlockRenderType getRenderType(BlockState state) {
+		return BlockRenderType.MODEL;
+	}
 }

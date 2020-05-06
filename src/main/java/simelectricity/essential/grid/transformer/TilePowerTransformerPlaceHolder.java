@@ -1,11 +1,11 @@
 package simelectricity.essential.grid.transformer;
 
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import simelectricity.essential.common.SEMultiBlockEnergyTile;
 
 public class TilePowerTransformerPlaceHolder extends SEMultiBlockEnergyTile {
@@ -36,8 +36,8 @@ public class TilePowerTransformerPlaceHolder extends SEMultiBlockEnergyTile {
 
     public static class Render extends TilePowerTransformerPlaceHolder {
         @Override
-        @SideOnly(Side.CLIENT)
-        public void onSyncDataFromServerArrived(NBTTagCompound nbt) {
+        @OnlyIn(Dist.CLIENT)
+        public void onSyncDataFromServerArrived(CompoundNBT nbt) {
         	super.onSyncDataFromServerArrived(nbt);
             markForRenderUpdate();
         }
@@ -45,14 +45,14 @@ public class TilePowerTransformerPlaceHolder extends SEMultiBlockEnergyTile {
         //////////////////////////////
         /////TileEntity
         //////////////////////////////
-        @SideOnly(Side.CLIENT)
         @Override
+        @OnlyIn(Dist.CLIENT)
         public double getMaxRenderDistanceSquared() {
             return 100000;
         }
 
-        @SideOnly(Side.CLIENT)
         @Override
+        @OnlyIn(Dist.CLIENT)
         public AxisAlignedBB getRenderBoundingBox() {
             return TileEntity.INFINITE_EXTENT_AABB;
         }

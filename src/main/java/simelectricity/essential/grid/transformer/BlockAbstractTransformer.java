@@ -2,44 +2,38 @@ package simelectricity.essential.grid.transformer;
 
 import java.util.List;
 
-import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
-import net.minecraft.block.BlockHorizontal;
+import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.state.BlockState;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.init.Items;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.fluid.IFluidState;
+import net.minecraft.block.BlockState;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
+import net.minecraft.world.storage.loot.LootContext;
 import rikka.librikka.block.BlockBase;
-import rikka.librikka.block.ISubBlock;
 import rikka.librikka.item.ItemBlockBase;
 import rikka.librikka.multiblock.MultiBlockStructure;
 import rikka.librikka.multiblock.MultiBlockStructure.Result;
-import rikka.librikka.properties.Properties;
-import simelectricity.api.SEAPI;
-import simelectricity.essential.common.SEMultiBlockEnergyTile;
 
-public abstract class BlockAbstractTransformer extends BlockBase implements ISubBlock {
-	public final MultiBlockStructure structureTemplate;
-
-    public BlockAbstractTransformer(String unlocalizedName, Material material) {
-		super(unlocalizedName, material, ItemBlockBase.class);
-
-		this.structureTemplate = this.createStructureTemplate();
-		
-        setCreativeTab(SEAPI.SETab);
-        setHardness(3.0F);
-        setResistance(10.0F);
-        setSoundType(SoundType.METAL);
+public abstract class BlockAbstractTransformer extends BlockBase {
+    public BlockAbstractTransformer(String unlocalizedName, Material material, ItemGroup group) {
+		super(unlocalizedName, 
+				Block.Properties.create(material).hardnessAndResistance(3.0F, 10.0F).sound(SoundType.METAL), 
+				ItemBlockBase.class,
+				(new Item.Properties()).group(group));
 	}
     
-    protected abstract MultiBlockStructure createStructureTemplate();
+    protected abstract MultiBlockStructure getBlueprint();
     
     protected abstract ItemStack getItemToDrop(BlockState state);
 
@@ -52,32 +46,20 @@ public abstract class BlockAbstractTransformer extends BlockBase implements ISub
     ///////////////////////////////
     ///BlockStates
     ///////////////////////////////
-    @Override
-    public BlockState getActualState(@Nonnull BlockState state, IBlockAccess world, BlockPos pos) {
-    	TileEntity te = world.getTileEntity(pos);
-        if (te instanceof SEMultiBlockEnergyTile) {
-        	SEMultiBlockEnergyTile render = (SEMultiBlockEnergyTile) te;
-            EnumFacing facing = render.getFacing();
-            boolean mirrored = render.isMirrored();
-            if (facing == null) {
-                return state; //Prevent crashing!
-            }
-
-            state = state.withProperty(BlockHorizontal.FACING, facing)
-                    .withProperty(Properties.propertyMirrored, mirrored);
-        }
-        return state;
-    }
+//    @Override
+//    protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
+//    	builder.add(BlockStateProperties.HORIZONTAL_FACING, BlockStateProperties.INVERTED);
+//    }
 
     ///////////////////////////////
     /// Block activities
     ///////////////////////////////
     @Override
-    public void onBlockPlacedBy(World world, BlockPos pos, BlockState state, EntityLivingBase placer, ItemStack stack) {
+    public void onBlockPlacedBy(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
         if (world.isRemote)
             return;
 
-        Result ret = this.structureTemplate.attempToBuild(world, pos);
+        Result ret = this.getBlueprint().attempToBuild(world, pos);
         if (ret != null) {
             ret.createStructure();
         }
@@ -85,22 +67,17 @@ public abstract class BlockAbstractTransformer extends BlockBase implements ISub
     }
 
     @Override
-    public void breakBlock(World world, BlockPos pos, BlockState state) {
+    public boolean removedByPlayer(BlockState state, World world, BlockPos pos, PlayerEntity player, boolean willHarvest, IFluidState fluid) {
         TileEntity te = world.getTileEntity(pos);
         if (te != null) {
-            this.structureTemplate.restoreStructure(te, state, true);
+            this.getBlueprint().restoreStructure(te, state, true);
         }
 
-        super.breakBlock(world, pos, state);
+        return super.removedByPlayer(state, world, pos, player, willHarvest, fluid);
     }
 
     @Override
-    public int damageDropped(BlockState state) {
-    	return getItemToDrop(state).getItemDamage();
-    }
-
-    @Override
-    public List<ItemStack> getDrops(IBlockAccess world, BlockPos pos, BlockState state, int fortune) {
+    public List<ItemStack> getDrops(BlockState state, LootContext.Builder builder) {
     	List<ItemStack> ret = new java.util.ArrayList<ItemStack>();
     	
     	ItemStack itemStack = getItemToDrop(state);
@@ -114,7 +91,7 @@ public abstract class BlockAbstractTransformer extends BlockBase implements ISub
      * Creative-mode middle mouse button clicks
      */
     @Override
-    public ItemStack getItem(World world, BlockPos pos, BlockState state) {
+    public ItemStack getItem(IBlockReader world, BlockPos pos, BlockState state) {
     	return getItemToDrop(state);
     }
 }

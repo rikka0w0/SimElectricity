@@ -50,7 +50,7 @@ public class BlockCableJoint extends BlockBase implements IMetaProvider<ITileMet
 	}
 	
     private BlockCableJoint(Type meta) {
-        super("essential_cable_joint" + meta.name(), 
+        super("cable_joint" + meta.name(), 
         		Block.Properties.create(Material.GLASS)
         		.hardnessAndResistance(0.2F, 10.0F)
         		.sound(SoundType.METAL), SEAPI.SETab);

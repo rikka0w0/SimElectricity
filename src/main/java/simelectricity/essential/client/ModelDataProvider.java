@@ -17,6 +17,7 @@ import simelectricity.essential.BlockRegistry;
 import simelectricity.essential.Essential;
 import simelectricity.essential.ItemRegistry;
 import simelectricity.essential.common.semachine.SEMachineBlock;
+import simelectricity.essential.grid.transformer.BlockPowerTransformer;
 
 public final class ModelDataProvider extends BlockStateProvider implements ISimpleItemDataProvider {
 	private final ExistingFileHelper exfh;
@@ -46,6 +47,21 @@ public final class ModelDataProvider extends BlockStateProvider implements ISimp
 			registerDynamic(block);
 		for (Block block: BlockRegistry.concretePole)
 			registerDynamic2(block);
+		
+		for (BlockPowerTransformer block: BlockRegistry.powerTransformer) {
+			if (block.blockType.formed) {
+				registerFake(block);
+			} else {
+				VariantBlockStateBuilder builder = getVariantBuilder(block);
+				String namespace = block.getRegistryName().getNamespace();
+				String blockName =  block.getRegistryName().getPath();
+				ModelFile modelFile = new ModelFile.ExistingModelFile(new ResourceLocation(namespace, "block/"+blockName), exfh);	
+				builder.forAllStates((blockstate) -> ConfiguredModel.builder().modelFile(modelFile).build());
+				
+				BlockModelBuilder itemModelBuilder = models().getBuilder("item/"+blockName);
+				itemModelBuilder.parent(modelFile);
+			}
+		}
 		
 		// Items
 		registerSimpleItems(ItemRegistry.itemHVCable);
@@ -89,6 +105,17 @@ public final class ModelDataProvider extends BlockStateProvider implements ISimp
 		
 		// Generate item model
 		registerSimpleItem(block, "item/"+blockName+"_inventory");
+	}
+	
+	private void registerFake (Block block) {
+		VariantBlockStateBuilder builder = getVariantBuilder(block);
+		String namespace = block.getRegistryName().getNamespace();
+		String blockName =  block.getRegistryName().getPath();
+
+		final ModelFile modelFile = new ModelFile.ExistingModelFile(mcLoc("block/torch"), exfh);
+		builder.forAllStates((blockstate)->ConfiguredModel.builder().modelFile(modelFile).build());
+		
+		registerSimpleItem(block, mcLoc("block/stone"));
 	}
 	
     private void registerSEMBlock(SEMachineBlock block) {

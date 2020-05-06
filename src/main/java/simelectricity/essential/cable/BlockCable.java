@@ -98,7 +98,7 @@ public class BlockCable extends BlockBase implements ICustomBoundingBox, IMetaPr
     }
     
 	private BlockCable(ISECableMeta cableData) {
-        this("essential_cable", 
+        this("cable", 
         		cableData, 
         		Block.Properties.create(Material.GLASS).hardnessAndResistance(0.2F, 10.0F).sound(SoundType.METAL).notSolid()
         		, ItemBlockBase.class,

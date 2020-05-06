@@ -39,9 +39,6 @@ public class FastTESRPowerPole<T extends TileEntity & ISEPowerPole> extends Tile
     public static TextureAtlasSprite texture;
     public final static ResourceLocation hvcable_texture_loc = new ResourceLocation(ResourcePaths.hv_cable);
 
-    /**
-     * Do not call this
-     */
     public static void onPreTextureStitchEvent(TextureStitchEvent.Pre event) {
     	if (EasyTextureLoader.isBlockAtlas(event))
     		event.addSprite(hvcable_texture_loc);

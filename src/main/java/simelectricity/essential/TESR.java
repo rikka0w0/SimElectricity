@@ -24,6 +24,7 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.util.Direction;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.ILightReader;
 import net.minecraftforge.client.MinecraftForgeClient;
@@ -41,7 +42,7 @@ public class TESR extends TileEntityRenderer<TESRTestBlock.Tile>{
 		IVertexBuilder builder = buffer.getBuffer(RenderType.getCutout());
         BlockState state = te.getWorld().getBlockState(te.getPos().down());
         IBakedModel model = Minecraft.getInstance().getModelManager().getModel(BlockModelShapes.getModelLocation(state));
-		
+//        model = Minecraft.getInstance().getModelManager().getModel(new ResourceLocation(Essential.MODID, "block/testobjmodel"));
        
 //		matrixStack.push();
 //		matrixStack.translate(0, 2, 0);
@@ -88,7 +89,7 @@ public class TESR extends TileEntityRenderer<TESRTestBlock.Tile>{
 		      }
 		      int i = 15728640;
 		      int j = WorldRenderer.getPackedLightmapCoords(te.getWorld(), state, te.getPos());
-			builder.addQuad(matrixStack.getLast(), quad, f, f1, f2, 15728640, OverlayTexture.NO_OVERLAY);
+			builder.addQuad(matrixStack.getLast(), quad, new float[]{1.0F, 1.0F, 1.0F, 1.0F}, f, f1, f2, new int[]{i, i, i, i}, OverlayTexture.NO_OVERLAY, true);
 //		    builder.addQuad(matrixStack.getLast(), quad, new float[]{1.0F, 1.0F, 1.0F, 1.0F}, f, f1, f2, new int[]{i, i, i, i}, 655360, true);
 		}
 		matrixStack.pop();

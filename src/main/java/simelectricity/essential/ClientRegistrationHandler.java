@@ -19,6 +19,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ModelBakeEvent;
+import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -47,14 +48,10 @@ import simelectricity.essential.client.grid.pole.ConcretePoleTER;
 import simelectricity.essential.client.grid.pole.MetalPole35kVBottomTER;
 import simelectricity.essential.client.grid.pole.MetalPole35kVModel;
 import simelectricity.essential.client.grid.pole.MetalPole35kVTER;
+import simelectricity.essential.client.grid.transformer.FastTESRPowerTransformer;
 import simelectricity.essential.client.grid.pole.ConcretePoleModel;
 import simelectricity.essential.client.grid.FastTESRPowerPole;
 import simelectricity.essential.client.grid.GridRenderMonitor;
-//import simelectricity.essential.client.grid.transformer.FastTESRPowerTransformer;
-//import simelectricity.essential.grid.transformer.TileDistributionTransformer;
-//import simelectricity.essential.grid.transformer.TilePowerTransformerPlaceHolder;
-//import simelectricity.essential.grid.transformer.TilePowerTransformerWinding.Primary;
-//import simelectricity.essential.grid.transformer.TilePowerTransformerWinding.Secondary;
 import simelectricity.essential.grid.BlockCableJoint;
 import simelectricity.essential.grid.BlockPoleConcrete35kV;
 import simelectricity.essential.grid.BlockPoleConcrete;
@@ -62,29 +59,43 @@ import simelectricity.essential.grid.TilePoleBranch;
 import simelectricity.essential.grid.TilePoleConcrete;
 import simelectricity.essential.grid.TilePoleConcrete35kV;
 import simelectricity.essential.grid.TilePoleMetal35kV;
+import simelectricity.essential.grid.transformer.TilePowerTransformerPlaceHolder;
+import simelectricity.essential.grid.transformer.TilePowerTransformerWinding;
 
 @Mod.EventBusSubscriber(modid = Essential.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ClientRegistrationHandler {
     public static Map<BlockState, CodeBasedModel> dynamicModels = new HashMap<>();
 	
 	public static void registerTileEntityRenders() {
+		// ConcretePole35kV
 		TERHelper.bind(TilePoleConcrete35kV.class, ConcretePole35kVTER::new);
+		
+		// MetalPole35kV
 		TERHelper.bind(TilePoleMetal35kV.class, MetalPole35kVTER::new);
 		TERHelper.bind(TilePoleMetal35kV.Bottom.class, MetalPole35kVBottomTER::new);
+		
+		// ConcretePole
 		TERHelper.bind(TilePoleConcrete.Pole10Kv.Type0.class, ConcretePoleTER::new);
 		TERHelper.bind(TilePoleConcrete.Pole10Kv.Type1.class, ConcretePoleTER::new);
 		TERHelper.bind(TilePoleConcrete.Pole415vType0.class, ConcretePoleTER::new);
 		TERHelper.bind(TilePoleBranch.Type10kV.class, ConcretePoleTER::new);
 		TERHelper.bind(TilePoleBranch.Type415V.class, ConcretePoleTER::new);
 
+		// PowerTransformer
+		TERHelper.bind(TilePowerTransformerPlaceHolder.Render.class, FastTESRPowerTransformer::new);
+		TERHelper.bind(TilePowerTransformerWinding.Primary.class, FastTESRPowerPole::new);
+		TERHelper.bind(TilePowerTransformerWinding.Secondary.class, FastTESRPowerPole::new);
+		
 		ClientRegistry.bindTileEntityRenderer(BlockRegistry.ttb_tetype, TESR::new);
-//        FastTESRPowerPole.register(Primary.class);
-//        FastTESRPowerPole.register(Secondary.class);
-//        
 //        FastTESRPowerPole.register(TileDistributionTransformer.Pole10kV.class);
 //        FastTESRPowerPole.register(TileDistributionTransformer.Pole415V.class);
 
-//        ClientRegistry.bindTileEntitySpecialRenderer(TilePowerTransformerPlaceHolder.Render.class, FastTESRPowerTransformer.instance);
+	}
+	
+	@OnlyIn(Dist.CLIENT)
+	@SubscribeEvent
+	public static void onModelRegistryEvent(ModelRegistryEvent event) {
+		FastTESRPowerTransformer.onModelRegistryEvent();
 	}
 	
     @SubscribeEvent
@@ -100,6 +111,7 @@ public class ClientRegistrationHandler {
     	LedPanelRender.instance.onPreTextureStitchEvent(event);
     	
     	FastTESRPowerPole.onPreTextureStitchEvent(event);
+    	FastTESRPowerTransformer.onPreTextureStitchEvent(event);
     }
     
     @SubscribeEvent
@@ -134,7 +146,7 @@ public class ClientRegistrationHandler {
     	LedPanelRender.instance.onModelBakeEvent();
     	
     	FastTESRPowerPole.onModelBakeEvent();
-    	
+    	FastTESRPowerTransformer.onModelBakeEvent();
 
 		// Assign item models
     	for (int i=0; i<BlockRegistry.concretePole.length; i++) {
@@ -143,7 +155,7 @@ public class ClientRegistrationHandler {
     		IBakedModel newItemModel = event.getModelRegistry().get(BlockModelShapes.getModelLocation(block.getDefaultState()));
     		registry.put(resLoc, newItemModel);
     	}
-    	
+
 //      event.getModelRegistry().put(new ModelResourceLocation(), null);
 //  	Minecraft.getInstance().getModelManager().getModel(location)
 //  	net.minecraft.client.renderer.model.BlockModel
@@ -250,5 +262,5 @@ public class ClientRegistrationHandler {
 //		IUnbakedModel machine = ModelLoader.instance().getUnbakedModel(new ResourceLocation(Essential.MODID, "block/machine"));
 //		adj = null;
 		// ModelBakery public IUnbakedModel getUnbakedModel(ResourceLocation modelLocation)
-	}	
+	}
 }

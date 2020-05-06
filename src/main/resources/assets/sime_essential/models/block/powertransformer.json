@@ -1,0 +1,6 @@
+{
+	"loader": "forge:obj",
+	"model": "sime_essential:models/powertransformer.obj",
+	"diffuseLighting": true,
+	"ambientToFullbright": true
+}
