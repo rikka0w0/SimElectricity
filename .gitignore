@@ -29,6 +29,7 @@ build
 .settings
 /.settings
 /bin
+*.launch
 
 # MacOS #
 .DS_Store
