@@ -10,7 +10,7 @@ Current Supported Version: Minecraft Forge 1.15.2
 
 ![Image](/documentation/grid.jpg)
 
-# Addons: ![Image](/src/main/resources/assets/sime_essential/textures/item/fute_lemon_tea.png)
+# Addons: ![Image](/src/main/resources/assets/sime_essential/textures/item/futa_lemon_tea.png)
 1. BuildCraft Extension:
 Install BuildCraft facades to SimElectricity cable, already included in the SimElectricity Essential Mod.
 1. ThermalExpension Extension: Install ThermalDynamics facades to SimElectricity cable, already included in the SimElectricity Essential Mod.
@@ -56,7 +56,7 @@ and comments in the API source code (`package simelectricity.api`).
 They are invoked separately. Before building or testing this Mod, you have to execute the gradle task "runData". 
 Checkout: [https://minecraft.gamepedia.com/Tutorials/Running_the_Data_Generator](https://minecraft.gamepedia.com/Tutorials/Running_the_Data_Generator)
 
-## Special Thanks To: ![Image](/src/main/resources/assets/sime_essential/textures/items/tool_glove.png)
+## Special Thanks To: ![Image](/src/main/resources/assets/sime_essential/textures/item/tool_glove.png)
 * [LibRikka](https://github.com/rikka0w0/librikka) - A code pack designed to simplify Minecraft Modding
 * [CSPARSEJ](https://github.com/rwl/CSparseJ) - CSparseJ is a Java port of CSparse, a Concise Sparse matrix package.
 * [Minecraft Forge](https://github.com/MinecraftForge/MinecraftForge) - A Minecraft mod container and loader
