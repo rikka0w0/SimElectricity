@@ -4,7 +4,7 @@ before_install:
  - git submodule update --init --remote --recursive
 install: true
 script:
- - ./gradlew runData
+ - ./gradlew runData || true
  - ./gradlew build
 addons:
   artifacts:
