@@ -1,35 +1,33 @@
 package simelectricity.extension.facades;
 
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.NBTUtil;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import simelectricity.essential.api.client.ISECoverPanelRender;
 import simelectricity.essential.api.coverpanel.ISECoverPanel;
 
 public class BCFacadePanel implements ISECoverPanel{
 	private final boolean isHollow;
-	private final IBlockState blockState;
+	private final BlockState blockState;
 	private final ItemStack itemStack;
 	
-	public BCFacadePanel(NBTTagCompound nbt) {
+	public BCFacadePanel(CompoundNBT nbt) {
 		this.isHollow = nbt.getBoolean("isHollow");
+			
+		this.blockState = NBTUtil.readBlockState(nbt.getCompound("blockstate"));
 		
-		Block block = Block.getBlockById(nbt.getInteger("blockID"));
-		int meta = nbt.getByte("meta");
-		
-		this.blockState = block.getStateFromMeta(meta);
-		
-		this.itemStack = new ItemStack(nbt);
+		CompoundNBT nbtItemStack = nbt.getCompound("itemstack");
+		this.itemStack = ItemStack.read(nbtItemStack);
 		if (itemStack != null)
 			itemStack.setCount(1);
 	}
 	
-	public BCFacadePanel(boolean isHollow, IBlockState blockState, ItemStack itemStack){
+	public BCFacadePanel(boolean isHollow, BlockState blockState, ItemStack itemStack){
 		this.isHollow = isHollow;
 		this.blockState = blockState;
 		
@@ -42,34 +40,32 @@ public class BCFacadePanel implements ISECoverPanel{
 			
 	}
 	
-	public IBlockState getBlockState() {return blockState;}
+	public BlockState getBlockState() {return blockState;}
 	
 	@Override
 	public boolean isHollow() {return isHollow;}
 
 	@Override
-	public void toNBT(NBTTagCompound nbt) {
-		nbt.setString("coverPanelType", "BCFacade");
+	public void toNBT(CompoundNBT nbt) {
+		nbt.putString("coverPanelType", "BCFacade");
+		nbt.putBoolean("isHollow", isHollow);
+		nbt.put("blockstate", NBTUtil.writeBlockState(blockState));
 		
-		nbt.setBoolean("isHollow", isHollow);
-
-		Block block = blockState.getBlock();
-		int meta = block.getMetaFromState(blockState);
-		nbt.setInteger("meta", meta);
-		nbt.setInteger("blockID", Block.getIdFromBlock(block));
-				
-		if (itemStack != null)
-			itemStack.writeToNBT(nbt);
+		CompoundNBT nbtItemStack = new CompoundNBT();
+		if (itemStack != null) {
+			itemStack.write(nbtItemStack);
+			nbt.put("itemstack", nbtItemStack);
+		}
 	}
 	
 	@Override
-	@SideOnly(Side.CLIENT)
+	@OnlyIn(Dist.CLIENT)
 	public ISECoverPanelRender getCoverPanelRender() {
 		return BCFacadeRender.instance;
 	}
 
 	@Override
-	public void setHost(TileEntity hostTileEntity, EnumFacing side) {}
+	public void setHost(TileEntity hostTileEntity, Direction side) {}
 
 	@Override
 	public ItemStack getDroppedItemStack() {

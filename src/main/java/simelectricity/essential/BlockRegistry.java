@@ -89,7 +89,7 @@ public class BlockRegistry {
     	TileEntityHelper.registerTileEntity(registry, TilePoleMetal35kV.class, metalPole35kV);
     	TileEntityHelper.registerTileEntity(registry, TilePoleMetal35kV.Bottom.class, metalPole35kV);
     	TileEntityHelper.registerTileEntity(registry, TilePoleConcrete35kV.class, concretePole35kV);
-    	
+
     	TileEntityHelper.registerTileEntity(registry, TilePoleConcrete.Pole10Kv.Type0.class, concretePole);
     	TileEntityHelper.registerTileEntity(registry, TilePoleConcrete.Pole10Kv.Type1.class, concretePole);
     	TileEntityHelper.registerTileEntity(registry, TilePoleConcrete.Pole415vType0.class, concretePole);
@@ -109,6 +109,7 @@ public class BlockRegistry {
 
     	TileEntityHelper.registerTileEntity(registry, TileDistributionTransformer.Pole10kV.class, distributionTransformer);
     	TileEntityHelper.registerTileEntity(registry, TileDistributionTransformer.Pole415V.class, distributionTransformer);
+
 
     	
     	RegisterTEs(registry, blockElectronics);

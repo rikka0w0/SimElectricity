@@ -126,7 +126,6 @@ public abstract class BlockElectronics extends SEMachineBlock implements IMetaPr
         if (world.isRemote)
             return;
 
-        
         TileEntity te = world.getTileEntity(pos);
 
         if (te instanceof SESinglePortMachine) {

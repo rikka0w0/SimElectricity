@@ -3,17 +3,19 @@ package simelectricity.extension.facades;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.tuple.Pair;
 
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.IBakedModel;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.client.renderer.RenderTypeLookup;
+import net.minecraft.client.renderer.model.BakedQuad;
+import net.minecraft.client.renderer.model.IBakedModel;
+import net.minecraft.util.Direction;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.client.MinecraftForgeClient;
@@ -25,21 +27,21 @@ public class BCFacadeRender implements ISECoverPanelRender{
 	public final static ISECoverPanelRender instance = new BCFacadeRender();
 	protected BCFacadeRender() {};
 	
-	public static int getVertexIndex(List<Vec3d> positions, EnumFacing.Axis axis,
+	public static int getVertexIndex(List<Vec3d> positions, Direction.Axis axis,
 									 boolean minOrMax1, boolean minOrMax2) {
-		EnumFacing.Axis axis1, axis2;
+		Direction.Axis axis1, axis2;
 		switch (axis) {
 			case X:
-				axis1 = EnumFacing.Axis.Y;
-				axis2 = EnumFacing.Axis.Z;
+				axis1 = Direction.Axis.Y;
+				axis2 = Direction.Axis.Z;
 				break;
 			case Y:
-				axis1 = EnumFacing.Axis.X;
-				axis2 = EnumFacing.Axis.Z;
+				axis1 = Direction.Axis.X;
+				axis2 = Direction.Axis.Z;
 				break;
 			case Z:
-				axis1 = EnumFacing.Axis.X;
-				axis2 = EnumFacing.Axis.Y;
+				axis1 = Direction.Axis.X;
+				axis2 = Direction.Axis.Y;
 				break;
 			default:
 				throw new IllegalArgumentException();
@@ -61,12 +63,12 @@ public class BCFacadeRender implements ISECoverPanelRender{
 		);
 	}
 
-	public static List<MutableQuad> getTransformedQuads(IBlockState state, IBakedModel model, EnumFacing side,
+	public static List<MutableQuad> getTransformedQuads(BlockState state, IBakedModel model, Direction side, Random rand,
 														Vec3d pos0, Vec3d pos1, Vec3d pos2, Vec3d pos3) {
-		return model.getQuads(state, side, 0).stream()
+		return model.getQuads(state, side, rand).stream()
 				.map(quad -> {
 					MutableQuad mutableQuad = new MutableQuad().fromBakedItem(quad);
-					boolean positive = side.getAxisDirection() == EnumFacing.AxisDirection.POSITIVE;
+					boolean positive = side.getAxisDirection() == Direction.AxisDirection.POSITIVE;
 					Function<Vec3d, Vec3d> transformPosition = pos -> {
 						switch (side.getAxis()) {
 							case X:
@@ -163,10 +165,10 @@ public class BCFacadeRender implements ISECoverPanelRender{
 		throw new IllegalArgumentException();
 	}
 
-	public static void addRotatedQuads(List<MutableQuad> quads, IBlockState state, IBakedModel model, EnumFacing side, Rotation rotation,
-									   Vec3d pos0, Vec3d pos1, Vec3d pos2, Vec3d pos3) {
+	public static void addRotatedQuads(List<MutableQuad> quads, BlockState state, IBakedModel model, Direction side, Rotation rotation,
+									   Random rand, Vec3d pos0, Vec3d pos1, Vec3d pos2, Vec3d pos3) {
 		quads.addAll(getTransformedQuads(
-				state, model, side,
+				state, model, side, rand,
 				rotate(pos0, rotation),
 				rotate(pos1, rotation),
 				rotate(pos2, rotation),
@@ -174,21 +176,24 @@ public class BCFacadeRender implements ISECoverPanelRender{
 		));
 	}
 	
-    public static List<MutableQuad> bake(IBlockState blockState, EnumFacing side) {
-        IBakedModel model = Minecraft.getMinecraft().getBlockRendererDispatcher().getModelForState(blockState);
+    public static List<MutableQuad> bake(BlockState blockState, Direction side) {
+        IBakedModel model = Minecraft.getInstance().getBlockRendererDispatcher().getModelForState(blockState);
         List<MutableQuad> quads = new ArrayList<>();
         int pS = 1;
         int nS = 16 - pS;
-
+        
+        Random random = new Random();
+        random.setSeed(42L);
+        
         quads.addAll(getTransformedQuads(
-                blockState, model, side,
+                blockState, model, side, random, 
                 new Vec3d(0 / 16D, 16 / 16D, 0 / 16D),
                 new Vec3d(16 / 16D, 16 / 16D, 0 / 16D),
                 new Vec3d(16 / 16D, 0 / 16D, 0 / 16D),
                 new Vec3d(0 / 16D, 0 / 16D, 0 / 16D)
         ));
         quads.addAll(getTransformedQuads(
-                blockState, model, side.getOpposite(),
+                blockState, model, side.getOpposite(), random,
                 new Vec3d(pS / 16D, nS / 16D, nS / 16D),
                 new Vec3d(nS / 16D, nS / 16D, nS / 16D),
                 new Vec3d(nS / 16D, pS / 16D, nS / 16D),
@@ -197,7 +202,7 @@ public class BCFacadeRender implements ISECoverPanelRender{
 
         for (Rotation rotation : Rotation.values()) {
             addRotatedQuads(
-                    quads, blockState, model, side.getOpposite(), rotation,
+                    quads, blockState, model, side.getOpposite(), rotation, random,
                     new Vec3d(0 / 16D, 16 / 16D, 16 / 16D),
                     new Vec3d(pS / 16D, nS / 16D, nS / 16D),
                     new Vec3d(pS / 16D, pS / 16D, nS / 16D),
@@ -215,17 +220,17 @@ public class BCFacadeRender implements ISECoverPanelRender{
     }
 
 	//Encode the side information in the tint variable
-	public static int tintFunc(EnumFacing side, int tint)	{	return tint * EnumFacing.VALUES.length + side.ordinal();}
+	public static int tintFunc(Direction side, int tint)	{	return tint * Direction.values().length + side.ordinal();}
 	
 	public static int getTint(int in) {	return in / 6;}
 	
-	public static EnumFacing getFacing(int in) {	return EnumFacing.getFront(in % EnumFacing.VALUES.length);}
+	public static Direction getFacing(int in) {	return Direction.byIndex(in % Direction.values().length);}
 	
 	@Override
-	public void renderCoverPanel(ISECoverPanel coverPanel, EnumFacing side, List quads) {
+	public void renderCoverPanel(ISECoverPanel coverPanel, Direction side, List quads) {
 		BCFacadePanel facade = (BCFacadePanel) coverPanel;
-		IBlockState blockState = facade.getBlockState();
-		if (blockState.getBlock().canRenderInLayer(blockState, MinecraftForgeClient.getRenderLayer())) {
+		BlockState blockState = facade.getBlockState();
+		if (RenderTypeLookup.canRenderInLayer(blockState, MinecraftForgeClient.getRenderLayer())) {
 			List<MutableQuad> mutableQuads = bake(blockState, side);
 	        List<BakedQuad> baked = new ArrayList<>();
 	        for (MutableQuad quad : mutableQuads)

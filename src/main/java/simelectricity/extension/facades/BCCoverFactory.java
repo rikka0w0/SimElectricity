@@ -1,9 +1,9 @@
 package simelectricity.extension.facades;
 
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import simelectricity.essential.api.ISECoverPanelFactory;
 import simelectricity.essential.api.coverpanel.ISECoverPanel;
 
@@ -82,7 +82,7 @@ public class BCCoverFactory implements ISECoverPanelFactory{
 				Object facadeState = mtdgetState.invoke(facadePhasedState);
 				
 				boolean isHollow = (boolean) mtdisHollow.invoke(facade);
-				IBlockState blockState = (IBlockState) mtdgetBlockState.invoke(facadeState);
+				BlockState blockState = (BlockState) mtdgetBlockState.invoke(facadeState);
 				ItemStack reqStack = (ItemStack) mtdgetRequiredStack.invoke(facadeState);
 				
 				return new BCFacadePanel(isHollow, blockState, itemStack);
@@ -94,12 +94,12 @@ public class BCCoverFactory implements ISECoverPanelFactory{
 	}
 
 	@Override
-	public boolean acceptNBT(NBTTagCompound nbt) {
+	public boolean acceptNBT(CompoundNBT nbt) {
 		return nbt.getString("coverPanelType").equals("BCFacade");
 	}
 
 	@Override
-	public ISECoverPanel fromNBT(NBTTagCompound nbt) {
+	public ISECoverPanel fromNBT(CompoundNBT nbt) {
 		return new BCFacadePanel(nbt);
 	}
 }

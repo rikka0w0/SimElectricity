@@ -3,7 +3,6 @@ package simelectricity.essential.machines.tile;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.ITickableTileEntity;
@@ -13,7 +12,8 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
-import rikka.librikka.Utils;
+import rikka.librikka.block.BlockUtils;
+import rikka.librikka.tileentity.INamedContainerProvider2;
 import simelectricity.api.ISEEnergyNetUpdateHandler;
 import simelectricity.api.SEAPI;
 import simelectricity.api.components.ISEConstantPowerLoad;
@@ -22,7 +22,7 @@ import simelectricity.essential.common.semachine.ISESocketProvider;
 import simelectricity.essential.common.semachine.SESinglePortMachine;
 import simelectricity.essential.machines.gui.ContainerSE2RF;
 
-public class TileSE2RF extends SESinglePortMachine<ISEConstantPowerLoad> implements ISEConstantPowerLoad, ISEEnergyNetUpdateHandler, ITickableTileEntity, INamedContainerProvider, ISESocketProvider {
+public class TileSE2RF extends SESinglePortMachine<ISEConstantPowerLoad> implements ISEConstantPowerLoad, ISEEnergyNetUpdateHandler, ITickableTileEntity, INamedContainerProvider2, ISESocketProvider {
     public final static double bufferCapacity = 1000;	// J
     public double ratedOutputPower = 100;	            // W
 
@@ -38,7 +38,7 @@ public class TileSE2RF extends SESinglePortMachine<ISEConstantPowerLoad> impleme
     public int calcRFPowerDemand(int offeredAmount, Direction side) {
         int rfDemand = 0;
 
-        TileEntity te = Utils.getTileEntitySafely(world, pos.offset(side));
+        TileEntity te = BlockUtils.getTileEntitySafely(world, pos.offset(side));
 
 		if (te != null) {
 			IEnergyStorage es = te.getCapability(CapabilityEnergy.ENERGY, side.getOpposite()).orElse(null);
@@ -53,7 +53,7 @@ public class TileSE2RF extends SESinglePortMachine<ISEConstantPowerLoad> impleme
     public int outpurRFPower(int offeredAmount, Direction side) {
         int accpted = 0;
 
-        TileEntity te = Utils.getTileEntitySafely(world, pos.offset(side));
+        TileEntity te = BlockUtils.getTileEntitySafely(world, pos.offset(side));
 
 		if (te != null) {
 			IEnergyStorage es = te.getCapability(CapabilityEnergy.ENERGY, side.getOpposite()).orElse(null);

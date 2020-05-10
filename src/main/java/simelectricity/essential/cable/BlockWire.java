@@ -37,6 +37,7 @@ import rikka.librikka.IMetaProvider;
 import rikka.librikka.RayTraceHelper;
 import rikka.librikka.Utils;
 import rikka.librikka.block.BlockBase;
+import rikka.librikka.block.BlockUtils;
 import rikka.librikka.block.ICustomBoundingBox;
 import rikka.librikka.item.ItemBlockBase;
 import simelectricity.api.SEAPI;
@@ -198,8 +199,8 @@ public class BlockWire extends BlockBase implements ICustomBoundingBox, IMetaPro
             BlockWire blockWire = (BlockWire) getBlock();
             ItemStack itemStack = player.getHeldItem(hand);
             boolean shrinkItem = false;
-            TileEntity teSelected = Utils.getTileEntitySafely(world, pos);
-            TileEntity teNew = Utils.getTileEntitySafely(world, pos.offset(facing));
+            TileEntity teSelected = BlockUtils.getTileEntitySafely(world, pos);
+            TileEntity teNew = BlockUtils.getTileEntitySafely(world, pos.offset(facing));
 
             if (teSelected instanceof ISEGenericWire) {
             	// TODO: fix this
@@ -213,7 +214,7 @@ public class BlockWire extends BlockBase implements ICustomBoundingBox, IMetaPro
                     if (tr_branch == null) {
                         // Center
                         if (facing != tr_side && facing != tr_side.getOpposite()) {
-                            if (!wireTile.hasBranch(tr_side, facing) && Utils.isSideSolid(world, pos.offset(tr_side), tr_side.getOpposite())) {
+                            if (!wireTile.hasBranch(tr_side, facing) && BlockUtils.isSideSolid(world, pos.offset(tr_side), tr_side.getOpposite())) {
                                 shrinkItem = blockWire.addBranch(wireTile, tr_side, facing, itemStack, world.isRemote);
                             }
                         }
@@ -222,7 +223,7 @@ public class BlockWire extends BlockBase implements ICustomBoundingBox, IMetaPro
                         if (facing == tr_side || facing == tr_side.getOpposite()) {
 
                             if (!wireTile.hasBranch(to, facing.getOpposite()) &&
-                                    (Utils.isSideSolid(world, pos.offset(to), to.getOpposite()) ||
+                                    (BlockUtils.isSideSolid(world, pos.offset(to), to.getOpposite()) ||
                                             world.getTileEntity(pos.offset(to)) instanceof ISECableTile)) {
                                 shrinkItem = blockWire.addBranch(wireTile, to, facing.getOpposite(), itemStack, world.isRemote);
                             }
@@ -231,13 +232,13 @@ public class BlockWire extends BlockBase implements ICustomBoundingBox, IMetaPro
                                 if (teNew instanceof ISEGenericWire) {
                                     // Add branch in neighbor
                                     if (!((ISEGenericWire) teNew).hasBranch(tr_side, tr_branch.getOpposite()) &&
-                                            (Utils.isSideSolid(world, pos.offset(facing).offset(tr_side), tr_side.getOpposite()) ||
+                                            (BlockUtils.isSideSolid(world, pos.offset(facing).offset(tr_side), tr_side.getOpposite()) ||
                                                     world.getTileEntity(pos.offset(tr_branch).offset(tr_side)) instanceof ISECableTile)) {
                                         shrinkItem = blockWire.addBranch((ISEGenericWire) teNew, tr_side, tr_branch.getOpposite(), itemStack, world.isRemote);
                                     }
                                 } else {
                                     // Block edge, try to place a new neighbor wire
-                                    if (Utils.isSideSolid(world, pos.offset(tr_branch).offset(tr_side), tr_side.getOpposite()) ||
+                                    if (BlockUtils.isSideSolid(world, pos.offset(tr_branch).offset(tr_side), tr_side.getOpposite()) ||
                                             world.getTileEntity(pos.offset(tr_branch).offset(tr_side)) instanceof ISECableTile) {
                                         nextPlacedSide.set(tr_side);
                                         nextPlacedto.set(tr_branch.getOpposite());
@@ -247,7 +248,7 @@ public class BlockWire extends BlockBase implements ICustomBoundingBox, IMetaPro
                                     }
                                 }
                             } else {
-                                if (!wireTile.hasBranch(tr_side, facing) && Utils.isSideSolid(world, pos.offset(tr_side), tr_side.getOpposite())) {
+                                if (!wireTile.hasBranch(tr_side, facing) && BlockUtils.isSideSolid(world, pos.offset(tr_side), tr_side.getOpposite())) {
                                     shrinkItem = blockWire.addBranch(wireTile, tr_side, facing, itemStack, world.isRemote);
                                 }
                             }
@@ -257,7 +258,7 @@ public class BlockWire extends BlockBase implements ICustomBoundingBox, IMetaPro
             } else if (teNew instanceof ISEGenericWire) {
                 Direction wire_side = facing.getOpposite();
                 // Selecting the block after the ISEGenericWire block
-                if (!((ISEGenericWire) teNew).hasBranch(wire_side, to) && Utils.isSideSolid(world, pos, wire_side.getOpposite())) {
+                if (!((ISEGenericWire) teNew).hasBranch(wire_side, to) && BlockUtils.isSideSolid(world, pos, wire_side.getOpposite())) {
                     shrinkItem = blockWire.addBranch((ISEGenericWire) teNew, wire_side, to, itemStack, world.isRemote);
                 }
             } else {
@@ -825,7 +826,7 @@ public class BlockWire extends BlockBase implements ICustomBoundingBox, IMetaPro
             	return;
             
             Direction side = Direction.getFacingFromVector(x, y, z);
-            if (wireTile.hasBranch(side, null) && !Utils.isSideSolid(world, fromPos, side.getOpposite())) {
+            if (wireTile.hasBranch(side, null) && !BlockUtils.isSideSolid(world, fromPos, side.getOpposite())) {
                 // The opposite side is no longer solid
 
                 // Drop wires as items

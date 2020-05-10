@@ -1,13 +1,17 @@
 package simelectricity.essential.items;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemUseContext;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import rikka.librikka.IMetaProvider;
 import rikka.librikka.IMetaBase;
@@ -180,6 +184,7 @@ public final class ItemTools extends ItemBase implements IMetaProvider<IMetaBase
             return ActionResultType.PASS;
         
         Utils.chat(player, "------------------");
+        player.sendMessage(getDisplayName(world, pos));
         
         if (block instanceof ISENodeDelegateBlock) {
         	delegatedNode = ((ISENodeDelegateBlock) block).getNode(world, pos);
@@ -217,6 +222,19 @@ public final class ItemTools extends ItemBase implements IMetaProvider<IMetaBase
         return ActionResultType.PASS;
     }
 
+    public static ITextComponent getDisplayName(World world, BlockPos pos) {
+    	TileEntity te = world.getTileEntity(pos);
+    	if (te instanceof INamedContainerProvider)
+    		return ((INamedContainerProvider) te).getDisplayName();
+
+    	BlockState blockstate = world.getBlockState(pos);
+    	INamedContainerProvider container = blockstate.getContainer(world, pos);
+    	if (container != null)
+    		return container.getDisplayName();
+
+    	return new TranslationTextComponent(blockstate.getBlock().getTranslationKey());
+    }
+    
     public static void printVI(ISESimulatable node, PlayerEntity player) {
     	String s = "WTF";
     	

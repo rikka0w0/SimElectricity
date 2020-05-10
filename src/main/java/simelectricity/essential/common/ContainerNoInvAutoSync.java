@@ -16,11 +16,11 @@ public abstract class ContainerNoInvAutoSync<HOST> extends ContainerNoInventory<
 	public ContainerNoInvAutoSync(@Nullable Object host, int windowID) {
 		this(host, Essential.MODID, windowID);
 	}
-	
+
 	public ContainerNoInvAutoSync(@Nullable Object host, String namespace, int windowID) {
 		super(host, namespace, windowID);
 	}
-	
+
     public ContainerNoInvAutoSync(@Nullable Object host, ContainerType containerType, int windowID) {
 		super(host, containerType, windowID);
 	}

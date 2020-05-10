@@ -16,7 +16,7 @@ modId="simelectricity" #mandatory
 # The version number of the mod - there's a few well known ${} variables useable here or just hardcode it
 version="${file.jarVersion}" #mandatory
  # A display name for the mod
-displayName="SimElectricity" #mandatory
+displayName="SimElectricity EnergyNet" #mandatory
 # A URL to query for updates for this mod. See the JSON update specification <here>
 # updateJSONURL="http://myurl.me/" #optional
 # A URL for the "homepage" for this mod, displayed in the mod UI
@@ -42,7 +42,7 @@ modId="sime_essential" #mandatory
 # The version number of the mod - there's a few well known ${} variables useable here or just hardcode it
 version="${file.jarVersion}" #mandatory
  # A display name for the mod
-displayName="SimElectricity SimElectricity Essential" #mandatory
+displayName="SimElectricity Essential" #mandatory
 # A URL to query for updates for this mod. See the JSON update specification <here>
 # updateJSONURL="http://myurl.me/" #optional
 # A URL for the "homepage" for this mod, displayed in the mod UI
@@ -53,6 +53,28 @@ logoFile="examplemod.png" #optional
 credits="Chinese Institution of Scientific Minecraft Mod (CISM)" #optional
 # A text field displayed in the mod UI
 authors="Rikka0_0, Aurora, MeowJ, YurisCat" #optional
+# The description text for the mod (multi line!) (#mandatory)
+description='''
+23333333333333333
+'''
+
+[[mods]] #mandatory
+# The modid of the mod
+modId="sime_facades" #mandatory
+# The version number of the mod - there's a few well known ${} variables useable here or just hardcode it
+version="${file.jarVersion}" #mandatory
+ # A display name for the mod
+displayName="SimElectricity Facades Extension" #mandatory
+# A URL to query for updates for this mod. See the JSON update specification <here>
+# updateJSONURL="http://myurl.me/" #optional
+# A URL for the "homepage" for this mod, displayed in the mod UI
+displayURL="https://github.com/RoyalAliceAcademyOfSciences/SimElectricity" #optional
+# A file name (in the root of the mod JAR) containing a logo for display
+logoFile="examplemod.png" #optional
+# A text field displayed in the mod UI
+credits="Chinese Institution of Scientific Minecraft Mod (CISM)" #optional
+# A text field displayed in the mod UI
+authors="Rikka0_0" #optional
 # The description text for the mod (multi line!) (#mandatory)
 description='''
 23333333333333333
@@ -77,14 +99,15 @@ description='''
     versionRange="[1.15.2]"
     ordering="NONE"
     side="BOTH"
-[[dependencies.sime_essential]] #optional
-    # the modid of the dependency
+[[dependencies.sime_essential]]
     modId="simelectricity" #mandatory
-    # Does this dependency have to exist - if not, ordering below must be specified
     mandatory=true #mandatory
-    # The version range of the dependency
     versionRange="[1,)" #mandatory
-    # An ordering relationship for the dependency - BEFORE or AFTER required if the relationship is not mandatory
     ordering="AFTER"
-    # Side this dependency is applied on - BOTH, CLIENT or SERVER
+    side="BOTH"
+[[dependencies.sime_facades]]
+    modId="sime_essential" #mandatory
+    mandatory=true #mandatory
+    versionRange="[1,)" #mandatory
+    ordering="AFTER"
     side="BOTH"

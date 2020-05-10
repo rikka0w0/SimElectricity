@@ -16,6 +16,7 @@ buildscript {
 }
 
 apply plugin: 'net.minecraftforge.gradle'
+apply plugin: 'eclipse'
 
 dependencies {
     // Specify the version of Minecraft to use, If this is any group other then 'net.minecraft' it is assumed
@@ -123,17 +124,17 @@ sourceSets {
     main {
         java {
             srcDir "src/main/java"
-            srcDir "librikka/src"
+            srcDir "librikka/src/main/java"
         }
         resources {
             srcDir "src/main/resources"
-            exclude "**/.md" // exclude readme from localization repo
+            srcDir "src/generated/resources"
         }
     }
 }
 
 jar.classifier = 'full'
-jar.version = '2.0'
+jar.version = version
 jar {
     manifest {
         attributes([
@@ -154,44 +155,27 @@ def libsDir = new File(System.getenv("LIBS_DIR") ?: "build/libs/")
 //sourceJar.excludes.addAll(["rikka/**"])
 
 
-//task deobfJar(type: Jar) {
-//    destinationDir = libsDir
-//
-//    doFirst {
-//        from(sourceSets.main.output) {
-//            excludes.addAll(["rikka/**"])
-//        }
-//    }
-//    classifier = 'dev'
-//}
+task deobfJar(type: Jar, dependsOn: 'jar') {
+    from(sourceSets.main.output) {
+    	excludes.addAll(["rikka/**"])
+    }
+    destinationDir = libsDir
+    manifest = jar.manifest
+    classifier = 'dev'
+}
 
-//task standaloneJar(type: Jar, dependsOn: reobfJar) {
-//    destinationDir = libsDir
-//
-//    doFirst {
-//        from(project.ext.jarFile) {
-//            excludes.addAll(["rikka/**"])
-//        }
-//    }
-//}
-//
-//task librikkaJar(type: Jar, dependsOn: [standaloneJar, reobfJar]) {
-//    destinationDir = libsDir
-//    String oldArchivesBaseName = archivesBaseName;
-//
-//    doFirst {
-//        archivesBaseName = 'librikka'
-//        from(project.ext.jarFile) {
-//            includes.addAll(["rikka/**"])
-//            excludes.addAll(["simelectricity/**"])
-//            excludes.addAll(["edu/**"])
-//        }
-//    }
-//
-//    doLast {
-//        archivesBaseName = oldArchivesBaseName;
-//    }
-//}
+task standaloneJar(type: Jar, dependsOn: 'reobfJar') {
+    from(project.ext.jarFile) {
+    	excludes.addAll(["rikka/**"])
+    }
+    destinationDir = libsDir
+    manifest = jar.manifest
+}
+
+artifacts {
+    archives deobfJar
+    archives standaloneJar
+}
 //
 //task apiSrcJar(type: Jar) {
 //    destinationDir = libsDir
@@ -251,68 +235,4 @@ def libsDir = new File(System.getenv("LIBS_DIR") ?: "build/libs/")
 //            excludes.addAll(["simelectricity/essential/**"])
 //        }
 //    }
-//}
-//
-//build.dependsOn deobfJar, standaloneJar, librikkaJar, apiJar, apiDevJar, apiSrcJar, energyNetDevJar, energyNetJar
-//
-//dependencies {
-//
-//}
-//
-//task clearMOD << {
-//    println 'clear mods'
-////    delete "run/mods/buildcraft*"
-//    delete "run/mods*"
-//    mkdir 'run/mods'
-//}
-//
-//task copyIC << {
-//    println 'copying ic'
-//    copy{
-//        into 'run/mods'
-//        from('archive/devLibs'){
-//            include 'industrialcraft-2-2.7.83-ex111-dev.jar'
-//        }
-//    }
-//}
-//
-//task copyBC << {
-//    println 'copying bc'
-//    copy{
-//        into 'run/mods'
-//        from('archive/devLibs'){
-//            include 'buildcraft-7.99.7.jar'
-//        }
-//    }
-//}
-//
-//
-//task runWithBC {
-//    doFirst {
-//        clearMOD.execute()
-//        copyBC.execute()
-//    }
-//    group = 'forgegradle'
-//    finalizedBy runClient
-//}
-//
-//
-//task runWithIC {
-//    doFirst {
-//        clearMOD.execute()
-//        copyIC.execute()
-//    }
-//    group = 'forgegradle'
-//    finalizedBy runClient
-//}
-//
-//
-//task runWithALL {
-//    doFirst {
-//        clearMOD.execute()
-//        copyIC.execute()
-//        copyBC.execute()
-//    }
-//    group = 'forgegradle'
-//    finalizedBy runClient
 //}

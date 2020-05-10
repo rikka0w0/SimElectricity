@@ -1,5 +1,7 @@
 package simelectricity.essential;
 
+import java.util.LinkedList;
+
 import net.minecraft.block.Block;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.inventory.container.ContainerType;
@@ -47,8 +49,6 @@ public class Essential {
             throw new RuntimeException("Duplicated Class Instantiation: simelectricity.essential.Essential");
     	
     	ConfigProvider.register();
-    	
-    	SEEAPI.coverPanelRegistry = CoverPanelRegistry.INSTANCE;
     }
     
     @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
@@ -63,6 +63,12 @@ public class Essential {
     		if (event.includeClient()) {
     			generator.addProvider(new ModelDataProvider(generator, exfh));
     		}
+    	}
+    	
+    	@SubscribeEvent
+    	public static void newRegistry(RegistryEvent.NewRegistry event) {
+        	SEEAPI.coverPanelRegistry = CoverPanelRegistry.INSTANCE;
+            SEEAPI.coloredBlocks = new LinkedList<Block>();
     	}
     	
     	@SubscribeEvent

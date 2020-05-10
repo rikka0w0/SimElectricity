@@ -7,7 +7,7 @@ import net.minecraft.util.Direction;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.model.data.ModelDataMap;
-import rikka.librikka.Utils;
+import rikka.librikka.block.BlockUtils;
 import simelectricity.api.SEAPI;
 import simelectricity.api.components.ISEWire;
 import simelectricity.api.node.ISESubComponent;
@@ -192,8 +192,8 @@ public class TileWire extends SEEnergyTile implements ISEGenericWire {
 
                     externalConnections[index] =
                                     wireTileNeighbor.getWireParam(branch.getOpposite()).hasBranchOnSide(wire_side.getOpposite()) &&
-                                    !Utils.isSideSolid(world, pos.offset(branch), branch.getOpposite()) &&
-                                    !Utils.isSideSolid(world, pos.offset(branch), wire_side);
+                                    !BlockUtils.isSideSolid(world, pos.offset(branch), branch.getOpposite()) &&
+                                    !BlockUtils.isSideSolid(world, pos.offset(branch), wire_side);
                 } else {
                     externalConnections[index] = false;
                 }
@@ -298,8 +298,8 @@ public class TileWire extends SEEnergyTile implements ISEGenericWire {
     void notifyExtCornerOfStateChange(Direction side, Direction to) {
         TileEntity potentialNeighbor = world.getTileEntity(pos.offset(side).offset(to));
         if (    potentialNeighbor instanceof ISEGenericWire &&
-                !Utils.isSideSolid(world, pos.offset(to), to.getOpposite()) &&
-                !Utils.isSideSolid(world, pos.offset(to), side.getOpposite())) {
+                !BlockUtils.isSideSolid(world, pos.offset(to), to.getOpposite()) &&
+                !BlockUtils.isSideSolid(world, pos.offset(to), side.getOpposite())) {
             ISEGenericWire wireTile = (ISEGenericWire)potentialNeighbor;
             if (wireTile.getWireParam(to.getOpposite()).hasBranchOnSide(side.getOpposite()))
                 wireTile.onRenderingUpdateRequested();

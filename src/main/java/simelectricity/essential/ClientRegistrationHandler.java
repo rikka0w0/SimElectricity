@@ -1,7 +1,6 @@
 package simelectricity.essential;
 
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Map;
 
 import net.minecraft.block.Block;
@@ -30,7 +29,6 @@ import rikka.librikka.DirHorizontal8;
 import rikka.librikka.gui.AutoGuiHandler;
 import rikka.librikka.model.CodeBasedModel;
 import rikka.librikka.model.loader.TERHelper;
-import simelectricity.essential.api.SEEAPI;
 import simelectricity.essential.cable.BlockCable;
 import simelectricity.essential.cable.BlockWire;
 import simelectricity.essential.client.cable.CableModel;
@@ -125,7 +123,7 @@ public class ClientRegistrationHandler {
     }
 
     @SubscribeEvent
-    public static void onModelBake(ModelBakeEvent event) {  	
+    public static void onModelBake(ModelBakeEvent event) {
     	Map<ResourceLocation, IBakedModel> registry = event.getModelRegistry();
     	
 		for (SEMachineBlock sem: BlockRegistry.blockElectronics)
@@ -187,10 +185,7 @@ public class ClientRegistrationHandler {
      */
 	@OnlyIn(Dist.CLIENT)
 	@SubscribeEvent
-	public static void onClientSetup(FMLClientSetupEvent event){
-        //Initialize client-side API
-        SEEAPI.coloredBlocks = new LinkedList<Block>();
-        
+	public static void onClientSetup(FMLClientSetupEvent event){        
 		// Register Gui
 //		ScreenManager.registerFactory(BlockRegistry.cAdjustableResistor, GuiAdjustableResistor::new);
 		for (Class<? extends Container> containerCls: BlockRegistry.registeredGuiContainers) {

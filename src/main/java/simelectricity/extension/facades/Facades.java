@@ -1,63 +1,54 @@
 package simelectricity.extension.facades;
 
-import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.Mod.EventHandler;
-import net.minecraftforge.fml.common.SidedProxy;
-import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
-import simelectricity.essential.Essential;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import simelectricity.essential.api.ISECoverPanelFactory;
 import simelectricity.essential.api.SEEAPI;
 
 import java.lang.reflect.Constructor;
 
-@Mod(modid = Facades.modID, name = Facades.modName, version = Facades.version, dependencies = "required-after:"+Essential.MODID)
+@Mod(Facades.MODID)
 public class Facades {
-    public static final String modID = "sime_thermalexpansion";
-    public static final String modName = "SimElectricity ThermalExpansion Extension";
-    public static final String version = "1.0";
-
-    @SidedProxy(clientSide="simelectricity.extension.facades.ClientProxy", serverSide="simelectricity.extension.facades.CommonProxy")
-    public static CommonProxy proxy;
-
-    @Mod.Instance(modID)
-    public static Facades instance;
-
+    public static final String MODID = "sime_facades";
+    public static final String modName = "SimElectricity  Extension";
+    
     public static boolean teThermalDynamicLoaded;
     public static boolean bcTransportLoaded;
 
-    @EventHandler
-    public void postInit(FMLPostInitializationEvent event) {
-        Loader loader = Loader.instance();
-        teThermalDynamicLoaded = loader.isModLoaded("thermaldynamics");
-        bcTransportLoaded = loader.isModLoaded("buildcrafttransport");
+    @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
+    public final static class ModEventBusHandler {
+    	@SubscribeEvent
+    	public static void onCommonSetup(FMLCommonSetupEvent event) {
+            teThermalDynamicLoaded = ModList.get().isLoaded("thermaldynamics");
+            bcTransportLoaded = ModList.get().isLoaded("buildcrafttransport");
 
-        //Attempt to load extension class
-        if (teThermalDynamicLoaded){
-            try {
-                Class<?> clsBCCF = Class.forName("simelectricity.extension.facades.TECoverFactory");
-                Constructor<?> constructor = clsBCCF.getConstructor();
-                ISECoverPanelFactory bcCoverPanelFactory = (ISECoverPanelFactory) constructor.newInstance();
+            //Attempt to load extension class
+            if (teThermalDynamicLoaded) {
+                try {
+                    Class<?> clsBCCF = Class.forName("simelectricity.extension.facades.TECoverFactory");
+                    Constructor<?> constructor = clsBCCF.getConstructor();
+                    ISECoverPanelFactory bcCoverPanelFactory = (ISECoverPanelFactory) constructor.newInstance();
 
-                SEEAPI.coverPanelRegistry.registerCoverPanelFactory(bcCoverPanelFactory);
-                proxy.RegisterBlockColorHandlers();
-            } catch (Exception e) {
-                e.printStackTrace();
+                    SEEAPI.coverPanelRegistry.registerCoverPanelFactory(bcCoverPanelFactory);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
-        }
 
-        //Attempt to load extension class
-        if (bcTransportLoaded){
-            try {
-                Class<?> clsBCCF = Class.forName("simelectricity.extension.facades.BCCoverFactory");
-                Constructor<?>  constructor = clsBCCF.getConstructor();
-                ISECoverPanelFactory bcCoverPanelFactory = (ISECoverPanelFactory) constructor.newInstance();
+            //Attempt to load extension class
+            if (bcTransportLoaded) {
+                try {
+                    Class<?> clsBCCF = Class.forName("simelectricity.extension.facades.BCCoverFactory");
+                    Constructor<?>  constructor = clsBCCF.getConstructor();
+                    ISECoverPanelFactory bcCoverPanelFactory = (ISECoverPanelFactory) constructor.newInstance();
 
-                SEEAPI.coverPanelRegistry.registerCoverPanelFactory(bcCoverPanelFactory);
-                proxy.RegisterBlockColorHandlers();
-            } catch (Exception e) {
-                e.printStackTrace();
+                    SEEAPI.coverPanelRegistry.registerCoverPanelFactory(bcCoverPanelFactory);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
-        }
+    	}
     }
 }

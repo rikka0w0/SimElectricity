@@ -113,7 +113,4 @@ public abstract class SESinglePortMachine<T extends ISEComponentParameter> exten
     protected void collectModelData(ModelDataMap.Builder builder) {
     	builder.withInitial(ISESocketProvider.prop, (ISESocketProvider) this);
     }
-//    protected void setSecondState(boolean val) {
-//    	this.world.setBlockState(this.getPos(), this.getBlockState().with(BlockStateProperties.POWERED, val));
-//    }
 }

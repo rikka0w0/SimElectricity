@@ -34,7 +34,7 @@ public class BlockDistributionTransformer extends BlockAbstractTransformer imple
     public static EnumDistributionTransformerRenderPart[][][] renderParts;
     public final EnumDistributionTransformerBlockType blockType;
 	private BlockDistributionTransformer(EnumDistributionTransformerBlockType blockType) {
-		super("disttransformer_"+blockType.getName(), Material.IRON, blockType.formed ? null : SEAPI.SETab);
+		super("transformer_10kv_415v_"+blockType.getName(), Material.IRON, blockType.formed ? null : SEAPI.SETab);
 		this.blockType = blockType;
 	}
 

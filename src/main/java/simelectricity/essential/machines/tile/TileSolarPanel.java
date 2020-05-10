@@ -9,7 +9,7 @@ import simelectricity.api.components.ISEVoltageSource;
 import simelectricity.essential.common.semachine.ISESocketProvider;
 import simelectricity.essential.common.semachine.SESinglePortMachine;
 
-public class TileSolarPanel extends SESinglePortMachine implements ISEVoltageSource, ISESocketProvider, ITickableTileEntity {
+public class TileSolarPanel extends SESinglePortMachine<TileSolarPanel> implements ISEVoltageSource, ISESocketProvider, ITickableTileEntity {
     private static byte STATE_DAY;
     private static final byte STATE_NIGHT = 1;
     private static final byte STATE_CAVE = 2;

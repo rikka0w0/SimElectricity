@@ -1,10 +1,10 @@
 package simelectricity.extension.facades;
 
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 /** Modified from BuildCraft source code */
-@SideOnly(Side.CLIENT)
+@OnlyIn(Dist.CLIENT)
 public class MutableVertex {
     /** The position of this vertex. */
     public float position_x, position_y, position_z;
@@ -47,8 +47,10 @@ public class MutableVertex {
         // TEX_2F
         data[offset + 4] = Float.floatToRawIntBits(tex_u);
         data[offset + 5] = Float.floatToRawIntBits(tex_v);
+        // TEX_2SB
+        data[offset + 6] = 1;	// TODO: Check TEX_2SB
         // NORMAL_3B
-        data[offset + 6] = normalToPackedInt();
+        data[offset + 7] = normalToPackedInt();
     }
 
     public void fromBakedItem(int[] data, int offset) {
@@ -62,7 +64,7 @@ public class MutableVertex {
         tex_u = Float.intBitsToFloat(data[offset + 4]);
         tex_v = Float.intBitsToFloat(data[offset + 5]);
         // NORMAL_3B
-        normali(data[offset + 6]);
+        normali(data[offset + 7]);
         lightf(1,1);
     }
 

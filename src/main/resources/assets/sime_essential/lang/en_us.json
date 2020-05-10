@@ -52,11 +52,11 @@
 	"block.sime_essential.transformer_35kv_10kv_oiltanksupport": "35kV-10kV Transformer Tank Support",
 	"block.sime_essential.transformer_35kv_10kv_oilpipe": "35kV-10kV Transformer Oil Pipe",
 
-	"block.sime_essential.disttransformer.pole10kvnormal.name": "10kV Distribution Transformer Pole",
-	"block.sime_essential.disttransformer.pole10kvspec.name": "10kV Distribution Transformer Pole(Special)",
-	"block.sime_essential.disttransformer.pole10kvaux.name": "Auxiliary Distribution Transformer Pole",
-	"block.sime_essential.disttransformer.pole415vnormal.name": "415V Distribution Transformer Pole",
-	"block.sime_essential.disttransformer.transformer.name": "Distribution Transformer(10kV-415V)",
+	"block.sime_essential.transformer_10kv_415v_pole10kvnormal": "10kV Distribution Transformer Pole",
+	"block.sime_essential.transformer_10kv_415v_pole10kvspe": "10kV Distribution Transformer Pole(Special)",
+	"block.sime_essential.transformer_10kv_415v_pole10kvaux": "Auxiliary Distribution Transformer Pole",
+	"block.sime_essential.transformer_10kv_415v_pole415vnormal": "415V Distribution Transformer Pole",
+	"block.sime_essential.transformer_10kv_415v_transformer": "Distribution Transformer(10kV-415V)",
 
 "__comment": "Fluids",
 	"fluid.futa_lemon_tea": "Futa Lemon Tea",
