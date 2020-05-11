@@ -10,6 +10,7 @@ import net.minecraft.util.Direction;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 import rikka.librikka.block.BlockUtils;
@@ -143,13 +144,13 @@ public class TileSE2RF extends SESinglePortMachine<ISEConstantPowerLoad> impleme
     }
 
     // TODO: getCapability
-//    @Override
-//    public <T> T getCapability(Capability<T> capability, Direction facing) {
-//        if (capability == CapabilityEnergy.ENERGY && facing == this.facing) {
-//            return (T) rfBufferHandler;
-//        }
-//        return super.getCapability(capability, facing);
-//    }
+    @Override
+    public <T> LazyOptional<T> getCapability(Capability<T> capability, Direction facing) {
+        if (capability == CapabilityEnergy.ENERGY && facing == this.getFacing()) {
+            return (LazyOptional<T>) LazyOptional.of(()->rfBufferHandler);
+        }
+        return super.getCapability(capability, facing);
+    }
 
     ///////////////////////////////////
     /// ISESidedFacing

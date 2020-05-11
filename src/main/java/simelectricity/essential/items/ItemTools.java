@@ -1,27 +1,25 @@
 package simelectricity.essential.items;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemUseContext;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import rikka.librikka.IMetaProvider;
 import rikka.librikka.IMetaBase;
 import rikka.librikka.Utils;
+import rikka.librikka.block.BlockUtils;
 import rikka.librikka.item.ItemBase;
 import simelectricity.api.ISECrowbarTarget;
 import simelectricity.api.ISESidedFacing;
 import simelectricity.api.ISEWrenchable;
 import simelectricity.api.SEAPI;
 import simelectricity.api.components.ISECable;
+import simelectricity.api.components.ISEVoltageSource;
 import simelectricity.api.node.ISEGridNode;
 import simelectricity.api.node.ISESimulatable;
 import simelectricity.api.node.ISESubComponent;
@@ -184,7 +182,7 @@ public final class ItemTools extends ItemBase implements IMetaProvider<IMetaBase
             return ActionResultType.PASS;
         
         Utils.chat(player, "------------------");
-        player.sendMessage(getDisplayName(world, pos));
+        player.sendMessage(BlockUtils.getDisplayName(world, pos));
         
         if (block instanceof ISENodeDelegateBlock) {
         	delegatedNode = ((ISENodeDelegateBlock) block).getNode(world, pos);
@@ -205,9 +203,17 @@ public final class ItemTools extends ItemBase implements IMetaProvider<IMetaBase
             for (Direction dir : Direction.values()) {
                 ISESubComponent comp = tile.getComponent(dir);
                 if (comp != null && comp != delegatedNode) {
+                    double voltage = comp.getVoltage();
                     String[] temp = comp.toString().split("[.]");
-                    Utils.chat(player, temp[temp.length - 1].split("@")[0] + ": " +
-                            SEUnitHelper.getVoltageStringWithUnit(comp.getVoltage()));
+                    String msg = temp[temp.length - 1].split("@")[0] + ": " +
+                            SEUnitHelper.getVoltageStringWithUnit(voltage);
+                    if (comp instanceof ISEVoltageSource) {
+                    	double r = ((ISEVoltageSource) comp).getResistance();
+                    	double vint = ((ISEVoltageSource) comp).getOutputVoltage();
+                    	double power = voltage*(voltage-vint)/r;
+                    	msg += ", " + SEUnitHelper.getPowerStringWithUnit(power);
+                    }
+                    Utils.chat(player, msg);
                 }
             }
 
@@ -222,19 +228,6 @@ public final class ItemTools extends ItemBase implements IMetaProvider<IMetaBase
         return ActionResultType.PASS;
     }
 
-    public static ITextComponent getDisplayName(World world, BlockPos pos) {
-    	TileEntity te = world.getTileEntity(pos);
-    	if (te instanceof INamedContainerProvider)
-    		return ((INamedContainerProvider) te).getDisplayName();
-
-    	BlockState blockstate = world.getBlockState(pos);
-    	INamedContainerProvider container = blockstate.getContainer(world, pos);
-    	if (container != null)
-    		return container.getDisplayName();
-
-    	return new TranslationTextComponent(blockstate.getBlock().getTranslationKey());
-    }
-    
     public static void printVI(ISESimulatable node, PlayerEntity player) {
     	String s = "WTF";
     	

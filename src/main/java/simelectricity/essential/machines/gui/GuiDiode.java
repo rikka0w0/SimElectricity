@@ -24,14 +24,14 @@ public final class GuiDiode<T extends ContainerDiode> extends SEGuiContainer<Con
         this.font.drawString(this.title.getFormattedText(), 8, 6, 4210752);
 
         int ybase = 22;
-        this.font.drawString(I18n.format("gui.sime_essential.voltage_input"), 85, ybase, 4210752);
+        this.font.drawString(I18n.format("gui.simelectricity.voltage_input"), 85, ybase, 4210752);
         this.font.drawString(SEUnitHelper.getVoltageStringWithUnit(this.container.inputVoltage), 85, ybase + 8, 4210752);
-        this.font.drawString(I18n.format("gui.sime_essential.voltage_output"), 85, ybase + 16, 4210752);
+        this.font.drawString(I18n.format("gui.simelectricity.voltage_output"), 85, ybase + 16, 4210752);
         this.font.drawString(SEUnitHelper.getVoltageStringWithUnit(this.container.outputVoltage), 85, ybase + 24, 4210752);
 
         this.font.drawString(I18n.format(this.container.inputVoltage > this.container.outputVoltage ?
-                "gui.sime_essential.forward_biased" :
-                "gui.sime_essential.reverse_biased"
+                "gui.simelectricity.forward_biased" :
+                "gui.simelectricity.reverse_biased"
         ), 85, ybase + 32, 4210752);
     }
 

@@ -23,10 +23,8 @@ public final class GuiVoltageMeter<T extends ContainerVoltageMeter> extends SEGu
         //the parameters for drawString are: string, x, y, color
 
         this.font.drawString(this.title.getFormattedText(), 8, 6, 4210752);
-        this.font.drawString("Voltage: " + SEUnitHelper.getVoltageStringWithUnit(this.container.voltage), 18, 22, 4210752);
-
-        //draws "Inventory" or your regional equivalent
-        this.font.drawString(I18n.format("container.inventory"), 8, this.ySize - 96, 4210752);
+        this.font.drawString(I18n.format("gui.simelectricity.voltage") + ": " + 
+        		SEUnitHelper.getVoltageStringWithUnit(this.container.voltage), 18, 22, 4210752);
         this.font.drawString("x10^" + String.valueOf(this.sqr), this.xSize - 38, this.ySize - 96, 4210752);
     }
 

@@ -16,6 +16,10 @@ public interface ISE2StateTile {
     	World world = te.getWorld();
     	BlockPos pos = te.getPos();
     	BlockState blockstate = te.getBlockState();
+
+    	if (!hasSecondState(blockstate))
+    		throw new RuntimeException("The second state does not exist for " + te.getClass().getCanonicalName());
+
     	world.setBlockState(pos, blockstate.with(BlockStateProperties.POWERED, val));
     }
     

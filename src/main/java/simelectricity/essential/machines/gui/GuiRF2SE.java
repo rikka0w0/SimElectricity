@@ -30,7 +30,7 @@ public final class GuiRF2SE<T extends ContainerRF2SE> extends SEGuiContainer<T> 
         this.font.drawString(this.container.bufferedEnergy + "RF", 8, 62, 4210752);
 //        this.font.drawString(I18n.format("gui.sime_essential:rf_demand"), 8, 70, 4210752);
 //        this.font.drawString(this.container.rfDemandRateDisplay + "RF", 8, 78, 4210752);
-        this.font.drawString(I18n.format("gui.sime_essential:rf_power"), 8, 86, 4210752);
+        this.font.drawString(I18n.format("gui.sime_essential.rf_power"), 8, 86, 4210752);
         this.font.drawString(this.container.rfInputRateDisplay + "RF", 8, 94, 4210752);
 //
         this.font.drawString(I18n.format("gui.simelectricity.power_rated") + ": " +

@@ -31,13 +31,13 @@ public class GuiPowerMeter<T extends ContainerPowerMeter> extends SEGuiContainer
         this.font.drawString(this.title.getFormattedText(), 8, 6, 4210752);
 
         int ybase = 22;
-        this.font.drawString(I18n.format("gui.sime_essential.voltage"), 10, ybase, 4210752);
+        this.font.drawString(I18n.format("gui.simelectricity.voltage"), 10, ybase, 4210752);
         this.font.drawString(SEUnitHelper.getVoltageStringWithUnit(this.container.voltage), 10, ybase + 8, 4210752);
-        this.font.drawString(I18n.format("gui.sime_essential.current"), 10, ybase + 16, 4210752);
+        this.font.drawString(I18n.format("gui.simelectricity.current"), 10, ybase + 16, 4210752);
         this.font.drawString(SEUnitHelper.getCurrentStringWithUnit(this.container.current), 10, ybase + 24, 4210752);
-        this.font.drawString(I18n.format("gui.sime_essential.power_input"), 10, ybase+32, 4210752);
+        this.font.drawString(I18n.format("gui.simelectricity.power_input"), 10, ybase+32, 4210752);
         this.font.drawString(SEUnitHelper.getPowerStringWithUnit(this.container.voltage*this.container.current), 10, ybase + 40, 4210752);
-        this.font.drawString(I18n.format("gui.sime_essential.used_energy"), 10, ybase + 48, 4210752);
+        this.font.drawString(I18n.format("gui.simelectricity.used_energy"), 10, ybase + 48, 4210752);
         this.font.drawString(SEUnitHelper.getEnergyStringInKWh(this.container.bufferedEnergy), 10, ybase + 56, 4210752);
         this.font.drawString(SEUnitHelper.getEnergyStringInJ(this.container.bufferedEnergy), 10, ybase + 64, 4210752);
     }

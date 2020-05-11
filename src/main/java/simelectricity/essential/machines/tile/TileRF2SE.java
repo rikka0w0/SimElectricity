@@ -111,9 +111,9 @@ public class TileRF2SE extends SESinglePortMachine<ISEConstantPowerSource> imple
 
     @Override
     public <T> LazyOptional<T> getCapability(Capability<T> capability, Direction facing) {
-//        if (capability == CapabilityEnergy.ENERGY && facing == this.facing) {
-//            return (T) rfBufferHandler;
-//        }
+        if (capability == CapabilityEnergy.ENERGY && facing == this.getFacing()) {
+            return (LazyOptional<T>) LazyOptional.of(()->rfBufferHandler);
+        }
         return super.getCapability(capability, facing);
     }
 

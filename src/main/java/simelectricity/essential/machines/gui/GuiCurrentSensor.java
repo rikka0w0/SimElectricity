@@ -23,8 +23,8 @@ public class GuiCurrentSensor<T extends ContainerCurrentSensor> extends SEGuiCon
 
         this.font.drawString(this.title.getFormattedText(), 8, 6, 4210752);
 
-        this.font.drawString(I18n.format("gui.sime_essential.current_threshold"), 18, 85, 4210752);
-        this.font.drawString(I18n.format("gui.sime_essential.resistance_internal"), 18, 124, 4210752);
+        this.font.drawString(I18n.format("gui.simelectricity.current_threshold"), 18, 85, 4210752);
+        this.font.drawString(I18n.format("gui.simelectricity.resistance_internal"), 18, 124, 4210752);
 
         String conditionString = this.container.absMode ? "|I|" : "I";
         conditionString += this.container.inverted ? "<" : ">";
@@ -32,7 +32,7 @@ public class GuiCurrentSensor<T extends ContainerCurrentSensor> extends SEGuiCon
         
         
         int ybase = 22;
-        this.font.drawString(I18n.format("gui.sime_essential.condition_threshold"), 10, ybase, 4210752);
+        this.font.drawString(I18n.format("gui.simelectricity.condition_threshold"), 10, ybase, 4210752);
         this.font.drawString(conditionString, 10, ybase + 8, 4210752);
         this.font.drawString("I=" + SEUnitHelper.getCurrentStringWithUnit(this.container.current), 10, ybase + 16, 4210752);
         this.font.drawString("Ron = " + String.format("%.3f", this.container.resistance) + " \u03a9", 10, ybase + 24, 4210752);

@@ -27,10 +27,10 @@ public class GuiRelay<T extends ContainerRelay> extends SEGuiContainer<T> {
 
         this.font.drawString(this.title.getFormattedText(), 8, 6, 4210752);
 
-        this.font.drawString(I18n.format("gui.sime_essential.resistance_internal"), 18, 124, 4210752);
+        this.font.drawString(I18n.format("gui.simelectricity.resistance_internal"), 18, 124, 4210752);
 
         int ybase = 22;
-        this.font.drawString(I18n.format("gui.sime_essential.current"), 10, ybase + 16, 4210752);
+        this.font.drawString(I18n.format("gui.simelectricity.current"), 10, ybase + 16, 4210752);
         this.font.drawString(SEUnitHelper.getCurrentStringWithUnit(this.container.current), 10, ybase + 24, 4210752);
         this.font.drawString("Ron = " + String.format("%.3f", this.container.resistance) + " \u03a9", 10, ybase + 32, 4210752);
     }
