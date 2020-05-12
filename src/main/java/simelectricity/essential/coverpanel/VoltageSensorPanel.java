@@ -54,8 +54,6 @@ public class VoltageSensorPanel implements ISEElectricalCoverPanel, ISERedstoneE
 
     @Override
     public void toNBT(CompoundNBT nbt) {
-        nbt.putString("coverPanelType", "VoltageSensorPanel");
-
         nbt.putBoolean("inverted", this.inverted);
         nbt.putDouble("thresholdVoltage", this.thresholdVoltage);
     }

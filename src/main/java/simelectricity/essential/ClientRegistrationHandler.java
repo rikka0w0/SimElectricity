@@ -29,10 +29,12 @@ import rikka.librikka.DirHorizontal8;
 import rikka.librikka.gui.AutoGuiHandler;
 import rikka.librikka.model.CodeBasedModel;
 import rikka.librikka.model.loader.TERHelper;
+import simelectricity.essential.api.SEEAPI;
 import simelectricity.essential.cable.BlockCable;
 import simelectricity.essential.cable.BlockWire;
 import simelectricity.essential.client.cable.CableModel;
 import simelectricity.essential.client.cable.WireModel;
+import simelectricity.essential.client.coverpanel.BlockColorHandler;
 import simelectricity.essential.client.coverpanel.LedPanelRender;
 import simelectricity.essential.client.coverpanel.SupportRender;
 import simelectricity.essential.client.coverpanel.VoltageSensorRender;
@@ -274,6 +276,10 @@ public class ClientRegistrationHandler {
 				});
 		}
 		MinecraftForge.EVENT_BUS.register(GridRenderMonitor.instance);
+		
+        for (Block block: SEEAPI.coloredBlocks) {
+            Minecraft.getInstance().getBlockColors().register(BlockColorHandler.colorHandler, block);
+        }
 	}
 //	ModelLoaderRegistry.registerLoader(new ResourceLocation("librikka","virtual"), loader);
 //	ModelLoaderRegistry.getModel("", deserializationContext, data)

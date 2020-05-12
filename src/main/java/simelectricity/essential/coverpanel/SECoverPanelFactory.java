@@ -1,21 +1,29 @@
 package simelectricity.essential.coverpanel;
 
+import java.lang.reflect.InvocationTargetException;
+
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import simelectricity.essential.api.ISECoverPanelFactory;
+import simelectricity.essential.api.SEEAPI;
 import simelectricity.essential.api.coverpanel.ISECoverPanel;
 import simelectricity.essential.items.ItemMisc;
 
-public class SECoverPanelFactory implements ISECoverPanelFactory {
+public class SECoverPanelFactory implements ISECoverPanelFactory {	
+	public SECoverPanelFactory() {
+		SEEAPI.coverPanelRegistry.register(this, LedPanel.class);
+		SEEAPI.coverPanelRegistry.register(this, VoltageSensorPanel.class);
+		SEEAPI.coverPanelRegistry.register(this, FacadePanel.FacadeNormal.class);
+		SEEAPI.coverPanelRegistry.register(this, FacadePanel.FacadeHollow.class);
+	}
+	
+	private static String getIdentifier(Class<? extends ISECoverPanel> pCls) {
+		return pCls.getName();
+	}
 
     @Override
-    public boolean acceptItemStack(ItemStack itemStack) {
-        return itemStack.getItem() instanceof ItemMisc;
-    }
-
-    @Override
-    public ISECoverPanel fromItemStack(ItemStack itemStack) {
+    public ISECoverPanel from(ItemStack itemStack) {
     	Item item = itemStack.getItem();
         if (item instanceof ItemMisc) {
         	return ((ItemMisc) item).itemType.constructor.get();
@@ -25,22 +33,19 @@ public class SECoverPanelFactory implements ISECoverPanelFactory {
     }
 
     @Override
-    public boolean acceptNBT(CompoundNBT nbt) {
-        String coverPanelType = nbt.getString("coverPanelType");
-        return coverPanelType.equals("LedPanel") ||
-                coverPanelType.equals("VoltageSensorPanel");
-    }
+    public ISECoverPanel from(CompoundNBT nbt, Class<? extends ISECoverPanel> panelCls, String coverPanelName) {
+		try {
+			return panelCls.getConstructor(CompoundNBT.class).newInstance(nbt);
+		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
+				| InvocationTargetException | NoSuchMethodException | SecurityException e) {
 
-    @Override
-    public ISECoverPanel fromNBT(CompoundNBT nbt) {
-        String coverPanelType = nbt.getString("coverPanelType");
-
-        if (coverPanelType.equals("LedPanel"))
-            return new LedPanel();
-
-        if (coverPanelType.equals("VoltageSensorPanel"))
-            return new VoltageSensorPanel(nbt);
+		}
 
         return null;
     }
+
+	@Override
+	public String getName() {
+		return "SECoverPanelFactory";
+	}
 }

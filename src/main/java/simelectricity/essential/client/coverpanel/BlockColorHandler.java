@@ -1,4 +1,4 @@
-package simelectricity.extension.facades;
+package simelectricity.essential.client.coverpanel;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
@@ -12,6 +12,8 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 import simelectricity.essential.api.ISECoverPanelHost;
 import simelectricity.essential.api.coverpanel.ISECoverPanel;
+import simelectricity.extension.facades.TEFacadePanel;
+import simelectricity.extension.facades.TEFacadeRender;
 
 @OnlyIn(Dist.CLIENT)
 public class BlockColorHandler implements IBlockColor{

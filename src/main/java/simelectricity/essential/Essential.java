@@ -109,7 +109,7 @@ public class Essential {
     				MessageContainerSync.class, MessageContainerSync.processor::toBytes, MessageContainerSync.processor::fromBytes, 
     				MessageContainerSync.processor::handler);
 
-        	SEEAPI.coverPanelRegistry.registerCoverPanelFactory(new SECoverPanelFactory());
+    		new SECoverPanelFactory();
     	}
     }
     

@@ -46,7 +46,7 @@ public class TileCable extends SEEnergyTile implements ISEGenericCable, ISEIumin
             if (coverPanel != null) {
                 CompoundNBT tag = new CompoundNBT();
                 tag.putInt("side", i);
-                coverPanel.toNBT(tag);
+                SEEAPI.coverPanelRegistry.saveToNBT(coverPanel, tag);
                 tagList.add(tag);
             }
         }

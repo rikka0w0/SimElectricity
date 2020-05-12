@@ -19,6 +19,12 @@ public class LedPanel implements ISEElectricalLoadCoverPanel, ISEIuminousCoverPa
     private volatile byte lightLevel;
     private volatile TileEntity hostTileEntity;
 
+    public LedPanel() {}
+    
+    public LedPanel(CompoundNBT nbt) {
+    	
+    }
+    
     @Override
     public boolean isHollow() {
         return false;
@@ -26,7 +32,6 @@ public class LedPanel implements ISEElectricalLoadCoverPanel, ISEIuminousCoverPa
 
     @Override
     public void toNBT(CompoundNBT nbt) {
-        nbt.putString("coverPanelType", "LedPanel");
     }
 
     @Override

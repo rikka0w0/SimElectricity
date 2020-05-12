@@ -10,6 +10,7 @@ import simelectricity.api.SEAPI;
 import simelectricity.essential.api.coverpanel.ISECoverPanel;
 import simelectricity.essential.coverpanel.LedPanel;
 import simelectricity.essential.coverpanel.VoltageSensorPanel;
+import simelectricity.essential.coverpanel.FacadePanel;
 
 /**
  * The ItemMisc creates very simple and basic items
@@ -19,7 +20,9 @@ import simelectricity.essential.coverpanel.VoltageSensorPanel;
 public final class ItemMisc extends ItemBase implements IMetaProvider<IMetaBase> {
     public static enum ItemType implements IMetaBase {
     	ledpanel(LedPanel::new),
-    	voltagesensor(VoltageSensorPanel::new);
+    	voltagesensor(VoltageSensorPanel::new),
+    	facade(FacadePanel.FacadeNormal::new),
+    	facade_hollow(FacadePanel.FacadeHollow::new);
     	
     	public final Supplier<ISECoverPanel> constructor;
     	ItemType(Supplier<ISECoverPanel> constructor) {

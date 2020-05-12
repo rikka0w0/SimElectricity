@@ -17,7 +17,7 @@ public interface ISECoverPanel {
     boolean isHollow();
 
     /**
-     * Save the cover panel to a NBT object
+     * Save the cover panel to a NBT object, this should not be called!
      *
      * @param nbt
      */
