@@ -8,7 +8,7 @@ Presented by the Chinese Institution of Scientific Minecraft Mod (CISM)
 
 Current Supported Version: Minecraft Forge 1.15.2
 
-![Image](/documentation/grid.jpg)
+![Image](https://raw.githubusercontent.com/wiki/RoyalAliceAcademyOfSciences/SimElectricity/screenshots/grid.jpg)
 
 # Addons: ![Image](/src/main/resources/assets/sime_essential/textures/item/futa_lemon_tea.png)
 1. BuildCraft Extension:
