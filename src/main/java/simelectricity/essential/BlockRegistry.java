@@ -13,6 +13,7 @@ import rikka.librikka.ITileMeta;
 import rikka.librikka.block.BlockBase;
 import rikka.librikka.container.ContainerHelper;
 import rikka.librikka.tileentity.TileEntityHelper;
+import simelectricity.essential.api.SEEAPI;
 import simelectricity.essential.cable.*;
 import simelectricity.essential.coverpanel.ContainerVoltageSensor;
 import simelectricity.essential.grid.*;
@@ -62,6 +63,7 @@ public class BlockRegistry {
     public static void registerBlocks(final IForgeRegistry<Block> registry, boolean isItemBlock) {
     	registerBlocks(registry, isItemBlock, blockCable);
     	registerBlocks(registry, isItemBlock, blockWire);
+    	SEEAPI.coverPanelRegistry.registerColoredFacadeHost(blockCable);
     	
     	registerBlocks(registry, isItemBlock, metalPole35kV);
     	registerBlocks(registry, isItemBlock, concretePole35kV);

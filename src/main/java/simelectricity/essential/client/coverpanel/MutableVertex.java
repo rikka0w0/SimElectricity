@@ -121,14 +121,6 @@ public class MutableVertex {
         return rgba;
     }
 
-    public MutableVertex multColouri(int r, int g, int b, int a) {
-        colour_r = (short) (colour_r * r / 255);
-        colour_g = (short) (colour_g * g / 255);
-        colour_b = (short) (colour_b * b / 255);
-        colour_a = (short) (colour_a * a / 255);
-        return this;
-    }
-
     public MutableVertex lightf(float block, float sky) {
         return lighti((int) (block * 0xF), (int) (sky * 0xF));
     }

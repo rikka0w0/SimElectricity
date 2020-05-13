@@ -15,10 +15,10 @@ import simelectricity.essential.items.ItemMisc;
 
 public class SECoverPanelFactory implements ISECoverPanelFactory {	
 	public SECoverPanelFactory() {
-		SEEAPI.coverPanelRegistry.register(this, LedPanel.class);
-		SEEAPI.coverPanelRegistry.register(this, VoltageSensorPanel.class);
-		SEEAPI.coverPanelRegistry.register(this, FacadePanel.FacadeNormal.class);
-		SEEAPI.coverPanelRegistry.register(this, FacadePanel.FacadeHollow.class);
+		SEEAPI.coverPanelRegistry.register(this, LedPanel.class, null);
+		SEEAPI.coverPanelRegistry.register(this, VoltageSensorPanel.class, null);
+		SEEAPI.coverPanelRegistry.register(this, FacadePanel.FacadeNormal.class, null);
+		SEEAPI.coverPanelRegistry.register(this, FacadePanel.FacadeHollow.class, null);
 	}
 	
 	private static String getIdentifier(Class<? extends ISECoverPanel> pCls) {

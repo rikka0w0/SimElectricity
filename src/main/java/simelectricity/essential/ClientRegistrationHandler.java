@@ -29,18 +29,17 @@ import rikka.librikka.DirHorizontal8;
 import rikka.librikka.gui.AutoGuiHandler;
 import rikka.librikka.model.CodeBasedModel;
 import rikka.librikka.model.loader.TERHelper;
-import simelectricity.essential.api.SEEAPI;
 import simelectricity.essential.cable.BlockCable;
 import simelectricity.essential.cable.BlockWire;
 import simelectricity.essential.client.cable.CableModel;
 import simelectricity.essential.client.cable.WireModel;
-import simelectricity.essential.client.coverpanel.BlockColorHandler;
 import simelectricity.essential.client.coverpanel.LedPanelRender;
 import simelectricity.essential.client.coverpanel.SupportRender;
 import simelectricity.essential.client.coverpanel.VoltageSensorRender;
 import simelectricity.essential.client.semachine.SEMachineModel;
 import simelectricity.essential.client.semachine.SocketRender;
 import simelectricity.essential.common.semachine.SEMachineBlock;
+import simelectricity.essential.coverpanel.CoverPanelRegistry;
 import simelectricity.essential.client.grid.pole.CableJointModel;
 import simelectricity.essential.client.grid.pole.ConcretePole35kVModel;
 import simelectricity.essential.client.grid.pole.ConcretePole35kVTER;
@@ -275,14 +274,9 @@ public class ClientRegistrationHandler {
 					dynamicModels.put(blockstate, new DistributionTransformerComponentModel(blockType, facing));
 				});
 		}
-		MinecraftForge.EVENT_BUS.register(GridRenderMonitor.instance);
 		
-		for (Block block: BlockRegistry.blockCable) {
-			SEEAPI.coloredBlocks.add(block);
-		}
-        for (Block block: SEEAPI.coloredBlocks) {
-            Minecraft.getInstance().getBlockColors().register(BlockColorHandler.colorHandler, block);
-        }
+		MinecraftForge.EVENT_BUS.register(GridRenderMonitor.instance);		
+		CoverPanelRegistry.INSTANCE.registerAllColoredFacadeHost();
 	}
 //	ModelLoaderRegistry.registerLoader(new ResourceLocation("librikka","virtual"), loader);
 //	ModelLoaderRegistry.getModel("", deserializationContext, data)

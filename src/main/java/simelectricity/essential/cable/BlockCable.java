@@ -50,6 +50,7 @@ import simelectricity.essential.api.ISECoverPanelHost;
 import simelectricity.essential.api.ISEGenericCable;
 import simelectricity.essential.api.SEEAPI;
 import simelectricity.essential.api.coverpanel.ISECoverPanel;
+import simelectricity.essential.api.coverpanel.ISEFacadeCoverPanel;
 import simelectricity.essential.api.coverpanel.ISEGuiCoverPanel;
 import simelectricity.essential.api.coverpanel.ISERedstoneEmitterCoverPanel;
 import simelectricity.essential.utils.SEUnitHelper;
@@ -531,6 +532,10 @@ public class BlockCable extends BlockBase implements ICustomBoundingBox, IMetaPr
             if (!player.isCreative())
                 itemStack.shrink(1);
 
+            if (coverPanel instanceof ISEFacadeCoverPanel
+            		&&((ISEFacadeCoverPanel)coverPanel).getBlockState().isAir())
+            	return ActionResultType.FAIL;
+            
             if (!world.isRemote)    //Handle on server side
                 cable.installCoverPanel(side, coverPanel);
             return ActionResultType.SUCCESS;

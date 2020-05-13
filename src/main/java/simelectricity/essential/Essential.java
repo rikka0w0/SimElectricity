@@ -1,7 +1,5 @@
 package simelectricity.essential;
 
-import java.util.LinkedList;
-
 import net.minecraft.block.Block;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.inventory.container.ContainerType;
@@ -68,7 +66,6 @@ public class Essential {
     	@SubscribeEvent
     	public static void newRegistry(RegistryEvent.NewRegistry event) {
         	SEEAPI.coverPanelRegistry = CoverPanelRegistry.INSTANCE;
-            SEEAPI.coloredBlocks = new LinkedList<Block>();
     	}
     	
     	@SubscribeEvent

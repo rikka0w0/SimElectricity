@@ -63,7 +63,7 @@ public class TileElectricFurnace extends SESinglePortMachine<ISEVoltageSource> i
     }
     
     public double getEnergyRequired(FurnaceRecipe recipe) {
-    	return recipe.getCookTime() * 25;
+    	return recipe == null? -1 : recipe.getCookTime() * 25;
     }
 
     ///////////////////////////////////
@@ -257,7 +257,8 @@ public class TileElectricFurnace extends SESinglePortMachine<ISEVoltageSource> i
     @Override
     public void onEnergyNetUpdate() {
         this.voltage = this.circuit.getVoltage();
-        this.powerLevel = this.voltage * this.voltage / this.cachedParam.getResistance();
+        this.powerLevel = this.cachedParam.isOn() ? this.voltage * this.voltage / this.cachedParam.getResistance() : 0;
+        
         
     	Utils.enqueueServerWork(()->{
 			this.setSecondState(this.powerLevel > 100);

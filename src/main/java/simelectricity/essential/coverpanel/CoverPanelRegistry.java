@@ -1,12 +1,20 @@
 package simelectricity.essential.coverpanel;
 
+import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import simelectricity.essential.api.ISECoverPanelFactory;
+import simelectricity.essential.api.client.ISECoverPanelRender;
 import simelectricity.essential.api.coverpanel.ISECoverPanel;
+import simelectricity.essential.api.coverpanel.ISEFacadeCoverPanel;
 import simelectricity.essential.api.internal.ISECoverPanelRegistry;
+import simelectricity.essential.client.coverpanel.BlockColorHandler;
+import simelectricity.essential.client.coverpanel.GenericFacadeRender;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -17,19 +25,16 @@ public enum CoverPanelRegistry implements ISECoverPanelRegistry {
     
 	private final Map<String, ISECoverPanelFactory> factories = new HashMap<>();
 	private final Map<String, Pair<ISECoverPanelFactory, Class<? extends ISECoverPanel>>> panels = new HashMap<>();
-
-	@Override
-	public void register(ISECoverPanelFactory factory, Class<? extends ISECoverPanel> panel) {
-		String name = panel.getSimpleName();
-		if (name == null)
-			name = panel.getName();	// Anonymous inner class
-		
-		register(factory, panel, name);
-	}
+	private final List<Block> coloredBlocks = new LinkedList<>();
 	
 	@Override
 	public void register(ISECoverPanelFactory factory, Class<? extends ISECoverPanel> panel, String name) {
 		String factoryName = factory.getName();
+		if (name == null) {
+			panel.getSimpleName();
+			if (name == null)
+				name = panel.getName();	// Anonymous inner class
+		}
 		
 		this.panels.put(factoryName + ":" + name, Pair.of(factory, panel));
         this.factories.put(factoryName, factory);
@@ -51,6 +56,9 @@ public enum CoverPanelRegistry implements ISECoverPanelRegistry {
 	
 	@Override
     public ISECoverPanel fromNBT(CompoundNBT nbt) {
+		if (nbt == null)
+			return null;
+		
     	String factoryName = nbt.getString("factory_name");
     	ISECoverPanelFactory factory = factories.get(factoryName);
     	if (factory == null)
@@ -80,4 +88,20 @@ public enum CoverPanelRegistry implements ISECoverPanelRegistry {
 
         return result;
     }
+
+	@Override
+	public ISECoverPanelRender<ISEFacadeCoverPanel> getGenericFacadeRender() {
+		return GenericFacadeRender.instance;
+	}
+
+	@Override
+	public void registerColoredFacadeHost(Block... blocks) {
+		for (Block block: blocks)
+			this.coloredBlocks.add(block);
+	}
+	
+	public void registerAllColoredFacadeHost() {
+		for (Block block: this.coloredBlocks)
+			Minecraft.getInstance().getBlockColors().register(BlockColorHandler.colorHandler, block);
+	}
 }

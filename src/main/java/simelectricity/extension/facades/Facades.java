@@ -30,7 +30,7 @@ public class Facades {
                     Constructor<?> constructor = clsTECF.getConstructor();
                     ISECoverPanelFactory teCoverPanelFactory = (ISECoverPanelFactory) constructor.newInstance();
 
-                    SEEAPI.coverPanelRegistry.register(teCoverPanelFactory, TEFacadePanel.class);
+                    SEEAPI.coverPanelRegistry.register(teCoverPanelFactory, TEFacadePanel.class, null);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -43,7 +43,7 @@ public class Facades {
                     Constructor<?>  constructor = clsBCCF.getConstructor();
                     ISECoverPanelFactory bcCoverPanelFactory = (ISECoverPanelFactory) constructor.newInstance();
 
-                    SEEAPI.coverPanelRegistry.register(bcCoverPanelFactory, BCFacadePanel.class);
+                    SEEAPI.coverPanelRegistry.register(bcCoverPanelFactory, BCFacadePanel.class, null);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

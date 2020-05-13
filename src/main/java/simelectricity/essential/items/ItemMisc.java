@@ -14,6 +14,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -87,5 +88,7 @@ public final class ItemMisc extends ItemBase implements IMetaProvider<IMetaBase>
 		BlockState blockstate = NBTUtil.readBlockState(stack.getTag().getCompound("facade_blockstate"));
 		if (!blockstate.isAir())
 			tooltip.add(blockstate.getBlock().getNameTextComponent());
+		if (flagIn.isAdvanced())
+			tooltip.add(new StringTextComponent(blockstate.toString()));
 	}
 }
