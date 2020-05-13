@@ -1,4 +1,4 @@
-package simelectricity.extension.facades;
+package simelectricity.essential.client.coverpanel;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,12 +20,11 @@ import net.minecraft.util.Rotation;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.client.MinecraftForgeClient;
 import simelectricity.essential.api.client.ISECoverPanelRender;
-import simelectricity.essential.api.coverpanel.ISECoverPanel;
-import simelectricity.essential.client.coverpanel.SupportRender;
+import simelectricity.essential.api.coverpanel.ISEFacadeCoverPanel;
 
-public class BCFacadeRender implements ISECoverPanelRender{
-	public final static ISECoverPanelRender instance = new BCFacadeRender();
-	protected BCFacadeRender() {};
+public class GenericFacadeRender implements ISECoverPanelRender<ISEFacadeCoverPanel> {
+	public final static ISECoverPanelRender instance = new GenericFacadeRender();
+	protected GenericFacadeRender() {};
 	
 	public static int getVertexIndex(List<Vec3d> positions, Direction.Axis axis,
 									 boolean minOrMax1, boolean minOrMax2) {
@@ -227,15 +226,13 @@ public class BCFacadeRender implements ISECoverPanelRender{
 	public static Direction getFacing(int in) {	return Direction.byIndex(in % Direction.values().length);}
 	
 	@Override
-	public void renderCoverPanel(ISECoverPanel coverPanel, Direction side, List quads) {
-		BCFacadePanel facade = (BCFacadePanel) coverPanel;
-		BlockState blockState = facade.getBlockState();
+	public void renderCoverPanel(ISEFacadeCoverPanel coverPanel, Direction side, List quads) {
+		BlockState blockState = coverPanel.getBlockState();
 		if (RenderTypeLookup.canRenderInLayer(blockState, MinecraftForgeClient.getRenderLayer())) {
 			List<MutableQuad> mutableQuads = bake(blockState, side);
 	        List<BakedQuad> baked = new ArrayList<>();
 	        for (MutableQuad quad : mutableQuads)
 	        	quads.add(quad.toBakedItem());
-	        
 	        quads.addAll(SupportRender.forSide(side));
 		}
 	}

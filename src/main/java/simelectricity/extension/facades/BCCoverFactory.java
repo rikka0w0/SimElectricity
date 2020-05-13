@@ -1,7 +1,6 @@
 package simelectricity.extension.facades;
 
 import net.minecraft.block.BlockState;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import simelectricity.essential.api.ISECoverPanelFactory;
@@ -68,13 +67,10 @@ public class BCCoverFactory implements ISECoverPanelFactory{
 	}
 
 	@Override
-	public boolean acceptItemStack(ItemStack itemStack) {
-		Item item = itemStack.getItem();
-		return clsIFacadeItem.isAssignableFrom(item.getClass());
-	}
-	
-	@Override
-	public ISECoverPanel fromItemStack(ItemStack itemStack) {
+	public ISECoverPanel from(ItemStack itemStack) {
+		if (!clsIFacadeItem.isAssignableFrom(itemStack.getItem().getClass()))
+			return null;
+		
 		try {
 			Object facade = mtdgetFacade.invoke(objFacadeItem, itemStack);
 			if (facade != null) {
@@ -94,12 +90,12 @@ public class BCCoverFactory implements ISECoverPanelFactory{
 	}
 
 	@Override
-	public boolean acceptNBT(CompoundNBT nbt) {
-		return nbt.getString("coverPanelType").equals("BCFacade");
+	public ISECoverPanel from(CompoundNBT nbt, Class<? extends ISECoverPanel> panelCls, String coverPanelName) {
+		return new BCFacadePanel(nbt);
 	}
 
 	@Override
-	public ISECoverPanel fromNBT(CompoundNBT nbt) {
-		return new BCFacadePanel(nbt);
+	public String getName() {
+		return "BCCoverFactory";
 	}
 }

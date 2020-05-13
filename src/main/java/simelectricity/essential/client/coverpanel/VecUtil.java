@@ -1,4 +1,4 @@
-package simelectricity.extension.facades;
+package simelectricity.essential.client.coverpanel;
 
 import net.minecraft.util.Direction.Axis;
 import net.minecraft.util.math.Vec3d;

@@ -1,4 +1,4 @@
-package simelectricity.extension.facades;
+package simelectricity.essential.client.coverpanel;
 
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;

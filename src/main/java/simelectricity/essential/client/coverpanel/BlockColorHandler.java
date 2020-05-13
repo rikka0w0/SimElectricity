@@ -12,8 +12,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 import simelectricity.essential.api.ISECoverPanelHost;
 import simelectricity.essential.api.coverpanel.ISECoverPanel;
-import simelectricity.extension.facades.TEFacadePanel;
-import simelectricity.extension.facades.TEFacadeRender;
+import simelectricity.essential.api.coverpanel.ISEFacadeCoverPanel;
 
 @OnlyIn(Dist.CLIENT)
 public class BlockColorHandler implements IBlockColor{
@@ -26,13 +25,13 @@ public class BlockColorHandler implements IBlockColor{
             if (te instanceof ISECoverPanelHost) {
                 ISECoverPanelHost cable = (ISECoverPanelHost)te;
 
-                Direction side = TEFacadeRender.getFacing(tintIndex);
+                Direction side = GenericFacadeRender.getFacing(tintIndex);
                 ISECoverPanel coverPanel = cable.getCoverPanelOnSide(side);
 
-                if (coverPanel instanceof TEFacadePanel) {
-                    TEFacadePanel bcFacade = (TEFacadePanel) coverPanel;
+                if (coverPanel instanceof ISEFacadeCoverPanel) {
+                	ISEFacadeCoverPanel bcFacade = (ISEFacadeCoverPanel) coverPanel;
                     BlockState state = bcFacade.getBlockState();
-                    tintIndex = TEFacadeRender.getTint(tintIndex);
+                    tintIndex = GenericFacadeRender.getTint(tintIndex);
                     return Minecraft.getInstance().getBlockColors().getColor(state, world, pos, tintIndex);
                 }
 

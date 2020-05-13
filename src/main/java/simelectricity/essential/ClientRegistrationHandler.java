@@ -277,6 +277,9 @@ public class ClientRegistrationHandler {
 		}
 		MinecraftForge.EVENT_BUS.register(GridRenderMonitor.instance);
 		
+		for (Block block: BlockRegistry.blockCable) {
+			SEEAPI.coloredBlocks.add(block);
+		}
         for (Block block: SEEAPI.coloredBlocks) {
             Minecraft.getInstance().getBlockColors().register(BlockColorHandler.colorHandler, block);
         }

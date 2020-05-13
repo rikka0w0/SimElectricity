@@ -10,10 +10,10 @@ import net.minecraft.util.Direction;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import simelectricity.essential.api.client.ISECoverPanelRender;
-import simelectricity.essential.api.coverpanel.ISECoverPanel;
-import simelectricity.extension.facades.BCFacadeRender;
+import simelectricity.essential.api.coverpanel.ISEFacadeCoverPanel;
+import simelectricity.essential.client.coverpanel.GenericFacadeRender;
 
-public abstract class FacadePanel implements ISECoverPanel{
+public abstract class FacadePanel implements ISEFacadeCoverPanel {
 	private final boolean isHollow;
 	public final BlockState blockState;
 	private final ItemStack itemStack;
@@ -39,6 +39,7 @@ public abstract class FacadePanel implements ISECoverPanel{
 			
 	}
 	
+	@Override
 	public BlockState getBlockState() {return blockState;}
 	
 	@Override
@@ -46,7 +47,7 @@ public abstract class FacadePanel implements ISECoverPanel{
 
 	@Override
 	public void toNBT(CompoundNBT nbt) {
-		nbt.putBoolean("isHollow", isHollow);
+		nbt.putBoolean("isHollow", isHollow());
 		nbt.put("blockstate", NBTUtil.writeBlockState(blockState));
 		
 		CompoundNBT nbtItemStack = new CompoundNBT();
@@ -66,45 +67,37 @@ public abstract class FacadePanel implements ISECoverPanel{
 		return itemStack.copy();
 	}
 	
+	@Override
+	@OnlyIn(Dist.CLIENT)
+	public ISECoverPanelRender getCoverPanelRender() {
+		return GenericFacadeRender.instance;
+	}
+	
 	public static class FacadeNormal extends FacadePanel {
 		public FacadeNormal() {
-			super(false, Blocks.AIR.getDefaultState(), ItemStack.EMPTY);
+			this(Blocks.AIR.getDefaultState(), ItemStack.EMPTY);
+		}
+		
+		public FacadeNormal(BlockState state, ItemStack stack) {
+			super(false, state, stack);
 		}
 		
 		public FacadeNormal(CompoundNBT nbt) {
 			super(nbt);
 		}
-		
-		@Override
-		public boolean isHollow() {
-			return false;
-		}
-		
-		@Override
-		@OnlyIn(Dist.CLIENT)
-		public ISECoverPanelRender getCoverPanelRender() {
-			return BCFacadeRender.instance;
-		}
 	}
 	
 	public static class FacadeHollow extends FacadePanel {
 		public FacadeHollow() {
-			super(false, Blocks.AIR.getDefaultState(), ItemStack.EMPTY);
+			this(Blocks.AIR.getDefaultState(), ItemStack.EMPTY);
+		}
+		
+		public FacadeHollow(BlockState state, ItemStack stack) {
+			super(true, state, stack);
 		}
 		
 		public FacadeHollow(CompoundNBT nbt) {
 			super(nbt);
-		}
-
-		@Override
-		public boolean isHollow() {
-			return true;
-		}
-		
-		@Override
-		@OnlyIn(Dist.CLIENT)
-		public ISECoverPanelRender getCoverPanelRender() {
-			return BCFacadeRender.instance;
 		}
 	}
 }

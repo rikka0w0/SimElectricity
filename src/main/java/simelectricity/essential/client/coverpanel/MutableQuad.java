@@ -1,4 +1,4 @@
-package simelectricity.extension.facades;
+package simelectricity.essential.client.coverpanel;
 
 import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -47,7 +47,7 @@ public class MutableQuad {
     }
 
     public BakedQuad toBakedItem() {
-        int[] data = new int[28];
+        int[] data = new int[32];
         vertex_0.toBakedItem(data, 0);
         vertex_1.toBakedItem(data, 8);
         vertex_2.toBakedItem(data, 16);

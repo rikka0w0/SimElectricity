@@ -12,7 +12,6 @@ import java.lang.reflect.Constructor;
 @Mod(Facades.MODID)
 public class Facades {
     public static final String MODID = "sime_facades";
-    public static final String modName = "SimElectricity  Extension";
     
     public static boolean teThermalDynamicLoaded;
     public static boolean bcTransportLoaded;
@@ -24,31 +23,31 @@ public class Facades {
             teThermalDynamicLoaded = ModList.get().isLoaded("thermaldynamics");
             bcTransportLoaded = ModList.get().isLoaded("buildcrafttransport");
 
-            //Attempt to load extension class
-//            if (teThermalDynamicLoaded) {
-//                try {
-//                    Class<?> clsBCCF = Class.forName("simelectricity.extension.facades.TECoverFactory");
-//                    Constructor<?> constructor = clsBCCF.getConstructor();
-//                    ISECoverPanelFactory bcCoverPanelFactory = (ISECoverPanelFactory) constructor.newInstance();
-//
-//                    SEEAPI.coverPanelRegistry.registerCoverPanelFactory(bcCoverPanelFactory);
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//
-//            //Attempt to load extension class
-//            if (bcTransportLoaded) {
-//                try {
-//                    Class<?> clsBCCF = Class.forName("simelectricity.extension.facades.BCCoverFactory");
-//                    Constructor<?>  constructor = clsBCCF.getConstructor();
-//                    ISECoverPanelFactory bcCoverPanelFactory = (ISECoverPanelFactory) constructor.newInstance();
-//
-//                    SEEAPI.coverPanelRegistry.registerCoverPanelFactory(bcCoverPanelFactory);
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//            }
+            // Attempt to load extension class
+            if (teThermalDynamicLoaded) {
+                try {
+                    Class<?> clsTECF = Class.forName("simelectricity.extension.facades.TECoverFactory");
+                    Constructor<?> constructor = clsTECF.getConstructor();
+                    ISECoverPanelFactory teCoverPanelFactory = (ISECoverPanelFactory) constructor.newInstance();
+
+                    SEEAPI.coverPanelRegistry.register(teCoverPanelFactory, TEFacadePanel.class);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            // Attempt to load extension class
+            if (bcTransportLoaded) {
+                try {
+                    Class<?> clsBCCF = Class.forName("simelectricity.extension.facades.BCCoverFactory");
+                    Constructor<?>  constructor = clsBCCF.getConstructor();
+                    ISECoverPanelFactory bcCoverPanelFactory = (ISECoverPanelFactory) constructor.newInstance();
+
+                    SEEAPI.coverPanelRegistry.register(bcCoverPanelFactory, BCFacadePanel.class);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
     	}
     }
 }
