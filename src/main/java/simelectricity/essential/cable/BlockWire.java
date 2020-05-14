@@ -6,7 +6,6 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.IWaterLoggable;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -43,6 +42,7 @@ import rikka.librikka.item.ItemBlockBase;
 import simelectricity.api.SEAPI;
 import simelectricity.api.tile.ISECableTile;
 import simelectricity.api.tile.ISEWireTile;
+import simelectricity.essential.Essential;
 import simelectricity.essential.api.ISEGenericCable;
 import simelectricity.essential.api.ISEGenericWire;
 import simelectricity.essential.utils.SEUnitHelper;
@@ -771,7 +771,7 @@ public class BlockWire extends BlockBase implements ICustomBoundingBox, IMetaPro
             return ret;  //This is not supposed to happen
 
         ISEGenericWire wireTile = (ISEGenericWire) te;
-		BlockRayTraceResult trace = rayTrace(world, pos, Minecraft.getInstance().player);
+		BlockRayTraceResult trace = rayTrace(world, pos, Essential.proxy.getClientPlayer());
 
         if (trace == null || trace.subHit < 0 || !pos.equals(trace.getPos())) {
             // Perhaps we aren't the object the mouse is over

@@ -1,28 +1,26 @@
 package simelectricity.essential;
 
 import net.minecraft.block.Block;
-import net.minecraft.data.DataGenerator;
+//import net.minecraft.data.DataGenerator;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.chunk.Chunk;
-import net.minecraftforge.client.event.DrawHighlightEvent;
-import net.minecraftforge.client.model.generators.ExistingFileHelper;
+//import net.minecraftforge.client.model.generators.ExistingFileHelper;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.world.ChunkWatchEvent;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
+//import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
 import net.minecraftforge.registries.IForgeRegistry;
-import rikka.librikka.block.ICustomBoundingBox;
 import simelectricity.essential.api.ISEChunkWatchSensitiveTile;
 import simelectricity.essential.api.SEEAPI;
-import simelectricity.essential.client.ModelDataProvider;
+//import simelectricity.essential.client.ModelDataProvider;
 import simelectricity.essential.coverpanel.CoverPanelRegistry;
 import simelectricity.essential.coverpanel.SECoverPanelFactory;
 import simelectricity.essential.utils.network.MessageContainerSync;
@@ -50,19 +48,7 @@ public class Essential {
     }
     
     @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
-    public final static class ModEventBusHandler {
-    	@SubscribeEvent
-    	public static void gatherData(GatherDataEvent event) {
-    		DataGenerator generator = event.getGenerator();
-    		ExistingFileHelper exfh = event.getExistingFileHelper();
-    		if (event.includeServer()) {
-
-    		}
-    		if (event.includeClient()) {
-    			generator.addProvider(new ModelDataProvider(generator, exfh));
-    		}
-    	}
-    	
+    public final static class ModEventBusHandler {   	
     	@SubscribeEvent
     	public static void newRegistry(RegistryEvent.NewRegistry event) {
         	SEEAPI.coverPanelRegistry = CoverPanelRegistry.INSTANCE;
@@ -120,11 +106,6 @@ public class Essential {
 				if (tileEntity instanceof ISEChunkWatchSensitiveTile)
 					((ISEChunkWatchSensitiveTile) tileEntity).onRenderingUpdateRequested();
 			}
-		}
-		
-		@SubscribeEvent
-		public static void onBlockHighLight(DrawHighlightEvent.HighlightBlock event) {
-			ICustomBoundingBox.onBlockHighLight(event);
 		}
     }
 }

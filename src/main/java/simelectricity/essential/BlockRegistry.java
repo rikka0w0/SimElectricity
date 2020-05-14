@@ -74,15 +74,9 @@ public class BlockRegistry {
     	
     	registerBlocks(registry, isItemBlock, blockElectronics);
     	registerBlocks(registry, isItemBlock, blockTwoPortElectronics);
-    	
-    	ttb=new TESRTestBlock();
-    	registerBlocks(registry, isItemBlock, ttb);
     }
-    public static TESRTestBlock ttb;
-    public static TileEntityType<TESRTestBlock.Tile> ttb_tetype;
-    public static void registerTileEntities(final IForgeRegistry<TileEntityType<?>> registry) {
-    	ttb_tetype=TileEntityHelper.registerTileEntity(registry, TESRTestBlock.Tile.class, ttb);
-    	
+
+    public static void registerTileEntities(final IForgeRegistry<TileEntityType<?>> registry) {    	
     	TileEntityHelper.registerTileEntity(registry, TileCable.class, blockCable);
     	TileEntityHelper.registerTileEntity(registry, TileWire.class, blockWire);
     	

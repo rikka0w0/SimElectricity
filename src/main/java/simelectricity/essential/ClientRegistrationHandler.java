@@ -5,32 +5,36 @@ import java.util.Map;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockModelShapes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.model.ModelResourceLocation;
+import net.minecraft.data.DataGenerator;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.DrawHighlightEvent;
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
+import net.minecraftforge.client.model.generators.ExistingFileHelper;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
 import rikka.librikka.DirHorizontal8;
+import rikka.librikka.block.ICustomBoundingBox;
 import rikka.librikka.gui.AutoGuiHandler;
 import rikka.librikka.model.CodeBasedModel;
 import rikka.librikka.model.loader.TERHelper;
 import simelectricity.essential.cable.BlockCable;
 import simelectricity.essential.cable.BlockWire;
+import simelectricity.essential.client.ModelDataProvider;
 import simelectricity.essential.client.cable.CableModel;
 import simelectricity.essential.client.cable.WireModel;
 import simelectricity.essential.client.coverpanel.LedPanelRender;
@@ -66,7 +70,7 @@ import simelectricity.essential.grid.transformer.TileDistributionTransformer;
 import simelectricity.essential.grid.transformer.TilePowerTransformerPlaceHolder;
 import simelectricity.essential.grid.transformer.TilePowerTransformerWinding;
 
-@Mod.EventBusSubscriber(modid = Essential.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
+@Mod.EventBusSubscriber(value = Dist.CLIENT, modid = Essential.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ClientRegistrationHandler {
     public static Map<BlockState, CodeBasedModel> dynamicModels = new HashMap<>();
 	
@@ -90,7 +94,6 @@ public class ClientRegistrationHandler {
 		TERHelper.bind(TilePowerTransformerWinding.Primary.class, FastTESRPowerPole::new);
 		TERHelper.bind(TilePowerTransformerWinding.Secondary.class, FastTESRPowerPole::new);
 		
-		ClientRegistry.bindTileEntityRenderer(BlockRegistry.ttb_tetype, TESR::new);
 		TERHelper.bind(TileDistributionTransformer.Pole10kV.class, FastTESRPowerPole::new);
 		TERHelper.bind(TileDistributionTransformer.Pole415V.class, FastTESRPowerPole::new);
 	}
@@ -186,19 +189,20 @@ public class ClientRegistrationHandler {
      */
 	@OnlyIn(Dist.CLIENT)
 	@SubscribeEvent
-	public static void onClientSetup(FMLClientSetupEvent event){        
+	public static void onClientSetup(FMLClientSetupEvent event){
+		MinecraftForge.EVENT_BUS.register(new Object() {
+			@SubscribeEvent
+			public void onBlockHighLight(DrawHighlightEvent.HighlightBlock event) {
+				ICustomBoundingBox.onBlockHighLight(event);
+			}
+		});
+		
 		// Register Gui
 //		ScreenManager.registerFactory(BlockRegistry.cAdjustableResistor, GuiAdjustableResistor::new);
 		for (Class<? extends Container> containerCls: BlockRegistry.registeredGuiContainers) {
 			AutoGuiHandler.registerContainerGui(containerCls);
 		}
-        
-        Minecraft.getInstance().getBlockColors().register((blockstate, lightreader, pos, tintIndex) -> {
-        	return Minecraft.getInstance().getBlockColors().getColor(lightreader.getBlockState(pos.down()), lightreader, pos, tintIndex);
-        }, BlockRegistry.ttb);
-        RenderTypeLookup.setRenderLayer(BlockRegistry.ttb, (layer)->true);
-        
-//    	SEEAPI.coloredBlocks.add(BlockRegistry.blockCable);
+
     	ClientRegistrationHandler.registerTileEntityRenders();
 		
 		// Was Block::getBlockLayer
@@ -278,6 +282,17 @@ public class ClientRegistrationHandler {
 		MinecraftForge.EVENT_BUS.register(GridRenderMonitor.instance);		
 		CoverPanelRegistry.INSTANCE.registerAllColoredFacadeHost();
 	}
+	
+	@SubscribeEvent
+	public static void gatherData(GatherDataEvent event) {
+		DataGenerator generator = event.getGenerator();
+		ExistingFileHelper exfh = event.getExistingFileHelper();
+
+		if (event.includeClient()) {
+			generator.addProvider(new ModelDataProvider(generator, exfh));
+		}
+	}
+	
 //	ModelLoaderRegistry.registerLoader(new ResourceLocation("librikka","virtual"), loader);
 //	ModelLoaderRegistry.getModel("", deserializationContext, data)
 

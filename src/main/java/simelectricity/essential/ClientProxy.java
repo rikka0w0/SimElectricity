@@ -1,8 +1,10 @@
 package simelectricity.essential;
 
+import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.world.World;
+import simelectricity.essential.client.coverpanel.BlockColorHandler;
 
 public class ClientProxy extends CommonProxy {
     @Override
@@ -15,8 +17,8 @@ public class ClientProxy extends CommonProxy {
         return Minecraft.getInstance().world;
     }
 
-//    @Override
-//    public IThreadListener getClientThread() {
-//        return Minecraft.getInstance();
-//    }
+    @Override
+    public void registerColoredFacadeHost(Block block) {
+    	Minecraft.getInstance().getBlockColors().register(BlockColorHandler.colorHandler, block);
+    }
 }

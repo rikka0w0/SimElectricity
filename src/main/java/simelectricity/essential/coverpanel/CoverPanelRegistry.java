@@ -1,15 +1,14 @@
 package simelectricity.essential.coverpanel;
 
 import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import simelectricity.essential.Essential;
 import simelectricity.essential.api.ISECoverPanelFactory;
 import simelectricity.essential.api.client.ISECoverPanelRender;
 import simelectricity.essential.api.coverpanel.ISECoverPanel;
 import simelectricity.essential.api.coverpanel.ISEFacadeCoverPanel;
 import simelectricity.essential.api.internal.ISECoverPanelRegistry;
-import simelectricity.essential.client.coverpanel.BlockColorHandler;
 import simelectricity.essential.client.coverpanel.GenericFacadeRender;
 
 import java.util.HashMap;
@@ -102,6 +101,6 @@ public enum CoverPanelRegistry implements ISECoverPanelRegistry {
 	
 	public void registerAllColoredFacadeHost() {
 		for (Block block: this.coloredBlocks)
-			Minecraft.getInstance().getBlockColors().register(BlockColorHandler.colorHandler, block);
+			Essential.proxy.registerColoredFacadeHost(block);
 	}
 }

@@ -5,7 +5,6 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.IWaterLoggable;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.LivingEntity;
@@ -46,6 +45,7 @@ import rikka.librikka.block.BlockBase;
 import rikka.librikka.block.ICustomBoundingBox;
 import rikka.librikka.item.ItemBlockBase;
 import simelectricity.api.SEAPI;
+import simelectricity.essential.Essential;
 import simelectricity.essential.api.ISECoverPanelHost;
 import simelectricity.essential.api.ISEGenericCable;
 import simelectricity.essential.api.SEEAPI;
@@ -443,7 +443,7 @@ public class BlockCable extends BlockBase implements ICustomBoundingBox, IMetaPr
 			return ret; // This is not supposed to happen
 
 		ISEGenericCable cable = (ISEGenericCable) te;
-		BlockRayTraceResult trace = rayTrace(world, pos, Minecraft.getInstance().player);
+		BlockRayTraceResult trace = rayTrace(world, pos, Essential.proxy.getClientPlayer());
 
 		AxisAlignedBB aabb = null;
 		if (trace == null || trace.subHit < 0 || !pos.equals(trace.getPos())) {

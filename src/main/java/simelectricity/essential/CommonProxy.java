@@ -1,10 +1,11 @@
 package simelectricity.essential;
 
+import net.minecraft.block.Block;
 import net.minecraft.entity.player.PlayerEntity;
 //import net.minecraft.util.IThreadListener;
 import net.minecraft.world.World;
 
-public class CommonProxy  {
+public class CommonProxy {
     public PlayerEntity getClientPlayer() {
         return null;
     }
@@ -13,7 +14,7 @@ public class CommonProxy  {
         return null;
     }
 
-//    public IThreadListener getClientThread() {
-//        return null;
-//    }
+    public void registerColoredFacadeHost(Block block) {
+    	
+    }
 }

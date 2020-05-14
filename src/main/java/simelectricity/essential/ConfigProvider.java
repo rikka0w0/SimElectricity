@@ -34,7 +34,9 @@ public class ConfigProvider {
 
     public static void syncConfig() {
     	joule2rf = joule2rf_Spec.get();
-    	parabolaRenderSteps = parabolaRenderSteps_Spec.get();
+    	if (EffectiveSide.get().isClient()) {
+    		parabolaRenderSteps = parabolaRenderSteps_Spec.get();
+    	}
     }
 
     @SubscribeEvent

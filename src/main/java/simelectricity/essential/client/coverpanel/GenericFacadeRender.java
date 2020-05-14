@@ -18,10 +18,13 @@ import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.Vec3d;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.MinecraftForgeClient;
 import simelectricity.essential.api.client.ISECoverPanelRender;
 import simelectricity.essential.api.coverpanel.ISEFacadeCoverPanel;
 
+@OnlyIn(Dist.CLIENT)
 public class GenericFacadeRender implements ISECoverPanelRender<ISEFacadeCoverPanel> {
 	public final static ISECoverPanelRender instance = new GenericFacadeRender();
 	protected GenericFacadeRender() {};

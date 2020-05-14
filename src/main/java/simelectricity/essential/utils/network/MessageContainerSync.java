@@ -1,5 +1,6 @@
 package simelectricity.essential.utils.network;
 
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.util.Direction;
@@ -48,6 +49,11 @@ public class MessageContainerSync extends MessageContainerSyncBase {
 		@Override
 		protected MessageContainerSync create() {
 			return new MessageContainerSync();
+		}
+
+		@Override
+		protected PlayerEntity getClientPlayer() {
+			return Essential.proxy.getClientPlayer();
 		}
 	}
 
