@@ -13,7 +13,7 @@ import simelectricity.essential.api.coverpanel.ISEFacadeCoverPanel;
 
 public interface ISECoverPanelRegistry {
     /**
-     * 
+     * Register cover panel and its factory during {@link net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent}
      * @param factory the factory which is able to create the ISECoverPanel from ItemStack
      * @param panelCls the class of the ISECoverPanel to be registered
      * @param name the name of the cover panel, this should only contains lower case letters, numbers and _. 

@@ -1,30 +1,25 @@
 package simelectricity.essential;
 
 import net.minecraft.block.Block;
-//import net.minecraft.data.DataGenerator;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.chunk.Chunk;
-//import net.minecraftforge.client.model.generators.ExistingFileHelper;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.world.ChunkWatchEvent;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-//import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
 import net.minecraftforge.registries.IForgeRegistry;
 import simelectricity.essential.api.ISEChunkWatchSensitiveTile;
 import simelectricity.essential.api.SEEAPI;
-//import simelectricity.essential.client.ModelDataProvider;
 import simelectricity.essential.coverpanel.CoverPanelRegistry;
 import simelectricity.essential.coverpanel.SECoverPanelFactory;
 import simelectricity.essential.utils.network.MessageContainerSync;
-
 
 @Mod(Essential.MODID)
 public class Essential {
