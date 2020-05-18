@@ -22,7 +22,6 @@ import simelectricity.api.ISEEnergyNetUpdateHandler;
 import simelectricity.api.components.ISEVoltageSource;
 import simelectricity.essential.common.ItemStackHandlerInventory;
 import simelectricity.essential.common.semachine.ISE2StateTile;
-import simelectricity.essential.common.semachine.ISESocketProvider;
 import simelectricity.essential.common.semachine.SESinglePortMachine;
 import simelectricity.essential.machines.gui.ContainerElectricFurnace;
 
@@ -30,7 +29,8 @@ import java.util.Optional;
 
 import javax.annotation.Nonnull;
 
-public class TileElectricFurnace extends SESinglePortMachine<ISEVoltageSource> implements ISEVoltageSource, ISE2StateTile, ISEEnergyNetUpdateHandler, ISESocketProvider, ITickableTileEntity, INamedContainerProvider2 {
+public class TileElectricFurnace extends SESinglePortMachine<ISEVoltageSource> implements 
+		ISEVoltageSource, ISE2StateTile, ISEEnergyNetUpdateHandler, ITickableTileEntity, INamedContainerProvider2 {
     public static float energyPerItem = 5000F;
 
     //Component parameters

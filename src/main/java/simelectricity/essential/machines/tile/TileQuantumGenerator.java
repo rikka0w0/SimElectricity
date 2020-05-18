@@ -10,11 +10,11 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import rikka.librikka.tileentity.INamedContainerProvider2;
 import simelectricity.api.ISEEnergyNetUpdateHandler;
 import simelectricity.api.components.ISEVoltageSource;
-import simelectricity.essential.common.semachine.ISESocketProvider;
 import simelectricity.essential.common.semachine.SESinglePortMachine;
 import simelectricity.essential.machines.gui.ContainerQuantumGenerator;
 
-public class TileQuantumGenerator extends SESinglePortMachine<ISEVoltageSource> implements ISEVoltageSource, ISEEnergyNetUpdateHandler, ISESocketProvider, INamedContainerProvider2 {
+public class TileQuantumGenerator extends SESinglePortMachine<ISEVoltageSource> implements 
+		ISEVoltageSource, ISEEnergyNetUpdateHandler, INamedContainerProvider2 {
     //Component parameters
     public double internalVoltage = 230;
     public double resistance = 0.1;

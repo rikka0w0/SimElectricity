@@ -11,11 +11,11 @@ import rikka.librikka.Utils;
 import rikka.librikka.tileentity.INamedContainerProvider2;
 import simelectricity.api.ISEEnergyNetUpdateHandler;
 import simelectricity.api.components.ISESwitch;
-import simelectricity.essential.common.semachine.ISESocketProvider;
 import simelectricity.essential.common.semachine.SETwoPortMachine;
 import simelectricity.essential.machines.gui.ContainerCurrentSensor;
 
-public class TileCurrentSensor extends SETwoPortMachine<ISESwitch> implements ISESwitch, ISEEnergyNetUpdateHandler, ISESocketProvider, INamedContainerProvider2 {
+public class TileCurrentSensor extends SETwoPortMachine<ISESwitch> implements 
+		ISESwitch, ISEEnergyNetUpdateHandler, INamedContainerProvider2 {
     public double current;
     public boolean emitRedstoneSignal;
 

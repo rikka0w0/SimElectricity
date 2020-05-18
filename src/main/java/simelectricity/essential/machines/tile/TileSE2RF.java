@@ -19,11 +19,11 @@ import simelectricity.api.ISEEnergyNetUpdateHandler;
 import simelectricity.api.SEAPI;
 import simelectricity.api.components.ISEConstantPowerLoad;
 import simelectricity.essential.ConfigProvider;
-import simelectricity.essential.common.semachine.ISESocketProvider;
 import simelectricity.essential.common.semachine.SESinglePortMachine;
 import simelectricity.essential.machines.gui.ContainerSE2RF;
 
-public class TileSE2RF extends SESinglePortMachine<ISEConstantPowerLoad> implements ISEConstantPowerLoad, ISEEnergyNetUpdateHandler, ITickableTileEntity, INamedContainerProvider2, ISESocketProvider {
+public class TileSE2RF extends SESinglePortMachine<ISEConstantPowerLoad> implements 
+		ISEConstantPowerLoad, ISEEnergyNetUpdateHandler, ITickableTileEntity, INamedContainerProvider2 {
     public final static double bufferCapacity = 1000;	// J
     public double ratedOutputPower = 100;	            // W
 

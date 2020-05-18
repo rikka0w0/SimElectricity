@@ -10,11 +10,11 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import rikka.librikka.tileentity.INamedContainerProvider2;
 import simelectricity.api.ISEEnergyNetUpdateHandler;
 import simelectricity.api.components.ISETransformer;
-import simelectricity.essential.common.semachine.ISESocketProvider;
 import simelectricity.essential.common.semachine.SETwoPortMachine;
 import simelectricity.essential.machines.gui.ContainerAdjustableTransformer;
 
-public class TileAdjustableTransformer extends SETwoPortMachine<ISETransformer> implements ISETransformer, ISEEnergyNetUpdateHandler, ISESocketProvider, INamedContainerProvider2 {
+public class TileAdjustableTransformer extends SETwoPortMachine<ISETransformer> implements 
+		ISETransformer, ISEEnergyNetUpdateHandler, INamedContainerProvider2 {
     //Input - primary, output - secondary
     public double ratio = 10, outputResistance = 1;
 

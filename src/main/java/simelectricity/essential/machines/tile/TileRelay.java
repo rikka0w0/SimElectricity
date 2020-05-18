@@ -11,14 +11,13 @@ import rikka.librikka.tileentity.INamedContainerProvider2;
 import simelectricity.api.ISEEnergyNetUpdateHandler;
 import simelectricity.api.SEAPI;
 import simelectricity.api.components.ISESwitch;
-import simelectricity.essential.common.semachine.ISESocketProvider;
 import simelectricity.essential.common.semachine.SETwoPortMachine;
 import simelectricity.essential.machines.gui.ContainerRelay;
 
 /**
  * Created by manageryzy on 12/18/2017.
  */
-public class TileRelay extends SETwoPortMachine implements ISESwitch, ISEEnergyNetUpdateHandler, ISESocketProvider, INamedContainerProvider2 {
+public class TileRelay extends SETwoPortMachine<ISESwitch> implements ISESwitch, ISEEnergyNetUpdateHandler, INamedContainerProvider2 {
     public double current;
 
     public double resistance = 0.001;

@@ -8,10 +8,10 @@ import rikka.librikka.Utils;
 import simelectricity.api.ISEEnergyNetUpdateHandler;
 import simelectricity.api.components.ISEVoltageSource;
 import simelectricity.essential.common.semachine.ISE2StateTile;
-import simelectricity.essential.common.semachine.ISESocketProvider;
 import simelectricity.essential.common.semachine.SESinglePortMachine;
 
-public class TileIncandescentLamp extends SESinglePortMachine<ISEVoltageSource> implements ISEVoltageSource, ISE2StateTile, ISEEnergyNetUpdateHandler, ISESocketProvider {
+public class TileIncandescentLamp extends SESinglePortMachine<ISEVoltageSource> implements 
+		ISEVoltageSource, ISE2StateTile, ISEEnergyNetUpdateHandler {
     public byte lightLevel;
 
     @Override

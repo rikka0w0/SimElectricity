@@ -9,11 +9,11 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import rikka.librikka.tileentity.INamedContainerProvider2;
 import simelectricity.api.ISEEnergyNetUpdateHandler;
 import simelectricity.api.components.ISEDiode;
-import simelectricity.essential.common.semachine.ISESocketProvider;
 import simelectricity.essential.common.semachine.SETwoPortMachine;
 import simelectricity.essential.machines.gui.ContainerDiode;
 
-public class TileDiode extends SETwoPortMachine<ISEDiode> implements ISEDiode, ISEEnergyNetUpdateHandler, ISESocketProvider, INamedContainerProvider2 {
+public class TileDiode extends SETwoPortMachine<ISEDiode> implements 
+		ISEDiode, ISEEnergyNetUpdateHandler, INamedContainerProvider2 {
     public double inputVoltage, outputVoltage;
 
     /////////////////////////////////////////////////////////

@@ -9,11 +9,11 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import rikka.librikka.tileentity.INamedContainerProvider2;
 import simelectricity.api.ISEEnergyNetUpdateHandler;
 import simelectricity.api.components.ISEVoltageSource;
-import simelectricity.essential.common.semachine.ISESocketProvider;
 import simelectricity.essential.common.semachine.SESinglePortMachine;
 import simelectricity.essential.machines.gui.ContainerVoltageMeter;
 
-public class TileVoltageMeter extends SESinglePortMachine<ISEVoltageSource> implements ISEVoltageSource, ISEEnergyNetUpdateHandler, ISESocketProvider, INamedContainerProvider2 {
+public class TileVoltageMeter extends SESinglePortMachine<ISEVoltageSource> implements 
+		ISEVoltageSource, ISEEnergyNetUpdateHandler, INamedContainerProvider2 {
     public double voltage;
 
     @Override

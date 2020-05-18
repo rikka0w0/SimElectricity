@@ -11,11 +11,11 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import rikka.librikka.tileentity.INamedContainerProvider2;
 import simelectricity.api.ISEEnergyNetUpdateHandler;
 import simelectricity.api.components.ISESwitch;
-import simelectricity.essential.common.semachine.ISESocketProvider;
 import simelectricity.essential.common.semachine.SETwoPortMachine;
 import simelectricity.essential.machines.gui.ContainerPowerMeter;
 
-public class TilePowerMeter extends SETwoPortMachine<ISESwitch> implements ISESwitch, ISEEnergyNetUpdateHandler, ISESocketProvider, ITickableTileEntity, INamedContainerProvider2 {
+public class TilePowerMeter extends SETwoPortMachine<ISESwitch> implements 
+		ISESwitch, ISEEnergyNetUpdateHandler, ITickableTileEntity, INamedContainerProvider2 {
     public boolean isOn;
     public double current, voltage, bufferedEnergy;
 

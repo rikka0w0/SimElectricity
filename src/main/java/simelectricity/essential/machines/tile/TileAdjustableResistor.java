@@ -11,11 +11,11 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import rikka.librikka.tileentity.INamedContainerProvider2;
 import simelectricity.api.ISEEnergyNetUpdateHandler;
 import simelectricity.api.components.ISEVoltageSource;
-import simelectricity.essential.common.semachine.ISESocketProvider;
 import simelectricity.essential.common.semachine.SESinglePortMachine;
 import simelectricity.essential.machines.gui.ContainerAdjustableResistor;
 
-public class TileAdjustableResistor extends SESinglePortMachine<ISEVoltageSource> implements ISEVoltageSource, ISEEnergyNetUpdateHandler, ISESocketProvider, ITickableTileEntity, INamedContainerProvider2 {
+public class TileAdjustableResistor extends SESinglePortMachine<ISEVoltageSource> implements 
+		ISEVoltageSource, ISEEnergyNetUpdateHandler, ITickableTileEntity, INamedContainerProvider2 {
     //Component parameters
     public double resistance = 100;
 
