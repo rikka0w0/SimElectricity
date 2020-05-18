@@ -7,12 +7,16 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.item.ItemStack;
+import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.math.shapes.ISelectionContext;
+import net.minecraft.util.math.shapes.VoxelShape;
+import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import rikka.librikka.IMetaProvider;
@@ -93,9 +97,32 @@ public abstract class BlockElectronics extends SEMachineBlock implements IMetaPr
 		}
     }
 
-    //////////////////////////////////////
-    /////Item drops and Block activities
-    //////////////////////////////////////
+    private final static VoxelShape vsXfmRFSE_NS = VoxelShapes.or(
+    		VoxelShapes.create(0.2, 0, 0, 0.8, 1, 1), 
+    		VoxelShapes.create(0, 0.2, 0, 0.2, 0.8, 1), 
+    		VoxelShapes.create(0.8, 0.2, 0, 1, 0.8, 1)
+    		);
+    private final static VoxelShape vsXfmRFSE_WE = VoxelShapes.or(
+    		VoxelShapes.create(0, 0, 0.2, 1, 1, 0.8), 
+    		VoxelShapes.create(0, 0.2, 0, 1, 0.8, 0.2), 
+    		VoxelShapes.create(0, 0.2, 0.8, 1, 0.8, 1)
+    		);
+    private final static VoxelShape vsXfmRFSE_DU = VoxelShapes.or(
+    		VoxelShapes.create(0, 0, 0.2, 1, 1, 0.8), 
+    		VoxelShapes.create(0.2, 0, 0, 0.8, 1, 0.8), 
+    		VoxelShapes.create(0.2, 0, 0.8, 0.8, 1, 1)
+    		);
+    
+	@Override
+	public VoxelShape getShape(BlockState state, IBlockReader worldIn, BlockPos pos, ISelectionContext context) {
+		if (this.useObjModel()) {
+			Direction.Axis axis = state.get(BlockStateProperties.FACING).getAxis();
+			return axis == Direction.Axis.Z ? vsXfmRFSE_NS : 
+				(axis == Direction.Axis.X ? vsXfmRFSE_WE : vsXfmRFSE_DU);
+		}
+		return VoxelShapes.fullCube();
+	}
+    
     @Override
     public int getLightValue(BlockState state, IBlockReader world, BlockPos pos) {
         TileEntity te = world.getTileEntity(pos);

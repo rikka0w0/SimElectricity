@@ -22,7 +22,7 @@ import simelectricity.api.SEAPI;
 import simelectricity.essential.api.ISECoverPanelHost;
 import simelectricity.essential.common.CoverPanelUtils;
 
-public abstract class SEMachineBlock extends BlockBase{
+public abstract class SEMachineBlock extends BlockBase {
     public SEMachineBlock(String unlocalizedName) {
         super(unlocalizedName, 
         		Block.Properties.create(Material.IRON)
