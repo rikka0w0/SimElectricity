@@ -14,7 +14,7 @@ import simelectricity.essential.client.grid.PowerPoleRenderHelper;
 import simelectricity.essential.grid.TileCableJoint;
 import simelectricity.essential.grid.TilePoleBranch;
 import simelectricity.essential.grid.TilePoleConcrete;
-//import simelectricity.essential.grid.transformer.TileDistributionTransformer;
+import simelectricity.essential.grid.transformer.TileDistributionTransformer;
 import simelectricity.essential.client.grid.ISEPowerPole;
 import simelectricity.essential.api.ISEPoleAccessory;
 
@@ -24,14 +24,14 @@ public class PoleAccessoryRendererDispatcher {
 	static {
 		register(TilePoleConcrete.Pole10Kv.Type0.class, TileCableJoint.Type10kV.class, AR10kVType0CableJoint.instance);
 		register(TilePoleConcrete.Pole10Kv.Type1.class, TileCableJoint.Type10kV.class, AR10kVType1CableJoint.instance);
-//		register(TileDistributionTransformer.Pole10kV.class, TileCableJoint.Type10kV.class, AR10kVType0CableJoint.instance);
+		register(TileDistributionTransformer.Pole10kV.class, TileCableJoint.Type10kV.class, AR10kVType0CableJoint.instance);
 		
 		register(TilePoleConcrete.Pole10Kv.Type0.class, TilePoleBranch.Type10kV.class, AR10kVType0Branch.instance);
 		register(TilePoleConcrete.Pole10Kv.Type1.class, TilePoleBranch.Type10kV.class, AR10kVType1Branch.instance);
 		register(TilePoleConcrete.Pole415vType0.class, TilePoleBranch.Type415V.class, AR415VBranch.instance);
 		
 		register(TilePoleConcrete.Pole415vType0.class, TileCableJoint.Type415V.class, AR415VType0CableJoint.instance);
-//		register(TileDistributionTransformer.Pole415V.class, TileCableJoint.Type415V.class, AR415VType0CableJoint.instance);
+		register(TileDistributionTransformer.Pole415V.class, TileCableJoint.Type415V.class, AR415VType0CableJoint.instance);
 	}
 	
 	public static void register(Class<? extends ISEPowerPole> poleClass, Class<? extends ISEPoleAccessory> accessoryClass, ISEAccessoryRenderer renderer) {
@@ -45,7 +45,7 @@ public class PoleAccessoryRendererDispatcher {
 		PowerPoleRenderHelper helper = pole.getRenderHelper();
 		if (helper == null)
 			return;
-				
+
 		TileEntity neighborTile = world.getTileEntity(accessoryPos);
 		if (neighborTile instanceof ISEPoleAccessory && neighborTile instanceof ISEPowerPole) {
 			ISEPoleAccessory accessory = (ISEPoleAccessory) neighborTile;

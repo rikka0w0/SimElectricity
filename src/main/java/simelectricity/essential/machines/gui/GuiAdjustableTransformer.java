@@ -35,7 +35,7 @@ public final class GuiAdjustableTransformer<T extends ContainerAdjustableTransfo
     @Override
     protected void drawGuiContainerBackgroundLayer(float opacity, int par2, int par3) {
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        bindTexture("sime_essential:textures/gui/adjustable_transformer.png");
+        bindTexture("textures/gui/adjustable_transformer.png");
         blit(this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
         blit(this.guiLeft + 74, this.guiTop + 32, 176, 0, 28, 48);
 
