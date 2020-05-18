@@ -5,16 +5,15 @@ import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.util.Direction;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.model.data.ModelDataMap;
 import rikka.librikka.Utils;
 import simelectricity.api.ISESidedFacing;
 import simelectricity.api.SEAPI;
 import simelectricity.api.components.ISEComponentParameter;
 import simelectricity.api.node.ISESubComponent;
 import simelectricity.api.tile.ISETile;
-import simelectricity.essential.common.SEEnergyTile;
 
-public class SETwoPortMachine<T extends ISEComponentParameter> extends SEEnergyTile implements ISESidedFacing, ISETile, ISEComponentParameter {
+public abstract class SETwoPortMachine<T extends ISEComponentParameter> extends SEMachineTile implements 
+		ISESidedFacing, ISETile, ISEComponentParameter {
     public Direction inputSide = Direction.SOUTH;
     public Direction outputSide = Direction.NORTH;
     protected final ISESubComponent input = SEAPI.energyNetAgent.newComponent(this, this);
@@ -106,9 +105,5 @@ public class SETwoPortMachine<T extends ISEComponentParameter> extends SEEnergyT
 
         if (isAddedToEnergyNet)
             SEAPI.energyNetAgent.updateTileConnection(this);
-    }
-    
-    protected void collectModelData(ModelDataMap.Builder builder) {
-    	builder.withInitial(ISESocketProvider.prop, (ISESocketProvider) this);
     }
 }

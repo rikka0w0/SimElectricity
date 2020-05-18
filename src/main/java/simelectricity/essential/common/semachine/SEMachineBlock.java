@@ -3,6 +3,8 @@ package simelectricity.essential.common.semachine;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.fluid.IFluidState;
 import net.minecraft.state.StateContainer;
 import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.block.BlockState;
@@ -11,10 +13,14 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Rotation;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
+import net.minecraft.world.World;
 import rikka.librikka.Utils;
 import rikka.librikka.block.BlockBase;
 import simelectricity.api.SEAPI;
+import simelectricity.essential.api.ISECoverPanelHost;
+import simelectricity.essential.common.CoverPanelUtils;
 
 public abstract class SEMachineBlock extends BlockBase{
     public SEMachineBlock(String unlocalizedName) {
@@ -71,4 +77,19 @@ public abstract class SEMachineBlock extends BlockBase{
 	
 	@Override
 	public abstract TileEntity createTileEntity(BlockState state, IBlockReader world);
+
+    ///////////////////////////////
+    /// CoverPanelHandler
+    ///////////////////////////////
+    @Override
+    public boolean removedByPlayer(BlockState state, World world, BlockPos pos, PlayerEntity player, boolean willHarvest, IFluidState fluid) {
+		TileEntity te = world.getTileEntity(pos);
+		if (!(te instanceof ISECoverPanelHost))
+			return super.removedByPlayer(state, world, pos, player, willHarvest, fluid);
+    	
+    	if (CoverPanelUtils.removeCoverPanel((ISECoverPanelHost)te, player))
+			return false;
+		
+		return super.removedByPlayer(state, world, pos, player, willHarvest, fluid);
+    }
 }

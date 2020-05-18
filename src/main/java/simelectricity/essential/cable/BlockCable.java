@@ -51,8 +51,8 @@ import simelectricity.essential.api.ISEGenericCable;
 import simelectricity.essential.api.SEEAPI;
 import simelectricity.essential.api.coverpanel.ISECoverPanel;
 import simelectricity.essential.api.coverpanel.ISEFacadeCoverPanel;
-import simelectricity.essential.api.coverpanel.ISEGuiCoverPanel;
 import simelectricity.essential.api.coverpanel.ISERedstoneEmitterCoverPanel;
+import simelectricity.essential.common.CoverPanelUtils;
 import simelectricity.essential.utils.SEUnitHelper;
 
 import javax.annotation.Nullable;
@@ -463,38 +463,6 @@ public class BlockCable extends BlockBase implements ICustomBoundingBox, IMetaPr
     //////////////////////////////////////
     /////Item drops and Block activities
     //////////////////////////////////////
-    private ActionResultType attemptOpenCoverPanelGui(TileEntity te, PlayerEntity player) {
-        if (player.isCrouching())
-            return ActionResultType.FAIL;
-
-        BlockRayTraceResult trace = this.rayTrace(te.getWorld(), te.getPos(), player);
-
-        if (trace == null)
-        	return ActionResultType.FAIL;    //This is not suppose to happen, but just in case!
-
-        if (!trace.getPos().equals(te.getPos()))
-        	return ActionResultType.FAIL;
-
-        if (trace.subHit < 7)
-        	return ActionResultType.FAIL;    //The player is looking at the cable
-
-        if (trace.subHit > 12)
-        	return ActionResultType.FAIL;    //The player is looking at somewhere else
-
-        if (te instanceof ISECoverPanelHost) {
-            ISECoverPanelHost host = (ISECoverPanelHost) te;
-            Direction panelSide = Direction.byIndex(trace.subHit - 7);
-            ISECoverPanel coverPanel = host.getCoverPanelOnSide(panelSide);
-
-            // TODO: check this
-            if (coverPanel instanceof ISEGuiCoverPanel) {
-                player.openContainer((ISEGuiCoverPanel) coverPanel);
-                return ActionResultType.SUCCESS;
-            }
-        }
-        return ActionResultType.FAIL;
-    }
-
 	@Override
 	public ActionResultType onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult ray) {
 		Direction side = ray.getFace();
@@ -507,7 +475,7 @@ public class BlockCable extends BlockBase implements ICustomBoundingBox, IMetaPr
         
         ItemStack itemStack = player.getHeldItemMainhand();
         if (itemStack == null || itemStack.isEmpty())
-            return this.attemptOpenCoverPanelGui(te, player);	// Empty hand
+            return CoverPanelUtils.openCoverPanelGui(cable, player);	// Empty hand
 
         // We have an item on the player's main hand
         Item item = itemStack.getItem();
@@ -522,26 +490,16 @@ public class BlockCable extends BlockBase implements ICustomBoundingBox, IMetaPr
 			return ActionResultType.SUCCESS;
 		}
         
-        // Check if it is an cover panel item
+        // Attempt to install cover panel, check panel type
         ISECoverPanel coverPanel = SEEAPI.coverPanelRegistry.fromItemStack(itemStack);
-        if (coverPanel == null)
-            return this.attemptOpenCoverPanelGui(te, player);	// Other items
-
-        // Attempt to install cover panel
-        if (cable.canInstallCoverPanelOnSide(side, coverPanel)) {
-            if (!player.isCreative())
-                itemStack.shrink(1);
-
-            if (coverPanel instanceof ISEFacadeCoverPanel
-            		&&((ISEFacadeCoverPanel)coverPanel).getBlockState().isAir())
-            	return ActionResultType.FAIL;
-            
-            if (!world.isRemote)    //Handle on server side
-                cable.installCoverPanel(side, coverPanel);
+        if (coverPanel instanceof ISEFacadeCoverPanel
+        		&&((ISEFacadeCoverPanel)coverPanel).getBlockState().isAir())
+        	return ActionResultType.FAIL;
+        
+        if (CoverPanelUtils.installCoverPanel(state, world, pos, player, handIn, ray) == ActionResultType.SUCCESS)
             return ActionResultType.SUCCESS;
-        }
 
-        return this.attemptOpenCoverPanelGui(te, player);	// Fail to install cover panel
+        return CoverPanelUtils.openCoverPanelGui(cable, player);	// Fail to install cover panel
     }
 
     @Override
@@ -579,28 +537,10 @@ public class BlockCable extends BlockBase implements ICustomBoundingBox, IMetaPr
 		if (!(te instanceof ISEGenericCable))
 			return super.removedByPlayer(state, world, pos, player, willHarvest, fluid);
 
-		ISEGenericCable cable = (ISEGenericCable) te;
-
-		BlockRayTraceResult trace = this.rayTrace(world, pos, player);
-		if (trace == null)
-			return super.removedByPlayer(state, world, pos, player, willHarvest, fluid);
-		if (!trace.getPos().equals(pos))
-			return super.removedByPlayer(state, world, pos, player, willHarvest, fluid);
-
-		if (trace.subHit > 6 && trace.subHit < 13) {
-			// Remove the selected cover panel
-			Direction side = Direction.byIndex(trace.subHit - 7);
-			ISECoverPanel coverPanel = cable.getCoverPanelOnSide(side);
-			cable.removeCoverPanel(coverPanel, !player.isCreative());
+		if (CoverPanelUtils.removeCoverPanel((ISECoverPanelHost)te, player))
 			return false;
-		} else {
-			for (Direction side : Direction.values()) {
-				ISECoverPanel coverPanel = cable.getCoverPanelOnSide(side);
-				cable.removeCoverPanel(coverPanel, !player.isCreative());
-			}
 
-			return super.removedByPlayer(state, world, pos, player, willHarvest, fluid);
-		}
+		return super.removedByPlayer(state, world, pos, player, willHarvest, fluid);
     }
 
     @Override
@@ -609,19 +549,12 @@ public class BlockCable extends BlockBase implements ICustomBoundingBox, IMetaPr
         if (!(te instanceof ISEGenericCable))
             return ItemStack.EMPTY;
 
-        ISEGenericCable cable = (ISEGenericCable) te;
+        ISECoverPanelHost host = (ISECoverPanelHost) te;
+        Direction side = host.getSelectedCoverPanel(player);
 
-        BlockRayTraceResult trace = this.rayTrace(world, pos, player);
-        if (!trace.getPos().equals(pos))
-        	super.getPickBlock(state, target, world, pos, player);
-
-        if (trace.subHit > 6 && trace.subHit < 13) {
-            Direction side = Direction.byIndex(trace.subHit - 7);
-            ISECoverPanel coverPanel = cable.getCoverPanelOnSide(side);
-            return coverPanel.getDroppedItemStack();
-        } else {
-            return super.getPickBlock(state, target, world, pos, player);
-        }
+        return side==null ? 
+        		super.getPickBlock(state, target, world, pos, player) :
+        		host.getCoverPanelOnSide(side).getDroppedItemStack();
     }
 
     ///////////////////////

@@ -18,6 +18,9 @@ import net.minecraft.world.World;
 import rikka.librikka.IMetaProvider;
 import rikka.librikka.ITileMeta;
 import rikka.librikka.Utils;
+import simelectricity.essential.api.ISECoverPanelHost;
+import simelectricity.essential.api.coverpanel.ISECoverPanel;
+import simelectricity.essential.common.CoverPanelUtils;
 import simelectricity.essential.common.semachine.SEMachineBlock;
 import simelectricity.essential.common.semachine.SESinglePortMachine;
 import simelectricity.essential.machines.tile.*;
@@ -105,13 +108,22 @@ public abstract class BlockElectronics extends SEMachineBlock implements IMetaPr
 
     @Override
     public ActionResultType onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult rtResult) {
-        if (player.isCrouching())
-            return ActionResultType.PASS;
-
+    	if (CoverPanelUtils.installCoverPanel(state, world, pos, player, hand, rtResult) == ActionResultType.SUCCESS)
+    		return ActionResultType.SUCCESS;
+  
+    	TileEntity te = world.getTileEntity(pos);
+    	if (te instanceof ISECoverPanelHost) {
+    		ISECoverPanel coverPanel = ((ISECoverPanelHost) te).getCoverPanelOnSide(rtResult.getFace());
+    		if (coverPanel != null && !coverPanel.isHollow())
+                return ActionResultType.PASS; 
+    	}
+    	
+    	if (player.isCrouching())
+            return ActionResultType.PASS;        
+        
         if (meta == Type.incandescent_lamp)
             return ActionResultType.PASS;    //Incandescent Lamp doesn't have an Gui!
 
-        TileEntity te = world.getTileEntity(pos);
         if (te instanceof INamedContainerProvider) {
         	player.openContainer((INamedContainerProvider) te);
         	return ActionResultType.SUCCESS;

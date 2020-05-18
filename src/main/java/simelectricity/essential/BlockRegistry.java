@@ -73,7 +73,9 @@ public class BlockRegistry {
     	registerBlocks(registry, isItemBlock, distributionTransformer);
     	
     	registerBlocks(registry, isItemBlock, blockElectronics);
+    	SEEAPI.coverPanelRegistry.registerColoredFacadeHost(blockElectronics);
     	registerBlocks(registry, isItemBlock, blockTwoPortElectronics);
+    	SEEAPI.coverPanelRegistry.registerColoredFacadeHost(blockTwoPortElectronics);
     }
 
     public static void registerTileEntities(final IForgeRegistry<TileEntityType<?>> registry) {    	

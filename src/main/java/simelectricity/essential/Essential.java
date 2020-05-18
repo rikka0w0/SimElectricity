@@ -25,7 +25,6 @@ import simelectricity.essential.utils.network.MessageContainerSync;
 public class Essential {
     public static final String MODID = "sime_essential";
 
-    @Deprecated
     public static CommonProxy proxy = DistExecutor.runForDist(()->()->new ClientProxy(), ()->()->new CommonProxy());
 
     public static Essential instance;

@@ -2,6 +2,7 @@ package simelectricity.essential;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Predicate;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -205,29 +206,29 @@ public class ClientRegistrationHandler {
 
     	ClientRegistrationHandler.registerTileEntityRenders();
 		
+    	Predicate<RenderType> multiLayer = (layer) -> {
+    		return layer==RenderType.getSolid() || 
+    				layer==RenderType.getCutout()|| 
+    				layer==RenderType.getCutoutMipped();
+    	};
+    	
 		// Was Block::getBlockLayer
 		for (SEMachineBlock sem: BlockRegistry.blockElectronics) {
-			RenderTypeLookup.setRenderLayer(sem, RenderType.getCutoutMipped());
+			RenderTypeLookup.setRenderLayer(sem, multiLayer);
 		}
 		for (SEMachineBlock sem: BlockRegistry.blockTwoPortElectronics) {
-			RenderTypeLookup.setRenderLayer(sem, RenderType.getCutoutMipped());
+			RenderTypeLookup.setRenderLayer(sem, multiLayer);
 		}
 		
 		for (BlockCable cable: BlockRegistry.blockCable) {
-			RenderTypeLookup.setRenderLayer(cable, (layer)-> {
-				return layer==RenderType.getSolid() || layer==RenderType.getCutoutMipped();
-			}
-			);
+			RenderTypeLookup.setRenderLayer(cable, multiLayer);
 			
 			cable.getStateContainer().getValidStates().forEach((blockstate) ->
 				dynamicModels.put(blockstate, new CableModel(cable))
 			);
 		}
 		for (BlockWire wire: BlockRegistry.blockWire) {
-			RenderTypeLookup.setRenderLayer(wire, (layer)-> {
-				return layer==RenderType.getSolid();
-			}
-			);
+			RenderTypeLookup.setRenderLayer(wire, RenderType.getSolid());
 			
 			wire.getStateContainer().getValidStates().forEach((blockstate) ->
 				dynamicModels.put(blockstate, new WireModel(wire))

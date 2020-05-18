@@ -5,7 +5,6 @@ import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.util.Direction;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.model.data.ModelDataMap;
 import rikka.librikka.Utils;
 import simelectricity.api.ISEWrenchable;
 import simelectricity.api.ISESidedFacing;
@@ -13,9 +12,9 @@ import simelectricity.api.SEAPI;
 import simelectricity.api.components.ISEComponentParameter;
 import simelectricity.api.node.ISESubComponent;
 import simelectricity.api.tile.ISETile;
-import simelectricity.essential.common.SEEnergyTile;
 
-public abstract class SESinglePortMachine<T extends ISEComponentParameter> extends SEEnergyTile implements ISESidedFacing, ISEWrenchable, ISETile, ISEComponentParameter {
+public abstract class SESinglePortMachine<T extends ISEComponentParameter> extends SEMachineTile implements 
+		ISESidedFacing, ISEWrenchable, ISETile, ISEComponentParameter {
     protected Direction functionalSide = Direction.SOUTH;
     protected final ISESubComponent circuit = SEAPI.energyNetAgent.newComponent(this, this);
     protected final T cachedParam = (T) circuit;
@@ -26,7 +25,6 @@ public abstract class SESinglePortMachine<T extends ISEComponentParameter> exten
     @Override
     public void read(CompoundNBT tagCompound) {
         super.read(tagCompound);
-
         this.functionalSide = Utils.facingFromNbt(tagCompound, "functionalSide");
     }
 
@@ -74,7 +72,6 @@ public abstract class SESinglePortMachine<T extends ISEComponentParameter> exten
     @Override
     public void prepareS2CPacketData(CompoundNBT nbt) {
         super.prepareS2CPacketData(nbt);
-
         Utils.saveToNbt(nbt, "functionalSide", this.functionalSide);
     }
 
@@ -82,10 +79,6 @@ public abstract class SESinglePortMachine<T extends ISEComponentParameter> exten
     @Override
     public void onSyncDataFromServerArrived(CompoundNBT nbt) {
         this.functionalSide = Utils.facingFromNbt(nbt, "functionalSide");
-
-        // Flag 1 - update Rendering Only!
-        this.markForRenderUpdate();
-
         super.onSyncDataFromServerArrived(nbt);
     }
 
@@ -108,9 +101,5 @@ public abstract class SESinglePortMachine<T extends ISEComponentParameter> exten
 
         if (isAddedToEnergyNet)
             SEAPI.energyNetAgent.updateTileConnection(this);
-    }
-    
-    protected void collectModelData(ModelDataMap.Builder builder) {
-    	builder.withInitial(ISESocketProvider.prop, (ISESocketProvider) this);
     }
 }

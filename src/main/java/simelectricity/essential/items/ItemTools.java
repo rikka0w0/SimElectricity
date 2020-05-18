@@ -83,17 +83,24 @@ public final class ItemTools extends ItemBase implements IMetaProvider<IMetaBase
     	
     	
         if (te instanceof ISECoverPanelHost) {
-            ISECoverPanel coverPanel = ((ISECoverPanelHost) te).getSelectedCoverPanel(player);
+            Direction coverPanelSide = ((ISECoverPanelHost) te).getSelectedCoverPanel(player);
 
-            if (coverPanel == null)
+            if (coverPanelSide == null)
                 return ActionResultType.FAIL;
 
-            if (te.getWorld().isRemote) {
-                return ActionResultType.PASS;
-            } else {
-                boolean ret = ((ISECoverPanelHost) te).removeCoverPanel(coverPanel, !player.isCreative());
-                return ret ? ActionResultType.PASS : ActionResultType.FAIL;
+            ISECoverPanelHost host = (ISECoverPanelHost) te;
+            if (host.removeCoverPanel(coverPanelSide, true)) {
+            	ISECoverPanel coverPanel = ((ISECoverPanelHost) te).getCoverPanelOnSide(side);
+            	
+            	if (!te.getWorld().isRemote())
+                	host.removeCoverPanel(coverPanelSide, false);
+            	
+                if (!player.isCreative()) {
+                	Utils.dropItemIntoWorld(te.getWorld(), te.getPos(), coverPanel.getDroppedItemStack());
+                }
+                return ActionResultType.SUCCESS;
             }
+            return ActionResultType.FAIL;
         } else if (te instanceof ISECrowbarTarget) {
             ISECrowbarTarget crowbarTarget = (ISECrowbarTarget) te;
 

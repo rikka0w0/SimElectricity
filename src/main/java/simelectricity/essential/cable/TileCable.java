@@ -3,24 +3,21 @@ package simelectricity.essential.cable;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.model.data.ModelDataMap;
-import net.minecraftforge.common.util.Constants.NBT;
-import rikka.librikka.Utils;
 import simelectricity.api.ISEEnergyNetUpdateHandler;
 import simelectricity.api.SEAPI;
 import simelectricity.api.node.ISESimulatable;
 import simelectricity.api.tile.ISECableTile;
 import simelectricity.essential.api.ISEGenericCable;
 import simelectricity.essential.api.ISEIuminousCoverPanelHost;
-import simelectricity.essential.api.SEEAPI;
 import simelectricity.essential.api.coverpanel.*;
+import simelectricity.essential.common.CoverPanelUtils;
 import simelectricity.essential.common.SEEnergyTile;
 
 public class TileCable extends SEEnergyTile implements ISEGenericCable, ISEIuminousCoverPanelHost, ISECableTile, ISEEnergyNetUpdateHandler {
@@ -39,37 +36,6 @@ public class TileCable extends SEEnergyTile implements ISEGenericCable, ISEIumin
     ////////////////////////////////////////
     //Private functions
     ////////////////////////////////////////
-    private ListNBT coverPanelsToNBT() {
-        ListNBT tagList = new ListNBT();
-        for (int i = 0; i < this.installedCoverPanels.length; i++) {
-            ISECoverPanel coverPanel = this.installedCoverPanels[i];
-            if (coverPanel != null) {
-                CompoundNBT tag = new CompoundNBT();
-                tag.putInt("side", i);
-                SEEAPI.coverPanelRegistry.saveToNBT(coverPanel, tag);
-                tagList.add(tag);
-            }
-        }
-        return tagList;
-    }
-
-    private void coverPanelsFromNBT(ListNBT tagList) {
-        for (int i = 0; i < 6; i++)
-			this.installedCoverPanels[i] = null;
-
-        for (int i = 0; i < tagList.size(); i++) {
-            CompoundNBT tag = tagList.getCompound(i);
-            int side = tag.getInt("side");
-            if (side > -1 && side < this.installedCoverPanels.length) {
-                ISECoverPanel coverPanel = SEEAPI.coverPanelRegistry.fromNBT(tag);
-				this.installedCoverPanels[side] = coverPanel;
-
-                if (coverPanel != null)
-                    coverPanel.setHost(this, Direction.byIndex(side));
-            }
-        }
-    }
-
     public void setResistanceOnPlace(double resistance) {
         this.resistance = resistance;
     }
@@ -95,16 +61,17 @@ public class TileCable extends SEEnergyTile implements ISEGenericCable, ISEIumin
     }
 
     @Override
-    public ISECoverPanel getSelectedCoverPanel(PlayerEntity player) {
+    public Direction getSelectedCoverPanel(PlayerEntity player) {
         Block block = this.getBlockType();
         if (block instanceof BlockCable) {
-            RayTraceResult result = ((BlockCable) block).rayTrace(this.world, this.pos, player);
-
+            BlockRayTraceResult result = ((BlockCable) block).rayTrace(this.world, this.pos, player);
+            if (result.getPos() != this.getPos())
+            	return null;	// The player is looking at somewhere else ???
+            
             if (result.subHit < 7 || result.subHit > 12)
                 return null;    //The player is not looking at any installed cover panel
 
-            Direction side = Direction.byIndex(result.subHit - 7);
-            return this.installedCoverPanels[side.ordinal()];
+            return Direction.byIndex(result.subHit - 7);
         }
         return null;
     }
@@ -115,12 +82,13 @@ public class TileCable extends SEEnergyTile implements ISEGenericCable, ISEIumin
     }
 
     @Override
-    public boolean canInstallCoverPanelOnSide(Direction side, ISECoverPanel coverPanel) {
-        return this.installedCoverPanels[side.ordinal()] == null;
-    }
-
-    @Override
-    public void installCoverPanel(Direction side, ISECoverPanel coverPanel) {
+    public boolean installCoverPanel(Direction side, ISECoverPanel coverPanel, boolean simulated) {
+    	if (this.installedCoverPanels[side.ordinal()] != null)
+    		return false;
+    	
+    	if (simulated)
+    		return true;
+    	
 		this.installedCoverPanels[side.ordinal()] = coverPanel;
         coverPanel.setHost(this, side);
 
@@ -139,24 +107,20 @@ public class TileCable extends SEEnergyTile implements ISEGenericCable, ISEIumin
         world.notifyNeighborsOfStateChange(pos, getBlockType());
 
 		this.onRenderingUpdateRequested();
+		
+		return true;
     }
 
     @Override
-    public boolean removeCoverPanel(ISECoverPanel coverPanel, boolean dropItem) {
-        if (coverPanel == null)
+    public boolean removeCoverPanel(Direction side, boolean simulated) {
+        if (side == null || this.installedCoverPanels[side.ordinal()] == null)
             return false;
-
-        //Look for that panel and remove it
-        Direction side = null;
-        for (Direction facing : Direction.values()) {
-            if (this.installedCoverPanels[facing.ordinal()] == coverPanel)
-                side = facing;
-        }
-
-        if (side == null)
-            return false;
+        
+        if (simulated)
+        	return true;
 
         //Remove the panel
+        ISECoverPanel coverPanel = this.installedCoverPanels[side.ordinal()];
 		this.installedCoverPanels[side.ordinal()] = null;
 
         if (coverPanel instanceof ISEElectricalLoadCoverPanel || !coverPanel.isHollow())
@@ -167,10 +131,6 @@ public class TileCable extends SEEnergyTile implements ISEGenericCable, ISEIumin
 		this.onRenderingUpdateRequested();
 
         world.notifyNeighborsOfStateChange(pos, getBlockType());
-
-        //Spawn an item entity for player to pick up
-        if (dropItem)
-            Utils.dropItemIntoWorld(this.world, this.pos, coverPanel.getDroppedItemStack());
 
         return true;
     }
@@ -192,14 +152,14 @@ public class TileCable extends SEEnergyTile implements ISEGenericCable, ISEIumin
 
 		this.color = tagCompound.getInt("color");
 		this.resistance = tagCompound.getDouble("resistance");
-		this.coverPanelsFromNBT(tagCompound.getList("coverPanels", NBT.TAG_COMPOUND));
+		CoverPanelUtils.coverPanelsFromNBT(this, tagCompound, this.installedCoverPanels);
     }
 
     @Override
     public CompoundNBT write(CompoundNBT tagCompound) {
         tagCompound.putInt("color", this.color);
         tagCompound.putDouble("resistance", this.resistance);
-        tagCompound.put("coverPanels", this.coverPanelsToNBT());
+        CoverPanelUtils.coverPanelsToNBT(this, tagCompound);
 
         return super.write(tagCompound);
     }
@@ -280,7 +240,7 @@ public class TileCable extends SEEnergyTile implements ISEGenericCable, ISEIumin
         nbt.putByte("connections", bc);
         nbt.putInt("color", color);
 
-        nbt.put("coverPanels", this.coverPanelsToNBT());
+        CoverPanelUtils.coverPanelsToNBT(this, nbt);
 
         nbt.putByte("lightLevel", this.lightLevel);
     }
@@ -298,7 +258,7 @@ public class TileCable extends SEEnergyTile implements ISEGenericCable, ISEIumin
 		connections[5] = (connectionsBinary & 32) > 0;
 		this.color = nbt.getInt("color");
 
-		this.coverPanelsFromNBT(nbt.getList("coverPanels", NBT.TAG_COMPOUND));
+		CoverPanelUtils.coverPanelsFromNBT(this, nbt, this.installedCoverPanels);
 
         byte lightLevel = nbt.getByte("lightLevel");
         if (this.lightLevel != lightLevel) {
@@ -351,6 +311,6 @@ public class TileCable extends SEEnergyTile implements ISEGenericCable, ISEIumin
     
     @Override
     protected void collectModelData(ModelDataMap.Builder builder) {
-    	builder.withInitial(prop, this);
+    	builder.withInitial(ISEGenericCable.prop, this);
     }
 }

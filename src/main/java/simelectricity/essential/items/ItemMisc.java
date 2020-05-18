@@ -68,6 +68,10 @@ public final class ItemMisc extends ItemBase implements IMetaProvider<IMetaBase>
 	public ActionResultType onItemUse(ItemUseContext context) {
 		if (this.itemType != ItemType.facade && this.itemType != ItemType.facade_hollow)
 			return super.onItemUse(context);
+			
+		if (!context.getPlayer().isCrouching())
+			return ActionResultType.FAIL;
+		
 		BlockState blockstate = context.getWorld().getBlockState(context.getPos());
 		
 		if (!blockstate.isSolid())
