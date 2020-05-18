@@ -56,7 +56,7 @@ public class CoverPanelUtils {
     	for (Direction side: Direction.values()) {
             CompoundNBT tag = tagList.getCompound(side.ordinal());
             int sideId = tag.getInt("side");
-            if (sideId > -1 && sideId < Direction.values().length) {
+            if (tag.contains("side") && sideId > -1 && sideId < Direction.values().length) {
                 ISECoverPanel coverPanel = SEEAPI.coverPanelRegistry.fromNBT(tag);
                 ret[sideId] = coverPanel;
 
@@ -123,19 +123,29 @@ public class CoverPanelUtils {
         	// Center, remove all cover panels and drop items
 			for (Direction side2 : Direction.values()) {
 				ISECoverPanel coverPanel = host.getCoverPanelOnSide(side2);
-				if (host.removeCoverPanel(side2, false) && !player.isCreative())
+				if (host.removeCoverPanel(side2, true)) {
+					if (!world.isRemote)
+						host.removeCoverPanel(side2, false);
+					
 			        //Spawn an item entity for player to pick up
-			        Utils.dropItemIntoWorld(world, pos, coverPanel.getDroppedItemStack());
+					if(!player.isCreative())
+						Utils.dropItemIntoWorld(world, pos, coverPanel.getDroppedItemStack());
+				}
 			}
 			
 			return false;
         } else {
         	// CoverPanel
         	ISECoverPanel coverPanel = host.getCoverPanelOnSide(side);
-			if (host.removeCoverPanel(side, false) && !player.isCreative())
+			if (host.removeCoverPanel(side, true)) {
+				if (!world.isRemote)
+					host.removeCoverPanel(side, false);
+				
 		        //Spawn an item entity for player to pick up
-		        Utils.dropItemIntoWorld(world, pos, coverPanel.getDroppedItemStack());
-			
+				if(!player.isCreative())
+					Utils.dropItemIntoWorld(world, pos, coverPanel.getDroppedItemStack());
+			}
+
 			return true;
         }
     }
