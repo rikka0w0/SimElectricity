@@ -8,6 +8,7 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import rikka.librikka.Utils;
@@ -92,7 +93,7 @@ public class VoltageSensorPanel implements ISEElectricalCoverPanel, ISERedstoneE
 
 	@Override
 	public ITextComponent getDisplayName() {
-		return ItemRegistry.itemMisc[ItemMisc.ItemType.voltagesensor.ordinal()].getName();
+		return new TranslationTextComponent(ItemRegistry.itemMisc[ItemMisc.ItemType.voltagesensor.ordinal()].getTranslationKey());
 	}
 
     /////////////////////////

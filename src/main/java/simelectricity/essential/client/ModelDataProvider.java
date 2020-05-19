@@ -68,10 +68,10 @@ public final class ModelDataProvider extends BlockStateProvider implements ISimp
 
 		
 		// Items
-		registerSimpleItems(ItemRegistry.itemHVCable);
+		registerSimpleItem(ItemRegistry.itemHVCable);
 		registerSimpleItem(ItemRegistry.itemFutaTea);
-		registerSimpleItems(ItemRegistry.itemMisc);
-		registerSimpleItems(ItemRegistry.itemTools);
+		registerSimpleItem(ItemRegistry.itemMisc);
+		registerSimpleItem(ItemRegistry.itemTools);
 	}
 	/**
 	 * Both the block model and item model are dynamic
