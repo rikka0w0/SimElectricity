@@ -6,15 +6,22 @@ install: true
 script:
  - ./gradlew runData || true
  - ./gradlew build
+ - cd librikka
+ - ./gradlew build
 addons:
   artifacts:
     s3_region: "ap-northeast-1"
     paths:
       - $(ls build/libs/* | tr "\n" ":")
+      - $(ls librikka/build/libs/* | tr "\n" ":")
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
   - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+  - rm -f  $HOME/librikka/.gradle/caches/modules-2/modules-2.lock
+  - rm -fr $HOME/librikka/.gradle/caches/*/plugin-resolution/
 cache:
   directories:
     - $HOME/.gradle/caches/
     - $HOME/.gradle/wrapper/
+    - $HOME/librikka/.gradle/caches/
+    - $HOME/librikka/.gradle/wrapper/
