@@ -7,8 +7,9 @@ install: true
 script:
  - ./gradlew runData || true
  - ./gradlew build
- - cd librikka
+ - pushd librikka
  - ./gradlew build
+ - popd
 addons:
   artifacts:
     s3_region: "ap-northeast-1"
