@@ -78,23 +78,12 @@ public final class SEMachineModel implements IDynamicBakedModel {
 	@Override
 	public List<BakedQuad> getQuads(BlockState state, Direction side, Random rand, IModelData extraData) {
 		RenderType layer = MinecraftForgeClient.getRenderLayer();
-    	if (layer == RenderType.getSolid())
-    		return this.bakedModel.getQuads(state, side, rand, extraData);
-    	// Only render the machine body in the solid layer
+		List<BakedQuad> quads = new LinkedList<>();
 		
-		// Create a copy of the original quads
-		List<BakedQuad> quads = new LinkedList<>(this.bakedModel.getQuads(state, side, rand, extraData));
-    	
-		// Render the sockets in the cutout layer
-		if (side == null && layer == RenderType.getCutout()) {
-    		ISESocketProvider sp = extraData.getData(ISESocketProvider.prop);
-    		if (sp != null)
-    			SocketRender.getBaked(quads, sp);
-    	}
-		
+		boolean hideMachineFace = false;
 		// Render facade cover panel, if possible
 		ISECoverPanelHost host = extraData.getData(ISECoverPanelHost.prop);
-		if (host != null && side != null) {
+		if (host != null && side != null && layer != RenderType.getSolid()) {
     		ISECoverPanel coverPanel = host.getCoverPanelOnSide(side);
     		if (coverPanel instanceof ISEFacadeCoverPanel) {
     			BlockState blockState = ((ISEFacadeCoverPanel) coverPanel).getBlockState();   			   			
@@ -103,10 +92,10 @@ public final class SEMachineModel implements IDynamicBakedModel {
     			List<MutableQuad> mquads = new LinkedList<>();
     			mquads.addAll(GenericFacadeRender.getTransformedQuads(
     	                blockState, model, side, rand, 
-    	                new Vec3d(0 / 16D, 16 / 16D, -0.0001D),
-    	                new Vec3d(16 / 16D, 16 / 16D, -0.0001D),
-    	                new Vec3d(16 / 16D, 0 / 16D, -0.0001D),
-    	                new Vec3d(0 / 16D, 0 / 16D, -0.0001D)
+    	                new Vec3d(0 / 16D, 16 / 16D, 0D),
+    	                new Vec3d(16 / 16D, 16 / 16D, 0D),
+    	                new Vec3d(16 / 16D, 0 / 16D, 0D),
+    	                new Vec3d(0 / 16D, 0 / 16D, 0D)
     	        ));
     			
     			for (MutableQuad mquad : mquads) {
@@ -115,10 +104,26 @@ public final class SEMachineModel implements IDynamicBakedModel {
     	            	mquad.setTint(GenericFacadeRender.tintFunc(side, tint));
     	            }
     	            quads.add(mquad.toBakedItem());
-    	        }    	        	
+    	        }
+    			
+    			hideMachineFace = true;
     		}
 		}
+
+    	if (layer == RenderType.getSolid() && !hideMachineFace)
+    		return this.bakedModel.getQuads(state, side, rand, extraData);
+    	// Only render the machine body in the solid layer
 		
+		// Create a copy of the original quads
+		this.bakedModel.getQuads(state, side, rand, extraData);
+    	
+		// Render the sockets in the cutout layer
+		if (side == null && layer == RenderType.getCutout()) {
+    		ISESocketProvider sp = extraData.getData(ISESocketProvider.prop);
+    		if (sp != null)
+    			SocketRender.getBaked(quads, sp);
+    	}
+
     	return quads;
 	}
 	

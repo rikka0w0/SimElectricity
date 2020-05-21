@@ -5,6 +5,7 @@ import java.util.function.Supplier;
 
 import javax.annotation.Nullable;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.Item;
@@ -13,6 +14,9 @@ import net.minecraft.item.ItemUseContext;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Direction;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
@@ -72,9 +76,12 @@ public final class ItemMisc extends ItemBase implements IMetaProvider<IMetaBase>
 		if (!context.getPlayer().isCrouching())
 			return ActionResultType.FAIL;
 		
-		BlockState blockstate = context.getWorld().getBlockState(context.getPos());
-		
-		if (!blockstate.isSolid())
+		World world = context.getWorld();
+		BlockPos pos = context.getPos();
+		Direction side = context.getFace();
+		BlockState blockstate = world.getBlockState(pos);
+		VoxelShape shape = blockstate.getShape(world, pos);
+		if (!Block.doesSideFillSquare(shape, side))
 			return super.onItemUse(context);
 		
 		CompoundNBT bsNBT = NBTUtil.writeBlockState(blockstate);
