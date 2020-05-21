@@ -1,6 +1,7 @@
 language: java
 before_install:
  - chmod +x gradlew
+ - chmod +x librikka/gradlew
  - git submodule update --init --remote --recursive
 install: true
 script:

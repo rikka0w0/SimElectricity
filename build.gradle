@@ -84,10 +84,10 @@ minecraft {
             workingDirectory project.file('run')
 
             // Recommended logging data for a userdev environment
-            property 'forge.logging.markers', 'SCAN,REGISTRIES'
+            // property 'forge.logging.markers', 'SCAN,REGISTRIES'
 
             // Recommended logging level for the console
-            property 'forge.logging.console.level', 'debug'
+            // property 'forge.logging.console.level', 'debug'
 
             args '--mod', 'sime_essential', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
 
