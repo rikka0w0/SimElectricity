@@ -4,11 +4,14 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
+import rikka.librikka.ForgeConfigHelper;
+
 import org.apache.commons.lang3.tuple.Pair;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
 import simelectricity.SimElectricity;
 import simelectricity.energynet.EnergyNetSimulator;
+import simelectricity.essential.Essential;
 
 @Mod.EventBusSubscriber(modid = SimElectricity.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ConfigManager {
@@ -20,6 +23,7 @@ public class ConfigManager {
     public static ForgeConfigSpec.IntValue precision_Spec;
     public static ForgeConfigSpec.IntValue maxIteration_Spec;
     public static ForgeConfigSpec.IntValue shuntPN_Spec;
+    public static ForgeConfigSpec.DoubleValue joule2rf;
 
     public static boolean showDebugOutput;
     public static boolean showEnergyNetInfo;
@@ -48,10 +52,6 @@ public class ConfigManager {
         shuntPN = shuntPN_Spec.get();
 
         EnergyNetSimulator.config();
-
-//        for (ISEConfigHandler handler: handlers) {
-//            handler.onConfigChanged(isClient);
-//        }
     }
 
     @SubscribeEvent
@@ -62,42 +62,17 @@ public class ConfigManager {
         }
     }
 
-    public static BooleanValue buildBoolean(ForgeConfigSpec.Builder builder, String modID, String key, boolean defaultVal, String comment) {
-        return builder
-                .comment(comment + "\r\nDefault: "+ defaultVal)
-                .translation(modID + ".config." + key.toLowerCase().replace(' ', '_'))
-                .define(key, defaultVal);
-    }
-
-    public static ForgeConfigSpec.IntValue buildInt(ForgeConfigSpec.Builder builder, String modID, String key, int defaultVal, String comment) {
-        return buildInt(builder, modID, key, defaultVal, Integer.MIN_VALUE, Integer.MAX_VALUE, comment);
-    }
-
-    public static ForgeConfigSpec.IntValue buildInt(ForgeConfigSpec.Builder builder, String modID, String key, int defaultVal, int min, int max, String comment) {
-        return builder
-                .comment(comment + "\r\nDefault: "+ defaultVal)
-                .translation(modID + ".config." + key.toLowerCase().replace(' ', '_'))
-                .defineInRange(key, defaultVal, min, max);
-    }
-
-    public static ForgeConfigSpec.ConfigValue<String> buildString(ForgeConfigSpec.Builder builder, String modID, String key, String defaultVal, String comment) {
-        return builder
-                .comment(comment + "\r\nDefault: "+ defaultVal)
-                .translation(modID + ".config." + key.toLowerCase().replace(' ', '_'))
-                .define(key, defaultVal);
-    }
-
     private ConfigManager(ForgeConfigSpec.Builder builder) {
-
         builder.push(CATEGORY_ENERGYNET);
 
-        showDebugOutput_Spec = buildBoolean(builder, SimElectricity.MODID, "Enable Debug Output", false, "Display debug information in the console, e.g. S->C sync notifications");
-        showEnergyNetInfo_Spec = buildBoolean(builder, SimElectricity.MODID,"Show EnergyNet Info", false, "Display EnergyNet information in the console, e.g. tile attached/deteched/changed event");
-        matrixSolver_Spec = buildString(builder, SimElectricity.MODID,"Matrix Solver", "QR", "The preferred matrix solving algorithm (QR is much more effective than Gaussian.). Options: QR, Gaussian. Warning: CASE SENSITIVE!");
-        precision_Spec = buildInt(builder, SimElectricity.MODID, "Precision", 3, "3 means that the result is accurate up to 3 decimal places");
-        maxIteration_Spec = buildInt(builder, SimElectricity.MODID, "Max iteration", 50, "To aviod infinite loop, the simualtor aborts the simulation when this threshold is reached");
-        shuntPN_Spec = buildInt(builder, SimElectricity.MODID, "RPN", 1000000000, "The resistance put in parallel with every PN junction, alleviate convergence issue");//
-
+        showDebugOutput_Spec = ForgeConfigHelper.boolVal(builder, SimElectricity.MODID, "Enable Debug Output", false, "Display debug information in the console, e.g. S->C sync notifications");
+        showEnergyNetInfo_Spec = ForgeConfigHelper.boolVal(builder, SimElectricity.MODID,"Show EnergyNet Info", false, "Display EnergyNet information in the console, e.g. tile attached/deteched/changed event");
+        matrixSolver_Spec = ForgeConfigHelper.stringVal(builder, SimElectricity.MODID,"Matrix Solver", "QR", "The preferred matrix solving algorithm (QR is much more effective than Gaussian.). Options: QR, Gaussian. Warning: CASE SENSITIVE!");
+        precision_Spec = ForgeConfigHelper.intVal(builder, SimElectricity.MODID, "Precision", 3, "3 means that the result is accurate up to 3 decimal places");
+        maxIteration_Spec = ForgeConfigHelper.intVal(builder, SimElectricity.MODID, "Max iteration", 50, "To aviod infinite loop, the simualtor aborts the simulation when this threshold is reached");
+        shuntPN_Spec = ForgeConfigHelper.intVal(builder, SimElectricity.MODID, "RPN", 1000000000, "The resistance put in parallel with every PN junction, alleviate convergence issue");//
+        joule2rf = ForgeConfigHelper.doubleVal(builder, Essential.MODID, "Joule to RF conversion ratio", 1, 0, Double.MAX_VALUE, "This number determines how many RF equal to 1 Joule");
+        
         builder.pop();
     }
 }

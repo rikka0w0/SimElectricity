@@ -17,7 +17,6 @@ import rikka.librikka.tileentity.INamedContainerProvider2;
 import simelectricity.api.ISEEnergyNetUpdateHandler;
 import simelectricity.api.SEAPI;
 import simelectricity.api.components.ISEConstantPowerSource;
-import simelectricity.essential.ConfigProvider;
 import simelectricity.essential.common.semachine.SESinglePortMachine;
 import simelectricity.essential.machines.gui.ContainerRF2SE;
 
@@ -53,7 +52,7 @@ public class TileRF2SE extends SESinglePortMachine<ISEConstantPowerSource> imple
         boolean paramChanged = false;
 
         if (((ISEConstantPowerSource) this.circuit).isOn()) {
-            double ouputPowerSetPoint = this.actualInputPower * 20.0 / ConfigProvider.joule2rf;  // J per Sec
+            double ouputPowerSetPoint = this.actualInputPower * 20.0 / SEAPI.energyNetAgent.joule2rf();  // J per Sec
             if (ouputPowerSetPoint < 1) {
                 ouputPowerSetPoint = 1;
             }
@@ -63,7 +62,7 @@ public class TileRF2SE extends SESinglePortMachine<ISEConstantPowerSource> imple
                 paramChanged = true;
             }
 
-            double RFConsumed = actualOutputPower / 20.0 * ConfigProvider.joule2rf;
+            double RFConsumed = actualOutputPower / 20.0 * SEAPI.energyNetAgent.joule2rf();
             if (RFConsumed < 1.0)
                 RFConsumed = 1.0;
             bufferedEnergy -= MathHelper.floor(RFConsumed);
@@ -148,7 +147,7 @@ public class TileRF2SE extends SESinglePortMachine<ISEConstantPowerSource> imple
                 return 0;   // Buffer is full
 
             // Min (Available space in the buffer, maximum input RF per tick, maximum available RF in this tick
-            int energyReceived = Math.min((int)(owner.ratedOutputPower / 20.0 * ConfigProvider.joule2rf), maxReceive);
+            int energyReceived = Math.min((int)(owner.ratedOutputPower / 20.0 * SEAPI.energyNetAgent.joule2rf()), maxReceive);
             if (!simulate) {
                 owner.bufferedEnergy += energyReceived;
                 owner.actualInputPower += energyReceived;

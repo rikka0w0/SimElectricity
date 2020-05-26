@@ -17,6 +17,7 @@ import net.minecraftforge.fml.network.simple.SimpleChannel;
 import net.minecraftforge.registries.IForgeRegistry;
 import simelectricity.essential.api.ISEChunkWatchSensitiveTile;
 import simelectricity.essential.api.SEEAPI;
+import simelectricity.essential.client.ClientConfigs;
 import simelectricity.essential.coverpanel.CoverPanelRegistry;
 import simelectricity.essential.coverpanel.SECoverPanelFactory;
 import simelectricity.essential.utils.network.MessageContainerSync;
@@ -38,7 +39,7 @@ public class Essential {
         else
             throw new RuntimeException("Duplicated Class Instantiation: simelectricity.essential.Essential");
     	
-    	ConfigProvider.register();
+    	ClientConfigs.register();
     }
     
     @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD)

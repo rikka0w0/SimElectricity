@@ -18,7 +18,6 @@ import rikka.librikka.tileentity.INamedContainerProvider2;
 import simelectricity.api.ISEEnergyNetUpdateHandler;
 import simelectricity.api.SEAPI;
 import simelectricity.api.components.ISEConstantPowerLoad;
-import simelectricity.essential.ConfigProvider;
 import simelectricity.essential.common.semachine.SESinglePortMachine;
 import simelectricity.essential.machines.gui.ContainerSE2RF;
 
@@ -76,13 +75,13 @@ public class TileSE2RF extends SESinglePortMachine<ISEConstantPowerLoad> impleme
         
         boolean paramChanged = false;
         
-        int offeredAmount = (int)(ratedOutputPower / 20 * ConfigProvider.joule2rf);	// Energy per tick, RF
+        int offeredAmount = (int)(ratedOutputPower / 20 * SEAPI.energyNetAgent.joule2rf());	// Energy per tick, RF
         int rfDemand = calcRFPowerDemand(offeredAmount, getFacing());	// Energy per tick, RF
         this.rfDemandRateDisplay = rfDemand;
         if (((ISEConstantPowerLoad) circuit).isOn()) {
         	this.bufferedEnergy += actualInputPower / 20;	// Energy per tick, J
         	
-        	double ouputPowerSetPoint = rfDemand * 20 / ConfigProvider.joule2rf;
+        	double ouputPowerSetPoint = rfDemand * 20 / SEAPI.energyNetAgent.joule2rf();
 	        if (ouputPowerSetPoint < 1) {
 	        	ouputPowerSetPoint = 1;
 	        }
@@ -92,10 +91,10 @@ public class TileSE2RF extends SESinglePortMachine<ISEConstantPowerLoad> impleme
 	        	paramChanged = true;
 	        }
         	
-            if (this.bufferedEnergy * ConfigProvider.joule2rf > rfDemand) {
+            if (this.bufferedEnergy * SEAPI.energyNetAgent.joule2rf() > rfDemand) {
     	        int rfAccepted = outpurRFPower(offeredAmount, getFacing());	// Energy per tick, RF
         		this.rfOutputRateDisplay = rfAccepted;
-    	        this.bufferedEnergy -= rfAccepted / ConfigProvider.joule2rf;
+    	        this.bufferedEnergy -= rfAccepted / SEAPI.energyNetAgent.joule2rf();
     	        
     	        if (this.bufferedEnergy > this.bufferCapacity) {
     	        	this.enabled = false;
@@ -105,10 +104,10 @@ public class TileSE2RF extends SESinglePortMachine<ISEConstantPowerLoad> impleme
             	this.rfOutputRateDisplay = 0;
             }
         } else {
-        	if (this.bufferedEnergy * ConfigProvider.joule2rf > rfDemand) {
+        	if (this.bufferedEnergy * SEAPI.energyNetAgent.joule2rf() > rfDemand) {
         		int rfAccepted = outpurRFPower(offeredAmount, getFacing());
         		this.rfOutputRateDisplay = rfAccepted;
-        		this.bufferedEnergy -= rfAccepted / ConfigProvider.joule2rf;
+        		this.bufferedEnergy -= rfAccepted / SEAPI.energyNetAgent.joule2rf();
         	} else {
             	this.rfOutputRateDisplay = 0;
             }
@@ -184,20 +183,20 @@ public class TileSE2RF extends SESinglePortMachine<ISEConstantPowerLoad> impleme
             if (!canExtract())
                 return 0;
 
-            int energyExtracted = Math.min(getEnergyStored(), Math.min((int)(owner.ratedOutputPower / 20 * ConfigProvider.joule2rf), maxExtract));
+            int energyExtracted = Math.min(getEnergyStored(), Math.min((int)(owner.ratedOutputPower / 20 * SEAPI.energyNetAgent.joule2rf()), maxExtract));
             if (!simulate)
-            	owner.bufferedEnergy -= energyExtracted / ConfigProvider.joule2rf;
+            	owner.bufferedEnergy -= energyExtracted / SEAPI.energyNetAgent.joule2rf();
             return energyExtracted;
         }
         
 		@Override
 		public int getMaxEnergyStored() {
-			return (int) (bufferCapacity * ConfigProvider.joule2rf);
+			return (int) (bufferCapacity * SEAPI.energyNetAgent.joule2rf());
 		}
 
         @Override
         public int getEnergyStored() {
-            return (int) (owner.bufferedEnergy * ConfigProvider.joule2rf);
+            return (int) (owner.bufferedEnergy * SEAPI.energyNetAgent.joule2rf());
         }
 
         @Override

@@ -33,6 +33,7 @@ import simelectricity.api.tile.ISECableTile;
 import simelectricity.api.tile.ISEGridTile;
 import simelectricity.api.tile.ISETile;
 import simelectricity.api.tile.ISEWireTile;
+import simelectricity.common.ConfigManager;
 import simelectricity.common.SELogger;
 import simelectricity.energynet.GridEvent.*;
 import simelectricity.energynet.TileEvent.Attach;
@@ -308,4 +309,9 @@ public class EnergyNetAgent implements ISEEnergyNetAgent {
 
         getEnergyNetForWorld(world).addEvent(new BreakTranformer(node));
     }
+
+	@Override
+	public double joule2rf() {
+		return ConfigManager.joule2rf.get();
+	}
 }

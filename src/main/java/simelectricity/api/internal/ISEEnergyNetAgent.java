@@ -135,4 +135,9 @@ public interface ISEEnergyNetAgent {
      * @param node Either primary or secondary grid node
      */
     void breakTransformer(World world, ISEGridNode node);
+    
+    /**
+     * @return How many RF equal to 1 Joule
+     */
+    double joule2rf();
 }
