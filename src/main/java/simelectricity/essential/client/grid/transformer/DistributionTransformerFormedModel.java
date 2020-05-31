@@ -25,7 +25,7 @@ import rikka.librikka.model.quadbuilder.RawQuadGroup;
 import rikka.librikka.multiblock.IMultiBlockTile;
 import rikka.librikka.multiblock.MultiBlockTileInfo;
 import simelectricity.essential.client.ResourcePaths;
-import simelectricity.essential.client.grid.FastTESRPowerPole;
+import simelectricity.essential.client.grid.PowerPoleTER;
 import simelectricity.essential.client.grid.pole.Models;
 import simelectricity.essential.grid.transformer.BlockDistributionTransformer;
 import simelectricity.essential.grid.transformer.EnumDistributionTransformerRenderPart;
@@ -108,11 +108,11 @@ public class DistributionTransformerFormedModel extends CodeBasedModel {
 			insulator = Models.render10kVInsulatorSmall(textureMetal, textureInsulator);
 			//10Kv insulator and cable
 			model.merge(insulator.clone().translateCoord(-0.425F, 0.6F, 0.15F));
-            model.merge(FastTESRPowerPole.renderParabolicCable(new Vec3f(-0.425F,0.85F, 0.15F), new Vec3f(-0.425F,0.85F,2.85F), false, 0.1F, 0.03F));
+            model.merge(PowerPoleTER.renderParabolicCable(new Vec3f(-0.425F,0.85F, 0.15F), new Vec3f(-0.425F,0.85F,2.85F), false, 0.1F, 0.03F));
 			model.merge(insulator.clone().translateCoord(-0.775F, 0.6F, 0.15F));
-            model.merge(FastTESRPowerPole.renderParabolicCable(new Vec3f(-0.775F,0.85F, 0.15F), new Vec3f(-0.775F,0.85F,2.85F), false, 0.1F, 0.03F));
+            model.merge(PowerPoleTER.renderParabolicCable(new Vec3f(-0.775F,0.85F, 0.15F), new Vec3f(-0.775F,0.85F,2.85F), false, 0.1F, 0.03F));
 			model.merge(insulator.clone().translateCoord(-1.125F, 0.6F, 0.15F));
-            model.merge(FastTESRPowerPole.renderParabolicCable(new Vec3f(-1.125F,0.85F, 0.15F), new Vec3f(-1.125F,0.85F,2.85F), false, 0.1F, 0.03F));
+            model.merge(PowerPoleTER.renderParabolicCable(new Vec3f(-1.125F,0.85F, 0.15F), new Vec3f(-1.125F,0.85F,2.85F), false, 0.1F, 0.03F));
             
             model.add((new RawQuadCube(2.3F, 0.1F, 0.05F, textureMetal)).translateCoord(-0.275F, 0.5F, 0.15F));
             
@@ -124,11 +124,11 @@ public class DistributionTransformerFormedModel extends CodeBasedModel {
 			model.merge(Models.render415VSwitch(textureMetal, textureCeramic).translateCoord(0.5F, 0.4F, 0.75F));
 			
 			//Transformer cable
-			model.merge(FastTESRPowerPole.renderParabolicCable(new Object[]{
+			model.merge(PowerPoleTER.renderParabolicCable(new Object[]{
 					new Vec3f(0.8F, 0.375F, 0.75F),
 					0.15F, new Vec3f(1.1F, 0.5F, 0.75F),
 					-0.1F, new Vec3f(0.9F, 2.2F, 0.75F)}, 0.03F));
-			model.merge(FastTESRPowerPole.renderParabolicCable(new Object[]{
+			model.merge(PowerPoleTER.renderParabolicCable(new Object[]{
 					new Vec3f(0.8F, 0.375F, 1.25F),
 					0.15F, new Vec3f(1.1F, 0.5F, 1.25F),
 					-0.1F, new Vec3f(0.8F, 1.25F, 1.25F),
@@ -140,11 +140,11 @@ public class DistributionTransformerFormedModel extends CodeBasedModel {
 			insulator = Models.render10kVInsulatorSmall(textureMetal, textureInsulator);
 			//10Kv insulator and cable
 			model.merge(insulator.clone().translateCoord(-0.425F, 0.6F, -0.15F));
-            model.merge(FastTESRPowerPole.renderParabolicCable(new Vec3f(-0.425F,0.85F, -0.15F), new Vec3f(-0.425F,0.85F, 1.85F), false, 0.1F, 0.03F));
+            model.merge(PowerPoleTER.renderParabolicCable(new Vec3f(-0.425F,0.85F, -0.15F), new Vec3f(-0.425F,0.85F, 1.85F), false, 0.1F, 0.03F));
 			model.merge(insulator.clone().translateCoord(-0.775F, 0.6F, -0.15F));
-            model.merge(FastTESRPowerPole.renderParabolicCable(new Vec3f(-0.775F,0.85F, -0.15F), new Vec3f(-0.775F,0.85F, 1.85F), false, 0.1F, 0.03F));
+            model.merge(PowerPoleTER.renderParabolicCable(new Vec3f(-0.775F,0.85F, -0.15F), new Vec3f(-0.775F,0.85F, 1.85F), false, 0.1F, 0.03F));
 			model.merge(insulator.clone().translateCoord(-1.125F, 0.6F, -0.15F));
-            model.merge(FastTESRPowerPole.renderParabolicCable(new Vec3f(-1.125F,0.85F, -0.15F), new Vec3f(-1.125F,0.85F, 1.85F), false, 0.1F, 0.03F));
+            model.merge(PowerPoleTER.renderParabolicCable(new Vec3f(-1.125F,0.85F, -0.15F), new Vec3f(-1.125F,0.85F, 1.85F), false, 0.1F, 0.03F));
             
             model.add((new RawQuadCube(2.3F, 0.1F, 0.05F, textureMetal)).translateCoord(-0.275F, 0.5F, -0.15F));
             
@@ -156,13 +156,13 @@ public class DistributionTransformerFormedModel extends CodeBasedModel {
 			model.merge(Models.render415VSwitch(textureMetal, textureCeramic).translateCoord(0.5F, 0.4F, -1.25F));
 			
 			//Transformer cable
-			model.merge(FastTESRPowerPole.renderParabolicCable(new Object[]{
+			model.merge(PowerPoleTER.renderParabolicCable(new Object[]{
 					new Vec3f(0.8F, 0.375F, -0.75F),
 					0.08F, new Vec3f(1.1F, 0.5F, -0.75F),
 					-0.15F, new Vec3f(0.8F, 1.25F, -0.75F),
 					-0.05F, new Vec3f(0.2F, 1.4F, -0.75F),
 					0.2F, new Vec3f(-0.9F, 2.1F, -0.75F)}, 0.03F));
-			model.merge(FastTESRPowerPole.renderParabolicCable(new Object[]{
+			model.merge(PowerPoleTER.renderParabolicCable(new Object[]{
 					new Vec3f(0.8F, 0.375F, -1.25F),
 					0.08F, new Vec3f(1.1F, 0.5F, -1.25F),
 					-0.15F, new Vec3f(0.8F, 1.25F, -1.25F),
@@ -187,24 +187,24 @@ public class DistributionTransformerFormedModel extends CodeBasedModel {
 			model.merge(Models.render10kVInsulatorSmall(textureMetal, textureInsulator).rotateAroundX(180).translateCoord(-0.45F, 0.55F, 0.15F));
 			model.merge(Models.render10kVInsulatorSmall(textureMetal, textureInsulator).rotateAroundX(180).translateCoord(-0.85F, 0.55F, -0.15F));
 			
-			model.merge(FastTESRPowerPole.renderParabolicCable(new Object[] {
+			model.merge(PowerPoleTER.renderParabolicCable(new Object[] {
 					new Vec3f(-1.5F, 0.275F, -0.65F),
 					0.15F, new Vec3f(-1.125F, 0.775F, -0.65F)}, 0.03F));
 			
-			model.merge(FastTESRPowerPole.renderParabolicCable(new Object[] {
+			model.merge(PowerPoleTER.renderParabolicCable(new Object[] {
 					new Vec3f(-1.5F, 0.275F, 0),
 					0.1F, new Vec3f(-0.85F, 0.3F, -0.15F),
 					0.2F, new Vec3f(-0.775F, 0.775F, -0.65F)}, 0.03F));
 			
-			model.merge(FastTESRPowerPole.renderParabolicCable(new Object[] {
+			model.merge(PowerPoleTER.renderParabolicCable(new Object[] {
 					new Vec3f(-1.5F, 0.275F, 0.65F),
 					0.1F, new Vec3f(-0.45F, 0.3F, 0.15F),
 					0.2F, new Vec3f(-0.425F, 0.775F, -0.65F)}, 0.03F));
             
 			//Cable(upwards)
-			model.merge(FastTESRPowerPole.renderParabolicCable(new Vec3f(-1.725F, 0.7F, 0.65F), new Vec3f(-1.65F,3.8F,0.65F), false, 0, 0.03F));
-			model.merge(FastTESRPowerPole.renderParabolicCable(new Vec3f(-1.725F, 0.7F, 0), new Vec3f(-1.65F,3.8F,0), false, 0, 0.03F));
-			model.merge(FastTESRPowerPole.renderParabolicCable(new Vec3f(-1.725F, 0.7F, -0.65F), new Vec3f(-1.65F,3.8F,-0.65F), false, 0, 0.03F));
+			model.merge(PowerPoleTER.renderParabolicCable(new Vec3f(-1.725F, 0.7F, 0.65F), new Vec3f(-1.65F,3.8F,0.65F), false, 0, 0.03F));
+			model.merge(PowerPoleTER.renderParabolicCable(new Vec3f(-1.725F, 0.7F, 0), new Vec3f(-1.65F,3.8F,0), false, 0, 0.03F));
+			model.merge(PowerPoleTER.renderParabolicCable(new Vec3f(-1.725F, 0.7F, -0.65F), new Vec3f(-1.65F,3.8F,-0.65F), false, 0, 0.03F));
 			
 			//Fuse
 			RawQuadGroup fuse = Models.render10kVSwitch(textureMetal, textureCeramic);
@@ -226,9 +226,9 @@ public class DistributionTransformerFormedModel extends CodeBasedModel {
             model.rotateAroundY(90);
             
             //Cable
-            model.merge(FastTESRPowerPole.renderParabolicCable(new Vec3f(-0.74F, 0.55F, 0), new Vec3f(-0.74F, 0.55F, 5F), true, 0.2F, 0.05F));
-            model.merge(FastTESRPowerPole.renderParabolicCable(new Vec3f(0 , 1.5F, 0), new Vec3f(0F, 1.5F, 5F), true, 0.2F, 0.05F));
-            model.merge(FastTESRPowerPole.renderParabolicCable(new Vec3f(0.74F, 0.55F, 0), new Vec3f(0.74F, 0.55F, 5F), true, 0.2F, 0.05F));
+            model.merge(PowerPoleTER.renderParabolicCable(new Vec3f(-0.74F, 0.55F, 0), new Vec3f(-0.74F, 0.55F, 5F), true, 0.2F, 0.05F));
+            model.merge(PowerPoleTER.renderParabolicCable(new Vec3f(0 , 1.5F, 0), new Vec3f(0F, 1.5F, 5F), true, 0.2F, 0.05F));
+            model.merge(PowerPoleTER.renderParabolicCable(new Vec3f(0.74F, 0.55F, 0), new Vec3f(0.74F, 0.55F, 5F), true, 0.2F, 0.05F));
 
             //Pole
             model.add(new RawQuadCube(0.25F, 1, 0.25F, textureConcrete));
@@ -254,20 +254,20 @@ public class DistributionTransformerFormedModel extends CodeBasedModel {
             model.add((new RawQuadCube(0.05F, 0.1F, 1.4F, textureMetal)).translateCoord(-1.4F, -0.25F, 0));
             
             //Cable
-            model.merge(FastTESRPowerPole.renderParabolicCable(new Vec3f(-0.74F, 0.55F, 0), new Vec3f(-0.74F, 0.55F, -5F), true, 0.2F, 0.05F));
-            model.merge(FastTESRPowerPole.renderParabolicCable(new Vec3f(0 , 1.5F, 0), new Vec3f(0F, 1.5F, -5F), true, 0.2F, 0.05F));
-            model.merge(FastTESRPowerPole.renderParabolicCable(new Vec3f(0.74F, 0.55F, 0), new Vec3f(0.74F, 0.55F, -5F), true, 0.2F, 0.05F));
+            model.merge(PowerPoleTER.renderParabolicCable(new Vec3f(-0.74F, 0.55F, 0), new Vec3f(-0.74F, 0.55F, -5F), true, 0.2F, 0.05F));
+            model.merge(PowerPoleTER.renderParabolicCable(new Vec3f(0 , 1.5F, 0), new Vec3f(0F, 1.5F, -5F), true, 0.2F, 0.05F));
+            model.merge(PowerPoleTER.renderParabolicCable(new Vec3f(0.74F, 0.55F, 0), new Vec3f(0.74F, 0.55F, -5F), true, 0.2F, 0.05F));
             
 			//Transformer Connection
 			model.merge(Models.render10kVInsulatorSmall(textureMetal, textureInsulator).rotateAroundX(180).translateCoord(-1, -0.2F, -0.15F));
 			model.merge(Models.render10kVInsulatorSmall(textureMetal, textureInsulator).rotateAroundX(270).translateCoord(0, -0.2F, -0.125F));
-			model.merge(FastTESRPowerPole.renderParabolicCable(new Vec3f(-1.65F,-0.2F,0.65F), new Vec3f(-0.74F, 0.55F, 0), false, -0.3F, 0.03F));
-			model.merge(FastTESRPowerPole.renderParabolicCable(new Object[] {
+			model.merge(PowerPoleTER.renderParabolicCable(new Vec3f(-1.65F,-0.2F,0.65F), new Vec3f(-0.74F, 0.55F, 0), false, -0.3F, 0.03F));
+			model.merge(PowerPoleTER.renderParabolicCable(new Object[] {
 					new Vec3f(-1.65F,-0.4F, 0),
 					0.025F, new Vec3f(-1F,-0.45F, -0.15F),
 					0.1F, new Vec3f(0, -0.2F, -0.375F),
 					0.1F, new Vec3f(0, 1.4F, -0.6F)}, 0.03F));
-			model.merge(FastTESRPowerPole.renderParabolicCable(new Vec3f(-1.65F,-0.4F, -0.65F), new Vec3f(0.74F, 0.45F, -0.8F), false, 0.4F, 0.03F));
+			model.merge(PowerPoleTER.renderParabolicCable(new Vec3f(-1.65F,-0.4F, -0.65F), new Vec3f(0.74F, 0.45F, -0.8F), false, 0.4F, 0.03F));
             
             //Pole
             model.add(new RawQuadCube(0.25F, 1, 0.25F, textureConcrete));
@@ -282,10 +282,10 @@ public class DistributionTransformerFormedModel extends CodeBasedModel {
             model.merge(insulator.clone().translateCoord(0, 0.05F, 0.9F));
             model.rotateAroundY(90);
             
-            model.merge(FastTESRPowerPole.renderParabolicCable(new Vec3f(-0.9F, 0.3F, 0), new Vec3f(-0.9F, 0.3F, 5F), true, 0.2F, 0.05F));
-            model.merge(FastTESRPowerPole.renderParabolicCable(new Vec3f(-0.45F, 0.3F, 0), new Vec3f(-0.45F, 0.3F, 5F), true, 0.2F, 0.05F));
-            model.merge(FastTESRPowerPole.renderParabolicCable(new Vec3f(0.45F, 0.3F, 0), new Vec3f(0.45F, 0.3F, 5F), true, 0.2F, 0.05F));
-            model.merge(FastTESRPowerPole.renderParabolicCable(new Vec3f(0.9F, 0.3F, 0), new Vec3f(0.9F, 0.3F, 5F), true, 0.2F, 0.05F));
+            model.merge(PowerPoleTER.renderParabolicCable(new Vec3f(-0.9F, 0.3F, 0), new Vec3f(-0.9F, 0.3F, 5F), true, 0.2F, 0.05F));
+            model.merge(PowerPoleTER.renderParabolicCable(new Vec3f(-0.45F, 0.3F, 0), new Vec3f(-0.45F, 0.3F, 5F), true, 0.2F, 0.05F));
+            model.merge(PowerPoleTER.renderParabolicCable(new Vec3f(0.45F, 0.3F, 0), new Vec3f(0.45F, 0.3F, 5F), true, 0.2F, 0.05F));
+            model.merge(PowerPoleTER.renderParabolicCable(new Vec3f(0.9F, 0.3F, 0), new Vec3f(0.9F, 0.3F, 5F), true, 0.2F, 0.05F));
             
             //Pole
             model.add(new RawQuadCube(0.25F, 1, 0.25F, textureConcrete));
@@ -299,10 +299,10 @@ public class DistributionTransformerFormedModel extends CodeBasedModel {
             model.merge(insulator.clone().translateCoord(0, 0.05F, 0.9F));
             model.rotateAroundY(90);
             
-            model.merge(FastTESRPowerPole.renderParabolicCable(new Vec3f(-0.9F, 0.3F, 0), new Vec3f(-0.9F, 0.3F, -5F), true, 0.2F, 0.05F));
-            model.merge(FastTESRPowerPole.renderParabolicCable(new Vec3f(-0.45F, 0.3F, 0), new Vec3f(-0.45F, 0.3F, -5F), true, 0.2F, 0.05F));
-            model.merge(FastTESRPowerPole.renderParabolicCable(new Vec3f(0.45F, 0.3F, 0), new Vec3f(0.45F, 0.3F, -5F), true, 0.2F, 0.05F));
-            model.merge(FastTESRPowerPole.renderParabolicCable(new Vec3f(0.9F, 0.3F, 0), new Vec3f(0.9F, 0.3F, -5F), true, 0.2F, 0.05F));
+            model.merge(PowerPoleTER.renderParabolicCable(new Vec3f(-0.9F, 0.3F, 0), new Vec3f(-0.9F, 0.3F, -5F), true, 0.2F, 0.05F));
+            model.merge(PowerPoleTER.renderParabolicCable(new Vec3f(-0.45F, 0.3F, 0), new Vec3f(-0.45F, 0.3F, -5F), true, 0.2F, 0.05F));
+            model.merge(PowerPoleTER.renderParabolicCable(new Vec3f(0.45F, 0.3F, 0), new Vec3f(0.45F, 0.3F, -5F), true, 0.2F, 0.05F));
+            model.merge(PowerPoleTER.renderParabolicCable(new Vec3f(0.9F, 0.3F, 0), new Vec3f(0.9F, 0.3F, -5F), true, 0.2F, 0.05F));
             
             //Pole
             model.add(new RawQuadCube(0.25F, 1, 0.25F, textureConcrete));
@@ -337,14 +337,14 @@ public class DistributionTransformerFormedModel extends CodeBasedModel {
 			model.merge(Models.render10kVInsulatorTall(textureMetal, textureCeramic).translateCoord(-0.25F, 1, 1F));
 			
 			//Cable
-			model.merge(FastTESRPowerPole.renderParabolicCable(new Vec3f(-0.25F, 1.4F, 0), new Vec3f(-1.125F, 2.75F, 0), false, 0.3F, 0.03F));
-			model.merge(FastTESRPowerPole.renderParabolicCable(new Vec3f(-0.25F, 1.4F, 0.5F), new Vec3f(-0.775F, 2.75F, 0.5F), false, 0.15F, 0.03F));
-			model.merge(FastTESRPowerPole.renderParabolicCable(new Vec3f(-0.25F, 1.4F, 1), new Vec3f(-0.425F, 2.75F, 1), false, 0.05F, 0.03F));
+			model.merge(PowerPoleTER.renderParabolicCable(new Vec3f(-0.25F, 1.4F, 0), new Vec3f(-1.125F, 2.75F, 0), false, 0.3F, 0.03F));
+			model.merge(PowerPoleTER.renderParabolicCable(new Vec3f(-0.25F, 1.4F, 0.5F), new Vec3f(-0.775F, 2.75F, 0.5F), false, 0.15F, 0.03F));
+			model.merge(PowerPoleTER.renderParabolicCable(new Vec3f(-0.25F, 1.4F, 1), new Vec3f(-0.425F, 2.75F, 1), false, 0.05F, 0.03F));
 			
-			model.merge(FastTESRPowerPole.renderParabolicCable(new Object[]{new Vec3f(0.25F, 1.325F, 0), 0.05F,new Vec3f(0.3F, 1.8F, -0.2F), -0.05F, new Vec3f(0.5F, 2.4F, -0.25F)}, 0.03F));
-			model.merge(FastTESRPowerPole.renderParabolicCable(new Vec3f(0.25F, 1.325F, 0.333F), new Vec3f(0.5F, 2.4F, 0.25F), false, -0.15F, 0.03F));
-			model.merge(FastTESRPowerPole.renderParabolicCable(new Vec3f(0.25F, 1.325F, 0.666F), new Vec3f(0.5F, 2.4F, 0.75F), false, -0.15F, 0.03F));
-			model.merge(FastTESRPowerPole.renderParabolicCable(new Object[]{new Vec3f(0.25F, 1.325F, 1F), 0.05F,new Vec3f(0.3F, 1.8F, 1.2F), -0.05F, new Vec3f(0.5F, 2.4F, 1.25F)}, 0.03F));
+			model.merge(PowerPoleTER.renderParabolicCable(new Object[]{new Vec3f(0.25F, 1.325F, 0), 0.05F,new Vec3f(0.3F, 1.8F, -0.2F), -0.05F, new Vec3f(0.5F, 2.4F, -0.25F)}, 0.03F));
+			model.merge(PowerPoleTER.renderParabolicCable(new Vec3f(0.25F, 1.325F, 0.333F), new Vec3f(0.5F, 2.4F, 0.25F), false, -0.15F, 0.03F));
+			model.merge(PowerPoleTER.renderParabolicCable(new Vec3f(0.25F, 1.325F, 0.666F), new Vec3f(0.5F, 2.4F, 0.75F), false, -0.15F, 0.03F));
+			model.merge(PowerPoleTER.renderParabolicCable(new Object[]{new Vec3f(0.25F, 1.325F, 1F), 0.05F,new Vec3f(0.3F, 1.8F, 1.2F), -0.05F, new Vec3f(0.5F, 2.4F, 1.25F)}, 0.03F));
 			
 			break;
 		case TransformerRight:

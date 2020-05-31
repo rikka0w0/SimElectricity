@@ -32,7 +32,7 @@ import simelectricity.essential.client.grid.pole.Models;
 import simelectricity.essential.grid.transformer.TilePowerTransformerPlaceHolder;
 
 @OnlyIn(Dist.CLIENT)
-public class FastTESRPowerTransformer extends TileEntityRenderer<TilePowerTransformerPlaceHolder.Render>{
+public class PowerTransformerTER extends TileEntityRenderer<TilePowerTransformerPlaceHolder.Render> {
     public final static ResourceLocation modelResLoc = new ResourceLocation(Essential.MODID, "block/powertransformer");
     private final static List<BakedQuad> quads = new LinkedList<>();
     private final static Matrix4f refXMatrix = new Matrix4f(new float[] {
@@ -42,7 +42,7 @@ public class FastTESRPowerTransformer extends TileEntityRenderer<TilePowerTransf
     		0, 0, 0, 1
     });
 
-    public FastTESRPowerTransformer(TileEntityRendererDispatcher rendererDispatcherIn) {
+    public PowerTransformerTER(TileEntityRendererDispatcher rendererDispatcherIn) {
 		super(rendererDispatcherIn);
 	}
     

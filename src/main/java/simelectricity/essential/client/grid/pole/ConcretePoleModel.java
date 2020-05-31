@@ -143,6 +143,6 @@ public class ConcretePoleModel extends CodeBasedModel {
     		new ItemTransformVec3f(new Vector3f(0, 225, 0), 	new Vector3f(0,0.15F,0), 				new Vector3f(0.4F, 0.4F, 0.4F)),		//firstperson_leftIn
     		new ItemTransformVec3f(new Vector3f(0, 45, 0), 		new Vector3f(0,0.15F,0), 				new Vector3f(0.4F, 0.4F, 0.4F)),		//firstperson_rightIn
     		null, 
-    		new ItemTransformVec3f(new Vector3f(45, 30, 0), new Vector3f(0.025F, 0, 0), new Vector3f(0.5F, 0.5F, 0.5F))	//gui
+    		new ItemTransformVec3f(new Vector3f(45, 30, 0), new Vector3f(0.025F, 0.025F, 0), new Vector3f(0.5F, 0.5F, 0.5F))	//gui
     		, null, null);
 }

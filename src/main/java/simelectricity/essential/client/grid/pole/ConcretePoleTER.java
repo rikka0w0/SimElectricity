@@ -5,14 +5,14 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import rikka.librikka.model.quadbuilder.RawQuadGroup;
-import simelectricity.essential.client.grid.FastTESRPowerPole;
+import simelectricity.essential.client.grid.PowerPoleTER;
 import simelectricity.essential.client.grid.ISEPowerPole;
 import simelectricity.essential.client.grid.PowerPoleRenderHelper;
 import simelectricity.essential.grid.TilePoleBranch;
 import simelectricity.essential.grid.TilePoleConcrete;
 
 @OnlyIn(Dist.CLIENT)
-public class ConcretePoleTER<T extends TileEntity & ISEPowerPole> extends FastTESRPowerPole<T> {
+public class ConcretePoleTER<T extends TileEntity & ISEPowerPole> extends PowerPoleTER<T> {
 	public ConcretePoleTER(TileEntityRendererDispatcher rendererDispatcherIn) {
 		super(rendererDispatcherIn);
 	}

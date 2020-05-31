@@ -54,9 +54,9 @@ import simelectricity.essential.client.grid.pole.MetalPole35kVModel;
 import simelectricity.essential.client.grid.pole.MetalPole35kVTER;
 import simelectricity.essential.client.grid.transformer.DistributionTransformerComponentModel;
 import simelectricity.essential.client.grid.transformer.DistributionTransformerFormedModel;
-import simelectricity.essential.client.grid.transformer.FastTESRPowerTransformer;
+import simelectricity.essential.client.grid.transformer.PowerTransformerTER;
 import simelectricity.essential.client.grid.pole.ConcretePoleModel;
-import simelectricity.essential.client.grid.FastTESRPowerPole;
+import simelectricity.essential.client.grid.PowerPoleTER;
 import simelectricity.essential.client.grid.GridRenderMonitor;
 import simelectricity.essential.grid.BlockCableJoint;
 import simelectricity.essential.grid.BlockPoleConcrete35kV;
@@ -91,18 +91,18 @@ public class ClientRegistrationHandler {
 		TERHelper.bind(TilePoleBranch.Type415V.class, ConcretePoleTER::new);
 
 		// PowerTransformer
-		TERHelper.bind(TilePowerTransformerPlaceHolder.Render.class, FastTESRPowerTransformer::new);
-		TERHelper.bind(TilePowerTransformerWinding.Primary.class, FastTESRPowerPole::new);
-		TERHelper.bind(TilePowerTransformerWinding.Secondary.class, FastTESRPowerPole::new);
+		TERHelper.bind(TilePowerTransformerPlaceHolder.Render.class, PowerTransformerTER::new);
+		TERHelper.bind(TilePowerTransformerWinding.Primary.class, PowerPoleTER::new);
+		TERHelper.bind(TilePowerTransformerWinding.Secondary.class, PowerPoleTER::new);
 		
-		TERHelper.bind(TileDistributionTransformer.Pole10kV.class, FastTESRPowerPole::new);
-		TERHelper.bind(TileDistributionTransformer.Pole415V.class, FastTESRPowerPole::new);
+		TERHelper.bind(TileDistributionTransformer.Pole10kV.class, PowerPoleTER::new);
+		TERHelper.bind(TileDistributionTransformer.Pole415V.class, PowerPoleTER::new);
 	}
 	
 	@OnlyIn(Dist.CLIENT)
 	@SubscribeEvent
 	public static void onModelRegistryEvent(ModelRegistryEvent event) {
-		FastTESRPowerTransformer.onModelRegistryEvent();
+		PowerTransformerTER.onModelRegistryEvent();
 	}
 	
     @SubscribeEvent
@@ -117,8 +117,8 @@ public class ClientRegistrationHandler {
     	VoltageSensorRender.instance.onPreTextureStitchEvent(event);
     	LedPanelRender.instance.onPreTextureStitchEvent(event);
     	
-    	FastTESRPowerPole.onPreTextureStitchEvent(event);
-    	FastTESRPowerTransformer.onPreTextureStitchEvent(event);
+    	PowerPoleTER.onPreTextureStitchEvent(event);
+    	PowerTransformerTER.onPreTextureStitchEvent(event);
     	DistributionTransformerFormedModel.instance.onPreTextureStitchEvent(event);
     }
     
@@ -153,8 +153,8 @@ public class ClientRegistrationHandler {
     	VoltageSensorRender.instance.onModelBakeEvent();
     	LedPanelRender.instance.onModelBakeEvent();
     	
-    	FastTESRPowerPole.onModelBakeEvent();
-    	FastTESRPowerTransformer.onModelBakeEvent();
+    	PowerPoleTER.onModelBakeEvent();
+    	PowerTransformerTER.onModelBakeEvent();
     	DistributionTransformerFormedModel.instance.onModelBakeEvent();
 
 		// Assign item models

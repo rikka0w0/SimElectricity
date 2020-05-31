@@ -13,6 +13,7 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.LazyValue;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -29,15 +30,21 @@ import simelectricity.essential.client.ClientConfigs;
 import simelectricity.essential.client.ResourcePaths;
 import simelectricity.essential.client.grid.PowerPoleRenderHelper.ConnectionInfo;
 
+/**
+ * Cable model helpers should be called during and after {@link net.minecraftforge.client.event.ModelBakeEvent}
+ * @author Rikka0w0
+ * @param <T>
+ */
 @OnlyIn(Dist.CLIENT)
-public class FastTESRPowerPole<T extends TileEntity & ISEPowerPole> extends TileEntityRenderer<T> {	
-    public FastTESRPowerPole(TileEntityRendererDispatcher rendererDispatcherIn) {
+public class PowerPoleTER<T extends TileEntity & ISEPowerPole> extends TileEntityRenderer<T> {	
+    public PowerPoleTER(TileEntityRendererDispatcher rendererDispatcherIn) {
 		super(rendererDispatcherIn);
 	}
 
-	private static FastTESRPowerPole instance;
-    public static TextureAtlasSprite texture;
+	private static PowerPoleTER instance;
     public final static ResourceLocation hvcable_texture_loc = new ResourceLocation(ResourcePaths.hv_cable);
+    private final static LazyValue<TextureAtlasSprite> texture = 
+    		new LazyValue(()->EasyTextureLoader.blockTextureGetter().apply(hvcable_texture_loc));
 
     public static void onPreTextureStitchEvent(TextureStitchEvent.Pre event) {
     	if (EasyTextureLoader.isBlockAtlas(event))
@@ -45,11 +52,15 @@ public class FastTESRPowerPole<T extends TileEntity & ISEPowerPole> extends Tile
     }
 
 	public static void onModelBakeEvent() {
-		texture = EasyTextureLoader.blockTextureGetter().apply(hvcable_texture_loc);
+		cableTexture();
+	}
+	
+	public static TextureAtlasSprite cableTexture() {
+		return texture.getValue();
 	}
 
     public static RawQuadGroup renderParabolicCable(Object[] vertexAndTension, float thickness) {
-    	return renderParabolicCable(vertexAndTension, thickness, texture);
+    	return renderParabolicCable(vertexAndTension, thickness, cableTexture());
     }
     
     /**
@@ -72,7 +83,7 @@ public class FastTESRPowerPole<T extends TileEntity & ISEPowerPole> extends Tile
     }
     
     public static RawQuadGroup renderParabolicCable(Vec3f from, Vec3f to, boolean half, float tension, float thickness) {
-    	return renderParabolicCable(from, to, half, tension, thickness, texture);
+    	return renderParabolicCable(from, to, half, tension, thickness, cableTexture());
     }
     
 	public static RawQuadGroup renderParabolicCable(Vec3f from, Vec3f to, boolean half, float tension, float thickness, TextureAtlasSprite texture) {
@@ -103,7 +114,7 @@ public class FastTESRPowerPole<T extends TileEntity & ISEPowerPole> extends Tile
 	}
 	
 	public static RawQuadGroup renderCatenaryCable(Vec3f from, Vec3f to, boolean half, float tension, float thickness) {
-		return renderCatenaryCable(from, to, half, tension, thickness, texture);
+		return renderCatenaryCable(from, to, half, tension, thickness, cableTexture());
 	}
 	
 	public static RawQuadGroup renderCatenaryCable(Vec3f from, Vec3f to, boolean half, float tension, float thickness, TextureAtlasSprite texture) {
@@ -164,7 +175,7 @@ public class FastTESRPowerPole<T extends TileEntity & ISEPowerPole> extends Tile
 		BlockPos pos = helper.pos;  
         for (PowerPoleRenderHelper.ConnectionInfo[] connections : helper.connectionList) {
             for (PowerPoleRenderHelper.ConnectionInfo info : connections) {
-            	RawQuadGroup group = renderParabolicCable(info.fixedFrom, info.fixedTo, true, info.tension, 0.06F, texture);
+            	RawQuadGroup group = renderParabolicCable(info.fixedFrom, info.fixedTo, true, info.tension, 0.06F, cableTexture());
             	group.translateCoord(-pos.getX(), -pos.getY(), -pos.getZ());
             	group.bake(helper.quadBuffer);
             }
@@ -172,8 +183,8 @@ public class FastTESRPowerPole<T extends TileEntity & ISEPowerPole> extends Tile
         
         for (PowerPoleRenderHelper.ExtraWireInfo wire : helper.extraWireList) {
         	RawQuadGroup group = wire.useCatenary ? 
-        			renderCatenaryCable(wire.from, wire.to, false, wire.tension, 0.06F, texture) :
-        			renderParabolicCable(wire.from, wire.to, false, wire.tension, 0.06F, texture);
+        			renderCatenaryCable(wire.from, wire.to, false, wire.tension, 0.06F, cableTexture()) :
+        			renderParabolicCable(wire.from, wire.to, false, wire.tension, 0.06F, cableTexture());
         	group.translateCoord(-pos.getX(), -pos.getY(), -pos.getZ());
         	group.bake(helper.quadBuffer);
         }

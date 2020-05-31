@@ -4,11 +4,11 @@ import java.util.List;
 
 import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
-import simelectricity.essential.client.grid.FastTESRPowerPole;
+import simelectricity.essential.client.grid.PowerPoleTER;
 import simelectricity.essential.client.grid.PowerPoleRenderHelper;
 import simelectricity.essential.grid.TilePoleMetal35kV;
 
-public class MetalPole35kVTER extends FastTESRPowerPole<TilePoleMetal35kV>{
+public class MetalPole35kVTER extends PowerPoleTER<TilePoleMetal35kV>{
 	public MetalPole35kVTER(TileEntityRendererDispatcher rendererDispatcherIn) {
 		super(rendererDispatcherIn);
 	}

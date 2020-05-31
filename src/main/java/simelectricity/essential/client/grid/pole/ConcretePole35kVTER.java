@@ -9,11 +9,11 @@ import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.model.ModelResourceLocation;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import rikka.librikka.model.quadbuilder.RawQuadGroup;
-import simelectricity.essential.client.grid.FastTESRPowerPole;
+import simelectricity.essential.client.grid.PowerPoleTER;
 import simelectricity.essential.client.grid.PowerPoleRenderHelper;
 import simelectricity.essential.grid.TilePoleConcrete35kV;
 
-public class ConcretePole35kVTER extends FastTESRPowerPole<TilePoleConcrete35kV>{
+public class ConcretePole35kVTER extends PowerPoleTER<TilePoleConcrete35kV>{
 	public ConcretePole35kVTER(TileEntityRendererDispatcher rendererDispatcherIn) {
 		super(rendererDispatcherIn);
 	}
