@@ -7,6 +7,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.model.data.ModelDataMap;
@@ -65,6 +66,10 @@ public class TileCable extends SEEnergyTile implements ISEGenericCable, ISEIumin
         Block block = this.getBlockType();
         if (block instanceof BlockCable) {
             BlockRayTraceResult result = ((BlockCable) block).rayTrace(this.world, this.pos, player);
+            
+            if (result == null || result.getType() != RayTraceResult.Type.BLOCK)
+            	return null;
+            
             if (result.getPos() != this.getPos())
             	return null;	// The player is looking at somewhere else ???
             

@@ -8,6 +8,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.fluid.IFluidState;
@@ -389,9 +390,10 @@ public class BlockCable extends BlockBase implements ICustomBoundingBox, IMetaPr
     public BlockRayTraceResult rayTrace(IBlockReader world, BlockPos pos, PlayerEntity player) {
         Vec3d start = player.getPositionVector().add(0, player.getEyeHeight(), 0);
         double reachDistance = 5;
-
-//        if (player instanceof ServerPlayerEntity)
-//            reachDistance = ((ServerPlayerEntity) player).interactionManager.getBlockReachDistance();
+        
+        IAttributeInstance attrib = player.getAttribute(PlayerEntity.REACH_DISTANCE);
+        if (attrib != null)
+        	reachDistance = attrib.getValue();
 
         Vec3d end = start.add(player.getLookVec().normalize().scale(reachDistance));
         return this.rayTrace(world, pos, start, end);
