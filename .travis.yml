@@ -9,7 +9,7 @@ before_install:
  - git submodule update --init --remote --recursive
 install: true
 script:
- - ./gradlew build
+ - ./gradlew clean build
 addons:
   artifacts:
     s3_region: "ap-northeast-1"
