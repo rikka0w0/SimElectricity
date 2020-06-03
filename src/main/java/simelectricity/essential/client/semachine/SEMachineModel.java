@@ -19,11 +19,11 @@ import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.client.model.data.EmptyModelData;
 import net.minecraftforge.client.model.data.IDynamicBakedModel;
 import net.minecraftforge.client.model.data.IModelData;
+import rikka.librikka.model.quadbuilder.MutableQuad;
 import simelectricity.essential.api.ISECoverPanelHost;
 import simelectricity.essential.api.coverpanel.ISECoverPanel;
 import simelectricity.essential.api.coverpanel.ISEFacadeCoverPanel;
 import simelectricity.essential.client.coverpanel.GenericFacadeRender;
-import simelectricity.essential.client.coverpanel.MutableQuad;
 import simelectricity.essential.common.semachine.ISESocketProvider;
 
 import java.util.LinkedList;
