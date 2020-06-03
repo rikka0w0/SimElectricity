@@ -13,10 +13,10 @@ import net.minecraft.client.renderer.model.ModelResourceLocation;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.MinecraftForgeClient;
+import net.minecraftforge.client.model.data.EmptyModelData;
 import net.minecraftforge.client.model.data.IDynamicBakedModel;
 import net.minecraftforge.client.model.data.IModelData;
 import simelectricity.essential.api.ISECoverPanelHost;
@@ -89,23 +89,12 @@ public final class SEMachineModel implements IDynamicBakedModel {
     			BlockState blockState = ((ISEFacadeCoverPanel) coverPanel).getBlockState();   			   			
     			IBakedModel model = Minecraft.getInstance().getBlockRendererDispatcher().getModelForState(blockState);
     			
-    			List<MutableQuad> mquads = new LinkedList<>();
-    			mquads.addAll(GenericFacadeRender.getTransformedQuads(
-    	                blockState, model, side, rand, 
-    	                new Vec3d(0 / 16D, 16 / 16D, 0D),
-    	                new Vec3d(16 / 16D, 16 / 16D, 0D),
-    	                new Vec3d(16 / 16D, 0 / 16D, 0D),
-    	                new Vec3d(0 / 16D, 0 / 16D, 0D)
-    	        ));
-    			
-    			for (MutableQuad mquad : mquads) {
-    	            int tint = mquad.getTint();
-    	            if (tint != -1) {
-    	            	mquad.setTint(GenericFacadeRender.tintFunc(side, tint));
-    	            }
-    	            quads.add(mquad.toBakedItem());
-    	        }
-    			
+    			model.getQuads(blockState, side, rand, EmptyModelData.INSTANCE).stream()
+    				.map(MutableQuad::new)
+    				.peek((mquad)->GenericFacadeRender.tintFunc(side, mquad))
+    				.map(MutableQuad::bake)
+    				.forEach(quads::add);
+
     			hideMachineFace = true;
     		}
 		}

@@ -11,7 +11,7 @@ import net.minecraft.nbt.NBTUtil;
 import simelectricity.essential.api.ISECoverPanelFactory;
 import simelectricity.essential.api.SEEAPI;
 import simelectricity.essential.api.coverpanel.ISECoverPanel;
-import simelectricity.essential.items.ItemMisc;
+import simelectricity.essential.items.ItemPanel;
 
 public class SECoverPanelFactory implements ISECoverPanelFactory {	
 	public SECoverPanelFactory() {
@@ -28,9 +28,9 @@ public class SECoverPanelFactory implements ISECoverPanelFactory {
     @Override
     public ISECoverPanel from(ItemStack itemStack) {
     	Item item = itemStack.getItem();
-        if (item instanceof ItemMisc) {
-        	ItemMisc.ItemType type = ((ItemMisc) item).itemType;
-        	if (type == ItemMisc.ItemType.facade) {
+        if (item instanceof ItemPanel) {
+        	ItemPanel.ItemType type = ((ItemPanel) item).itemType;
+        	if (type == ItemPanel.ItemType.facade) {
         		CompoundNBT bsNBT = itemStack.getTag();
         		BlockState blockstate = Blocks.AIR.getDefaultState();
         		if (bsNBT != null && bsNBT.contains("facade_blockstate")) {
@@ -38,7 +38,7 @@ public class SECoverPanelFactory implements ISECoverPanelFactory {
         			blockstate = NBTUtil.readBlockState(bsNBT);
         		}
         		return new FacadePanel.FacadeNormal(blockstate, itemStack);
-        	} else if (type == ItemMisc.ItemType.facade_hollow) {
+        	} else if (type == ItemPanel.ItemType.facade_hollow) {
         		CompoundNBT bsNBT = itemStack.getTag();
         		BlockState blockstate = Blocks.AIR.getDefaultState();
         		if (bsNBT != null && bsNBT.contains("facade_blockstate")) {
@@ -47,7 +47,7 @@ public class SECoverPanelFactory implements ISECoverPanelFactory {
         		}
         		return new FacadePanel.FacadeHollow(blockstate, itemStack);
         	}
-        	return ((ItemMisc) item).itemType.constructor.get();
+        	return ((ItemPanel) item).itemType.constructor.get();
         }
 
         return null;

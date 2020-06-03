@@ -1,5 +1,6 @@
 package simelectricity.essential.client.coverpanel;
 
+import net.minecraft.util.Direction;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -135,5 +136,26 @@ public class MutableVertex {
         tex_u = u;
         tex_v = v;
         return this;
+    }
+    
+    public float get(Direction.Axis axis) {
+		if (axis == Direction.Axis.X) {
+			return this.position_x;
+		} else if (axis == Direction.Axis.Y) {
+			return this.position_y;
+		} else if (axis == Direction.Axis.Z) {
+			return this.position_z;
+		}
+		return Float.NaN;
+    }
+    
+    public void offset(Direction.Axis axis, float val) {
+		if (axis == Direction.Axis.X) {
+			this.position_x += val;
+		} else if (axis == Direction.Axis.Y) {
+			this.position_y += val;
+		} else if (axis == Direction.Axis.Z) {
+			this.position_z += val;
+		}
     }
 }

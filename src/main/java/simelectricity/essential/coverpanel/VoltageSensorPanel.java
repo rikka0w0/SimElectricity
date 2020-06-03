@@ -18,7 +18,7 @@ import simelectricity.essential.api.coverpanel.ISEElectricalCoverPanel;
 import simelectricity.essential.api.coverpanel.ISEGuiCoverPanel;
 import simelectricity.essential.api.coverpanel.ISERedstoneEmitterCoverPanel;
 import simelectricity.essential.client.coverpanel.VoltageSensorRender;
-import simelectricity.essential.items.ItemMisc;
+import simelectricity.essential.items.ItemPanel;
 
 public class VoltageSensorPanel implements ISEElectricalCoverPanel, ISERedstoneEmitterCoverPanel, ISEGuiCoverPanel{
     public boolean emitRedStoneSignal;
@@ -93,7 +93,7 @@ public class VoltageSensorPanel implements ISEElectricalCoverPanel, ISERedstoneE
 
 	@Override
 	public ITextComponent getDisplayName() {
-		return new TranslationTextComponent(ItemRegistry.itemMisc[ItemMisc.ItemType.voltagesensor.ordinal()].getTranslationKey());
+		return new TranslationTextComponent(ItemRegistry.itemMisc[ItemPanel.ItemType.voltagesensor.ordinal()].getTranslationKey());
 	}
 
     /////////////////////////

@@ -91,7 +91,7 @@ public class CableModel extends CodeBasedModel {
             if (coverPanel != null) {
                 ISECoverPanelRender render = coverPanel.getCoverPanelRender();
                 if (render != null)
-                    render.renderCoverPanel(coverPanel, side, quads);
+                    render.renderCoverPanel(coverPanel, side, rand, quads);
             }
         }
 

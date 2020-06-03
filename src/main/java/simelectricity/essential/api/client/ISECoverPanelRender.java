@@ -7,8 +7,9 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import simelectricity.essential.api.coverpanel.ISECoverPanel;
 
 import java.util.List;
+import java.util.Random;
 
 public interface ISECoverPanelRender<TYPE extends ISECoverPanel> {
     @OnlyIn(Dist.CLIENT)
-    void renderCoverPanel(TYPE coverPanel, Direction side, List<BakedQuad> quads);
+    void renderCoverPanel(TYPE coverPanel, Direction side, Random random, List<BakedQuad> quads);
 }

@@ -20,7 +20,7 @@ public class MutableQuad {
     private boolean shade = false;
     private TextureAtlasSprite sprite = null;
 
-    public MutableQuad fromBakedItem(BakedQuad quad) {
+    public MutableQuad(BakedQuad quad) {
         tintIndex = quad.getTintIndex();
         face = quad.getFace();
         sprite = quad.func_187508_a();
@@ -33,8 +33,6 @@ public class MutableQuad {
         vertex_1.fromBakedItem(data, stride);
         vertex_2.fromBakedItem(data, stride * 2);
         vertex_3.fromBakedItem(data, stride * 3);
-
-        return this;
     }
 
     public int getTint() {
@@ -46,7 +44,7 @@ public class MutableQuad {
         return this;
     }
 
-    public BakedQuad toBakedItem() {
+    public BakedQuad bake() {
         int[] data = new int[32];
         vertex_0.toBakedItem(data, 0);
         vertex_1.toBakedItem(data, 8);

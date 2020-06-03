@@ -30,12 +30,7 @@ import simelectricity.essential.api.coverpanel.ISECoverPanel;
 import simelectricity.essential.coverpanel.LedPanel;
 import simelectricity.essential.coverpanel.VoltageSensorPanel;
 
-/**
- * The ItemMisc creates very simple and basic items
- * e.g. raw materials and things cannot be "used" by players
- * @author Rikka0w0
- */
-public final class ItemMisc extends ItemBase implements IMetaProvider<IMetaBase> {
+public final class ItemPanel extends ItemBase implements IMetaProvider<IMetaBase> {
     public static enum ItemType implements IMetaBase {
     	ledpanel(LedPanel::new),
     	voltagesensor(VoltageSensorPanel::new),
@@ -49,7 +44,7 @@ public final class ItemMisc extends ItemBase implements IMetaProvider<IMetaBase>
     }
     
     public final ItemType itemType;
-    private ItemMisc(ItemType itemType) {
+    private ItemPanel(ItemType itemType) {
         super("item_" + itemType.name(), (new Item.Properties())
         		.group(SEAPI.SETab));
         this.itemType = itemType;
@@ -60,10 +55,10 @@ public final class ItemMisc extends ItemBase implements IMetaProvider<IMetaBase>
 		return itemType;
 	}
     
-    public static ItemMisc[] create() {
-    	ItemMisc[] ret = new ItemMisc[ItemType.values().length];
+    public static ItemPanel[] create() {
+    	ItemPanel[] ret = new ItemPanel[ItemType.values().length];
     	for (ItemType meta: ItemType.values()) {
-    		ret[meta.ordinal()] = new ItemMisc(meta);
+    		ret[meta.ordinal()] = new ItemPanel(meta);
     	}
     	return ret;
     }
@@ -78,11 +73,13 @@ public final class ItemMisc extends ItemBase implements IMetaProvider<IMetaBase>
 		
 		World world = context.getWorld();
 		BlockPos pos = context.getPos();
-		Direction side = context.getFace();
 		BlockState blockstate = world.getBlockState(pos);
 		VoxelShape shape = blockstate.getShape(world, pos);
-		if (!Block.doesSideFillSquare(shape, side))
-			return super.onItemUse(context);
+		
+		for (Direction side: Direction.values()) {
+			if (!Block.doesSideFillSquare(shape, side))
+				return super.onItemUse(context);
+		}
 		
 		CompoundNBT bsNBT = NBTUtil.writeBlockState(blockstate);
 		context.getItem().getOrCreateTag().put("facade_blockstate", bsNBT);

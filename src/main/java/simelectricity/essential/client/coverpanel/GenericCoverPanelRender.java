@@ -19,6 +19,7 @@ import simelectricity.essential.api.coverpanel.ISECoverPanel;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 @OnlyIn(Dist.CLIENT)
 public abstract class GenericCoverPanelRender<T extends ISECoverPanel> implements ISECoverPanelRender<T>, IModelBakeHandler {
@@ -129,7 +130,7 @@ public abstract class GenericCoverPanelRender<T extends ISECoverPanel> implement
     }
 
     @Override
-    public void renderCoverPanel(ISECoverPanel coverPanel, Direction side, List quads) {
+    public void renderCoverPanel(ISECoverPanel coverPanel, Direction side, Random rand, List quads) {
         if (MinecraftForgeClient.getRenderLayer() != RenderType.getSolid())
             return;
 
