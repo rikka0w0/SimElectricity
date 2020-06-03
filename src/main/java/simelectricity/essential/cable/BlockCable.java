@@ -623,8 +623,8 @@ public class BlockCable extends MetaBlock implements ISimpleTexture {
 
         ISEGenericCable cable = (ISEGenericCable) te;
 
-        RayTraceResult trace = this.rayTrace(world, pos, player);
-        if (!trace.getBlockPos().equals(pos))
+        RayTraceResult trace = this.rayTrace(world, pos, player);        
+        if (trace==null || !trace.getBlockPos().equals(pos))
             return new ItemStack(Item.getItemFromBlock(this), 1, damageDropped(state));
 
         if (trace.subHit > 6 && trace.subHit < 13) {

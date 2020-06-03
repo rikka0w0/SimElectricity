@@ -102,7 +102,7 @@ public class TileCable extends SEEnergyTile implements ISEGenericCable, ISEIumin
         if (block instanceof BlockCable) {
             RayTraceResult result = ((BlockCable) block).rayTrace(this.world, this.pos, player);
 
-            if (result.subHit < 7 || result.subHit > 12)
+            if (result==null || result.subHit < 7 || result.subHit > 12)
                 return null;    //The player is not looking at anyinstalled cover panel
 
             EnumFacing side = EnumFacing.getFront(result.subHit - 7);
