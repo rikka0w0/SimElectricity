@@ -16,7 +16,6 @@ import net.minecraft.inventory.container.Container;
 import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.DrawHighlightEvent;
 import net.minecraftforge.client.event.ModelBakeEvent;
@@ -41,7 +40,6 @@ import simelectricity.essential.client.cable.WireModel;
 import simelectricity.essential.client.coverpanel.LedPanelRender;
 import simelectricity.essential.client.coverpanel.SupportRender;
 import simelectricity.essential.client.coverpanel.VoltageSensorRender;
-import simelectricity.essential.client.semachine.SEMachineModel;
 import simelectricity.essential.client.semachine.SocketRender;
 import simelectricity.essential.common.semachine.SEMachineBlock;
 import simelectricity.essential.coverpanel.CoverPanelRegistry;
@@ -99,7 +97,6 @@ public class ClientRegistrationHandler {
 		TERHelper.bind(TileDistributionTransformer.Pole415V.class, PowerPoleTER::new);
 	}
 	
-	@OnlyIn(Dist.CLIENT)
 	@SubscribeEvent
 	public static void onModelRegistryEvent(ModelRegistryEvent event) {
 		PowerTransformerTER.onModelRegistryEvent();
@@ -121,20 +118,10 @@ public class ClientRegistrationHandler {
     	PowerTransformerTER.onPreTextureStitchEvent(event);
     	DistributionTransformerFormedModel.instance.onPreTextureStitchEvent(event);
     }
-    
-    @SubscribeEvent
-    public static void onTextureStitch(TextureStitchEvent.Post event) {
-//    	event.getMap().getSprite(location)
-    }
 
     @SubscribeEvent
     public static void onModelBake(ModelBakeEvent event) {
     	Map<ResourceLocation, IBakedModel> registry = event.getModelRegistry();
-    	
-		for (SEMachineBlock sem: BlockRegistry.blockElectronics)
-			SEMachineModel.replace(registry, sem);
-		for (SEMachineBlock sem: BlockRegistry.blockTwoPortElectronics)
-			SEMachineModel.replace(registry, sem);
     	
     	dynamicModels.forEach((blockstate, dynamicModel) -> {
     		dynamicModel.onModelBakeEvent();
@@ -188,7 +175,7 @@ public class ClientRegistrationHandler {
      * TextureStitchEvent.Post
      * ModelBakeEvent
      */
-	@OnlyIn(Dist.CLIENT)
+
 	@SubscribeEvent
 	public static void onClientSetup(FMLClientSetupEvent event){
 		MinecraftForge.EVENT_BUS.register(new Object() {

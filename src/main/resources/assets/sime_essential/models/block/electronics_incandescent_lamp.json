@@ -1,5 +1,6 @@
 {
   "parent": "block/cube_all",
+  "loader": "sime_essential:machine",
   "textures": {
     "all": "sime_essential:block/machines/incandescent_lamp",
     "particle": "sime_essential:block/machines/incandescent_lamp"

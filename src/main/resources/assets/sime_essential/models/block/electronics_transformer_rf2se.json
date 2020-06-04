@@ -1,5 +1,6 @@
 {
-	"loader": "forge:obj",
+    "loader": "sime_essential:machine",
+	"loader2": "forge:obj",
 	"model": "sime_essential:models/electronics_transformer_rf2se.obj",
 	"textures": {
 		"particle": "sime_essential:block/machines/motor_case_red"

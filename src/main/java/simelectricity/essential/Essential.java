@@ -40,6 +40,7 @@ public class Essential {
             throw new RuntimeException("Duplicated Class Instantiation: simelectricity.essential.Essential");
     	
     	ClientConfigs.register();
+    	proxy.registerModelLoaders();
     }
     
     @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD)

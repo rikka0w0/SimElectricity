@@ -1,5 +1,6 @@
 {
   "parent": "block/cube",
+  "loader": "sime_essential:machine",
   "textures": {
     "down": "sime_essential:block/machines/machine_bottom",
     "up": "sime_essential:block/machines/solar_panel_top",

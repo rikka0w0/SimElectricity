@@ -1,5 +1,6 @@
 {
     "parent": "block/cube",
+    "loader": "sime_essential:machine",
     "display": {
         "firstperson_righthand": {
             "rotation": [ 0, 135, 0 ],

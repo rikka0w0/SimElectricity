@@ -17,4 +17,8 @@ public class CommonProxy {
     public void registerColoredFacadeHost(Block block) {
     	
     }
+    
+    public void registerModelLoaders() {
+    	
+    }
 }
