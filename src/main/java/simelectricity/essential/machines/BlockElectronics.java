@@ -162,14 +162,13 @@ public abstract class BlockElectronics extends SEMachineBlock implements IMetaPr
     @Override
     public void onBlockPlacedBy(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
         super.onBlockPlacedBy(world, pos, state, placer, stack);
-        if (world.isRemote)
-            return;
 
         TileEntity te = world.getTileEntity(pos);
-
         if (te instanceof SESinglePortMachine) {
             Direction sight = Utils.getPlayerSight(placer);
-            ((SESinglePortMachine) te).setFacing(sight.getOpposite());
+            // Facing is now stored in the blockstate
+            // which has been set during getStateForPlacement
+//            ((SESinglePortMachine) te).setFacing(sight.getOpposite());
 
             if (sight == Direction.UP && te instanceof TileSolarPanel)
                 sight = Direction.DOWN;

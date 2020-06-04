@@ -95,6 +95,11 @@ public abstract class SESinglePortMachine<T extends ISEComponentParameter> exten
     /////////////////////////////////////////////////////////
     public void SetFunctionalSide(Direction side) {
         this.functionalSide = side;
+        
+        if (world.isRemote) {
+        	this.markForRenderUpdate();
+        	return;
+        }
 
         markTileEntityForS2CSync();
         this.world.notifyNeighborsOfStateChange(this.pos, getBlockState().getBlock());

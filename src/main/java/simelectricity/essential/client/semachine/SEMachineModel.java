@@ -78,6 +78,9 @@ public final class SEMachineModel implements IDynamicBakedModel {
 	@Override
 	public List<BakedQuad> getQuads(BlockState state, Direction side, Random rand, IModelData extraData) {
 		RenderType layer = MinecraftForgeClient.getRenderLayer();
+		if (layer == null)
+			return this.bakedModel.getQuads(state, side, rand, extraData);
+		
 		List<BakedQuad> quads = new LinkedList<>();
 		
 		boolean hideMachineFace = false;
@@ -102,9 +105,6 @@ public final class SEMachineModel implements IDynamicBakedModel {
     	if (layer == RenderType.getSolid() && !hideMachineFace)
     		return this.bakedModel.getQuads(state, side, rand, extraData);
     	// Only render the machine body in the solid layer
-		
-		// Create a copy of the original quads
-		this.bakedModel.getQuads(state, side, rand, extraData);
     	
 		// Render the sockets in the cutout layer
 		if (side == null && layer == RenderType.getCutout()) {

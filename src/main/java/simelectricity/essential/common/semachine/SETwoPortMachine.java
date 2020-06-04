@@ -99,6 +99,11 @@ public abstract class SETwoPortMachine<T extends ISEComponentParameter> extends 
         inputSide = input;
         outputSide = output;
 
+        if (world.isRemote) {
+        	this.markForRenderUpdate();
+        	return;
+        }
+
         markTileEntityForS2CSync();
         this.world.notifyNeighborsOfStateChange(this.pos, getBlockState().getBlock());
         //this.worldObj.notifyBlockChange(xCoord, yCoord, zCoord, this.getBlockType());

@@ -139,11 +139,8 @@ public abstract class BlockTwoPortElectronics extends SEMachineBlock implements 
     @Override
     public void onBlockPlacedBy(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
         super.onBlockPlacedBy(world, pos, state, placer, stack);
-        if (world.isRemote)
-            return;
 
         TileEntity te = world.getTileEntity(pos);
-
         if (te instanceof SETwoPortMachine) {
             Direction sight = Utils.getPlayerSight(placer);
 
