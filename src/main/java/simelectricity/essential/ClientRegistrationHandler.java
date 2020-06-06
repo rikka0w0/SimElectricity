@@ -21,6 +21,7 @@ import net.minecraftforge.client.event.DrawHighlightEvent;
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
+import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.client.model.generators.ExistingFileHelper;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -32,14 +33,13 @@ import rikka.librikka.block.ICustomBoundingBox;
 import rikka.librikka.gui.AutoGuiHandler;
 import rikka.librikka.model.CodeBasedModel;
 import rikka.librikka.model.loader.TERHelper;
-import simelectricity.essential.cable.BlockCable;
 import simelectricity.essential.cable.BlockWire;
 import simelectricity.essential.client.ModelDataProvider;
-import simelectricity.essential.client.cable.CableModel;
-import simelectricity.essential.client.cable.WireModel;
+import simelectricity.essential.client.cable.CableModelLoader;
 import simelectricity.essential.client.coverpanel.LedPanelRender;
 import simelectricity.essential.client.coverpanel.SupportRender;
 import simelectricity.essential.client.coverpanel.VoltageSensorRender;
+import simelectricity.essential.client.semachine.SEMachineModelLoader;
 import simelectricity.essential.client.semachine.SocketRender;
 import simelectricity.essential.common.semachine.SEMachineBlock;
 import simelectricity.essential.coverpanel.CoverPanelRegistry;
@@ -97,9 +97,17 @@ public class ClientRegistrationHandler {
 		TERHelper.bind(TileDistributionTransformer.Pole415V.class, PowerPoleTER::new);
 	}
 	
+	public static void registerModelLoaders() {
+    	ModelLoaderRegistry.registerLoader(SEMachineModelLoader.id, SEMachineModelLoader.instance);
+    	ModelLoaderRegistry.registerLoader(CableModelLoader.id, CableModelLoader.instance);
+	}
+	
 	@SubscribeEvent
 	public static void onModelRegistryEvent(ModelRegistryEvent event) {
 		PowerTransformerTER.onModelRegistryEvent();
+		
+		// This cannot be placed here yet, due to Forge's bug, use proxy as a temp replacement
+//		registerModelLoaders()
 	}
 	
     @SubscribeEvent
@@ -207,19 +215,12 @@ public class ClientRegistrationHandler {
 			RenderTypeLookup.setRenderLayer(sem, multiLayer);
 		}
 		
-		for (BlockCable cable: BlockRegistry.blockCable) {
-			RenderTypeLookup.setRenderLayer(cable, multiLayer);
-			
-			cable.getStateContainer().getValidStates().forEach((blockstate) ->
-				dynamicModels.put(blockstate, new CableModel(cable))
-			);
+		for (Block block: BlockRegistry.blockCable) {
+			RenderTypeLookup.setRenderLayer(block, multiLayer);
 		}
+		
 		for (BlockWire wire: BlockRegistry.blockWire) {
 			RenderTypeLookup.setRenderLayer(wire, RenderType.getSolid());
-			
-			wire.getStateContainer().getValidStates().forEach((blockstate) ->
-				dynamicModels.put(blockstate, new WireModel(wire))
-			);
 		}
 
 		BlockRegistry.cableJoint[BlockCableJoint.Type._10kv.ordinal()]

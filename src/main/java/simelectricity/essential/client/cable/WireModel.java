@@ -28,16 +28,10 @@ public class WireModel extends CodeBasedModel {
 
     public final float thickness;
 
-    public WireModel(BlockWire wireBlock) {
-    	this(	wireBlock.getRegistryName().getNamespace(), 
-    			wireBlock.getRegistryName().getPath(), 
-    			wireBlock.meta().thickness());
-    }
-    
-    public WireModel(String domain, String name, float thickness) {
+    public WireModel(ResourceLocation insulatorTextureLoc, ResourceLocation conductorTextureLoc, float thickness) {
+        this.insulatorTextureLoc = registerTexture(insulatorTextureLoc);
+        this.conductorTextureLoc = registerTexture(insulatorTextureLoc);
         this.thickness = thickness;
-        this.insulatorTextureLoc = this.registerTexture(domain, "block/wire/" + name + "_insulator");		// We just want to bypass the ModelBakery
-        this.conductorTextureLoc = this.registerTexture(domain, "block/wire/" + name + "_conductor");		// and load our texture
     }
 
     @Override

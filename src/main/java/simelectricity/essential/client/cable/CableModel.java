@@ -1,6 +1,5 @@
 package simelectricity.essential.client.cable;
 
-
 import java.util.function.Function;
 
 import net.minecraft.block.BlockState;
@@ -18,7 +17,6 @@ import rikka.librikka.model.quadbuilder.RawQuadCube;
 import simelectricity.essential.api.ISEGenericCable;
 import simelectricity.essential.api.client.ISECoverPanelRender;
 import simelectricity.essential.api.coverpanel.ISECoverPanel;
-import simelectricity.essential.cable.BlockCable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,13 +30,9 @@ public class CableModel extends CodeBasedModel {
 
     private final List<BakedQuad>[] branches = new List[6];
 
-    public CableModel(BlockCable cable) {
-    	this(cable.getRegistryName().getNamespace(), cable.getRegistryName().getPath(), cable.meta().thickness());
-    }
-    
-    public CableModel(String domain, String name, float thickness) {
-        this.insulatorTextureLoc = registerTexture(domain, "block/cable/" + name + "_insulator");    // We just want to bypass the ModelBakery
-        this.conductorTextureLoc = registerTexture(domain,"block/cable/" + name + "_conductor");    // and load our texture
+    public CableModel(ResourceLocation insulatorTextureLoc, ResourceLocation conductorTextureLoc, float thickness) {
+        this.insulatorTextureLoc = registerTexture(insulatorTextureLoc);
+        this.conductorTextureLoc = registerTexture(insulatorTextureLoc);
         this.thickness = thickness;
     }
 
@@ -47,6 +41,10 @@ public class CableModel extends CodeBasedModel {
         return this.conductorTexture;
     }
 
+    public RenderType getCableRenderLayer() {
+    	return RenderType.getSolid();
+    }
+    
     @Override
 	public List<BakedQuad> getQuads(BlockState blockState, Direction cullingSide, Random rand,
 			IModelData extraData) {
@@ -58,7 +56,7 @@ public class CableModel extends CodeBasedModel {
         
     	if (cullingSide == null) {
             //Render center & branches in SOLID layer
-            if (MinecraftForgeClient.getRenderLayer() == RenderType.getCutoutMipped()) {
+            if (MinecraftForgeClient.getRenderLayer() == getCableRenderLayer()) {
                 byte numOfCon = 0;
                 Direction conSide = Direction.DOWN;
 

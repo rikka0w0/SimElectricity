@@ -8,6 +8,7 @@ import java.util.function.Function;
 import com.google.gson.Gson;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
+import com.mojang.datafixers.util.Pair;
 
 import net.minecraft.client.renderer.model.BlockModel;
 import net.minecraft.client.renderer.model.IBakedModel;
@@ -16,6 +17,7 @@ import net.minecraft.client.renderer.model.IUnbakedModel;
 import net.minecraft.client.renderer.model.ItemOverrideList;
 import net.minecraft.client.renderer.model.Material;
 import net.minecraft.client.renderer.model.ModelBakery;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.JSONUtils;
 import net.minecraft.util.LazyValue;
@@ -74,8 +76,13 @@ public class SEMachineModelLoader implements IModelLoader {
 	
 	public static class VanillaWrapper implements IModelGeometry<VanillaWrapper> {
 		@Override
-		public IBakedModel bake(IModelConfiguration owner, ModelBakery bakery, Function spriteGetter,
-				IModelTransform modelTransform, ItemOverrideList overrides, ResourceLocation modelLocation) {
+		public IBakedModel bake(IModelConfiguration owner, 
+				ModelBakery bakery, 
+				Function<Material, TextureAtlasSprite> spriteGetter, 
+				IModelTransform modelTransform, 
+				ItemOverrideList overrides, 
+				ResourceLocation modelLocation) {
+			
 			IUnbakedModel unbakedOwner = owner.getOwnerModel();
 			if (!(unbakedOwner instanceof BlockModel))
 				return unbakedOwner.bakeModel(bakery, spriteGetter, modelTransform, modelLocation);
@@ -98,8 +105,9 @@ public class SEMachineModelLoader implements IModelLoader {
 		}
 
 		@Override
-		public Collection getTextures(IModelConfiguration owner, Function modelGetter,
-				Set missingTextureErrors) {
+		public Collection<Material> getTextures(IModelConfiguration owner, 
+				Function<ResourceLocation, IUnbakedModel> modelGetter, 
+				Set<Pair<String, String>> missingTextureErrors) {
 			
 			IUnbakedModel unbakedOwner = owner.getOwnerModel();
 			if (!(unbakedOwner instanceof BlockModel))
@@ -131,16 +139,21 @@ public class SEMachineModelLoader implements IModelLoader {
 		}
 		
 		@Override
-		public IBakedModel bake(IModelConfiguration owner, ModelBakery bakery, Function spriteGetter,
-				IModelTransform modelTransform, ItemOverrideList overrides, ResourceLocation modelLocation) {
+		public IBakedModel bake(IModelConfiguration owner, 
+				ModelBakery bakery, 
+				Function<Material, TextureAtlasSprite> spriteGetter, 
+				IModelTransform modelTransform, 
+				ItemOverrideList overrides, 
+				ResourceLocation modelLocation) {
 			IBakedModel bakedModel = 
 				modelGeometry.bake(owner, bakery, spriteGetter, modelTransform, overrides, modelLocation);
 			return new SEMachineModel(bakedModel);
 		}
 
 		@Override
-		public Collection getTextures(IModelConfiguration owner, Function modelGetter,
-				Set missingTextureErrors) {
+		public Collection<Material> getTextures(IModelConfiguration owner, 
+				Function<ResourceLocation, IUnbakedModel> modelGetter, 
+				Set<Pair<String, String>> missingTextureErrors) {
 			return modelGeometry.getTextures(owner, modelGetter, missingTextureErrors);
 		}
 	}
