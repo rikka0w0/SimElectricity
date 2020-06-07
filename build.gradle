@@ -19,10 +19,6 @@ apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'eclipse'
 
 dependencies {
-    // Specify the version of Minecraft to use, If this is any group other then 'net.minecraft' it is assumed
-    // that the dep is a ForgeGradle 'patcher' dependency. And it's patches will be applied.
-    // The userdev artifact is a special name and will get all sorts of transformations applied to it.
-    // minecraft 'net.minecraftforge:forge:1.15.1-30.0.41'
     minecraft 'net.minecraftforge:forge:1.15.2-31.1.47'
 
     runtime fileTree(dir: 'libs', include: '*.jar')
@@ -34,6 +30,32 @@ archivesBaseName = "SimElectricity"
 
 // Need this here so eclipse task generates correctly.
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8'
+
+// configure  the source folders
+sourceSets {
+    librikka {
+        java {
+            srcDir "librikka/src/main/java"
+        }
+        resources {
+            srcDir "librikka/src/main/resources"
+        }
+    }
+
+    main {
+        java {
+            srcDir "src/main/java"
+        }
+        resources {
+            srcDir "src/main/resources"
+            srcDir "src/generated/resources"
+            exclude '.cache'
+            exclude 'Thumbs.db'
+        }
+        compileClasspath += librikka.output
+        runtimeClasspath += librikka.output
+    }
+}
 
 minecraft {
     // the mappings can be changed at any time, and must be in the following format.
@@ -61,6 +83,10 @@ minecraft {
                 simelectricity {
                     source sourceSets.main
                 }
+                
+                librikka {
+                    source sourceSets.librikka
+                }
             }
         }
 
@@ -76,6 +102,10 @@ minecraft {
             mods {
                 simelectricity {
                     source sourceSets.main
+                }
+                
+                librikka {
+                    source sourceSets.librikka
                 }
             }
         }
@@ -95,45 +125,22 @@ minecraft {
                 simelectricity {
                     source sourceSets.main
                 }
+                
+                librikka {
+                    source sourceSets.librikka
+                }
             }
         }
     }
 }
 
-//processResources {
-//    // this will ensure that this task is redone when the versions change.
-//    inputs.property "version", project.version
-//    inputs.property "mcversion", project.minecraft.version
-//
-//    // replace stuff in mcmod.info, nothing else
-//    from(sourceSets.main.resources.srcDirs) {
-//        include 'mcmod.info'
-//
-//        // replace version and mcversion
-//        expand 'version':project.version, 'mcversion':project.minecraft.version
-//    }
-//
-//    // copy everything else except the mcmod.info
-//    from(sourceSets.main.resources.srcDirs) {
-//        exclude 'mcmod.info'
-//    }
-//}
-
-// configure  the source folders
-sourceSets {
-    main {
-        java {
-            srcDir "src/main/java"
-            srcDir "librikka/src/main/java"
-        }
-        resources {
-            srcDir "src/main/resources"
-            srcDir "src/generated/resources"
-        }
-    }
+// Ref: https://stackoverflow.com/questions/61093029/how-to-add-another-sourceset-with-a-mod-in-minecraft-forge-forge-gradle-3
+configurations {
+    librikkaCompile.extendsFrom(compile)
+    librikkaCompileOnly.extendsFrom(compileOnly)
+    librikkaRuntimeOnly.extendsFrom(runtimeOnly)
 }
 
-jar.classifier = 'full'
 jar.version = version
 jar {
     manifest {
@@ -149,90 +156,22 @@ jar {
     }
 }
 
-
-ext.jarFile = zipTree(jar.archivePath)
 def libsDir = new File(System.getenv("LIBS_DIR") ?: "build/libs/")
-//sourceJar.excludes.addAll(["rikka/**"])
-
 
 task deobfJar(type: Jar, dependsOn: 'jar') {
-    from(sourceSets.main.output) {
-    	excludes.addAll(["rikka/**"])
-    }
     destinationDir = libsDir
+    from sourceSets.main.output
     manifest = jar.manifest
     classifier = 'dev'
 }
 
-task standaloneJar(type: Jar, dependsOn: 'reobfJar') {
-    from(project.ext.jarFile) {
-    	excludes.addAll(["rikka/**"])
-    }
+task sourceJar(type: Jar) {
     destinationDir = libsDir
-    manifest = jar.manifest
+    from sourceSets.main.allSource
+    classifier "src"
 }
 
 artifacts {
     archives deobfJar
-    archives standaloneJar
+    archives sourceJar
 }
-//
-//task apiSrcJar(type: Jar) {
-//    destinationDir = libsDir
-//    appendix = "api"
-//    classifier = 'sources'
-//
-//    doFirst {
-//        from (sourceSets.main.allSource) {
-//           includes.addAll(["simelectricity/api/**", "simelectricity/essential/api/**"])
-//        }
-//    }
-//}
-//
-//task apiDevJar(type: Jar, dependsOn: reobfJar) {
-//    destinationDir = libsDir
-//    appendix = 'api'
-//    classifier = 'dev'
-//
-//    doFirst {
-//        from(sourceSets.main.output) {
-//            includes.addAll(["simelectricity/api/**", "simelectricity/essential/api/**"])
-//        }
-//    }
-//}
-//
-//task apiJar(type: Jar, dependsOn: reobfJar) {
-//    destinationDir = libsDir
-//    appendix = 'api'
-//
-//    doFirst {
-//        from(project.ext.jarFile) {
-//            includes.addAll(["simelectricity/api/**", "simelectricity/essential/api/**"])
-//        }
-//    }
-//}
-//
-//task energyNetDevJar(type: Jar, dependsOn: reobfJar) {
-//    destinationDir = libsDir
-//    appendix = 'energyNet'
-//    classifier = 'dev'
-//
-//    doFirst {
-//        from(sourceSets.main.output) {
-//            includes.addAll(["simelectricity/**"])
-//            excludes.addAll(["simelectricity/essential/**"])
-//        }
-//    }
-//}
-//
-//task energyNetJar(type: Jar, dependsOn: reobfJar) {
-//    destinationDir = libsDir
-//    appendix = 'energyNet'
-//
-//    doFirst {
-//        from(project.ext.jarFile) {
-//            includes.addAll(["simelectricity/**"])
-//            excludes.addAll(["simelectricity/essential/**"])
-//        }
-//    }
-//}
