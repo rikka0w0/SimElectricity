@@ -7,7 +7,7 @@ public class Catenary implements java.util.function.Function<Float,Float>, com.g
 	private final float u, x1, k;
 	
 	public Catenary(float yFrom, float yTo, float d, float h) {
-		float h1, a, offset;
+		float h1, a;
 		if (yFrom<yTo) {
 			h1 = yFrom;
 			a = yTo - yFrom;

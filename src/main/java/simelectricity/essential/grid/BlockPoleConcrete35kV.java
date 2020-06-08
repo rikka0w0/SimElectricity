@@ -97,7 +97,8 @@ public class BlockPoleConcrete35kV extends BlockBase implements ICustomBoundingB
     	final Block blockThis = this;
     	
     	return new BlockMapping(Blocks.AIR.getDefaultState(), toState) {
-    		@Override
+    		@SuppressWarnings("deprecation")
+			@Override
     	    protected boolean cancelPlacement(BlockState state) {
     			return !state.isAir();
     		}
@@ -152,7 +153,6 @@ public class BlockPoleConcrete35kV extends BlockBase implements ICustomBoundingB
     public VoxelShape getBoundingShape(BlockState state, IBlockReader world, BlockPos pos, ISelectionContext context) {
     	Type type = state.get(propType);
         int facing = state.get(BlockStateProperties.HORIZONTAL_FACING).getHorizontalIndex();
-        VoxelShape vs = VoxelShapes.empty();
 
         if (type == Type.pole || type == Type.pole_collisionbox) {
 			if (type == Type.pole_collisionbox)

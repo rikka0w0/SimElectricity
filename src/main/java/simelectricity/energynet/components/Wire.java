@@ -5,7 +5,7 @@ import net.minecraft.util.Direction;
 import simelectricity.api.components.ISEWire;
 import simelectricity.api.node.ISESubComponent;
 
-public final class Wire extends CableBase<ISEWire> implements ISESubComponent, ISEWire {
+public final class Wire extends CableBase<ISEWire> implements ISESubComponent<ISESubComponent<?>>, ISEWire {
     private volatile boolean[] hasBranchOnSide;        //Use canConnectOnSide() instead
 
     public Wire(ISEWire dataProvider, TileEntity te) {
@@ -34,10 +34,5 @@ public final class Wire extends CableBase<ISEWire> implements ISESubComponent, I
         }
 
         return hasBranchOnSide[side.ordinal()];
-    }
-
-    @Override
-    public ISESubComponent getComplement() {
-        return null;
     }
 }

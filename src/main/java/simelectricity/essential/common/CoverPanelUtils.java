@@ -70,6 +70,7 @@ public class CoverPanelUtils {
     ///////////////////////////////
     /// CoverPanel Handler
     ///////////////////////////////
+	@SuppressWarnings("deprecation")
 	public static ActionResultType installCoverPanel(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult ray) {
 		Direction side = ray.getFace();
         TileEntity te = world.getTileEntity(pos);

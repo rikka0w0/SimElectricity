@@ -12,4 +12,10 @@ import java.util.Random;
 public interface ISECoverPanelRender<TYPE extends ISECoverPanel> {
     @OnlyIn(Dist.CLIENT)
     void renderCoverPanel(TYPE coverPanel, Direction side, Random random, List<BakedQuad> quads);
+    
+    @OnlyIn(Dist.CLIENT)
+    @SuppressWarnings("unchecked")
+	default <X> X cast() {
+    	return (X) this;
+    }
 }

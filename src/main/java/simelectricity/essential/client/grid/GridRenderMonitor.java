@@ -16,8 +16,8 @@ import java.util.Set;
 public enum GridRenderMonitor {
 	instance;
 
-	private final Set<ISEPowerPole> affactedTiles = new HashSet();
-    private final Set<ISEPowerPole> processedTiles = new HashSet();
+	private final Set<ISEPowerPole> affactedTiles = new HashSet<>();
+    private final Set<ISEPowerPole> processedTiles = new HashSet<>();
 
 
     public synchronized void notifyChanged(ISEPowerPole... list) {

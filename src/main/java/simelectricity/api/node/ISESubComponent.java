@@ -10,6 +10,6 @@ import simelectricity.api.components.ISEComponentParameter;
  * API users should not implement this interface anywhere!
  */
 
-public interface ISESubComponent<T extends ISESubComponent> extends ISESimulatable, ISEComponentParameter {
-	T getComplement();
+public interface ISESubComponent<T extends ISESubComponent<?>> extends ISESimulatable, ISEComponentParameter {
+
 }

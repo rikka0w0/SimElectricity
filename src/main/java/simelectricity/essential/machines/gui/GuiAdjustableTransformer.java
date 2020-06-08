@@ -11,8 +11,8 @@ import simelectricity.essential.utils.SEUnitHelper;
 import simelectricity.essential.utils.client.gui.SEGuiContainer;
 
 @OnlyIn(Dist.CLIENT)
-public final class GuiAdjustableTransformer<T extends ContainerAdjustableTransformer> extends SEGuiContainer<T> {
-    public GuiAdjustableTransformer(T screenContainer, PlayerInventory inv, ITextComponent titleIn) {
+public final class GuiAdjustableTransformer extends SEGuiContainer<ContainerAdjustableTransformer> {
+    public GuiAdjustableTransformer(ContainerAdjustableTransformer screenContainer, PlayerInventory inv, ITextComponent titleIn) {
         super(screenContainer, inv, titleIn);
     }
 

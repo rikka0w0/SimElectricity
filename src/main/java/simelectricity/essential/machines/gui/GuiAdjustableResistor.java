@@ -11,8 +11,8 @@ import simelectricity.essential.utils.SEUnitHelper;
 import simelectricity.essential.utils.client.gui.SEGuiContainer;
 
 @OnlyIn(Dist.CLIENT)
-public final class GuiAdjustableResistor<T extends ContainerAdjustableResistor> extends SEGuiContainer<T> {
-    public GuiAdjustableResistor(T screenContainer, PlayerInventory inv, ITextComponent titleIn) {
+public final class GuiAdjustableResistor extends SEGuiContainer<ContainerAdjustableResistor> {
+    public GuiAdjustableResistor(ContainerAdjustableResistor screenContainer, PlayerInventory inv, ITextComponent titleIn) {
         super(screenContainer, inv, titleIn);
     }
 

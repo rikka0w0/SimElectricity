@@ -2,7 +2,6 @@ package simelectricity.essential.machines.gui;
 
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import rikka.librikka.container.ContainerSynchronizer;
 import rikka.librikka.gui.AutoGuiHandler;
@@ -21,7 +20,7 @@ public class ContainerAdjustableTransformer extends ContainerNoInventoryTwoPort<
     public double vPri, vSec;
 
 	// Server side
-    public ContainerAdjustableTransformer(TileEntity tileEntity, int windowID) {
+    public ContainerAdjustableTransformer(TileAdjustableTransformer tileEntity, int windowID) {
         super(tileEntity, windowID);
     }
     

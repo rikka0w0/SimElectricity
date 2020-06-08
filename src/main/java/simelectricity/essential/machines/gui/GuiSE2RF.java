@@ -10,8 +10,8 @@ import simelectricity.essential.utils.SEUnitHelper;
 import simelectricity.essential.utils.client.gui.SEGuiContainer;
 
 @OnlyIn(Dist.CLIENT)
-public final class GuiSE2RF<T extends ContainerSE2RF> extends SEGuiContainer<T>{
-    public GuiSE2RF(T screenContainer, PlayerInventory inv, ITextComponent titleIn) {
+public final class GuiSE2RF extends SEGuiContainer<ContainerSE2RF>{
+    public GuiSE2RF(ContainerSE2RF screenContainer, PlayerInventory inv, ITextComponent titleIn) {
         super(screenContainer, inv, titleIn);
     }
 

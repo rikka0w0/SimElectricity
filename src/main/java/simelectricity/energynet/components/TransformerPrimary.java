@@ -2,10 +2,10 @@ package simelectricity.energynet.components;
 
 import net.minecraft.tileentity.TileEntity;
 import simelectricity.api.components.ISETransformer;
-import simelectricity.api.node.ISESubComponent;
+import simelectricity.api.node.ISEPairedComponent;
 import simelectricity.energynet.components.SEComponent.Tile;
 
-public class TransformerPrimary extends Tile<ISETransformer> implements ISESubComponent<TransformerSecondary>, ISETransformer {
+public class TransformerPrimary extends Tile<ISETransformer> implements ISEPairedComponent<TransformerSecondary>, ISETransformer {
     protected volatile double rsec, ratio;
     protected volatile TransformerSecondary secondary;
 

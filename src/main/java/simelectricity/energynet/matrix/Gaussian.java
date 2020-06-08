@@ -23,8 +23,8 @@ public class Gaussian implements IMatrixSolver {
     public static final double EPSILON = 1e-10;
 
     private double[][] matrix;
-    private int currentRow;
-    private int currentColumn;
+//    private int currentRow;
+//    private int currentColumn;
     private int nZ;
     private int size;
 
@@ -84,8 +84,8 @@ public class Gaussian implements IMatrixSolver {
     public void newMatrix(int size) {
         this.size = size;
         this.matrix = new double[size][size];
-        this.currentRow = 0;
-        this.currentColumn = 0;
+//        this.currentRow = 0;
+//        this.currentColumn = 0;
         this.nZ = 0;
     }
 

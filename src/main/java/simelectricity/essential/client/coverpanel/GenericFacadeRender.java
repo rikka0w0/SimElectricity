@@ -25,7 +25,7 @@ import simelectricity.essential.api.coverpanel.ISEFacadeCoverPanel;
 
 @OnlyIn(Dist.CLIENT)
 public class GenericFacadeRender implements ISECoverPanelRender<ISEFacadeCoverPanel> {
-	public final static ISECoverPanelRender instance = new GenericFacadeRender();
+	public final static GenericFacadeRender instance = new GenericFacadeRender();
 	protected GenericFacadeRender() {};
 	
 	public static void tintFunc(Direction side, MutableQuad mquad) {
@@ -74,7 +74,7 @@ public class GenericFacadeRender implements ISECoverPanelRender<ISEFacadeCoverPa
 	}
 	
 	@Override
-	public void renderCoverPanel(ISEFacadeCoverPanel coverPanel, Direction side, Random random, List quads) {		
+	public void renderCoverPanel(ISEFacadeCoverPanel coverPanel, Direction side, Random random, List<BakedQuad> quads) {		
 		BlockState blockState = coverPanel.getBlockState();
 		if (RenderTypeLookup.canRenderInLayer(blockState, MinecraftForgeClient.getRenderLayer())) {	
 	        List<MutableQuad> mquads = new LinkedList<>();

@@ -44,7 +44,7 @@ public class TilePoleMetal35kV extends TileMultiBlockPole  implements ISEFacing8
                     float z = 0;
                     float cos = MathAssitant.cosAngle(rotation*45);
                     float sin = MathAssitant.sinAngle(rotation*45);
-                    int rotation = 0;
+
                     Vec3f pos = new Vec3f(
                             x*cos + z*sin + 0.5F + this.pos.getX(),
                             this.pos.getY() + 5,

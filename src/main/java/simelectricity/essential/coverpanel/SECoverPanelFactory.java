@@ -20,10 +20,6 @@ public class SECoverPanelFactory implements ISECoverPanelFactory {
 		SEEAPI.coverPanelRegistry.register(this, FacadePanel.FacadeNormal.class, null);
 		SEEAPI.coverPanelRegistry.register(this, FacadePanel.FacadeHollow.class, null);
 	}
-	
-	private static String getIdentifier(Class<? extends ISECoverPanel> pCls) {
-		return pCls.getName();
-	}
 
     @Override
     public ISECoverPanel from(ItemStack itemStack) {

@@ -16,7 +16,6 @@ import simelectricity.essential.common.ISEFacing8;
 
 public abstract class TilePoleConcrete extends TilePowerPoleBase implements ISEFacing8 {
 	protected BlockPos accessory;
-	private int facing;
     
 	protected abstract boolean acceptAccessory(TileEntity accessory);
 	
@@ -94,7 +93,6 @@ public abstract class TilePoleConcrete extends TilePowerPoleBase implements ISEF
             @Nonnull
             @OnlyIn(Dist.CLIENT)
             protected PowerPoleRenderHelper createRenderHelper() {
-            	final TilePoleConcrete pole = this;
                 PowerPoleRenderHelper helper = new PowerPoleRenderHelper(pos, getRotation(), 1, 3);
                 helper.addInsulatorGroup(0, 0.5F, 0,
                         helper.createInsulator(0, 1.2F, -0.74F, 0.55F, 0),
@@ -171,7 +169,6 @@ public abstract class TilePoleConcrete extends TilePowerPoleBase implements ISEF
         @Nonnull
         @OnlyIn(Dist.CLIENT)
         protected PowerPoleRenderHelper createRenderHelper() {
-        	final TilePoleConcrete pole = this;
             PowerPoleRenderHelper helper = new PowerPoleRenderHelper(this.pos, getRotation(), 1, 4);
             
             helper.addInsulatorGroup(0, 0.55F, 0,

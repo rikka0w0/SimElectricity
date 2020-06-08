@@ -10,10 +10,10 @@ import simelectricity.essential.utils.SEUnitHelper;
 import simelectricity.essential.utils.client.gui.SEGuiContainer;
 
 @OnlyIn(Dist.CLIENT)
-public final class GuiVoltageMeter<T extends ContainerVoltageMeter> extends SEGuiContainer<T> {
+public final class GuiVoltageMeter extends SEGuiContainer<ContainerVoltageMeter> {
     private int sqr;
 
-    public GuiVoltageMeter(T screenContainer, PlayerInventory inv, ITextComponent titleIn) {
+    public GuiVoltageMeter(ContainerVoltageMeter screenContainer, PlayerInventory inv, ITextComponent titleIn) {
         super(screenContainer, inv, titleIn);
     }
 

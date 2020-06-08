@@ -20,8 +20,9 @@ import java.util.List;
 public enum SocketRender implements IModelBakeHandler{
 	INSTANCE;
 	
-    private final static TextureAtlasSprite[] icons = new TextureAtlasSprite[ISESocketProvider.numOfSockets];
-    private final static ResourceLocation[] iconsLoc = new ResourceLocation[ISESocketProvider.numOfSockets];
+	private final static int numOfSockets = 5;
+    private final static TextureAtlasSprite[] icons = new TextureAtlasSprite[SocketRender.numOfSockets];
+    private final static ResourceLocation[] iconsLoc = new ResourceLocation[SocketRender.numOfSockets];
     
     public static void getBaked(List<BakedQuad> list, ISESocketProvider sp) {
         TextureAtlasSprite[] textures = new TextureAtlasSprite[6];

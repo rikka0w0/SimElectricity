@@ -4,13 +4,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
-import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import rikka.librikka.Utils;
 import simelectricity.essential.ItemRegistry;
 import simelectricity.essential.api.ISEIuminousCoverPanelHost;
 import simelectricity.essential.api.client.ISECoverPanelRender;
+import simelectricity.essential.api.coverpanel.ISECoverPanel;
 import simelectricity.essential.api.coverpanel.ISEElectricalLoadCoverPanel;
 import simelectricity.essential.api.coverpanel.ISEIuminousCoverPanel;
 import simelectricity.essential.client.coverpanel.LedPanelRender;
@@ -36,8 +36,8 @@ public class LedPanel implements ISEElectricalLoadCoverPanel, ISEIuminousCoverPa
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public ISECoverPanelRender getCoverPanelRender() {
-        return LedPanelRender.instance;
+    public <T extends ISECoverPanel> ISECoverPanelRender<T> getCoverPanelRender() {
+        return LedPanelRender.instance.cast();
     }
 
     @Override
@@ -71,8 +71,6 @@ public class LedPanel implements ISEElectricalLoadCoverPanel, ISEIuminousCoverPa
             this.lightLevel = lightLevel;
 
             if (this.hostTileEntity instanceof ISEIuminousCoverPanelHost) {
-                ServerWorld world = (ServerWorld) this.hostTileEntity.getWorld();
-
                 Utils.enqueueServerWork(() -> 
                 	((ISEIuminousCoverPanelHost) LedPanel.this.hostTileEntity).onLightValueUpdated()
                 	);

@@ -12,5 +12,5 @@ public interface ISETile {
     /**
      * @return the component on the given side, null if not applicable
      */
-    ISESubComponent getComponent(Direction side);
+    ISESubComponent<?> getComponent(Direction side);
 }

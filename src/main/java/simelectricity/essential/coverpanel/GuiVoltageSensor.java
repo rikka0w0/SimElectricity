@@ -8,8 +8,8 @@ import org.lwjgl.opengl.GL11;
 import simelectricity.essential.utils.SEUnitHelper;
 import simelectricity.essential.utils.client.gui.SEGuiContainer;
 
-public class GuiVoltageSensor<T extends ContainerVoltageSensor> extends SEGuiContainer<T> {
-    public GuiVoltageSensor(T screenContainer, PlayerInventory inv, ITextComponent titleIn) {
+public class GuiVoltageSensor extends SEGuiContainer<ContainerVoltageSensor> {
+    public GuiVoltageSensor(ContainerVoltageSensor screenContainer, PlayerInventory inv, ITextComponent titleIn) {
         super(screenContainer, inv, titleIn);
     }
 
@@ -22,7 +22,6 @@ public class GuiVoltageSensor<T extends ContainerVoltageSensor> extends SEGuiCon
 
     	this.font.drawString(I18n.format("gui.simelectricity.voltage_threshold"), 18, 124, 4210752);
 
-        int ybase = 22;
         this.font.drawString(SEUnitHelper.getVoltageStringWithUnit(this.container.thresholdVoltage), 20, 51, 4210752);
     }
 

@@ -11,12 +11,11 @@ import simelectricity.essential.utils.SEUnitHelper;
 import simelectricity.essential.utils.client.gui.SEGuiContainer;
 
 @OnlyIn(Dist.CLIENT)
-public class GuiRelay<T extends ContainerRelay> extends SEGuiContainer<T> {
-    private static final int switchSize = 32;
+public class GuiRelay extends SEGuiContainer<ContainerRelay> {
     private static final int switchX = 115;
     private static final int switchY = 48;
 
-    public GuiRelay(T screenContainer, PlayerInventory inv, ITextComponent titleIn) {
+    public GuiRelay(ContainerRelay screenContainer, PlayerInventory inv, ITextComponent titleIn) {
         super(screenContainer, inv, titleIn);
     }
 

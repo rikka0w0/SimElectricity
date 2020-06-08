@@ -29,15 +29,16 @@ import com.google.common.collect.ImmutableList;
 import simelectricity.essential.client.ResourcePaths;
 import simelectricity.essential.grid.BlockPoleConcrete;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
+@SuppressWarnings("deprecation")
 @OnlyIn(Dist.CLIENT)
 public class ConcretePoleModel extends CodeBasedModel {
     private final BlockPoleConcrete.Type blockType;
     private final int rotation;
-    private final List<BakedQuad> quads = new ArrayList();
+    private final List<BakedQuad> quads = new LinkedList<>();
 
     @EasyTextureLoader.Mark(ResourcePaths.metal)
     private final TextureAtlasSprite textureMetal = null;

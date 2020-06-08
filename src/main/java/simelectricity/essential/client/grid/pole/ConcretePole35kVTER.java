@@ -1,10 +1,7 @@
 package simelectricity.essential.client.grid.pole;
 
-import java.util.List;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockModelShapes;
-import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.model.ModelResourceLocation;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
@@ -22,7 +19,7 @@ public class ConcretePole35kVTER extends PowerPoleTER<TilePoleConcrete35kV>{
 	
 	@Override
 	protected void bake(TilePoleConcrete35kV te, PowerPoleRenderHelper helper) {
-		List<BakedQuad> quads = helper.quadBuffer;
+//		List<BakedQuad> quads = helper.quadBuffer;
 		
 		if (modelInsulator == null) {
 			ModelResourceLocation modelResLoc = BlockModelShapes.getModelLocation(te.getBlockState());

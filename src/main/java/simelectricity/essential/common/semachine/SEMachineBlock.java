@@ -32,7 +32,7 @@ public abstract class SEMachineBlock extends BlockBase {
     }
 
     public abstract boolean hasSecondState();
-    @Deprecated
+
     public abstract boolean useObjModel();
 
     ///////////////////////////////

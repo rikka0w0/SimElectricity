@@ -5,7 +5,7 @@ import simelectricity.api.components.ISEConstantPowerLoad;
 import simelectricity.api.node.ISESubComponent;
 import simelectricity.energynet.components.SEComponent.Tile;
 
-public class ConstantPowerLoad extends Tile<ISEConstantPowerLoad> implements ISESubComponent, ISEConstantPowerLoad {
+public class ConstantPowerLoad extends Tile<ISEConstantPowerLoad> implements ISESubComponent<ISESubComponent<?>>, ISEConstantPowerLoad {
 	private volatile double pRated, rMin, rMax;
     private volatile boolean enabled;
 
@@ -40,9 +40,4 @@ public class ConstantPowerLoad extends Tile<ISEConstantPowerLoad> implements ISE
     public synchronized boolean isOn() {
         return this.enabled;
     }
-
-	@Override
-	public ISESubComponent getComplement() {
-		return null;
-	}
 }

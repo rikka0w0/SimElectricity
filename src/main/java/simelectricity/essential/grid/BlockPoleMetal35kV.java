@@ -173,7 +173,8 @@ public class BlockPoleMetal35kV extends BlockBase implements ISEHVCableConnector
     	final Block blockThis = this;
     	
     	return new BlockMapping(toState) {
-    		@Override
+    		@SuppressWarnings("deprecation")
+			@Override
     	    protected boolean cancelPlacement(BlockState state) {
     			return !state.isAir();
     		}
@@ -195,7 +196,8 @@ public class BlockPoleMetal35kV extends BlockBase implements ISEHVCableConnector
     	final Block blockThis = this;
     	
     	return new BlockMapping(toState) {
-    		@Override
+    		@SuppressWarnings("deprecation")
+			@Override
     	    protected boolean cancelPlacement(BlockState state) {
     			return !state.isAir();
     		}

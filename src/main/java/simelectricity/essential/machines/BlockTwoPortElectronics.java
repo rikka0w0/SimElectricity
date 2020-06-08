@@ -145,9 +145,9 @@ public abstract class BlockTwoPortElectronics extends SEMachineBlock implements 
             Direction sight = Utils.getPlayerSight(placer);
 
             if (te instanceof TileSwitch)
-                ((SETwoPortMachine) te).setFunctionalSide(Direction.UP, Direction.DOWN);
+                ((SETwoPortMachine<?>) te).setFunctionalSide(Direction.UP, Direction.DOWN);
             else
-                ((SETwoPortMachine) te).setFunctionalSide(sight.getOpposite(), sight);
+                ((SETwoPortMachine<?>) te).setFunctionalSide(sight.getOpposite(), sight);
         }
     }
 
@@ -183,7 +183,8 @@ public abstract class BlockTwoPortElectronics extends SEMachineBlock implements 
         return 0;
     }
 
-    @Override
+    @SuppressWarnings("deprecation")
+	@Override
     public void neighborChanged(BlockState state, World world, BlockPos pos, Block block, BlockPos fromPos, boolean isMoving) {
         if (world.isRemote) {
             super.neighborChanged(state, world, pos, block, fromPos, isMoving);

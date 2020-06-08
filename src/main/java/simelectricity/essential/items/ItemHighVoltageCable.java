@@ -71,9 +71,6 @@ public final class ItemHighVoltageCable extends ItemBase implements IMetaProvide
         if (world.isRemote)
             return ActionResultType.SUCCESS;
 
-        int x = pos.getX();
-        int y = pos.getY();
-        int z = pos.getZ();
         Block block = world.getBlockState(pos).getBlock();
 
         if (!(block instanceof ISEHVCableConnector))

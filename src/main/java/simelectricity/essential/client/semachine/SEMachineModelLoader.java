@@ -30,9 +30,9 @@ import net.minecraftforge.client.model.geometry.IModelGeometry;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import simelectricity.essential.Essential;
 
-public class SEMachineModelLoader implements IModelLoader {
+public class SEMachineModelLoader implements IModelLoader<SEMachineModelLoader.Wrapper> {
 	public final static ResourceLocation id = new ResourceLocation(Essential.MODID, "machine");
-	public final static IModelLoader instance = new SEMachineModelLoader();
+	public final static IModelLoader<?> instance = new SEMachineModelLoader();
 	public final static LazyValue<Gson> vanillaParser = new LazyValue<>(
 			()->ObfuscationReflectionHelper.getPrivateValue(BlockModel.class, null, "field_178319_a")
 		);
@@ -43,7 +43,7 @@ public class SEMachineModelLoader implements IModelLoader {
 	}
 	
 	@Override
-	public IModelGeometry read(JsonDeserializationContext deserializationContext, JsonObject modelContents) {
+	public Wrapper read(JsonDeserializationContext deserializationContext, JsonObject modelContents) {
         if (modelContents.has("loader2")) {
             String loader2 = JSONUtils.getString(modelContents, "loader2");
             final IModelGeometry<?> secondaryGeometry = ModelLoaderRegistry.getModel(
@@ -60,8 +60,8 @@ public class SEMachineModelLoader implements IModelLoader {
         }
 	}
 	
-	public static IModelGeometry getModelGeometry(BlockModel model) {
-		IModelGeometry geometry = null;
+	public static IModelGeometry<?> getModelGeometry(BlockModel model) {
+		IModelGeometry<?> geometry = null;
 		try {
 			Field cg = BlockModelConfiguration.class.getDeclaredField("customGeometry");
 			cg.setAccessible(true);
@@ -74,7 +74,11 @@ public class SEMachineModelLoader implements IModelLoader {
 		return geometry;
 	}
 	
-	public static class VanillaWrapper implements IModelGeometry<VanillaWrapper> {
+	public static interface Wrapper extends IModelGeometry<Wrapper> {
+		
+	}
+	
+	public static class VanillaWrapper implements Wrapper {
 		@Override
 		public IBakedModel bake(IModelConfiguration owner, 
 				ModelBakery bakery, 
@@ -131,10 +135,10 @@ public class SEMachineModelLoader implements IModelLoader {
 		}
 	}
 
-	public static class ForgeWrapper implements IModelGeometry<VanillaWrapper> {
-		public final IModelGeometry modelGeometry;
+	public static class ForgeWrapper implements Wrapper {
+		public final IModelGeometry<?> modelGeometry;
 		
-		public ForgeWrapper(IModelGeometry modelGeometry) {
+		public ForgeWrapper(IModelGeometry<?> modelGeometry) {
 			this.modelGeometry = modelGeometry;
 		}
 		

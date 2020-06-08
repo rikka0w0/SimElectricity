@@ -10,8 +10,8 @@ import simelectricity.essential.utils.SEUnitHelper;
 import simelectricity.essential.utils.client.gui.SEGuiContainer;
 
 @OnlyIn(Dist.CLIENT)
-public final class GuiQuantumGenerator<T extends ContainerQuantumGenerator> extends SEGuiContainer<T> {
-    public GuiQuantumGenerator(T screenContainer, PlayerInventory inv, ITextComponent titleIn) {
+public final class GuiQuantumGenerator extends SEGuiContainer<ContainerQuantumGenerator> {
+    public GuiQuantumGenerator(ContainerQuantumGenerator screenContainer, PlayerInventory inv, ITextComponent titleIn) {
         super(screenContainer, inv, titleIn);
     }
 

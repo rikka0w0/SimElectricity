@@ -10,8 +10,8 @@ import org.lwjgl.opengl.GL11;
 import simelectricity.essential.utils.client.gui.SEGuiContainer;
 
 @OnlyIn(Dist.CLIENT)
-public class GuiElectricFurnace<T extends ContainerElectricFurnace> extends SEGuiContainer<T>{
-    public GuiElectricFurnace(T screenContainer, PlayerInventory inv, ITextComponent titleIn) {
+public class GuiElectricFurnace extends SEGuiContainer<ContainerElectricFurnace>{
+    public GuiElectricFurnace(ContainerElectricFurnace screenContainer, PlayerInventory inv, ITextComponent titleIn) {
         super(screenContainer, inv, titleIn);
     }
 

@@ -224,7 +224,7 @@ public class BlockDistributionTransformer extends BlockAbstractTransformer imple
         };
         
         renderParts[2] = new EnumDistributionTransformerRenderPart[][]{
-        	{EnumDistributionTransformerRenderPart.AuxLeft, null, null,EnumDistributionTransformerRenderPart.AuxMiddle, null, EnumDistributionTransformerRenderPart.AuxLeft.AuxRight}
+        	{EnumDistributionTransformerRenderPart.AuxLeft, null, null,EnumDistributionTransformerRenderPart.AuxMiddle, null, EnumDistributionTransformerRenderPart.AuxRight}
         };
         
         renderParts[3] = new EnumDistributionTransformerRenderPart[][]{

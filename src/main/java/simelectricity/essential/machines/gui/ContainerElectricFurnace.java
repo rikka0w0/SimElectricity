@@ -17,7 +17,7 @@ import simelectricity.essential.utils.network.MessageContainerSync;
 import java.util.Iterator;
 
 @AutoGuiHandler.Marker(GuiElectricFurnace.class)
-public class ContainerElectricFurnace extends ContainerInventory {
+public class ContainerElectricFurnace extends ContainerInventory<IInventory> {
 	private TileElectricFurnace te;
     @ContainerSynchronizer.SyncField
     public int progress;

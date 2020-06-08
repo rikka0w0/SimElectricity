@@ -3,11 +3,8 @@ package simelectricity.essential.client.grid.transformer;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
-import java.util.Set;
-
 import java.util.function.Function;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Sets;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.model.BakedQuad;
@@ -33,8 +30,6 @@ import simelectricity.essential.grid.transformer.EnumDistributionTransformerRend
 @OnlyIn(Dist.CLIENT)
 public class DistributionTransformerFormedModel extends CodeBasedModel {
 	public final static DistributionTransformerFormedModel instance = new DistributionTransformerFormedModel();
-	
-    private final Set<ResourceLocation> textures = Sets.newHashSet();
     
     @EasyTextureLoader.Mark("sime_essential:render/distribution/transformer_heatsink_front_back")
     private final TextureAtlasSprite textureHeatSink = null;
@@ -52,7 +47,8 @@ public class DistributionTransformerFormedModel extends CodeBasedModel {
     @EasyTextureLoader.Mark(ResourcePaths.ceramic_insulator)
     private final TextureAtlasSprite textureCeramic = null;   
     
-    private final List<BakedQuad>[][] quads = new List[EnumDistributionTransformerRenderPart.values().length][4];
+    @SuppressWarnings("unchecked")
+	private final List<BakedQuad>[][] quads = new List[EnumDistributionTransformerRenderPart.values().length][4];
 	
     private DistributionTransformerFormedModel() {
     	for (EnumDistributionTransformerRenderPart part: EnumDistributionTransformerRenderPart.values()) {

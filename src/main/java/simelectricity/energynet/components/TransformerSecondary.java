@@ -2,9 +2,9 @@ package simelectricity.energynet.components;
 
 import net.minecraft.tileentity.TileEntity;
 import simelectricity.api.components.ISETransformer;
-import simelectricity.api.node.ISESubComponent;
+import simelectricity.api.node.ISEPairedComponent;
 
-public class TransformerSecondary extends SEComponent implements ISESubComponent<TransformerPrimary>, ISETransformer {
+public class TransformerSecondary extends SEComponent implements ISEPairedComponent<TransformerPrimary>, ISETransformer {
     private volatile TransformerPrimary primary;
 
     public TransformerSecondary(TransformerPrimary primary, TileEntity te) {

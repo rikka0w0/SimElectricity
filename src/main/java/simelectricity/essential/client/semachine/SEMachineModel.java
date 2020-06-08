@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+@SuppressWarnings("deprecation")
 @OnlyIn(Dist.CLIENT)
 public final class SEMachineModel implements IDynamicBakedModel {
     private final IBakedModel bakedModel;
@@ -60,7 +61,6 @@ public final class SEMachineModel implements IDynamicBakedModel {
     }
 
     @Override
-    @Deprecated
     public ItemCameraTransforms getItemCameraTransforms() {
         return this.bakedModel.getItemCameraTransforms();
     }

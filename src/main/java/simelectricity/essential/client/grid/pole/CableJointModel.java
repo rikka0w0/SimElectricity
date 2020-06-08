@@ -17,14 +17,14 @@ import rikka.librikka.model.loader.EasyTextureLoader;
 import rikka.librikka.model.quadbuilder.RawQuadCube;
 import rikka.librikka.model.quadbuilder.RawQuadGroup;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
 @OnlyIn(Dist.CLIENT)
 public abstract class CableJointModel extends CodeBasedModel {
 	protected final int facing;
-	protected final List<BakedQuad> quads = new ArrayList();
+	protected final List<BakedQuad> quads = new LinkedList<>();
 
     @EasyTextureLoader.Mark("sime_essential:render/transmission/essential_cable_joint_texture_updown")
     public final TextureAtlasSprite texture_updown = null;

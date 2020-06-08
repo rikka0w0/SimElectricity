@@ -402,6 +402,7 @@ public class BlockWire extends BlockBase implements ICustomBoundingBox, IMetaPro
 		builder.add(BlockStateProperties.WATERLOGGED);
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public IFluidState getFluidState(BlockState state) {
 		return state.get(BlockStateProperties.WATERLOGGED) ? Fluids.WATER.getStillFluidState(false)
@@ -414,6 +415,7 @@ public class BlockWire extends BlockBase implements ICustomBoundingBox, IMetaPro
 		return this.getDefaultState().with(BlockStateProperties.WATERLOGGED, ifluidstate.getFluid() == Fluids.WATER);
 	}
 	
+	@SuppressWarnings("deprecation")
 	@Override
 	public BlockState updatePostPlacement(BlockState stateIn, Direction facing, BlockState facingState, IWorld worldIn,
 			BlockPos currentPos, BlockPos facingPos) {

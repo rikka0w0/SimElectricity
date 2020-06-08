@@ -9,6 +9,7 @@ import rikka.librikka.Utils;
 import simelectricity.api.ISESidedFacing;
 import simelectricity.api.SEAPI;
 import simelectricity.api.components.ISEComponentParameter;
+import simelectricity.api.node.ISEPairedComponent;
 import simelectricity.api.node.ISESubComponent;
 import simelectricity.api.tile.ISETile;
 
@@ -16,8 +17,9 @@ public abstract class SETwoPortMachine<T extends ISEComponentParameter> extends 
 		ISESidedFacing, ISETile, ISEComponentParameter {
     public Direction inputSide = Direction.SOUTH;
     public Direction outputSide = Direction.NORTH;
-    protected final ISESubComponent input = SEAPI.energyNetAgent.newComponent(this, this);
-    protected final T cachedParam = (T) input;
+    protected final ISEPairedComponent<?> input = (ISEPairedComponent<?>) SEAPI.energyNetAgent.newComponent(this, this);
+    @SuppressWarnings("unchecked")
+	protected final T cachedParam = (T) input;
 
     ///////////////////////////////////
     /// TileEntity
@@ -83,7 +85,7 @@ public abstract class SETwoPortMachine<T extends ISEComponentParameter> extends 
     ///ISETile
     /////////////////////////////////////////////////////////
     @Override
-    public ISESubComponent getComponent(Direction side) {
+    public ISESubComponent<?> getComponent(Direction side) {
         if (side == this.inputSide)
             return this.input;
         else if (side == this.outputSide)

@@ -10,6 +10,7 @@ import net.minecraft.util.Direction;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import simelectricity.essential.api.client.ISECoverPanelRender;
+import simelectricity.essential.api.coverpanel.ISECoverPanel;
 import simelectricity.essential.api.coverpanel.ISEFacadeCoverPanel;
 import simelectricity.essential.client.coverpanel.GenericFacadeRender;
 
@@ -69,8 +70,8 @@ public abstract class FacadePanel implements ISEFacadeCoverPanel {
 	
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public ISECoverPanelRender getCoverPanelRender() {
-		return GenericFacadeRender.instance;
+	public <T extends ISECoverPanel> ISECoverPanelRender<T> getCoverPanelRender() {
+		return GenericFacadeRender.instance.cast();
 	}
 	
 	public static class FacadeNormal extends FacadePanel {

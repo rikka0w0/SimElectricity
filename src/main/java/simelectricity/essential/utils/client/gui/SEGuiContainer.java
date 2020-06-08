@@ -15,14 +15,14 @@ import simelectricity.essential.Essential;
 import simelectricity.essential.utils.network.MessageContainerSync;
 
 @OnlyIn(Dist.CLIENT)
-public abstract class SEGuiContainer<TC extends Container> extends ContainerScreen {
+public abstract class SEGuiContainer<TC extends Container> extends ContainerScreen<TC> {
     protected final TC container;
     protected GuiDirectionSelector directionSelector;
     private static final ResourceLocation dsTexture = new ResourceLocation("sime_essential:textures/gui/direction_selector.png");
 
     public SEGuiContainer(TC screenContainer, PlayerInventory inv, ITextComponent titleIn) {
         super(screenContainer, inv, titleIn);
-        this.container = (TC) screenContainer;
+        this.container = screenContainer;
     }
 
     protected Button addServerButton(int id, int widthIn, int heightIn, int width, int height, String text) {
@@ -32,7 +32,7 @@ public abstract class SEGuiContainer<TC extends Container> extends ContainerScre
     }
     
     protected GuiDirectionSelector addDirectionSelector(int x, int y) {
-        final SEGuiContainer parent = this; 
+        final SEGuiContainer<TC> parent = this; 
         GuiDirectionSelector directionSelector = new GuiDirectionSelector(x, y) {
         	@Override
         	protected void onClick(Direction selectedDirection, int mouseButton) {

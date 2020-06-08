@@ -14,6 +14,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import rikka.librikka.Utils;
 import simelectricity.essential.ItemRegistry;
 import simelectricity.essential.api.client.ISECoverPanelRender;
+import simelectricity.essential.api.coverpanel.ISECoverPanel;
 import simelectricity.essential.api.coverpanel.ISEElectricalCoverPanel;
 import simelectricity.essential.api.coverpanel.ISEGuiCoverPanel;
 import simelectricity.essential.api.coverpanel.ISERedstoneEmitterCoverPanel;
@@ -61,8 +62,8 @@ public class VoltageSensorPanel implements ISEElectricalCoverPanel, ISERedstoneE
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public ISECoverPanelRender getCoverPanelRender() {
-        return VoltageSensorRender.instance;
+    public <T extends ISECoverPanel> ISECoverPanelRender<T> getCoverPanelRender() {
+        return VoltageSensorRender.instance.cast();
     }
 
     @Override

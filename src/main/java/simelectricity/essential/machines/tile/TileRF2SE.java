@@ -72,7 +72,7 @@ public class TileRF2SE extends SESinglePortMachine<ISEConstantPowerSource> imple
                 paramChanged = true;
             }
         } else {
-            if (this.bufferedEnergy > this.bufferCapacity * 0.25) {
+            if (this.bufferedEnergy > TileRF2SE.bufferCapacity * 0.25) {
                 this.enabled = true;
                 paramChanged = true;
             }
@@ -111,7 +111,7 @@ public class TileRF2SE extends SESinglePortMachine<ISEConstantPowerSource> imple
     @Override
     public <T> LazyOptional<T> getCapability(Capability<T> capability, Direction facing) {
         if (capability == CapabilityEnergy.ENERGY && facing == this.getFacing()) {
-            return (LazyOptional<T>) LazyOptional.of(()->rfBufferHandler);
+            return energyHdlerCap.cast();
         }
         return super.getCapability(capability, facing);
     }
@@ -132,6 +132,7 @@ public class TileRF2SE extends SESinglePortMachine<ISEConstantPowerSource> imple
     /// IEnergyStorage
     ///////////////////////////////////
     RFBufferHandler rfBufferHandler = new RFBufferHandler(this);
+    private final LazyOptional<?> energyHdlerCap = LazyOptional.of(()->rfBufferHandler);
     protected static class RFBufferHandler implements IEnergyStorage {
         protected TileRF2SE owner;
         public RFBufferHandler(TileRF2SE owner) {

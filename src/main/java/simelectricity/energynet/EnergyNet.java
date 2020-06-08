@@ -21,7 +21,6 @@ package simelectricity.energynet;
 
 import net.minecraft.world.server.ServerWorld;
 import simelectricity.api.node.ISESimulatable;
-import simelectricity.common.ConfigManager;
 import simelectricity.common.SELogger;
 import simelectricity.energynet.components.SEComponent;
 import simelectricity.energynet.components.SwitchA;
@@ -148,7 +147,7 @@ public final class EnergyNet {
         if (tileEntityGraph.size() == 0 && this.dataProvider.getGridObjectCount() == 0) {
             return new String[]{
                     "EnergyNet is empty and idle",
-                    "Matrix solving algorithsm: " + ConfigManager.matrixSolver
+                    "Matrix solving algorithsm: " + this.simulator.getMatrixSolverName()
             };
         }
 
@@ -157,7 +156,7 @@ public final class EnergyNet {
                     "EnergyNet is idle",
                     "Tiles: " + String.valueOf(tileEntityGraph.size()),
                     "Grid Objects: " + String.valueOf(this.dataProvider.getGridObjectCount()),
-                    "Matrix solving algorithsm: " + ConfigManager.matrixSolver,
+                    "Matrix solving algorithsm: " + this.simulator.getMatrixSolverName()
             };
         } else {
             return new String[]{
@@ -167,7 +166,7 @@ public final class EnergyNet {
                     "Matrix size: " + this.simulator.getMatrixSize(),
                     //"Non-zero elements: " + String.valueOf(this.matrix.getTotalNonZeros()),
                     "Density: " + this.simulator.getDensity() + "%",
-                    "Matrix solving algorithsm: " + ConfigManager.matrixSolver,
+                    "Matrix solving algorithsm: " + this.simulator.getMatrixSolverName(),
                     "Iterations:" + String.valueOf(iterations)
             };
         }
@@ -175,6 +174,10 @@ public final class EnergyNet {
 
     public void reFresh() {
         this.scheduledRefresh = true;
+    }
+
+    public void notifyConfigChanged() {
+        this.simulator.setConfigChanged();
     }
 
     public void notifyServerShuttingdown() {
@@ -215,5 +218,10 @@ public final class EnergyNet {
         }
 
         return Double.NaN;
+    }
+    
+    @Override
+    public String toString() {
+    	return "EnergyNet for " + world.getProviderName();
     }
 }

@@ -109,7 +109,6 @@ public class BlockPoleConcrete extends BlockBase implements IMetaProvider<ITileM
     public void onBlockPlacedBy(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
 		super.onBlockPlacedBy(world, pos, state, placer, stack);
 
-		TileEntity te = world.getTileEntity(pos);
 		if (!world.isRemote) {
 			// TODO: CHECK!
 			SEAPI.energyNetAgent.attachGridNode(world, SEAPI.energyNetAgent.newGridNode(pos, blockType.numOfConductor));
@@ -128,18 +127,6 @@ public class BlockPoleConcrete extends BlockBase implements IMetaProvider<ITileM
         }
 
         return super.removedByPlayer(state, world, pos, player, willHarvest, fluid);
-    }
-
-    @Override
-    public void neighborChanged(BlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving) {
-        super.neighborChanged(state, worldIn, pos, blockIn, fromPos, isMoving);
-        // TODO: Fix BlockPowerPole3::neighborChanged
-//    	if (!worldIn.isRemote) { //Server only!
-//            if (!canPlaceBlockAt(worldIn, pos)) {
-//				dropBlockAsItem(worldIn, pos, state, 0);
-//                worldIn.setBlockToAir(pos);
-//            }
-//        }
     }
 
     ///////////////////

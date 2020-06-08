@@ -14,7 +14,7 @@ import rikka.librikka.model.quadbuilder.RawQuadCube;
 import simelectricity.essential.Essential;
 import simelectricity.essential.api.coverpanel.ISECoverPanel;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 @OnlyIn(Dist.CLIENT)
@@ -23,7 +23,8 @@ public enum SupportRender implements IModelBakeHandler {
 	
 	private final static ResourceLocation resLoc = new ResourceLocation(Essential.MODID, "block/coverpanel/support");
     private static TextureAtlasSprite[] textures;
-    private final static List<BakedQuad>[] bakedQuads = new List[6];    //BakedQuads for all 6 directions
+    @SuppressWarnings("unchecked")
+	private final static List<BakedQuad>[] bakedQuads = new List[6];    //BakedQuads for all 6 directions
 
     @Override
     public void onPreTextureStitchEvent(TextureStitchEvent.Pre event) {
@@ -43,7 +44,7 @@ public enum SupportRender implements IModelBakeHandler {
     public static List<BakedQuad> forSide(Direction side) {
         int i = side.ordinal();
         if (SupportRender.bakedQuads[i] == null) {
-            SupportRender.bakedQuads[i] = new ArrayList();
+            SupportRender.bakedQuads[i] = new LinkedList<>();
             RawQuadCube cube = new RawQuadCube(0.1F, 0.5F - ISECoverPanel.thickness, 0.1F, SupportRender.textures);
             cube.rotateToDirection(side);
             cube.translateCoord(0.5F, 0.5F, 0.5F);

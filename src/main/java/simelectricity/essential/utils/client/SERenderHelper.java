@@ -16,7 +16,7 @@ import simelectricity.essential.Essential;
  *
  * @author Rikka0_0
  */
-@Deprecated
+
 @OnlyIn(Dist.CLIENT)
 public class SERenderHelper {
     public static ResourceLocation createResourceLocation(String path) {

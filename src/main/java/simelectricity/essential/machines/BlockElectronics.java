@@ -173,7 +173,7 @@ public abstract class BlockElectronics extends SEMachineBlock implements IMetaPr
             if (sight == Direction.UP && te instanceof TileSolarPanel)
                 sight = Direction.DOWN;
 
-            ((SESinglePortMachine) te).SetFunctionalSide(sight);
+            ((SESinglePortMachine<?>) te).SetFunctionalSide(sight);
         }
     }
 }

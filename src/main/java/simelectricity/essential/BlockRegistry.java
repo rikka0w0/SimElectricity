@@ -1,11 +1,14 @@
 package simelectricity.essential;
 
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import net.minecraft.block.Block;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.ContainerType;
+import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraftforge.registries.IForgeRegistry;
 import rikka.librikka.IMetaProvider;
@@ -27,7 +30,7 @@ import simelectricity.essential.machines.gui.*;
 
 public class BlockRegistry {    
 	public final static List<Class<? extends Container>> registeredGuiContainers = new LinkedList<>();
-	
+	private final static Set<Item> blockItems = new LinkedHashSet<>();
 	
 	public static BlockCable[] blockCable;
 	public static BlockWire[] blockWire;
@@ -60,22 +63,26 @@ public class BlockRegistry {
 		BlockRegistry.blockTwoPortElectronics = BlockTwoPortElectronics.create();
     }
     
-    public static void registerBlocks(final IForgeRegistry<Block> registry, boolean isItemBlock) {
-    	registerBlocks(registry, isItemBlock, blockCable);
-    	registerBlocks(registry, isItemBlock, blockWire);
+    public static void registerBlocks(final IForgeRegistry<Block> registry) {
+    	registerBlocks(registry, blockCable);
+    	registerBlocks(registry, blockWire);
     	SEEAPI.coverPanelRegistry.registerColoredFacadeHost(blockCable);
     	
-    	registerBlocks(registry, isItemBlock, metalPole35kV);
-    	registerBlocks(registry, isItemBlock, concretePole35kV);
-    	registerBlocks(registry, isItemBlock, concretePole);
-    	registerBlocks(registry, isItemBlock, cableJoint);
-    	registerBlocks(registry, isItemBlock, powerTransformer);
-    	registerBlocks(registry, isItemBlock, distributionTransformer);
+    	registerBlocks(registry, metalPole35kV);
+    	registerBlocks(registry, concretePole35kV);
+    	registerBlocks(registry, concretePole);
+    	registerBlocks(registry, cableJoint);
+    	registerBlocks(registry, powerTransformer);
+    	registerBlocks(registry, distributionTransformer);
     	
-    	registerBlocks(registry, isItemBlock, blockElectronics);
+    	registerBlocks(registry, blockElectronics);
     	SEEAPI.coverPanelRegistry.registerColoredFacadeHost(blockElectronics);
-    	registerBlocks(registry, isItemBlock, blockTwoPortElectronics);
+    	registerBlocks(registry, blockTwoPortElectronics);
     	SEEAPI.coverPanelRegistry.registerColoredFacadeHost(blockTwoPortElectronics);
+    }
+    
+    public static void registerBlockItems(final IForgeRegistry<Item> registry) {
+    	blockItems.forEach(registry::register);
     }
 
     public static void registerTileEntities(final IForgeRegistry<TileEntityType<?>> registry) {    	
@@ -133,18 +140,16 @@ public class BlockRegistry {
     }
     
     
-    private static void registerBlocks(IForgeRegistry registry, boolean isItemBlock, BlockBase... blocks) {
-    	if (isItemBlock) {
-        	for (BlockBase block: blocks)
-        		registry.register(block.itemBlock);
-    	} else {
-    		registry.registerAll(blocks);
-    	}
+    private static void registerBlocks(IForgeRegistry<Block> registry, BlockBase... blocks) {
+    	registry.registerAll(blocks);
+
+    	for (BlockBase block: blocks)
+    		blockItems.add(block.asItem());
     }
     
-    private static void RegisterTEs(IForgeRegistry<TileEntityType<?>> registry, IMetaProvider[] blocks) {
-    	for (IMetaProvider<ITileMeta> meta: blocks) {
-    		TileEntityHelper.registerTileEntity(registry, meta.meta().teCls(), (Block)meta);
+    private static <T extends Block&IMetaProvider<ITileMeta>> void RegisterTEs(IForgeRegistry<TileEntityType<?>> registry, T[] blocks) {
+    	for (T block: blocks) {
+    		TileEntityHelper.registerTileEntity(registry, block.meta().teCls(), block);
     	}
 	}
     

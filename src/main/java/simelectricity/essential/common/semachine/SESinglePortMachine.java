@@ -16,8 +16,9 @@ import simelectricity.api.tile.ISETile;
 public abstract class SESinglePortMachine<T extends ISEComponentParameter> extends SEMachineTile implements 
 		ISESidedFacing, ISEWrenchable, ISETile, ISEComponentParameter {
     protected Direction functionalSide = Direction.SOUTH;
-    protected final ISESubComponent circuit = SEAPI.energyNetAgent.newComponent(this, this);
-    protected final T cachedParam = (T) circuit;
+    protected final ISESubComponent<?> circuit = SEAPI.energyNetAgent.newComponent(this, this);
+    @SuppressWarnings("unchecked")
+	protected final T cachedParam = (T) circuit;
 
     ///////////////////////////////////
     /// TileEntity
@@ -86,7 +87,7 @@ public abstract class SESinglePortMachine<T extends ISEComponentParameter> exten
     ///ISETile
     /////////////////////////////////////////////////////////
     @Override
-    public ISESubComponent getComponent(Direction side) {
+    public ISESubComponent<?> getComponent(Direction side) {
         return side == this.functionalSide ? this.circuit : null;
     }
 

@@ -19,7 +19,7 @@ import java.util.List;
 
 public class TileWire extends SEEnergyTile implements ISEGenericWire {
     private final Wire[] wires;
-    private final ISESubComponent[] nodes;
+    private final ISESubComponent<?>[] nodes;
 
     public static class Wire implements ISEWire {
         public final TileWire parent;
@@ -160,7 +160,7 @@ public class TileWire extends SEEnergyTile implements ISEGenericWire {
     /// ISEWireTile
     ///////////////////////////////////
     @Override
-    public ISESubComponent getComponent(Direction side) {
+    public ISESubComponent<?> getComponent(Direction side) {
         return this.nodes[side.ordinal()];
     }
 

@@ -13,10 +13,8 @@ import rikka.librikka.DirHorizontal8;
 import rikka.librikka.math.MathAssitant;
 import rikka.librikka.math.Vec3f;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-
 
 @OnlyIn(Dist.CLIENT)
 public class PowerPoleRenderHelper {
@@ -29,10 +27,10 @@ public class PowerPoleRenderHelper {
     /**
      * Buffer
      */
-    public final LinkedList<PowerPoleRenderHelper.ConnectionInfo[]> connectionList = new LinkedList();
-    public final LinkedList<PowerPoleRenderHelper.ExtraWireInfo> extraWireList = new LinkedList();
+    public final LinkedList<PowerPoleRenderHelper.ConnectionInfo[]> connectionList = new LinkedList<>();
+    public final LinkedList<PowerPoleRenderHelper.ExtraWireInfo> extraWireList = new LinkedList<>();
     
-    public final List<BakedQuad> quadBuffer = new ArrayList();
+    public final List<BakedQuad> quadBuffer = new LinkedList<>();
     private boolean needBake = false;
     
     private int addedGroup;
@@ -377,7 +375,6 @@ public class PowerPoleRenderHelper {
             Vec3i offset = group.parent.pos.subtract(this.parent.pos);
 
             float x = offset.getX() + group.centerX - this.centerX;
-            float y = offset.getY() + group.centerY - this.centerY;
             float z = offset.getZ() + group.centerZ - this.centerZ;
 
             return MathHelper.sqrt(x * x + z * z);
@@ -390,7 +387,6 @@ public class PowerPoleRenderHelper {
          */
         public float distanceTo(Vec3i pos) {
             float x = pos.getX() - (this.parent.pos.getX() + this.centerX);
-            float y = pos.getY() - (this.parent.pos.getY() + this.centerY);
             float z = pos.getZ() - (this.parent.pos.getZ() + this.centerZ);
 
             return MathHelper.sqrt(x * x + z * z);

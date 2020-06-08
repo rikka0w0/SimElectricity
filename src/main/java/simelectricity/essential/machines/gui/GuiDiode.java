@@ -11,8 +11,8 @@ import simelectricity.essential.utils.SEUnitHelper;
 import simelectricity.essential.utils.client.gui.SEGuiContainer;
 
 @OnlyIn(Dist.CLIENT)
-public final class GuiDiode<T extends ContainerDiode> extends SEGuiContainer<ContainerDiode> {
-    public GuiDiode(T screenContainer, PlayerInventory inv, ITextComponent titleIn) {
+public final class GuiDiode extends SEGuiContainer<ContainerDiode> {
+    public GuiDiode(ContainerDiode screenContainer, PlayerInventory inv, ITextComponent titleIn) {
         super(screenContainer, inv, titleIn);
     }
 

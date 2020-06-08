@@ -81,7 +81,8 @@ public class QR implements IMatrixSolver {
         this.nZ++;
     }
 
-    private void setElementToZero(int column, int row) {
+    @SuppressWarnings("unused")
+	private void setElementToZero(int column, int row) {
         ListIterator<Integer> Ai = this.AiList.listIterator(this.Ap[column]);    //Ap[column] -> rowIndexStart, rowIndex -> index in Ai
         ListIterator<Double> Ax = this.AxList.listIterator(this.Ap[column]);
 
@@ -131,8 +132,6 @@ public class QR implements IMatrixSolver {
         double[][] matrixIneff = new double[this.size][this.size];
 
         for (int columnIndex = 0; columnIndex < this.size; columnIndex++) {
-            int rowIndex = 0;
-
             //Get column pointer boundaries
             int start = this.matrix.p[columnIndex];
             int end = this.matrix.p[columnIndex + 1];

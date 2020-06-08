@@ -146,7 +146,6 @@ public final class ItemTools extends ItemBase implements IMetaProvider<IMetaBase
 
     public static ActionResultType useGlove(ItemUseContext context) {
     	TileEntity te = context.getWorld().getTileEntity(context.getPos());
-    	PlayerEntity player = context.getPlayer();
     	Direction side = context.getFace();
     	
         if (te instanceof ISESidedFacing) {
@@ -170,7 +169,6 @@ public final class ItemTools extends ItemBase implements IMetaProvider<IMetaBase
     	World world = context.getWorld();
     	BlockPos pos = context.getPos();
         PlayerEntity player = context.getPlayer();
-        Direction side = context.getFace();
         
         if (world.isRemote)
             return ActionResultType.PASS;
@@ -180,7 +178,7 @@ public final class ItemTools extends ItemBase implements IMetaProvider<IMetaBase
         
         ISESimulatable delegatedNode = null;
         if (block instanceof ISENodeDelegateBlock) {
-        	delegatedNode = ((ISENodeDelegateBlock) block).getNode(world, pos);
+        	delegatedNode = ((ISENodeDelegateBlock<?>) block).getNode(world, pos);
         }
         
         if (!(	te instanceof ISECableTile ||
@@ -192,7 +190,7 @@ public final class ItemTools extends ItemBase implements IMetaProvider<IMetaBase
         player.sendMessage(BlockUtils.getDisplayName(world, pos));
         
         if (block instanceof ISENodeDelegateBlock) {
-        	delegatedNode = ((ISENodeDelegateBlock) block).getNode(world, pos);
+        	delegatedNode = ((ISENodeDelegateBlock<?>) block).getNode(world, pos);
             if (delegatedNode != null) {
             	ItemTools.printVI(delegatedNode, player);
             }
@@ -208,7 +206,7 @@ public final class ItemTools extends ItemBase implements IMetaProvider<IMetaBase
             ISETile tile = (ISETile) te;
 
             for (Direction dir : Direction.values()) {
-                ISESubComponent comp = tile.getComponent(dir);
+                ISESubComponent<?> comp = tile.getComponent(dir);
                 if (comp != null && comp != delegatedNode) {
                     double voltage = comp.getVoltage();
                     String[] temp = comp.toString().split("[.]");
@@ -273,7 +271,7 @@ public final class ItemTools extends ItemBase implements IMetaProvider<IMetaBase
         ISEGridNode gridNode = null;
         ISESimulatable delegatedNode = null;
         if (block instanceof ISENodeDelegateBlock)
-            delegatedNode = ((ISENodeDelegateBlock) block).getNode(world, pos);
+            delegatedNode = ((ISENodeDelegateBlock<?>) block).getNode(world, pos);
 
         if (delegatedNode instanceof ISEGridNode) {
             gridNode = (ISEGridNode) delegatedNode;
@@ -303,7 +301,7 @@ public final class ItemTools extends ItemBase implements IMetaProvider<IMetaBase
             TileEntity lastTE = world.getTileEntity(lastSelectedPos);
             Block lastBlock = world.getBlockState(lastSelectedPos).getBlock();
             if (lastBlock instanceof ISENodeDelegateBlock)
-                delegatedNode = ((ISENodeDelegateBlock) lastBlock).getNode(world, lastSelectedPos);
+                delegatedNode = ((ISENodeDelegateBlock<?>) lastBlock).getNode(world, lastSelectedPos);
 
             ISEGridNode lastNode = null;
             if (delegatedNode instanceof ISEGridNode) {

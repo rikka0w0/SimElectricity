@@ -19,7 +19,7 @@ import simelectricity.essential.client.grid.ISEPowerPole;
 import simelectricity.essential.api.ISEPoleAccessory;
 
 public class PoleAccessoryRendererDispatcher {
-	private final static Map<Pair<Class<? extends ISEPowerPole>, Class<? extends ISEPoleAccessory>>,ISEAccessoryRenderer> registered = new HashMap();
+	private final static Map<Pair<Class<? extends ISEPowerPole>, Class<? extends ISEPoleAccessory>>,ISEAccessoryRenderer> registered = new HashMap<>();
 	
 	static {
 		register(TilePoleConcrete.Pole10Kv.Type0.class, TileCableJoint.Type10kV.class, AR10kVType0CableJoint.instance);

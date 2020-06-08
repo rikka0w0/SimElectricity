@@ -2,7 +2,6 @@ package simelectricity.essential.machines.gui;
 
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import rikka.librikka.container.ContainerSynchronizer;
 import rikka.librikka.gui.AutoGuiHandler;
@@ -26,7 +25,7 @@ public class ContainerPowerMeter extends ContainerNoInventoryTwoPort<TilePowerMe
 
 
     // Server side
-    public ContainerPowerMeter(TileEntity tileEntity, int windowId) {
+    public ContainerPowerMeter(TilePowerMeter tileEntity, int windowId) {
     	super(tileEntity, windowId);
     }
 

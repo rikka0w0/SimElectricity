@@ -70,8 +70,7 @@ public class PowerTransformerTER extends TileEntityRenderer<TilePowerTransformer
         // HV and LV Bushing
         TextureAtlasSprite textureMetal = EasyTextureLoader.blockTextureGetter().apply(new ResourceLocation(ResourcePaths.metal));
         TextureAtlasSprite textureInsulator = EasyTextureLoader.blockTextureGetter().apply(new ResourceLocation(ResourcePaths.glass_insulator));
-        
-        LinkedList<BakedQuad> quads2 = new LinkedList<>();
+
         RawQuadGroup model = new RawQuadGroup();
         RawQuadGroup insulator = Models.renderInsulatorString(1.4F, textureInsulator);
         insulator.add((new RawQuadCube(0.1F, 1.8F, 0.1F, textureMetal)).translateCoord(0, -0.1F, 0));

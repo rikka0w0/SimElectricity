@@ -2,6 +2,7 @@ package simelectricity.essential.machines.gui;
 
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.resources.I18n;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -9,9 +10,10 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import org.lwjgl.opengl.GL11;
 import simelectricity.essential.utils.SEUnitHelper;
 import simelectricity.essential.utils.client.gui.SEGuiContainer;
+import simelectricity.essential.utils.network.MessageContainerSync;
 
 @OnlyIn(Dist.CLIENT)
-public class GuiPowerMeter<T extends ContainerPowerMeter> extends SEGuiContainer<T> {
+public class GuiPowerMeter extends SEGuiContainer<ContainerPowerMeter> {
     ////////////////////////
     /// Switch
     ////////////////////////
@@ -19,7 +21,7 @@ public class GuiPowerMeter<T extends ContainerPowerMeter> extends SEGuiContainer
     private static final int switchX = 115;
     private static final int switchY = 48;
 
-    public GuiPowerMeter(T screenContainer, PlayerInventory inv, ITextComponent titleIn) {
+    public GuiPowerMeter(ContainerPowerMeter screenContainer, PlayerInventory inv, ITextComponent titleIn) {
         super(screenContainer, inv, titleIn);
     }
 
@@ -56,10 +58,20 @@ public class GuiPowerMeter<T extends ContainerPowerMeter> extends SEGuiContainer
     @Override
     public void init() {
         super.init();
-        int xbase = 18;
+//        int xbase = 18;
         int ybase = 97;
 
         this.directionSelector = addDirectionSelector(this.guiLeft + 116, this.guiTop + 20);
         addServerButton(1, this.guiLeft + 10, this.guiTop + ybase, 40, 20, "Clear");
+    }
+    
+    @Override
+    public boolean mouseClicked(double x, double y, int button) {
+        boolean ret = super.mouseClicked(x, y, button);
+
+        if (x >= this.guiLeft + GuiPowerMeter.switchX && y >= this.guiTop + GuiPowerMeter.switchY && x < this.guiLeft + GuiPowerMeter.switchX + GuiPowerMeter.switchSize && y < this.guiTop + GuiPowerMeter.switchY + GuiPowerMeter.switchSize)
+            MessageContainerSync.sendButtonClickEventToSever(this.container, 12, Screen.hasControlDown());
+        
+        return ret;
     }
 }

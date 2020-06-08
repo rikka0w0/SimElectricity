@@ -12,12 +12,10 @@ import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.model.ModelResourceLocation;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.inventory.container.Container;
 import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.DrawHighlightEvent;
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
@@ -186,18 +184,11 @@ public class ClientRegistrationHandler {
 
 	@SubscribeEvent
 	public static void onClientSetup(FMLClientSetupEvent event){
-		MinecraftForge.EVENT_BUS.register(new Object() {
-			@SubscribeEvent
-			public void onBlockHighLight(DrawHighlightEvent.HighlightBlock event) {
-				ICustomBoundingBox.onBlockHighLight(event);
-			}
-		});
+		MinecraftForge.EVENT_BUS.addListener(ICustomBoundingBox::onBlockHighLight);
 		
 		// Register Gui
 //		ScreenManager.registerFactory(BlockRegistry.cAdjustableResistor, GuiAdjustableResistor::new);
-		for (Class<? extends Container> containerCls: BlockRegistry.registeredGuiContainers) {
-			AutoGuiHandler.registerContainerGui(containerCls);
-		}
+		BlockRegistry.registeredGuiContainers.forEach(AutoGuiHandler::registerContainerGui);
 
     	ClientRegistrationHandler.registerTileEntityRenders();
 		
@@ -246,7 +237,6 @@ public class ClientRegistrationHandler {
 		}
 		
 		for (int i=0; i<BlockRegistry.concretePole.length; i++) {
-			final int modelType = i;
 			BlockRegistry.concretePole[i].getStateContainer().getValidStates().forEach((blockstate) -> {
 				DirHorizontal8 facing = blockstate.get(DirHorizontal8.prop);
 				BlockPoleConcrete block = (BlockPoleConcrete) blockstate.getBlock();

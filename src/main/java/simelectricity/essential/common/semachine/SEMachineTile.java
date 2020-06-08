@@ -136,7 +136,7 @@ public abstract class SEMachineTile extends SEEnergyTile implements ISESocketPro
         	return true;
 
         //Remove the panel
-        ISECoverPanel coverPanel = installedCoverPanels[side.ordinal()];
+//        ISECoverPanel coverPanel = installedCoverPanels[side.ordinal()];
         installedCoverPanels[side.ordinal()] = null;
 		
 		postCoverPanelModification();

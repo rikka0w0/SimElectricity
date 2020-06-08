@@ -96,7 +96,7 @@ public class TileSE2RF extends SESinglePortMachine<ISEConstantPowerLoad> impleme
         		this.rfOutputRateDisplay = rfAccepted;
     	        this.bufferedEnergy -= rfAccepted / SEAPI.energyNetAgent.joule2rf();
     	        
-    	        if (this.bufferedEnergy > this.bufferCapacity) {
+    	        if (this.bufferedEnergy > TileSE2RF.bufferCapacity) {
     	        	this.enabled = false;
     	        	paramChanged = true;
     	        }
@@ -112,7 +112,7 @@ public class TileSE2RF extends SESinglePortMachine<ISEConstantPowerLoad> impleme
             	this.rfOutputRateDisplay = 0;
             }
         	
-            if (this.bufferedEnergy < this.bufferCapacity * 0.25) {
+            if (this.bufferedEnergy < TileSE2RF.bufferCapacity * 0.25) {
             	this.enabled = true;
 	        	paramChanged = true;
             }
@@ -142,11 +142,10 @@ public class TileSE2RF extends SESinglePortMachine<ISEConstantPowerLoad> impleme
         return super.write(tagCompound);
     }
 
-    // TODO: getCapability
-    @Override
+	@Override
     public <T> LazyOptional<T> getCapability(Capability<T> capability, Direction facing) {
         if (capability == CapabilityEnergy.ENERGY && facing == this.getFacing()) {
-            return (LazyOptional<T>) LazyOptional.of(()->rfBufferHandler);
+            return energyHdlerCap.cast();
         }
         return super.getCapability(capability, facing);
     }
@@ -167,6 +166,7 @@ public class TileSE2RF extends SESinglePortMachine<ISEConstantPowerLoad> impleme
     /// IEnergyStorage
     ///////////////////////////////////
     RFBufferHandler rfBufferHandler = new RFBufferHandler(this);
+    private final LazyOptional<?> energyHdlerCap = LazyOptional.of(()->rfBufferHandler);
     protected static class RFBufferHandler implements IEnergyStorage {
     	protected TileSE2RF owner;
     	public RFBufferHandler(TileSE2RF owner) {
@@ -191,7 +191,7 @@ public class TileSE2RF extends SESinglePortMachine<ISEConstantPowerLoad> impleme
         
 		@Override
 		public int getMaxEnergyStored() {
-			return (int) (bufferCapacity * SEAPI.energyNetAgent.joule2rf());
+			return (int) (TileSE2RF.bufferCapacity * SEAPI.energyNetAgent.joule2rf());
 		}
 
         @Override

@@ -13,13 +13,11 @@ public class ClientConfigs {
 
 	public static ForgeConfigSpec.IntValue parabolaRenderSteps;
 
-	private static ClientConfigs instace;
 	private static ForgeConfigSpec configSpec;
 
 	public static void register() {
 		Pair<ClientConfigs, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(ClientConfigs::new);
 		configSpec = specPair.getRight();
-		instace = specPair.getLeft();
 
 		ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ClientConfigs.configSpec);
 	}

@@ -14,7 +14,6 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
-import net.minecraftforge.registries.IForgeRegistry;
 import simelectricity.essential.api.ISEChunkWatchSensitiveTile;
 import simelectricity.essential.api.SEEAPI;
 import simelectricity.essential.client.ClientConfigs;
@@ -52,17 +51,15 @@ public class Essential {
     	
     	@SubscribeEvent
 		public static void registerBlocks(final RegistryEvent.Register<Block> event) {
-    		IForgeRegistry registry = event.getRegistry();
     		BlockRegistry.initBlocks();
-        	BlockRegistry.registerBlocks(registry, false);
+        	BlockRegistry.registerBlocks(event.getRegistry());
     	}
     	
     	@SubscribeEvent
 		public static void registerItems(final RegistryEvent.Register<Item> event) {
-    		IForgeRegistry registry = event.getRegistry();
     		ItemRegistry.initItems();
-        	BlockRegistry.registerBlocks(registry, true);
-            ItemRegistry.registerItems(registry);
+        	BlockRegistry.registerBlockItems(event.getRegistry());
+            ItemRegistry.registerItems(event.getRegistry());
     	}
     	
     	@SubscribeEvent

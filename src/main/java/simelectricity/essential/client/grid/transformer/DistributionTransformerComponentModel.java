@@ -27,6 +27,7 @@ import simelectricity.essential.client.grid.pole.ConcretePoleModel;
 import simelectricity.essential.client.grid.pole.Models;
 import simelectricity.essential.grid.transformer.EnumDistributionTransformerBlockType;
 
+@SuppressWarnings("deprecation")
 @OnlyIn(Dist.CLIENT)
 public class DistributionTransformerComponentModel extends CodeBasedModel {
 	private final EnumDistributionTransformerBlockType blockType;
@@ -144,7 +145,7 @@ public class DistributionTransformerComponentModel extends CodeBasedModel {
         model.bake(this.quads);
 	}
 
-    @Override
+	@Override
     public ItemCameraTransforms getItemCameraTransforms() {
         return ConcretePoleModel.itemCameraTransforms;
     }

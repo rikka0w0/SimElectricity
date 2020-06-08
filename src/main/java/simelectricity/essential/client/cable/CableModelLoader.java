@@ -7,10 +7,10 @@ import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.IModelLoader;
-import net.minecraftforge.client.model.geometry.IModelGeometry;
+import rikka.librikka.model.CodeBasedModel;
 import simelectricity.essential.Essential;
 
-public class CableModelLoader implements IModelLoader {
+public class CableModelLoader implements IModelLoader<CodeBasedModel> {
 	public final static ResourceLocation id = new ResourceLocation(Essential.MODID, "cable");
 	public final static CableModelLoader instance = new CableModelLoader();
 	
@@ -20,7 +20,7 @@ public class CableModelLoader implements IModelLoader {
 	}
 
 	@Override
-	public IModelGeometry read(JsonDeserializationContext deserializationContext, JsonObject modelContents) {
+	public CodeBasedModel read(JsonDeserializationContext deserializationContext, JsonObject modelContents) {
 		String type = JSONUtils.getString(modelContents, "type");
 		ResourceLocation insulator = new ResourceLocation(JSONUtils.getString(modelContents, "side"));
 		ResourceLocation conductor = new ResourceLocation(JSONUtils.getString(modelContents, "core"));

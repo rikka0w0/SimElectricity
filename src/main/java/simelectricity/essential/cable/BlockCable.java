@@ -159,6 +159,7 @@ public class BlockCable extends BlockBase implements ICustomBoundingBox, IMetaPr
 		builder.add(BlockStateProperties.WATERLOGGED);
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public IFluidState getFluidState(BlockState state) {
 		return state.get(BlockStateProperties.WATERLOGGED) ? Fluids.WATER.getStillFluidState(false)
@@ -171,6 +172,7 @@ public class BlockCable extends BlockBase implements ICustomBoundingBox, IMetaPr
 		return this.getDefaultState().with(BlockStateProperties.WATERLOGGED, ifluidstate.getFluid() == Fluids.WATER);
 	}
 	
+	@SuppressWarnings("deprecation")
 	@Override
 	public BlockState updatePostPlacement(BlockState stateIn, Direction facing, BlockState facingState, IWorld worldIn,
 			BlockPos currentPos, BlockPos facingPos) {
@@ -340,10 +342,7 @@ public class BlockCable extends BlockBase implements ICustomBoundingBox, IMetaPr
     
     // Was addCollisionBoxToList
     @Override
-    public VoxelShape getShape(BlockState state, IBlockReader world, BlockPos pos, ISelectionContext context) {
-        double min = 0.5 - cableData.thickness() / 2;
-        double max = 0.5 + cableData.thickness() / 2;
-      	
+    public VoxelShape getShape(BlockState state, IBlockReader world, BlockPos pos, ISelectionContext context) {     	
         // Center
       	VoxelShape vs = brancheShapes[6];
     	
@@ -465,9 +464,9 @@ public class BlockCable extends BlockBase implements ICustomBoundingBox, IMetaPr
     //////////////////////////////////////
     /////Item drops and Block activities
     //////////////////////////////////////
+	@SuppressWarnings("deprecation")
 	@Override
 	public ActionResultType onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult ray) {
-		Direction side = ray.getFace();
         TileEntity te = world.getTileEntity(pos);
 
         if (!(te instanceof ISEGenericCable))

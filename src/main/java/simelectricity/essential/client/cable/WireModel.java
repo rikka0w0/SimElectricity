@@ -138,7 +138,7 @@ public class WireModel extends CodeBasedModel {
         return quads;
     }
 
-    private void translateGroupCoord(Direction wire_side, IRawModel group) {
+    private void translateGroupCoord(Direction wire_side, IRawModel<?> group) {
         switch (wire_side) {
             case DOWN:
                 group.translateCoord(0, thickness / 2 - 0.5F , 0);

@@ -39,7 +39,7 @@ public class SEGraph {
         if (SEGraph.isInterconnectionTerminal(node))        //A interconnection terminal
             return true;
 
-        if (node instanceof CableBase && ((CableBase) node).hasShuntResistance())
+        if (node instanceof CableBase && ((CableBase<?>) node).hasShuntResistance())
             return true;
 
         return node instanceof GridNode && ((GridNode) node).type != GridNode.ISEGridNode_Wire;
@@ -59,9 +59,9 @@ public class SEGraph {
 
     public static double calcR(SEComponent cur, SEComponent neighbor) {
         if (cur instanceof CableBase) {
-            CableBase curConductor = (CableBase) cur;
+            CableBase<?> curConductor = (CableBase<?>) cur;
             if (neighbor instanceof CableBase) {
-                return curConductor.getResistance() + ((CableBase) neighbor).getResistance();
+                return curConductor.getResistance() + ((CableBase<?>) neighbor).getResistance();
             } else {
                 return curConductor.getResistance();
             }
@@ -74,7 +74,7 @@ public class SEGraph {
             }
         } else {
             if (neighbor instanceof CableBase) {
-                return ((CableBase) neighbor).getResistance();
+                return ((CableBase<?>) neighbor).getResistance();
             }
         }
 
@@ -122,7 +122,7 @@ public class SEGraph {
     public void isolateVertex(SEComponent node) {        
         //Cut possible interconnection
         if (node instanceof Cable)
-            this.breakInterconnection((Cable) node);
+            SEGraph.breakInterconnection((Cable) node);
 
         //Remove this node from its neighbor list
         for (SEComponent neighbor : node.neighbors) {
@@ -195,7 +195,7 @@ public class SEGraph {
             return null;
 
         //Cut possible interconnection
-        this.breakInterconnection(gridNode);
+        SEGraph.breakInterconnection(gridNode);
 
         //Break transformer
         this.breakTransformer(gridNode);

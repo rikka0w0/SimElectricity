@@ -8,7 +8,7 @@ import net.minecraftforge.client.model.data.ModelProperty;
 import simelectricity.essential.api.coverpanel.ISECoverPanel;
 
 public interface ISECoverPanelHost {
-	public static ModelProperty<ISECoverPanelHost> prop = new ModelProperty();
+	public static ModelProperty<ISECoverPanelHost> prop = new ModelProperty<>();
 	
     /**
      * Use custom raytrace to determine which cover panel is actually selected by the player

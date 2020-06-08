@@ -10,11 +10,10 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-@Deprecated
 @OnlyIn(Dist.CLIENT)
 public class SERenderHeap {
-    private final LinkedList<double[][]> cubes = new LinkedList();
-    private final LinkedList<TextureAtlasSprite[]> textures = new LinkedList();
+    private final LinkedList<double[][]> cubes = new LinkedList<>();
+    private final LinkedList<TextureAtlasSprite[]> textures = new LinkedList<>();
 
     @Override
     public SERenderHeap clone() {
@@ -110,7 +109,8 @@ public class SERenderHeap {
             double[][] cube = cubeIterator.next();
             TextureAtlasSprite[] textureArray = textureIterator.next();
 
-            RawQuadCube rawCube = new RawQuadCube(cube, textureArray);
+            @SuppressWarnings("deprecation")
+			RawQuadCube rawCube = new RawQuadCube(cube, textureArray);
             rawCube.bake(list);
         }
     }

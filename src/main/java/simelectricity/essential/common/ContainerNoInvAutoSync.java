@@ -13,15 +13,15 @@ import simelectricity.essential.Essential;
 import simelectricity.essential.utils.network.MessageContainerSync;
 
 public abstract class ContainerNoInvAutoSync<HOST> extends ContainerNoInventory<HOST> {
-	public ContainerNoInvAutoSync(@Nullable Object host, int windowID) {
+	public ContainerNoInvAutoSync(@Nullable HOST host, int windowID) {
 		this(host, Essential.MODID, windowID);
 	}
 
-	public ContainerNoInvAutoSync(@Nullable Object host, String namespace, int windowID) {
+	public ContainerNoInvAutoSync(@Nullable HOST host, String namespace, int windowID) {
 		super(host, namespace, windowID);
 	}
 
-    public ContainerNoInvAutoSync(@Nullable Object host, ContainerType containerType, int windowID) {
+    public ContainerNoInvAutoSync(@Nullable HOST host, ContainerType<?> containerType, int windowID) {
 		super(host, containerType, windowID);
 	}
 

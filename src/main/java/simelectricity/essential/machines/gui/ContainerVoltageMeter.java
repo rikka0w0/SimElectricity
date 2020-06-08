@@ -2,7 +2,6 @@ package simelectricity.essential.machines.gui;
 
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.tileentity.TileEntity;
 import rikka.librikka.container.ContainerSynchronizer;
 import rikka.librikka.gui.AutoGuiHandler;
 import simelectricity.essential.common.ContainerNoInvAutoSync;
@@ -14,7 +13,7 @@ public class ContainerVoltageMeter extends ContainerNoInvAutoSync<TileVoltageMet
     public double voltage;
 
     // Server side
-    public ContainerVoltageMeter(TileEntity tileEntity, int windowId) {
+    public ContainerVoltageMeter(TileVoltageMeter tileEntity, int windowId) {
     	super(tileEntity, windowId);
     }
 

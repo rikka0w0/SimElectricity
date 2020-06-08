@@ -3,7 +3,8 @@ package simelectricity.energynet.matrix;
 import simelectricity.common.SELogger;
 
 /**
- * A class that is designed to solve problem Ax=b
+ * A class implementing this interface is designed to solve Ax=b, <p>
+ * where x and b are vectors, A is a square matrix.
  */
 public interface IMatrixSolver {
     /**
@@ -48,15 +49,13 @@ public interface IMatrixSolver {
      */
     int getMatrixSize();
 
-    class MatrixHelper {
-        public static IMatrixSolver newSolver(String name) {
-            try {
-                return (IMatrixSolver) Class.forName("simelectricity.energynet.matrix." + name).newInstance();
-            } catch (Exception e) {
-                SELogger.logFatal(SELogger.simulator, "Invalid Matrix Solver! Please check your config settings!");
-                e.printStackTrace();
-                return null;
-            }
+    public static IMatrixSolver newSolver(String name) {
+        try {
+            return (IMatrixSolver) Class.forName("simelectricity.energynet.matrix." + name).newInstance();
+        } catch (Exception e) {
+            SELogger.logFatal(SELogger.simulator, "Invalid Matrix Solver! Please check your config settings!");
+            e.printStackTrace();
+            return null;
         }
     }
 }

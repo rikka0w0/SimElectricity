@@ -1,5 +1,6 @@
 package simelectricity.essential;
 
+import net.minecraft.item.Item;
 import net.minecraftforge.registries.IForgeRegistry;
 import simelectricity.essential.items.ItemHighVoltageCable;
 import simelectricity.essential.items.ItemPanel;
@@ -19,7 +20,7 @@ public class ItemRegistry {
         itemTools = ItemTools.create();
     }
     
-    public static void registerItems(IForgeRegistry registry) {
+    public static void registerItems(IForgeRegistry<Item> registry) {
     	registry.registerAll(itemHVCable);
     	registry.registerAll(itemFutaTea);
     	registry.registerAll(itemMisc);

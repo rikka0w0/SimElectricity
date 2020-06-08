@@ -28,10 +28,14 @@ public class MetalPole35kVModel extends CodeBasedModel {
     private final TextureAtlasSprite textureInsulator = null;
 	
 	// [(8-DirHorizontal8.ordinal)&7]
+	@SuppressWarnings("unchecked")
 	public final static List<BakedQuad>[] insulator35Kv = new List[8];
+	@SuppressWarnings("unchecked")
 	public final static List<BakedQuad>[] bakedModelType0 = new List[8];
+	@SuppressWarnings("unchecked")
 	public final static List<BakedQuad>[] bakedModelType1 = new List[8];
 	// [(8-DirHorizontal8.ordinal)&7][partId]
+	@SuppressWarnings("unchecked")
 	public final static List<BakedQuad>[][] bakedModelBasePart = new List[8][4];
 	public static RawQuadGroup modelInsulator = null;
 	
@@ -52,12 +56,14 @@ public class MetalPole35kVModel extends CodeBasedModel {
         modelInsulator = Models.render35KvInsulator(textureMetal, textureInsulator);		
         
     	for (int facing=0; facing<8; facing++) {
-    		List<BakedQuad> type0 = new LinkedList();
-        	List<BakedQuad> insulator35Kv = new LinkedList();
-    		List<BakedQuad> type1 = new LinkedList();
-    		List<BakedQuad>[] baseParts = new LinkedList[] {
-    				new LinkedList(), new LinkedList(), 
-    				new LinkedList(), new LinkedList()};
+    		List<BakedQuad> type0 = new LinkedList<>();
+        	List<BakedQuad> insulator35Kv = new LinkedList<>();
+    		List<BakedQuad> type1 = new LinkedList<>();
+
+    		@SuppressWarnings("unchecked")
+			List<BakedQuad>[] baseParts = new LinkedList[] {
+    				new LinkedList<>(), new LinkedList<>(), 
+    				new LinkedList<>(), new LinkedList<>()};
 
     		//Type 0
             RawQuadGroup insulator = modelInsulator.clone();

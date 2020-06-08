@@ -16,13 +16,13 @@ import rikka.librikka.model.quadbuilder.RawQuadCube;
 import rikka.librikka.model.quadbuilder.RawQuadGroup;
 import simelectricity.essential.client.ResourcePaths;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
 @OnlyIn(Dist.CLIENT)
 public class ConcretePole35kVModel extends CodeBasedModel {
-    private final List<BakedQuad> quads = new ArrayList();
+    private final List<BakedQuad> quads = new LinkedList<>();
     private final int rotation;
     private final int type;
     private final boolean isRod;

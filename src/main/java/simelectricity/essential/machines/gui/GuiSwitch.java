@@ -2,6 +2,7 @@ package simelectricity.essential.machines.gui;
 
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.resources.I18n;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -11,9 +12,8 @@ import simelectricity.essential.utils.SEUnitHelper;
 import simelectricity.essential.utils.client.gui.SEGuiContainer;
 import simelectricity.essential.utils.network.MessageContainerSync;
 
-
 @OnlyIn(Dist.CLIENT)
-public final class GuiSwitch<T extends ContainerSwitch> extends SEGuiContainer<T> {
+public final class GuiSwitch extends SEGuiContainer<ContainerSwitch> {
     ////////////////////////
     /// Switch
     ////////////////////////
@@ -21,7 +21,7 @@ public final class GuiSwitch<T extends ContainerSwitch> extends SEGuiContainer<T
     private static final int switchX = 115;
     private static final int switchY = 48;
 
-    public GuiSwitch(T screenContainer, PlayerInventory inv, ITextComponent titleIn) {
+    public GuiSwitch(ContainerSwitch screenContainer, PlayerInventory inv, ITextComponent titleIn) {
         super(screenContainer, inv, titleIn);
     }
     
@@ -83,7 +83,7 @@ public final class GuiSwitch<T extends ContainerSwitch> extends SEGuiContainer<T
         boolean ret = super.mouseClicked(x, y, button);
 
         if (x >= this.guiLeft + GuiSwitch.switchX && y >= this.guiTop + GuiSwitch.switchY && x < this.guiLeft + GuiSwitch.switchX + GuiSwitch.switchSize && y < this.guiTop + GuiSwitch.switchY + GuiSwitch.switchSize)
-            MessageContainerSync.sendButtonClickEventToSever(this.container, 12, this.hasControlDown());
+            MessageContainerSync.sendButtonClickEventToSever(this.container, 12, Screen.hasControlDown());
         
         return ret;
     }

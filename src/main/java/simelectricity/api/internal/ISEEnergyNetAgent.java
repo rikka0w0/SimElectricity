@@ -34,7 +34,7 @@ public interface ISEEnergyNetAgent {
      * @return A reference to ISESubComponent, which also implements the corresponding ISEComponentParameter.
      *          TileEntity should store this reference and use it to access simulation results, e.g. voltage.
      */
-    ISESubComponent newComponent(ISEComponentParameter dataProvider, TileEntity parent);
+    ISESubComponent<?> newComponent(ISEComponentParameter dataProvider, TileEntity parent);
 
     /**
      * Create a new cable component, WITHOUT register it.

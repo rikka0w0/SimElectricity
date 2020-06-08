@@ -28,7 +28,8 @@ public class CableModel extends CodeBasedModel {
     private final ResourceLocation insulatorTextureLoc, conductorTextureLoc;
     public TextureAtlasSprite insulatorTexture, conductorTexture;
 
-    private final List<BakedQuad>[] branches = new List[6];
+    @SuppressWarnings("unchecked")
+	private final List<BakedQuad>[] branches = new List[6];
 
     public CableModel(ResourceLocation insulatorTextureLoc, ResourceLocation conductorTextureLoc, float thickness) {
         this.insulatorTextureLoc = registerTexture(insulatorTextureLoc);
@@ -87,7 +88,7 @@ public class CableModel extends CodeBasedModel {
         for (Direction side : Direction.values()) {
             ISECoverPanel coverPanel = cable.getCoverPanelOnSide(side);
             if (coverPanel != null) {
-                ISECoverPanelRender render = coverPanel.getCoverPanelRender();
+                ISECoverPanelRender<ISECoverPanel> render = coverPanel.getCoverPanelRender();
                 if (render != null)
                     render.renderCoverPanel(coverPanel, side, rand, quads);
             }

@@ -11,8 +11,8 @@ import simelectricity.essential.utils.SEUnitHelper;
 import simelectricity.essential.utils.client.gui.SEGuiContainer;
 
 @OnlyIn(Dist.CLIENT)
-public class GuiCurrentSensor<T extends ContainerCurrentSensor> extends SEGuiContainer<T> {
-    public GuiCurrentSensor(T screenContainer, PlayerInventory inv, ITextComponent titleIn) {
+public class GuiCurrentSensor extends SEGuiContainer<ContainerCurrentSensor> {
+    public GuiCurrentSensor(ContainerCurrentSensor screenContainer, PlayerInventory inv, ITextComponent titleIn) {
         super(screenContainer, inv, titleIn);
     }
 

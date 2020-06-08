@@ -41,10 +41,9 @@ public class PowerPoleTER<T extends TileEntity & ISEPowerPole> extends TileEntit
 		super(rendererDispatcherIn);
 	}
 
-	private static PowerPoleTER instance;
     public final static ResourceLocation hvcable_texture_loc = new ResourceLocation(ResourcePaths.hv_cable);
     private final static LazyValue<TextureAtlasSprite> texture = 
-    		new LazyValue(()->EasyTextureLoader.blockTextureGetter().apply(hvcable_texture_loc));
+    		new LazyValue<>(()->EasyTextureLoader.blockTextureGetter().apply(hvcable_texture_loc));
 
     public static void onPreTextureStitchEvent(TextureStitchEvent.Pre event) {
     	if (EasyTextureLoader.isBlockAtlas(event))

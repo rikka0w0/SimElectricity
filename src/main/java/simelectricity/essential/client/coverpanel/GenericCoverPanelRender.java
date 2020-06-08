@@ -25,7 +25,9 @@ import java.util.Random;
 public abstract class GenericCoverPanelRender<T extends ISECoverPanel> implements ISECoverPanelRender<T>, IModelBakeHandler {
     private final ResourceLocation textureRes;
     protected TextureAtlasSprite texture;
-    protected List<BakedQuad>[] bakedQuads = new List[6];    //BakedQuads for all 6 directions
+
+    @SuppressWarnings("unchecked")
+	protected List<BakedQuad>[] bakedQuads = new List[6];    //BakedQuads for all 6 directions
 
     protected GenericCoverPanelRender(String textureName) {
     	this(Essential.MODID, textureName);
@@ -130,7 +132,7 @@ public abstract class GenericCoverPanelRender<T extends ISECoverPanel> implement
     }
 
     @Override
-    public void renderCoverPanel(ISECoverPanel coverPanel, Direction side, Random rand, List quads) {
+    public void renderCoverPanel(T coverPanel, Direction side, Random rand, List<BakedQuad> quads) {
         if (MinecraftForgeClient.getRenderLayer() != RenderType.getSolid())
             return;
 

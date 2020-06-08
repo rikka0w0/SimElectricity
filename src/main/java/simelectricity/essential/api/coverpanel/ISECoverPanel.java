@@ -24,8 +24,7 @@ public interface ISECoverPanel {
     void toNBT(CompoundNBT nbt);
 
     @OnlyIn(Dist.CLIENT)
-    ISECoverPanelRender getCoverPanelRender();
-
+    <T extends ISECoverPanel> ISECoverPanelRender<T> getCoverPanelRender();
 
     /**
      * Called when the cover panel is loaded from NBT data or placed by a player using itemStack

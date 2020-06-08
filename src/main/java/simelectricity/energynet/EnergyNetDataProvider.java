@@ -35,7 +35,7 @@ public class EnergyNetDataProvider extends WorldSavedData {
     ///////////////////////////////////////
     /// GridTile update notification
     ///////////////////////////////////////
-    private final Set<ISEGridTile> updatedGridTile = new HashSet();
+    private final Set<ISEGridTile> updatedGridTile = new HashSet<>();
     //Map between coord and GridNode
     private final HashMap<BlockPos, GridNode> gridNodeMap = new HashMap<>();
     private final List<TileEntity> loadedTiles = new LinkedList<>();
@@ -118,7 +118,7 @@ public class EnergyNetDataProvider extends WorldSavedData {
                 ISETile tile = (ISETile) te;
                 
                 for (Direction direction : Direction.values()) {
-                    ISESubComponent subComponent = tile.getComponent(direction);
+                    ISESubComponent<?> subComponent = tile.getComponent(direction);
                     if (subComponent != null) {
                         this.tileEntityGraph.addVertex((SEComponent) subComponent);
                     }
@@ -144,7 +144,7 @@ public class EnergyNetDataProvider extends WorldSavedData {
 
             if (cable.isGridInterConnectionPoint) {
                 GridNode gridNode = getGridObjectAtCoord(te.getPos());
-                this.tileEntityGraph.interconnection(cable, gridNode);
+                SEGraph.interconnection(cable, gridNode);
             }
 
             //Build connection with neighbors
@@ -181,7 +181,7 @@ public class EnergyNetDataProvider extends WorldSavedData {
                     }
                 } else if (neighborTileEntity instanceof ISETile) {
                     ISETile tile = (ISETile) neighborTileEntity;
-                    ISESubComponent component = tile.getComponent(direction.getOpposite());
+                    ISESubComponent<?> component = tile.getComponent(direction.getOpposite());
 
                     if (component != null) {
                         this.tileEntityGraph.addEdge((SEComponent) component, cable);
@@ -192,7 +192,7 @@ public class EnergyNetDataProvider extends WorldSavedData {
             ISETile tile = (ISETile) te;
 
             for (Direction direction : Direction.values()) {
-                ISESubComponent subComponent = tile.getComponent(direction);
+                ISESubComponent<?> subComponent = tile.getComponent(direction);
                 if (subComponent != null) {
                     this.tileEntityGraph.isolateVertex((SEComponent) subComponent);
                 }
@@ -250,7 +250,7 @@ public class EnergyNetDataProvider extends WorldSavedData {
             } else {
                 // ISETile
                 for (Direction direction : Direction.values()) {
-                    ISESubComponent subComponent = tile.getComponent(direction);
+                    ISESubComponent<?> subComponent = tile.getComponent(direction);
                     if (subComponent != null) {
                         TileEntity neighborTileEntity = getTileEntityOnDirection(te, direction);
 
@@ -282,10 +282,10 @@ public class EnergyNetDataProvider extends WorldSavedData {
         } else if (te instanceof ISETile) {
             ISETile tile = (ISETile) te;
             for (Direction direction : Direction.values()) {
-                ISESubComponent subComponent = tile.getComponent(direction);
+                ISESubComponent<?> subComponent = tile.getComponent(direction);
 
                 if (subComponent instanceof Tile)
-                    ((Tile) subComponent).updateComponentParameters();
+                    ((Tile<?>) subComponent).updateComponentParameters();
             }
         } else {
             throw new RuntimeException("Unexpected TileEntity:" + te);
@@ -303,7 +303,7 @@ public class EnergyNetDataProvider extends WorldSavedData {
         } else if (te instanceof ISETile) {
             ISETile tile = (ISETile) te;
             for (Direction direction : Direction.values()) {
-                ISESubComponent subComponent = tile.getComponent(direction);
+                ISESubComponent<?> subComponent = tile.getComponent(direction);
                 if (subComponent != null) {
                     this.tileEntityGraph.removeVertex((SEComponent) subComponent);
                 }
@@ -425,7 +425,6 @@ public class EnergyNetDataProvider extends WorldSavedData {
     	
         this.loadedGridTiles.remove(te);
 
-        ISEGridTile gridTile = (ISEGridTile) te;
         GridNode gridObject = this.gridNodeMap.get(te.getPos());
 
         //gridObject can be null if the GridObject is just removed

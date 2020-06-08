@@ -139,13 +139,14 @@ public class TileElectricFurnace extends SESinglePortMachine<ISEVoltageSource> i
     @Override
     public <T> LazyOptional<T> getCapability(Capability<T> capability, Direction facing) {
     	if (!this.removed && facing != null && capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-    		return (LazyOptional<T>) LazyOptional.of(()->itemStackHandler);
+    		return itemStackHdlerCap.cast();
     	}
         return super.getCapability(capability, facing);
     }
 
     final TileElectricFurnace furnance = this;
     ItemStackHandlerImpl itemStackHandler = new ItemStackHandlerImpl(this);
+    private final LazyOptional<?> itemStackHdlerCap = LazyOptional.of(()->itemStackHandler);
     public final ItemStackHandlerInventory inventory = new ItemStackHandlerInventory(itemStackHandler) {
 		@Override
 		public void markDirty() {
@@ -204,14 +205,8 @@ public class TileElectricFurnace extends SESinglePortMachine<ISEVoltageSource> i
         public void makeResult(ItemStack result) {
             super.extractItem(0, 1, false);	// Consume the ingredient
             
-            ItemStack resultStack = this.getStackInSlot(1);
-            int limit = getStackLimit(1, result);
-            
+            ItemStack resultStack = this.getStackInSlot(1);            
             // We assume that resultStack is valid for insert and replace
-            
-            if (!resultStack.isEmpty())
-                limit -= resultStack.getCount();
-
             
             if (resultStack.isEmpty()) {
                 this.stacks.set(1, result);

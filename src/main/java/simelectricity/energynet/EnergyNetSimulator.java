@@ -4,7 +4,6 @@ import simelectricity.common.ConfigManager;
 import simelectricity.common.SELogger;
 import simelectricity.energynet.components.*;
 import simelectricity.energynet.matrix.IMatrixSolver;
-import simelectricity.energynet.matrix.IMatrixSolver.MatrixHelper;
 
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -16,20 +15,33 @@ public class EnergyNetSimulator extends Thread {
     /**
      * The absolute tolerance
      */
-    private static double epsilon;
+    private double epsilon;
     /**
      * The conductance placed between each PN junction(to alleviate convergence problem)
      */
-    private static double Gpn;
+    private double Gpn;
     /**
      * Matrix solving algorithm used to solve the problem
      */
-    private static IMatrixSolver matrix;
+    private IMatrixSolver matrix;
     
-    public static final void config() {
-        epsilon = Math.pow(10, -ConfigManager.precision);
-        Gpn = 1.0D / ConfigManager.shuntPN;
-        matrix = MatrixHelper.newSolver(ConfigManager.matrixSolver);
+    public String getMatrixSolverName() {
+        return matrix.getClass().getSimpleName();
+    }
+    
+    private volatile boolean configChanged;
+    public void setConfigChanged() {
+    	configChanged = true;
+    }
+    
+    private void checkAndUpdateConfig() {
+        if (configChanged) {
+        	configChanged = false;
+
+            epsilon = Math.pow(10, -ConfigManager.precision.get());
+            Gpn = 1.0D / ConfigManager.shuntPN.get();
+            matrix = IMatrixSolver.newSolver(ConfigManager.matrixSolver.get());
+        }
     }
     
 	/////////////////////////////////////////////////
@@ -121,6 +133,11 @@ public class EnergyNetSimulator extends Thread {
             try {
                 SELogger.logInfo(SELogger.simulator, this.getName() + " wake up");
 
+                if (this.matrix == null)
+                	this.setConfigChanged();
+
+                checkAndUpdateConfig();
+
                 processing = true;
                 SELogger.logInfo(SELogger.simulator, this.getName() + " Started");
                 startAt = System.currentTimeMillis();
@@ -169,7 +186,7 @@ public class EnergyNetSimulator extends Thread {
 
 
             if (columnNode instanceof CableBase) {
-                CableBase cableBase = (CableBase) columnNode;
+                CableBase<?> cableBase = (CableBase<?>) columnNode;
 
                 if (cableBase.hasShuntResistance())
                     currents[columnNode.index] -= voltages[cableBase.index] / cableBase.getShuntResistance();
@@ -320,7 +337,7 @@ public class EnergyNetSimulator extends Thread {
 
             //Cable - GridNode
             if (columnNode instanceof CableBase) {
-                CableBase cableBase = (CableBase) columnNode;
+                CableBase<?> cableBase = (CableBase<?>) columnNode;
 
                 if (cableBase.hasShuntResistance())
                     diagonalElement += 1.0D / cableBase.getShuntResistance();
@@ -366,7 +383,7 @@ public class EnergyNetSimulator extends Thread {
                 if (gridNode.type == GridNode.ISEGridNode_TransformerSecondary) {
                     GridNode sec = gridNode;
                     GridNode pri = sec.complement;
-                    double ratio = pri.ratio;
+//                    double ratio = pri.ratio;
                     double res = pri.resistance;
 
                     diagonalElement += 1.0D / res;

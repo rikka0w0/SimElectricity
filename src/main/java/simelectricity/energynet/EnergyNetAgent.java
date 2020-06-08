@@ -46,8 +46,7 @@ import java.util.Map;
 import java.util.WeakHashMap;
 
 public class EnergyNetAgent implements ISEEnergyNetAgent {
-    @SuppressWarnings("unchecked")
-    public static Map<World, EnergyNet> mapping = new WeakHashMap();
+    public static Map<World, EnergyNet> mapping = new WeakHashMap<>();
 
     /**
      * Return the instance of energyNet for a specific world,
@@ -138,7 +137,7 @@ public class EnergyNetAgent implements ISEEnergyNetAgent {
     }
 
     @Override
-    public ISESubComponent newComponent(ISEComponentParameter dataProvider, TileEntity parent) {
+    public ISESubComponent<?> newComponent(ISEComponentParameter dataProvider, TileEntity parent) {
         if (dataProvider instanceof ISEDiode)
             //Create a pair of DiodeInput and DiodeOutput at the same time
             return new DiodeInput((ISEDiode) dataProvider, parent);

@@ -5,7 +5,7 @@ import simelectricity.api.components.ISEConstantPowerSource;
 import simelectricity.api.node.ISESubComponent;
 import simelectricity.energynet.components.SEComponent.Tile;
 
-public class ConstantPowerSource extends Tile<ISEConstantPowerSource> implements ISESubComponent, ISEConstantPowerSource {
+public class ConstantPowerSource extends Tile<ISEConstantPowerSource> implements ISESubComponent<ISESubComponent<?>>, ISEConstantPowerSource {
     private volatile double pRated, vMin, vMax;
     private volatile boolean enabled;
 
@@ -31,11 +31,6 @@ public class ConstantPowerSource extends Tile<ISEConstantPowerSource> implements
     @Override
     public boolean isOn() {
         return enabled;
-    }
-
-    @Override
-    public ISESubComponent getComplement() {
-        return null;
     }
 
     @Override

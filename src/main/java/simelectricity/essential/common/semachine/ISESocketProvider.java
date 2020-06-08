@@ -5,10 +5,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.model.data.ModelProperty;
 
-public interface ISESocketProvider {
-	@Deprecated
-    int numOfSockets = 5;
-	
+public interface ISESocketProvider {	
 	public static ModelProperty<ISESocketProvider> prop = new ModelProperty<>();
 
     /**

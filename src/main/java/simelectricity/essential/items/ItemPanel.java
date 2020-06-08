@@ -87,6 +87,7 @@ public final class ItemPanel extends ItemBase implements IMetaProvider<IMetaBase
 		return ActionResultType.SUCCESS;
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	@OnlyIn(Dist.CLIENT)
 	public void addInformation(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flagIn) {

@@ -121,8 +121,6 @@ public final class ModelDataProvider extends BlockStateProvider implements ISimp
 	 */
 	private void registerDynamic2(Block block) {
 		VariantBlockStateBuilder builder = getVariantBuilder(block);
-		String namespace = block.getRegistryName().getNamespace();
-		String blockName =  block.getRegistryName().getPath();
 		
 		final ModelFile modelFile = new ModelFile.ExistingModelFile(mcLoc("block/torch"), exfh);
 		builder.forAllStates((blockstate)->ConfiguredModel.builder().modelFile(modelFile).build());
@@ -139,7 +137,6 @@ public final class ModelDataProvider extends BlockStateProvider implements ISimp
 	 */
 	private void registerDynamic(Block block) {
 		VariantBlockStateBuilder builder = getVariantBuilder(block);
-		String namespace = block.getRegistryName().getNamespace();
 		String blockName =  block.getRegistryName().getPath();
 
 //		BlockModelBuilder cableDummyModel = models().getBuilder("block/"+blockName);
@@ -155,8 +152,6 @@ public final class ModelDataProvider extends BlockStateProvider implements ISimp
 	
 	private void registerFake (Block block) {
 		VariantBlockStateBuilder builder = getVariantBuilder(block);
-		String namespace = block.getRegistryName().getNamespace();
-		String blockName =  block.getRegistryName().getPath();
 
 		final ModelFile modelFile = new ModelFile.ExistingModelFile(mcLoc("block/torch"), exfh);
 		builder.forAllStates((blockstate)->ConfiguredModel.builder().modelFile(modelFile).build());
