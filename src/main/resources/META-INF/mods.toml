@@ -1,83 +1,47 @@
-# This is an example mods.toml file. It contains the data relating to the loading mods.
-# There are several mandatory fields (#mandatory), and many more that are optional (#optional).
-# The overall format is standard TOML format, v0.5.0.
-# Note that there are a couple of TOML lists in this file.
-# Find more information on toml format here:  https://github.com/toml-lang/toml
-# The name of the mod loader type to load - for regular FML @Mod mods it should be javafml
-modLoader="javafml" #mandatory
-# A version range to match for said mod loader - for regular FML @Mod it will be the forge version
+modLoader="javafml"
 loaderVersion="[28,)" #mandatory (28 is current forge version)
-# A URL to refer people to when problems occur with this mod
-issueTrackerURL="http://my.issue.tracker/" #optional
-# A list of mods - how many allowed here is determined by the individual mod loader
+issueTrackerURL="https://github.com/RoyalAliceAcademyOfSciences/SimElectricity/issues" #optional
+
 [[mods]] #mandatory
-# The modid of the mod
-modId="simelectricity" #mandatory
-# The version number of the mod - there's a few well known ${} variables useable here or just hardcode it
-version="${file.jarVersion}" #mandatory
- # A display name for the mod
-displayName="SimElectricity EnergyNet" #mandatory
-# A URL to query for updates for this mod. See the JSON update specification <here>
+modId="simelectricity"
+version="${file.jarVersion}"
+displayName="SimElectricity EnergyNet"
 # updateJSONURL="http://myurl.me/" #optional
-# A URL for the "homepage" for this mod, displayed in the mod UI
-displayURL="https://github.com/RoyalAliceAcademyOfSciences/SimElectricity" #optional
-# A file name (in the root of the mod JAR) containing a logo for display
-logoFile="examplemod.png" #optional
-# A text field displayed in the mod UI
-credits="Chinese Institution of Scientific Minecraft Mod (CISM)" #optional
-# A text field displayed in the mod UI
-authors="Rikka0_0, Aurora" #optional
+displayURL="https://github.com/RoyalAliceAcademyOfSciences/SimElectricity"
+logoFile="sime_logo.png" #optional
+credits="Chinese Institution of Scientific Minecraft Mod (CISM)"
+authors="Rikka0_0, Aurora"
 # The description text for the mod (multi line!) (#mandatory)
 description='''
 A mod for real world circuit simulation!
-
-Have some lorem ipsum.
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed mollis lacinia magna. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed sagittis luctus odio eu tempus. Interdum et malesuada fames ac ante ipsum primis in faucibus. Pellentesque volutpat ligula eget lacus auctor sagittis. In hac habitasse platea dictumst. Nunc gravida elit vitae sem vehicula efficitur. Donec mattis ipsum et arcu lobortis, eleifend sagittis sem rutrum. Cras pharetra quam eget posuere fermentum. Sed id tincidunt justo. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
 '''
 
 [[mods]] #mandatory
-# The modid of the mod
-modId="sime_essential" #mandatory
-# The version number of the mod - there's a few well known ${} variables useable here or just hardcode it
-version="${file.jarVersion}" #mandatory
- # A display name for the mod
-displayName="SimElectricity Essential" #mandatory
-# A URL to query for updates for this mod. See the JSON update specification <here>
+modId="sime_essential"
+version="${file.jarVersion}"
+displayName="SimElectricity Essential"
 # updateJSONURL="http://myurl.me/" #optional
-# A URL for the "homepage" for this mod, displayed in the mod UI
-displayURL="https://github.com/RoyalAliceAcademyOfSciences/SimElectricity" #optional
-# A file name (in the root of the mod JAR) containing a logo for display
-logoFile="examplemod.png" #optional
-# A text field displayed in the mod UI
-credits="Chinese Institution of Scientific Minecraft Mod (CISM)" #optional
-# A text field displayed in the mod UI
-authors="Rikka0_0, Aurora, MeowJ, YurisCat" #optional
+displayURL="https://github.com/RoyalAliceAcademyOfSciences/SimElectricity"
+logoFile="sime_logo.png" #optional
+credits="Chinese Institution of Scientific Minecraft Mod (CISM)"
+authors="Rikka0_0, Aurora, MeowJ, YurisCat"
 # The description text for the mod (multi line!) (#mandatory)
 description='''
-23333333333333333
+Provides a set of items and blocks to demonstrate the capability of the SimElectricity EnergyNet
 '''
 
 [[mods]] #mandatory
-# The modid of the mod
-modId="sime_facades" #mandatory
-# The version number of the mod - there's a few well known ${} variables useable here or just hardcode it
-version="${file.jarVersion}" #mandatory
- # A display name for the mod
-displayName="SimElectricity Facades Extension" #mandatory
-# A URL to query for updates for this mod. See the JSON update specification <here>
+modId="sime_facades"
+version="${file.jarVersion}"
+displayName="SimElectricity Facades Extension"
 # updateJSONURL="http://myurl.me/" #optional
-# A URL for the "homepage" for this mod, displayed in the mod UI
-displayURL="https://github.com/RoyalAliceAcademyOfSciences/SimElectricity" #optional
-# A file name (in the root of the mod JAR) containing a logo for display
+displayURL="https://github.com/RoyalAliceAcademyOfSciences/SimElectricity"
 logoFile="examplemod.png" #optional
-# A text field displayed in the mod UI
-credits="Chinese Institution of Scientific Minecraft Mod (CISM)" #optional
-# A text field displayed in the mod UI
-authors="Rikka0_0" #optional
+credits="Chinese Institution of Scientific Minecraft Mod (CISM)"
+authors="Rikka0_0"
 # The description text for the mod (multi line!) (#mandatory)
 description='''
-23333333333333333
+Facade support for BuildCraft and ThermalExpansion
 '''
 
 # A dependency - use the . to indicate dependency for a specific modid. Dependencies are optional.
@@ -92,7 +56,13 @@ description='''
     ordering="NONE"
     # Side this dependency is applied on - BOTH, CLIENT or SERVER
     side="BOTH"
-# Here's another dependency
+    
+[[dependencies.simelectricity]]
+    modId="librikka"
+    mandatory=true
+    versionRange="[1.0.0,)"
+    ordering="AFTER"
+    side="BOTH"
 [[dependencies.simelectricity]]
     modId="minecraft"
     mandatory=true
