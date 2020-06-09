@@ -21,16 +21,13 @@ import java.util.Random;
 import java.util.function.Function;
 
 public class WireModel extends CodeBasedModel {
-    private final ResourceLocation insulatorTextureLoc;
-    private TextureAtlasSprite insulatorTexture;
-    private final ResourceLocation conductorTextureLoc;
-    private TextureAtlasSprite conductorTexture;
+    private final TextureAtlasSprite insulatorTexture, conductorTexture;
 
     public final float thickness;
 
-    public WireModel(ResourceLocation insulatorTextureLoc, ResourceLocation conductorTextureLoc, float thickness) {
-        this.insulatorTextureLoc = registerTexture(insulatorTextureLoc);
-        this.conductorTextureLoc = registerTexture(insulatorTextureLoc);
+    public WireModel(TextureAtlasSprite insulatorTexture, TextureAtlasSprite conductorTexture, float thickness) {
+        this.insulatorTexture = insulatorTexture;
+        this.conductorTexture = conductorTexture;
         this.thickness = thickness;
     }
 
@@ -41,8 +38,7 @@ public class WireModel extends CodeBasedModel {
 
     @Override
     protected void bake(Function<ResourceLocation, TextureAtlasSprite> textureRegistry) {
-        this.insulatorTexture = textureRegistry.apply(insulatorTextureLoc);
-        this.conductorTexture = textureRegistry.apply(conductorTextureLoc);
+
     }
 
     @Override

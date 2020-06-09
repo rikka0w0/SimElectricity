@@ -25,15 +25,14 @@ import java.util.Random;
 @OnlyIn(Dist.CLIENT)
 public class CableModel extends CodeBasedModel {
     private final float thickness;
-    private final ResourceLocation insulatorTextureLoc, conductorTextureLoc;
-    public TextureAtlasSprite insulatorTexture, conductorTexture;
+    public final TextureAtlasSprite insulatorTexture, conductorTexture;
 
     @SuppressWarnings("unchecked")
 	private final List<BakedQuad>[] branches = new List[6];
 
-    public CableModel(ResourceLocation insulatorTextureLoc, ResourceLocation conductorTextureLoc, float thickness) {
-        this.insulatorTextureLoc = registerTexture(insulatorTextureLoc);
-        this.conductorTextureLoc = registerTexture(insulatorTextureLoc);
+    public CableModel(TextureAtlasSprite insulatorTexture, TextureAtlasSprite conductorTexture, float thickness) {
+        this.insulatorTexture = insulatorTexture;
+        this.conductorTexture = conductorTexture;
         this.thickness = thickness;
     }
 
@@ -98,10 +97,7 @@ public class CableModel extends CodeBasedModel {
     }
 
 	@Override
-	protected void bake(Function<ResourceLocation, TextureAtlasSprite> textureRegistry) {
-		this.conductorTexture = textureRegistry.apply(conductorTextureLoc);
-		this.insulatorTexture = textureRegistry.apply(insulatorTextureLoc);
-		
+	protected void bake(Function<ResourceLocation, TextureAtlasSprite> textureRegistry) {		
 		//Bake branches
         List<BakedQuad> branchDown = new ArrayList<BakedQuad>();
         List<BakedQuad> branchUp = new ArrayList<BakedQuad>();

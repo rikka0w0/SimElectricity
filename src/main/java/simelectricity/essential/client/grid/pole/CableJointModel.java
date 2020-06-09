@@ -32,10 +32,10 @@ public abstract class CableJointModel extends CodeBasedModel {
     public final TextureAtlasSprite texture_metal = null;
     @EasyTextureLoader.Mark("sime_essential:render/transmission/essential_cable_joint_texture_side")
     public final TextureAtlasSprite texture_side = null;
-    
-    
-    protected CableJointModel(BlockState state) {
-        this.facing = (8-state.get(DirHorizontal8.prop).ordinal()) & 7;
+
+
+    protected CableJointModel(DirHorizontal8 facing) {
+    	this.facing = (8-facing.ordinal()) & 7;
     }
 
     @Override
@@ -52,8 +52,8 @@ public abstract class CableJointModel extends CodeBasedModel {
     }
 	
 	public static class Type10kV extends CableJointModel {
-		public Type10kV(BlockState state) {
-			super(state);
+		public Type10kV(DirHorizontal8 facing) {
+			super(facing);
 		}
 		
 		@Override
@@ -87,22 +87,14 @@ public abstract class CableJointModel extends CodeBasedModel {
 	}
 	
 	public static class Type415V extends CableJointModel {
-		public Type415V(BlockState state) {
-			super(state);
+		public Type415V(DirHorizontal8 facing) {
+			super(facing);
 		}
 		
 		@Override
 		protected void bake(Function<ResourceLocation, TextureAtlasSprite> textureRegistry) {
 			this.quads.clear();
-		}
-		
-	    @Override
-	    public List<BakedQuad> getQuads(BlockState state, Direction side, Random rand, IModelData extraData) {
-	    	if (side != null)
-	            return ImmutableList.of();
-	    	
-	    	this.quads.clear();
-	    	
+			
 	        RawQuadGroup model = new RawQuadGroup();
 	        RawQuadGroup branch = new RawQuadGroup();
 	        branch.add(new RawQuadCube(0.1F, 0.6F, 0.1F,new TextureAtlasSprite[]{null, null, texture_updown, texture_updown, texture_updown, texture_updown}));
@@ -128,12 +120,8 @@ public abstract class CableJointModel extends CodeBasedModel {
 	        branch.add((new RawQuadCube(0.25F, 0.1F, 0.25F, texture_updown)).translateCoord(0, 0.5F, 0));
 	        branch.add((new RawQuadCube(0.1F, 0.5F, 0.1F, new TextureAtlasSprite[]{null, texture_metal, texture_side, texture_side, texture_side, texture_side})).rotateAroundX(-10).translateCoord(0, 0.55F, 0));
 	        model.merge(branch.clone().rotateAroundX(-15).rotateAroundZ(-15).rotateAroundY(-15));
-//	        
+
 	        model.rotateAroundY(facing * 45 - 90).translateCoord(0.5F, 0, 0.5F).bake(this.quads);
-//	    	
-	        
-//	        new RawQuadCube(0.1F, 0.6F, 0.1F,new TextureAtlasSprite[]{null, null, texture_updown, texture_updown, texture_updown, texture_updown}).bake(quads);
-	        return this.quads;
-	    }
+		}
 	}
 }

@@ -24,6 +24,7 @@ import net.minecraftforge.client.model.generators.ExistingFileHelper;
 import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.client.model.generators.VariantBlockStateBuilder;
 import net.minecraftforge.client.model.generators.ModelBuilder.Perspective;
+import rikka.librikka.DirHorizontal8;
 import rikka.librikka.IMetaProvider;
 import rikka.librikka.model.loader.ISimpleItemDataProvider;
 import simelectricity.essential.BlockRegistry;
@@ -34,6 +35,7 @@ import simelectricity.essential.cable.BlockWire;
 import simelectricity.essential.cable.ISECableMeta;
 import simelectricity.essential.client.cable.CableModelLoader;
 import simelectricity.essential.common.semachine.SEMachineBlock;
+import simelectricity.essential.grid.BlockCableJoint;
 import simelectricity.essential.grid.transformer.BlockPowerTransformer;
 
 public final class ModelDataProvider extends BlockStateProvider implements ISimpleItemDataProvider {    
@@ -81,8 +83,8 @@ public final class ModelDataProvider extends BlockStateProvider implements ISimp
 		for (BlockWire wire: BlockRegistry.blockWire)
 			cableModel(wire, "wire");
 		
-		for (Block block: BlockRegistry.cableJoint)
-			registerDynamic(block);
+		for (BlockCableJoint block: BlockRegistry.cableJoint)
+			cableJoint(block);
 		for (Block block: BlockRegistry.concretePole35kV)
 			registerDynamic(block);
 		for (Block block: BlockRegistry.metalPole35kV)
@@ -265,6 +267,39 @@ public final class ModelDataProvider extends BlockStateProvider implements ISimp
     	VariantBlockStateBuilder builder = getVariantBuilder(block);
     	builder.forAllStates((blockstate)->ConfiguredModel.builder().modelFile(modelFile).build());
     	
+		// Generate item model
+		registerSimpleItem(block, "item/"+name+"_inventory");
+    }
+
+    private void cableJoint(BlockCableJoint block) {
+    	String domain = block.getRegistryName().getNamespace();
+    	String name = block.getRegistryName().getPath();
+    	
+    	String dirLoc = "block/";
+    	
+    	String type = block.meta() == BlockCableJoint.Type._415v ? "cable_joint_415v" : "cable_joint_10kv";
+		
+    	JsonObject json = new JsonObject();
+		json.addProperty("loader", BuiltInModelLoader.id.toString());
+		json.addProperty("type", type);
+		json.addProperty("offaxis", false);
+    	ResourceLocation modelResLoc = new ResourceLocation(domain, dirLoc + name);
+    	ModelFile modelFile = customLoader(modelResLoc, json);
+    	
+    	json = new JsonObject();
+		json.addProperty("loader", BuiltInModelLoader.id.toString());
+		json.addProperty("type", type);
+		json.addProperty("offaxis", true);
+    	ResourceLocation modelResLocOffAxis = new ResourceLocation(domain, dirLoc + name + "_45");
+    	ModelFile modelFileOffAxis = customLoader(modelResLocOffAxis, json);
+    	
+    	getVariantBuilder(block).forAllStates((blockstate)-> {
+    		DirHorizontal8 dir = blockstate.get(DirHorizontal8.prop);
+    		boolean offAxis = dir != DirHorizontal8.fromDirection4(dir.toDirection4());
+    		int rotation = ((dir.ordinal()&7)>>1) * 90;
+    		return ConfiguredModel.builder().modelFile(offAxis?modelFileOffAxis:modelFile).rotationY(rotation).build();
+    	});
+		
 		// Generate item model
 		registerSimpleItem(block, "item/"+name+"_inventory");
     }

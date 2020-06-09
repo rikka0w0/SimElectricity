@@ -32,6 +32,7 @@ import rikka.librikka.gui.AutoGuiHandler;
 import rikka.librikka.model.CodeBasedModel;
 import rikka.librikka.model.loader.TERHelper;
 import simelectricity.essential.cable.BlockWire;
+import simelectricity.essential.client.BuiltInModelLoader;
 import simelectricity.essential.client.ModelDataProvider;
 import simelectricity.essential.client.cable.CableModelLoader;
 import simelectricity.essential.client.coverpanel.LedPanelRender;
@@ -41,7 +42,6 @@ import simelectricity.essential.client.semachine.SEMachineModelLoader;
 import simelectricity.essential.client.semachine.SocketRender;
 import simelectricity.essential.common.semachine.SEMachineBlock;
 import simelectricity.essential.coverpanel.CoverPanelRegistry;
-import simelectricity.essential.client.grid.pole.CableJointModel;
 import simelectricity.essential.client.grid.pole.ConcretePole35kVModel;
 import simelectricity.essential.client.grid.pole.ConcretePole35kVTER;
 import simelectricity.essential.client.grid.pole.ConcretePoleTER;
@@ -54,7 +54,6 @@ import simelectricity.essential.client.grid.transformer.PowerTransformerTER;
 import simelectricity.essential.client.grid.pole.ConcretePoleModel;
 import simelectricity.essential.client.grid.PowerPoleTER;
 import simelectricity.essential.client.grid.GridRenderMonitor;
-import simelectricity.essential.grid.BlockCableJoint;
 import simelectricity.essential.grid.BlockPoleConcrete35kV;
 import simelectricity.essential.grid.BlockPoleConcrete;
 import simelectricity.essential.grid.TilePoleBranch;
@@ -98,6 +97,7 @@ public class ClientRegistrationHandler {
 	public static void registerModelLoaders() {
     	ModelLoaderRegistry.registerLoader(SEMachineModelLoader.id, SEMachineModelLoader.instance);
     	ModelLoaderRegistry.registerLoader(CableModelLoader.id, CableModelLoader.instance);
+    	ModelLoaderRegistry.registerLoader(BuiltInModelLoader.id, BuiltInModelLoader.instance);
 	}
 	
 	@SubscribeEvent
@@ -128,19 +128,19 @@ public class ClientRegistrationHandler {
     @SubscribeEvent
     public static void onModelBake(ModelBakeEvent event) {
     	Map<ResourceLocation, IBakedModel> registry = event.getModelRegistry();
-    	
+
     	dynamicModels.forEach((blockstate, dynamicModel) -> {
     		dynamicModel.onModelBakeEvent();
     		registry.put(BlockModelShapes.getModelLocation(blockstate), dynamicModel);
     	});
-    	
+
     	MetalPole35kVModel.instance.onModelBakeEvent();
 		for (int i=0; i<BlockRegistry.metalPole35kV.length; i++) {
 			BlockRegistry.metalPole35kV[i].getStateContainer().getValidStates().forEach((blockstate) -> {
 				registry.put(BlockModelShapes.getModelLocation(blockstate), MetalPole35kVModel.instance);
 			});
 		}
-    	
+
     	SocketRender.INSTANCE.onModelBakeEvent();
     	SupportRender.INSTANCE.onModelBakeEvent();
     	VoltageSensorRender.instance.onModelBakeEvent();
@@ -214,14 +214,14 @@ public class ClientRegistrationHandler {
 			RenderTypeLookup.setRenderLayer(wire, RenderType.getSolid());
 		}
 
-		BlockRegistry.cableJoint[BlockCableJoint.Type._10kv.ordinal()]
-				.getStateContainer().getValidStates().forEach((blockstate) -> {
-			dynamicModels.put(blockstate, new CableJointModel.Type10kV(blockstate));
-		});
-		BlockRegistry.cableJoint[BlockCableJoint.Type._415v.ordinal()]
-				.getStateContainer().getValidStates().forEach((blockstate) -> {
-			dynamicModels.put(blockstate, new CableJointModel.Type415V(blockstate));
-		});
+//		BlockRegistry.cableJoint[BlockCableJoint.Type._10kv.ordinal()]
+//				.getStateContainer().getValidStates().forEach((blockstate) -> {
+//			dynamicModels.put(blockstate, new CableJointModel.Type10kV(blockstate));
+//		});
+//		BlockRegistry.cableJoint[BlockCableJoint.Type._415v.ordinal()]
+//				.getStateContainer().getValidStates().forEach((blockstate) -> {
+//			dynamicModels.put(blockstate, new CableJointModel.Type415V(blockstate));
+//		});
 		
 		for (int i=0; i<BlockRegistry.concretePole35kV.length; i++) {
 			final int modelType = i;
