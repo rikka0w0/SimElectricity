@@ -213,15 +213,6 @@ public class ClientRegistrationHandler {
 		for (BlockWire wire: BlockRegistry.blockWire) {
 			RenderTypeLookup.setRenderLayer(wire, RenderType.getSolid());
 		}
-
-//		BlockRegistry.cableJoint[BlockCableJoint.Type._10kv.ordinal()]
-//				.getStateContainer().getValidStates().forEach((blockstate) -> {
-//			dynamicModels.put(blockstate, new CableJointModel.Type10kV(blockstate));
-//		});
-//		BlockRegistry.cableJoint[BlockCableJoint.Type._415v.ordinal()]
-//				.getStateContainer().getValidStates().forEach((blockstate) -> {
-//			dynamicModels.put(blockstate, new CableJointModel.Type415V(blockstate));
-//		});
 		
 		for (int i=0; i<BlockRegistry.concretePole35kV.length; i++) {
 			final int modelType = i;
