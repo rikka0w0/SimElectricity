@@ -42,7 +42,6 @@ import simelectricity.essential.client.semachine.SEMachineModelLoader;
 import simelectricity.essential.client.semachine.SocketRender;
 import simelectricity.essential.common.semachine.SEMachineBlock;
 import simelectricity.essential.coverpanel.CoverPanelRegistry;
-import simelectricity.essential.client.grid.pole.ConcretePole35kVModel;
 import simelectricity.essential.client.grid.pole.ConcretePole35kVTER;
 import simelectricity.essential.client.grid.pole.ConcretePoleTER;
 import simelectricity.essential.client.grid.pole.MetalPole35kVBottomTER;
@@ -54,7 +53,6 @@ import simelectricity.essential.client.grid.transformer.PowerTransformerTER;
 import simelectricity.essential.client.grid.pole.ConcretePoleModel;
 import simelectricity.essential.client.grid.PowerPoleTER;
 import simelectricity.essential.client.grid.GridRenderMonitor;
-import simelectricity.essential.grid.BlockPoleConcrete35kV;
 import simelectricity.essential.grid.BlockPoleConcrete;
 import simelectricity.essential.grid.TilePoleBranch;
 import simelectricity.essential.grid.TilePoleConcrete;
@@ -213,20 +211,7 @@ public class ClientRegistrationHandler {
 		for (BlockWire wire: BlockRegistry.blockWire) {
 			RenderTypeLookup.setRenderLayer(wire, RenderType.getSolid());
 		}
-		
-		for (int i=0; i<BlockRegistry.concretePole35kV.length; i++) {
-			final int modelType = i;
-			BlockRegistry.concretePole35kV[i].getStateContainer().getValidStates().forEach((blockstate) -> {
-				Direction facing = blockstate.get(BlockStateProperties.HORIZONTAL_FACING);
-				BlockPoleConcrete35kV.Type type = blockstate.get(BlockPoleConcrete35kV.propType);
-				
-				if (type == BlockPoleConcrete35kV.Type.pole || type == BlockPoleConcrete35kV.Type.pole_collisionbox)
-					dynamicModels.put(blockstate, new ConcretePole35kVModel(facing, modelType, true));
-				else if (type == BlockPoleConcrete35kV.Type.host)
-					dynamicModels.put(blockstate, new ConcretePole35kVModel(facing, modelType, false));
-			});
-		}
-		
+
 		for (int i=0; i<BlockRegistry.concretePole.length; i++) {
 			BlockRegistry.concretePole[i].getStateContainer().getValidStates().forEach((blockstate) -> {
 				DirHorizontal8 facing = blockstate.get(DirHorizontal8.prop);

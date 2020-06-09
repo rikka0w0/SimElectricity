@@ -26,7 +26,9 @@ import net.minecraftforge.client.model.generators.VariantBlockStateBuilder;
 import net.minecraftforge.client.model.generators.ModelBuilder.Perspective;
 import rikka.librikka.DirHorizontal8;
 import rikka.librikka.IMetaProvider;
+import rikka.librikka.model.GeneratedModelLoader;
 import rikka.librikka.model.loader.ISimpleItemDataProvider;
+import rikka.librikka.model.loader.ModelGeometryBakeContext;
 import simelectricity.essential.BlockRegistry;
 import simelectricity.essential.Essential;
 import simelectricity.essential.ItemRegistry;
@@ -36,6 +38,7 @@ import simelectricity.essential.cable.ISECableMeta;
 import simelectricity.essential.client.cable.CableModelLoader;
 import simelectricity.essential.common.semachine.SEMachineBlock;
 import simelectricity.essential.grid.BlockCableJoint;
+import simelectricity.essential.grid.BlockPoleConcrete35kV;
 import simelectricity.essential.grid.transformer.BlockPowerTransformer;
 
 public final class ModelDataProvider extends BlockStateProvider implements ISimpleItemDataProvider {    
@@ -85,8 +88,8 @@ public final class ModelDataProvider extends BlockStateProvider implements ISimp
 		
 		for (BlockCableJoint block: BlockRegistry.cableJoint)
 			cableJoint(block);
-		for (Block block: BlockRegistry.concretePole35kV)
-			registerDynamic(block);
+		for (int i=0; i<BlockRegistry.concretePole35kV.length; i++)
+			concretePole35kV(BlockRegistry.concretePole35kV[i], i>0);
 		for (Block block: BlockRegistry.metalPole35kV)
 			registerDynamic(block);
 		for (Block block: BlockRegistry.concretePole)
@@ -214,7 +217,6 @@ public final class ModelDataProvider extends BlockStateProvider implements ISimp
 		// Generate item model
 		BlockModelBuilder itemModelBuilder = models().getBuilder("item/"+blockName);
 		itemModelBuilder.parent(modelFile);
-		// TODO: remove useObjModel() in the future
 		if (block.useObjModel()) {
 			itemModelBuilder.transforms()
 			.transform(Perspective.GUI)
@@ -300,6 +302,51 @@ public final class ModelDataProvider extends BlockStateProvider implements ISimp
     		return ConfiguredModel.builder().modelFile(offAxis?modelFileOffAxis:modelFile).rotationY(rotation).build();
     	});
 		
+		// Generate item model
+		registerSimpleItem(block, "item/"+name+"_inventory");
+    }
+    
+    private void concretePole35kV(BlockPoleConcrete35kV block, boolean terminals) {
+    	String domain = block.getRegistryName().getNamespace();
+    	String name = block.getRegistryName().getPath();
+
+    	String dirLoc = "block/";
+    	
+    	JsonObject json = GeneratedModelLoader.instance.placeholder();
+    	ResourceLocation modelResLoc = new ResourceLocation(domain, dirLoc + name + "_placeholder");
+    	ModelFile modelGhost = customLoader(modelResLoc, json);
+    	
+    	json = new JsonObject();
+		json.addProperty("loader", BuiltInModelLoader.id.toString());
+		json.addProperty("type", "concrete_pole_35kv");
+		json.addProperty("terminals", terminals);
+		json.addProperty("isrod", true);
+    	ResourceLocation modelResLocRod = new ResourceLocation(domain, dirLoc + name + "_rod");
+    	ModelFile modelRod = customLoader(modelResLocRod, json);
+    	
+    	json = new JsonObject();
+		json.addProperty("loader", BuiltInModelLoader.id.toString());
+		json.addProperty("type", "concrete_pole_35kv");
+		json.addProperty("terminals", terminals);
+		json.addProperty("isrod", false);
+    	ResourceLocation modelResLocHost = new ResourceLocation(domain, dirLoc + name + "_host");
+    	ModelFile modelHost = customLoader(modelResLocHost, json);
+    	
+    	getVariantBuilder(block).forAllStates((blockstate)-> {
+			Direction facing = blockstate.get(BlockStateProperties.HORIZONTAL_FACING);
+			BlockPoleConcrete35kV.Type type = blockstate.get(BlockPoleConcrete35kV.propType);
+			ModelFile mdl = modelGhost;
+			if (type == BlockPoleConcrete35kV.Type.pole || type == BlockPoleConcrete35kV.Type.pole_collisionbox)
+				mdl = modelRod;
+			else if (type == BlockPoleConcrete35kV.Type.host)
+				mdl = modelHost;
+
+    		return ConfiguredModel.builder()
+    				.modelFile(mdl)
+    				.rotationY(ModelGeometryBakeContext.encodeDirection(facing))
+    				.build();
+    	});
+    	
 		// Generate item model
 		registerSimpleItem(block, "item/"+name+"_inventory");
     }

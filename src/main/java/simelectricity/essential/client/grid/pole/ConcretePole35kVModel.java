@@ -24,7 +24,7 @@ import java.util.Random;
 public class ConcretePole35kVModel extends CodeBasedModel {
     private final List<BakedQuad> quads = new LinkedList<>();
     private final int rotation;
-    private final int type;
+    private final boolean type;
     private final boolean isRod;
     public RawQuadGroup modelInsulator;
 
@@ -35,7 +35,7 @@ public class ConcretePole35kVModel extends CodeBasedModel {
     @EasyTextureLoader.Mark(ResourcePaths.concrete)
     private final TextureAtlasSprite textureConcrete = null;
     
-    public ConcretePole35kVModel(Direction facing, int type, boolean isRod) {
+    public ConcretePole35kVModel(Direction facing, boolean type, boolean isRod) {
 		/*
 		 * Meta facing: MC: South - 0, OpenGL: Xpos(East) - 0
 		 */
@@ -74,7 +74,7 @@ public class ConcretePole35kVModel extends CodeBasedModel {
         	model2.add((new RawQuadCube(0.25F, 11F, 0.25F, textureMetal)).translateCoord(0, -5.5F, 0).rotateAroundX(90).translateCoord(0.25F, 0.125F, 0));
         	model2.add((new RawQuadCube(0.25F, 11F, 0.25F, textureMetal)).translateCoord(0, -5.5F, 0).rotateAroundX(90).translateCoord(-0.25F, 0.125F, 0));
 
-            if (type > 0) {    //1
+            if (type) {    //1
                 RawQuadGroup insulator = modelInsulator.clone().rotateAroundX(180);
                 model2.merge(insulator.clone().translateCoord(0, 0, -4.5F));
                 model2.merge(insulator.clone().translateCoord(0, 0, 0));
