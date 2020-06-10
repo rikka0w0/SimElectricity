@@ -1,20 +1,11 @@
 package simelectricity.essential;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.function.Predicate;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.client.renderer.BlockModelShapes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.RenderTypeLookup;
-import net.minecraft.client.renderer.model.IBakedModel;
-import net.minecraft.client.renderer.model.ModelResourceLocation;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.state.properties.BlockStateProperties;
-import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.event.ModelRegistryEvent;
@@ -28,7 +19,6 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
 import rikka.librikka.block.ICustomBoundingBox;
 import rikka.librikka.gui.AutoGuiHandler;
-import rikka.librikka.model.CodeBasedModel;
 import rikka.librikka.model.loader.TERHelper;
 import simelectricity.essential.cable.BlockWire;
 import simelectricity.essential.client.BuiltInModelLoader;
@@ -45,8 +35,6 @@ import simelectricity.essential.client.grid.pole.ConcretePole35kVTER;
 import simelectricity.essential.client.grid.pole.ConcretePoleTER;
 import simelectricity.essential.client.grid.pole.MetalPole35kVBottomTER;
 import simelectricity.essential.client.grid.pole.MetalPole35kVTER;
-import simelectricity.essential.client.grid.transformer.DistributionTransformerComponentModel;
-import simelectricity.essential.client.grid.transformer.DistributionTransformerFormedModel;
 import simelectricity.essential.client.grid.transformer.PowerTransformerTER;
 import simelectricity.essential.client.grid.PowerPoleTER;
 import simelectricity.essential.client.grid.GridRenderMonitor;
@@ -54,16 +42,12 @@ import simelectricity.essential.grid.TilePoleBranch;
 import simelectricity.essential.grid.TilePoleConcrete;
 import simelectricity.essential.grid.TilePoleConcrete35kV;
 import simelectricity.essential.grid.TilePoleMetal35kV;
-import simelectricity.essential.grid.transformer.BlockDistributionTransformer;
-import simelectricity.essential.grid.transformer.EnumDistributionTransformerBlockType;
 import simelectricity.essential.grid.transformer.TileDistributionTransformer;
 import simelectricity.essential.grid.transformer.TilePowerTransformerPlaceHolder;
 import simelectricity.essential.grid.transformer.TilePowerTransformerWinding;
 
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = Essential.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
-public class ClientRegistrationHandler {
-    public static Map<BlockState, CodeBasedModel> dynamicModels = new HashMap<>();
-	
+public class ClientRegistrationHandler {	
 	public static void registerTileEntityRenders() {
 		// ConcretePole35kV
 		TERHelper.bind(TilePoleConcrete35kV.class, ConcretePole35kVTER::new);
@@ -103,10 +87,7 @@ public class ClientRegistrationHandler {
 	}
 	
     @SubscribeEvent
-    public static void onTextureStitch(TextureStitchEvent.Pre event) {   	
-    	for (CodeBasedModel dynamicModel: dynamicModels.values())
-    		dynamicModel.onPreTextureStitchEvent(event);
-    	
+    public static void onTextureStitch(TextureStitchEvent.Pre event) {
     	SocketRender.INSTANCE.onPreTextureStitchEvent(event);
     	SupportRender.INSTANCE.onPreTextureStitchEvent(event);
     	VoltageSensorRender.instance.onPreTextureStitchEvent(event);
@@ -114,18 +95,10 @@ public class ClientRegistrationHandler {
     	
     	PowerPoleTER.onPreTextureStitchEvent(event);
     	PowerTransformerTER.onPreTextureStitchEvent(event);
-    	DistributionTransformerFormedModel.instance.onPreTextureStitchEvent(event);
     }
 
     @SubscribeEvent
     public static void onModelBake(ModelBakeEvent event) {
-    	Map<ResourceLocation, IBakedModel> registry = event.getModelRegistry();
-
-    	dynamicModels.forEach((blockstate, dynamicModel) -> {
-    		dynamicModel.onModelBakeEvent();
-    		registry.put(BlockModelShapes.getModelLocation(blockstate), dynamicModel);
-    	});
-
     	SocketRender.INSTANCE.onModelBakeEvent();
     	SupportRender.INSTANCE.onModelBakeEvent();
     	VoltageSensorRender.instance.onModelBakeEvent();
@@ -133,20 +106,6 @@ public class ClientRegistrationHandler {
     	
     	PowerPoleTER.onModelBakeEvent();
     	PowerTransformerTER.onModelBakeEvent();
-    	DistributionTransformerFormedModel.instance.onModelBakeEvent();
-    	
-    	// Assign item models and formed block models
-		for (EnumDistributionTransformerBlockType blockType: EnumDistributionTransformerBlockType.values()) {
-			Block block = BlockRegistry.distributionTransformer[blockType.ordinal()];
-			if (blockType.formed) {
-				registry.put(BlockModelShapes.getModelLocation(block.getDefaultState()), DistributionTransformerFormedModel.instance);
-			} else {
-				BlockState blockstate = block.getDefaultState().with(BlockStateProperties.HORIZONTAL_FACING, Direction.EAST);
-	    		ModelResourceLocation resLoc = new ModelResourceLocation(block.getRegistryName(), "inventory");
-	    		IBakedModel newItemModel = event.getModelRegistry().get(BlockModelShapes.getModelLocation(blockstate));
-	    		registry.put(resLoc, newItemModel);
-			}
-		}
     }
     
     
@@ -190,18 +149,6 @@ public class ClientRegistrationHandler {
 			RenderTypeLookup.setRenderLayer(wire, RenderType.getSolid());
 		}
 		
-		for (int i=0; i<BlockRegistry.distributionTransformer.length; i++) {
-			BlockDistributionTransformer block = BlockRegistry.distributionTransformer[i];
-			final EnumDistributionTransformerBlockType blockType = block.blockType;
-			if (!blockType.formed)
-				block.getStateContainer().getValidStates().forEach((blockstate) -> {
-					Direction facing = blockstate.has(BlockStateProperties.HORIZONTAL_FACING) ? 
-							blockstate.get(BlockStateProperties.HORIZONTAL_FACING) : null;
-	
-					dynamicModels.put(blockstate, new DistributionTransformerComponentModel(blockType, facing));
-				});
-		}
-		
 		MinecraftForge.EVENT_BUS.register(GridRenderMonitor.instance);
 		CoverPanelRegistry.INSTANCE.registerAllColoredFacadeHost();
 	}
@@ -215,7 +162,7 @@ public class ClientRegistrationHandler {
 			generator.addProvider(new ModelDataProvider(generator, exfh));
 		}
 	}
-	
+
 //	ModelLoaderRegistry.registerLoader(new ResourceLocation("librikka","virtual"), loader);
 //	ModelLoaderRegistry.getModel("", deserializationContext, data)
 }

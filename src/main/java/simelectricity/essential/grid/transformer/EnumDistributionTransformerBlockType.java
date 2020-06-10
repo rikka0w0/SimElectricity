@@ -43,4 +43,12 @@ public enum EnumDistributionTransformerBlockType implements ITileMeta, IStringSe
 	public Class<? extends TileEntity> teCls() {
 		return teCls;
 	}
+	
+	public static EnumDistributionTransformerBlockType forName(String name) {
+		for(EnumDistributionTransformerBlockType type: EnumDistributionTransformerBlockType.values()) {
+			if (type.getName().equals(name.toLowerCase()))
+				return type;
+		}
+		return null;
+	}
 }

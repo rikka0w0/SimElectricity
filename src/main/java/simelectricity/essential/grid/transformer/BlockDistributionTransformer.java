@@ -1,7 +1,6 @@
 package simelectricity.essential.grid.transformer;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
@@ -18,7 +17,6 @@ import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import rikka.librikka.IMetaProvider;
-import rikka.librikka.ITileMeta;
 import rikka.librikka.Utils;
 import rikka.librikka.block.ICustomBoundingBox;
 import rikka.librikka.multiblock.BlockMapping;
@@ -29,8 +27,10 @@ import simelectricity.api.tile.ISEGridTile;
 import simelectricity.essential.BlockRegistry;
 import simelectricity.essential.api.ISEHVCableConnector;
 
-public class BlockDistributionTransformer extends BlockAbstractTransformer implements IMetaProvider<ITileMeta>, ICustomBoundingBox, ISEHVCableConnector {
-    public static MultiBlockStructure blueprint;
+public class BlockDistributionTransformer extends BlockAbstractTransformer 
+	implements IMetaProvider<EnumDistributionTransformerBlockType>, ICustomBoundingBox, ISEHVCableConnector {
+
+	public static MultiBlockStructure blueprint;
     public static EnumDistributionTransformerRenderPart[][][] renderParts;
     public final EnumDistributionTransformerBlockType blockType;
 	private BlockDistributionTransformer(EnumDistributionTransformerBlockType blockType) {
@@ -53,7 +53,7 @@ public class BlockDistributionTransformer extends BlockAbstractTransformer imple
     }
 	
     @Override
-	public ITileMeta meta() {
+	public EnumDistributionTransformerBlockType meta() {
 		return this.blockType;
 	}
     
@@ -253,9 +253,4 @@ public class BlockDistributionTransformer extends BlockAbstractTransformer imple
     public boolean isNormalCube(BlockState state, IBlockReader worldIn, BlockPos pos) {
         return false;
     }
-    
-	@Override
-	public BlockRenderType getRenderType(BlockState state) {
-		return BlockRenderType.MODEL;
-	}
 }

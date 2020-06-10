@@ -42,7 +42,9 @@ import simelectricity.essential.common.semachine.SEMachineBlock;
 import simelectricity.essential.grid.BlockCableJoint;
 import simelectricity.essential.grid.BlockPoleConcrete;
 import simelectricity.essential.grid.BlockPoleConcrete35kV;
+import simelectricity.essential.grid.transformer.BlockDistributionTransformer;
 import simelectricity.essential.grid.transformer.BlockPowerTransformer;
+import simelectricity.essential.grid.transformer.EnumDistributionTransformerBlockType;
 
 public final class ModelDataProvider extends BlockStateProvider implements ISimpleItemDataProvider {    
     private final DataGenerator generator;
@@ -96,8 +98,11 @@ public final class ModelDataProvider extends BlockStateProvider implements ISimp
         for (int i=0; i<BlockRegistry.metalPole35kV.length; i++)
             metalPole35kV(BlockRegistry.metalPole35kV[i], i>0);
         for (BlockPoleConcrete block: BlockRegistry.concretePole)
-        	concretePole(block);
-        
+            concretePole(block);
+
+        for (BlockDistributionTransformer block: BlockRegistry.distributionTransformer)
+            distributionTransformer(block);
+
         for (BlockPowerTransformer block: BlockRegistry.powerTransformer) {
             if (block.blockType.formed) {
                 registerFake(block);
@@ -112,40 +117,25 @@ public final class ModelDataProvider extends BlockStateProvider implements ISimp
                 itemModelBuilder.parent(modelFile);
             }
         }
-        
-        for (Block block: BlockRegistry.distributionTransformer)
-            registerDynamic2(block);
 
-        
         // Items
         registerSimpleItem(ItemRegistry.itemHVCable);
         registerSimpleItem(ItemRegistry.itemFutaTea);
         registerSimpleItem(ItemRegistry.itemMisc);
         registerSimpleItem(ItemRegistry.itemTools);
     }
-    /**
-     * Both the block model and item model are dynamic
-     * @param block
-     */
-    private void registerDynamic2(Block block) {
-        VariantBlockStateBuilder builder = getVariantBuilder(block);
-        
-        final ModelFile modelFile = new ModelFile.ExistingModelFile(mcLoc("block/torch"), exfh);
-        builder.forAllStates((blockstate)->ConfiguredModel.builder().modelFile(modelFile).build());
-        
-        String itemModelPath = "item/"+block.getRegistryName().getPath();
-        BlockModelBuilder itemModelBuilder = models().getBuilder(itemModelPath);
-        itemModelBuilder.parent(new ModelFile.ExistingModelFile(mcLoc("item/generated"), models().existingFileHelper));
-        itemModelBuilder.texture("layer0", "minecraft:block/stone");
-    }
-    
-    private void registerFake (Block block) {
-        VariantBlockStateBuilder builder = getVariantBuilder(block);
 
-        final ModelFile modelFile = new ModelFile.ExistingModelFile(mcLoc("block/torch"), exfh);
-        builder.forAllStates((blockstate)->ConfiguredModel.builder().modelFile(modelFile).build());
+    private void registerFake(Block block) {
+        String domain = block.getRegistryName().getNamespace();
+        String name = block.getRegistryName().getPath();
         
-        registerSimpleItem(block, mcLoc("block/stone"));
+        JsonObject json = GeneratedModelLoader.placeholder();
+        ResourceLocation modelResLoc = new ResourceLocation(domain, BuiltInModelLoader.dir + name);
+        ModelFile modelGhost = customLoader(modelResLoc, json);
+        getVariantBuilder(block).forAllStates(
+                (blockstate)->ConfiguredModel.builder().modelFile(modelGhost).build());
+        
+        models().getBuilder("item/"+name).parent(modelGhost);
     }
     
     private void machineModel(SEMachineBlock block) {
@@ -250,22 +240,23 @@ public final class ModelDataProvider extends BlockStateProvider implements ISimp
 
         ResourceLocation modelResLoc = new ResourceLocation(domain, dirLoc + name);
         ModelFile modelFile = customLoader(modelResLoc, json);
-        VariantBlockStateBuilder builder = getVariantBuilder(block);
-        builder.forAllStates((blockstate)->ConfiguredModel.builder().modelFile(modelFile).build());
+
+        getVariantBuilder(block).forAllStates(
+                (blockstate)->ConfiguredModel.builder().modelFile(modelFile).build());
         
         // Generate item model
         registerSimpleItem(block, "item/"+name+"_inventory");
     }
     
     private Pair<ModelFile, ModelFile> dir8Model(JsonObject commonProps, String domain, String path) {
-    	final JsonObject json = new JsonObject();
-    	commonProps.entrySet().forEach((entry)->json.add(entry.getKey(), entry.getValue()));
+        final JsonObject json = new JsonObject();
+        commonProps.entrySet().forEach((entry)->json.add(entry.getKey(), entry.getValue()));
         json.addProperty("offaxis", false);
         ResourceLocation modelResLoc = new ResourceLocation(domain, path);
         ModelFile modelFile = customLoader(modelResLoc, json);
         
         final JsonObject jsonOffAxis = new JsonObject();
-    	commonProps.entrySet().forEach((entry)->jsonOffAxis.add(entry.getKey(), entry.getValue()));
+        commonProps.entrySet().forEach((entry)->jsonOffAxis.add(entry.getKey(), entry.getValue()));
         jsonOffAxis.addProperty("offaxis", true);
         ResourceLocation modelResLocOffAxis = new ResourceLocation(domain, path + "_45");
         ModelFile modelFileOffAxis = customLoader(modelResLocOffAxis, jsonOffAxis);
@@ -274,19 +265,19 @@ public final class ModelDataProvider extends BlockStateProvider implements ISimp
     }
 
     private void dir8Block(Block block, Pair<ModelFile, ModelFile> models) {
-    	dir8Block(block, models.getLeft(), models.getRight());
+        dir8Block(block, models.getLeft(), models.getRight());
     }
 
     private void dir8Block(Block block, ModelFile modelFile, ModelFile modelOffAxis) {
         getVariantBuilder(block).forAllStates((blockstate)-> {
             DirHorizontal8 dir = blockstate.get(DirHorizontal8.prop);
-        	Pair<Integer, Boolean> encodedDir = ModelGeometryBakeContext.encodeDirection(dir);
+            Pair<Integer, Boolean> encodedDir = ModelGeometryBakeContext.encodeDirection(dir);
             boolean offAxis = encodedDir.getRight();
             int rotation = encodedDir.getLeft();
             return ConfiguredModel.builder()
-            		.modelFile(offAxis?modelOffAxis:modelFile)
-            		.rotationY(rotation)
-            		.build();
+                    .modelFile(offAxis?modelOffAxis:modelFile)
+                    .rotationY(rotation)
+                    .build();
         });
     }
     
@@ -376,5 +367,31 @@ public final class ModelDataProvider extends BlockStateProvider implements ISimp
 
         // Generate item model
         models().getBuilder("item/"+name).parent(models.getLeft());
+    }
+    
+    private void distributionTransformer(BlockDistributionTransformer block) {
+        String domain = block.getRegistryName().getNamespace();
+        String name = block.getRegistryName().getPath();
+
+        final EnumDistributionTransformerBlockType blockType = block.meta();
+
+        JsonObject json = BuiltInModelLoader.serialize("distribution_transformer");
+        json.addProperty("part", blockType.getName());
+        json.addProperty("formed", blockType.formed);
+        ResourceLocation modelResLoc = new ResourceLocation(domain, BuiltInModelLoader.dir + name);
+        ModelFile modelFile = customLoader(modelResLoc, json);
+        
+        getVariantBuilder(block).forAllStates((blockstate)-> {
+        	ConfiguredModel.Builder<?> builder = ConfiguredModel.builder().modelFile(modelFile);
+        	if (blockstate.has(BlockStateProperties.HORIZONTAL_FACING)) {
+        		Direction facing = blockstate.get(BlockStateProperties.HORIZONTAL_FACING);
+        		builder.rotationY(ModelGeometryBakeContext.encodeDirection(facing));
+        	}
+
+        	return builder.build();
+        });
+
+        // Generate item model
+        models().getBuilder("item/"+name).parent(modelFile);
     }
 }

@@ -1,7 +1,7 @@
 package simelectricity.essential.client.grid.pole;
 
 import java.util.function.Function;
-import com.google.common.collect.ImmutableList;
+
 import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;

@@ -17,7 +17,10 @@ import simelectricity.essential.client.grid.pole.CableJointModel;
 import simelectricity.essential.client.grid.pole.ConcretePole35kVModel;
 import simelectricity.essential.client.grid.pole.ConcretePoleModel;
 import simelectricity.essential.client.grid.pole.MetalPole35kVModel;
+import simelectricity.essential.client.grid.transformer.DistributionTransformerComponentModel;
+import simelectricity.essential.client.grid.transformer.DistributionTransformerFormedModel;
 import simelectricity.essential.grid.BlockPoleConcrete;
+import simelectricity.essential.grid.transformer.EnumDistributionTransformerBlockType;
 
 public class BuiltInModelLoader implements IModelLoader<ModelGeometryWrapper> {
 	public final static ResourceLocation id = new ResourceLocation(Essential.MODID, "builtin");
@@ -51,7 +54,7 @@ public class BuiltInModelLoader implements IModelLoader<ModelGeometryWrapper> {
 				return new CableJointModel.Type415V(facing);
 			});
 		}
-		
+
 		else if (type.equals("concrete_pole_35kv")) {
 			final boolean isRod = JSONUtils.getBoolean(modelContents, "isrod");
 			final boolean terminals = JSONUtils.getBoolean(modelContents, "terminals");
@@ -60,17 +63,17 @@ public class BuiltInModelLoader implements IModelLoader<ModelGeometryWrapper> {
 				return new ConcretePole35kVModel(facing, terminals, isRod);
 			});	
 		}
-		
+
 		else if (type.equals("metal_pole_35kv")) {
 			final boolean terminals = JSONUtils.getBoolean(modelContents, "terminals");
 			return new ModelGeometryWrapper(null, MetalPole35kVModel.class, (context)->{
 				return new MetalPole35kVModel(terminals);
 			});	
 		}
-		
+
 		else if (type.equals("concrete_pole")) {
 			final boolean offAxis = JSONUtils.getBoolean(modelContents, "offaxis");
-			BlockPoleConcrete.Type blockType = BlockPoleConcrete.Type.forName(
+			final BlockPoleConcrete.Type blockType = BlockPoleConcrete.Type.forName(
 					JSONUtils.getString(modelContents, "part"));
 			return new ModelGeometryWrapper(null, ConcretePoleModel.class, (context)->{
 				DirHorizontal8 facing = context.getFacing8(offAxis);
@@ -78,7 +81,24 @@ public class BuiltInModelLoader implements IModelLoader<ModelGeometryWrapper> {
 			});	
 		}
 
-		
+		else if (type.equals("distribution_transformer")) {
+			final EnumDistributionTransformerBlockType blockType = 
+					EnumDistributionTransformerBlockType.forName(
+						JSONUtils.getString(modelContents, "part"));
+			
+			if (blockType.formed) {
+				return new ModelGeometryWrapper(null, DistributionTransformerFormedModel.class, (context)->{
+					return DistributionTransformerFormedModel.instance;
+				});
+			} else {
+				return new ModelGeometryWrapper(null, DistributionTransformerComponentModel.class, (context)->{
+					Direction facing = context.getFacing();
+					return new DistributionTransformerComponentModel(blockType, facing);
+				});	
+			}
+		}
+
+
 		throw new RuntimeException("\"" + type + "\" is not implemented by " + id.toString());
 	}
 	
