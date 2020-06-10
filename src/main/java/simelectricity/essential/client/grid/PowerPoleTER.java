@@ -13,10 +13,8 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.LazyValue;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3i;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -24,9 +22,7 @@ import net.minecraftforge.client.event.TextureStitchEvent;
 import rikka.librikka.math.MathAssitant;
 import rikka.librikka.math.Vec3f;
 import rikka.librikka.model.loader.EasyTextureLoader;
-import rikka.librikka.model.quadbuilder.RawQuadCube;
 import rikka.librikka.model.quadbuilder.RawQuadGroup;
-import simelectricity.essential.client.ClientConfigs;
 import simelectricity.essential.client.ResourcePaths;
 import simelectricity.essential.client.grid.PowerPoleRenderHelper.ConnectionInfo;
 
@@ -41,108 +37,30 @@ public class PowerPoleTER<T extends TileEntity & ISEPowerPole> extends TileEntit
 		super(rendererDispatcherIn);
 	}
 
-    public final static ResourceLocation hvcable_texture_loc = new ResourceLocation(ResourcePaths.hv_cable);
-    private final static LazyValue<TextureAtlasSprite> texture = 
-    		new LazyValue<>(()->EasyTextureLoader.blockTextureGetter().apply(hvcable_texture_loc));
+    private static TextureAtlasSprite textureCable = null;
 
     public static void onPreTextureStitchEvent(TextureStitchEvent.Pre event) {
     	if (EasyTextureLoader.isBlockAtlas(event))
-    		event.addSprite(hvcable_texture_loc);
+    		event.addSprite(new ResourceLocation(ResourcePaths.hv_cable));
     }
 
 	public static void onModelBakeEvent() {
-		cableTexture();
-	}
-	
-	public static TextureAtlasSprite cableTexture() {
-		return texture.getValue();
+		textureCable = EasyTextureLoader.blockTextureGetter().apply(new ResourceLocation(ResourcePaths.hv_cable));
 	}
 
     public static RawQuadGroup renderParabolicCable(Object[] vertexAndTension, float thickness) {
-    	return renderParabolicCable(vertexAndTension, thickness, cableTexture());
-    }
-    
-    /**
-     * 
-     * @param vertexesAndTension Vec3f, float, Vec3f, float, ..., Vec3f
-     * @param thickness
-     * @param texture
-     * @return
-     */
-    public static RawQuadGroup renderParabolicCable(Object[] vertexesAndTension, float thickness, TextureAtlasSprite texture) {
-    	RawQuadGroup ret = new RawQuadGroup();
-    	Vec3f start = (Vec3f) vertexesAndTension[0];
-    	for (int i=1; i<vertexesAndTension.length; i+=2) {
-    		float tension = (float) vertexesAndTension[i];
-    		Vec3f end = (Vec3f) vertexesAndTension[i+1];
-    		ret.merge(renderParabolicCable(start, end, false, tension, thickness, texture));
-    		start = end;
-    	}
-		return ret;
+    	return PowerCableBakery.renderParabolicCable(vertexAndTension, thickness, textureCable);
     }
     
     public static RawQuadGroup renderParabolicCable(Vec3f from, Vec3f to, boolean half, float tension, float thickness) {
-    	return renderParabolicCable(from, to, half, tension, thickness, cableTexture());
+    	return PowerCableBakery.renderParabolicCable(from, to, half, tension, thickness, textureCable);
     }
     
-	public static RawQuadGroup renderParabolicCable(Vec3f from, Vec3f to, boolean half, float tension, float thickness, TextureAtlasSprite texture) {
-		RawQuadGroup ret = new RawQuadGroup();
-		
-		float steps = ClientConfigs.parabolaRenderSteps.get();
-		float length = from.distanceTo(to);	
-		float b = 4F * tension / length;
-		float a = -b / length;
-        float unitLength = length / steps;
-
-        float y0 = 0, y1;
-
-        for (int i = 0; i < steps / (half ? 2 : 1); i++) {
-        	float x1 = (i + 1) * unitLength;
-            y1 = x1 * x1 * a + x1 * b;
-            
-            ret.add((new RawQuadCube(thickness, MathHelper.sqrt(unitLength*unitLength + (y1 - y0)*(y1 - y0)), thickness, texture))
-            			.rotateAroundZ((float) Math.atan2(y0 - y1, unitLength) * 180F / MathAssitant.PI)
-            			.translateCoord(y0, i * unitLength, 0)
-            			);
-            y0 = y1;
-        }
-        
-        ret.rotateToVec(from.x, from.y, from.z, to.x, to.y, to.z);
-        ret.translateCoord(from.x, from.y, from.z);
-        return ret;
-	}
-	
 	public static RawQuadGroup renderCatenaryCable(Vec3f from, Vec3f to, boolean half, float tension, float thickness) {
-		return renderCatenaryCable(from, to, half, tension, thickness, cableTexture());
+		return PowerCableBakery.renderCatenaryCable(from, to, half, tension, thickness, textureCable);
 	}
 	
-	public static RawQuadGroup renderCatenaryCable(Vec3f from, Vec3f to, boolean half, float tension, float thickness, TextureAtlasSprite texture) {
-		RawQuadGroup ret = new RawQuadGroup();
-		
-		float steps = ClientConfigs.parabolaRenderSteps.get();
-        float y0 = 0, y1;
-
-        float d = MathHelper.sqrt((from.x-to.x)*(from.x-to.x) + (from.z-to.z)*(from.z-to.z));
-        float step = d/steps;
-        Catenary c = new Catenary(0, to.y-from.y, d, tension);
-        
-        //Origin
-        for (int i = 0; i < steps / (half ? 2 : 1); i++) {
-            y1 = c.apply((i + 1) * step);
-            
-            ret.add((new RawQuadCube(thickness, MathHelper.sqrt(step*step + (y1 - y0)*(y1 - y0)), thickness, texture))
-            			.rotateAroundZ(-(float) Math.atan2(y0 - y1, step) * 180F / MathAssitant.PI)
-            			.translateCoord(-y0, i * step, 0)
-            			);
-            y0 = y1;
-        }
-        
-        ret.rotateToVec(from.x, 0, from.z, to.x, 0, to.z);
-        ret.translateCoord(from.x, from.y, from.z);
-        return ret;
-	}
-	
-    public static void renderInsulator(Vec3i pos, Vec3f from, Vec3f to, float angle, RawQuadGroup modelInsulator, List<BakedQuad> quads) {
+	public static void renderInsulator(Vec3i pos, Vec3f from, Vec3f to, float angle, RawQuadGroup modelInsulator, List<BakedQuad> quads) {
     	modelInsulator = modelInsulator.clone();
     	modelInsulator.rotateAroundZ(angle / MathAssitant.PI * 180);
     	modelInsulator.rotateToVec(from.x, from.y, from.z, to.x, from.y, to.z);
@@ -174,7 +92,7 @@ public class PowerPoleTER<T extends TileEntity & ISEPowerPole> extends TileEntit
 		BlockPos pos = helper.pos;  
         for (PowerPoleRenderHelper.ConnectionInfo[] connections : helper.connectionList) {
             for (PowerPoleRenderHelper.ConnectionInfo info : connections) {
-            	RawQuadGroup group = renderParabolicCable(info.fixedFrom, info.fixedTo, true, info.tension, 0.06F, cableTexture());
+            	RawQuadGroup group = PowerCableBakery.renderParabolicCable(info.fixedFrom, info.fixedTo, true, info.tension, 0.06F, textureCable);
             	group.translateCoord(-pos.getX(), -pos.getY(), -pos.getZ());
             	group.bake(helper.quadBuffer);
             }
@@ -182,8 +100,8 @@ public class PowerPoleTER<T extends TileEntity & ISEPowerPole> extends TileEntit
         
         for (PowerPoleRenderHelper.ExtraWireInfo wire : helper.extraWireList) {
         	RawQuadGroup group = wire.useCatenary ? 
-        			renderCatenaryCable(wire.from, wire.to, false, wire.tension, 0.06F, cableTexture()) :
-        			renderParabolicCable(wire.from, wire.to, false, wire.tension, 0.06F, cableTexture());
+        			PowerCableBakery.renderCatenaryCable(wire.from, wire.to, false, wire.tension, 0.06F, textureCable) :
+        			PowerCableBakery.renderParabolicCable(wire.from, wire.to, false, wire.tension, 0.06F, textureCable);
         	group.translateCoord(-pos.getX(), -pos.getY(), -pos.getZ());
         	group.bake(helper.quadBuffer);
         }

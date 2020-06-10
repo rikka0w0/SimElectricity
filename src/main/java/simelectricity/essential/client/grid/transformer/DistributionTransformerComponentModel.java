@@ -20,7 +20,7 @@ import rikka.librikka.model.loader.EasyTextureLoader;
 import rikka.librikka.model.quadbuilder.RawQuadCube;
 import rikka.librikka.model.quadbuilder.RawQuadGroup;
 import simelectricity.essential.client.ResourcePaths;
-import simelectricity.essential.client.grid.PowerPoleTER;
+import simelectricity.essential.client.grid.PowerCableBakery;
 import simelectricity.essential.client.grid.pole.ConcretePoleModel;
 import simelectricity.essential.client.grid.pole.Models;
 import simelectricity.essential.grid.transformer.EnumDistributionTransformerBlockType;
@@ -82,9 +82,9 @@ public class DistributionTransformerComponentModel extends CodeBasedModel {
 			model.add((new RawQuadCube(0.25F, 1, 0.25F, textureConcrete)));
 			break;
 		case Pole10kVNormal:
-			model.merge(PowerPoleTER.renderParabolicCable(new Vec3f(0.4F, 0.45F, -0.74F), new Vec3f(-0.4F, 0.4F, -0.74F), false, -0.1F, 0.03F, textureCable));
-			model.merge(PowerPoleTER.renderParabolicCable(new Vec3f(0.4F, 1.45F, 0), new Vec3f(-0.4F, 1.4F, 0), false, -0.1F, 0.03F, textureCable));
-			model.merge(PowerPoleTER.renderParabolicCable(new Vec3f(0.4F, 0.45F, 0.74F), new Vec3f(-0.4F, 0.4F, 0.74F), false, -0.1F, 0.03F, textureCable));
+			model.merge(PowerCableBakery.renderParabolicCable(new Vec3f(0.4F, 0.45F, -0.74F), new Vec3f(-0.4F, 0.4F, -0.74F), false, -0.1F, 0.03F, textureCable));
+			model.merge(PowerCableBakery.renderParabolicCable(new Vec3f(0.4F, 1.45F, 0), new Vec3f(-0.4F, 1.4F, 0), false, -0.1F, 0.03F, textureCable));
+			model.merge(PowerCableBakery.renderParabolicCable(new Vec3f(0.4F, 0.45F, 0.74F), new Vec3f(-0.4F, 0.4F, 0.74F), false, -0.1F, 0.03F, textureCable));
 			
             model.add(new RawQuadCube(0.15F, 0.1F, 1.6F, textureMetal));
             insulator = Models.render10kVInsulator(textureMetal, textureInsulator);
@@ -94,9 +94,9 @@ public class DistributionTransformerComponentModel extends CodeBasedModel {
             model.add((new RawQuadCube(0.25F, 1, 0.25F, textureConcrete)));
 			break;
 		case Pole10kVSpec:
-			model.merge(PowerPoleTER.renderParabolicCable(new Vec3f(0.4F, 0.45F, -0.74F), new Vec3f(-0.4F, 0.4F, -0.74F), false, -0.1F, 0.03F, textureCable));
-			model.merge(PowerPoleTER.renderParabolicCable(new Vec3f(0.4F, 1.45F, 0), new Vec3f(-0.4F, 1.4F, 0), false, -0.1F, 0.03F, textureCable));
-			model.merge(PowerPoleTER.renderParabolicCable(new Vec3f(0.4F, 0.45F, 0.74F), new Vec3f(-0.4F, 0.4F, 0.74F), false, -0.1F, 0.03F, textureCable));
+			model.merge(PowerCableBakery.renderParabolicCable(new Vec3f(0.4F, 0.45F, -0.74F), new Vec3f(-0.4F, 0.4F, -0.74F), false, -0.1F, 0.03F, textureCable));
+			model.merge(PowerCableBakery.renderParabolicCable(new Vec3f(0.4F, 1.45F, 0), new Vec3f(-0.4F, 1.4F, 0), false, -0.1F, 0.03F, textureCable));
+			model.merge(PowerCableBakery.renderParabolicCable(new Vec3f(0.4F, 0.45F, 0.74F), new Vec3f(-0.4F, 0.4F, 0.74F), false, -0.1F, 0.03F, textureCable));
 			
 			model.add((new RawQuadCube(0.15F, 0.1F, 1.6F, textureMetal)).translateCoord(0.2F, -0.3F, 0));
 			model.add((new RawQuadCube(0.15F, 0.1F, 1.6F, textureMetal)).translateCoord(-0.2F, -0.3F, 0));
@@ -109,10 +109,10 @@ public class DistributionTransformerComponentModel extends CodeBasedModel {
             model.add((new RawQuadCube(0.25F, 1, 0.25F, textureConcrete)));
 			break;
 		case Pole415VNormal:
-			model.merge(PowerPoleTER.renderParabolicCable(new Vec3f(0.4F, 0.2F, -0.9F), new Vec3f(-0.4F, 0.2F, -0.9F), false, -0.1F, 0.03F, textureCable));
-			model.merge(PowerPoleTER.renderParabolicCable(new Vec3f(0.4F, 0.2F, -0.45F), new Vec3f(-0.4F, 0.2F, -0.45F), false, -0.1F, 0.03F, textureCable));
-			model.merge(PowerPoleTER.renderParabolicCable(new Vec3f(0.4F, 0.2F, 0.45F), new Vec3f(-0.4F, 0.2F, 0.45F), false, -0.1F, 0.03F, textureCable));
-			model.merge(PowerPoleTER.renderParabolicCable(new Vec3f(0.4F, 0.2F, 0.9F), new Vec3f(-0.4F, 0.2F, 0.9F), false, -0.1F, 0.03F, textureCable));
+			model.merge(PowerCableBakery.renderParabolicCable(new Vec3f(0.4F, 0.2F, -0.9F), new Vec3f(-0.4F, 0.2F, -0.9F), false, -0.1F, 0.03F, textureCable));
+			model.merge(PowerCableBakery.renderParabolicCable(new Vec3f(0.4F, 0.2F, -0.45F), new Vec3f(-0.4F, 0.2F, -0.45F), false, -0.1F, 0.03F, textureCable));
+			model.merge(PowerCableBakery.renderParabolicCable(new Vec3f(0.4F, 0.2F, 0.45F), new Vec3f(-0.4F, 0.2F, 0.45F), false, -0.1F, 0.03F, textureCable));
+			model.merge(PowerCableBakery.renderParabolicCable(new Vec3f(0.4F, 0.2F, 0.9F), new Vec3f(-0.4F, 0.2F, 0.9F), false, -0.1F, 0.03F, textureCable));
 			
 			
             model.add(new RawQuadCube(0.15F, 0.1F, 1.94F, textureMetal));
