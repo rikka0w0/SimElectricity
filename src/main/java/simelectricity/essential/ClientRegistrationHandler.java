@@ -26,7 +26,6 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
-import rikka.librikka.DirHorizontal8;
 import rikka.librikka.block.ICustomBoundingBox;
 import rikka.librikka.gui.AutoGuiHandler;
 import rikka.librikka.model.CodeBasedModel;
@@ -49,10 +48,8 @@ import simelectricity.essential.client.grid.pole.MetalPole35kVTER;
 import simelectricity.essential.client.grid.transformer.DistributionTransformerComponentModel;
 import simelectricity.essential.client.grid.transformer.DistributionTransformerFormedModel;
 import simelectricity.essential.client.grid.transformer.PowerTransformerTER;
-import simelectricity.essential.client.grid.pole.ConcretePoleModel;
 import simelectricity.essential.client.grid.PowerPoleTER;
 import simelectricity.essential.client.grid.GridRenderMonitor;
-import simelectricity.essential.grid.BlockPoleConcrete;
 import simelectricity.essential.grid.TilePoleBranch;
 import simelectricity.essential.grid.TilePoleConcrete;
 import simelectricity.essential.grid.TilePoleConcrete35kV;
@@ -137,15 +134,6 @@ public class ClientRegistrationHandler {
     	PowerPoleTER.onModelBakeEvent();
     	PowerTransformerTER.onModelBakeEvent();
     	DistributionTransformerFormedModel.instance.onModelBakeEvent();
-
-		// Assign item models
-    	for (int i=0; i<BlockRegistry.concretePole.length; i++) {
-    		Block block = BlockRegistry.concretePole[i];
-			BlockState blockstate = block.getDefaultState();
-    		ModelResourceLocation resLoc = new ModelResourceLocation(block.getRegistryName(), "inventory");
-    		IBakedModel newItemModel = event.getModelRegistry().get(BlockModelShapes.getModelLocation(blockstate));
-    		registry.put(resLoc, newItemModel);
-    	}
     	
     	// Assign item models and formed block models
 		for (EnumDistributionTransformerBlockType blockType: EnumDistributionTransformerBlockType.values()) {
@@ -200,16 +188,6 @@ public class ClientRegistrationHandler {
 		
 		for (BlockWire wire: BlockRegistry.blockWire) {
 			RenderTypeLookup.setRenderLayer(wire, RenderType.getSolid());
-		}
-
-		for (int i=0; i<BlockRegistry.concretePole.length; i++) {
-			BlockRegistry.concretePole[i].getStateContainer().getValidStates().forEach((blockstate) -> {
-				DirHorizontal8 facing = blockstate.get(DirHorizontal8.prop);
-				BlockPoleConcrete block = (BlockPoleConcrete) blockstate.getBlock();
-				BlockPoleConcrete.Type type = block.blockType;
-
-				dynamicModels.put(blockstate, new ConcretePoleModel(type, facing));
-			});
 		}
 		
 		for (int i=0; i<BlockRegistry.distributionTransformer.length; i++) {

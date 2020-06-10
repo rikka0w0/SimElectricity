@@ -24,8 +24,6 @@ import java.util.function.Function;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import com.google.common.collect.ImmutableList;
-
 import simelectricity.essential.client.ResourcePaths;
 import simelectricity.essential.grid.BlockPoleConcrete;
 

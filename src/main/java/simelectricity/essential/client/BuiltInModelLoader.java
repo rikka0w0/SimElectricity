@@ -15,7 +15,9 @@ import simelectricity.essential.Essential;
 import simelectricity.essential.client.grid.GridRenderMonitor;
 import simelectricity.essential.client.grid.pole.CableJointModel;
 import simelectricity.essential.client.grid.pole.ConcretePole35kVModel;
+import simelectricity.essential.client.grid.pole.ConcretePoleModel;
 import simelectricity.essential.client.grid.pole.MetalPole35kVModel;
+import simelectricity.essential.grid.BlockPoleConcrete;
 
 public class BuiltInModelLoader implements IModelLoader<ModelGeometryWrapper> {
 	public final static ResourceLocation id = new ResourceLocation(Essential.MODID, "builtin");
@@ -63,6 +65,16 @@ public class BuiltInModelLoader implements IModelLoader<ModelGeometryWrapper> {
 			final boolean terminals = JSONUtils.getBoolean(modelContents, "terminals");
 			return new ModelGeometryWrapper(null, MetalPole35kVModel.class, (context)->{
 				return new MetalPole35kVModel(terminals);
+			});	
+		}
+		
+		else if (type.equals("concrete_pole")) {
+			final boolean offAxis = JSONUtils.getBoolean(modelContents, "offaxis");
+			BlockPoleConcrete.Type blockType = BlockPoleConcrete.Type.forName(
+					JSONUtils.getString(modelContents, "part"));
+			return new ModelGeometryWrapper(null, ConcretePoleModel.class, (context)->{
+				DirHorizontal8 facing = context.getFacing8(offAxis);
+				return new ConcretePoleModel(blockType, facing);
 			});	
 		}
 

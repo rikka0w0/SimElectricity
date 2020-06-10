@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.commons.lang3.tuple.Pair;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
@@ -38,8 +40,8 @@ import simelectricity.essential.cable.ISECableMeta;
 import simelectricity.essential.client.cable.CableModelLoader;
 import simelectricity.essential.common.semachine.SEMachineBlock;
 import simelectricity.essential.grid.BlockCableJoint;
+import simelectricity.essential.grid.BlockPoleConcrete;
 import simelectricity.essential.grid.BlockPoleConcrete35kV;
-import simelectricity.essential.grid.BlockPoleMetal35kV;
 import simelectricity.essential.grid.transformer.BlockPowerTransformer;
 
 public final class ModelDataProvider extends BlockStateProvider implements ISimpleItemDataProvider {    
@@ -93,8 +95,8 @@ public final class ModelDataProvider extends BlockStateProvider implements ISimp
             concretePole35kV(BlockRegistry.concretePole35kV[i], i>0);
         for (int i=0; i<BlockRegistry.metalPole35kV.length; i++)
             metalPole35kV(BlockRegistry.metalPole35kV[i], i>0);
-        for (Block block: BlockRegistry.concretePole)
-            registerDynamic2(block);
+        for (BlockPoleConcrete block: BlockRegistry.concretePole)
+        	concretePole(block);
         
         for (BlockPowerTransformer block: BlockRegistry.powerTransformer) {
             if (block.blockType.formed) {
@@ -254,7 +256,40 @@ public final class ModelDataProvider extends BlockStateProvider implements ISimp
         // Generate item model
         registerSimpleItem(block, "item/"+name+"_inventory");
     }
+    
+    private Pair<ModelFile, ModelFile> dir8Model(JsonObject commonProps, String domain, String path) {
+    	final JsonObject json = new JsonObject();
+    	commonProps.entrySet().forEach((entry)->json.add(entry.getKey(), entry.getValue()));
+        json.addProperty("offaxis", false);
+        ResourceLocation modelResLoc = new ResourceLocation(domain, path);
+        ModelFile modelFile = customLoader(modelResLoc, json);
+        
+        final JsonObject jsonOffAxis = new JsonObject();
+    	commonProps.entrySet().forEach((entry)->jsonOffAxis.add(entry.getKey(), entry.getValue()));
+        jsonOffAxis.addProperty("offaxis", true);
+        ResourceLocation modelResLocOffAxis = new ResourceLocation(domain, path + "_45");
+        ModelFile modelFileOffAxis = customLoader(modelResLocOffAxis, jsonOffAxis);
+        
+        return Pair.of(modelFile, modelFileOffAxis);
+    }
 
+    private void dir8Block(Block block, Pair<ModelFile, ModelFile> models) {
+    	dir8Block(block, models.getLeft(), models.getRight());
+    }
+
+    private void dir8Block(Block block, ModelFile modelFile, ModelFile modelOffAxis) {
+        getVariantBuilder(block).forAllStates((blockstate)-> {
+            DirHorizontal8 dir = blockstate.get(DirHorizontal8.prop);
+        	Pair<Integer, Boolean> encodedDir = ModelGeometryBakeContext.encodeDirection(dir);
+            boolean offAxis = encodedDir.getRight();
+            int rotation = encodedDir.getLeft();
+            return ConfiguredModel.builder()
+            		.modelFile(offAxis?modelOffAxis:modelFile)
+            		.rotationY(rotation)
+            		.build();
+        });
+    }
+    
     ////////////////////
     /// Built-in models
     ////////////////////
@@ -263,30 +298,16 @@ public final class ModelDataProvider extends BlockStateProvider implements ISimp
         String name = block.getRegistryName().getPath();
         
         String type = block.meta() == BlockCableJoint.Type._415v ? "cable_joint_415v" : "cable_joint_10kv";
-        JsonObject json;
+        JsonObject json = BuiltInModelLoader.serialize(type);
         
-        json = BuiltInModelLoader.serialize(type);
-        json.addProperty("offaxis", false);
-        ResourceLocation modelResLoc = new ResourceLocation(domain, BuiltInModelLoader.dir + name);
-        ModelFile modelFile = customLoader(modelResLoc, json);
-        
-        json = BuiltInModelLoader.serialize(type);
-        json.addProperty("offaxis", true);
-        ResourceLocation modelResLocOffAxis = new ResourceLocation(domain, BuiltInModelLoader.dir + name + "_45");
-        ModelFile modelFileOffAxis = customLoader(modelResLocOffAxis, json);
-        
-        getVariantBuilder(block).forAllStates((blockstate)-> {
-            DirHorizontal8 dir = blockstate.get(DirHorizontal8.prop);
-            boolean offAxis = dir != DirHorizontal8.fromDirection4(dir.toDirection4());
-            int rotation = ((dir.ordinal()&7)>>1) * 90;
-            return ConfiguredModel.builder().modelFile(offAxis?modelFileOffAxis:modelFile).rotationY(rotation).build();
-        });
-        
+        // BlockStates
+        dir8Block(block, dir8Model(json, domain, BuiltInModelLoader.dir + name));
+
         // Generate item model
         registerSimpleItem(block, "item/"+name+"_inventory");
     }
 
-    private void concretePole35kV(BlockPoleConcrete35kV block, boolean terminals) {
+    private void concretePole35kV(Block block, boolean terminals) {
         String domain = block.getRegistryName().getNamespace();
         String name = block.getRegistryName().getPath();
 
@@ -326,7 +347,7 @@ public final class ModelDataProvider extends BlockStateProvider implements ISimp
         registerSimpleItem(block, "item/"+name+"_inventory");
     }
 
-    private void metalPole35kV(BlockPoleMetal35kV block, boolean terminals) {
+    private void metalPole35kV(Block block, boolean terminals) {
         String domain = block.getRegistryName().getNamespace();
         String name = block.getRegistryName().getPath();
 
@@ -339,5 +360,21 @@ public final class ModelDataProvider extends BlockStateProvider implements ISimp
 
         // Generate item model
         registerSimpleItem(block, "item/"+name+"_inventory");
+    }
+    
+    private void concretePole(BlockPoleConcrete block) {
+        String domain = block.getRegistryName().getNamespace();
+        String name = block.getRegistryName().getPath();
+
+        JsonObject json = BuiltInModelLoader.serialize("concrete_pole");
+        json.addProperty("part", block.meta().name());
+
+        Pair<ModelFile, ModelFile> models = dir8Model(json, domain, BuiltInModelLoader.dir + name);
+        
+        // BlockStates
+        dir8Block(block, models);
+
+        // Generate item model
+        models().getBuilder("item/"+name).parent(models.getLeft());
     }
 }

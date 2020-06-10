@@ -28,7 +28,7 @@ import simelectricity.essential.api.ISEHVCableConnector;
 
 import javax.annotation.Nullable;
 
-public class BlockPoleConcrete extends BlockBase implements IMetaProvider<ITileMeta>, ISEHVCableConnector {
+public class BlockPoleConcrete extends BlockBase implements IMetaProvider<BlockPoleConcrete.Type>, ISEHVCableConnector {
 	public enum Type implements ITileMeta {
 		pole(null, 0),
 		crossarm10kvt0(TilePoleConcrete.Pole10Kv.Type0.class,3),
@@ -49,6 +49,14 @@ public class BlockPoleConcrete extends BlockBase implements IMetaProvider<ITileM
 		public Class<? extends TileEntity> teCls() {
 			return this.teCls;
 		}
+		
+		public static Type forName(String name) {
+			for (Type type: Type.values()) {
+				if (type.name().toLowerCase().equals(name.toLowerCase()))
+					return type;
+			}
+			return null;
+		}
 	}
 	
 	public static BlockPoleConcrete[] create() {
@@ -61,7 +69,7 @@ public class BlockPoleConcrete extends BlockBase implements IMetaProvider<ITileM
     
     public final Type blockType;
 	@Override
-	public ITileMeta meta() {
+	public Type meta() {
 		return blockType;
 	}
 	
