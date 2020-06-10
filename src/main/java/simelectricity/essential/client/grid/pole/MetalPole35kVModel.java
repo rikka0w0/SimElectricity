@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.Function;
 
-import com.google.common.collect.ImmutableList;
-
 import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -19,29 +17,40 @@ import rikka.librikka.model.quadbuilder.RawQuadGroup;
 import simelectricity.essential.client.ResourcePaths;
 import simelectricity.essential.utils.client.SERenderHeap;
 
-public class MetalPole35kVModel extends CodeBasedModel {
-	public final static MetalPole35kVModel instance = new MetalPole35kVModel();
-	
+public class MetalPole35kVModel extends CodeBasedModel {	
 	@EasyTextureLoader.Mark(ResourcePaths.metal)
     private final TextureAtlasSprite textureMetal = null;
 	@EasyTextureLoader.Mark(ResourcePaths.glass_insulator)
     private final TextureAtlasSprite textureInsulator = null;
 	
 	// [(8-DirHorizontal8.ordinal)&7]
+	public final List<BakedQuad>[] insulator35Kv;
 	@SuppressWarnings("unchecked")
-	public final static List<BakedQuad>[] insulator35Kv = new List[8];
-	@SuppressWarnings("unchecked")
-	public final static List<BakedQuad>[] bakedModelType0 = new List[8];
-	@SuppressWarnings("unchecked")
-	public final static List<BakedQuad>[] bakedModelType1 = new List[8];
+	public final List<BakedQuad>[] bakedModelTop = new List[8];
 	// [(8-DirHorizontal8.ordinal)&7][partId]
 	@SuppressWarnings("unchecked")
-	public final static List<BakedQuad>[][] bakedModelBasePart = new List[8][4];
-	public static RawQuadGroup modelInsulator = null;
+	public final List<BakedQuad>[][] bakedModelBasePart = new List[8][4];
+	public RawQuadGroup modelInsulator = null;
+
+	public final boolean terminals;
+	@SuppressWarnings("unchecked")
+	public MetalPole35kVModel(boolean terminals) {
+		this.terminals = terminals;
+		if (terminals) {
+			this.insulator35Kv = null;
+		} else {
+			this.insulator35Kv = new List[8];
+		}
+	}
 	
 	@Override
+    protected boolean skipLegacyTextureRegistration() {
+    	return true;
+    }
+
+	@Override
 	public List<BakedQuad> getQuads(BlockState state, Direction side, Random rand, IModelData extraData) {
-		return ImmutableList.of();
+		return emptyQuadList;
 	}
 
 	@Override
@@ -53,37 +62,41 @@ public class MetalPole35kVModel extends CodeBasedModel {
     public void bake(Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter) {
 		SERenderHeap model = Models.renderTower0Top(textureMetal);
 		
-        modelInsulator = Models.render35KvInsulator(textureMetal, textureInsulator);		
-        
+		RawQuadGroup modelInsulator = Models.render35KvInsulator(textureMetal, textureInsulator);		
+        if (!this.terminals)
+        	this.modelInsulator = modelInsulator;
+		
     	for (int facing=0; facing<8; facing++) {
-    		List<BakedQuad> type0 = new LinkedList<>();
-        	List<BakedQuad> insulator35Kv = new LinkedList<>();
-    		List<BakedQuad> type1 = new LinkedList<>();
+    		List<BakedQuad> modelTop = new LinkedList<>();
+        	List<BakedQuad> modelHangingInsulator = new LinkedList<>();
 
     		@SuppressWarnings("unchecked")
 			List<BakedQuad>[] baseParts = new LinkedList[] {
     				new LinkedList<>(), new LinkedList<>(), 
     				new LinkedList<>(), new LinkedList<>()};
 
-    		//Type 0
-            RawQuadGroup insulator = modelInsulator.clone();
-            insulator.rotateAroundZ(180);
-            insulator.translateCoord(-3.95F, 7F, 0);
-            insulator.rotateAroundVector(facing*45, 0, 1, 0);
-            insulator.translateCoord(0.5F, 0, 0.5F);
-            insulator.bake(insulator35Kv);    		
-
-            //Legacy Rotation
+            // Top
     		int rotation = facing * 45;
-            model.clone().rotateAroundY(rotation+90).transform(0.5, -18, 0.5).bake(type0);
+            model.clone().rotateAroundY(rotation+90).transform(0.5, -18, 0.5).bake(modelTop);
             
-            //Type 1
-            RawQuadGroup insulators = new RawQuadGroup();
-            insulators.merge(modelInsulator.clone().translateCoord(0, -2F, -4.9F));
-            insulators.merge(modelInsulator.clone().translateCoord(0, -2F, 4.9F));
-            insulators.merge(modelInsulator.clone().translateCoord(0, 5F, 3.95F));
-            insulators.rotateAroundY(rotation+90).translateCoord(0.5F, 0, 0.5F).bake(type1);
-            type1.addAll(type0);
+            // Insulators
+            if (this.terminals) {
+                //Type 1
+                RawQuadGroup insulators = new RawQuadGroup();
+                insulators.merge(modelInsulator.clone().translateCoord(0, -2F, -4.9F));
+                insulators.merge(modelInsulator.clone().translateCoord(0, -2F, 4.9F));
+                insulators.merge(modelInsulator.clone().translateCoord(0, 5F, 3.95F));
+                insulators.rotateAroundY(rotation+90).translateCoord(0.5F, 0, 0.5F).bake(modelTop);
+            } else {
+            	//Type 0
+                RawQuadGroup insulator = modelInsulator.clone();
+                insulator.rotateAroundZ(180);
+                insulator.translateCoord(-3.95F, 7F, 0);
+                insulator.rotateAroundVector(facing*45, 0, 1, 0);
+                insulator.translateCoord(0.5F, 0, 0.5F);
+                insulator.bake(modelHangingInsulator);
+                this.insulator35Kv[facing] = modelHangingInsulator;
+            }
             
             // Base
             if ((facing>>1)<<1 == facing) {
@@ -106,11 +119,8 @@ public class MetalPole35kVModel extends CodeBasedModel {
 						.transform(0.5F, 0, 0.5F).bake(baseParts[0]);          	
             }
 
-            
-            MetalPole35kVModel.bakedModelType0[facing] = type0;
-            MetalPole35kVModel.insulator35Kv[facing] = insulator35Kv;
-            MetalPole35kVModel.bakedModelType1[facing] = type1;
-            MetalPole35kVModel.bakedModelBasePart[facing] = baseParts;
+            this.bakedModelTop[facing] = modelTop;
+            this.bakedModelBasePart[facing] = baseParts;
     	}
     }
 }

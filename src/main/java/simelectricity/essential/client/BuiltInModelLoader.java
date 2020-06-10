@@ -9,18 +9,25 @@ import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.IModelLoader;
 import rikka.librikka.DirHorizontal8;
+import rikka.librikka.model.GeneratedModelLoader;
 import rikka.librikka.model.loader.ModelGeometryWrapper;
 import simelectricity.essential.Essential;
+import simelectricity.essential.client.grid.GridRenderMonitor;
 import simelectricity.essential.client.grid.pole.CableJointModel;
 import simelectricity.essential.client.grid.pole.ConcretePole35kVModel;
+import simelectricity.essential.client.grid.pole.MetalPole35kVModel;
 
 public class BuiltInModelLoader implements IModelLoader<ModelGeometryWrapper> {
 	public final static ResourceLocation id = new ResourceLocation(Essential.MODID, "builtin");
 	public final static IModelLoader<?> instance = new BuiltInModelLoader();
+	public final static String dir = "block/builtin/";
 	
-	@Override
-	public void onResourceManagerReload(IResourceManager resourceManager) {
-		
+	public static JsonObject serialize(String type) {
+    	JsonObject json = new JsonObject();
+    	GeneratedModelLoader.commentDoNotModify(json);
+		json.addProperty("loader", id.toString());
+		json.addProperty("type", type);
+		return json;
 	}
 
 	@Override
@@ -51,8 +58,20 @@ public class BuiltInModelLoader implements IModelLoader<ModelGeometryWrapper> {
 				return new ConcretePole35kVModel(facing, terminals, isRod);
 			});	
 		}
+		
+		else if (type.equals("metal_pole_35kv")) {
+			final boolean terminals = JSONUtils.getBoolean(modelContents, "terminals");
+			return new ModelGeometryWrapper(null, MetalPole35kVModel.class, (context)->{
+				return new MetalPole35kVModel(terminals);
+			});	
+		}
 
 		
 		throw new RuntimeException("\"" + type + "\" is not implemented by " + id.toString());
+	}
+	
+	@Override
+	public void onResourceManagerReload(IResourceManager resourceManager) {
+		GridRenderMonitor.instance.markLoadedPowerPoleForRenderingUpdate();
 	}
 }

@@ -1,7 +1,6 @@
 package simelectricity.essential.client.grid.pole;
 
 import java.util.function.Function;
-import com.google.common.collect.ImmutableList;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.model.BakedQuad;
@@ -41,7 +40,7 @@ public abstract class CableJointModel extends CodeBasedModel {
     @Override
     public List<BakedQuad> getQuads(BlockState state, Direction side, Random rand, IModelData extraData) {
     	if (side != null)
-            return ImmutableList.of();
+            return emptyQuadList;
     	
         return this.quads;
     }

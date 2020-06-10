@@ -39,7 +39,7 @@ public class CableModelLoader implements IModelLoader<ModelGeometryWrapper> {
 		});
 	}
 	
-	public JsonObject serialize(String type, ResourceLocation insulator, ResourceLocation conductor, float thickness) {
+	public static JsonObject serialize(String type, ResourceLocation insulator, ResourceLocation conductor, float thickness) {
 		JsonObject root = new JsonObject();
 		
 		root.addProperty("loader", id.toString());

@@ -45,7 +45,6 @@ import simelectricity.essential.coverpanel.CoverPanelRegistry;
 import simelectricity.essential.client.grid.pole.ConcretePole35kVTER;
 import simelectricity.essential.client.grid.pole.ConcretePoleTER;
 import simelectricity.essential.client.grid.pole.MetalPole35kVBottomTER;
-import simelectricity.essential.client.grid.pole.MetalPole35kVModel;
 import simelectricity.essential.client.grid.pole.MetalPole35kVTER;
 import simelectricity.essential.client.grid.transformer.DistributionTransformerComponentModel;
 import simelectricity.essential.client.grid.transformer.DistributionTransformerFormedModel;
@@ -111,8 +110,6 @@ public class ClientRegistrationHandler {
     	for (CodeBasedModel dynamicModel: dynamicModels.values())
     		dynamicModel.onPreTextureStitchEvent(event);
     	
-    	MetalPole35kVModel.instance.onPreTextureStitchEvent(event);
-    	
     	SocketRender.INSTANCE.onPreTextureStitchEvent(event);
     	SupportRender.INSTANCE.onPreTextureStitchEvent(event);
     	VoltageSensorRender.instance.onPreTextureStitchEvent(event);
@@ -131,13 +128,6 @@ public class ClientRegistrationHandler {
     		dynamicModel.onModelBakeEvent();
     		registry.put(BlockModelShapes.getModelLocation(blockstate), dynamicModel);
     	});
-
-    	MetalPole35kVModel.instance.onModelBakeEvent();
-		for (int i=0; i<BlockRegistry.metalPole35kV.length; i++) {
-			BlockRegistry.metalPole35kV[i].getStateContainer().getValidStates().forEach((blockstate) -> {
-				registry.put(BlockModelShapes.getModelLocation(blockstate), MetalPole35kVModel.instance);
-			});
-		}
 
     	SocketRender.INSTANCE.onModelBakeEvent();
     	SupportRender.INSTANCE.onModelBakeEvent();
@@ -234,7 +224,7 @@ public class ClientRegistrationHandler {
 				});
 		}
 		
-		MinecraftForge.EVENT_BUS.register(GridRenderMonitor.instance);		
+		MinecraftForge.EVENT_BUS.register(GridRenderMonitor.instance);
 		CoverPanelRegistry.INSTANCE.registerAllColoredFacadeHost();
 	}
 	
@@ -250,10 +240,4 @@ public class ClientRegistrationHandler {
 	
 //	ModelLoaderRegistry.registerLoader(new ResourceLocation("librikka","virtual"), loader);
 //	ModelLoaderRegistry.getModel("", deserializationContext, data)
-
-	// Get unbaked model
-//	IUnbakedModel adj = ModelLoader.instance().getUnbakedModel(new ResourceLocation(Essential.MODID, "block/electronics_adjustable_resistor"));
-//	IUnbakedModel machine = ModelLoader.instance().getUnbakedModel(new ResourceLocation(Essential.MODID, "block/machine"));
-//	adj = null;
-	// ModelBakery public IUnbakedModel getUnbakedModel(ResourceLocation modelLocation)
 }

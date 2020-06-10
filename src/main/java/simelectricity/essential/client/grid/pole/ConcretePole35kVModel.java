@@ -53,7 +53,7 @@ public class ConcretePole35kVModel extends CodeBasedModel {
     @Override
     public List<BakedQuad> getQuads(BlockState state, Direction side, Random rand, IModelData extraData) {
     	if (side != null)
-            return ImmutableList.of();
+            return emptyQuadList;
     	
         return this.quads;
     }
