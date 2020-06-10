@@ -4,7 +4,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 import java.util.function.Function;
-import com.google.common.collect.ImmutableList;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.model.BakedQuad;
@@ -30,6 +29,7 @@ import simelectricity.essential.grid.transformer.EnumDistributionTransformerRend
 @OnlyIn(Dist.CLIENT)
 public class DistributionTransformerFormedModel extends CodeBasedModel {
 	public final static DistributionTransformerFormedModel instance = new DistributionTransformerFormedModel();
+	public final static NoBaking instanceNoBaking = new NoBaking();
 
 	@EasyTextureLoader.Mark(ResourcePaths.hv_cable)
 	private final TextureAtlasSprite textureCable = null;
@@ -60,25 +60,29 @@ public class DistributionTransformerFormedModel extends CodeBasedModel {
     		}
     	}
     }
-    
+
+    protected boolean skipLegacyTextureRegistration() {
+    	return true;
+    }
+
 	@Override
 	public List<BakedQuad> getQuads(BlockState state, Direction side, Random rand, IModelData extraData) {
     	if (side != null)
-            return ImmutableList.of();
+            return emptyQuadList;
 
     	IMultiBlockTile te = extraData.getData(IMultiBlockTile.prop);
     	if (te == null)
-            return ImmutableList.of();
+            return emptyQuadList;
 
     	MultiBlockTileInfo mbInfo = te.getMultiBlockTileInfo();
     	if (mbInfo == null)
-            return ImmutableList.of();
+            return emptyQuadList;
     		
     	EnumDistributionTransformerRenderPart part = mbInfo.lookup( BlockDistributionTransformer.renderParts);
     	Direction facing = mbInfo.facing;
     	
     	if (part == null || facing == null)
-            return ImmutableList.of();
+            return emptyQuadList;
     	
 		return quads[part.ordinal()][facing.ordinal()-2];
 	}
@@ -360,5 +364,30 @@ public class DistributionTransformerFormedModel extends CodeBasedModel {
 			model.rotateAroundY(270-facing.getHorizontalAngle());
         model.translateCoord(0.5F, 0, 0.5F);
         model.bake(list);
+	}
+	
+	private static class NoBaking extends CodeBasedModel {
+	    protected boolean skipLegacyTextureRegistration() {
+	    	return true;
+	    }
+		
+		@Override
+		public List<BakedQuad> getQuads(BlockState state, Direction side, Random rand, IModelData extraData) {
+			if (instance == null)
+				return emptyQuadList;
+			return instance.getQuads(state, side, rand, extraData);
+		}
+
+		@Override
+		public TextureAtlasSprite getParticleTexture() {
+			if (instance == null)
+				return null;
+			return instance.getParticleTexture();
+		}
+
+		@Override
+		protected void bake(Function<ResourceLocation, TextureAtlasSprite> textureRegistry) {
+
+		}
 	}
 }

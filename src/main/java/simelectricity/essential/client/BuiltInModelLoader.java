@@ -86,9 +86,13 @@ public class BuiltInModelLoader implements IModelLoader<ModelGeometryWrapper> {
 					EnumDistributionTransformerBlockType.forName(
 						JSONUtils.getString(modelContents, "part"));
 			
-			if (blockType.formed) {
+			if (blockType == EnumDistributionTransformerBlockType.PlaceHolder) {
 				return new ModelGeometryWrapper(null, DistributionTransformerFormedModel.class, (context)->{
 					return DistributionTransformerFormedModel.instance;
+				});
+			} else if (blockType.formed) {
+				return new ModelGeometryWrapper(null, null, (context)->{
+					return DistributionTransformerFormedModel.instanceNoBaking;
 				});
 			} else {
 				return new ModelGeometryWrapper(null, DistributionTransformerComponentModel.class, (context)->{

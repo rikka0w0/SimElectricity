@@ -392,6 +392,16 @@ public final class ModelDataProvider extends BlockStateProvider implements ISimp
         });
 
         // Generate item model
-        models().getBuilder("item/"+name).parent(modelFile);
+        BlockModelBuilder itemModelBuilder = models().getBuilder("item/"+name);
+        if (blockType.formed) {
+        	itemModelBuilder.parent(
+        		customLoader(
+                	new ResourceLocation(domain, BuiltInModelLoader.dir + name + "_inventory"), 
+                	GeneratedModelLoader.placeholder()
+        		)
+        	);
+        } else {
+        	itemModelBuilder.parent(modelFile);
+        }
     }
 }
