@@ -39,7 +39,8 @@ public abstract class GenericCoverPanelRender<T extends ISECoverPanel> implement
 
     @Override
     public void onPreTextureStitchEvent(TextureStitchEvent.Pre event) {
-        event.addSprite(textureRes);
+    	if (EasyTextureLoader.isBlockAtlas(event))
+        	event.addSprite(textureRes);
     }
     
     @Override
