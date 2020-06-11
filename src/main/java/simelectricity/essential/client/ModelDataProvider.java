@@ -404,4 +404,27 @@ public final class ModelDataProvider extends BlockStateProvider implements ISimp
         	itemModelBuilder.parent(modelFile);
         }
     }
+
+    
+    //////////////////////
+    /// 1.15 compatibility layer
+    //////////////////////
+    protected ModelDataProvider models() {
+    	return this;
+    }
+    
+	@Override
+	public BlockModelBuilder getBuilderImpl(String path) {
+		return this.getBuilder(path);
+	}
+	
+	@Override
+	public ExistingFileHelper existingFileHelper() {
+		return this.existingFileHelper;
+	}
+
+	@Override
+	public String getModId() {
+		return this.getModId();
+	}
 }

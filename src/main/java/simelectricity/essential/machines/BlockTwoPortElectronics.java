@@ -99,7 +99,7 @@ public abstract class BlockTwoPortElectronics extends SEMachineBlock implements 
     /////Item drops and Block activities
     //////////////////////////////////////
     @Override
-    public ActionResultType onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult rtResult) {
+    public ActionResultType onBlockActivatedImpl(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult rtResult) {
     	if (CoverPanelUtils.installCoverPanel(state, world, pos, player, hand, rtResult) == ActionResultType.SUCCESS)
     		return ActionResultType.SUCCESS;
   
@@ -110,7 +110,7 @@ public abstract class BlockTwoPortElectronics extends SEMachineBlock implements 
                 return ActionResultType.PASS; 
     	}
     	
-    	if (player.isCrouching())
+    	if (player.isSneaking())
             return ActionResultType.PASS;
                 
         if (te instanceof TileSwitch) {

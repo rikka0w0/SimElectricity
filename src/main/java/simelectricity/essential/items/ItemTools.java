@@ -284,7 +284,7 @@ public final class ItemTools extends ItemBase implements IMetaProvider<IMetaBase
             return ActionResultType.FAIL;
         }
 
-        if (player.isCrouching()) {
+        if (player.isSneaking()) {
             for (ISEGridNode neighbor : gridNode.getNeighborList()) {
                 SEAPI.energyNetAgent.breakGridConnection(world, neighbor, gridNode);
             }

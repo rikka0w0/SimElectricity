@@ -269,7 +269,7 @@ public class TileCable extends SEEnergyTile implements ISEGenericCable, ISEIumin
         if (this.lightLevel != lightLevel) {
             this.lightLevel = lightLevel;
             //Detect change & proceed
-			this.world.getLightManager().checkBlock(this.pos);
+			this.world.getChunkProvider().getLightManager().checkBlock(this.pos);
             //world.updateLightByType(EnumSkyBlock.Block, xCoord, yCoord, zCoord);	//checkLightFor
         }
 

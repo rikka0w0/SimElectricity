@@ -66,7 +66,7 @@ Facade support for BuildCraft and ThermalExpansion
 [[dependencies.simelectricity]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.15.2]"
+    versionRange="[1.14.4]"
     ordering="NONE"
     side="BOTH"
 [[dependencies.sime_essential]]

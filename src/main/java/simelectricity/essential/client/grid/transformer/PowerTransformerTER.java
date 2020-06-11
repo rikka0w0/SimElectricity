@@ -3,27 +3,23 @@ package simelectricity.essential.client.grid.transformer;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.vertex.IVertexBuilder;
-
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.Matrix4f;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.Vector3f;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.model.IBakedModel;
-import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.client.model.animation.TileEntityRendererFast;
+import net.minecraftforge.client.model.pipeline.LightUtil;
 import rikka.librikka.model.loader.EasyTextureLoader;
+import rikka.librikka.model.quadbuilder.MutableQuad;
 import rikka.librikka.model.quadbuilder.RawQuadCube;
 import rikka.librikka.model.quadbuilder.RawQuadGroup;
 import simelectricity.essential.Essential;
@@ -32,20 +28,20 @@ import simelectricity.essential.client.grid.pole.Models;
 import simelectricity.essential.grid.transformer.TilePowerTransformerPlaceHolder;
 
 @OnlyIn(Dist.CLIENT)
-public class PowerTransformerTER extends TileEntityRenderer<TilePowerTransformerPlaceHolder.Render> {
+public class PowerTransformerTER extends TileEntityRendererFast<TilePowerTransformerPlaceHolder.Render> {
     public final static ResourceLocation modelResLoc = new ResourceLocation(Essential.MODID, "block/powertransformer");
     private final static List<BakedQuad> quads = new LinkedList<>();
-    private final static Matrix4f refXMatrix = new Matrix4f(new float[] {
-    		1, 0, 0, 0,
-    		0, 1, 0, 0,
-    		0, 0,-1, 0,
-    		0, 0, 0, 1
-    });
+//    private final static Matrix4f refXMatrix = new Matrix4f(new float[] {
+//    		1, 0, 0, 0,
+//    		0, 1, 0, 0,
+//    		0, 0,-1, 0,
+//    		0, 0, 0, 1
+//    });
 
-    public PowerTransformerTER(TileEntityRendererDispatcher rendererDispatcherIn) {
-		super(rendererDispatcherIn);
+	public PowerTransformerTER(TileEntityRendererDispatcher rendererDispatcherIn) {
+		super();
 	}
-    
+
     public static void onModelRegistryEvent() {
     	ModelLoader.addSpecialModel(modelResLoc);
     }
@@ -90,8 +86,10 @@ public class PowerTransformerTER extends TileEntityRenderer<TilePowerTransformer
 	}
 
 	@Override
-	public void render(TilePowerTransformerPlaceHolder.Render te, float partialTicks, MatrixStack matrixStack,
-			IRenderTypeBuffer bufferIn, int combinedLightIn, int combinedOverlayIn) {
+	public void renderTileEntityFast(TilePowerTransformerPlaceHolder.Render te, 
+			double x, double y, double z, float partialTicks, int destroyStage,
+			BufferBuilder buffer) {
+		BlockPos pos = te.getPos();
 		Direction facing = te.getFacing();
 		boolean mirrored = te.isMirrored();
 		if (facing == null)
@@ -101,26 +99,34 @@ public class PowerTransformerTER extends TileEntityRenderer<TilePowerTransformer
 		//270 180 90  0
 		//0   1   2   3
 		
-        IVertexBuilder buffer = bufferIn.getBuffer(RenderType.getSolid());
-        
+		buffer.setTranslation(x-pos.getX(), y-pos.getY(), z-pos.getZ());
+
     	//TODO: Fix light calculation
-        int lightDummy = 15728640;
+        int i = 15728640;
 		for (BakedQuad quad: quads) {
-			matrixStack.push();
+			MutableQuad mquad = new MutableQuad(quad);
+
+			mquad.translateCoord(-0.5f, 0, -0.5f);
+			if (mirrored) {
+				mquad.vertex_0.position_z = -mquad.vertex_0.position_z;
+				mquad.vertex_1.position_z = -mquad.vertex_1.position_z;
+				mquad.vertex_2.position_z = -mquad.vertex_2.position_z;
+				mquad.vertex_3.position_z = -mquad.vertex_3.position_z;
+			}
+			mquad.rotateAroundY(rotation);
+			mquad.translateCoord(0.5f, 0, 0.5f);
+			quad = mquad.bake();
 			
-			matrixStack.translate(0.5, 0, 0.5);
-			matrixStack.rotate(Vector3f.YP.rotationDegrees(rotation));
-			if (mirrored)
-				matrixStack.getLast().getMatrix().mul(refXMatrix);
-			matrixStack.translate(-0.5, 0, -0.5);
+			buffer.addVertexData(quad.getVertexData());
+			buffer.putBrightness4(i, i, i, i);
 			
-			buffer.addQuad(matrixStack.getLast(), quad, 
-					new float[]{1.0F, 1.0F, 1.0F, 1.0F}, 
-					1.0F, 1.0F, 1.0F, 
-					new int[]{lightDummy, lightDummy, lightDummy, lightDummy}, 
-					OverlayTexture.NO_OVERLAY, true);
-			
-			matrixStack.pop();
+            float diffuse = LightUtil.diffuseLight(mirrored ? quad.getFace() : quad.getFace().getOpposite());
+            
+            buffer.putColorMultiplier(diffuse, diffuse, diffuse, 4);
+            buffer.putColorMultiplier(diffuse, diffuse, diffuse, 3);
+            buffer.putColorMultiplier(diffuse, diffuse, diffuse, 2);
+            buffer.putColorMultiplier(diffuse, diffuse, diffuse, 1);
+			buffer.putPosition(pos.getX(), pos.getY(), pos.getZ());
 		}
 	}
 }

@@ -152,7 +152,7 @@ public class CoverPanelUtils {
     }
     
     public static ActionResultType openCoverPanelGui(ISECoverPanelHost host, PlayerEntity player) {
-        if (player.isCrouching())
+        if (player.isSneaking())
             return ActionResultType.FAIL;
 
         Direction panelSide = host.getSelectedCoverPanel(player);

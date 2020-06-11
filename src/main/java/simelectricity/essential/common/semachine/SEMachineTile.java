@@ -92,7 +92,7 @@ public abstract class SEMachineTile extends SEEnergyTile implements ISESocketPro
         BlockPos pos = this.getPos();
         BlockState blockstate = this.getBlockState();
         VoxelShape shape = blockstate.getShape(world, pos);
-        BlockRayTraceResult result = world.rayTraceBlocks(start, end, pos, shape, blockstate);
+        BlockRayTraceResult result = world.func_217296_a(start, end, pos, shape, blockstate);
         if (result == null || result.getType() != RayTraceResult.Type.BLOCK)
         	return null;
         

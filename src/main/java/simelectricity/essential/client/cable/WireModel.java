@@ -1,9 +1,9 @@
 package simelectricity.essential.client.cable;
 
 import net.minecraft.block.BlockState;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.MinecraftForgeClient;
@@ -49,7 +49,7 @@ public class WireModel extends CodeBasedModel {
         
         if (cullingSide == null) {
             //Render center & branches in SOLID layer
-            if (MinecraftForgeClient.getRenderLayer() == RenderType.getSolid()) {
+            if (MinecraftForgeClient.getRenderLayer() == BlockRenderLayer.SOLID) {
                 for (Direction wire_side: Direction.values()) {
                     byte numOfCon = 0;
                     Direction conSide = Direction.DOWN;

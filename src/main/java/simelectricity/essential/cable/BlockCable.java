@@ -21,6 +21,7 @@ import net.minecraft.state.StateContainer;
 import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -35,6 +36,7 @@ import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.IBlockReader;
+import net.minecraft.world.IEnviromentBlockReader;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
@@ -102,7 +104,7 @@ public class BlockCable extends BlockBase implements ICustomBoundingBox, IMetaPr
 	private BlockCable(ISECableMeta cableData) {
         this("cable", 
         		cableData, 
-        		Block.Properties.create(Material.GLASS).hardnessAndResistance(0.2F, 10.0F).sound(SoundType.METAL).notSolid()
+        		Block.Properties.create(Material.GLASS).hardnessAndResistance(0.2F, 10.0F).sound(SoundType.METAL)
         		, ItemBlockBase.class,
         		(new Item.Properties()).group(SEAPI.SETab),
                 TileCable.class);
@@ -157,6 +159,19 @@ public class BlockCable extends BlockBase implements ICustomBoundingBox, IMetaPr
 	@Override
 	protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
 		builder.add(BlockStateProperties.WATERLOGGED);
+	}
+	
+	@Override
+	public boolean isSolid(BlockState state) {
+		return false;
+	}
+	
+	@Override
+	public boolean canRenderInLayer(BlockState state, BlockRenderLayer layer) {
+		return 
+				layer==BlockRenderLayer.SOLID || 
+				layer==BlockRenderLayer.CUTOUT || 
+				layer==BlockRenderLayer.CUTOUT_MIPPED;
 	}
 
 	@SuppressWarnings("deprecation")
@@ -229,7 +244,7 @@ public class BlockCable extends BlockBase implements ICustomBoundingBox, IMetaPr
 //    }
 
     @Override
-    public int getLightValue(BlockState state, IBlockReader world, BlockPos pos) {
+    public int getLightValue(BlockState state, IEnviromentBlockReader world, BlockPos pos) {
         TileEntity te = world.getTileEntity(pos);
 
         if (te instanceof TileCable)
@@ -466,7 +481,7 @@ public class BlockCable extends BlockBase implements ICustomBoundingBox, IMetaPr
     //////////////////////////////////////
 	@SuppressWarnings("deprecation")
 	@Override
-	public ActionResultType onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult ray) {
+	public ActionResultType onBlockActivatedImpl(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult ray) {
         TileEntity te = world.getTileEntity(pos);
 
         if (!(te instanceof ISEGenericCable))

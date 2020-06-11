@@ -68,7 +68,7 @@ public final class ItemPanel extends ItemBase implements IMetaProvider<IMetaBase
 		if (this.itemType != ItemType.facade && this.itemType != ItemType.facade_hollow)
 			return super.onItemUse(context);
 			
-		if (!context.getPlayer().isCrouching())
+		if (!context.getPlayer().isSneaking())
 			return ActionResultType.FAIL;
 		
 		World world = context.getWorld();

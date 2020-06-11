@@ -64,6 +64,6 @@ public class TileIncandescentLamp extends SESinglePortMachine<ISEVoltageSource> 
         super.onSyncDataFromServerArrived(nbt);
         this.lightLevel = nbt.getByte("lightLevel");
         markForRenderUpdate();
-        this.world.getLightManager().checkBlock(this.pos); //checkLightFor
+        this.world.getChunkProvider().getLightManager().checkBlock(this.pos); //checkLightFor
     }
 }

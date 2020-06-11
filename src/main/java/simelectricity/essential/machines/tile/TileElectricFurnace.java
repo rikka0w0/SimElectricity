@@ -52,7 +52,7 @@ public class TileElectricFurnace extends SESinglePortMachine<ISEVoltageSource> i
     		if (world.isRemote) {
     			// Client Side
     	        markForRenderUpdate();
-    	        this.world.getLightManager().checkBlock(this.pos);	//checkLightFor
+    	        this.world.getChunkProvider().getLightManager().checkBlock(this.pos);	//checkLightFor
     		} else {
     			// Server Side
                 updateTileParameter();
@@ -133,7 +133,7 @@ public class TileElectricFurnace extends SESinglePortMachine<ISEVoltageSource> i
     public void onSyncDataFromServerArrived(CompoundNBT nbt) {
         super.onSyncDataFromServerArrived(nbt);
         this.setWorking(nbt.getBoolean("isWorking"));
-        this.world.getLightManager().checkBlock(this.pos);	//checkLightFor
+        this.world.getChunkProvider().getLightManager().checkBlock(this.pos);	//checkLightFor
     }
 
     @Override

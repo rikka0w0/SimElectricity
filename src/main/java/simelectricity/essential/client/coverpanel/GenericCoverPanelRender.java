@@ -1,9 +1,9 @@
 package simelectricity.essential.client.coverpanel;
 
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
@@ -39,7 +39,8 @@ public abstract class GenericCoverPanelRender<T extends ISECoverPanel> implement
 
     @Override
     public void onPreTextureStitchEvent(TextureStitchEvent.Pre event) {
-        event.addSprite(textureRes);
+    	if (EasyTextureLoader.isBlockAtlas(event))
+    		event.addSprite(textureRes);
     }
     
     @Override
@@ -133,7 +134,7 @@ public abstract class GenericCoverPanelRender<T extends ISECoverPanel> implement
 
     @Override
     public void renderCoverPanel(T coverPanel, Direction side, Random rand, List<BakedQuad> quads) {
-        if (MinecraftForgeClient.getRenderLayer() != RenderType.getSolid())
+        if (MinecraftForgeClient.getRenderLayer() != BlockRenderLayer.SOLID)
             return;
 
         quads.addAll(this.bakedQuads[side.ordinal()]);

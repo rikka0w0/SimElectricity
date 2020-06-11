@@ -5,7 +5,7 @@ import java.util.function.Function;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
@@ -41,8 +41,8 @@ public class CableModel extends CodeBasedModel {
         return this.conductorTexture;
     }
 
-    public RenderType getCableRenderLayer() {
-    	return RenderType.getSolid();
+    public BlockRenderLayer getCableRenderLayer() {
+    	return BlockRenderLayer.SOLID;
     }
     
     @Override

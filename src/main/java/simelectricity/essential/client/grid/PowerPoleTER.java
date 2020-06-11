@@ -2,15 +2,9 @@ package simelectricity.essential.client.grid;
 
 import java.util.List;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.vertex.IVertexBuilder;
-
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.model.BakedQuad;
-import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
@@ -19,6 +13,7 @@ import net.minecraft.util.math.Vec3i;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.TextureStitchEvent;
+import net.minecraftforge.client.model.animation.TileEntityRendererFast;
 import rikka.librikka.math.MathAssitant;
 import rikka.librikka.math.Vec3f;
 import rikka.librikka.model.loader.EasyTextureLoader;
@@ -32,9 +27,9 @@ import simelectricity.essential.client.grid.PowerPoleRenderHelper.ConnectionInfo
  * @param <T>
  */
 @OnlyIn(Dist.CLIENT)
-public class PowerPoleTER<T extends TileEntity & ISEPowerPole> extends TileEntityRenderer<T> {	
+public class PowerPoleTER<T extends TileEntity & ISEPowerPole> extends TileEntityRendererFast<T> {	
     public PowerPoleTER(TileEntityRendererDispatcher rendererDispatcherIn) {
-		super(rendererDispatcherIn);
+		super();
 	}
 
     private static TextureAtlasSprite textureCable = null;
@@ -108,8 +103,7 @@ public class PowerPoleTER<T extends TileEntity & ISEPowerPole> extends TileEntit
     }
     
 	@Override
-	public void render(T te, float partialTicks, MatrixStack matrixStack, IRenderTypeBuffer bufferIn,
-			int combinedLightIn, int combinedOverlayIn) {
+	public void renderTileEntityFast(T te, double x, double y, double z, float partialTicks, int destroyStage, BufferBuilder buffer) {
 		if (te.isRemoved())
 			return;
 		
@@ -121,28 +115,23 @@ public class PowerPoleTER<T extends TileEntity & ISEPowerPole> extends TileEntit
         if (helper.needBake())
         	bake(te, helper);
         
-        IVertexBuilder buffer = bufferIn.getBuffer(RenderType.getSolid());
-//        buffer.setTranslation(x, y, z);
-//        matrix.translate(x, y, z);
+		buffer.setTranslation(x, y, z);
 		
 		int i = 15728640;
 		for (BakedQuad quad: helper.quadBuffer) {
-//			buffer.addVertexData(quad.getVertexData());
-//			buffer.putBrightness4(i, i, i, i);
-//			
-//			float diffuse = 1;
-//            if(quad.shouldApplyDiffuseLighting())
-//                diffuse = net.minecraftforge.client.model.pipeline.LightUtil.diffuseLight(quad.getFace());
-//
-//            buffer.putColorMultiplier(diffuse, diffuse, diffuse, 4);
-//            buffer.putColorMultiplier(diffuse, diffuse, diffuse, 3);
-//            buffer.putColorMultiplier(diffuse, diffuse, diffuse, 2);
-//            buffer.putColorMultiplier(diffuse, diffuse, diffuse, 1);
-//			
-//			buffer.putPosition(0, 0, 0);
-			matrixStack.push();
-			buffer.addQuad(matrixStack.getLast(), quad, 1, 1, 1, i, OverlayTexture.NO_OVERLAY);
-			matrixStack.pop();
+			buffer.addVertexData(quad.getVertexData());
+			buffer.putBrightness4(i, i, i, i);
+			
+			float diffuse = 1;
+            if(quad.shouldApplyDiffuseLighting())
+                diffuse = net.minecraftforge.client.model.pipeline.LightUtil.diffuseLight(quad.getFace());
+
+            buffer.putColorMultiplier(diffuse, diffuse, diffuse, 4);
+            buffer.putColorMultiplier(diffuse, diffuse, diffuse, 3);
+            buffer.putColorMultiplier(diffuse, diffuse, diffuse, 2);
+            buffer.putColorMultiplier(diffuse, diffuse, diffuse, 1);
+			
+			buffer.putPosition(0, 0, 0);
 		}
 	}
 }

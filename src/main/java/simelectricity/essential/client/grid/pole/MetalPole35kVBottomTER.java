@@ -1,28 +1,22 @@
 package simelectricity.essential.client.grid.pole;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.vertex.IVertexBuilder;
-
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.model.IBakedModel;
-import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
+import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.client.model.animation.TileEntityRendererFast;
 import rikka.librikka.DirHorizontal8;
 import simelectricity.essential.grid.TilePoleMetal35kV;
 
-public class MetalPole35kVBottomTER extends TileEntityRenderer<TilePoleMetal35kV.Bottom>{
+public class MetalPole35kVBottomTER extends TileEntityRendererFast<TilePoleMetal35kV.Bottom>{
 	public MetalPole35kVBottomTER(TileEntityRendererDispatcher rendererDispatcherIn) {
-		super(rendererDispatcherIn);
+		super();
 	}
-
-	@Override
-	public void render(TilePoleMetal35kV.Bottom te, float partialTicks, MatrixStack matrixStack,
-			IRenderTypeBuffer bufferIn, int combinedLightIn, int combinedOverlayIn) {
+	
+	public void renderTileEntityFast(TilePoleMetal35kV.Bottom te, double x, double y, double z, float partialTicks, int destroyStage, BufferBuilder buffer) {
 		DirHorizontal8 facing8 = te.facing();
 		int facing = (8-facing8.ordinal()) & 7;
 		int part = te.getPartId();	
@@ -36,14 +30,23 @@ public class MetalPole35kVBottomTER extends TileEntityRenderer<TilePoleMetal35kV
 			return;
 		MetalPole35kVModel model = (MetalPole35kVModel) bakedmodel;
 		
-        IVertexBuilder buffer = bufferIn.getBuffer(RenderType.getSolid());
-
-        int i = 15728640;
+		buffer.setTranslation(x, y, z);
+		
+		int i = 15728640;
 		for (BakedQuad quad: model.bakedModelBasePart[facing][part]) {
-			matrixStack.push();
-			buffer.addQuad(matrixStack.getLast(), quad, 1, 1, 1, i, OverlayTexture.NO_OVERLAY);
-			matrixStack.pop();
+			buffer.addVertexData(quad.getVertexData());
+			buffer.putBrightness4(i, i, i, i);
+			
+			float diffuse = 1;
+            if(quad.shouldApplyDiffuseLighting())
+                diffuse = net.minecraftforge.client.model.pipeline.LightUtil.diffuseLight(quad.getFace());
+
+            buffer.putColorMultiplier(diffuse, diffuse, diffuse, 4);
+            buffer.putColorMultiplier(diffuse, diffuse, diffuse, 3);
+            buffer.putColorMultiplier(diffuse, diffuse, diffuse, 2);
+            buffer.putColorMultiplier(diffuse, diffuse, diffuse, 1);
+			
+			buffer.putPosition(0, 0, 0);
 		}
 	}
-
 }

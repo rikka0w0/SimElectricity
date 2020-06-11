@@ -3,6 +3,8 @@
  */
 package simelectricity.energynet;
 
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.tileentity.TileEntity;
@@ -129,7 +131,8 @@ public class EnergyNetDataProvider extends WorldSavedData {
     }
 
     private static boolean isSideSolid(World world, BlockPos pos, Direction facing) {
-        return world.getBlockState(pos).isSolidSide(world, pos, facing);
+    	BlockState state = world.getBlockState(pos);
+        return Block.hasSolidSide(state, world, pos, facing);
     }
 
     public void updateTileConnection(TileEntity te) {

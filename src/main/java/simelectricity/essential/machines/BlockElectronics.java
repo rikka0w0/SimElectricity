@@ -18,6 +18,7 @@ import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.world.IBlockReader;
+import net.minecraft.world.IEnviromentBlockReader;
 import net.minecraft.world.World;
 import rikka.librikka.IMetaProvider;
 import rikka.librikka.ITileMeta;
@@ -124,7 +125,7 @@ public abstract class BlockElectronics extends SEMachineBlock implements IMetaPr
 	}
     
     @Override
-    public int getLightValue(BlockState state, IBlockReader world, BlockPos pos) {
+    public int getLightValue(BlockState state, IEnviromentBlockReader world, BlockPos pos) {
         TileEntity te = world.getTileEntity(pos);
 
         if (te instanceof TileIncandescentLamp) {
@@ -134,7 +135,7 @@ public abstract class BlockElectronics extends SEMachineBlock implements IMetaPr
     }
 
     @Override
-    public ActionResultType onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult rtResult) {
+    public ActionResultType onBlockActivatedImpl(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult rtResult) {
     	if (CoverPanelUtils.installCoverPanel(state, world, pos, player, hand, rtResult) == ActionResultType.SUCCESS)
     		return ActionResultType.SUCCESS;
   
@@ -145,7 +146,7 @@ public abstract class BlockElectronics extends SEMachineBlock implements IMetaPr
                 return ActionResultType.PASS; 
     	}
     	
-    	if (player.isCrouching())
+    	if (player.isSneaking())
             return ActionResultType.PASS;        
         
         if (meta == Type.incandescent_lamp)

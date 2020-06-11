@@ -8,26 +8,25 @@ import java.util.function.Function;
 import com.google.gson.Gson;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
-import com.mojang.datafixers.util.Pair;
 
 import net.minecraft.client.renderer.model.BlockModel;
 import net.minecraft.client.renderer.model.IBakedModel;
-import net.minecraft.client.renderer.model.IModelTransform;
 import net.minecraft.client.renderer.model.IUnbakedModel;
 import net.minecraft.client.renderer.model.ItemOverrideList;
-import net.minecraft.client.renderer.model.Material;
 import net.minecraft.client.renderer.model.ModelBakery;
+import net.minecraft.client.renderer.texture.ISprite;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.JSONUtils;
-import net.minecraft.util.LazyValue;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.BlockModelConfiguration;
 import net.minecraftforge.client.model.IModelConfiguration;
 import net.minecraftforge.client.model.IModelLoader;
-import net.minecraftforge.client.model.ModelLoaderRegistry;
+import net.minecraftforge.client.model.ModelLoaderRegistry2;
 import net.minecraftforge.client.model.geometry.IModelGeometry;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
+import rikka.librikka.LazyValue;
 import simelectricity.essential.Essential;
 
 public class SEMachineModelLoader implements IModelLoader<SEMachineModelLoader.Wrapper> {
@@ -46,7 +45,7 @@ public class SEMachineModelLoader implements IModelLoader<SEMachineModelLoader.W
 	public Wrapper read(JsonDeserializationContext deserializationContext, JsonObject modelContents) {
         if (modelContents.has("loader2")) {
             String loader2 = JSONUtils.getString(modelContents, "loader2");
-            final IModelGeometry<?> secondaryGeometry = ModelLoaderRegistry.getModel(
+            final IModelGeometry<?> secondaryGeometry = ModelLoaderRegistry2.getModel(
             		new ResourceLocation(loader2), 
             		deserializationContext, 
             		modelContents);
@@ -80,16 +79,17 @@ public class SEMachineModelLoader implements IModelLoader<SEMachineModelLoader.W
 	
 	public static class VanillaWrapper implements Wrapper {
 		@Override
-		public IBakedModel bake(IModelConfiguration owner, 
+		public IBakedModel bake(
+				IModelConfiguration owner, 
 				ModelBakery bakery, 
-				Function<Material, TextureAtlasSprite> spriteGetter, 
-				IModelTransform modelTransform, 
-				ItemOverrideList overrides, 
-				ResourceLocation modelLocation) {
+				Function<ResourceLocation, TextureAtlasSprite> spriteGetter, 
+				ISprite sprite, 
+				VertexFormat format, 
+				ItemOverrideList overrides) {
 			
 			IUnbakedModel unbakedOwner = owner.getOwnerModel();
 			if (!(unbakedOwner instanceof BlockModel))
-				return unbakedOwner.bakeModel(bakery, spriteGetter, modelTransform, modelLocation);
+				return unbakedOwner.bake(bakery, spriteGetter, sprite, format);
 			
 			BlockModel ownerBlockModel = (BlockModel) unbakedOwner;
 			for (BlockModel blockModel=ownerBlockModel; blockModel!=null; blockModel=blockModel.parent) {
@@ -97,7 +97,7 @@ public class SEMachineModelLoader implements IModelLoader<SEMachineModelLoader.W
 					IBakedModel vanillaModel;
 					synchronized(blockModel.customData) {
 						blockModel.customData.setCustomGeometry(null);
-						vanillaModel = ownerBlockModel.bakeModel(bakery, ownerBlockModel, spriteGetter, modelTransform, modelLocation, true);
+						vanillaModel = ownerBlockModel.bake(bakery, ownerBlockModel, spriteGetter, sprite, format);
 						blockModel.customData.setCustomGeometry(this);
 					}
 					
@@ -109,9 +109,10 @@ public class SEMachineModelLoader implements IModelLoader<SEMachineModelLoader.W
 		}
 
 		@Override
-		public Collection<Material> getTextures(IModelConfiguration owner, 
+		public Collection<ResourceLocation> getTextureDependencies(
+				IModelConfiguration owner, 
 				Function<ResourceLocation, IUnbakedModel> modelGetter, 
-				Set<Pair<String, String>> missingTextureErrors) {
+				Set<String> missingTextureErrors) {
 			
 			IUnbakedModel unbakedOwner = owner.getOwnerModel();
 			if (!(unbakedOwner instanceof BlockModel))
@@ -120,7 +121,7 @@ public class SEMachineModelLoader implements IModelLoader<SEMachineModelLoader.W
 			BlockModel ownerBlockModel = (BlockModel) unbakedOwner;
 			for (BlockModel blockModel=ownerBlockModel; blockModel!=null; blockModel=blockModel.parent) {
 				if (getModelGeometry(blockModel) == this) {
-					Collection<Material> materials;
+					Collection<ResourceLocation> materials;
 					synchronized(blockModel.customData) {
 						blockModel.customData.setCustomGeometry(null);
 						materials = ownerBlockModel.getTextures(modelGetter, missingTextureErrors);
@@ -143,22 +144,24 @@ public class SEMachineModelLoader implements IModelLoader<SEMachineModelLoader.W
 		}
 		
 		@Override
-		public IBakedModel bake(IModelConfiguration owner, 
+		public IBakedModel bake(
+				IModelConfiguration owner, 
 				ModelBakery bakery, 
-				Function<Material, TextureAtlasSprite> spriteGetter, 
-				IModelTransform modelTransform, 
-				ItemOverrideList overrides, 
-				ResourceLocation modelLocation) {
+				Function<ResourceLocation, TextureAtlasSprite> spriteGetter, 
+				ISprite sprite, 
+				VertexFormat format, 
+				ItemOverrideList overrides) {
 			IBakedModel bakedModel = 
-				modelGeometry.bake(owner, bakery, spriteGetter, modelTransform, overrides, modelLocation);
+				modelGeometry.bake(owner, bakery, spriteGetter, sprite, format, overrides);
 			return new SEMachineModel(bakedModel);
 		}
 
 		@Override
-		public Collection<Material> getTextures(IModelConfiguration owner, 
+		public Collection<ResourceLocation> getTextureDependencies(
+				IModelConfiguration owner, 
 				Function<ResourceLocation, IUnbakedModel> modelGetter, 
-				Set<Pair<String, String>> missingTextureErrors) {
-			return modelGeometry.getTextures(owner, modelGetter, missingTextureErrors);
+				Set<String> missingTextureErrors) {
+			return modelGeometry.getTextureDependencies(owner, modelGetter, missingTextureErrors);
 		}
 	}
 }

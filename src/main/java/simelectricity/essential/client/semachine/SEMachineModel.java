@@ -4,13 +4,13 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockModelShapes;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.model.ItemOverrideList;
 import net.minecraft.client.renderer.model.ModelResourceLocation;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
@@ -64,11 +64,6 @@ public final class SEMachineModel implements IDynamicBakedModel {
     public ItemCameraTransforms getItemCameraTransforms() {
         return this.bakedModel.getItemCameraTransforms();
     }
-    
-	@Override
-	public boolean func_230044_c_() {
-		return this.bakedModel.func_230044_c_();
-	}
 
     @Override
     public ItemOverrideList getOverrides() {
@@ -77,7 +72,7 @@ public final class SEMachineModel implements IDynamicBakedModel {
     
 	@Override
 	public List<BakedQuad> getQuads(BlockState state, Direction side, Random rand, IModelData extraData) {
-		RenderType layer = MinecraftForgeClient.getRenderLayer();
+		BlockRenderLayer layer = MinecraftForgeClient.getRenderLayer();
 		if (layer == null)
 			return this.bakedModel.getQuads(state, side, rand, extraData);
 		
@@ -86,12 +81,11 @@ public final class SEMachineModel implements IDynamicBakedModel {
 		boolean hideMachineFace = false;
 		// Render facade cover panel, if possible
 		ISECoverPanelHost host = extraData.getData(ISECoverPanelHost.prop);
-		if (host != null && side != null && layer != RenderType.getSolid()) {
+		if (host != null && side != null && layer != BlockRenderLayer.SOLID) {
     		ISECoverPanel coverPanel = host.getCoverPanelOnSide(side);
     		if (coverPanel instanceof ISEFacadeCoverPanel) {
     			BlockState blockState = ((ISEFacadeCoverPanel) coverPanel).getBlockState();   			   			
-    			IBakedModel model = Minecraft.getInstance().getBlockRendererDispatcher().getModelForState(blockState);
-    			
+    			IBakedModel model = Minecraft.getInstance().getBlockRendererDispatcher().getModelForState(blockState);    			
     			model.getQuads(blockState, side, rand, EmptyModelData.INSTANCE).stream()
     				.map(MutableQuad::new)
     				.peek((mquad)->GenericFacadeRender.tintFunc(side, mquad))
@@ -102,12 +96,12 @@ public final class SEMachineModel implements IDynamicBakedModel {
     		}
 		}
 
-    	if (layer == RenderType.getSolid() && !hideMachineFace)
+    	if (layer == BlockRenderLayer.SOLID && !hideMachineFace)
     		return this.bakedModel.getQuads(state, side, rand, extraData);
     	// Only render the machine body in the solid layer
     	
 		// Render the sockets in the cutout layer
-		if (side == null && layer == RenderType.getCutout()) {
+		if (side == null && layer == BlockRenderLayer.CUTOUT) {
     		ISESocketProvider sp = extraData.getData(ISESocketProvider.prop);
     		if (sp != null)
     			SocketRender.getBaked(quads, sp);

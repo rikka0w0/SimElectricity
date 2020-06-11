@@ -9,7 +9,6 @@ import java.util.function.Predicate;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.util.Direction;
@@ -76,7 +75,7 @@ public class GenericFacadeRender implements ISECoverPanelRender<ISEFacadeCoverPa
 	@Override
 	public void renderCoverPanel(ISEFacadeCoverPanel coverPanel, Direction side, Random random, List<BakedQuad> quads) {		
 		BlockState blockState = coverPanel.getBlockState();
-		if (RenderTypeLookup.canRenderInLayer(blockState, MinecraftForgeClient.getRenderLayer())) {	
+		if (blockState.canRenderInLayer(MinecraftForgeClient.getRenderLayer())) {	
 	        List<MutableQuad> mquads = new LinkedList<>();
 	        
 	        // Get the block model
