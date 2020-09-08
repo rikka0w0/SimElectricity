@@ -1,0 +1,33 @@
+{
+  "itemGroup.simelectricity": "SimElectricity",
+
+  "item.simelectricity.semanagementtool": "Netzwerk-Management-Werkzeug",
+
+  "gui.simelectricity.voltage": "Spannung",
+  "gui.simelectricity.voltage_input": "Eingangs Spannung",
+  "gui.simelectricity.voltage_output": "Ausgangs Spannung",
+  "gui.simelectricity.voltage_regulated": "Regulated Spannung",
+  "gui.simelectricity.voltage_threshold": "Threshold Spannung",
+  "gui.simelectricity.current": "Strom",
+  "gui.simelectricity.current_input": "Eingangs Strom",
+  "gui.simelectricity.current_output": "Ausgangs Strom",
+  "gui.simelectricity.current_trip": "Auslöse Strom",
+  "gui.simelectricity.current_threshold": "Schwellwert Strom",
+  "gui.simelectricity.power_input": "Eingangs Leistung",
+  "gui.simelectricity.power_output": "Ausgangs Leistung",
+  "gui.simelectricity.power_rated": "Nennleistung",
+  "gui.simelectricity.buffered_energy": "GEschpeicherte Energy",
+  "gui.simelectricity.used_energy": "Verbrauchte Energy",
+  "gui.simelectricity.resistance_output": "Ausgangs Widerstand",
+  "gui.simelectricity.resistance_internal": "Interner Widerstand",
+  "gui.simelectricity.voltage_internal": "Interne Spannung",
+  "gui.simelectricity.ratio_step_up": "Step-up-Verhältnis",
+  "gui.simelectricity.resistivity": "Widerstand",
+  "gui.simelectricity.resistance_secondary": "Widerstand (sekundär)",
+  "gui.simelectricity.forward_biased": "Vorwärts voreingenommen",
+  "gui.simelectricity.reverse_biased": "Rückwärts vorgespannt",
+  "gui.simelectricity.condition_threshold": "Schwellenwertbedingungn",
+
+  "seconfig.category:energynet": "EnergyNet",
+  "seconfig.category:energynet.tooltip": "Konfigurieren Sie den Simulator"
+}
