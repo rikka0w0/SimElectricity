@@ -425,6 +425,6 @@ public final class ModelDataProvider extends BlockStateProvider implements ISimp
 
 	@Override
 	public String getModId() {
-		return this.getModId();
+		return Essential.MODID;
 	}
 }
