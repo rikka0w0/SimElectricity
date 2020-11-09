@@ -8,6 +8,7 @@ import net.minecraft.inventory.container.Container;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import rikka.librikka.gui.GuiDirectionSelector;
@@ -25,12 +26,16 @@ public abstract class SEGuiContainer<TC extends Container> extends ContainerScre
         this.container = screenContainer;
     }
 
-    protected Button addServerButton(int id, int widthIn, int heightIn, int width, int height, String text) {
-        return this.addButton(new Button(widthIn, heightIn, width, height, text, (button) -> {
+    protected Button addServerButton(int id, int x, int y, int width, int height, String text) {
+    	return addServerButton(id, x, y, width, height, new StringTextComponent(text));
+    }
+
+    protected Button addServerButton(int id, int x, int y, int width, int height, ITextComponent text) {
+        return this.addButton(new Button(x, y, width, height, text, (button) -> {
         	MessageContainerSync.sendButtonClickEventToSever(container, id, Screen.hasControlDown());
         }));
     }
-    
+
     protected GuiDirectionSelector addDirectionSelector(int x, int y) {
         final SEGuiContainer<TC> parent = this; 
         GuiDirectionSelector directionSelector = new GuiDirectionSelector(x, y) {
@@ -42,11 +47,6 @@ public abstract class SEGuiContainer<TC extends Container> extends ContainerScre
 			@Override
 			protected ResourceLocation texture() {
 				return dsTexture;
-			}
-
-			@Override
-			protected String localize(Direction direction) {
-				return direction.getName();
 			}
         };
         return this.addButton(directionSelector);

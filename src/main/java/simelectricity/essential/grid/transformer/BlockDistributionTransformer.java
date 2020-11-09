@@ -34,7 +34,7 @@ public class BlockDistributionTransformer extends BlockAbstractTransformer
     public static EnumDistributionTransformerRenderPart[][][] renderParts;
     public final EnumDistributionTransformerBlockType blockType;
 	private BlockDistributionTransformer(EnumDistributionTransformerBlockType blockType) {
-		super("transformer_10kv_415v_"+blockType.getName(), Material.IRON, blockType.formed ? null : SEAPI.SETab);
+		super("transformer_10kv_415v_"+blockType.getString(), Material.IRON, blockType.formed ? null : SEAPI.SETab);
 		this.blockType = blockType;
 	}
 
@@ -90,7 +90,7 @@ public class BlockDistributionTransformer extends BlockAbstractTransformer
     	BlockState state = super.getStateForPlacement(context);
     	PlayerEntity placer = context.getPlayer();
     	Direction facing = Utils.getPlayerSightHorizontal(placer);
-		if (state.has(BlockStateProperties.HORIZONTAL_FACING))
+		if (state.hasProperty(BlockStateProperties.HORIZONTAL_FACING))
 			return state.with(BlockStateProperties.HORIZONTAL_FACING, facing.getOpposite());
 		else
 			return state;
@@ -148,7 +148,7 @@ public class BlockDistributionTransformer extends BlockAbstractTransformer
     		@Override
     		protected BlockState getStateForRestore(Direction facing) {
     			BlockState state = super.getStateForRestore(facing);
-    			if (state.has(BlockStateProperties.HORIZONTAL_FACING)) {
+    			if (state.hasProperty(BlockStateProperties.HORIZONTAL_FACING)) {
     				BlockDistributionTransformer block = (BlockDistributionTransformer) state.getBlock();
     				return state.with(BlockStateProperties.HORIZONTAL_FACING, 
     						(block.blockType == EnumDistributionTransformerBlockType.Transformer) ?
@@ -244,13 +244,5 @@ public class BlockDistributionTransformer extends BlockAbstractTransformer
         };
 
         blueprint =  new MultiBlockStructure(configuration);
-    }
-    
-    ////////////////////////////////////
-    /// Rendering
-    ////////////////////////////////////
-    @Override
-    public boolean isNormalCube(BlockState state, IBlockReader worldIn, BlockPos pos) {
-        return false;
     }
 }

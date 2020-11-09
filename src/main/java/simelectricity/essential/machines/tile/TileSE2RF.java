@@ -1,5 +1,6 @@
 package simelectricity.essential.machines.tile;
 
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
@@ -123,8 +124,8 @@ public class TileSE2RF extends SESinglePortMachine<ISEConstantPowerLoad> impleme
     }
 
     @Override
-    public void read(CompoundNBT tagCompound) {
-        super.read(tagCompound);
+    public void read(BlockState blockState, CompoundNBT tagCompound) {
+        super.read(blockState, tagCompound);
 
         this.ratedOutputPower = tagCompound.getDouble("ratedOutputPower");
         this.ouputPowerSetPoint = tagCompound.getDouble("ouputPowerSetPoint");

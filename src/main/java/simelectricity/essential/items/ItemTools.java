@@ -187,7 +187,7 @@ public final class ItemTools extends ItemBase implements IMetaProvider<IMetaBase
             return ActionResultType.PASS;
         
         Utils.chat(player, "------------------");
-        player.sendMessage(BlockUtils.getDisplayName(world, pos));
+        player.sendMessage(BlockUtils.getDisplayName(world, pos), net.minecraft.util.Util.DUMMY_UUID);	// TODO: Im not sure about 1.16.4 UUID stuff
         
         if (block instanceof ISENodeDelegateBlock) {
         	delegatedNode = ((ISENodeDelegateBlock<?>) block).getNode(world, pos);

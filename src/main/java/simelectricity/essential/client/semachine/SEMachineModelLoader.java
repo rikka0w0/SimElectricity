@@ -15,7 +15,7 @@ import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.model.IModelTransform;
 import net.minecraft.client.renderer.model.IUnbakedModel;
 import net.minecraft.client.renderer.model.ItemOverrideList;
-import net.minecraft.client.renderer.model.Material;
+import net.minecraft.client.renderer.model.RenderMaterial;
 import net.minecraft.client.renderer.model.ModelBakery;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.resources.IResourceManager;
@@ -82,7 +82,7 @@ public class SEMachineModelLoader implements IModelLoader<SEMachineModelLoader.W
 		@Override
 		public IBakedModel bake(IModelConfiguration owner, 
 				ModelBakery bakery, 
-				Function<Material, TextureAtlasSprite> spriteGetter, 
+				Function<RenderMaterial, TextureAtlasSprite> spriteGetter, 
 				IModelTransform modelTransform, 
 				ItemOverrideList overrides, 
 				ResourceLocation modelLocation) {
@@ -109,7 +109,7 @@ public class SEMachineModelLoader implements IModelLoader<SEMachineModelLoader.W
 		}
 
 		@Override
-		public Collection<Material> getTextures(IModelConfiguration owner, 
+		public Collection<RenderMaterial> getTextures(IModelConfiguration owner, 
 				Function<ResourceLocation, IUnbakedModel> modelGetter, 
 				Set<Pair<String, String>> missingTextureErrors) {
 			
@@ -120,7 +120,7 @@ public class SEMachineModelLoader implements IModelLoader<SEMachineModelLoader.W
 			BlockModel ownerBlockModel = (BlockModel) unbakedOwner;
 			for (BlockModel blockModel=ownerBlockModel; blockModel!=null; blockModel=blockModel.parent) {
 				if (getModelGeometry(blockModel) == this) {
-					Collection<Material> materials;
+					Collection<RenderMaterial> materials;
 					synchronized(blockModel.customData) {
 						blockModel.customData.setCustomGeometry(null);
 						materials = ownerBlockModel.getTextures(modelGetter, missingTextureErrors);
@@ -145,7 +145,7 @@ public class SEMachineModelLoader implements IModelLoader<SEMachineModelLoader.W
 		@Override
 		public IBakedModel bake(IModelConfiguration owner, 
 				ModelBakery bakery, 
-				Function<Material, TextureAtlasSprite> spriteGetter, 
+				Function<RenderMaterial, TextureAtlasSprite> spriteGetter, 
 				IModelTransform modelTransform, 
 				ItemOverrideList overrides, 
 				ResourceLocation modelLocation) {
@@ -155,7 +155,7 @@ public class SEMachineModelLoader implements IModelLoader<SEMachineModelLoader.W
 		}
 
 		@Override
-		public Collection<Material> getTextures(IModelConfiguration owner, 
+		public Collection<RenderMaterial> getTextures(IModelConfiguration owner, 
 				Function<ResourceLocation, IUnbakedModel> modelGetter, 
 				Set<Pair<String, String>> missingTextureErrors) {
 			return modelGeometry.getTextures(owner, modelGetter, missingTextureErrors);

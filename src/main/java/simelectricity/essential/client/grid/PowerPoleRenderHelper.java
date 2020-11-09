@@ -5,7 +5,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3i;
+import net.minecraft.util.math.vector.Vector3i;
 import net.minecraft.world.IBlockReader;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -372,7 +372,7 @@ public class PowerPoleRenderHelper {
          */
         public float distanceTo(PowerPoleRenderHelper.Group group) {
             //Normalize respect to current TileEntity coordinate
-            Vec3i offset = group.parent.pos.subtract(this.parent.pos);
+            Vector3i offset = group.parent.pos.subtract(this.parent.pos);
 
             float x = offset.getX() + group.centerX - this.centerX;
             float z = offset.getZ() + group.centerZ - this.centerZ;
@@ -385,7 +385,7 @@ public class PowerPoleRenderHelper {
          * @param pos
          * @return
          */
-        public float distanceTo(Vec3i pos) {
+        public float distanceTo(Vector3i pos) {
             float x = pos.getX() - (this.parent.pos.getX() + this.centerX);
             float z = pos.getZ() - (this.parent.pos.getZ() + this.centerZ);
 

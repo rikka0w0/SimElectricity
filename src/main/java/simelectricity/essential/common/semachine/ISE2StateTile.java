@@ -24,6 +24,6 @@ public interface ISE2StateTile {
     }
     
     public static boolean hasSecondState(BlockState state) {
-		return state.has(BlockStateProperties.POWERED);
+		return state.hasProperty(BlockStateProperties.POWERED);
     }
 }

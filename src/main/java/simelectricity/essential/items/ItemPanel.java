@@ -96,7 +96,7 @@ public final class ItemPanel extends ItemBase implements IMetaProvider<IMetaBase
 
 		BlockState blockstate = NBTUtil.readBlockState(stack.getTag().getCompound("facade_blockstate"));
 		if (!blockstate.isAir())
-			tooltip.add(blockstate.getBlock().getNameTextComponent());
+			tooltip.add(blockstate.getBlock().getTranslatedName());
 		if (flagIn.isAdvanced())
 			tooltip.add(new StringTextComponent(blockstate.toString()));
 	}

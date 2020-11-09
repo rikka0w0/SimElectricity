@@ -27,7 +27,7 @@ public class TileSolarPanel extends SESinglePortMachine<ISEVoltageSource> implem
             return;
 
         //Server only
-        if (!this.world.getDimension().isSurfaceWorld() || !this.world.canBlockSeeSky(this.pos.up())) {
+        if (!this.world.getDimensionType().hasSkyLight() || !this.world.canBlockSeeSky(this.pos.up())) {
             this.detectAndSendChange(TileSolarPanel.STATE_CAVE);
             return;
         }

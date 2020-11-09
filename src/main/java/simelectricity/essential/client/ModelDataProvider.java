@@ -22,10 +22,10 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.generators.BlockModelBuilder;
 import net.minecraftforge.client.model.generators.BlockStateProvider;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
-import net.minecraftforge.client.model.generators.ExistingFileHelper;
 import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.client.model.generators.VariantBlockStateBuilder;
 import net.minecraftforge.client.model.generators.ModelBuilder.Perspective;
+import net.minecraftforge.common.data.ExistingFileHelper;
 import rikka.librikka.DirHorizontal8;
 import rikka.librikka.IMetaProvider;
 import rikka.librikka.model.GeneratedModelLoader;
@@ -376,14 +376,14 @@ public final class ModelDataProvider extends BlockStateProvider implements ISimp
         final EnumDistributionTransformerBlockType blockType = block.meta();
 
         JsonObject json = BuiltInModelLoader.serialize("distribution_transformer");
-        json.addProperty("part", blockType.getName());
+        json.addProperty("part", blockType.getString());
         json.addProperty("formed", blockType.formed);
         ResourceLocation modelResLoc = new ResourceLocation(domain, BuiltInModelLoader.dir + name);
         ModelFile modelFile = customLoader(modelResLoc, json);
         
         getVariantBuilder(block).forAllStates((blockstate)-> {
         	ConfiguredModel.Builder<?> builder = ConfiguredModel.builder().modelFile(modelFile);
-        	if (blockstate.has(BlockStateProperties.HORIZONTAL_FACING)) {
+        	if (blockstate.hasProperty(BlockStateProperties.HORIZONTAL_FACING)) {
         		Direction facing = blockstate.get(BlockStateProperties.HORIZONTAL_FACING);
         		builder.rotationY(ModelGeometryBakeContext.encodeDirection(facing));
         	}

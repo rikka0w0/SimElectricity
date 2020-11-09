@@ -15,7 +15,7 @@ import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3i;
+import net.minecraft.util.math.vector.Vector3i;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.TextureStitchEvent;
@@ -60,7 +60,7 @@ public class PowerPoleTER<T extends TileEntity & ISEPowerPole> extends TileEntit
 		return PowerCableBakery.renderCatenaryCable(from, to, half, tension, thickness, textureCable);
 	}
 	
-	public static void renderInsulator(Vec3i pos, Vec3f from, Vec3f to, float angle, RawQuadGroup modelInsulator, List<BakedQuad> quads) {
+	public static void renderInsulator(Vector3i pos, Vec3f from, Vec3f to, float angle, RawQuadGroup modelInsulator, List<BakedQuad> quads) {
     	modelInsulator = modelInsulator.clone();
     	modelInsulator.rotateAroundZ(angle / MathAssitant.PI * 180);
     	modelInsulator.rotateToVec(from.x, from.y, from.z, to.x, from.y, to.z);

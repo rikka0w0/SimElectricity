@@ -6,7 +6,7 @@ import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.fluid.IFluidState;
+import net.minecraft.fluid.FluidState;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.state.StateContainer;
@@ -77,7 +77,8 @@ public class BlockPoleConcrete extends BlockBase implements IMetaProvider<BlockP
         super("pole_concrete_" + blockType.name(), 
         		Block.Properties.create(Material.ROCK)
         		.hardnessAndResistance(3F, 10F)
-        		.sound(SoundType.METAL), 
+        		.sound(SoundType.METAL)
+        		.setOpaque((a,b,c)->false), 
         		SEAPI.SETab);
         this.blockType = blockType;
     }
@@ -126,7 +127,7 @@ public class BlockPoleConcrete extends BlockBase implements IMetaProvider<BlockP
     }
 
     @Override
-    public boolean removedByPlayer(BlockState state, World world, BlockPos pos, PlayerEntity player, boolean willHarvest, IFluidState fluid) {
+    public boolean removedByPlayer(BlockState state, World world, BlockPos pos, PlayerEntity player, boolean willHarvest, FluidState fluid) {
         TileEntity te = world.getTileEntity(pos);    //Do this before the tileEntity is removed!
         if (te instanceof ISEGridTile) {
         	ISEGridNode node = ((ISEGridTile) te).getGridNode();
@@ -143,13 +144,5 @@ public class BlockPoleConcrete extends BlockBase implements IMetaProvider<BlockP
     @Override
     public VoxelShape getShape(BlockState state, IBlockReader world, BlockPos pos, ISelectionContext context) {
     	return VoxelShapes.create(0.375F, 0, 0.375F, 0.625F, 1, 0.625F);
-    }
-
-    ////////////////////////////////////
-    /// Rendering
-    ////////////////////////////////////
-    @Override
-    public boolean isNormalCube(BlockState state, IBlockReader worldIn, BlockPos pos) {
-        return false;
     }
 }

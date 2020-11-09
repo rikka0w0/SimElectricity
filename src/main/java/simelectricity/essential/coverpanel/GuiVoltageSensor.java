@@ -5,6 +5,9 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.client.resources.I18n;
 import org.lwjgl.opengl.GL11;
+
+import com.mojang.blaze3d.matrix.MatrixStack;
+
 import simelectricity.essential.utils.SEUnitHelper;
 import simelectricity.essential.utils.client.gui.SEGuiContainer;
 
@@ -14,25 +17,25 @@ public class GuiVoltageSensor extends SEGuiContainer<ContainerVoltageSensor> {
     }
 
     @Override
-    protected void drawGuiContainerForegroundLayer(int x, int y) {
+    protected void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int x, int y) {
         //draw text and stuff here
         //the parameters for drawString are: string, x, y, color
 
-    	this.font.drawString(title.getFormattedText(), 8, 6, 4210752);
+    	this.font.drawString(matrixStack, title.getString(), 8, 6, 4210752);
 
-    	this.font.drawString(I18n.format("gui.simelectricity.voltage_threshold"), 18, 124, 4210752);
+    	this.font.drawString(matrixStack, I18n.format("gui.simelectricity.voltage_threshold"), 18, 124, 4210752);
 
-        this.font.drawString(SEUnitHelper.getVoltageStringWithUnit(this.container.thresholdVoltage), 20, 51, 4210752);
+        this.font.drawString(matrixStack, SEUnitHelper.getVoltageStringWithUnit(this.container.thresholdVoltage), 20, 51, 4210752);
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(float opacity, int par2, int par3) {
+    protected void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, float opacity, int par2, int par3) {
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         this.minecraft.textureManager.bindTexture(new ResourceLocation("sime_essential:textures/gui/voltage_sensor.png"));
-        blit(this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
+        blit(matrixStack, this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
 
-        blit(this.guiLeft + 70, this.guiTop + 30, this.container.inverted ? 52 : 0, 166, 52, 33);
-        blit(this.guiLeft + 130, this.guiTop + 36, this.container.emitRedStoneSignal ? 180 : 176, 0, 4, 16);
+        blit(matrixStack, this.guiLeft + 70, this.guiTop + 30, this.container.inverted ? 52 : 0, 166, 52, 33);
+        blit(matrixStack, this.guiLeft + 130, this.guiTop + 36, this.container.emitRedStoneSignal ? 180 : 176, 0, 4, 16);
     }
 
     @Override

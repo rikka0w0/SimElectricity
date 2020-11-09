@@ -6,7 +6,7 @@ import net.minecraft.client.renderer.color.IBlockColor;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.ILightReader;
+import net.minecraft.world.IBlockDisplayReader;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -19,7 +19,7 @@ public class BlockColorHandler implements IBlockColor{
     public final static IBlockColor colorHandler = new BlockColorHandler();
 
     @Override
-    public int getColor(BlockState blockState, ILightReader world, BlockPos pos, int tintIndex) {
+    public int getColor(BlockState blockState, IBlockDisplayReader world, BlockPos pos, int tintIndex) {
         if (world != null && pos != null) {
             TileEntity te = world.getTileEntity(pos);
             if (te instanceof ISECoverPanelHost) {

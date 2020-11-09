@@ -9,7 +9,7 @@ import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.fluid.IFluidState;
+import net.minecraft.fluid.FluidState;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
@@ -19,7 +19,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
-import net.minecraft.world.storage.loot.LootContext;
+import net.minecraft.loot.LootContext;
 import rikka.librikka.block.BlockBase;
 import rikka.librikka.item.ItemBlockBase;
 import rikka.librikka.multiblock.MultiBlockStructure;
@@ -28,7 +28,7 @@ import rikka.librikka.multiblock.MultiBlockStructure.Result;
 public abstract class BlockAbstractTransformer extends BlockBase {
     public BlockAbstractTransformer(String unlocalizedName, Material material, ItemGroup group) {
 		super(unlocalizedName, 
-				Block.Properties.create(material).hardnessAndResistance(3.0F, 10.0F).sound(SoundType.METAL), 
+				Block.Properties.create(material).hardnessAndResistance(3.0F, 10.0F).sound(SoundType.METAL).setOpaque((a,b,c)->false), 
 				ItemBlockBase.class,
 				(new Item.Properties()).group(group));
 	}
@@ -59,7 +59,7 @@ public abstract class BlockAbstractTransformer extends BlockBase {
     }
 
     @Override
-    public boolean removedByPlayer(BlockState state, World world, BlockPos pos, PlayerEntity player, boolean willHarvest, IFluidState fluid) {
+    public boolean removedByPlayer(BlockState state, World world, BlockPos pos, PlayerEntity player, boolean willHarvest, FluidState fluid) {
         TileEntity te = world.getTileEntity(pos);
         if (te != null) {
             this.getBlueprint().restoreStructure(te, state, true);

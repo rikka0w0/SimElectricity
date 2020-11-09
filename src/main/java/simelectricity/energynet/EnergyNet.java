@@ -50,12 +50,12 @@ public final class EnergyNet {
     public EnergyNet(ServerWorld world) {
         this.world = world;
         this.dataProvider = EnergyNetDataProvider.get(world);
+        String dimName = world.getDimensionKey().getRegistryName().toString();
 
         //Initialize thread
-        this.simulator = new EnergyNetSimulator(dataProvider, "SEEnergyNet_DIM" + String.valueOf(world.getDimension().getType().getId()));
+        this.simulator = new EnergyNetSimulator(dataProvider, "SEEnergyNet_DIM" + dimName);
 
-        SELogger.logInfo(SELogger.general, "EnergyNet has been created for DIM" + String.valueOf(world.getDimension().getType().getId())
-        + world.getDimension().getType().toString());
+        SELogger.logInfo(SELogger.general, "EnergyNet has been created for DIM" + dimName);
     }
 
     public synchronized boolean isNodeValid(ISESimulatable node) {

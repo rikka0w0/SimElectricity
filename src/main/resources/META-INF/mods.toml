@@ -1,6 +1,7 @@
 modLoader="javafml"
 loaderVersion="[28,)" #mandatory (28 is current forge version)
 issueTrackerURL="https://github.com/RoyalAliceAcademyOfSciences/SimElectricity/issues" #optional
+license="MIT License"
 
 [[mods]] #mandatory
 modId="simelectricity"
@@ -66,7 +67,7 @@ Facade support for BuildCraft and ThermalExpansion
 [[dependencies.simelectricity]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.15.2]"
+    versionRange="[1.16.3,)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.sime_essential]]

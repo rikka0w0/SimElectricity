@@ -66,8 +66,8 @@ public final class SEMachineModel implements IDynamicBakedModel {
     }
     
 	@Override
-	public boolean func_230044_c_() {
-		return this.bakedModel.func_230044_c_();
+	public boolean isSideLit() {
+		return this.bakedModel.isSideLit();
 	}
 
     @Override

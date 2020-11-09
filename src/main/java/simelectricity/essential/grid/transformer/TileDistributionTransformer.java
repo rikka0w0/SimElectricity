@@ -5,7 +5,7 @@ import javax.annotation.Nullable;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3i;
+import net.minecraft.util.math.vector.Vector3i;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.model.data.ModelDataMap;
@@ -88,8 +88,8 @@ public abstract class TileDistributionTransformer extends SEMultiBlockGridTile{
 	protected abstract BlockPos getComplementPos();
 	
 	public static class Pole415V extends TileDistributionTransformer {
-		public final static Vec3i rightPos = new Vec3i(5, 4, 0);
-		public final static Vec3i leftPos = new Vec3i(0, 4, 0);
+		public final static Vector3i rightPos = new Vector3i(5, 4, 0);
+		public final static Vector3i leftPos = new Vector3i(0, 4, 0);
 		
 		@Override
 		protected boolean acceptAccessory(TileEntity accessory) {
@@ -134,8 +134,8 @@ public abstract class TileDistributionTransformer extends SEMultiBlockGridTile{
 	}
 	
 	public static class Pole10kV extends TileDistributionTransformer {
-		public final static Vec3i rightPos = new Vec3i(5, 6, 0);
-		public final static Vec3i leftPos = new Vec3i(0, 6, 0);
+		public final static Vector3i rightPos = new Vector3i(5, 6, 0);
+		public final static Vector3i leftPos = new Vector3i(0, 6, 0);
 		
 		@Override
 		protected boolean acceptAccessory(TileEntity accessory) {

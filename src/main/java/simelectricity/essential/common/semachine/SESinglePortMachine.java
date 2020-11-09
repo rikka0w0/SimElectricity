@@ -1,5 +1,6 @@
 package simelectricity.essential.common.semachine;
 
+import net.minecraft.block.BlockState;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.util.Direction;
@@ -24,8 +25,8 @@ public abstract class SESinglePortMachine<T extends ISEComponentParameter> exten
     /// TileEntity
     ///////////////////////////////////
     @Override
-    public void read(CompoundNBT tagCompound) {
-        super.read(tagCompound);
+    public void read(BlockState blockState, CompoundNBT tagCompound) {
+        super.read(blockState, tagCompound);
         this.functionalSide = Utils.facingFromNbt(tagCompound, "functionalSide");
     }
 

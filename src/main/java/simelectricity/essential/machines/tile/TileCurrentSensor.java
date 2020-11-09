@@ -1,5 +1,6 @@
 package simelectricity.essential.machines.tile;
 
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.container.Container;
@@ -28,8 +29,8 @@ public class TileCurrentSensor extends SETwoPortMachine<ISESwitch> implements
     ///TileEntity
     /////////////////////////////////////////////////////////
     @Override
-    public void read(CompoundNBT tagCompound) {
-        super.read(tagCompound);
+    public void read(BlockState blockState, CompoundNBT tagCompound) {
+        super.read(blockState, tagCompound);
 
         this.resistance = tagCompound.getDouble("resistance");
         this.thresholdCurrent = tagCompound.getDouble("thresholdCurrent");

@@ -22,12 +22,12 @@ package simelectricity;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import simelectricity.api.SEAPI;
 import simelectricity.common.CommandSimE;
 import simelectricity.common.ConfigManager;
@@ -81,8 +81,8 @@ public class SimElectricity {
     @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
     public final static class ForgeEventBusHandler{	// MinecraftForge.EVENT_BUS MinecraftForgeEventsHandler
         @SubscribeEvent
-        public static void onServerStarting(FMLServerStartingEvent e) {
-        	CommandSimE.register(e.getCommandDispatcher());
+        public static void onServerStarting(RegisterCommandsEvent e) {
+        	CommandSimE.register(e.getDispatcher());
             SELogger.logInfo(SELogger.loader, "Server command registered");
         }
     }
