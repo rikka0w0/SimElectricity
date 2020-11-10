@@ -132,7 +132,7 @@ public final class EnergyNet {
 
         this.dataProvider.fireGridTileUpdateEvent();
 
-        if (calc) {
+        if (calc || this.simulator.getMatrixSolverName() == null) {
             this.simulator.start(needOptimize);
         }
     }
