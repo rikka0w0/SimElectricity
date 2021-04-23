@@ -99,9 +99,9 @@ public class TileCable extends SEEnergyTile implements ISEGenericCable, ISEIumin
         coverPanel.setHost(this, side);
 
         if (!coverPanel.isHollow()) {
-            //If the cover panel is not hollow, it may block some connection
-            if (this.connectedOnSide(side))
-                SEAPI.energyNetAgent.updateTileConnection(this);
+            // If the cover panel is not hollow, it may block some connection
+        	// The connection has to be check anyway, to keep the canConnection(side) record up to date
+            SEAPI.energyNetAgent.updateTileConnection(this);
         }
 
         if (coverPanel instanceof ISEElectricalCoverPanel)

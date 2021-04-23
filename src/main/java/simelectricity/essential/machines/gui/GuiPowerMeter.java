@@ -73,7 +73,7 @@ public class GuiPowerMeter extends SEGuiContainer<ContainerPowerMeter> {
         boolean ret = super.mouseClicked(x, y, button);
 
         if (x >= this.guiLeft + GuiPowerMeter.switchX && y >= this.guiTop + GuiPowerMeter.switchY && x < this.guiLeft + GuiPowerMeter.switchX + GuiPowerMeter.switchSize && y < this.guiTop + GuiPowerMeter.switchY + GuiPowerMeter.switchSize)
-            MessageContainerSync.sendButtonClickEventToSever(this.container, 12, Screen.hasControlDown());
+            MessageContainerSync.sendButtonClickEventToSever(this.container, 0, Screen.hasControlDown());
         
         return ret;
     }
