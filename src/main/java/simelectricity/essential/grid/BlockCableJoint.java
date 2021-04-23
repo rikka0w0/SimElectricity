@@ -123,8 +123,9 @@ public class BlockCableJoint extends BlockBase implements IMetaProvider<ITileMet
     @Override
     public boolean removedByPlayer(BlockState state, World world, BlockPos pos, PlayerEntity player, boolean willHarvest, FluidState fluid) {
         TileEntity te = world.getTileEntity(pos);    //Do this before the tileEntity is removed!
-        if (te instanceof ISEGridTile)
+        if (!world.isRemote && te instanceof ISEGridTile) {
             SEAPI.energyNetAgent.detachGridNode(world, ((ISEGridTile) te).getGridNode());
+        }
 
         return super.removedByPlayer(state, world, pos, player, willHarvest, fluid);
     }

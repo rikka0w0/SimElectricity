@@ -61,7 +61,7 @@ public abstract class BlockAbstractTransformer extends BlockBase {
     @Override
     public boolean removedByPlayer(BlockState state, World world, BlockPos pos, PlayerEntity player, boolean willHarvest, FluidState fluid) {
         TileEntity te = world.getTileEntity(pos);
-        if (te != null) {
+        if (te != null && !world.isRemote) {
             this.getBlueprint().restoreStructure(te, state, true);
         }
 

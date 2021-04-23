@@ -129,7 +129,7 @@ public class BlockPoleConcrete extends BlockBase implements IMetaProvider<BlockP
     @Override
     public boolean removedByPlayer(BlockState state, World world, BlockPos pos, PlayerEntity player, boolean willHarvest, FluidState fluid) {
         TileEntity te = world.getTileEntity(pos);    //Do this before the tileEntity is removed!
-        if (te instanceof ISEGridTile) {
+        if (!world.isRemote && te instanceof ISEGridTile) {
         	ISEGridNode node = ((ISEGridTile) te).getGridNode();
         	if (node != null)
                 SEAPI.energyNetAgent.detachGridNode(world, node);
