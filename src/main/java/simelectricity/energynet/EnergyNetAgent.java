@@ -78,7 +78,7 @@ public class EnergyNetAgent implements ISEEnergyNetAgent {
 
         if (energyNet == null) {
             SELogger.logWarn(SELogger.energyNet, "Attempt to unload the EnergyNet associated with DIM" +
-                    String.valueOf(world.dimension) + " but it does not exist!");
+                    String.valueOf(world.getDimensionKey().getRegistryName()) + " but it does not exist!");
             return;
         }
 

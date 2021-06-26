@@ -1,6 +1,7 @@
 package simelectricity.essential.cable;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
@@ -98,9 +99,9 @@ public class TileCable extends SEEnergyTile implements ISEGenericCable, ISEIumin
         coverPanel.setHost(this, side);
 
         if (!coverPanel.isHollow()) {
-            //If the cover panel is not hollow, it may block some connection
-            if (this.connectedOnSide(side))
-                SEAPI.energyNetAgent.updateTileConnection(this);
+            // If the cover panel is not hollow, it may block some connection
+        	// The connection has to be check anyway, to keep the canConnection(side) record up to date
+            SEAPI.energyNetAgent.updateTileConnection(this);
         }
 
         if (coverPanel instanceof ISEElectricalCoverPanel)
@@ -152,8 +153,8 @@ public class TileCable extends SEEnergyTile implements ISEGenericCable, ISEIumin
     }
 
     @Override
-    public void read(CompoundNBT tagCompound) {
-        super.read(tagCompound);
+    public void read(BlockState blockState, CompoundNBT tagCompound) {
+        super.read(blockState, tagCompound);
 
 		this.color = tagCompound.getInt("color");
 		this.resistance = tagCompound.getDouble("resistance");

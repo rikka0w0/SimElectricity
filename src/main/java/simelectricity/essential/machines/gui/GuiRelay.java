@@ -7,6 +7,9 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 import org.lwjgl.opengl.GL11;
+
+import com.mojang.blaze3d.matrix.MatrixStack;
+
 import simelectricity.essential.utils.SEUnitHelper;
 import simelectricity.essential.utils.client.gui.SEGuiContainer;
 
@@ -20,27 +23,27 @@ public class GuiRelay extends SEGuiContainer<ContainerRelay> {
     }
 
     @Override
-    protected void drawGuiContainerForegroundLayer(int x, int y) {
+    protected void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int x, int y) {
         //draw text and stuff here
         //the parameters for drawString are: string, x, y, color
 
-        this.font.drawString(this.title.getFormattedText(), 8, 6, 4210752);
+        this.font.drawString(matrixStack, this.title.getString(), 8, 6, 4210752);
 
-        this.font.drawString(I18n.format("gui.simelectricity.resistance_internal"), 18, 124, 4210752);
+        this.font.drawString(matrixStack, I18n.format("gui.simelectricity.resistance_internal"), 18, 124, 4210752);
 
         int ybase = 22;
-        this.font.drawString(I18n.format("gui.simelectricity.current"), 10, ybase + 16, 4210752);
-        this.font.drawString(SEUnitHelper.getCurrentStringWithUnit(this.container.current), 10, ybase + 24, 4210752);
-        this.font.drawString("Ron = " + String.format("%.3f", this.container.resistance) + " \u03a9", 10, ybase + 32, 4210752);
+        this.font.drawString(matrixStack, I18n.format("gui.simelectricity.current"), 10, ybase + 16, 4210752);
+        this.font.drawString(matrixStack, SEUnitHelper.getCurrentStringWithUnit(this.container.current), 10, ybase + 24, 4210752);
+        this.font.drawString(matrixStack, "Ron = " + String.format("%.3f", this.container.resistance) + " \u03a9", 10, ybase + 32, 4210752);
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(float opacity, int par2, int par3) {
+    protected void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, float partialTicks, int x, int y) {
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         bindTexture("textures/gui/switch.png");
-        blit(this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
+        blit(matrixStack, this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
 
-        blit(this.guiLeft + GuiRelay.switchX, this.guiTop + GuiRelay.switchY, this.container.isOn ? 208 : 176, 0, 32, 32);
+        blit(matrixStack, this.guiLeft + GuiRelay.switchX, this.guiTop + GuiRelay.switchY, this.container.isOn ? 208 : 176, 0, 32, 32);
 
         this.directionSelector.set(this.container.inputSide, this.container.outputSide);
     }

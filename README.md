@@ -6,7 +6,9 @@ A Minecraft mod aiming to bring real world electrical systems into the Minecraft
 
 Presented by the Chinese Institution of Scientific Minecraft Mod (CISM)
 
-Current Supported Version: Minecraft Forge 1.15.2
+Current Supported Version: Minecraft Forge 1.16.4 (Also work on 1.16.3)
+
+Legacy versions: Minecraft Forge 1.15.2, 1.14.4, 1.12.2, 1.11.2, 1.7.10
 
 ![Image](https://raw.githubusercontent.com/wiki/RoyalAliceAcademyOfSciences/SimElectricity/screenshots/grid.jpg)
 

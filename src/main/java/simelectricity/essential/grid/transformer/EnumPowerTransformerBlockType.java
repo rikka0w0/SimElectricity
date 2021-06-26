@@ -2,7 +2,7 @@ package simelectricity.essential.grid.transformer;
 
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IStringSerializable;
-import net.minecraft.util.math.Vec3i;
+import net.minecraft.util.math.vector.Vector3i;
 import rikka.librikka.ITileMeta;
 import simelectricity.essential.grid.transformer.TilePowerTransformerPlaceHolder;
 
@@ -15,11 +15,11 @@ public enum EnumPowerTransformerBlockType implements ITileMeta, IStringSerializa
     OilPipe,
 
     PlaceholderPrimary(TilePowerTransformerPlaceHolder.Primary.class, null),        //Connection to primary
-    Primary(TilePowerTransformerWinding.Primary.class, new Vec3i(3, 2, 1)),         //Primary node
+    Primary(TilePowerTransformerWinding.Primary.class, new Vector3i(3, 2, 1)),         //Primary node
     PlaceholderSecondary(TilePowerTransformerPlaceHolder.Secondary.class, null),    //Connection to secondary
-    Secondary(TilePowerTransformerWinding.Secondary.class, new Vec3i(4, 2, 3)),     //Secondary node
+    Secondary(TilePowerTransformerWinding.Secondary.class, new Vector3i(4, 2, 3)),     //Secondary node
     Placeholder(TilePowerTransformerPlaceHolder.class, null),
-    Render(TilePowerTransformerPlaceHolder.Render.class, new Vec3i(3, 2, 2));       //Render the structure
+    Render(TilePowerTransformerPlaceHolder.Render.class, new Vector3i(3, 2, 2));       //Render the structure
 
     static final EnumPowerTransformerBlockType[] rawStructure = new EnumPowerTransformerBlockType[6];
     static final EnumPowerTransformerBlockType[] formedStructure = new EnumPowerTransformerBlockType[6];
@@ -41,7 +41,7 @@ public enum EnumPowerTransformerBlockType implements ITileMeta, IStringSerializa
 
     public final boolean formed;
     public final Class<? extends TileEntity> teCls;
-    public final Vec3i offset;
+    public final Vector3i offset;
 
     EnumPowerTransformerBlockType() {
         this.formed = false;
@@ -49,7 +49,7 @@ public enum EnumPowerTransformerBlockType implements ITileMeta, IStringSerializa
         this.offset = null;
     }
     
-    EnumPowerTransformerBlockType(Class<? extends TileEntity> teCls, Vec3i offset) {
+    EnumPowerTransformerBlockType(Class<? extends TileEntity> teCls, Vector3i offset) {
         this.formed = true;
         this.teCls = teCls;
         this.offset = offset;
@@ -62,11 +62,11 @@ public enum EnumPowerTransformerBlockType implements ITileMeta, IStringSerializa
 
 	@Override
 	public String toString() {
-		return this.getName();
+		return this.getString();
 	}
 	
 	@Override
-	public String getName() {
+	public String getString() {
 		return name().toLowerCase();
 	}
 }

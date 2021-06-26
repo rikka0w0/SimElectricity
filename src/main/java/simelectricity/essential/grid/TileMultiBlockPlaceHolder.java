@@ -1,5 +1,6 @@
 package simelectricity.essential.grid;
 
+import net.minecraft.block.BlockState;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -21,8 +22,8 @@ public class TileMultiBlockPlaceHolder extends TileEntityBase implements IMultiB
     /////TileEntity
     //////////////////////////////
     @Override
-    public void read(CompoundNBT nbt) {
-        super.read(nbt);
+    public void read(BlockState state, CompoundNBT nbt) {
+        super.read(state, nbt);
         this.mbInfo = new MultiBlockTileInfo(nbt);
     }
 

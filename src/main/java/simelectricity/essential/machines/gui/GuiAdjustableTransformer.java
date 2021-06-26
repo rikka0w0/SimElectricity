@@ -7,6 +7,9 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 import org.lwjgl.opengl.GL11;
+
+import com.mojang.blaze3d.matrix.MatrixStack;
+
 import simelectricity.essential.utils.SEUnitHelper;
 import simelectricity.essential.utils.client.gui.SEGuiContainer;
 
@@ -17,27 +20,27 @@ public final class GuiAdjustableTransformer extends SEGuiContainer<ContainerAdju
     }
 
     @Override
-    protected void drawGuiContainerForegroundLayer(int x, int y) {
+    protected void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int x, int y) {
         //draw text and stuff here
         //the parameters for drawString are: string, x, y, color
 
-        this.font.drawString(this.title.getFormattedText(), 8, 6, 4210752);
+        this.font.drawString(matrixStack, this.title.getString(), 8, 6, 4210752);
 
-        this.font.drawString(I18n.format("gui.simelectricity.ratio_step_up"), 18, 85, 4210752);
-        this.font.drawString(I18n.format("gui.simelectricity.resistance_secondary"), 18, 124, 4210752);
+        this.font.drawString(matrixStack, I18n.format("gui.simelectricity.ratio_step_up"), 18, 85, 4210752);
+        this.font.drawString(matrixStack, I18n.format("gui.simelectricity.resistance_secondary"), 18, 124, 4210752);
 
-        this.font.drawString("1:" + String.format("%.1f", this.container.ratio), 74, 22, 4210752);
-        this.font.drawString(String.format("%.3f", this.container.outputResistance) + " \u03a9", 100, 56, 4210752);
-        this.font.drawString(SEUnitHelper.getVoltageStringWithUnit(this.container.vPri), 16, 30, 4210752);
-        this.font.drawString(SEUnitHelper.getVoltageStringWithUnit(this.container.vSec), 110, 30, 4210752);
+        this.font.drawString(matrixStack, "1:" + String.format("%.1f", this.container.ratio), 74, 22, 4210752);
+        this.font.drawString(matrixStack, String.format("%.3f", this.container.outputResistance) + " \u03a9", 100, 56, 4210752);
+        this.font.drawString(matrixStack, SEUnitHelper.getVoltageStringWithUnit(this.container.vPri), 16, 30, 4210752);
+        this.font.drawString(matrixStack, SEUnitHelper.getVoltageStringWithUnit(this.container.vSec), 110, 30, 4210752);
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(float opacity, int par2, int par3) {
+    protected void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, float partialTicks, int x, int y) {
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         bindTexture("textures/gui/adjustable_transformer.png");
-        blit(this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
-        blit(this.guiLeft + 74, this.guiTop + 32, 176, 0, 28, 48);
+        blit(matrixStack, this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
+        blit(matrixStack, this.guiLeft + 74, this.guiTop + 32, 176, 0, 28, 48);
 
         this.directionSelector.set(this.container.inputSide, this.container.outputSide);
     }

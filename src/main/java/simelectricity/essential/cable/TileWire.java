@@ -1,5 +1,6 @@
 package simelectricity.essential.cable;
 
+import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
@@ -137,11 +138,11 @@ public class TileWire extends SEEnergyTile implements ISEGenericWire {
     }
 
     @Override
-    public void read(CompoundNBT tagCompound) {
-        super.read(tagCompound);
+    public void read(BlockState blockState, CompoundNBT tagCompound) {
+        super.read(blockState, tagCompound);
 
         for (Direction side : Direction.values())
-            wires[side.ordinal()].readFromNBT(tagCompound.getCompound(side.getName()));
+            wires[side.ordinal()].readFromNBT(tagCompound.getCompound(side.getString()));
 
     }
 
@@ -150,7 +151,7 @@ public class TileWire extends SEEnergyTile implements ISEGenericWire {
         for (Direction side : Direction.values()) {
             CompoundNBT nbt = new CompoundNBT();
             wires[side.ordinal()].write(nbt);
-            tagCompound.put(side.getName(), nbt);
+            tagCompound.put(side.getString(), nbt);
         }
 
         return super.write(tagCompound);
@@ -220,7 +221,7 @@ public class TileWire extends SEEnergyTile implements ISEGenericWire {
         for (Direction side : Direction.values()) {
             CompoundNBT nbt = new CompoundNBT();
             wires[side.ordinal()].write(nbt);
-            tagCompound.put(side.getName(), nbt);
+            tagCompound.put(side.getString(), nbt);
 
             if (connectedOnSide[side.ordinal()])
                 connections |= (1 << side.ordinal());
@@ -240,7 +241,7 @@ public class TileWire extends SEEnergyTile implements ISEGenericWire {
     public void onSyncDataFromServerArrived(CompoundNBT tagCompound) {
         byte connections = tagCompound.getByte("connections");
         for (Direction side : Direction.values()) {
-            wires[side.ordinal()].readFromNBT(tagCompound.getCompound(side.getName()));
+            wires[side.ordinal()].readFromNBT(tagCompound.getCompound(side.getString()));
             connectedOnSide[side.ordinal()] = (connections & (1 << side.ordinal())) > 0;
         }
 

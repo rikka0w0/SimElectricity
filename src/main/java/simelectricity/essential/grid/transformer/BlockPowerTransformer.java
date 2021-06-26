@@ -29,7 +29,7 @@ public class BlockPowerTransformer extends BlockAbstractTransformer implements I
     private static Object[][][] collisionBoxes;
 	public final EnumPowerTransformerBlockType blockType;
     private BlockPowerTransformer(EnumPowerTransformerBlockType type) {
-        super("transformer_35kv_10kv_" + type.getName(), Material.IRON, type.formed ? null : SEAPI.SETab);
+        super("transformer_35kv_10kv_" + type.getString(), Material.IRON, type.formed ? null : SEAPI.SETab);
         this.blockType = type;
     }
 	
@@ -234,12 +234,7 @@ public class BlockPowerTransformer extends BlockAbstractTransformer implements I
 
     ////////////////////////////////////
     /// Rendering
-    ////////////////////////////////////
-    @Override
-    public boolean isNormalCube(BlockState state, IBlockReader worldIn, BlockPos pos) {
-        return false;
-    }
-    
+    ////////////////////////////////////   
 	@Override
 	public BlockRenderType getRenderType(BlockState state) {
 		return blockType.formed ? BlockRenderType.INVISIBLE : BlockRenderType.MODEL;

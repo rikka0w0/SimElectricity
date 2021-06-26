@@ -88,11 +88,6 @@ public abstract class TilePowerPoleBase extends SEEnergyTile implements ISEGridT
     public AxisAlignedBB getRenderBoundingBox() {
         return TileEntity.INFINITE_EXTENT_AABB;
     }
-    
-    @Override
-    public boolean hasFastRenderer() {
-        return true;
-    }
 
     /////////////////////////////////////////////////////////
     ///Sync

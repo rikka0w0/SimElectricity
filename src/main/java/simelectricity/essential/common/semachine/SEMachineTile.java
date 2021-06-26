@@ -8,7 +8,7 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
@@ -34,8 +34,8 @@ public abstract class SEMachineTile extends SEEnergyTile implements ISESocketPro
     /// TileEntity
     ///////////////////////////////////
     @Override
-    public void read(CompoundNBT tagCompound) {
-        super.read(tagCompound);
+    public void read(BlockState blockState, CompoundNBT tagCompound) {
+        super.read(blockState, tagCompound);
         CoverPanelUtils.coverPanelsFromNBT(this, tagCompound, installedCoverPanels);
     }
 
@@ -84,10 +84,10 @@ public abstract class SEMachineTile extends SEEnergyTile implements ISESocketPro
     /////////////////////////////////////////////////////////    
     @Override
     public Direction getSelectedCoverPanel(PlayerEntity player) {
-        Vec3d start = player.getPositionVector().add(0, player.getEyeHeight(), 0);
+        Vector3d start = player.getPositionVec().add(0, player.getEyeHeight(), 0);
         double reachDistance = 5;
-        Vec3d end = start.add(player.getLookVec().normalize().scale(reachDistance));
-        
+        Vector3d end = start.add(player.getLookVec().normalize().scale(reachDistance));
+
         World world = this.getWorld();
         BlockPos pos = this.getPos();
         BlockState blockstate = this.getBlockState();

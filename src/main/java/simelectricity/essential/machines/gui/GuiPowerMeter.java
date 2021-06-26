@@ -8,6 +8,9 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 import org.lwjgl.opengl.GL11;
+
+import com.mojang.blaze3d.matrix.MatrixStack;
+
 import simelectricity.essential.utils.SEUnitHelper;
 import simelectricity.essential.utils.client.gui.SEGuiContainer;
 import simelectricity.essential.utils.network.MessageContainerSync;
@@ -26,31 +29,31 @@ public class GuiPowerMeter extends SEGuiContainer<ContainerPowerMeter> {
     }
 
     @Override
-    protected void drawGuiContainerForegroundLayer(int x, int y) {
+    protected void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int x, int y) {
         //draw text and stuff here
         //the parameters for drawString are: string, x, y, color
 
-        this.font.drawString(this.title.getFormattedText(), 8, 6, 4210752);
+        this.font.drawString(matrixStack, this.title.getString(), 8, 6, 4210752);
 
         int ybase = 22;
-        this.font.drawString(I18n.format("gui.simelectricity.voltage"), 10, ybase, 4210752);
-        this.font.drawString(SEUnitHelper.getVoltageStringWithUnit(this.container.voltage), 10, ybase + 8, 4210752);
-        this.font.drawString(I18n.format("gui.simelectricity.current"), 10, ybase + 16, 4210752);
-        this.font.drawString(SEUnitHelper.getCurrentStringWithUnit(this.container.current), 10, ybase + 24, 4210752);
-        this.font.drawString(I18n.format("gui.simelectricity.power_input"), 10, ybase+32, 4210752);
-        this.font.drawString(SEUnitHelper.getPowerStringWithUnit(this.container.voltage*this.container.current), 10, ybase + 40, 4210752);
-        this.font.drawString(I18n.format("gui.simelectricity.used_energy"), 10, ybase + 48, 4210752);
-        this.font.drawString(SEUnitHelper.getEnergyStringInKWh(this.container.bufferedEnergy), 10, ybase + 56, 4210752);
-        this.font.drawString(SEUnitHelper.getEnergyStringInJ(this.container.bufferedEnergy), 10, ybase + 64, 4210752);
+        this.font.drawString(matrixStack, I18n.format("gui.simelectricity.voltage"), 10, ybase, 4210752);
+        this.font.drawString(matrixStack, SEUnitHelper.getVoltageStringWithUnit(this.container.voltage), 10, ybase + 8, 4210752);
+        this.font.drawString(matrixStack, I18n.format("gui.simelectricity.current"), 10, ybase + 16, 4210752);
+        this.font.drawString(matrixStack, SEUnitHelper.getCurrentStringWithUnit(this.container.current), 10, ybase + 24, 4210752);
+        this.font.drawString(matrixStack, I18n.format("gui.simelectricity.power_input"), 10, ybase+32, 4210752);
+        this.font.drawString(matrixStack, SEUnitHelper.getPowerStringWithUnit(this.container.voltage*this.container.current), 10, ybase + 40, 4210752);
+        this.font.drawString(matrixStack, I18n.format("gui.simelectricity.used_energy"), 10, ybase + 48, 4210752);
+        this.font.drawString(matrixStack, SEUnitHelper.getEnergyStringInKWh(this.container.bufferedEnergy), 10, ybase + 56, 4210752);
+        this.font.drawString(matrixStack, SEUnitHelper.getEnergyStringInJ(this.container.bufferedEnergy), 10, ybase + 64, 4210752);
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(float opacity, int par2, int par3) {
+    protected void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, float partialTicks, int xMouse, int yMouse) {
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         bindTexture("textures/gui/power_meter.png");
-        blit(this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
+        blit(matrixStack, this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
 
-        blit(this.guiLeft + switchX, this.guiTop + switchY, this.container.isOn ? 208 : 176, 0, 32, 32);
+        blit(matrixStack, this.guiLeft + switchX, this.guiTop + switchY, this.container.isOn ? 208 : 176, 0, 32, 32);
 
         this.directionSelector.set(this.container.inputSide, this.container.outputSide);
     }
@@ -70,7 +73,7 @@ public class GuiPowerMeter extends SEGuiContainer<ContainerPowerMeter> {
         boolean ret = super.mouseClicked(x, y, button);
 
         if (x >= this.guiLeft + GuiPowerMeter.switchX && y >= this.guiTop + GuiPowerMeter.switchY && x < this.guiLeft + GuiPowerMeter.switchX + GuiPowerMeter.switchSize && y < this.guiTop + GuiPowerMeter.switchY + GuiPowerMeter.switchSize)
-            MessageContainerSync.sendButtonClickEventToSever(this.container, 12, Screen.hasControlDown());
+            MessageContainerSync.sendButtonClickEventToSever(this.container, 0, Screen.hasControlDown());
         
         return ret;
     }

@@ -8,10 +8,10 @@ import net.minecraft.block.material.Material;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.ai.attributes.IAttributeInstance;
+import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluids;
-import net.minecraft.fluid.IFluidState;
+import net.minecraft.fluid.FluidState;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.DyeColor;
 import net.minecraft.item.DyeItem;
@@ -27,7 +27,7 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.math.shapes.IBooleanFunction;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
@@ -40,6 +40,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.ForgeMod;
 import rikka.librikka.IMetaProvider;
 import rikka.librikka.RayTraceHelper;
 import rikka.librikka.block.BlockBase;
@@ -103,6 +104,7 @@ public class BlockCable extends BlockBase implements ICustomBoundingBox, IMetaPr
         this("cable", 
         		cableData, 
         		Block.Properties.create(Material.GLASS).hardnessAndResistance(0.2F, 10.0F).sound(SoundType.METAL).notSolid()
+        		.setOpaque((a,b,c)->false)
         		, ItemBlockBase.class,
         		(new Item.Properties()).group(SEAPI.SETab),
                 TileCable.class);
@@ -161,15 +163,15 @@ public class BlockCable extends BlockBase implements ICustomBoundingBox, IMetaPr
 
 	@SuppressWarnings("deprecation")
 	@Override
-	public IFluidState getFluidState(BlockState state) {
+	public FluidState getFluidState(BlockState state) {
 		return state.get(BlockStateProperties.WATERLOGGED) ? Fluids.WATER.getStillFluidState(false)
 				: super.getFluidState(state);
 	}
 	
 	@Override
 	public BlockState getStateForPlacement(BlockItemUseContext context) {
-		IFluidState ifluidstate = context.getWorld().getFluidState(context.getPos());
-		return this.getDefaultState().with(BlockStateProperties.WATERLOGGED, ifluidstate.getFluid() == Fluids.WATER);
+		FluidState FluidState = context.getWorld().getFluidState(context.getPos());
+		return this.getDefaultState().with(BlockStateProperties.WATERLOGGED, FluidState.getFluid() == Fluids.WATER);
 	}
 	
 	@SuppressWarnings("deprecation")
@@ -208,11 +210,6 @@ public class BlockCable extends BlockBase implements ICustomBoundingBox, IMetaPr
         }
 
         return null;
-    }
-
-    @Override
-    public boolean isNormalCube(BlockState state, IBlockReader worldIn, BlockPos pos) {
-        return false;
     }
     
 //    @Override
@@ -379,27 +376,27 @@ public class BlockCable extends BlockBase implements ICustomBoundingBox, IMetaPr
     }
     
     // TODO: Check collisionRayTrace (getRayTraceResult) and getRaytraceShape
-    // Was RayTraceResult collisionRayTrace(IBlockState state, World world, BlockPos pos, Vec3d start, Vec3d end)
+    // Was RayTraceResult collisionRayTrace(IBlockState state, World world, BlockPos pos, Vector3d start, Vector3d end)
 //    @Override
-//    public RayTraceResult getRayTraceResult(BlockState state, World world, BlockPos pos, Vec3d start, Vec3d end, RayTraceResult original) {
+//    public RayTraceResult getRayTraceResult(BlockState state, World world, BlockPos pos, Vector3d start, Vector3d end, RayTraceResult original) {
 //    	return this.rayTrace(world, pos, start, end);
 //    }
 
     @Nullable
     public BlockRayTraceResult rayTrace(IBlockReader world, BlockPos pos, PlayerEntity player) {
-        Vec3d start = player.getPositionVector().add(0, player.getEyeHeight(), 0);
+        Vector3d start = player.getPositionVec().add(0, player.getEyeHeight(), 0);
         double reachDistance = 5;
-        
-        IAttributeInstance attrib = player.getAttribute(PlayerEntity.REACH_DISTANCE);
+
+        ModifiableAttributeInstance attrib = player.getAttribute(ForgeMod.REACH_DISTANCE.get());
         if (attrib != null)
         	reachDistance = attrib.getValue();
 
-        Vec3d end = start.add(player.getLookVec().normalize().scale(reachDistance));
+        Vector3d end = start.add(player.getLookVec().normalize().scale(reachDistance));
         return this.rayTrace(world, pos, start, end);
     }
 
     @Nullable
-    public BlockRayTraceResult rayTrace(IBlockReader world, BlockPos pos, Vec3d start, Vec3d end) {
+    public BlockRayTraceResult rayTrace(IBlockReader world, BlockPos pos, Vector3d start, Vector3d end) {
         TileEntity tile = world.getTileEntity(pos);
 
         if (!(tile instanceof ISEGenericCable))
@@ -533,7 +530,7 @@ public class BlockCable extends BlockBase implements ICustomBoundingBox, IMetaPr
     /// Item drops
     ///////////////////////
     @Override
-    public boolean removedByPlayer(BlockState state, World world, BlockPos pos, PlayerEntity player, boolean willHarvest, IFluidState fluid) {
+    public boolean removedByPlayer(BlockState state, World world, BlockPos pos, PlayerEntity player, boolean willHarvest, FluidState fluid) {
 		TileEntity te = world.getTileEntity(pos);
 		if (!(te instanceof ISEGenericCable))
 			return super.removedByPlayer(state, world, pos, player, willHarvest, fluid);

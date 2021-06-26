@@ -8,7 +8,7 @@ import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.fluid.IFluidState;
+import net.minecraft.fluid.FluidState;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.state.StateContainer;
@@ -53,7 +53,8 @@ public class BlockCableJoint extends BlockBase implements IMetaProvider<ITileMet
         super("cable_joint" + meta.name(), 
         		Block.Properties.create(Material.GLASS)
         		.hardnessAndResistance(0.2F, 10.0F)
-        		.sound(SoundType.METAL), SEAPI.SETab);
+        		.sound(SoundType.METAL)
+        		.setOpaque((a,b,c)->false), SEAPI.SETab);
         this.meta = meta;
     }
 
@@ -91,12 +92,7 @@ public class BlockCableJoint extends BlockBase implements IMetaProvider<ITileMet
 
     ////////////////////////////////////
     /// Rendering
-    ////////////////////////////////////
-    @Override
-    public boolean isNormalCube(BlockState state, IBlockReader worldIn, BlockPos pos) {
-        return false;
-    }
-    
+    ////////////////////////////////////    
     @Override
     public VoxelShape getShape(BlockState state, IBlockReader world, BlockPos pos, ISelectionContext context) {
     	return makeCuboidShape(0.0D, 0.0D, 0.0D, 15.0D, 15.0D, 15.0D);
@@ -125,10 +121,11 @@ public class BlockCableJoint extends BlockBase implements IMetaProvider<ITileMet
     }
 
     @Override
-    public boolean removedByPlayer(BlockState state, World world, BlockPos pos, PlayerEntity player, boolean willHarvest, IFluidState fluid) {
+    public boolean removedByPlayer(BlockState state, World world, BlockPos pos, PlayerEntity player, boolean willHarvest, FluidState fluid) {
         TileEntity te = world.getTileEntity(pos);    //Do this before the tileEntity is removed!
-        if (te instanceof ISEGridTile)
+        if (!world.isRemote && te instanceof ISEGridTile) {
             SEAPI.energyNetAgent.detachGridNode(world, ((ISEGridTile) te).getGridNode());
+        }
 
         return super.removedByPlayer(state, world, pos, player, willHarvest, fluid);
     }

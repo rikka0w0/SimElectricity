@@ -92,12 +92,7 @@ public abstract class TilePoleAccessory extends SEEnergyTile implements ISEPoleA
     public AxisAlignedBB getRenderBoundingBox() {
         return TileEntity.INFINITE_EXTENT_AABB;
     }
-    
-    @Override
-    public boolean hasFastRenderer() {
-        return true;
-    }
-    
+
     /////////////////////////////////////////////////////////
     ///Sync
     /////////////////////////////////////////////////////////

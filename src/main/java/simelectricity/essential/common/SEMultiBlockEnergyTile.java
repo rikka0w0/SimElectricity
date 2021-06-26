@@ -1,5 +1,6 @@
 package simelectricity.essential.common;
 
+import net.minecraft.block.BlockState;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Direction;
 import net.minecraftforge.api.distmarker.Dist;
@@ -15,8 +16,8 @@ public abstract class SEMultiBlockEnergyTile extends SEEnergyTile implements IMu
     /////TileEntity
     //////////////////////////////
     @Override
-    public void read(CompoundNBT nbt) {
-        super.read(nbt);
+    public void read(BlockState blockState, CompoundNBT nbt) {
+        super.read(blockState, nbt);
         this.mbInfo = new MultiBlockTileInfo(nbt);
     }
 

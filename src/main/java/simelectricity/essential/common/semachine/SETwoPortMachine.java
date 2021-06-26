@@ -1,5 +1,6 @@
 package simelectricity.essential.common.semachine;
 
+import net.minecraft.block.BlockState;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.util.Direction;
@@ -25,8 +26,8 @@ public abstract class SETwoPortMachine<T extends ISEComponentParameter> extends 
     /// TileEntity
     ///////////////////////////////////
     @Override
-    public void read(CompoundNBT tagCompound) {
-        super.read(tagCompound);
+    public void read(BlockState blockState, CompoundNBT tagCompound) {
+        super.read(blockState, tagCompound);
 
         this.inputSide = Utils.facingFromNbt(tagCompound, "inputSide");
         this.outputSide = Utils.facingFromNbt(tagCompound, "outputSide");

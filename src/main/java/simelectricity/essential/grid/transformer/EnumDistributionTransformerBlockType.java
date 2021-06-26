@@ -31,11 +31,11 @@ public enum EnumDistributionTransformerBlockType implements ITileMeta, IStringSe
 
 	@Override
 	public String toString() {
-		return getName();
+		return getString();
 	}
 
 	@Override
-	public String getName() {
+	public String getString() {
 		return name().toLowerCase();
 	}
     
@@ -46,7 +46,7 @@ public enum EnumDistributionTransformerBlockType implements ITileMeta, IStringSe
 	
 	public static EnumDistributionTransformerBlockType forName(String name) {
 		for(EnumDistributionTransformerBlockType type: EnumDistributionTransformerBlockType.values()) {
-			if (type.getName().equals(name.toLowerCase()))
+			if (type.getString().equals(name.toLowerCase()))
 				return type;
 		}
 		return null;

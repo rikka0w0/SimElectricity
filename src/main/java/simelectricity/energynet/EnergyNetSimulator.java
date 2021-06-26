@@ -8,6 +8,8 @@ import simelectricity.energynet.matrix.IMatrixSolver;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+import javax.annotation.Nullable;
+
 public class EnergyNetSimulator extends Thread {
 	/////////////////////////////////////////////////
 	/// Configuration
@@ -24,11 +26,12 @@ public class EnergyNetSimulator extends Thread {
      * Matrix solving algorithm used to solve the problem
      */
     private IMatrixSolver matrix;
-    
+
+    @Nullable
     public String getMatrixSolverName() {
-        return matrix.getClass().getSimpleName();
+        return matrix == null ? null : matrix.getClass().getSimpleName();
     }
-    
+
     private volatile boolean configChanged;
     public void setConfigChanged() {
     	configChanged = true;

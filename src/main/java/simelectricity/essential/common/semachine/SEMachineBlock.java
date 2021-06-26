@@ -4,7 +4,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.fluid.IFluidState;
+import net.minecraft.fluid.FluidState;
 import net.minecraft.state.StateContainer;
 import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.block.BlockState;
@@ -82,7 +82,7 @@ public abstract class SEMachineBlock extends BlockBase {
     /// CoverPanelHandler
     ///////////////////////////////
     @Override
-    public boolean removedByPlayer(BlockState state, World world, BlockPos pos, PlayerEntity player, boolean willHarvest, IFluidState fluid) {
+    public boolean removedByPlayer(BlockState state, World world, BlockPos pos, PlayerEntity player, boolean willHarvest, FluidState fluid) {
 		TileEntity te = world.getTileEntity(pos);
 		if (!(te instanceof ISECoverPanelHost))
 			return super.removedByPlayer(state, world, pos, player, willHarvest, fluid);

@@ -10,7 +10,7 @@ import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluids;
-import net.minecraft.fluid.IFluidState;
+import net.minecraft.fluid.FluidState;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -24,6 +24,7 @@ import net.minecraft.util.math.shapes.IBooleanFunction;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.shapes.VoxelShapes;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.client.resources.I18n;
@@ -81,7 +82,8 @@ public class BlockWire extends BlockBase implements ICustomBoundingBox, IMetaPro
         this("wire", meta, 
         		Block.Properties.create(Material.GLASS)
         		.hardnessAndResistance(0.2F, 10.0F)
-        		.sound(SoundType.METAL),
+        		.sound(SoundType.METAL)
+        		.setOpaque((a,b,c)->false),
         		ItemBlockWire.class,
         		(new Item.Properties()).group(SEAPI.SETab),
                 TileWire.class);
@@ -146,10 +148,10 @@ public class BlockWire extends BlockBase implements ICustomBoundingBox, IMetaPro
             BlockPos pos = context.getPos();
             Hand hand = context.getHand();
             Direction facing = context.getFace();
-            Vec3d vec3d = context.getHitVec().subtract(pos.getX(), pos.getY(), pos.getZ());
-            float hitX = (float) vec3d.x;
-            float hitY = (float) vec3d.y;
-            float hitZ = (float) vec3d.z;
+            Vector3d Vector3d = context.getHitVec().subtract(pos.getX(), pos.getY(), pos.getZ());
+            float hitX = (float) Vector3d.x;
+            float hitY = (float) Vector3d.y;
+            float hitZ = (float) Vector3d.z;
             
             
         	float x = hitX-facing.getXOffset()-0.5f;
@@ -404,15 +406,15 @@ public class BlockWire extends BlockBase implements ICustomBoundingBox, IMetaPro
 
 	@SuppressWarnings("deprecation")
 	@Override
-	public IFluidState getFluidState(BlockState state) {
+	public FluidState getFluidState(BlockState state) {
 		return state.get(BlockStateProperties.WATERLOGGED) ? Fluids.WATER.getStillFluidState(false)
 				: super.getFluidState(state);
 	}
 	
 	@Override
 	public BlockState getStateForPlacement(BlockItemUseContext context) {
-		IFluidState ifluidstate = context.getWorld().getFluidState(context.getPos());
-		return this.getDefaultState().with(BlockStateProperties.WATERLOGGED, ifluidstate.getFluid() == Fluids.WATER);
+		FluidState FluidState = context.getWorld().getFluidState(context.getPos());
+		return this.getDefaultState().with(BlockStateProperties.WATERLOGGED, FluidState.getFluid() == Fluids.WATER);
 	}
 	
 	@SuppressWarnings("deprecation")
@@ -453,15 +455,10 @@ public class BlockWire extends BlockBase implements ICustomBoundingBox, IMetaPro
         return null;
     }
 
-    @Override
-    public boolean isNormalCube(BlockState state, IBlockReader worldIn, BlockPos pos) {
-        return false;
-    }
-
     //////////////////////////////////
     ///CollisionBoxes
     //////////////////////////////////
-    public Vec3d getBranchVecOffset(Direction side) {
+    public Vector3d getBranchVecOffset(Direction side) {
         float thickness = meta.thickness();
         double x = 0, y = 0, z = 0;
         switch (side) {
@@ -485,7 +482,7 @@ public class BlockWire extends BlockBase implements ICustomBoundingBox, IMetaPro
                 break;
         }
 
-        return new Vec3d(x, y, z);
+        return new Vector3d(x, y, z);
     }
 
     public AxisAlignedBB getBranchBoundingBox(Direction side, Direction branch, boolean ignoreCorner, boolean onlyCorner) {
@@ -629,26 +626,26 @@ public class BlockWire extends BlockBase implements ICustomBoundingBox, IMetaPro
     }
 
     // TODO: Check collisionRayTrace (getRayTraceResult) and getRaytraceShape
-    // Was RayTraceResult collisionRayTrace(IBlockState state, World world, BlockPos pos, Vec3d start, Vec3d end)
+    // Was RayTraceResult collisionRayTrace(IBlockState state, World world, BlockPos pos, Vector3d start, Vector3d end)
 //    @Override
-//    public RayTraceResult getRayTraceResult(BlockState state, World world, BlockPos pos, Vec3d start, Vec3d end, RayTraceResult original) {
+//    public RayTraceResult getRayTraceResult(BlockState state, World world, BlockPos pos, Vector3d start, Vector3d end, RayTraceResult original) {
 //    	return this.rayTrace(world, pos, start, end);
 //    }
 
     @Nullable
     public BlockRayTraceResult rayTrace(IBlockReader world, BlockPos pos, PlayerEntity player) {
-        Vec3d start = player.getPositionVector().add(0, player.getEyeHeight(), 0);
+        Vector3d start = player.getPositionVec().add(0, player.getEyeHeight(), 0);
         double reachDistance = 5;
         
 //        if (player instanceof EntityPlayerMP)
 //            reachDistance = ((EntityPlayerMP) player).interactionManager.getBlockReachDistance();
 
-        Vec3d end = start.add(player.getLookVec().normalize().scale(reachDistance));
+        Vector3d end = start.add(player.getLookVec().normalize().scale(reachDistance));
         return this.rayTrace(world, pos, start, end);
     }
 
     @Nullable
-    public BlockRayTraceResult rayTrace(IBlockReader world, BlockPos pos, Vec3d start, Vec3d end) {
+    public BlockRayTraceResult rayTrace(IBlockReader world, BlockPos pos, Vector3d start, Vector3d end) {
         TileEntity tile = world.getTileEntity(pos);
         if (!(tile instanceof ISEGenericWire))
             return RayTraceHelper.computeTrace(null, pos, start, end, VoxelShapes.fullCube().getBoundingBox(), -1);
@@ -868,7 +865,7 @@ public class BlockWire extends BlockBase implements ICustomBoundingBox, IMetaPro
     ///////////////////////
     ThreadLocal<List<ItemStack>> itemDrops = new ThreadLocal<>();
     @Override
-    public boolean removedByPlayer(BlockState state, World world, BlockPos pos, PlayerEntity player, boolean willHarvest, IFluidState fluid) {
+    public boolean removedByPlayer(BlockState state, World world, BlockPos pos, PlayerEntity player, boolean willHarvest, FluidState fluid) {
         if (world.isRemote)
             return false;
 

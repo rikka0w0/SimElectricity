@@ -6,7 +6,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.fluid.IFluidState;
+import net.minecraft.fluid.FluidState;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.Item;
 import net.minecraft.state.EnumProperty;
@@ -15,7 +15,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3i;
+import net.minecraft.util.math.vector.Vector3i;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.math.shapes.VoxelShapes;
@@ -46,7 +46,7 @@ public class BlockPoleMetal35kV extends BlockBase implements ISEHVCableConnector
 		host;
 
 		@Override
-		public String getName() {
+		public String getString() {
 			return name();
 		}
 	}
@@ -54,7 +54,8 @@ public class BlockPoleMetal35kV extends BlockBase implements ISEHVCableConnector
 	private BlockPoleMetal35kV(int type) {
 		super("pole_metal_35kv_" + String.valueOf(type), Block.Properties.create(Material.ROCK)
         		.hardnessAndResistance(0.2F, 10.0F)
-        		.sound(SoundType.METAL), 
+        		.sound(SoundType.METAL)
+        		.setOpaque((a,b,c)->false),
         		ItemBlock.class, 
         		(new Item.Properties()).group(SEAPI.SETab));
 		
@@ -66,8 +67,8 @@ public class BlockPoleMetal35kV extends BlockBase implements ISEHVCableConnector
 		return new BlockPoleMetal35kV[] {new BlockPoleMetal35kV(0), new BlockPoleMetal35kV(1)};
 	}
 	
-	public final static Vec3i hostOffset = new Vec3i(5, 18, 2);
-	public final static Vec3i hostOffset45 = new Vec3i(4, 18, 4);
+	public final static Vector3i hostOffset = new Vector3i(5, 18, 2);
+	public final static Vector3i hostOffset45 = new Vector3i(4, 18, 4);
     protected MultiBlockStructure createStructureTemplate() {
         //y,z,x facing NORTH(Z-), do not change
         BlockMapping[][][] configuration = new BlockMapping[19][][];
@@ -309,7 +310,7 @@ public class BlockPoleMetal35kV extends BlockBase implements ISEHVCableConnector
 	}
 	
     @Override
-    public boolean removedByPlayer(BlockState state, World world, BlockPos pos, PlayerEntity player, boolean willHarvest, IFluidState fluid) {
+    public boolean removedByPlayer(BlockState state, World world, BlockPos pos, PlayerEntity player, boolean willHarvest, FluidState fluid) {
         TileEntity te = world.getTileEntity(pos);
         if (te != null && !world.isRemote) {
         	DirHorizontal8 facing = state.get(DirHorizontal8.prop);
@@ -421,11 +422,6 @@ public class BlockPoleMetal35kV extends BlockBase implements ISEHVCableConnector
     ////////////////////////////////////
     /// Rendering
     ////////////////////////////////////
-    @Override
-    public boolean isNormalCube(BlockState state, IBlockReader worldIn, BlockPos pos) {
-        return false;
-    }
-    
 	@Override
 	public BlockRenderType getRenderType(BlockState state) {
 		Type type = state.get(propType);
