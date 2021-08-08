@@ -15,11 +15,11 @@ public abstract class SEEnergyTile extends TileEntityBase {
 
     /**
      * Called just before joining the energyNet, do some initialization here </p>
-     * Should not use onLoad() in client anyway!
+     * Should not use clearRemoved() in client anyway!
      */
     @Override
-    public void onLoad() {
-    	super.onLoad();
+    public void clearRemoved() {
+    	super.clearRemoved();
         if (!this.level.isClientSide && !this.isAddedToEnergyNet) {
             SEAPI.energyNetAgent.attachTile(this);
             isAddedToEnergyNet = true;

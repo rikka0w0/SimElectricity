@@ -3,7 +3,6 @@ package simelectricity.essential.utils.client.gui;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.core.Direction;
@@ -13,7 +12,6 @@ import net.minecraft.network.chat.TextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import rikka.librikka.gui.GuiDirectionSelector;
-import simelectricity.essential.Essential;
 import simelectricity.essential.utils.network.MessageContainerSync;
 
 @OnlyIn(Dist.CLIENT)
@@ -51,17 +49,5 @@ public abstract class SEGuiContainer<TC extends AbstractContainerMenu> extends A
 			}
         };
         return this.addRenderableWidget(directionSelector);
-    }
-
-    protected void bindTexture(String name) {
-    	bindTexture(Essential.MODID, name);
-    }
-
-    protected void bindTexture(String namespace, String name) {
-    	bindTexture(new ResourceLocation(namespace,name));
-    }
-
-    protected void bindTexture(ResourceLocation resLoc) {
-    	this.minecraft.getTextureManager().bindForSetup(resLoc);
     }
 }

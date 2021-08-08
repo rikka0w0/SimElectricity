@@ -36,7 +36,7 @@ public class EnergyNetSimulator extends Thread {
     public void setConfigChanged() {
     	configChanged = true;
     }
-    
+
     private void checkAndUpdateConfig() {
         if (configChanged) {
         	configChanged = false;
@@ -46,7 +46,7 @@ public class EnergyNetSimulator extends Thread {
             matrix = IMatrixSolver.newSolver(ConfigManager.matrixSolver.get());
         }
     }
-    
+
 	/////////////////////////////////////////////////
 	/// Runtime
 	/////////////////////////////////////////////////
@@ -55,13 +55,13 @@ public class EnergyNetSimulator extends Thread {
      * Records the number of iterations during last iterating process
      */
     protected volatile int iterations;
-    
+
     private volatile boolean needOptimize;    	//Set to true to launch the optimizer
     private volatile boolean processing;    	//An indicator of the EnergyNet state
     private volatile long duration;            	//Time taken for the latest simulation, in milliseconds
     private volatile boolean suicide;
     private volatile boolean newResultAvaliable;
-    
+
     protected EnergyNetSimulator(EnergyNetDataProvider dataProvider, String name) {
     	this.dataProvider = dataProvider;
     	this.setName(name);
@@ -69,14 +69,14 @@ public class EnergyNetSimulator extends Thread {
     	this.suicide = false;
     	this.newResultAvaliable = false;
     }
-    
+
 	/////////////////////////////////////////////////
 	/// Info
 	/////////////////////////////////////////////////
     public int getIterations() {
     	return this.iterations;
     }
-    
+
     public long getTimeConsumption() {
     	return this.duration;
     }
@@ -84,11 +84,11 @@ public class EnergyNetSimulator extends Thread {
     public float getMatrixSize() {
     	return this.matrix.getMatrixSize();
     }
-    
+
     public float getTotalNonZeros() {
     	return this.matrix.getTotalNonZeros();
     }
-    
+
     public float getDensity() {
         if (this.matrix.getMatrixSize() == 0) {
             return Float.NaN;
@@ -96,7 +96,7 @@ public class EnergyNetSimulator extends Thread {
         	return (float)this.matrix.getTotalNonZeros() * 100F / (float)this.matrix.getMatrixSize() / (float)this.matrix.getMatrixSize();
         }
     }
-    
+
 	/////////////////////////////////////////////////
 	/// Threading
 	/////////////////////////////////////////////////
@@ -112,27 +112,27 @@ public class EnergyNetSimulator extends Thread {
     	this.suicide = true;
     	this.interrupt();
     }
-    
+
     public boolean isWorking() {
     	return this.processing;
     }
-    
+
     public void start(boolean needOptimize) {
     	this.needOptimize = needOptimize;
-    	
+
     	if (!this.isAlive())
     		this.start();
-    	
-    	synchronized (this) {  
+
+    	synchronized (this) {
     		this.notify();
         }
     }
-    
+
     @Override
     public void run() {
         long startAt;
-        
-        while(true){  
+
+        while(true){
             try {
                 SELogger.logInfo(SELogger.simulator, this.getName() + " wake up");
 
@@ -151,23 +151,23 @@ public class EnergyNetSimulator extends Thread {
                 processing = false;
                 newResultAvaliable = true;
                 SELogger.logInfo(SELogger.simulator, this.getName() + " sleep");
-            	
-                synchronized (this) {  
-                    wait();  
+
+                synchronized (this) {
+                    wait();
                 }
             } catch (InterruptedException e) {
             	if (this.suicide) {
                 	SELogger.logInfo(SELogger.general, this.getName() + " is shutting down");
             		return;
             	}
-            	
-                e.printStackTrace();  
-            }  
-        }  
-        
-        
+
+                e.printStackTrace();
+            }
+        }
+
+
     }
-    
+
     /**
      * @param voltages input, node voltage array from last iteration
      * @param currents output, return the new current mismatch
@@ -504,7 +504,7 @@ public class EnergyNetSimulator extends Thread {
                 diagonalElement += Gd;
             }
 
-            
+
             this.matrix.setElementValue(columnNode.index, columnNode.index, diagonalElement);
         }
 

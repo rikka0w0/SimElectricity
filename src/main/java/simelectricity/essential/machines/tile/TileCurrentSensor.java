@@ -113,6 +113,6 @@ public class TileCurrentSensor extends SETwoPortMachine<ISESwitch> implements
     ///////////////////////////////////
 	@Override
 	public AbstractContainerMenu createMenu(int windowId, Inventory inv, Player player) {
-		return new ContainerCurrentSensor(this, windowId);
+		return new ContainerCurrentSensor(this, windowId, player);
 	}
 }

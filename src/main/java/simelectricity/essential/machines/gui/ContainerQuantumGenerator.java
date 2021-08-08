@@ -1,6 +1,7 @@
 package simelectricity.essential.machines.gui;
 
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
 import rikka.librikka.container.ContainerSynchronizer;
 import rikka.librikka.gui.AutoGuiHandler;
 import simelectricity.api.SEAPI;
@@ -20,13 +21,13 @@ public class ContainerQuantumGenerator extends ContainerNoInvAutoSync<TileQuantu
     public double current;
 
     // Server side
-    public ContainerQuantumGenerator(TileQuantumGenerator tileEntity, int windowId) {
-        super(tileEntity, windowId);
+    public ContainerQuantumGenerator(TileQuantumGenerator tileEntity, int windowId, Player player) {
+        super(tileEntity, windowId, player);
     }
 
     // Client side
     public ContainerQuantumGenerator(int windowId, Inventory inv) {
-    	this(null, windowId);
+    	this(null, windowId, null);
     }
 
     @Override

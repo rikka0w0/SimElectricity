@@ -57,6 +57,6 @@ public class TileVoltageMeter extends SESinglePortMachine<ISEVoltageSource> impl
     ///////////////////////////////////
 	@Override
 	public AbstractContainerMenu createMenu(int windowID, Inventory playerInv, Player player) {
-		return new ContainerVoltageMeter(this, windowID);
+		return new ContainerVoltageMeter(this, windowID, player);
 	}
 }

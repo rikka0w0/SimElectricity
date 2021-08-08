@@ -93,6 +93,6 @@ public class TileQuantumGenerator extends SESinglePortMachine<ISEVoltageSource> 
     ///////////////////////////////////
 	@Override
 	public AbstractContainerMenu createMenu(int windowID, Inventory playerInv, Player player) {
-		return new ContainerQuantumGenerator(this, windowID);
+		return new ContainerQuantumGenerator(this, windowID, player);
 	}
 }

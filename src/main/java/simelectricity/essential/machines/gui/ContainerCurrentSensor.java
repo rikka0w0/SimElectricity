@@ -1,6 +1,7 @@
 package simelectricity.essential.machines.gui;
 
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.core.Direction;
 import rikka.librikka.container.ContainerSynchronizer;
 import rikka.librikka.gui.AutoGuiHandler;
@@ -23,13 +24,13 @@ public class ContainerCurrentSensor extends ContainerNoInventoryTwoPort<TileCurr
     public boolean emitRedstoneSignal;
 
     // Server side
-    public ContainerCurrentSensor(TileCurrentSensor tileEntity, int windowId) {
-    	super(tileEntity, windowId);
+    public ContainerCurrentSensor(TileCurrentSensor tileEntity, int windowId, Player player) {
+    	super(tileEntity, windowId, player);
     }
 
     // Client side
     public ContainerCurrentSensor(int windowId, Inventory inv) {
-    	this(null, windowId);
+    	this(null, windowId, null);
     }
 
     @Override

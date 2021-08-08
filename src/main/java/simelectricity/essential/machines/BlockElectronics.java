@@ -8,9 +8,13 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.core.Direction;
+import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.BlockHitResult;
@@ -22,6 +26,7 @@ import net.minecraft.world.level.Level;
 import rikka.librikka.IMetaProvider;
 import rikka.librikka.ITileMeta;
 import rikka.librikka.Utils;
+import rikka.librikka.tileentity.ITickableBlockEntity;
 import simelectricity.essential.api.ISECoverPanelHost;
 import simelectricity.essential.api.coverpanel.ISECoverPanel;
 import simelectricity.essential.common.CoverPanelUtils;
@@ -31,18 +36,20 @@ import simelectricity.essential.machines.tile.*;
 
 public abstract class BlockElectronics extends SEMachineBlock implements IMetaProvider<ITileMeta> {
 	public static enum Type implements ITileMeta {
-		voltage_meter(TileVoltageMeter.class),
-		quantum_generator(TileQuantumGenerator.class),
-		adjustable_resistor(TileAdjustableResistor.class),
-		incandescent_lamp(TileIncandescentLamp.class),
-		electric_furnace(TileElectricFurnace.class),
-		transformer_se2rf(TileSE2RF.class),
-		transformer_rf2se(TileRF2SE.class);
+		voltage_meter(TileVoltageMeter.class, false),
+		quantum_generator(TileQuantumGenerator.class, false),
+		adjustable_resistor(TileAdjustableResistor.class, true),
+		incandescent_lamp(TileIncandescentLamp.class, false),
+		electric_furnace(TileElectricFurnace.class, true),
+		transformer_se2rf(TileSE2RF.class, true),
+		transformer_rf2se(TileRF2SE.class, true);
 
-		Type(Class<? extends BlockEntity> teCls) {
+		Type(Class<? extends BlockEntity> teCls, boolean tickable) {
 			this.teCls = teCls;
+			this.tickable = tickable;
 		}
 
+		public final boolean tickable;
 		public final Class<? extends BlockEntity> teCls;
 
 		@Override
@@ -56,6 +63,12 @@ public abstract class BlockElectronics extends SEMachineBlock implements IMetaPr
 	public final ITileMeta meta() {
 		return meta;
 	}
+
+    @Override
+    public boolean useObjModel() {
+		return meta == Type.transformer_se2rf ||
+				meta == Type.transformer_rf2se;
+    }
 
     ///////////////////////////////
     ///Block Properties
@@ -75,12 +88,6 @@ public abstract class BlockElectronics extends SEMachineBlock implements IMetaPr
     				return meta == Type.incandescent_lamp ||
     						meta == Type.electric_furnace;
     			}
-
-    		    @Override
-    		    public boolean useObjModel() {
-    				return meta == Type.transformer_se2rf ||
-    						meta == Type.transformer_rf2se;
-    		    }
     		};
     	}
 
@@ -90,11 +97,16 @@ public abstract class BlockElectronics extends SEMachineBlock implements IMetaPr
 	@Override
 	public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
     	try {
-			return meta.teCls().getConstructor().newInstance();
+			return meta.create(pos, state);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
+	}
+
+	@Override
+	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> beType) {
+		return meta.tickable && !level.isClientSide() ? ITickableBlockEntity::genericTicker : null;
 	}
 
     private final static VoxelShape vsXfmRFSE_NS = Shapes.or(
@@ -175,5 +187,15 @@ public abstract class BlockElectronics extends SEMachineBlock implements IMetaPr
 
             ((SESinglePortMachine<?>) te).SetFunctionalSide(sight);
         }
+    }
+
+    @Override
+    public boolean removedByPlayer(BlockState state, Level level, BlockPos pos, Player player, boolean willHarvest, FluidState fluid) {
+    	BlockEntity blockEntity = level.getBlockEntity(pos);
+    	if (blockEntity instanceof TileElectricFurnace) {
+    		Containers.dropContents(level, pos, ((TileElectricFurnace)blockEntity).inventory);
+    	}
+
+    	return super.removedByPlayer(state, level, pos, player, willHarvest, fluid);
     }
 }

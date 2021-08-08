@@ -1,6 +1,7 @@
 package simelectricity.essential.machines.gui;
 
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
 import rikka.librikka.container.ContainerSynchronizer;
 import rikka.librikka.gui.AutoGuiHandler;
 import simelectricity.essential.common.ContainerNoInvAutoSync;
@@ -21,13 +22,13 @@ public class ContainerRF2SE extends ContainerNoInvAutoSync<TileRF2SE> implements
     public int rfInputRateDisplay;
 
     // Server side
-    public ContainerRF2SE(TileRF2SE tileEntity, int windowId) {
-        super(tileEntity, windowId);
+    public ContainerRF2SE(TileRF2SE tileEntity, int windowId, Player player) {
+        super(tileEntity, windowId, player);
     }
 
     // Client side
     public ContainerRF2SE(int windowId, Inventory inv) {
-    	this(null, windowId);
+    	this(null, windowId, null);
     }
 
     @Override

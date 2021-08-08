@@ -2,18 +2,21 @@ package simelectricity.essential.machines.gui;
 
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-import org.lwjgl.opengl.GL11;
-
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 
+import simelectricity.essential.Essential;
 import simelectricity.essential.utils.client.gui.SEGuiContainer;
 
 @OnlyIn(Dist.CLIENT)
 public class GuiElectricFurnace extends SEGuiContainer<ContainerElectricFurnace>{
+	private static final ResourceLocation bgTexture =
+			new ResourceLocation(Essential.MODID, "textures/gui/electric_furnace.png");
     public GuiElectricFurnace(ContainerElectricFurnace screenContainer, Inventory inv, Component titleIn) {
         super(screenContainer, inv, titleIn);
     }
@@ -33,8 +36,8 @@ public class GuiElectricFurnace extends SEGuiContainer<ContainerElectricFurnace>
     @Override
     protected void renderBg(PoseStack matrixStack, float partialTicks, int xMouse, int yMouse) {
         //draw your Gui here, only thing you need to change is the path
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        bindTexture("textures/gui/electric_furnace.png");
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.setShaderTexture(0, bgTexture);
         int x = (width - imageWidth) / 2;
         int y = (height - imageHeight) / 2;
         this.blit(matrixStack, x, y, 0, 0, imageWidth, imageHeight);

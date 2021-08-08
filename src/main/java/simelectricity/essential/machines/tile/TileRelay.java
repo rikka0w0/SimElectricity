@@ -125,6 +125,6 @@ public class TileRelay extends SETwoPortMachine<ISESwitch> implements ISESwitch,
     ///////////////////////////////////
     @Override
     public AbstractContainerMenu createMenu(int windowId, Inventory inv, Player player) {
-    	return new ContainerRelay(this, windowId);
+    	return new ContainerRelay(this, windowId, player);
     }
 }

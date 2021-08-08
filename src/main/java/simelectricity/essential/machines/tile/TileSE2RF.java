@@ -6,7 +6,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import rikka.librikka.tileentity.ITickableTileEntity;
+import rikka.librikka.tileentity.ITickableBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraftforge.api.distmarker.Dist;
@@ -24,7 +24,7 @@ import simelectricity.essential.common.semachine.SESinglePortMachine;
 import simelectricity.essential.machines.gui.ContainerSE2RF;
 
 public class TileSE2RF extends SESinglePortMachine<ISEConstantPowerLoad> implements
-		ISEConstantPowerLoad, ISEEnergyNetUpdateHandler, ITickableTileEntity, INamedContainerProvider2 {
+		ISEConstantPowerLoad, ISEEnergyNetUpdateHandler, ITickableBlockEntity, INamedContainerProvider2 {
     public TileSE2RF(BlockPos pos, BlockState blockState) {
 		super(pos, blockState);
 	}
@@ -261,7 +261,7 @@ public class TileSE2RF extends SESinglePortMachine<ISEConstantPowerLoad> impleme
     ///////////////////////////////////
 	@Override
 	public AbstractContainerMenu createMenu(int windowId, Inventory inv, Player player) {
-		return new ContainerSE2RF(this, windowId);
+		return new ContainerSE2RF(this, windowId, player);
 	}
 
     ///////////////////////////////////

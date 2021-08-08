@@ -3,18 +3,19 @@ package simelectricity.essential.common;
 import javax.annotation.Nullable;
 
 import net.minecraft.core.Direction;
+import net.minecraft.world.entity.player.Player;
 import simelectricity.api.SEAPI;
 import simelectricity.essential.Essential;
 import simelectricity.essential.common.semachine.SETwoPortMachine;
 import simelectricity.essential.utils.network.ISEDirectionSelectorEventHandler;
 
 public abstract class ContainerNoInventoryTwoPort<HOST extends SETwoPortMachine<?>> extends ContainerNoInvAutoSync<HOST> implements ISEDirectionSelectorEventHandler {
-	public ContainerNoInventoryTwoPort(@Nullable HOST host, int windowID) {
-		this(host, Essential.MODID, windowID);
+	public ContainerNoInventoryTwoPort(@Nullable HOST host, int windowID, Player player) {
+		this(host, Essential.MODID, windowID, player);
 	}
-	
-    public ContainerNoInventoryTwoPort(@Nullable HOST host, String namespace, int windowID) {
-		super(host, namespace, windowID);
+
+    public ContainerNoInventoryTwoPort(@Nullable HOST host, String namespace, int windowID, Player player) {
+		super(host, namespace, windowID, player);
 	}
 
     @Override

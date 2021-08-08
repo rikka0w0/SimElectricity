@@ -9,7 +9,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.crafting.SmeltingRecipe;
 import net.minecraft.nbt.CompoundTag;
-import rikka.librikka.tileentity.ITickableTileEntity;
+import rikka.librikka.tileentity.ITickableBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraftforge.common.capabilities.Capability;
@@ -32,7 +32,7 @@ import java.util.Optional;
 import javax.annotation.Nonnull;
 
 public class TileElectricFurnace extends SESinglePortMachine<ISEVoltageSource> implements
-		ISEVoltageSource, ISE2StateTile, ISEEnergyNetUpdateHandler, ITickableTileEntity, INamedContainerProvider2 {
+		ISEVoltageSource, ISE2StateTile, ISEEnergyNetUpdateHandler, ITickableBlockEntity, INamedContainerProvider2 {
     public TileElectricFurnace(BlockPos pos, BlockState blockState) {
 		super(pos, blockState);
 	}
@@ -104,8 +104,8 @@ public class TileElectricFurnace extends SESinglePortMachine<ISEVoltageSource> i
     }
 
     @Override
-    public void onLoad() {
-    	super.onLoad();
+    public void clearRemoved() {
+    	super.clearRemoved();
     	itemStackHandler.onContentsChanged(0);
     }
 
@@ -150,7 +150,6 @@ public class TileElectricFurnace extends SESinglePortMachine<ISEVoltageSource> i
         return super.getCapability(capability, facing);
     }
 
-    final TileElectricFurnace furnance = this;
     ItemStackHandlerImpl itemStackHandler = new ItemStackHandlerImpl(this);
     private final LazyOptional<?> itemStackHdlerCap = LazyOptional.of(()->itemStackHandler);
     public final ItemStackHandlerInventory inventory = new ItemStackHandlerInventory(itemStackHandler) {
@@ -159,9 +158,14 @@ public class TileElectricFurnace extends SESinglePortMachine<ISEVoltageSource> i
 //			furnance.markDirty();
 		}
 
+        @Override
+        public boolean canPlaceItem(int slot, @Nonnull ItemStack stack) {
+        	return slot == 0 && TileElectricFurnace.this.getSmeltingResult(stack) != null;
+        }
+
 		@Override
 		public boolean stillValid(Player player) {
-	        if (furnance.getLevel().getBlockEntity(furnance.getBlockPos()) != furnance)
+	        if (TileElectricFurnace.this.getLevel().getBlockEntity(TileElectricFurnace.this.getBlockPos()) != TileElectricFurnace.this)
 	            return false;
 
 	        final double X_CENTRE_OFFSET = 0.5;

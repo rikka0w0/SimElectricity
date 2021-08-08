@@ -2,21 +2,25 @@ package simelectricity.essential.machines.gui;
 
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-import org.lwjgl.opengl.GL11;
-
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 
+import simelectricity.essential.Essential;
 import simelectricity.essential.utils.SEUnitHelper;
 import simelectricity.essential.utils.client.gui.SEGuiContainer;
 import simelectricity.essential.utils.network.MessageContainerSync;
 
 @OnlyIn(Dist.CLIENT)
 public final class GuiSwitch extends SEGuiContainer<ContainerSwitch> {
+	private static final ResourceLocation bgTexture =
+			new ResourceLocation(Essential.MODID, "textures/gui/switch.png");
+
     ////////////////////////
     /// Switch
     ////////////////////////
@@ -27,7 +31,7 @@ public final class GuiSwitch extends SEGuiContainer<ContainerSwitch> {
     public GuiSwitch(ContainerSwitch screenContainer, Inventory inv, Component titleIn) {
         super(screenContainer, inv, titleIn);
     }
-    
+
     @Override
     protected void renderLabels(PoseStack matrixStack, int x, int y) {
         //draw text and stuff here
@@ -48,8 +52,8 @@ public final class GuiSwitch extends SEGuiContainer<ContainerSwitch> {
 
     @Override
     protected void renderBg(PoseStack matrixStack, float partialTicks, int x, int y) {
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        bindTexture("textures/gui/switch.png");
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.setShaderTexture(0, bgTexture);
         blit(matrixStack, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight);
 
         blit(matrixStack, this.leftPos + GuiSwitch.switchX, this.topPos + GuiSwitch.switchY, this.container.isOn ? 208 : 176, 0, 32, 32);
@@ -87,7 +91,7 @@ public final class GuiSwitch extends SEGuiContainer<ContainerSwitch> {
 
         if (x >= this.leftPos + GuiSwitch.switchX && y >= this.topPos + GuiSwitch.switchY && x < this.leftPos + GuiSwitch.switchX + GuiSwitch.switchSize && y < this.topPos + GuiSwitch.switchY + GuiSwitch.switchSize)
             MessageContainerSync.sendButtonClickEventToSever(this.container, 12, Screen.hasControlDown());
-        
+
         return ret;
     }
 }

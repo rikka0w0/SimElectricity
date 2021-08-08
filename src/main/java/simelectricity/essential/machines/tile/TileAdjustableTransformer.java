@@ -86,6 +86,6 @@ public class TileAdjustableTransformer extends SETwoPortMachine<ISETransformer> 
     ///////////////////////////////////
 	@Override
 	public AbstractContainerMenu createMenu(int windowID, Inventory inv, Player player) {
-		return new ContainerAdjustableTransformer(this, windowID);
+		return new ContainerAdjustableTransformer(this, windowID, player);
 	}
 }

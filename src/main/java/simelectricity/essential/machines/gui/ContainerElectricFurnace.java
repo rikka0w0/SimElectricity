@@ -4,7 +4,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.inventory.ContainerListener;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import rikka.librikka.container.ContainerInventory;
@@ -14,13 +14,13 @@ import simelectricity.essential.Essential;
 import simelectricity.essential.machines.tile.TileElectricFurnace;
 import simelectricity.essential.utils.network.MessageContainerSync;
 
-import java.util.Iterator;
-
 @AutoGuiHandler.Marker(GuiElectricFurnace.class)
 public class ContainerElectricFurnace extends ContainerInventory<Container> {
 	private TileElectricFurnace te;
     @ContainerSynchronizer.SyncField
     public int progress;
+
+    protected final Player player;
 
     // Client side
     public ContainerElectricFurnace(int windowId, Inventory playerInv) {
@@ -37,6 +37,8 @@ public class ContainerElectricFurnace extends ContainerInventory<Container> {
     // Common
     private ContainerElectricFurnace(int windowId, Inventory playerInv, Container machineInv) {
         super(Essential.MODID, windowId, playerInv, machineInv);
+        this.player = playerInv.player;
+
         addSlot(new Slot(machineInv, 0, 43, 33) {
             @Override
             public boolean mayPlace(ItemStack itemStack) {
@@ -61,13 +63,6 @@ public class ContainerElectricFurnace extends ContainerInventory<Container> {
         if (changeList == null)
             return;
 
-        Iterator<ContainerListener> iterator = getListeners().iterator();
-        while (iterator.hasNext()) {
-            ContainerListener crafter = iterator.next();
-
-            if (crafter instanceof ServerPlayer) {
-                MessageContainerSync.syncToClient((ServerPlayer) crafter, changeList);
-            }
-        }
+        MessageContainerSync.syncToClient((ServerPlayer) this.player, changeList);
     }
 }

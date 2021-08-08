@@ -33,9 +33,13 @@ public abstract class SEMachineBlock extends BlockBase implements EntityBlock {
         		, SEAPI.SETab);
     }
 
-    public abstract boolean hasSecondState();
+    public boolean hasSecondState() {
+    	return false;
+    }
 
-    public abstract boolean useObjModel();
+    public boolean useObjModel() {
+    	return false;
+    }
 
     ///////////////////////////////
     ///BlockStates

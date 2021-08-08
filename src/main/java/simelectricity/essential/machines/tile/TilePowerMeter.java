@@ -7,7 +7,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import rikka.librikka.tileentity.ITickableTileEntity;
+import rikka.librikka.tileentity.ITickableBlockEntity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import rikka.librikka.tileentity.INamedContainerProvider2;
@@ -17,7 +17,7 @@ import simelectricity.essential.common.semachine.SETwoPortMachine;
 import simelectricity.essential.machines.gui.ContainerPowerMeter;
 
 public class TilePowerMeter extends SETwoPortMachine<ISESwitch> implements
-		ISESwitch, ISEEnergyNetUpdateHandler, ITickableTileEntity, INamedContainerProvider2 {
+		ISESwitch, ISEEnergyNetUpdateHandler, ITickableBlockEntity, INamedContainerProvider2 {
     public TilePowerMeter(BlockPos pos, BlockState blockState) {
 		super(pos, blockState);
 	}
@@ -98,6 +98,6 @@ public class TilePowerMeter extends SETwoPortMachine<ISESwitch> implements
     ///////////////////////////////////
 	@Override
 	public AbstractContainerMenu createMenu(int windowId, Inventory inv, Player player) {
-        return new ContainerPowerMeter(this, windowId);
+        return new ContainerPowerMeter(this, windowId, player);
     }
 }

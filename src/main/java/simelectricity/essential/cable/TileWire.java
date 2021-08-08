@@ -132,11 +132,11 @@ public class TileWire extends SEEnergyTile implements ISEGenericWire {
     ///////////////////////////////////
 
     @Override
-    public void onLoad() {
+    public void clearRemoved() {
         for (Direction side : Direction.values())
             this.nodes[side.ordinal()] = SEAPI.energyNetAgent.newComponent(this.wires[side.ordinal()], this);
 
-        super.onLoad();
+        super.clearRemoved();
     }
 
     @Override

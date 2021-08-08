@@ -69,6 +69,6 @@ public class TileDiode extends SETwoPortMachine<ISEDiode> implements
     ///////////////////////////////////
 	@Override
 	public AbstractContainerMenu createMenu(int windowID, Inventory inv, Player player) {
-		return new ContainerDiode(this, windowID);
+		return new ContainerDiode(this, windowID, player);
 	}
 }

@@ -89,7 +89,7 @@ public class VoltageSensorPanel implements ISEElectricalCoverPanel, ISERedstoneE
     /////////////////////////
     @Override
     public AbstractContainerMenu createMenu(int windowId, Inventory inv, Player player) {
-        return new ContainerVoltageSensor(this, windowId);
+        return new ContainerVoltageSensor(this, windowId, player);
     }
 
 	@Override

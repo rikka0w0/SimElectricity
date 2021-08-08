@@ -46,18 +46,11 @@ public class EnergyNetDataProvider extends SavedData {
 
     public static EnergyNetDataProvider get(Level world) {
         if (world.isClientSide)
-            throw new RuntimeException("Not allowed to create WiWorldData in client");
+            throw new RuntimeException("Cannot create SavedData on client side!");
 
-        // The IS_GLOBAL constant is there for clarity, and should be simplified into the right branch.
         DimensionDataStorage storage = ((ServerLevel)world).getDataStorage();
         EnergyNetDataProvider instance = storage.computeIfAbsent(EnergyNetDataProvider::load, EnergyNetDataProvider::new, EnergyNetDataProvider.DATA_NAME);
 
-        if (instance == null) {
-            //instance = new EnergyNetDataProvider();
-            //storage.set(instance);
-        	// TODO check DimensionDataStorage::computeIfAbsent
-        	return null;
-        }
         return instance;
     }
 

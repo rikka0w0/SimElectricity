@@ -131,6 +131,6 @@ public class TileSwitch extends SETwoPortMachine<ISESwitch> implements
     ///////////////////////////////////
 	@Override
 	public AbstractContainerMenu createMenu(int windowId, Inventory inv, Player player) {
-		return new ContainerSwitch(this, windowId);
+		return new ContainerSwitch(this, windowId, player);
 	}
 }

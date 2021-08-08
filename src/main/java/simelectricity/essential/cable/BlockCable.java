@@ -39,9 +39,6 @@ import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.Level;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.ForgeMod;
 import rikka.librikka.IMetaProvider;
 import rikka.librikka.RayTraceHelper;
@@ -559,7 +556,8 @@ public class BlockCable extends BlockBase implements EntityBlock, ICustomBoundin
     ///////////////////////
     ///Redstone
     ///////////////////////
-    // TODO: Fix isSignalSource see DiodeBlock RepeaterBlock
+    // TODO: Fix isSignalSource see DiodeBlock RepeaterBlock RedStoneWireBlock
+    // https://github.com/MinecraftForge/MinecraftForge/issues/7915
     /*@Override
     public boolean isSignalSource(BlockState state, BlockGetter world, BlockPos pos, @Nullable Direction side) {
         BlockEntity te = world.getBlockEntity(pos);

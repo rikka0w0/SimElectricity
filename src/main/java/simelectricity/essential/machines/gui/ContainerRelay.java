@@ -1,6 +1,7 @@
 package simelectricity.essential.machines.gui;
 
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.core.Direction;
 import rikka.librikka.container.ContainerSynchronizer;
 import rikka.librikka.gui.AutoGuiHandler;
@@ -20,13 +21,13 @@ public class ContainerRelay extends ContainerNoInventoryTwoPort<TileRelay> imple
     public volatile Direction inputSide, outputSide;
 
     // Server side
-    public ContainerRelay(TileRelay tileEntity, int windowId) {
-    	super(tileEntity, windowId);
+    public ContainerRelay(TileRelay tileEntity, int windowId, Player player) {
+    	super(tileEntity, windowId, player);
     }
 
     // Client side
     public ContainerRelay(int windowId, Inventory inv) {
-    	this(null, windowId);
+    	this(null, windowId, null);
     }
 
     @Override

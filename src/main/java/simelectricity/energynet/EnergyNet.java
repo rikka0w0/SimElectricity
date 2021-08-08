@@ -53,9 +53,9 @@ public final class EnergyNet {
         String dimName = world.dimension().getRegistryName().toString();
 
         //Initialize thread
-        this.simulator = new EnergyNetSimulator(dataProvider, "SEEnergyNet_DIM" + dimName);
+        this.simulator = new EnergyNetSimulator(dataProvider, "SEEnergyNet_DIM_" + dimName);
 
-        SELogger.logInfo(SELogger.general, "EnergyNet has been created for DIM" + dimName);
+        SELogger.logInfo(SELogger.general, "EnergyNet has been created for DIM " + dimName);
     }
 
     public synchronized boolean isNodeValid(ISESimulatable node) {
@@ -91,7 +91,7 @@ public final class EnergyNet {
 
         if (this.cachedEvents.isEmpty() && !this.scheduledRefresh)
         	return;
-        
+
         if (this.scheduledRefresh) {
             calc = true;
             needOptimize = true;
@@ -143,7 +143,7 @@ public final class EnergyNet {
     public String[] info() {
         SEGraph tileEntityGraph = this.dataProvider.getTEGraph();
         int iterations = this.simulator.getIterations();
-        
+
         if (tileEntityGraph.size() == 0 && this.dataProvider.getGridObjectCount() == 0) {
             return new String[]{
                     "EnergyNet is empty and idle",
@@ -219,7 +219,7 @@ public final class EnergyNet {
 
         return Double.NaN;
     }
-    
+
     @Override
     public String toString() {
     	return "EnergyNet for " + world.gatherChunkSourceStats();

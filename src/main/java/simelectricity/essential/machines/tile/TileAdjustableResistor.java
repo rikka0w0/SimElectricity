@@ -7,7 +7,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import rikka.librikka.tileentity.ITickableTileEntity;
+import rikka.librikka.tileentity.ITickableBlockEntity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import rikka.librikka.tileentity.INamedContainerProvider2;
@@ -17,7 +17,7 @@ import simelectricity.essential.common.semachine.SESinglePortMachine;
 import simelectricity.essential.machines.gui.ContainerAdjustableResistor;
 
 public class TileAdjustableResistor extends SESinglePortMachine<ISEVoltageSource> implements
-		ISEVoltageSource, ISEEnergyNetUpdateHandler, ITickableTileEntity, INamedContainerProvider2 {
+		ISEVoltageSource, ISEEnergyNetUpdateHandler, ITickableBlockEntity, INamedContainerProvider2 {
     public TileAdjustableResistor(BlockPos pos, BlockState blockState) {
 		super(pos, blockState);
 	}
@@ -101,6 +101,6 @@ public class TileAdjustableResistor extends SESinglePortMachine<ISEVoltageSource
     ///////////////////////////////////
 	@Override
 	public AbstractContainerMenu createMenu(int windowId, Inventory inv, Player player) {
-		return new ContainerAdjustableResistor(this, windowId);
+		return new ContainerAdjustableResistor(this, windowId, player);
 	}
 }

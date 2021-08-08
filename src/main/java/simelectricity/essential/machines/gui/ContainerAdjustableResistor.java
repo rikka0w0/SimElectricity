@@ -1,6 +1,7 @@
 package simelectricity.essential.machines.gui;
 
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
 import rikka.librikka.container.ContainerSynchronizer;
 import rikka.librikka.gui.AutoGuiHandler;
 import simelectricity.api.SEAPI;
@@ -22,13 +23,13 @@ public class ContainerAdjustableResistor extends ContainerNoInvAutoSync<TileAdju
     public double bufferedEnergy;
 
     // Server side
-    public ContainerAdjustableResistor(TileAdjustableResistor tileEntity, int windowId) {
-    	super(tileEntity, windowId);
+    public ContainerAdjustableResistor(TileAdjustableResistor tileEntity, int windowId, Player player) {
+    	super(tileEntity, windowId, player);
     }
 
     // Client side
     public ContainerAdjustableResistor(int windowId, Inventory inv) {
-    	this(null, windowId);
+    	this(null, windowId, null);
     }
 
     @Override

@@ -38,7 +38,7 @@ public class BlockPowerTransformer extends BlockAbstractTransformer implements I
     	for (EnumPowerTransformerBlockType type: EnumPowerTransformerBlockType.rawStructure) {
     		ret[type.ordinal()] = new RawStructureBlock(type);
     	}
-    	for (EnumPowerTransformerBlockType type: EnumPowerTransformerBlockType.rawStructure) {
+    	for (EnumPowerTransformerBlockType type: EnumPowerTransformerBlockType.formedStructure) {
     		ret[type.ordinal()] = new FormedStructureBlock(type);
     	}
     	return ret;
