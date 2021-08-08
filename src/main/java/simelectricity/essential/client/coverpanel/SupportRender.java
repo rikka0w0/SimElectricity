@@ -1,10 +1,10 @@
 package simelectricity.essential.client.coverpanel;
 
-import net.minecraft.client.renderer.model.BakedQuad;
-import net.minecraft.client.renderer.model.IBakedModel;
+import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.TextureStitchEvent;
@@ -35,7 +35,7 @@ public enum SupportRender implements IModelBakeHandler {
     }
     
 	@Override
-	public IBakedModel onModelBakeEvent() {
+	public BakedModel onModelBakeEvent() {
 		TextureAtlasSprite texture = EasyTextureLoader.blockTextureGetter().apply(resLoc);
 		textures = new TextureAtlasSprite[]{null, null, texture, texture, texture, texture};
 		return null;

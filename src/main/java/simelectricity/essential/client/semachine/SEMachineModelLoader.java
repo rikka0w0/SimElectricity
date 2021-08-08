@@ -10,56 +10,57 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.mojang.datafixers.util.Pair;
 
-import net.minecraft.client.renderer.model.BlockModel;
-import net.minecraft.client.renderer.model.IBakedModel;
-import net.minecraft.client.renderer.model.IModelTransform;
-import net.minecraft.client.renderer.model.IUnbakedModel;
-import net.minecraft.client.renderer.model.ItemOverrideList;
-import net.minecraft.client.renderer.model.RenderMaterial;
-import net.minecraft.client.renderer.model.ModelBakery;
+import net.minecraft.client.renderer.block.model.BlockModel;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.resources.model.ModelState;
+import net.minecraft.client.resources.model.UnbakedModel;
+import net.minecraft.client.renderer.block.model.ItemOverrides;
+import net.minecraft.client.resources.model.Material;
+import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.resources.IResourceManager;
-import net.minecraft.util.JSONUtils;
-import net.minecraft.util.LazyValue;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.util.GsonHelper;
+import net.minecraft.util.LazyLoadedValue;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.model.BlockModelConfiguration;
 import net.minecraftforge.client.model.IModelConfiguration;
 import net.minecraftforge.client.model.IModelLoader;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.client.model.geometry.IModelGeometry;
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
+import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 import simelectricity.essential.Essential;
 
 public class SEMachineModelLoader implements IModelLoader<SEMachineModelLoader.Wrapper> {
 	public final static ResourceLocation id = new ResourceLocation(Essential.MODID, "machine");
 	public final static IModelLoader<?> instance = new SEMachineModelLoader();
-	public final static LazyValue<Gson> vanillaParser = new LazyValue<>(
-			()->ObfuscationReflectionHelper.getPrivateValue(BlockModel.class, null, "field_178319_a")
+	@SuppressWarnings("deprecation")
+	public final static LazyLoadedValue<Gson> vanillaParser = new LazyLoadedValue<>(
+			()->ObfuscationReflectionHelper.getPrivateValue(BlockModel.class, null, "GSON")
 		);
-	
+
 	@Override
-	public void onResourceManagerReload(IResourceManager resourceManager) {
+	public void onResourceManagerReload(ResourceManager resourceManager) {
 		// We didn't cache anything so do nothing here
 	}
-	
+
 	@Override
 	public Wrapper read(JsonDeserializationContext deserializationContext, JsonObject modelContents) {
         if (modelContents.has("loader2")) {
-            String loader2 = JSONUtils.getString(modelContents, "loader2");
+            String loader2 = GsonHelper.getAsString(modelContents, "loader2");
             final IModelGeometry<?> secondaryGeometry = ModelLoaderRegistry.getModel(
-            		new ResourceLocation(loader2), 
-            		deserializationContext, 
+            		new ResourceLocation(loader2),
+            		deserializationContext,
             		modelContents);
-            
+
             if (secondaryGeometry == null)
             	return null;
-            
+
             return new ForgeWrapper(secondaryGeometry);
         } else {
             return new VanillaWrapper();
         }
 	}
-	
+
 	public static IModelGeometry<?> getModelGeometry(BlockModel model) {
 		IModelGeometry<?> geometry = null;
 		try {
@@ -70,93 +71,93 @@ public class SEMachineModelLoader implements IModelLoader<SEMachineModelLoader.W
 		} catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
 			e.printStackTrace();
 		}
-		
+
 		return geometry;
 	}
-	
+
 	public static interface Wrapper extends IModelGeometry<Wrapper> {
-		
+
 	}
-	
+
 	public static class VanillaWrapper implements Wrapper {
 		@Override
-		public IBakedModel bake(IModelConfiguration owner, 
-				ModelBakery bakery, 
-				Function<RenderMaterial, TextureAtlasSprite> spriteGetter, 
-				IModelTransform modelTransform, 
-				ItemOverrideList overrides, 
+		public BakedModel bake(IModelConfiguration owner,
+				ModelBakery bakery,
+				Function<Material, TextureAtlasSprite> spriteGetter,
+				ModelState modelTransform,
+				ItemOverrides overrides,
 				ResourceLocation modelLocation) {
-			
-			IUnbakedModel unbakedOwner = owner.getOwnerModel();
+
+			UnbakedModel unbakedOwner = owner.getOwnerModel();
 			if (!(unbakedOwner instanceof BlockModel))
-				return unbakedOwner.bakeModel(bakery, spriteGetter, modelTransform, modelLocation);
-			
+				return unbakedOwner.bake(bakery, spriteGetter, modelTransform, modelLocation);
+
 			BlockModel ownerBlockModel = (BlockModel) unbakedOwner;
 			for (BlockModel blockModel=ownerBlockModel; blockModel!=null; blockModel=blockModel.parent) {
 				if (getModelGeometry(blockModel) == this) {
-					IBakedModel vanillaModel;
+					BakedModel vanillaModel;
 					synchronized(blockModel.customData) {
 						blockModel.customData.setCustomGeometry(null);
-						vanillaModel = ownerBlockModel.bakeModel(bakery, ownerBlockModel, spriteGetter, modelTransform, modelLocation, true);
+						vanillaModel = ownerBlockModel.bake(bakery, ownerBlockModel, spriteGetter, modelTransform, modelLocation, true);
 						blockModel.customData.setCustomGeometry(this);
 					}
-					
+
 					return new SEMachineModel(vanillaModel);
 				}
 			}
-			
+
 			throw new RuntimeException("Unable to locate the ModelGeometry in the model dependency tree!");
 		}
 
 		@Override
-		public Collection<RenderMaterial> getTextures(IModelConfiguration owner, 
-				Function<ResourceLocation, IUnbakedModel> modelGetter, 
+		public Collection<Material> getTextures(IModelConfiguration owner,
+				Function<ResourceLocation, UnbakedModel> modelGetter,
 				Set<Pair<String, String>> missingTextureErrors) {
-			
-			IUnbakedModel unbakedOwner = owner.getOwnerModel();
+
+			UnbakedModel unbakedOwner = owner.getOwnerModel();
 			if (!(unbakedOwner instanceof BlockModel))
-				return unbakedOwner.getTextures(modelGetter, missingTextureErrors);
-			
+				return unbakedOwner.getMaterials(modelGetter, missingTextureErrors);
+
 			BlockModel ownerBlockModel = (BlockModel) unbakedOwner;
 			for (BlockModel blockModel=ownerBlockModel; blockModel!=null; blockModel=blockModel.parent) {
 				if (getModelGeometry(blockModel) == this) {
-					Collection<RenderMaterial> materials;
+					Collection<Material> materials;
 					synchronized(blockModel.customData) {
 						blockModel.customData.setCustomGeometry(null);
-						materials = ownerBlockModel.getTextures(modelGetter, missingTextureErrors);
+						materials = ownerBlockModel.getMaterials(modelGetter, missingTextureErrors);
 						blockModel.customData.setCustomGeometry(this);
 					}
-					
+
 					return materials;
 				}
 			}
-			
+
 			throw new RuntimeException("Unable to locate the ModelGeometry in the model dependency tree!");
 		}
 	}
 
 	public static class ForgeWrapper implements Wrapper {
 		public final IModelGeometry<?> modelGeometry;
-		
+
 		public ForgeWrapper(IModelGeometry<?> modelGeometry) {
 			this.modelGeometry = modelGeometry;
 		}
-		
+
 		@Override
-		public IBakedModel bake(IModelConfiguration owner, 
-				ModelBakery bakery, 
-				Function<RenderMaterial, TextureAtlasSprite> spriteGetter, 
-				IModelTransform modelTransform, 
-				ItemOverrideList overrides, 
+		public BakedModel bake(IModelConfiguration owner,
+				ModelBakery bakery,
+				Function<Material, TextureAtlasSprite> spriteGetter,
+				ModelState modelTransform,
+				ItemOverrides overrides,
 				ResourceLocation modelLocation) {
-			IBakedModel bakedModel = 
+			BakedModel bakedModel =
 				modelGeometry.bake(owner, bakery, spriteGetter, modelTransform, overrides, modelLocation);
 			return new SEMachineModel(bakedModel);
 		}
 
 		@Override
-		public Collection<RenderMaterial> getTextures(IModelConfiguration owner, 
-				Function<ResourceLocation, IUnbakedModel> modelGetter, 
+		public Collection<Material> getTextures(IModelConfiguration owner,
+				Function<ResourceLocation, UnbakedModel> modelGetter,
 				Set<Pair<String, String>> missingTextureErrors) {
 			return modelGeometry.getTextures(owner, modelGetter, missingTextureErrors);
 		}

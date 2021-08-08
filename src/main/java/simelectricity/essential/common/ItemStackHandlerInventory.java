@@ -1,10 +1,10 @@
 package simelectricity.essential.common;
 
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.Container;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
-public abstract class ItemStackHandlerInventory implements IInventory {
+public abstract class ItemStackHandlerInventory implements Container {
 	protected IItemHandlerModifiable itemHandler;
 	
 	public ItemStackHandlerInventory(IItemHandlerModifiable itemHandler) {
@@ -12,39 +12,39 @@ public abstract class ItemStackHandlerInventory implements IInventory {
 	}
 	
 	@Override
-	public int getSizeInventory() {
+	public int getContainerSize() {
 		return this.itemHandler.getSlots();
 	}
 
 	@Override
 	public boolean isEmpty() {
-		for (int i = 0; i < getSizeInventory(); i++)
-			if (!this.getStackInSlot(i).isEmpty())
+		for (int i = 0; i < getContainerSize(); i++)
+			if (!this.getItem(i).isEmpty())
 				return false;
 
 		return true;
 	}
 
 	@Override
-	public ItemStack getStackInSlot(int slotIndex) {
+	public ItemStack getItem(int slotIndex) {
 	    return this.itemHandler.getStackInSlot(slotIndex);
 	}
 	
 	@Override
-	public ItemStack decrStackSize(int slotIndex, int count) {
-	    ItemStack itemStackInSlot = getStackInSlot(slotIndex);
+	public ItemStack removeItem(int slotIndex, int count) {
+	    ItemStack itemStackInSlot = getItem(slotIndex);
 	    if (itemStackInSlot.isEmpty()) return ItemStack.EMPTY;  //isEmpty(), EMPTY_ITEM
 	
 	    ItemStack itemStackRemoved;
 	    if (itemStackInSlot.getCount() <= count) { //getStackSize
 	        itemStackRemoved = itemStackInSlot;
-	        setInventorySlotContents(slotIndex, ItemStack.EMPTY); // EMPTY_ITEM
+	        setItem(slotIndex, ItemStack.EMPTY); // EMPTY_ITEM
 	    } else {
 	        itemStackRemoved = itemStackInSlot.split(count);
 	        if (itemStackInSlot.getCount() == 0) //getStackSize
-	            setInventorySlotContents(slotIndex, ItemStack.EMPTY); //EMPTY_ITEM
+	            setItem(slotIndex, ItemStack.EMPTY); //EMPTY_ITEM
 	    }
-	    markDirty();
+	    setChanged();
 	    return itemStackRemoved;
 	}
 
@@ -55,38 +55,38 @@ public abstract class ItemStackHandlerInventory implements IInventory {
 	 * @return
 	 */
 	@Override
-	public ItemStack removeStackFromSlot(int slotIndex) {
-	    ItemStack itemStack = getStackInSlot(slotIndex);
+	public ItemStack removeItemNoUpdate(int slotIndex) {
+	    ItemStack itemStack = getItem(slotIndex);
 	    if (!itemStack.isEmpty())
-	        setInventorySlotContents(slotIndex, ItemStack.EMPTY);  //isEmpty();  EMPTY_ITEM
+	        setItem(slotIndex, ItemStack.EMPTY);  //isEmpty();  EMPTY_ITEM
 	    return itemStack;
 	}
 
 	@Override
-	public void setInventorySlotContents(int slotIndex, ItemStack itemstack) {
-	    if (!itemstack.isEmpty() && itemstack.getCount() > getInventoryStackLimit())  // isEmpty();  getStackSize()
-	        itemstack.setCount(getInventoryStackLimit());  //setStackSize()
+	public void setItem(int slotIndex, ItemStack itemstack) {
+	    if (!itemstack.isEmpty() && itemstack.getCount() > getMaxStackSize())  // isEmpty();  getStackSize()
+	        itemstack.setCount(getMaxStackSize());  //setStackSize()
 	    this.itemHandler.setStackInSlot(slotIndex, itemstack);
 
 //	    if (getStackInSlot(0).isEmpty() && itemstack.isEmpty())
 //	    	onContentsChanged(slotIndex);
 	
-	    markDirty();
+	    setChanged();
 	}
 
 	@Override
-	public int getInventoryStackLimit() {
+	public int getMaxStackSize() {
 	    return this.itemHandler.getSlotLimit(0);	// This is slot sensitive in IItemHandler
 	}
 
 	@Override
-	public boolean isItemValidForSlot(int slot, ItemStack stack) {
+	public boolean canPlaceItem(int slot, ItemStack stack) {
 		return this.itemHandler.isItemValid(slot, stack);
 	}
 
 	@Override
-	public void clear() {
-		for (int i=0; i<getSizeInventory(); i++) {
+	public void clearContent() {
+		for (int i=0; i<getContainerSize(); i++) {
 			this.itemHandler.setStackInSlot(i, ItemStack.EMPTY);
 		}
 	}

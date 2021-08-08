@@ -5,11 +5,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import net.minecraft.block.Block;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.ContainerType;
-import net.minecraft.item.Item;
-import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.registries.IForgeRegistry;
 import rikka.librikka.IMetaProvider;
 import rikka.librikka.ITileMeta;
@@ -29,7 +29,7 @@ import simelectricity.essential.machines.*;
 import simelectricity.essential.machines.gui.*;
 
 public class BlockRegistry {    
-	public final static List<Class<? extends Container>> registeredGuiContainers = new LinkedList<>();
+	public final static List<Class<? extends AbstractContainerMenu>> registeredGuiContainers = new LinkedList<>();
 	private final static Set<Item> blockItems = new LinkedHashSet<>();
 	
 	public static BlockCable[] blockCable;
@@ -85,7 +85,7 @@ public class BlockRegistry {
     	blockItems.forEach(registry::register);
     }
 
-    public static void registerTileEntities(final IForgeRegistry<TileEntityType<?>> registry) {    	
+    public static void registerTileEntities(final IForgeRegistry<BlockEntityType<?>> registry) {    	
     	TileEntityHelper.registerTileEntity(registry, TileCable.class, blockCable);
     	TileEntityHelper.registerTileEntity(registry, TileWire.class, blockWire);
     	
@@ -121,7 +121,7 @@ public class BlockRegistry {
     	RegisterTEs(registry, blockTwoPortElectronics);
     }
     
-    public static void registerContainers(final IForgeRegistry<ContainerType<?>> registry) {
+    public static void registerContainers(final IForgeRegistry<MenuType<?>> registry) {
     	registerGuiContainer(registry, ContainerVoltageMeter.class);
     	registerGuiContainer(registry, ContainerQuantumGenerator.class);
     	registerGuiContainer(registry, ContainerAdjustableResistor.class);
@@ -147,13 +147,13 @@ public class BlockRegistry {
     		blockItems.add(block.asItem());
     }
     
-    private static <T extends Block&IMetaProvider<ITileMeta>> void RegisterTEs(IForgeRegistry<TileEntityType<?>> registry, T[] blocks) {
+    private static <T extends Block&IMetaProvider<ITileMeta>> void RegisterTEs(IForgeRegistry<BlockEntityType<?>> registry, T[] blocks) {
     	for (T block: blocks) {
     		TileEntityHelper.registerTileEntity(registry, block.meta().teCls(), block);
     	}
 	}
     
-    private static void registerGuiContainer(final IForgeRegistry<ContainerType<?>> registry, Class<? extends Container> containerCls) {
+    private static void registerGuiContainer(final IForgeRegistry<MenuType<?>> registry, Class<? extends AbstractContainerMenu> containerCls) {
     	ContainerHelper.register(registry, containerCls);
     	registeredGuiContainers.add(containerCls);
     }

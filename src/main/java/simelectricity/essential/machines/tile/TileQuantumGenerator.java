@@ -1,11 +1,12 @@
 package simelectricity.essential.machines.tile;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.Direction;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import rikka.librikka.tileentity.INamedContainerProvider2;
@@ -14,9 +15,13 @@ import simelectricity.api.components.ISEVoltageSource;
 import simelectricity.essential.common.semachine.SESinglePortMachine;
 import simelectricity.essential.machines.gui.ContainerQuantumGenerator;
 
-public class TileQuantumGenerator extends SESinglePortMachine<ISEVoltageSource> implements 
+public class TileQuantumGenerator extends SESinglePortMachine<ISEVoltageSource> implements
 		ISEVoltageSource, ISEEnergyNetUpdateHandler, INamedContainerProvider2 {
-    //Component parameters
+    public TileQuantumGenerator(BlockPos pos, BlockState blockState) {
+		super(pos, blockState);
+	}
+
+	//Component parameters
     public double internalVoltage = 230;
     public double resistance = 0.1;
 
@@ -25,22 +30,22 @@ public class TileQuantumGenerator extends SESinglePortMachine<ISEVoltageSource> 
     public double current;
 
     ///////////////////////////////////
-    /// TileEntity
+    /// BlockEntity
     ///////////////////////////////////
     @Override
-    public void read(BlockState blockState, CompoundNBT tagCompound) {
-        super.read(blockState, tagCompound);
+    public void load(CompoundTag tagCompound) {
+        super.load(tagCompound);
 
         this.internalVoltage = tagCompound.getDouble("internalVoltage");
         this.resistance = tagCompound.getDouble("resistance");
     }
 
     @Override
-    public CompoundNBT write(CompoundNBT tagCompound) {
+    public CompoundTag save(CompoundTag tagCompound) {
         tagCompound.putDouble("internalVoltage", this.internalVoltage);
         tagCompound.putDouble("resistance", this.resistance);
 
-        return super.write(tagCompound);
+        return super.save(tagCompound);
     }
 
     ///////////////////////////////////
@@ -82,12 +87,12 @@ public class TileQuantumGenerator extends SESinglePortMachine<ISEVoltageSource> 
     public int getSocketIconIndex(Direction side) {
         return side == this.functionalSide ? 1 : -1;
     }
-    
+
     ///////////////////////////////////
-    /// INamedContainerProvider
+    /// MenuProvider
     ///////////////////////////////////
 	@Override
-	public Container createMenu(int windowID, PlayerInventory playerInv, PlayerEntity player) {
+	public AbstractContainerMenu createMenu(int windowID, Inventory playerInv, Player player) {
 		return new ContainerQuantumGenerator(this, windowID);
 	}
 }

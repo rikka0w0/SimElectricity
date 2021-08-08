@@ -1,6 +1,6 @@
 package simelectricity.energynet.components;
 
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import simelectricity.api.components.ISEConstantPowerSource;
 import simelectricity.api.node.ISESubComponent;
 import simelectricity.energynet.components.SEComponent.Tile;
@@ -9,7 +9,7 @@ public class ConstantPowerSource extends Tile<ISEConstantPowerSource> implements
     private volatile double pRated, vMin, vMax;
     private volatile boolean enabled;
 
-    public ConstantPowerSource(ISEConstantPowerSource dataProvider, TileEntity te) {
+    public ConstantPowerSource(ISEConstantPowerSource dataProvider, BlockEntity te) {
         super(dataProvider, te);
     }
 

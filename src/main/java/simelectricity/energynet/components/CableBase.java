@@ -1,6 +1,6 @@
 package simelectricity.energynet.components;
 
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import simelectricity.api.components.ISECableBase;
 
 public abstract class CableBase<T extends ISECableBase> extends SEComponent.Tile<T> implements ISECableBase{
@@ -8,7 +8,7 @@ public abstract class CableBase<T extends ISECableBase> extends SEComponent.Tile
     private volatile boolean hasShuntResistance;
     private volatile double shuntResistance;
 
-    public CableBase(T dataProvider, TileEntity te) {
+    public CableBase(T dataProvider, BlockEntity te) {
         super(dataProvider, te);
     }
 

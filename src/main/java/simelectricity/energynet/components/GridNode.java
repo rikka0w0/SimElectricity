@@ -1,7 +1,7 @@
 package simelectricity.energynet.components;
 
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.BlockPos;
 import simelectricity.api.node.ISEGridNode;
 import simelectricity.energynet.SEGraph;
 
@@ -42,7 +42,7 @@ public class GridNode extends SEComponent implements ISEGridNode {
     /// Read from NBT
     ///////////////////////
 
-    public GridNode(CompoundNBT nbt) {
+    public GridNode(CompoundTag nbt) {
         pos = new BlockPos(
                 nbt.getInt("x"),
                 nbt.getInt("y"),
@@ -84,7 +84,7 @@ public class GridNode extends SEComponent implements ISEGridNode {
     ///////////////////////
     /// Save to NBT
     ///////////////////////
-    public void writeToNBT(CompoundNBT nbt) {
+    public void writeToNBT(CompoundTag nbt) {
         nbt.putInt("x", this.pos.getX());
         nbt.putInt("y", this.pos.getY());
         nbt.putInt("z", this.pos.getZ());

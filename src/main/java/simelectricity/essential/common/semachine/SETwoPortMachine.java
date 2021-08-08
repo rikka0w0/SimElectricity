@@ -1,9 +1,10 @@
 package simelectricity.essential.common.semachine;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.state.properties.BlockStateProperties;
-import net.minecraft.util.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import rikka.librikka.Utils;
@@ -14,7 +15,7 @@ import simelectricity.api.node.ISEPairedComponent;
 import simelectricity.api.node.ISESubComponent;
 import simelectricity.api.tile.ISETile;
 
-public abstract class SETwoPortMachine<T extends ISEComponentParameter> extends SEMachineTile implements 
+public abstract class SETwoPortMachine<T extends ISEComponentParameter> extends SEMachineTile implements
 		ISESidedFacing, ISETile, ISEComponentParameter {
     public Direction inputSide = Direction.SOUTH;
     public Direction outputSide = Direction.NORTH;
@@ -22,28 +23,32 @@ public abstract class SETwoPortMachine<T extends ISEComponentParameter> extends 
     @SuppressWarnings("unchecked")
 	protected final T cachedParam = (T) input;
 
+    public SETwoPortMachine(BlockPos pos, BlockState blockState) {
+		super(pos, blockState);
+	}
+
     ///////////////////////////////////
-    /// TileEntity
+    /// BlockEntity
     ///////////////////////////////////
     @Override
-    public void read(BlockState blockState, CompoundNBT tagCompound) {
-        super.read(blockState, tagCompound);
+    public void load(CompoundTag tagCompound) {
+        super.load(tagCompound);
 
         this.inputSide = Utils.facingFromNbt(tagCompound, "inputSide");
         this.outputSide = Utils.facingFromNbt(tagCompound, "outputSide");
     }
 
     @Override
-    public CompoundNBT write(CompoundNBT tagCompound) {
+    public CompoundTag save(CompoundTag tagCompound) {
     	Utils.saveToNbt(tagCompound, "inputSide", this.inputSide);
     	Utils.saveToNbt(tagCompound, "outputSide", this.outputSide);
 
-        return super.write(tagCompound);
+        return super.save(tagCompound);
     }
 
     @Override
     public Direction getFacing() {
-    	return getBlockState().get(BlockStateProperties.FACING);
+    	return getBlockState().getValue(BlockStateProperties.FACING);
     }
 
     ///////////////////////////////////
@@ -51,7 +56,7 @@ public abstract class SETwoPortMachine<T extends ISEComponentParameter> extends 
     ///////////////////////////////////
     @Override
     public void setFacing(Direction newFacing) {
-    	world.setBlockState(pos, getBlockState().with(BlockStateProperties.FACING, newFacing));
+    	level.setBlockAndUpdate(worldPosition, getBlockState().setValue(BlockStateProperties.FACING, newFacing));
     }
 
     @Override
@@ -63,7 +68,7 @@ public abstract class SETwoPortMachine<T extends ISEComponentParameter> extends 
     ///Sync
     /////////////////////////////////////////////////////////
     @Override
-    public void prepareS2CPacketData(CompoundNBT nbt) {
+    public void prepareS2CPacketData(CompoundTag nbt) {
         super.prepareS2CPacketData(nbt);
 
         Utils.saveToNbt(nbt, "inputSide", this.inputSide);
@@ -72,7 +77,7 @@ public abstract class SETwoPortMachine<T extends ISEComponentParameter> extends 
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public void onSyncDataFromServerArrived(CompoundNBT nbt) {
+    public void onSyncDataFromServerArrived(CompoundTag nbt) {
         this.inputSide = Utils.facingFromNbt(nbt, "inputSide");
         this.outputSide = Utils.facingFromNbt(nbt, "outputSide");
 
@@ -102,13 +107,13 @@ public abstract class SETwoPortMachine<T extends ISEComponentParameter> extends 
         inputSide = input;
         outputSide = output;
 
-        if (world.isRemote) {
+        if (level.isClientSide) {
         	this.markForRenderUpdate();
         	return;
         }
 
         markTileEntityForS2CSync();
-        this.world.notifyNeighborsOfStateChange(this.pos, getBlockState().getBlock());
+        this.level.updateNeighborsAt(this.worldPosition, getBlockState().getBlock());
         //this.worldObj.notifyBlockChange(xCoord, yCoord, zCoord, this.getBlockType());
 
         if (isAddedToEnergyNet)

@@ -1,29 +1,30 @@
 package simelectricity.essential.grid;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockRenderType;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.SoundType;
-import net.minecraft.block.material.Material;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.fluid.FluidState;
-import net.minecraft.item.BlockItemUseContext;
-import net.minecraft.item.Item;
-import net.minecraft.state.EnumProperty;
-import net.minecraft.state.StateContainer;
-import net.minecraft.state.properties.BlockStateProperties;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.IStringSerializable;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3i;
-import net.minecraft.util.math.shapes.IBooleanFunction;
-import net.minecraft.util.math.shapes.ISelectionContext;
-import net.minecraft.util.math.shapes.VoxelShape;
-import net.minecraft.util.math.shapes.VoxelShapes;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.core.Direction;
+import net.minecraft.util.StringRepresentable;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Vec3i;
+import net.minecraft.world.phys.shapes.BooleanOp;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
 import rikka.librikka.IMetaBase;
 import rikka.librikka.Utils;
 import rikka.librikka.block.BlockBase;
@@ -36,40 +37,42 @@ import simelectricity.api.SEAPI;
 import simelectricity.api.tile.ISEGridTile;
 import simelectricity.essential.api.ISEHVCableConnector;
 
-public class BlockPoleConcrete35kV extends BlockBase implements ICustomBoundingBox, ISEHVCableConnector {
+import net.minecraft.world.level.block.state.BlockBehaviour;
+
+public class BlockPoleConcrete35kV extends BlockBase implements ICustomBoundingBox, EntityBlock, ISEHVCableConnector {
 	public final MultiBlockStructure structureTemplate;
 	public final static EnumProperty<Type> propType = EnumProperty.create("type", Type.class);
-	
-	public static enum Type implements IMetaBase, IStringSerializable {
+
+	public static enum Type implements IMetaBase, StringRepresentable {
 		pole, collisionbox, pole_collisionbox, host;
 
 		@Override
-		public String getString() {
+		public String getSerializedName() {
 			return name();
 		}
 	}
-	
+
 	private BlockPoleConcrete35kV(int type) {
-		super("pole_concrete_35kv_" + String.valueOf(type), 
-				Block.Properties.create(Material.ROCK)
-        		.hardnessAndResistance(0.2F, 10.0F)
+		super("pole_concrete_35kv_" + String.valueOf(type),
+				BlockBehaviour.Properties.of(Material.STONE)
+        		.strength(0.2F, 10.0F)
         		.sound(SoundType.METAL)
-        		.setOpaque((a,b,c)->false),
+        		.isRedstoneConductor((a,b,c)->false),
         		ItemBlock.class,
-        		(new Item.Properties()).group(SEAPI.SETab));
-		
+        		(new Item.Properties()).tab(SEAPI.SETab));
+
 		this.structureTemplate = this.createStructureTemplate();
 	}
 
 	public static BlockPoleConcrete35kV[] create() {
 		return new BlockPoleConcrete35kV[] {new BlockPoleConcrete35kV(0), new BlockPoleConcrete35kV(1)};
 	}
-	
-	public final static Vector3i hostOffset = new Vector3i(5, 11, 0);
+
+	public final static Vec3i hostOffset = new Vec3i(5, 11, 0);
     protected MultiBlockStructure createStructureTemplate() {
         //y,z,x facing NORTH(Z-), do not change
         BlockMapping[][][] configuration = new BlockMapping[15][][];
-        
+
         BlockMapping p = blockMappingFromType(Type.pole);
         BlockMapping c = blockMappingFromType(Type.collisionbox);
         BlockMapping pc = blockMappingFromType(Type.pole_collisionbox);
@@ -89,141 +92,135 @@ public class BlockPoleConcrete35kV extends BlockBase implements ICustomBoundingB
 	        configuration[i] = new BlockMapping[][]{
 	        {null, null,  p, null, null, null, null, null, p , null, null}};
         }
-        
+
         return new MultiBlockStructure(configuration);
     }
-    
+
     private BlockMapping blockMappingFromType(Type type) {
-    	BlockState toState = this.getDefaultState().with(propType, type);
+    	BlockState toState = this.defaultBlockState().setValue(propType, type);
     	final Block blockThis = this;
-    	
-    	return new BlockMapping(Blocks.AIR.getDefaultState(), toState) {
-    		@SuppressWarnings("deprecation")
+
+    	return new BlockMapping(Blocks.AIR.defaultBlockState(), toState) {
 			@Override
     	    protected boolean cancelPlacement(BlockState state) {
     			return !state.isAir();
     		}
-    		
+
     		@Override
     		protected boolean cancelRestore(BlockState state) {
     			return state.getBlock() != blockThis;
     		}
-    		
+
     		@Override
     	    protected BlockState getStateForPlacement(Direction facing) {
-    	    	return super.getStateForPlacement(facing).with(BlockStateProperties.HORIZONTAL_FACING, facing);
+    	    	return super.getStateForPlacement(facing).setValue(BlockStateProperties.HORIZONTAL_FACING, facing);
     	    }
-    	    
+
     		@Override
     	    protected BlockState getStateForRestore(Direction facing) {
     	    	return super.getStateForRestore(facing);//.with(BlockStateProperties.HORIZONTAL_FACING, facing);
     	    }
     	};
     }
-	
+
     @Override
-	protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
+	protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
 		builder.add(BlockStateProperties.HORIZONTAL_FACING, propType);
 	}
-	
+
 	@Override
-	public boolean hasTileEntity(BlockState state) {
-		return true;
+	public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+		Type type = state.getValue(propType);
+		return type == Type.host ? new TilePoleConcrete35kV(pos, state) : new TileMultiBlockPlaceHolder(pos, state);
 	}
-	
-	@Override
-	public TileEntity createTileEntity(BlockState state, IBlockReader world) {
-		Type type = state.get(propType);
-		return type == Type.host ? new TilePoleConcrete35kV() : new TileMultiBlockPlaceHolder();
-	}
-	
+
     @Override
-    public boolean removedByPlayer(BlockState state, World world, BlockPos pos, PlayerEntity player, boolean willHarvest, FluidState fluid) {
-        TileEntity te = world.getTileEntity(pos);
-        if (te != null && !world.isRemote) {
+    public boolean removedByPlayer(BlockState state, Level world, BlockPos pos, Player player, boolean willHarvest, FluidState fluid) {
+        BlockEntity te = world.getBlockEntity(pos);
+        if (te != null && !world.isClientSide) {
             this.structureTemplate.restoreStructure(te, state, true);
         }
-        
+
         return super.removedByPlayer(state, world, pos, player, willHarvest, fluid);
     }
-    
+
     ///////////////////
     /// BoundingBoxes
     ///////////////////
     @Override
-    public VoxelShape getBoundingShape(BlockState state, IBlockReader world, BlockPos pos, ISelectionContext context) {
-    	Type type = state.get(propType);
-        int facing = state.get(BlockStateProperties.HORIZONTAL_FACING).getHorizontalIndex();
+    public VoxelShape getBoundingShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
+    	Type type = state.getValue(propType);
+        int facing = state.getValue(BlockStateProperties.HORIZONTAL_FACING).get2DDataValue();
 
         if (type == Type.pole || type == Type.pole_collisionbox) {
 			if (type == Type.pole_collisionbox)
 				if (facing == 0 || facing == 2)
-					return VoxelShapes.create(0, 0, 0.125F, 1, 1, 0.875F);
+					return Shapes.box(0, 0, 0.125F, 1, 1, 0.875F);
 				else
-					return VoxelShapes.create(0.125F, 0, 0, 0.875F, 1, 1);
+					return Shapes.box(0.125F, 0, 0, 0.875F, 1, 1);
 			else
-				return VoxelShapes.create(0.375F, 0, 0.375F, 0.625F, 1, 0.625F);
+				return Shapes.box(0.375F, 0, 0.375F, 0.625F, 1, 0.625F);
         } else {
             if (facing == 0 || facing == 2)
-                return VoxelShapes.create(0, 0, 0.125F, 1, 0.25F, 0.875F);
+                return Shapes.box(0, 0, 0.125F, 1, 0.25F, 0.875F);
             else
-                return VoxelShapes.create(0.125F, 0, 0, 0.875F, 0.25F, 1);
+                return Shapes.box(0.125F, 0, 0, 0.875F, 0.25F, 1);
         }
     }
 
     @Override
-    public VoxelShape getShape(BlockState state, IBlockReader world, BlockPos pos, ISelectionContext context) {
-    	Type type = state.get(propType);
-        int facing = state.get(BlockStateProperties.HORIZONTAL_FACING).getHorizontalIndex();
-        VoxelShape vs = VoxelShapes.empty();
+    public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
+    	Type type = state.getValue(propType);
+        int facing = state.getValue(BlockStateProperties.HORIZONTAL_FACING).get2DDataValue();
+        VoxelShape vs = Shapes.empty();
 
-        if (type == Type.pole || type == Type.pole_collisionbox) {        	
-            vs = VoxelShapes.combine(vs, VoxelShapes.create(0.375F, 0, 0.375F, 0.625F, 1, 0.625F), IBooleanFunction.OR);
+        if (type == Type.pole || type == Type.pole_collisionbox) {
+            vs = Shapes.joinUnoptimized(vs, Shapes.box(0.375F, 0, 0.375F, 0.625F, 1, 0.625F), BooleanOp.OR);
 
 			if (type == Type.pole_collisionbox) {
 				if (facing == 0 || facing == 2)
-					vs = VoxelShapes.combine(vs, VoxelShapes.create(0, 0, 0.125F, 1, 0.25F, 0.875F), IBooleanFunction.OR);
+					vs = Shapes.joinUnoptimized(vs, Shapes.box(0, 0, 0.125F, 1, 0.25F, 0.875F), BooleanOp.OR);
 				else
-					vs = VoxelShapes.combine(vs, VoxelShapes.create(0.125F, 0, 0, 0.875F, 0.25F, 1), IBooleanFunction.OR);
+					vs = Shapes.joinUnoptimized(vs, Shapes.box(0.125F, 0, 0, 0.875F, 0.25F, 1), BooleanOp.OR);
 			}
         } else {
             if (facing == 0 || facing == 2)
-                vs = VoxelShapes.combine(vs, VoxelShapes.create(0, 0, 0.125F, 1, 0.25F, 0.875F), IBooleanFunction.OR);
+                vs = Shapes.joinUnoptimized(vs, Shapes.box(0, 0, 0.125F, 1, 0.25F, 0.875F), BooleanOp.OR);
             else
-                vs = VoxelShapes.combine(vs, VoxelShapes.create(0.125F, 0, 0, 0.875F, 0.25F, 1), IBooleanFunction.OR);
+                vs = Shapes.joinUnoptimized(vs, Shapes.box(0.125F, 0, 0, 0.875F, 0.25F, 1), BooleanOp.OR);
         }
-        
+
         return vs;
     }
-    
+
     ////////////////////////////////////
     /// Rendering
-    ////////////////////////////////////    
+    ////////////////////////////////////
 	@Override
-	public BlockRenderType getRenderType(BlockState state) {
-		return state.get(propType) == Type.collisionbox ? BlockRenderType.INVISIBLE : BlockRenderType.MODEL;
+	public RenderShape getRenderShape(BlockState state) {
+		return state.getValue(propType) == Type.collisionbox ? RenderShape.INVISIBLE : RenderShape.MODEL;
 	}
-    
+
     //////////////////////////////////////
     /// ISEHVCableConnector
     //////////////////////////////////////
     @Override
-    public ISEGridTile getGridTile(World world, BlockPos pos) {
-        TileEntity te = world.getTileEntity(pos);
-        
+    public ISEGridTile getGridTile(Level world, BlockPos pos) {
+        BlockEntity te = world.getBlockEntity(pos);
+
         if (te instanceof ISEGridTile)
         	return (ISEGridTile) te;
         else if (te instanceof IMultiBlockTile) {
         	BlockPos hostPos = ((IMultiBlockTile) te).getMultiBlockTileInfo().getPartPos(hostOffset);
-        	TileEntity host = world.getTileEntity(hostPos);
-        	
+        	BlockEntity host = world.getBlockEntity(hostPos);
+
         	if (host instanceof ISEGridTile)
         		return (ISEGridTile) host;
         }
-        
+
         return null;
     }
-    
+
     //////////////////////////////////////
     /// BlockItem
     //////////////////////////////////////
@@ -233,17 +230,17 @@ public class BlockPoleConcrete35kV extends BlockBase implements ICustomBoundingB
 		}
 
 		@Override
-		protected boolean placeBlock(BlockItemUseContext context, BlockState state) {
-			World world = context.getWorld();
-			BlockPos pos = context.getPos();
+		protected boolean placeBlock(BlockPlaceContext context, BlockState state) {
+			Level world = context.getLevel();
+			BlockPos pos = context.getClickedPos();
 			Direction facing = Utils.getPlayerSightHorizontal(context.getPlayer());
 			BlockPoleConcrete35kV block = (BlockPoleConcrete35kV) this.getBlock();
-			
+
 			MultiBlockStructure.Result result = block.structureTemplate.attempToBuild(world, pos, facing);
 			if (result == null)
 				return false;
-			
-			if (!world.isRemote)
+
+			if (!world.isClientSide)
 				result.createStructure();
 			return true;
 		}

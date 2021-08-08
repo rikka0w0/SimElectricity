@@ -1,7 +1,7 @@
 package simelectricity.essential.client.grid;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.Mth;
 import rikka.librikka.math.MathAssitant;
 import rikka.librikka.math.Vec3f;
 import rikka.librikka.model.quadbuilder.RawQuadCube;
@@ -24,7 +24,7 @@ public class PowerCableBakery {
 	    	float x1 = (i + 1) * unitLength;
 	        y1 = x1 * x1 * a + x1 * b;
 	        
-	        ret.add((new RawQuadCube(thickness, MathHelper.sqrt(unitLength*unitLength + (y1 - y0)*(y1 - y0)), thickness, texture))
+	        ret.add((new RawQuadCube(thickness, Mth.sqrt(unitLength*unitLength + (y1 - y0)*(y1 - y0)), thickness, texture))
 	        			.rotateAroundZ((float) Math.atan2(y0 - y1, unitLength) * 180F / MathAssitant.PI)
 	        			.translateCoord(y0, i * unitLength, 0)
 	        			);
@@ -42,7 +42,7 @@ public class PowerCableBakery {
 		float steps = ClientConfigs.parabolaRenderSteps.get();
 	    float y0 = 0, y1;
 	
-	    float d = MathHelper.sqrt((from.x-to.x)*(from.x-to.x) + (from.z-to.z)*(from.z-to.z));
+	    float d = Mth.sqrt((from.x-to.x)*(from.x-to.x) + (from.z-to.z)*(from.z-to.z));
 	    float step = d/steps;
 	    Catenary c = new Catenary(0, to.y-from.y, d, tension);
 	    
@@ -50,7 +50,7 @@ public class PowerCableBakery {
 	    for (int i = 0; i < steps / (half ? 2 : 1); i++) {
 	        y1 = c.apply((i + 1) * step);
 	        
-	        ret.add((new RawQuadCube(thickness, MathHelper.sqrt(step*step + (y1 - y0)*(y1 - y0)), thickness, texture))
+	        ret.add((new RawQuadCube(thickness, Mth.sqrt(step*step + (y1 - y0)*(y1 - y0)), thickness, texture))
 	        			.rotateAroundZ(-(float) Math.atan2(y0 - y1, step) * 180F / MathAssitant.PI)
 	        			.translateCoord(-y0, i * step, 0)
 	        			);

@@ -1,17 +1,18 @@
 package simelectricity.essential.grid.transformer;
 
-import net.minecraft.block.material.Material;
-import net.minecraft.block.BlockRenderType;
-import net.minecraft.block.BlockState;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.shapes.ISelectionContext;
-import net.minecraft.util.math.shapes.VoxelShape;
-import net.minecraft.util.math.shapes.VoxelShapes;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.World;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
 import rikka.librikka.IMetaProvider;
 import rikka.librikka.ITileMeta;
 import rikka.librikka.multiblock.BlockMapping;
@@ -22,61 +23,73 @@ import simelectricity.api.SEAPI;
 import simelectricity.api.tile.ISEGridTile;
 import simelectricity.essential.BlockRegistry;
 import simelectricity.essential.api.ISEHVCableConnector;
-import simelectricity.essential.grid.transformer.TilePowerTransformerPlaceHolder;
 
 public class BlockPowerTransformer extends BlockAbstractTransformer implements IMetaProvider<ITileMeta>, ISEHVCableConnector {
     private static MultiBlockStructure blueprint;
     private static Object[][][] collisionBoxes;
 	public final EnumPowerTransformerBlockType blockType;
     private BlockPowerTransformer(EnumPowerTransformerBlockType type) {
-        super("transformer_35kv_10kv_" + type.getString(), Material.IRON, type.formed ? null : SEAPI.SETab);
+        super("transformer_35kv_10kv_" + type.getSerializedName(), Material.METAL, type.formed ? null : SEAPI.SETab);
         this.blockType = type;
     }
-	
+
     public static BlockPowerTransformer[] create() {
     	BlockPowerTransformer[] ret = new BlockPowerTransformer[EnumPowerTransformerBlockType.values().length];
-    	for (EnumPowerTransformerBlockType type: EnumPowerTransformerBlockType.values()) {
-    		ret[type.ordinal()] = new BlockPowerTransformer(type);
+    	for (EnumPowerTransformerBlockType type: EnumPowerTransformerBlockType.rawStructure) {
+    		ret[type.ordinal()] = new RawStructureBlock(type);
     	}
-    	return ret;    	
+    	for (EnumPowerTransformerBlockType type: EnumPowerTransformerBlockType.rawStructure) {
+    		ret[type.ordinal()] = new FormedStructureBlock(type);
+    	}
+    	return ret;
     }
-    
+
+    private static class RawStructureBlock extends BlockPowerTransformer {
+    	private RawStructureBlock(EnumPowerTransformerBlockType type) {
+    		super(type);
+    	}
+    }
+
+    private static class FormedStructureBlock extends BlockPowerTransformer implements EntityBlock {
+    	private FormedStructureBlock(EnumPowerTransformerBlockType type) {
+    		super(type);
+    	}
+
+        ///////////////////////////////
+        /// BlockEntity
+        ///////////////////////////////
+		@Override
+		public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+	        if (!blockType.formed)
+	            return null;
+
+	    	try {
+				return blockType.teCls().getConstructor().newInstance();
+			} catch (Exception e) {
+				e.printStackTrace();
+				return null;
+			}
+		}
+    }
+
 	@Override
 	public ITileMeta meta() {
 		return this.blockType;
 	}
-	
+
 	@Override
 	protected MultiBlockStructure getBlueprint() {
 		return blueprint;
 	}
-    ///////////////////////////////
-    /// TileEntity
-    ///////////////////////////////
-	@Override
-	public boolean hasTileEntity(BlockState state) {return this.meta().teCls() != null;}
-
-    @Override
-    public TileEntity createTileEntity(BlockState state, IBlockReader world) {
-        if (!blockType.formed)
-            return null;
-    	
-    	try {
-			return blockType.teCls().getConstructor().newInstance();
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
-    }
 
     ///////////////////////////////
     ///BlockStates
     ///////////////////////////////
     private static BlockState stateFromType(EnumPowerTransformerBlockType type) {
     	BlockPowerTransformer block = BlockRegistry.powerTransformer[type.ordinal()];
-    	return block.getDefaultState();
+    	return block.defaultBlockState();
     }
-    
+
 	@Override
 	protected ItemStack getItemToDrop(BlockState state) {
         if (blockType.formed)
@@ -84,7 +97,7 @@ public class BlockPowerTransformer extends BlockAbstractTransformer implements I
 
         return new ItemStack(this);
 	}
-	
+
     public static void createBluePrint() {
         //y,z,x facing NORTH(Z-), do not change
 		BlockMapping[][][] configuration = new BlockMapping[5][][];
@@ -147,32 +160,32 @@ public class BlockPowerTransformer extends BlockAbstractTransformer implements I
         };
 
         blueprint = new MultiBlockStructure(configuration);
-        
-    	Object f = VoxelShapes.fullCube();
-    	Object O = VoxelShapes.empty();
-    	
-    	AxisAlignedBB w = new AxisAlignedBB(0, 0, 0.2, 0.8, 1, 1);
-    	AxisAlignedBB d = new AxisAlignedBB(0, 0, 0, 0.8, 1, 0.8);
-		AxisAlignedBB a = new AxisAlignedBB(0.2, 0, 0, 1, 1, 0.8);
-		AxisAlignedBB q = new AxisAlignedBB(0.2, 0, 0.2, 1, 1, 1);
-		AxisAlignedBB l = new AxisAlignedBB(0.2, 0, 0, 1, 1, 1);
-		AxisAlignedBB r = new AxisAlignedBB(0, 0, 0, 0.8, 1, 1);
-		
-		AxisAlignedBB t = new AxisAlignedBB(0, 0.9, 0, 1, 1, 1);
-		AxisAlignedBB[] wt = new AxisAlignedBB[] {t, w};
-		AxisAlignedBB[] dt = new AxisAlignedBB[] {t, d};
-		AxisAlignedBB[] at = new AxisAlignedBB[] {t, a};
-		AxisAlignedBB[] qt = new AxisAlignedBB[] {t, q};
-		AxisAlignedBB[] lt = new AxisAlignedBB[] {t, l};
-		AxisAlignedBB[] rt = new AxisAlignedBB[] {t, r};
-		
-		VoxelShape b = VoxelShapes.create(0, 0.4, 0, 1, 1, 1);
-		VoxelShape p = VoxelShapes.create(0.425, 0, 0.425, 0.575, 1, 0.575);
-		AxisAlignedBB[] p2 = new AxisAlignedBB[] {
-				new AxisAlignedBB(0.425, 0, 0.425, 0.575, 0.5, 0.575),
-				new AxisAlignedBB(0, 0.425, 0.425, 0.575, 0.575, 0.575),
+
+    	Object f = Shapes.block();
+    	Object O = Shapes.empty();
+
+    	AABB w = new AABB(0, 0, 0.2, 0.8, 1, 1);
+    	AABB d = new AABB(0, 0, 0, 0.8, 1, 0.8);
+		AABB a = new AABB(0.2, 0, 0, 1, 1, 0.8);
+		AABB q = new AABB(0.2, 0, 0.2, 1, 1, 1);
+		AABB l = new AABB(0.2, 0, 0, 1, 1, 1);
+		AABB r = new AABB(0, 0, 0, 0.8, 1, 1);
+
+		AABB t = new AABB(0, 0.9, 0, 1, 1, 1);
+		AABB[] wt = new AABB[] {t, w};
+		AABB[] dt = new AABB[] {t, d};
+		AABB[] at = new AABB[] {t, a};
+		AABB[] qt = new AABB[] {t, q};
+		AABB[] lt = new AABB[] {t, l};
+		AABB[] rt = new AABB[] {t, r};
+
+		VoxelShape b = Shapes.box(0, 0.4, 0, 1, 1, 1);
+		VoxelShape p = Shapes.box(0.425, 0, 0.425, 0.575, 1, 0.575);
+		AABB[] p2 = new AABB[] {
+				new AABB(0.425, 0, 0.425, 0.575, 0.5, 0.575),
+				new AABB(0, 0.425, 0.425, 0.575, 0.575, 0.575),
 		};
-    	
+
         collisionBoxes = new Object[configuration.length][][];
         collisionBoxes[0] = new Object[][]{
             {O, b, b, O, b, b, O},
@@ -181,7 +194,7 @@ public class BlockPowerTransformer extends BlockAbstractTransformer implements I
             {a, f, f, f, f, f, d},
             {O, b, b, b, b, b, O}
 	    };
-	
+
 	    collisionBoxes[1] = new Object[][]{
 	        {O, f, f, f, f, f, O},
 	        {q, f, f, f, f, f, w},
@@ -189,7 +202,7 @@ public class BlockPowerTransformer extends BlockAbstractTransformer implements I
 	        {a, f, f, f, f, f, d},
 	        {O, f, f, f, f, f, O}
 	    };
-	
+
 	    collisionBoxes[2] = new Object[][]{
 	        {O , f, f, O, f, f, O},
 	        {qt, f, f, f, f, f, wt},
@@ -197,7 +210,7 @@ public class BlockPowerTransformer extends BlockAbstractTransformer implements I
 	        {at, f, f, f, f, f, dt},
 	        {f , f, f, f, f, f, O}
 	    };
-	
+
 	    collisionBoxes[3] = new Object[][]{
 	        {O, O, O, O, O, O, O},
 	        {O, O, O, O, O, O, O},
@@ -205,7 +218,7 @@ public class BlockPowerTransformer extends BlockAbstractTransformer implements I
 	        {O, p, O, O, O, O, O},
 	        {f, O, O, O, O, O, O},
 	    };
-	
+
 	    collisionBoxes[4] = new Object[][]{
 	        {O, O, O, O, O, O, O},
 	        {O, O, O, O, O, O, O},
@@ -219,8 +232,8 @@ public class BlockPowerTransformer extends BlockAbstractTransformer implements I
     /// ISEHVCableConnector
     //////////////////////////////////////
     @Override
-    public ISEGridTile getGridTile(World world, BlockPos pos) {
-        TileEntity te = world.getTileEntity(pos);
+    public ISEGridTile getGridTile(Level world, BlockPos pos) {
+        BlockEntity te = world.getBlockEntity(pos);
 
         if (te instanceof TilePowerTransformerPlaceHolder.Primary)
             return ((TilePowerTransformerPlaceHolder.Primary) te).getWinding();
@@ -234,39 +247,39 @@ public class BlockPowerTransformer extends BlockAbstractTransformer implements I
 
     ////////////////////////////////////
     /// Rendering
-    ////////////////////////////////////   
+    ////////////////////////////////////
 	@Override
-	public BlockRenderType getRenderType(BlockState state) {
-		return blockType.formed ? BlockRenderType.INVISIBLE : BlockRenderType.MODEL;
+	public RenderShape getRenderShape(BlockState state) {
+		return blockType.formed ? RenderShape.INVISIBLE : RenderShape.MODEL;
 	}
-	
+
 	@Override
-	public VoxelShape getShape(BlockState state, IBlockReader world, BlockPos pos, ISelectionContext context) {
+	public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
 		if (!this.blockType.formed)
-			return VoxelShapes.fullCube();
-		
-		TileEntity te = world.getTileEntity(pos);
+			return Shapes.block();
+
+		BlockEntity te = world.getBlockEntity(pos);
 		if (!(te instanceof IMultiBlockTile))
-			return VoxelShapes.empty();
-		
+			return Shapes.empty();
+
 		MultiBlockTileInfo mbInfo = ((IMultiBlockTile) te).getMultiBlockTileInfo();
 		if (mbInfo == null)
-			return VoxelShapes.empty();
-		
+			return Shapes.empty();
+
 		Object collBoxes = mbInfo.lookup(collisionBoxes);
 		if (collBoxes instanceof VoxelShape)
 			return (VoxelShape) collBoxes;
-		else if (collBoxes instanceof AxisAlignedBB)
-			return VoxelShapes.create(blueprint.createAABB(mbInfo, (AxisAlignedBB) collBoxes));
-		else if (collBoxes instanceof AxisAlignedBB[]) {
-			VoxelShape ret = VoxelShapes.empty();
-			for (AxisAlignedBB part: (AxisAlignedBB[]) collBoxes) {
-				ret = VoxelShapes.or(ret, 
-						VoxelShapes.create(blueprint.createAABB(mbInfo, part)));
+		else if (collBoxes instanceof AABB)
+			return Shapes.create(blueprint.createAABB(mbInfo, (AABB) collBoxes));
+		else if (collBoxes instanceof AABB[]) {
+			VoxelShape ret = Shapes.empty();
+			for (AABB part: (AABB[]) collBoxes) {
+				ret = Shapes.or(ret,
+						Shapes.create(blueprint.createAABB(mbInfo, part)));
 			}
 			return ret;
 		}
 
-		return VoxelShapes.fullCube();
+		return Shapes.block();
 	}
 }

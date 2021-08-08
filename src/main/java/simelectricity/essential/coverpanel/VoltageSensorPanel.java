@@ -1,14 +1,14 @@
 package simelectricity.essential.coverpanel;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import rikka.librikka.Utils;
@@ -26,14 +26,14 @@ public class VoltageSensorPanel implements ISEElectricalCoverPanel, ISERedstoneE
     public boolean inverted;
     public double thresholdVoltage = 100;
 
-    private TileEntity hostTileEntity;
+    private BlockEntity hostTileEntity;
     private Direction installedSide;
     private double voltage;
 
     public VoltageSensorPanel() {
     }
 
-    public VoltageSensorPanel(CompoundNBT nbt) {
+    public VoltageSensorPanel(CompoundTag nbt) {
         this.inverted = nbt.getBoolean("inverted");
         this.thresholdVoltage = nbt.getDouble("thresholdVoltage");
     }
@@ -55,7 +55,7 @@ public class VoltageSensorPanel implements ISEElectricalCoverPanel, ISERedstoneE
     }
 
     @Override
-    public void toNBT(CompoundNBT nbt) {
+    public void toNBT(CompoundTag nbt) {
         nbt.putBoolean("inverted", this.inverted);
         nbt.putDouble("thresholdVoltage", this.thresholdVoltage);
     }
@@ -67,7 +67,7 @@ public class VoltageSensorPanel implements ISEElectricalCoverPanel, ISERedstoneE
     }
 
     @Override
-    public void setHost(TileEntity hostTileEntity, Direction side) {
+    public void setHost(BlockEntity hostTileEntity, Direction side) {
         this.hostTileEntity = hostTileEntity;
         installedSide = side;
     }
@@ -88,13 +88,13 @@ public class VoltageSensorPanel implements ISEElectricalCoverPanel, ISERedstoneE
     ///ISEGuiCoverPanel
     /////////////////////////
     @Override
-    public Container createMenu(int windowId, PlayerInventory inv, PlayerEntity player) {
+    public AbstractContainerMenu createMenu(int windowId, Inventory inv, Player player) {
         return new ContainerVoltageSensor(this, windowId);
     }
 
 	@Override
-	public ITextComponent getDisplayName() {
-		return new TranslationTextComponent(ItemRegistry.itemMisc[ItemPanel.ItemType.voltagesensor.ordinal()].getTranslationKey());
+	public Component getDisplayName() {
+		return new TranslatableComponent(ItemRegistry.itemMisc[ItemPanel.ItemType.voltagesensor.ordinal()].getDescriptionId());
 	}
 
     /////////////////////////
@@ -118,7 +118,7 @@ public class VoltageSensorPanel implements ISEElectricalCoverPanel, ISERedstoneE
         if (emitRedStoneSignal != this.emitRedStoneSignal) {
             this.emitRedStoneSignal = emitRedStoneSignal;
             //Notify neighbor blocks if redstone signal polarity changes
-            this.hostTileEntity.getWorld().neighborChanged(this.hostTileEntity.getPos().offset(this.installedSide), this.hostTileEntity.getBlockState().getBlock(), this.hostTileEntity.getPos());
+            this.hostTileEntity.getLevel().neighborChanged(this.hostTileEntity.getBlockPos().relative(this.installedSide), this.hostTileEntity.getBlockState().getBlock(), this.hostTileEntity.getBlockPos());
 
             return true;
         }

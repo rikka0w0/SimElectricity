@@ -1,12 +1,14 @@
 package simelectricity.essential.common;
 
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.state.BlockState;
 import rikka.librikka.tileentity.TileEntityBase;
 import simelectricity.api.SEAPI;
 import simelectricity.essential.Essential;
 
 public abstract class SEEnergyTile extends TileEntityBase {
-	public SEEnergyTile() {
-		super(Essential.MODID);
+	public SEEnergyTile(BlockPos pos, BlockState blockState) {
+		super(Essential.MODID, pos, blockState);
 	}
 
 	protected boolean isAddedToEnergyNet;
@@ -18,17 +20,17 @@ public abstract class SEEnergyTile extends TileEntityBase {
     @Override
     public void onLoad() {
     	super.onLoad();
-        if (!this.world.isRemote && !this.isAddedToEnergyNet) {
+        if (!this.level.isClientSide && !this.isAddedToEnergyNet) {
             SEAPI.energyNetAgent.attachTile(this);
             isAddedToEnergyNet = true;
         }
     }
 
     @Override
-    public void remove() {
-        super.remove();
+    public void setRemoved() {
+        super.setRemoved();
 
-        if (!this.world.isRemote && this.isAddedToEnergyNet) {
+        if (!this.level.isClientSide && this.isAddedToEnergyNet) {
             SEAPI.energyNetAgent.detachTile(this);
             isAddedToEnergyNet = false;
         }

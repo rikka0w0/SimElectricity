@@ -1,6 +1,6 @@
 package simelectricity.energynet.components;
 
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import simelectricity.api.components.ISEDiode;
 import simelectricity.api.node.ISEPairedComponent;
 import simelectricity.energynet.components.SEComponent.Tile;
@@ -10,7 +10,7 @@ public class DiodeInput extends Tile<ISEDiode> implements ISEPairedComponent<Dio
     protected volatile double Rs, Is, Vt, Vfw;
     private double const1, const2;
 
-    public DiodeInput(ISEDiode dataProvider, TileEntity te) {
+    public DiodeInput(ISEDiode dataProvider, BlockEntity te) {
         super(dataProvider, te);
         this.output = new DiodeOutput(this, te);
     }

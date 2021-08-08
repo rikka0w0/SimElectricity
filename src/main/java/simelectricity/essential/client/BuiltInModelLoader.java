@@ -3,10 +3,10 @@ package simelectricity.essential.client;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 
-import net.minecraft.resources.IResourceManager;
-import net.minecraft.util.Direction;
-import net.minecraft.util.JSONUtils;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.core.Direction;
+import net.minecraft.util.GsonHelper;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.model.IModelLoader;
 import rikka.librikka.DirHorizontal8;
 import rikka.librikka.model.GeneratedModelLoader;
@@ -37,10 +37,10 @@ public class BuiltInModelLoader implements IModelLoader<ModelGeometryWrapper> {
 
 	@Override
 	public ModelGeometryWrapper read(JsonDeserializationContext deserializationContext, JsonObject modelContents) {	
-		final String type = JSONUtils.getString(modelContents, "type");
+		final String type = GsonHelper.getAsString(modelContents, "type");
 
 		if (type.equals("cable_joint_10kv")) {
-			final boolean offAxis = JSONUtils.getBoolean(modelContents, "offaxis");
+			final boolean offAxis = GsonHelper.getAsBoolean(modelContents, "offaxis");
 			return new ModelGeometryWrapper(null, CableJointModel.class, (context)->{
 				DirHorizontal8 facing = context.getFacing8(offAxis);
 				return new CableJointModel.Type10kV(facing);
@@ -48,7 +48,7 @@ public class BuiltInModelLoader implements IModelLoader<ModelGeometryWrapper> {
 		}
 
 		else if (type.equals("cable_joint_415v")) {
-			final boolean offAxis = JSONUtils.getBoolean(modelContents, "offaxis");
+			final boolean offAxis = GsonHelper.getAsBoolean(modelContents, "offaxis");
 			return new ModelGeometryWrapper(null, CableJointModel.class, (context)->{
 				DirHorizontal8 facing = context.getFacing8(offAxis);
 				return new CableJointModel.Type415V(facing);
@@ -56,8 +56,8 @@ public class BuiltInModelLoader implements IModelLoader<ModelGeometryWrapper> {
 		}
 
 		else if (type.equals("concrete_pole_35kv")) {
-			final boolean isRod = JSONUtils.getBoolean(modelContents, "isrod");
-			final boolean terminals = JSONUtils.getBoolean(modelContents, "terminals");
+			final boolean isRod = GsonHelper.getAsBoolean(modelContents, "isrod");
+			final boolean terminals = GsonHelper.getAsBoolean(modelContents, "terminals");
 			return new ModelGeometryWrapper(null, ConcretePole35kVModel.class, (context)->{
 				Direction facing = context.getFacing();
 				return new ConcretePole35kVModel(facing, terminals, isRod);
@@ -65,16 +65,16 @@ public class BuiltInModelLoader implements IModelLoader<ModelGeometryWrapper> {
 		}
 
 		else if (type.equals("metal_pole_35kv")) {
-			final boolean terminals = JSONUtils.getBoolean(modelContents, "terminals");
+			final boolean terminals = GsonHelper.getAsBoolean(modelContents, "terminals");
 			return new ModelGeometryWrapper(null, MetalPole35kVModel.class, (context)->{
 				return new MetalPole35kVModel(terminals);
 			});	
 		}
 
 		else if (type.equals("concrete_pole")) {
-			final boolean offAxis = JSONUtils.getBoolean(modelContents, "offaxis");
+			final boolean offAxis = GsonHelper.getAsBoolean(modelContents, "offaxis");
 			final BlockPoleConcrete.Type blockType = BlockPoleConcrete.Type.forName(
-					JSONUtils.getString(modelContents, "part"));
+					GsonHelper.getAsString(modelContents, "part"));
 			return new ModelGeometryWrapper(null, ConcretePoleModel.class, (context)->{
 				DirHorizontal8 facing = context.getFacing8(offAxis);
 				return new ConcretePoleModel(blockType, facing);
@@ -84,7 +84,7 @@ public class BuiltInModelLoader implements IModelLoader<ModelGeometryWrapper> {
 		else if (type.equals("distribution_transformer")) {
 			final EnumDistributionTransformerBlockType blockType = 
 					EnumDistributionTransformerBlockType.forName(
-						JSONUtils.getString(modelContents, "part"));
+						GsonHelper.getAsString(modelContents, "part"));
 			
 			if (blockType == EnumDistributionTransformerBlockType.PlaceHolder) {
 				return new ModelGeometryWrapper(null, DistributionTransformerFormedModel.class, (context)->{
@@ -107,7 +107,7 @@ public class BuiltInModelLoader implements IModelLoader<ModelGeometryWrapper> {
 	}
 	
 	@Override
-	public void onResourceManagerReload(IResourceManager resourceManager) {
+	public void onResourceManagerReload(ResourceManager resourceManager) {
 		GridRenderMonitor.instance.markLoadedPowerPoleForRenderingUpdate();
 	}
 }

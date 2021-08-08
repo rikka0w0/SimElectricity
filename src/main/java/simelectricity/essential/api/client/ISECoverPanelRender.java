@@ -1,7 +1,7 @@
 package simelectricity.essential.api.client;
 
-import net.minecraft.client.renderer.model.BakedQuad;
-import net.minecraft.util.Direction;
+import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.core.Direction;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import simelectricity.essential.api.coverpanel.ISECoverPanel;

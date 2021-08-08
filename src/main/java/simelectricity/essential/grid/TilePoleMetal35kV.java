@@ -1,8 +1,9 @@
 package simelectricity.essential.grid;
 
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.core.BlockPos;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import rikka.librikka.DirHorizontal8;
@@ -14,11 +15,15 @@ import simelectricity.essential.client.grid.PowerPoleRenderHelper;
 import simelectricity.essential.common.ISEFacing8;
 
 public class TilePoleMetal35kV extends TileMultiBlockPole  implements ISEFacing8 {
-    @OnlyIn(Dist.CLIENT)
+    public TilePoleMetal35kV(BlockPos pos, BlockState blockState) {
+		super(pos, blockState);
+	}
+
+	@OnlyIn(Dist.CLIENT)
     public boolean isType0() {
         return this.getBlockState().getBlock() == BlockRegistry.metalPole35kV[0];
     }
-    
+
     @Override
     @OnlyIn(Dist.CLIENT)
     public BlockPos getAccessoryPos() {
@@ -31,7 +36,7 @@ public class TilePoleMetal35kV extends TileMultiBlockPole  implements ISEFacing8
         PowerPoleRenderHelper helper;
         int rotation = (8 - this.getRotation().ordinal()) & 7;
         if (this.isType0()) {
-            helper = new PowerPoleRenderHelper(this.pos, rotation, 2, 3) {
+            helper = new PowerPoleRenderHelper(this.worldPosition, rotation, 2, 3) {
                 @Override
                 public void onUpdate() {
                     if (this.connectionList.size() < 2)
@@ -75,7 +80,7 @@ public class TilePoleMetal35kV extends TileMultiBlockPole  implements ISEFacing8
                     helper.createInsulator(2, 3, 4.5F, 0, 1)
             );
         } else {
-            helper = new PowerPoleRenderHelper(this.pos, rotation, 1, 3);
+            helper = new PowerPoleRenderHelper(this.worldPosition, rotation, 1, 3);
             helper.addInsulatorGroup(3.95F, 5, 0,
                     helper.createInsulator(0, 3, -4.9F, -2, 0),
                     helper.createInsulator(0, 3, 3.95F, 5, 0),
@@ -88,54 +93,58 @@ public class TilePoleMetal35kV extends TileMultiBlockPole  implements ISEFacing8
 
 	@Override
 	public void onStructureCreated() {
-		gridNode = SEAPI.energyNetAgent.newGridNode(this.pos, 3);
-		SEAPI.energyNetAgent.attachGridNode(this.world, this.gridNode);
+		gridNode = SEAPI.energyNetAgent.newGridNode(this.worldPosition, 3);
+		SEAPI.energyNetAgent.attachGridNode(this.level, this.gridNode);
 	}
 
 	@Override
 	public void onStructureRemoved() {
-		SEAPI.energyNetAgent.detachGridNode(this.world, this.gridNode);
+		SEAPI.energyNetAgent.detachGridNode(this.level, this.gridNode);
 	}
 
 	@Override
 	protected void onStructureCreating() {
 
 	}
-	
+
 	public static class Bottom extends TileMultiBlockPlaceHolder {
-	    @OnlyIn(Dist.CLIENT)
+	    public Bottom(BlockPos pos, BlockState blockState) {
+			super(pos, blockState);
+		}
+
+		@OnlyIn(Dist.CLIENT)
 		public int xOffset() {
 			return this.mbInfo.xOffset;
 		}
-	    
+
 	    @OnlyIn(Dist.CLIENT)
 		public int zOffset() {
 			return this.mbInfo.zOffset;
 		}
-	    
+
 	    @OnlyIn(Dist.CLIENT)
 	    public DirHorizontal8 facing() {
 	        return BlockPoleMetal35kV.getFacing(getBlockState());
 	    }
-	    
+
 	    @OnlyIn(Dist.CLIENT)
 	    public int getPartId() {
 			return BlockPoleMetal35kV.getPartId(facing(), this.mbInfo.xOffset, this.mbInfo.zOffset);
 	    }
-	    
+
 	    //////////////////////////////
-	    /////TileEntity
+	    /////BlockEntity
 	    //////////////////////////////
 	    @OnlyIn(Dist.CLIENT)
 	    @Override
-	    public double getMaxRenderDistanceSquared() {
+	    public double getViewDistance() {
 	        return 100000;
 	    }
 
 	    @OnlyIn(Dist.CLIENT)
 	    @Override
-	    public AxisAlignedBB getRenderBoundingBox() {
-	        return TileEntity.INFINITE_EXTENT_AABB;
+	    public AABB getRenderBoundingBox() {
+	        return BlockEntity.INFINITE_EXTENT_AABB;
 	    }
 	}
 }

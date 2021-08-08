@@ -1,14 +1,19 @@
 package simelectricity.essential.grid.transformer;
 
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.core.BlockPos;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import simelectricity.essential.common.SEMultiBlockEnergyTile;
 
 public class TilePowerTransformerPlaceHolder extends SEMultiBlockEnergyTile {
+    public TilePowerTransformerPlaceHolder(BlockPos pos, BlockState blockState) {
+		super(pos, blockState);
+	}
+
     @Override
     public void onLoad() {}
 	@Override
@@ -16,47 +21,59 @@ public class TilePowerTransformerPlaceHolder extends SEMultiBlockEnergyTile {
     @Override
     public void onStructureCreated() {}
     @Override
-    public void onStructureRemoved() {}	
-    
+    public void onStructureRemoved() {}
+
     public static class Primary extends TilePowerTransformerPlaceHolder {
+        public Primary(BlockPos pos, BlockState blockState) {
+    		super(pos, blockState);
+    	}
+
         public TilePowerTransformerWinding getWinding() {
             BlockPos pos = this.mbInfo.getPartPos(EnumPowerTransformerBlockType.Primary.offset);
-            TileEntity te = this.world.getTileEntity(pos);
+            BlockEntity te = this.level.getBlockEntity(pos);
             return te instanceof TilePowerTransformerWinding ? (TilePowerTransformerWinding)te : null;
         }
     }
 
     public static class Secondary extends TilePowerTransformerPlaceHolder {
+        public Secondary(BlockPos pos, BlockState blockState) {
+    		super(pos, blockState);
+    	}
+
         public TilePowerTransformerWinding getWinding() {
             BlockPos pos = this.mbInfo.getPartPos(EnumPowerTransformerBlockType.Secondary.offset);
-            TileEntity te = this.world.getTileEntity(pos);
+            BlockEntity te = this.level.getBlockEntity(pos);
             return te instanceof TilePowerTransformerWinding ? (TilePowerTransformerWinding) te : null;
         }
     }
 
     public static class Render extends TilePowerTransformerPlaceHolder {
+        public Render(BlockPos pos, BlockState blockState) {
+    		super(pos, blockState);
+    	}
+
         @Override
         @OnlyIn(Dist.CLIENT)
-        public void onSyncDataFromServerArrived(CompoundNBT nbt) {
+        public void onSyncDataFromServerArrived(CompoundTag nbt) {
         	super.onSyncDataFromServerArrived(nbt);
             markForRenderUpdate();
         }
-        
+
         //////////////////////////////
-        /////TileEntity
+        /////BlockEntity
         //////////////////////////////
         @Override
         @OnlyIn(Dist.CLIENT)
-        public double getMaxRenderDistanceSquared() {
+        public double getViewDistance() {
             return 100000;
         }
 
         @Override
         @OnlyIn(Dist.CLIENT)
-        public AxisAlignedBB getRenderBoundingBox() {
-            return TileEntity.INFINITE_EXTENT_AABB;
+        public AABB getRenderBoundingBox() {
+            return BlockEntity.INFINITE_EXTENT_AABB;
         }
-        
+
         public boolean hasFastRenderer() {
             return true;
         }

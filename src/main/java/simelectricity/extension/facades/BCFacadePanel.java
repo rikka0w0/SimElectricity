@@ -1,12 +1,12 @@
 package simelectricity.extension.facades;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
 import simelectricity.essential.coverpanel.FacadePanel;
 
 public class BCFacadePanel extends FacadePanel{
-    public BCFacadePanel(CompoundNBT nbt) {
+    public BCFacadePanel(CompoundTag nbt) {
     	super(nbt);
     }
 

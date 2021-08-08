@@ -3,8 +3,8 @@ package simelectricity.essential.api;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
 import simelectricity.essential.api.coverpanel.ISECoverPanel;
 
 public interface ISECoverPanelFactory {
@@ -24,7 +24,7 @@ public interface ISECoverPanelFactory {
 	 * @param coverPanelName the registry name of the cover panel instance
 	 * @return the ISECoverPanel instance
 	 */
-    ISECoverPanel from(CompoundNBT nbt, Class<? extends ISECoverPanel> panelCls, String coverPanelName);
+    ISECoverPanel from(CompoundTag nbt, Class<? extends ISECoverPanel> panelCls, String coverPanelName);
 	
 	String getName();
 }

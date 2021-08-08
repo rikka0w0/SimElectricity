@@ -1,39 +1,47 @@
 package simelectricity.essential.cable;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.SoundType;
-import net.minecraft.block.material.Material;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.IWaterLoggable;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.fluid.Fluids;
-import net.minecraft.fluid.FluidState;
-import net.minecraft.item.BlockItemUseContext;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemUseContext;
-import net.minecraft.state.StateContainer;
-import net.minecraft.state.properties.BlockStateProperties;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.*;
-import net.minecraft.util.math.*;
-import net.minecraft.util.math.shapes.IBooleanFunction;
-import net.minecraft.util.math.shapes.ISelectionContext;
-import net.minecraft.util.math.shapes.VoxelShape;
-import net.minecraft.util.math.shapes.VoxelShapes;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.IWorld;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.SimpleWaterloggedBlock;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType.BlockEntitySupplier;
+import net.minecraft.world.phys.shapes.BooleanOp;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.client.resources.language.I18n;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.Level;
+import net.minecraft.util.Mth;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import rikka.librikka.IMetaProvider;
+import rikka.librikka.MarkedBlockHitResult;
 import rikka.librikka.RayTraceHelper;
 import rikka.librikka.Utils;
 import rikka.librikka.block.BlockBase;
@@ -52,7 +60,9 @@ import javax.annotation.Nullable;
 import java.util.LinkedList;
 import java.util.List;
 
-public class BlockWire extends BlockBase implements ICustomBoundingBox, IMetaProvider<ISECableMeta>, IWaterLoggable  {
+import net.minecraft.world.level.block.state.BlockBehaviour;
+
+public class BlockWire extends BlockBase implements EntityBlock, ICustomBoundingBox, IMetaProvider<ISECableMeta>, SimpleWaterloggedBlock  {
     ///////////////////////////////
     /// Wire Properties
     ///////////////////////////////
@@ -64,7 +74,7 @@ public class BlockWire extends BlockBase implements ICustomBoundingBox, IMetaPro
 		Type(float resistivity) {
 			this.resistivity = resistivity;
 		}
-		
+
 		@Override
 		public float thickness() {
 			return 0.1F;
@@ -74,21 +84,21 @@ public class BlockWire extends BlockBase implements ICustomBoundingBox, IMetaPro
 		public float resistivity() {
 			return resistivity;
 		}
-		
+
 	}
-	
-	
+
+
     private BlockWire(ISECableMeta meta) {
-        this("wire", meta, 
-        		Block.Properties.create(Material.GLASS)
-        		.hardnessAndResistance(0.2F, 10.0F)
+        this("wire", meta,
+        		BlockBehaviour.Properties.of(Material.GLASS)
+        		.strength(0.2F, 10.0F)
         		.sound(SoundType.METAL)
-        		.setOpaque((a,b,c)->false),
+        		.isRedstoneConductor((a,b,c)->false),
         		ItemBlockWire.class,
-        		(new Item.Properties()).group(SEAPI.SETab),
-                TileWire.class);
+        		(new Item.Properties()).tab(SEAPI.SETab),
+                TileWire::new);
     }
-    
+
     public static BlockWire[] create() {
     	BlockWire[] ret = new BlockWire[Type.values().length];
     	for (ISECableMeta cableData: Type.values()) {
@@ -96,7 +106,7 @@ public class BlockWire extends BlockBase implements ICustomBoundingBox, IMetaPro
     	}
     	return ret;
     }
-    
+
 
     public final ISECableMeta meta;
     protected static ThreadLocal<Direction> nextPlacedSide = new ThreadLocal<>();
@@ -124,13 +134,13 @@ public class BlockWire extends BlockBase implements ICustomBoundingBox, IMetaPro
         }
 
         @Override	// Was canPlaceBlockOnSide
-        protected boolean canPlace(BlockItemUseContext context, BlockState stateForPlace) {
-        	World world = context.getWorld();
-        	BlockPos pos = context.getPos();
-        	Direction side = context.getFace();
-        	
-            TileEntity teSelected = world.getTileEntity(pos);
-            TileEntity teNew = world.getTileEntity(pos.offset(side));
+        protected boolean canPlace(BlockPlaceContext context, BlockState stateForPlace) {
+        	Level world = context.getLevel();
+        	BlockPos pos = context.getClickedPos();
+        	Direction side = context.getClickedFace();
+
+            BlockEntity teSelected = world.getBlockEntity(pos);
+            BlockEntity teNew = world.getBlockEntity(pos.relative(side));
 
             if (teSelected instanceof ISEGenericWire) {
                 return true;
@@ -142,26 +152,26 @@ public class BlockWire extends BlockBase implements ICustomBoundingBox, IMetaPro
         }
 
         @Override
-        public ActionResultType onItemUse(ItemUseContext context) {
-        	PlayerEntity player = context.getPlayer();
-            World world = context.getWorld();
-            BlockPos pos = context.getPos();
-            Hand hand = context.getHand();
-            Direction facing = context.getFace();
-            Vector3d Vector3d = context.getHitVec().subtract(pos.getX(), pos.getY(), pos.getZ());
-            float hitX = (float) Vector3d.x;
-            float hitY = (float) Vector3d.y;
-            float hitZ = (float) Vector3d.z;
-            
-            
-        	float x = hitX-facing.getXOffset()-0.5f;
-            float y = hitY-facing.getYOffset()-0.5f;
-            float z = hitZ-facing.getZOffset()-0.5f;
+        public InteractionResult useOn(UseOnContext context) {
+        	Player player = context.getPlayer();
+            Level world = context.getLevel();
+            BlockPos pos = context.getClickedPos();
+            InteractionHand hand = context.getHand();
+            Direction facing = context.getClickedFace();
+            Vec3 Vec3 = context.getClickLocation().subtract(pos.getX(), pos.getY(), pos.getZ());
+            float hitX = (float) Vec3.x;
+            float hitY = (float) Vec3.y;
+            float hitZ = (float) Vec3.z;
+
+
+        	float x = hitX-facing.getStepX()-0.5f;
+            float y = hitY-facing.getStepY()-0.5f;
+            float z = hitZ-facing.getStepZ()-0.5f;
 
 
             Direction to = null;
             if (facing.getAxis() == Direction.Axis.Y) {
-                if (MathHelper.abs(x) > MathHelper.abs(z)) {
+                if (Mth.abs(x) > Mth.abs(z)) {
                     if (x>0)
                         to = Direction.EAST;
                     else
@@ -173,7 +183,7 @@ public class BlockWire extends BlockBase implements ICustomBoundingBox, IMetaPro
                         to = Direction.NORTH;
                 }
             } else if (facing.getAxis() == Direction.Axis.X) {
-                if (MathHelper.abs(y) > MathHelper.abs(z)) {
+                if (Mth.abs(y) > Mth.abs(z)) {
                     if (y>0)
                         to = Direction.UP;
                     else
@@ -185,7 +195,7 @@ public class BlockWire extends BlockBase implements ICustomBoundingBox, IMetaPro
                         to = Direction.NORTH;
                 }
             } else if (facing.getAxis() == Direction.Axis.Z) {
-                if (MathHelper.abs(x) > MathHelper.abs(y)) {
+                if (Mth.abs(x) > Mth.abs(y)) {
                     if (x>0)
                         to = Direction.EAST;
                     else
@@ -199,16 +209,16 @@ public class BlockWire extends BlockBase implements ICustomBoundingBox, IMetaPro
             }
 
             BlockWire blockWire = (BlockWire) getBlock();
-            ItemStack itemStack = player.getHeldItem(hand);
+            ItemStack itemStack = player.getItemInHand(hand);
             boolean shrinkItem = false;
-            TileEntity teSelected = BlockUtils.getTileEntitySafely(world, pos);
-            TileEntity teNew = BlockUtils.getTileEntitySafely(world, pos.offset(facing));
+            BlockEntity teSelected = BlockUtils.getTileEntitySafely(world, pos);
+            BlockEntity teNew = BlockUtils.getTileEntitySafely(world, pos.relative(facing));
 
             if (teSelected instanceof ISEGenericWire) {
             	// TODO: fix this
-            	BlockRayTraceResult trace = blockWire.rayTrace(world, pos, player);
+            	MarkedBlockHitResult<Integer> trace = blockWire.rayTrace(world, pos, player);
 //                RayTraceResult trace = this.rayTrace(world, player, RayTraceContext.FluidMode.NONE);
-                if (trace.getPos().equals(pos) && subHit_isBranch(trace.subHit)) {
+                if (trace.getBlockPos().equals(pos) && subHit_isBranch(trace.subHit)) {
                     ISEGenericWire wireTile = (ISEGenericWire) teSelected;
                     Direction tr_side = subHit_side(trace.subHit);
                     Direction tr_branch = subHit_branch(trace.subHit);
@@ -216,8 +226,8 @@ public class BlockWire extends BlockBase implements ICustomBoundingBox, IMetaPro
                     if (tr_branch == null) {
                         // Center
                         if (facing != tr_side && facing != tr_side.getOpposite()) {
-                            if (!wireTile.hasBranch(tr_side, facing) && BlockUtils.isSideSolid(world, pos.offset(tr_side), tr_side.getOpposite())) {
-                                shrinkItem = blockWire.addBranch(wireTile, tr_side, facing, itemStack, world.isRemote);
+                            if (!wireTile.hasBranch(tr_side, facing) && BlockUtils.isSideSolid(world, pos.relative(tr_side), tr_side.getOpposite())) {
+                                shrinkItem = blockWire.addBranch(wireTile, tr_side, facing, itemStack, world.isClientSide);
                             }
                         }
                     } else {
@@ -225,33 +235,33 @@ public class BlockWire extends BlockBase implements ICustomBoundingBox, IMetaPro
                         if (facing == tr_side || facing == tr_side.getOpposite()) {
 
                             if (!wireTile.hasBranch(to, facing.getOpposite()) &&
-                                    (BlockUtils.isSideSolid(world, pos.offset(to), to.getOpposite()) ||
-                                            world.getTileEntity(pos.offset(to)) instanceof ISECableTile)) {
-                                shrinkItem = blockWire.addBranch(wireTile, to, facing.getOpposite(), itemStack, world.isRemote);
+                                    (BlockUtils.isSideSolid(world, pos.relative(to), to.getOpposite()) ||
+                                            world.getBlockEntity(pos.relative(to)) instanceof ISECableTile)) {
+                                shrinkItem = blockWire.addBranch(wireTile, to, facing.getOpposite(), itemStack, world.isClientSide);
                             }
                         } else {
                             if (wireTile.hasBranch(tr_side, facing)) {
                                 if (teNew instanceof ISEGenericWire) {
                                     // Add branch in neighbor
                                     if (!((ISEGenericWire) teNew).hasBranch(tr_side, tr_branch.getOpposite()) &&
-                                            (BlockUtils.isSideSolid(world, pos.offset(facing).offset(tr_side), tr_side.getOpposite()) ||
-                                                    world.getTileEntity(pos.offset(tr_branch).offset(tr_side)) instanceof ISECableTile)) {
-                                        shrinkItem = blockWire.addBranch((ISEGenericWire) teNew, tr_side, tr_branch.getOpposite(), itemStack, world.isRemote);
+                                            (BlockUtils.isSideSolid(world, pos.relative(facing).relative(tr_side), tr_side.getOpposite()) ||
+                                                    world.getBlockEntity(pos.relative(tr_branch).relative(tr_side)) instanceof ISECableTile)) {
+                                        shrinkItem = blockWire.addBranch((ISEGenericWire) teNew, tr_side, tr_branch.getOpposite(), itemStack, world.isClientSide);
                                     }
                                 } else {
                                     // Block edge, try to place a new neighbor wire
-                                    if (BlockUtils.isSideSolid(world, pos.offset(tr_branch).offset(tr_side), tr_side.getOpposite()) ||
-                                            world.getTileEntity(pos.offset(tr_branch).offset(tr_side)) instanceof ISECableTile) {
+                                    if (BlockUtils.isSideSolid(world, pos.relative(tr_branch).relative(tr_side), tr_side.getOpposite()) ||
+                                            world.getBlockEntity(pos.relative(tr_branch).relative(tr_side)) instanceof ISECableTile) {
                                         nextPlacedSide.set(tr_side);
                                         nextPlacedto.set(tr_branch.getOpposite());
                                         nextPlacedItemStack.set(itemStack);
 
-                                        return super.onItemUse(context);
+                                        return super.useOn(context);
                                     }
                                 }
                             } else {
-                                if (!wireTile.hasBranch(tr_side, facing) && BlockUtils.isSideSolid(world, pos.offset(tr_side), tr_side.getOpposite())) {
-                                    shrinkItem = blockWire.addBranch(wireTile, tr_side, facing, itemStack, world.isRemote);
+                                if (!wireTile.hasBranch(tr_side, facing) && BlockUtils.isSideSolid(world, pos.relative(tr_side), tr_side.getOpposite())) {
+                                    shrinkItem = blockWire.addBranch(wireTile, tr_side, facing, itemStack, world.isClientSide);
                                 }
                             }
                         }
@@ -261,7 +271,7 @@ public class BlockWire extends BlockBase implements ICustomBoundingBox, IMetaPro
                 Direction wire_side = facing.getOpposite();
                 // Selecting the block after the ISEGenericWire block
                 if (!((ISEGenericWire) teNew).hasBranch(wire_side, to) && BlockUtils.isSideSolid(world, pos, wire_side.getOpposite())) {
-                    shrinkItem = blockWire.addBranch((ISEGenericWire) teNew, wire_side, to, itemStack, world.isRemote);
+                    shrinkItem = blockWire.addBranch((ISEGenericWire) teNew, wire_side, to, itemStack, world.isClientSide);
                 }
             } else {
                 // Attempt to place fresh wire
@@ -270,16 +280,16 @@ public class BlockWire extends BlockBase implements ICustomBoundingBox, IMetaPro
                 nextPlacedto.set(to);
                 nextPlacedItemStack.set(itemStack);
 
-                return super.onItemUse(context);
+                return super.useOn(context);
             }
 
             if (shrinkItem) {
                 if (!player.isCreative())
                     itemStack.shrink(1);
 
-                return ActionResultType.SUCCESS;
+                return InteractionResult.SUCCESS;
             } else {
-                return ActionResultType.FAIL;
+                return InteractionResult.FAIL;
             }
         }
     }
@@ -376,17 +386,17 @@ public class BlockWire extends BlockBase implements ICustomBoundingBox, IMetaPro
         return index;
     }
 
-    
-    private final Class<? extends TileWire> tileEntityClass;
-    protected BlockWire(String name, ISECableMeta meta, Block.Properties props, Class<? extends ItemBlockBase> itemBlockClass,
-    		Item.Properties itemProps, Class<? extends TileWire> tileEntityClass) {
+
+    private final BlockEntitySupplier<? extends TileWire> blockEntitySupplier;
+    protected BlockWire(String name, ISECableMeta meta, BlockBehaviour.Properties props, Class<? extends ItemBlockBase> itemBlockClass,
+    		Item.Properties itemProps, BlockEntitySupplier<? extends TileWire> blockEntitySupplier) {
     	super(name+"_"+meta.name(), props, itemBlockClass, itemProps);
-    	this.setDefaultState(this.getDefaultState().with(BlockStateProperties.WATERLOGGED, false));
+    	this.registerDefaultState(this.defaultBlockState().setValue(BlockStateProperties.WATERLOGGED, false));
         this.meta = meta;
-        this.tileEntityClass = tileEntityClass;
+        this.blockEntitySupplier = blockEntitySupplier;
 
         //Calc. collision boxes and cache them
-//        this.cableBoundingBoxes = new AxisAlignedBB[thicknessList.length][7];
+//        this.cableBoundingBoxes = new AABB[thicknessList.length][7];
 //        for (int i=0; i<thicknessList.length; i++) {
 //            float min = 0.5F - thicknessList[i] / 2F;
 //            float max = 0.5F + thicknessList[i] / 2F;
@@ -395,56 +405,53 @@ public class BlockWire extends BlockBase implements ICustomBoundingBox, IMetaPro
 //                cableBoundingBoxes[i][side.ordinal()] = RayTraceHelper.createAABB(side, min, 0, min, max, min, max);
 //            }
 //
-//            cableBoundingBoxes[i][6] = new AxisAlignedBB(min, min, min, max, max, max);
+//            cableBoundingBoxes[i][6] = new AABB(min, min, min, max, max, max);
 //        }
     }
 
 	@Override
-	protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
+	protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
 		builder.add(BlockStateProperties.WATERLOGGED);
 	}
 
 	@SuppressWarnings("deprecation")
 	@Override
 	public FluidState getFluidState(BlockState state) {
-		return state.get(BlockStateProperties.WATERLOGGED) ? Fluids.WATER.getStillFluidState(false)
+		return state.getValue(BlockStateProperties.WATERLOGGED) ? Fluids.WATER.getSource(false)
 				: super.getFluidState(state);
 	}
-	
+
 	@Override
-	public BlockState getStateForPlacement(BlockItemUseContext context) {
-		FluidState FluidState = context.getWorld().getFluidState(context.getPos());
-		return this.getDefaultState().with(BlockStateProperties.WATERLOGGED, FluidState.getFluid() == Fluids.WATER);
+	public BlockState getStateForPlacement(BlockPlaceContext context) {
+		FluidState FluidState = context.getLevel().getFluidState(context.getClickedPos());
+		return this.defaultBlockState().setValue(BlockStateProperties.WATERLOGGED, FluidState.getType() == Fluids.WATER);
 	}
-	
+
 	@SuppressWarnings("deprecation")
 	@Override
-	public BlockState updatePostPlacement(BlockState stateIn, Direction facing, BlockState facingState, IWorld worldIn,
+	public BlockState updateShape(BlockState stateIn, Direction facing, BlockState facingState, LevelAccessor worldIn,
 			BlockPos currentPos, BlockPos facingPos) {
-		if (stateIn.get(BlockStateProperties.WATERLOGGED)) {
-			worldIn.getPendingFluidTicks().scheduleTick(currentPos, Fluids.WATER, Fluids.WATER.getTickRate(worldIn));
+		if (stateIn.getValue(BlockStateProperties.WATERLOGGED)) {
+			worldIn.getLiquidTicks().scheduleTick(currentPos, Fluids.WATER, Fluids.WATER.getTickDelay(worldIn));
 		}
-		
-		return super.updatePostPlacement(stateIn, facing, facingState, worldIn, currentPos, facingPos);
+
+		return super.updateShape(stateIn, facing, facingState, worldIn, currentPos, facingPos);
 	}
-    
+
     @Override
     @OnlyIn(Dist.CLIENT)
-    public void addInformation(ItemStack stack, @Nullable IBlockReader worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
-    	tooltip.add(new StringTextComponent(
-    			I18n.format("gui.simelectricity.resistivity") + ": " + 
+    public void appendHoverText(ItemStack stack, @Nullable BlockGetter worldIn, List<Component> tooltip, TooltipFlag flagIn) {
+    	tooltip.add(new TextComponent(
+    			I18n.get("gui.simelectricity.resistivity") + ": " +
     			SEUnitHelper.getStringWithoutUnit(2F*meta.resistivity()) + "\u03a9/m"
     			));;
     }
 
-    @Override
-    public boolean hasTileEntity(BlockState state) {return true;}
-
-    @Override
-    public TileEntity createTileEntity(BlockState state, IBlockReader world) {
+	@Override
+	public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         TileWire wire;
         try {
-            wire = tileEntityClass.getConstructor().newInstance();
+            wire = blockEntitySupplier.create(pos, state);
             //if (!world.isRemote)    //createTileEntity is only called by the server thread when the block is placed at the first
                 //wire.setResistanceOnPlace(this.resistances[this.getMetaFromState(state)]);
             return wire;
@@ -458,7 +465,7 @@ public class BlockWire extends BlockBase implements ICustomBoundingBox, IMetaPro
     //////////////////////////////////
     ///CollisionBoxes
     //////////////////////////////////
-    public Vector3d getBranchVecOffset(Direction side) {
+    public Vec3 getBranchVecOffset(Direction side) {
         float thickness = meta.thickness();
         double x = 0, y = 0, z = 0;
         switch (side) {
@@ -482,10 +489,10 @@ public class BlockWire extends BlockBase implements ICustomBoundingBox, IMetaPro
                 break;
         }
 
-        return new Vector3d(x, y, z);
+        return new Vec3(x, y, z);
     }
 
-    public AxisAlignedBB getBranchBoundingBox(Direction side, Direction branch, boolean ignoreCorner, boolean onlyCorner) {
+    public AABB getBranchBoundingBox(Direction side, Direction branch, boolean ignoreCorner, boolean onlyCorner) {
         float thickness = meta.thickness();
     	float min = 0.5F - thickness / 2.0F;
         float max = 0.5F + thickness / 2.0F;
@@ -499,11 +506,11 @@ public class BlockWire extends BlockBase implements ICustomBoundingBox, IMetaPro
             yMax = thickness;
 
         return (branch == null) ?
-                new AxisAlignedBB(min, min, min, max, max, max).offset(getBranchVecOffset(side)) : // Center
-                RayTraceHelper.createAABB(branch, min, yMin, min, max, yMax, max).offset(getBranchVecOffset(side));
+                new AABB(min, min, min, max, max, max).move(getBranchVecOffset(side)) : // Center
+                RayTraceHelper.createAABB(branch, min, yMin, min, max, yMax, max).move(getBranchVecOffset(side));
     }
 
-    public AxisAlignedBB getCenterBoundingBox(ISEGenericWire wireTile, Direction side) {
+    public AABB getCenterBoundingBox(ISEGenericWire wireTile, Direction side) {
         float thickness = meta.thickness();
         double x1, y1, z1, x2, y2, z2;
         x1 = 0.5 - thickness / 2;
@@ -532,10 +539,10 @@ public class BlockWire extends BlockBase implements ICustomBoundingBox, IMetaPro
         if (wireTile.hasBranch(side, Direction.EAST))
             x2 = 1;
 
-        return new AxisAlignedBB(x1, y1, z1, x2, y2, z2).offset(getBranchVecOffset(side));
+        return new AABB(x1, y1, z1, x2, y2, z2).move(getBranchVecOffset(side));
     }
 
-    public AxisAlignedBB getCornerBoundingBox(ISEGenericWire wireTile, Direction side1, Direction side2) {
+    public AABB getCornerBoundingBox(ISEGenericWire wireTile, Direction side1, Direction side2) {
         Direction e1 = null;
         Direction e2 = null;
         if (side1.getAxis() == Direction.Axis.Y) {
@@ -604,17 +611,17 @@ public class BlockWire extends BlockBase implements ICustomBoundingBox, IMetaPro
             }
         }
 
-        return new AxisAlignedBB(x1, y1, z1, x2, y2, z2);
+        return new AABB(x1, y1, z1, x2, y2, z2);
     }
 
     public static Direction subHit_side(int subHit) {
-        return Direction.byIndex((subHit>>4) & 0x07);
+        return Direction.from3DDataValue((subHit>>4) & 0x07);
     }
 
     @Nullable
     public static Direction subHit_branch(int subHit) {
         int to_int = subHit & 0x0F;
-        return to_int > Direction.values().length ? null : Direction.byIndex(to_int);
+        return to_int > Direction.values().length ? null : Direction.from3DDataValue(to_int);
     }
 
     public static boolean subHit_isBranch(int subHit) {
@@ -626,33 +633,33 @@ public class BlockWire extends BlockBase implements ICustomBoundingBox, IMetaPro
     }
 
     // TODO: Check collisionRayTrace (getRayTraceResult) and getRaytraceShape
-    // Was RayTraceResult collisionRayTrace(IBlockState state, World world, BlockPos pos, Vector3d start, Vector3d end)
+    // Was RayTraceResult collisionRayTrace(IBlockState state, Level world, BlockPos pos, Vec3 start, Vec3 end)
 //    @Override
-//    public RayTraceResult getRayTraceResult(BlockState state, World world, BlockPos pos, Vector3d start, Vector3d end, RayTraceResult original) {
+//    public RayTraceResult getRayTraceResult(BlockState state, Level world, BlockPos pos, Vec3 start, Vec3 end, RayTraceResult original) {
 //    	return this.rayTrace(world, pos, start, end);
 //    }
 
     @Nullable
-    public BlockRayTraceResult rayTrace(IBlockReader world, BlockPos pos, PlayerEntity player) {
-        Vector3d start = player.getPositionVec().add(0, player.getEyeHeight(), 0);
+    public MarkedBlockHitResult<Integer> rayTrace(BlockGetter world, BlockPos pos, Player player) {
+        Vec3 start = player.position().add(0, player.getEyeHeight(), 0);
         double reachDistance = 5;
-        
+
 //        if (player instanceof EntityPlayerMP)
 //            reachDistance = ((EntityPlayerMP) player).interactionManager.getBlockReachDistance();
 
-        Vector3d end = start.add(player.getLookVec().normalize().scale(reachDistance));
+        Vec3 end = start.add(player.getLookAngle().normalize().scale(reachDistance));
         return this.rayTrace(world, pos, start, end);
     }
 
     @Nullable
-    public BlockRayTraceResult rayTrace(IBlockReader world, BlockPos pos, Vector3d start, Vector3d end) {
-        TileEntity tile = world.getTileEntity(pos);
+    public MarkedBlockHitResult<Integer> rayTrace(BlockGetter world, BlockPos pos, Vec3 start, Vec3 end) {
+        BlockEntity tile = world.getBlockEntity(pos);
         if (!(tile instanceof ISEGenericWire))
-            return RayTraceHelper.computeTrace(null, pos, start, end, VoxelShapes.fullCube().getBoundingBox(), -1);
+            return MarkedBlockHitResult.rayTrace(pos, start, end, Shapes.block().bounds(), -1);
 
         ISEGenericWire wireTile = (ISEGenericWire) tile;
 
-        BlockRayTraceResult best = null;
+        MarkedBlockHitResult<Integer> best = null;
         for (Direction wire_side:  Direction.values()) {
             boolean hasConnection = false;
 
@@ -662,12 +669,12 @@ public class BlockWire extends BlockBase implements ICustomBoundingBox, IMetaPro
                     hasConnection = true;
 
                     boolean hasCorner = wireTile.hasBranch(to, wire_side);
-                    best = RayTraceHelper.computeTrace(best, pos, start, end,
+                    best = MarkedBlockHitResult.iterate(best, pos, start, end,
                             getBranchBoundingBox(wire_side, to, hasCorner, false),
                             (wire_side.ordinal() << 4) | to.ordinal());
 
                     if (hasCorner)
-                        best = RayTraceHelper.computeTrace(best, pos, start, end,
+                        best = MarkedBlockHitResult.iterate(best, pos, start, end,
                                 getBranchBoundingBox(wire_side, to, false, true),
                                 0x80 | (wire_side.ordinal() << 4) | to.ordinal());
                 }
@@ -675,17 +682,17 @@ public class BlockWire extends BlockBase implements ICustomBoundingBox, IMetaPro
 
             // Center
             if (hasConnection)
-                best = RayTraceHelper.computeTrace(best, pos, start, end, getBranchBoundingBox(wire_side,null, false, false), (wire_side.ordinal() << 4) | 7);
+                best = MarkedBlockHitResult.iterate(best, pos, start, end, getBranchBoundingBox(wire_side,null, false, false), (wire_side.ordinal() << 4) | 7);
         }
 
         return best;
     }
 
     @Override
-    public VoxelShape getShape(BlockState state, IBlockReader world, BlockPos pos, ISelectionContext context) {
-        TileEntity te = world.getTileEntity(pos);
+    public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
+        BlockEntity te = world.getBlockEntity(pos);
 
-        VoxelShape vs = VoxelShapes.empty();
+        VoxelShape vs = Shapes.empty();
         if (!(te instanceof ISEWireTile))
             return vs;
 
@@ -723,61 +730,61 @@ public class BlockWire extends BlockBase implements ICustomBoundingBox, IMetaPro
             //Branches
             if (wireTile.hasBranch(wire_side, Direction.DOWN)) {
                 hasConnection = true;
-                vs = VoxelShapes.combine(vs, VoxelShapes.create(min+x, y, min+z, max+x, max+y, max+z), IBooleanFunction.OR);
+                vs = Shapes.joinUnoptimized(vs, Shapes.box(min+x, y, min+z, max+x, max+y, max+z), BooleanOp.OR);
             }
 
             if (wireTile.hasBranch(wire_side, Direction.UP)) {
                 hasConnection = true;
-                vs = VoxelShapes.combine(vs, VoxelShapes.create(min+x, min+y, min+z, max+x, 1+y, max+z), IBooleanFunction.OR);
+                vs = Shapes.joinUnoptimized(vs, Shapes.box(min+x, min+y, min+z, max+x, 1+y, max+z), BooleanOp.OR);
             }
 
             if (wireTile.hasBranch(wire_side, Direction.NORTH)) {
                 hasConnection = true;
-                vs = VoxelShapes.combine(vs, VoxelShapes.create(min+x, min+y, z, max+x, max+y, max+z), IBooleanFunction.OR);
+                vs = Shapes.joinUnoptimized(vs, Shapes.box(min+x, min+y, z, max+x, max+y, max+z), BooleanOp.OR);
             }
 
             if (wireTile.hasBranch(wire_side, Direction.SOUTH)) {
                 hasConnection = true;
-                vs = VoxelShapes.combine(vs, VoxelShapes.create(min+x, min+y, min+z, max+x, max+y, 1+z), IBooleanFunction.OR);
+                vs = Shapes.joinUnoptimized(vs, Shapes.box(min+x, min+y, min+z, max+x, max+y, 1+z), BooleanOp.OR);
             }
 
             if (wireTile.hasBranch(wire_side, Direction.WEST)) {
                 hasConnection = true;
-                vs = VoxelShapes.combine(vs, VoxelShapes.create(x, min+y, min+z, max+x, max+y, max+z), IBooleanFunction.OR);
+                vs = Shapes.joinUnoptimized(vs, Shapes.box(x, min+y, min+z, max+x, max+y, max+z), BooleanOp.OR);
             }
 
             if (wireTile.hasBranch(wire_side, Direction.EAST)) {
                 hasConnection = true;
-                vs = VoxelShapes.combine(vs, VoxelShapes.create(min+x, min+y, min+z, 1+x, max+y, max+z), IBooleanFunction.OR);
+                vs = Shapes.joinUnoptimized(vs, Shapes.box(min+x, min+y, min+z, 1+x, max+y, max+z), BooleanOp.OR);
             }
 
             if (hasConnection) {
                 //Center
-                vs = VoxelShapes.combine(vs, VoxelShapes.create(min+x, min+y, min+z, max+x, max+y, max+z), IBooleanFunction.OR);
+                vs = Shapes.joinUnoptimized(vs, Shapes.box(min+x, min+y, min+z, max+x, max+y, max+z), BooleanOp.OR);
             }
         }
-        
+
 		return vs;
     }
 
-    // Was AxisAlignedBB getSelectedBoundingBox(IBlockState state, World world, BlockPos pos)
+    // Was AABB getSelectedBoundingBox(IBlockState state, Level world, BlockPos pos)
     @Override
-    public VoxelShape getBoundingShape(BlockState state, IBlockReader world, BlockPos pos, ISelectionContext context) {
-    	VoxelShape ret = VoxelShapes.empty();
-        TileEntity te = world.getTileEntity(pos);
+    public VoxelShape getBoundingShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
+    	VoxelShape ret = Shapes.empty();
+        BlockEntity te = world.getBlockEntity(pos);
 
         if (!(te instanceof ISEGenericWire))
             return ret;  //This is not supposed to happen
 
         ISEGenericWire wireTile = (ISEGenericWire) te;
-		BlockRayTraceResult trace = rayTrace(world, pos, Essential.proxy.getClientPlayer());
+        MarkedBlockHitResult<Integer> trace = rayTrace(world, pos, Essential.proxy.getClientPlayer());
 
-        if (trace == null || trace.subHit < 0 || !pos.equals(trace.getPos())) {
+        if (trace == null || trace.subHit < 0 || !pos.equals(trace.getBlockPos())) {
             // Perhaps we aren't the object the mouse is over
             return ret;
         }
 
-        AxisAlignedBB aabb = null;
+        AABB aabb = null;
         if (subHit_isBranch(trace.subHit)) {    //Center, corner or branches
             boolean isCorner = subHit_isCorner(trace.subHit);
             Direction wire_side = subHit_side(trace.subHit);
@@ -795,21 +802,21 @@ public class BlockWire extends BlockBase implements ICustomBoundingBox, IMetaPro
                 }
             }
 
-            aabb = aabb.grow(0.025);
+            aabb = aabb.inflate(0.025);
         }
 
-        return aabb==null ? VoxelShapes.empty() : VoxelShapes.create(aabb);
+        return aabb==null ? Shapes.empty() : Shapes.create(aabb);
     }
 
     //////////////////////////////////////
     /////Item drops and Block activities
     //////////////////////////////////////
     @Override
-    public void neighborChanged(BlockState state, World world, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving) {
-        if (world.isRemote)
+    public void neighborChanged(BlockState state, Level world, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving) {
+        if (world.isClientSide)
             return;
 
-        TileEntity te = world.getTileEntity(pos);
+        BlockEntity te = world.getBlockEntity(pos);
         if (te instanceof ISEGenericWire) {
             ISEGenericWire wireTile = (ISEGenericWire) te;
             wireTile.onRenderingUpdateRequested();
@@ -820,11 +827,11 @@ public class BlockWire extends BlockBase implements ICustomBoundingBox, IMetaPro
             if (x*x+y*y+z*z != 1)
                 return; // the change is not send from neighbor block!!!
 
-            TileEntity teFrom = world.getTileEntity(fromPos);
+            BlockEntity teFrom = world.getBlockEntity(fromPos);
             if (teFrom instanceof ISEGenericCable)
             	return;
-            
-            Direction side = Direction.getFacingFromVector(x, y, z);
+
+            Direction side = Direction.getNearest(x, y, z);
             if (wireTile.hasBranch(side, null) && !BlockUtils.isSideSolid(world, fromPos, side.getOpposite())) {
                 // The opposite side is no longer solid
 
@@ -840,23 +847,23 @@ public class BlockWire extends BlockBase implements ICustomBoundingBox, IMetaPro
                 }
 
                 // All branches have been removed, set the wire block to air.
-                world.setBlockState(pos, Blocks.AIR.getDefaultState());
+                world.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
             }
         }
     }
 
     @Override
-    public void onBlockPlacedBy(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
-        super.onBlockPlacedBy(world, pos, state, placer, stack);
-    	if (world.isRemote)
+    public void setPlacedBy(Level world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
+        super.setPlacedBy(world, pos, state, placer, stack);
+    	if (world.isClientSide)
             return;
 
-        TileEntity te = world.getTileEntity(pos);
+        BlockEntity te = world.getBlockEntity(pos);
         if (!(te instanceof ISEGenericWire))
             return;
 
         ISEGenericWire wireTile = (ISEGenericWire) te;
-        addBranch(wireTile, nextPlacedSide.get(), nextPlacedto.get(), nextPlacedItemStack.get(), world.isRemote);
+        addBranch(wireTile, nextPlacedSide.get(), nextPlacedto.get(), nextPlacedItemStack.get(), world.isClientSide);
         wireTile.onRenderingUpdateRequested();
     }
 
@@ -865,21 +872,21 @@ public class BlockWire extends BlockBase implements ICustomBoundingBox, IMetaPro
     ///////////////////////
     ThreadLocal<List<ItemStack>> itemDrops = new ThreadLocal<>();
     @Override
-    public boolean removedByPlayer(BlockState state, World world, BlockPos pos, PlayerEntity player, boolean willHarvest, FluidState fluid) {
-        if (world.isRemote)
+    public boolean removedByPlayer(BlockState state, Level world, BlockPos pos, Player player, boolean willHarvest, FluidState fluid) {
+        if (world.isClientSide)
             return false;
 
-        TileEntity te = world.getTileEntity(pos);
+        BlockEntity te = world.getBlockEntity(pos);
         if (!(te instanceof ISEGenericWire))
             return super.removedByPlayer(state, world, pos, player, willHarvest, fluid);
 
         ISEGenericWire wireTile = (ISEGenericWire) te;
 
-        BlockRayTraceResult trace = this.rayTrace(world, pos, player);
+        MarkedBlockHitResult<Integer> trace = this.rayTrace(world, pos, player);
         if (trace == null)
             return super.removedByPlayer(state, world, pos, player, willHarvest, fluid);
 
-        if (subHit_isBranch(trace.subHit) && trace.getPos().equals(pos)) {
+        if (subHit_isBranch(trace.subHit) && trace.getBlockPos().equals(pos)) {
             // Remove cable branch
             LinkedList<ItemStack> drops = new LinkedList<>();
             boolean isCorner = subHit_isCorner(trace.subHit);
@@ -908,16 +915,16 @@ public class BlockWire extends BlockBase implements ICustomBoundingBox, IMetaPro
     }
 
     @Override
-    public ItemStack getPickBlock(BlockState state, RayTraceResult target, IBlockReader world, BlockPos pos, PlayerEntity player) {
-        TileEntity te = world.getTileEntity(pos);
+    public ItemStack getPickBlock(BlockState state, HitResult target, BlockGetter world, BlockPos pos, Player player) {
+        BlockEntity te = world.getBlockEntity(pos);
         if (!(te instanceof ISEGenericWire))
             return ItemStack.EMPTY;
 
         ISEGenericWire wireTile = (ISEGenericWire) te;
 
-        BlockRayTraceResult trace = this.rayTrace(world, pos, player);
+        MarkedBlockHitResult<Integer> trace = this.rayTrace(world, pos, player);
 
-        if (subHit_isBranch(trace.subHit) && trace.getPos().equals(pos)) {    //Center, corner or branches
+        if (subHit_isBranch(trace.subHit) && trace.getBlockPos().equals(pos)) {    //Center, corner or branches
             Direction wire_side = subHit_side(trace.subHit);
 
             if (wireTile.getWireParam(wire_side).hasBranchOnSide(null)) {

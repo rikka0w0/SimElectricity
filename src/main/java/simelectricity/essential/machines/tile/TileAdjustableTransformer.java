@@ -1,11 +1,12 @@
 package simelectricity.essential.machines.tile;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.Direction;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import rikka.librikka.tileentity.INamedContainerProvider2;
@@ -14,30 +15,34 @@ import simelectricity.api.components.ISETransformer;
 import simelectricity.essential.common.semachine.SETwoPortMachine;
 import simelectricity.essential.machines.gui.ContainerAdjustableTransformer;
 
-public class TileAdjustableTransformer extends SETwoPortMachine<ISETransformer> implements 
+public class TileAdjustableTransformer extends SETwoPortMachine<ISETransformer> implements
 		ISETransformer, ISEEnergyNetUpdateHandler, INamedContainerProvider2 {
-    //Input - primary, output - secondary
+    public TileAdjustableTransformer(BlockPos pos, BlockState blockState) {
+		super(pos, blockState);
+	}
+
+	//Input - primary, output - secondary
     public double ratio = 10, outputResistance = 1;
 
     public double vPri, vSec;
 
     /////////////////////////////////////////////////////////
-    ///TileEntity
+    ///BlockEntity
     /////////////////////////////////////////////////////////
     @Override
-    public void read(BlockState blockState, CompoundNBT tagCompound) {
-        super.read(blockState, tagCompound);
+    public void load(CompoundTag tagCompound) {
+        super.load(tagCompound);
 
 		this.ratio = tagCompound.getDouble("ratio");
 		this.outputResistance = tagCompound.getDouble("outputResistance");
     }
 
     @Override
-    public CompoundNBT write(CompoundNBT tagCompound) {
+    public CompoundTag save(CompoundTag tagCompound) {
         tagCompound.putDouble("ratio", this.ratio);
         tagCompound.putDouble("outputResistance", this.outputResistance);
 
-        return super.write(tagCompound);
+        return super.save(tagCompound);
     }
 
     /////////////////////////////////////////////////////////
@@ -77,10 +82,10 @@ public class TileAdjustableTransformer extends SETwoPortMachine<ISETransformer> 
     }
 
     ///////////////////////////////////
-    /// INamedContainerProvider
+    /// MenuProvider
     ///////////////////////////////////
 	@Override
-	public Container createMenu(int windowID, PlayerInventory inv, PlayerEntity player) {
+	public AbstractContainerMenu createMenu(int windowID, Inventory inv, Player player) {
 		return new ContainerAdjustableTransformer(this, windowID);
 	}
 }

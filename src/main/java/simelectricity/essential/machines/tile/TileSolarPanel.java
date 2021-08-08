@@ -1,16 +1,22 @@
 package simelectricity.essential.machines.tile;
 
-import net.minecraft.util.Direction;
-import net.minecraft.tileentity.ITickableTileEntity;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.block.state.BlockState;
+import rikka.librikka.tileentity.ITickableTileEntity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import simelectricity.api.SEAPI;
 import simelectricity.api.components.ISEVoltageSource;
 import simelectricity.essential.common.semachine.SESinglePortMachine;
 
-public class TileSolarPanel extends SESinglePortMachine<ISEVoltageSource> implements 
+public class TileSolarPanel extends SESinglePortMachine<ISEVoltageSource> implements
 		ISEVoltageSource, ITickableTileEntity {
-    private static byte STATE_DAY;
+    public TileSolarPanel(BlockPos pos, BlockState blockState) {
+		super(pos, blockState);
+	}
+
+	private static byte STATE_DAY;
     private static final byte STATE_NIGHT = 1;
     private static final byte STATE_CAVE = 2;
     //Component parameters
@@ -19,20 +25,20 @@ public class TileSolarPanel extends SESinglePortMachine<ISEVoltageSource> implem
     private byte state = -1;
 
     ///////////////////////////////////
-    /// TileEntity
+    /// BlockEntity
     ///////////////////////////////////
     @Override
     public void tick() {
-        if (this.world.isRemote)
+        if (this.level.isClientSide)
             return;
 
         //Server only
-        if (!this.world.getDimensionType().hasSkyLight() || !this.world.canBlockSeeSky(this.pos.up())) {
+        if (!this.level.dimensionType().hasSkyLight() || !this.level.canSeeSkyFromBelowWater(this.worldPosition.above())) {
             this.detectAndSendChange(TileSolarPanel.STATE_CAVE);
             return;
         }
 
-        if (this.world.isDaytime())
+        if (this.level.isDay())
             this.detectAndSendChange(TileSolarPanel.STATE_DAY);
         else
             this.detectAndSendChange(TileSolarPanel.STATE_NIGHT);

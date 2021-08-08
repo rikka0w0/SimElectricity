@@ -1,7 +1,7 @@
 package simelectricity.essential.api.coverpanel;
 
-import net.minecraft.inventory.container.INamedContainerProvider;
+import net.minecraft.world.MenuProvider;
 
-public interface ISEGuiCoverPanel extends ISECoverPanel, INamedContainerProvider{
+public interface ISEGuiCoverPanel extends ISECoverPanel, MenuProvider{
 
 }

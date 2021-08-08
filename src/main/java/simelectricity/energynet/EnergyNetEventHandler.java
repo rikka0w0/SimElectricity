@@ -19,7 +19,7 @@
 
 package simelectricity.energynet;
 
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 //import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.WorldEvent.Unload;
 import net.minecraftforge.fml.LogicalSide;
@@ -34,7 +34,7 @@ public class EnergyNetEventHandler {
     @SubscribeEvent
     public static void onWorldUnload(Unload event) {
     	// TODO: Check Type: World
-        EnergyNetAgent.onWorldUnload((World)event.getWorld());
+        EnergyNetAgent.onWorldUnload((Level)event.getWorld());
     }
 
     //Pre -> Entities -> TileEntitis -> Post

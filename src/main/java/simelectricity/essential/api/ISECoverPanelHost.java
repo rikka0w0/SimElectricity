@@ -2,8 +2,8 @@ package simelectricity.essential.api;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.Direction;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.core.Direction;
 import net.minecraftforge.client.model.data.ModelProperty;
 import simelectricity.essential.api.coverpanel.ISECoverPanel;
 
@@ -17,7 +17,7 @@ public interface ISECoverPanelHost {
      * @return the side which the player is actually looking at, null - the cable
      */
 	@Nullable
-    Direction getSelectedCoverPanel(PlayerEntity player);
+    Direction getSelectedCoverPanel(Player player);
 
     ISECoverPanel getCoverPanelOnSide(Direction side);
 

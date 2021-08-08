@@ -1,6 +1,6 @@
 package simelectricity.energynet.components;
 
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import simelectricity.api.components.ISEVoltageSource;
 import simelectricity.api.node.ISESubComponent;
 import simelectricity.energynet.components.SEComponent.Tile;
@@ -9,7 +9,7 @@ public class VoltageSource extends Tile<ISEVoltageSource> implements ISESubCompo
     private volatile double v, r;
     private volatile boolean enabled;
 
-    public VoltageSource(ISEVoltageSource dataProvider, TileEntity te) {
+    public VoltageSource(ISEVoltageSource dataProvider, BlockEntity te) {
         super(dataProvider, te);
     }
 

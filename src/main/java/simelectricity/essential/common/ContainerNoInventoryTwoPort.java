@@ -2,7 +2,7 @@ package simelectricity.essential.common;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.util.Direction;
+import net.minecraft.core.Direction;
 import simelectricity.api.SEAPI;
 import simelectricity.essential.Essential;
 import simelectricity.essential.common.semachine.SETwoPortMachine;

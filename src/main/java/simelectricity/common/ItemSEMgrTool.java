@@ -1,8 +1,8 @@
 package simelectricity.common;
 
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemUseContext;
-import net.minecraft.util.ActionResultType;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.InteractionResult;
 import simelectricity.api.SEAPI;
 
 public class ItemSEMgrTool extends Item {
@@ -10,14 +10,14 @@ public class ItemSEMgrTool extends Item {
 
     public ItemSEMgrTool() {
         super((new Item.Properties())
-                .maxStackSize(1)
-                .maxDamage(0)
-                .group(SEAPI.SETab));
+                .stacksTo(1)
+                .durability(0)
+                .tab(SEAPI.SETab));
         this.setRegistryName(ItemSEMgrTool.name);
     }
 
     @Override
-    public ActionResultType onItemUse(ItemUseContext context) {
-        return ActionResultType.PASS;
+    public InteractionResult useOn(UseOnContext context) {
+        return InteractionResult.PASS;
     }
 }

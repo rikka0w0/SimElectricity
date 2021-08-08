@@ -1,48 +1,51 @@
 package simelectricity.essential.cable;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.IWaterLoggable;
-import net.minecraft.block.SoundType;
-import net.minecraft.block.material.Material;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.fluid.Fluids;
-import net.minecraft.fluid.FluidState;
-import net.minecraft.item.BlockItemUseContext;
-import net.minecraft.item.DyeColor;
-import net.minecraft.item.DyeItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.state.StateContainer;
-import net.minecraft.state.properties.BlockStateProperties;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.util.math.shapes.IBooleanFunction;
-import net.minecraft.util.math.shapes.ISelectionContext;
-import net.minecraft.util.math.shapes.VoxelShape;
-import net.minecraft.util.math.shapes.VoxelShapes;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.IWorld;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.SimpleWaterloggedBlock;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.client.resources.language.I18n;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.DyeItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType.BlockEntitySupplier;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.shapes.BooleanOp;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.Level;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.ForgeMod;
 import rikka.librikka.IMetaProvider;
 import rikka.librikka.RayTraceHelper;
+import rikka.librikka.MarkedBlockHitResult;
 import rikka.librikka.block.BlockBase;
 import rikka.librikka.block.ICustomBoundingBox;
 import rikka.librikka.item.ItemBlockBase;
@@ -60,12 +63,14 @@ import simelectricity.essential.utils.SEUnitHelper;
 import javax.annotation.Nullable;
 import java.util.List;
 
+import net.minecraft.world.level.block.state.BlockBehaviour;
+
 /**
  * RayTrace is inspired by BuildCraft
  *
  * @author Rikka0_0
  */
-public class BlockCable extends BlockBase implements ICustomBoundingBox, IMetaProvider<ISECableMeta>, IWaterLoggable {
+public class BlockCable extends BlockBase implements EntityBlock, ICustomBoundingBox, IMetaProvider<ISECableMeta>, SimpleWaterloggedBlock {
     ///////////////////////////////
     /// Cable Properties
     ///////////////////////////////
@@ -83,33 +88,33 @@ public class BlockCable extends BlockBase implements ICustomBoundingBox, IMetaPr
     	gold_medium(0.32F, 0.002F),
     	gold_thick(0.42F, 0.0002F),
     	;
-    	
+
     	private final float thickness;
     	private final float resistivity;
     	CableTypes(float thickness, float resistivity) {
     		this.thickness = thickness;
     		this.resistivity = resistivity;
     	}
-    	
+
     	public float thickness() {
     		return this.thickness;
     	}
-    	
+
     	public float resistivity() {
     		return this.resistivity;
     	}
     }
-    
+
 	private BlockCable(ISECableMeta cableData) {
-        this("cable", 
-        		cableData, 
-        		Block.Properties.create(Material.GLASS).hardnessAndResistance(0.2F, 10.0F).sound(SoundType.METAL).notSolid()
-        		.setOpaque((a,b,c)->false)
+        this("cable",
+        		cableData,
+        		BlockBehaviour.Properties.of(Material.GLASS).strength(0.2F, 10.0F).sound(SoundType.METAL).noOcclusion()
+        		.isRedstoneConductor((a,b,c)->false)
         		, ItemBlockBase.class,
-        		(new Item.Properties()).group(SEAPI.SETab),
-                TileCable.class);
+        		(new Item.Properties()).tab(SEAPI.SETab),
+                TileCable::new);
     }
-    
+
     public static BlockCable[] create() {
     	BlockCable[] ret = new BlockCable[CableTypes.values().length];
     	for (ISECableMeta cableData: CableTypes.values()) {
@@ -117,8 +122,8 @@ public class BlockCable extends BlockBase implements ICustomBoundingBox, IMetaPr
     	}
     	return ret;
     }
-    
-    
+
+
     ///////////////////////////////
     ///Block Properties
     ///////////////////////////////
@@ -129,14 +134,14 @@ public class BlockCable extends BlockBase implements ICustomBoundingBox, IMetaPr
 		return cableData;
 	}
 
-    private final Class<? extends TileCable> tileEntityClass;
-    protected BlockCable(String name, ISECableMeta cableData, Block.Properties props, Class<? extends ItemBlockBase> itemBlockClass,
-    		Item.Properties itemProps, Class<? extends TileCable> tileEntityClass) {
+    private final BlockEntitySupplier<? extends TileCable> blockEntitySupplier;
+    protected BlockCable(String name, ISECableMeta cableData, BlockBehaviour.Properties props, Class<? extends ItemBlockBase> itemBlockClass,
+    		Item.Properties itemProps, BlockEntitySupplier<? extends TileCable> blockEntitySupplier) {
     	// variableOpacity tells Minecraft not to cache any BlockStats
-        super(name+"_"+cableData.name(), props.variableOpacity(), itemBlockClass, itemProps);
-        this.setDefaultState(this.getDefaultState().with(BlockStateProperties.WATERLOGGED, false));
+        super(name+"_"+cableData.name(), props.dynamicShape(), itemBlockClass, itemProps);
+        this.registerDefaultState(this.defaultBlockState().setValue(BlockStateProperties.WATERLOGGED, false));
         this.cableData = cableData;
-        this.tileEntityClass = tileEntityClass;
+        this.blockEntitySupplier = blockEntitySupplier;
 
         //Calc. collision boxes and cache them
         float min = 0.5F - cableData.thickness() / 2F;
@@ -145,65 +150,62 @@ public class BlockCable extends BlockBase implements ICustomBoundingBox, IMetaPr
         for (Direction side: Direction.values()) {
         	cableBoundingBoxes[side.ordinal()] = RayTraceHelper.createAABB(side, min, 0, min, max, min, max);
         }
-        cableBoundingBoxes[6] = new AxisAlignedBB(min, min, min, max, max, max);
-        
-        brancheShapes[Direction.DOWN.ordinal()] = VoxelShapes.create(min, 0, min, max, max, max);
-        brancheShapes[Direction.UP.ordinal()] = VoxelShapes.create(min, min, min, max, 1, max);
-        brancheShapes[Direction.NORTH.ordinal()] = VoxelShapes.create(min, min, 0, max, max, max);
-        brancheShapes[Direction.SOUTH.ordinal()] = VoxelShapes.create(min, min, min, max, max, 1);
-        brancheShapes[Direction.WEST.ordinal()] = VoxelShapes.create(0, min, min, max, max, max);
-        brancheShapes[Direction.EAST.ordinal()] = VoxelShapes.create(min, min, min, 1, max, max);
-        brancheShapes[Direction.values().length] = VoxelShapes.create(min, min, min, max, max, max);
+        cableBoundingBoxes[6] = new AABB(min, min, min, max, max, max);
+
+        brancheShapes[Direction.DOWN.ordinal()] = Shapes.box(min, 0, min, max, max, max);
+        brancheShapes[Direction.UP.ordinal()] = Shapes.box(min, min, min, max, 1, max);
+        brancheShapes[Direction.NORTH.ordinal()] = Shapes.box(min, min, 0, max, max, max);
+        brancheShapes[Direction.SOUTH.ordinal()] = Shapes.box(min, min, min, max, max, 1);
+        brancheShapes[Direction.WEST.ordinal()] = Shapes.box(0, min, min, max, max, max);
+        brancheShapes[Direction.EAST.ordinal()] = Shapes.box(min, min, min, 1, max, max);
+        brancheShapes[Direction.values().length] = Shapes.box(min, min, min, max, max, max);
     }
 
 	@Override
-	protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
+	protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
 		builder.add(BlockStateProperties.WATERLOGGED);
 	}
 
 	@SuppressWarnings("deprecation")
 	@Override
 	public FluidState getFluidState(BlockState state) {
-		return state.get(BlockStateProperties.WATERLOGGED) ? Fluids.WATER.getStillFluidState(false)
+		return state.getValue(BlockStateProperties.WATERLOGGED) ? Fluids.WATER.getSource(false)
 				: super.getFluidState(state);
 	}
-	
+
 	@Override
-	public BlockState getStateForPlacement(BlockItemUseContext context) {
-		FluidState FluidState = context.getWorld().getFluidState(context.getPos());
-		return this.getDefaultState().with(BlockStateProperties.WATERLOGGED, FluidState.getFluid() == Fluids.WATER);
+	public BlockState getStateForPlacement(BlockPlaceContext context) {
+		FluidState FluidState = context.getLevel().getFluidState(context.getClickedPos());
+		return this.defaultBlockState().setValue(BlockStateProperties.WATERLOGGED, FluidState.getType() == Fluids.WATER);
 	}
-	
+
 	@SuppressWarnings("deprecation")
 	@Override
-	public BlockState updatePostPlacement(BlockState stateIn, Direction facing, BlockState facingState, IWorld worldIn,
+	public BlockState updateShape(BlockState stateIn, Direction facing, BlockState facingState, LevelAccessor worldIn,
 			BlockPos currentPos, BlockPos facingPos) {
-		if (stateIn.get(BlockStateProperties.WATERLOGGED)) {
-			worldIn.getPendingFluidTicks().scheduleTick(currentPos, Fluids.WATER, Fluids.WATER.getTickRate(worldIn));
+		if (stateIn.getValue(BlockStateProperties.WATERLOGGED)) {
+			worldIn.getLiquidTicks().scheduleTick(currentPos, Fluids.WATER, Fluids.WATER.getTickDelay(worldIn));
 		}
-		
-		return super.updatePostPlacement(stateIn, facing, facingState, worldIn, currentPos, facingPos);
+
+		return super.updateShape(stateIn, facing, facingState, worldIn, currentPos, facingPos);
 	}
-    
+
     @Override
-    @OnlyIn(Dist.CLIENT)
-    public void addInformation(ItemStack stack, @Nullable IBlockReader worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
-    	tooltip.add(new StringTextComponent(
-    			I18n.format("gui.simelectricity.resistivity") + ": " + 
+    // @OnlyIn(Dist.CLIENT)
+    public void appendHoverText(ItemStack stack, @Nullable BlockGetter worldIn, List<Component> tooltip, TooltipFlag flagIn) {
+    	tooltip.add(new TextComponent(
+    			I18n.get("gui.simelectricity.resistivity") + ": " +
     			SEUnitHelper.getStringWithoutUnit(2F*cableData.resistivity()) + "\u03a9/m"
     			));
     }
 
 	@Override
-	public boolean hasTileEntity(BlockState state) {return true;}
-    
-    @Override
-    public TileEntity createTileEntity(BlockState state, IBlockReader world) {
+	public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         TileCable cable;
         try {
-            cable = tileEntityClass.getConstructor().newInstance();
-            if (world instanceof ServerWorld && !((World)world).isRemote)    //createTileEntity is only called by the server thread when the block is placed at the first
-                cable.setResistanceOnPlace(this.cableData.resistivity());
+            cable = blockEntitySupplier.create(pos, state);
+            // if (world instanceof ServerLevel && !((World)world).isClientSide)    //createTileEntity is only called by the server thread when the block is placed at the first
+            cable.setResistanceOnPlace(this.cableData.resistivity());
             return cable;
         } catch (Exception e) {
             e.printStackTrace();
@@ -211,51 +213,51 @@ public class BlockCable extends BlockBase implements ICustomBoundingBox, IMetaPr
 
         return null;
     }
-    
+
 //    @Override
-//    public boolean isSolidSide(IBlockReader world, BlockPos pos, Direction side) {
-//        TileEntity tile = world.getTileEntity(pos);
+//    public boolean isSolidSide(BlockGetter world, BlockPos pos, Direction side) {
+//        BlockEntity tile = world.getTileEntity(pos);
 //
 //        return tile instanceof ISEGenericCable && ((ISEGenericCable) tile).getCoverPanelOnSide(side) != null;
 //    }
 
 //    @Deprecated
-//    public BlockFaceShape getBlockFaceShape(IBlockReader worldIn, IBlockState state, BlockPos pos, Direction face)
+//    public BlockFaceShape getBlockFaceShape(BlockGetter worldIn, IBlockState state, BlockPos pos, Direction face)
 //    {
 //        return isSideSolid(state, worldIn, pos, face) ? BlockFaceShape.SOLID : BlockFaceShape.UNDEFINED;
 //    }
 
     @Override
-    public int getLightValue(BlockState state, IBlockReader world, BlockPos pos) {
-        TileEntity te = world.getTileEntity(pos);
+    public int getLightEmission(BlockState state, BlockGetter world, BlockPos pos) {
+        BlockEntity te = world.getBlockEntity(pos);
 
         if (te instanceof TileCable)
             return ((TileCable) te).lightLevel;
 
         return 0;
     }
-    
+
     //////////////////////////////////
     ///CollisionBoxes
     //////////////////////////////////
-    protected final static AxisAlignedBB[] coverPanelBoundingBoxes;
-    
+    protected final static AABB[] coverPanelBoundingBoxes;
+
     static {
-    	coverPanelBoundingBoxes = new AxisAlignedBB[6];
+    	coverPanelBoundingBoxes = new AABB[6];
     	for (Direction side: Direction.values()){
     		coverPanelBoundingBoxes[side.ordinal()] = RayTraceHelper.createAABB(side, 0, 0, 0, 1, ISECoverPanel.thickness, 1);
     	}
     }
-    
+
     /**
      * @param side null for center
      * @param meta
      * @return
      */
-    private final AxisAlignedBB[] cableBoundingBoxes = new AxisAlignedBB[Direction.values().length+1];
+    private final AABB[] cableBoundingBoxes = new AABB[Direction.values().length+1];
     private final VoxelShape[] brancheShapes = new VoxelShape[Direction.values().length+1];
-    
-    public AxisAlignedBB getBoundingBox(ISEGenericCable cable, boolean ignoreCoverPanel) {
+
+    public AABB getBoundingBox(ISEGenericCable cable, boolean ignoreCoverPanel) {
         double x1, y1, z1, x2, y2, z2;
         x1 = 0.5 - cableData.thickness() / 2;
         y1 = x1;
@@ -292,7 +294,7 @@ public class BlockCable extends BlockBase implements ICustomBoundingBox, IMetaPr
 	        	x2=1;
 	        	z2=1;
 	        }
-	        
+
 	        if (cable.getCoverPanelOnSide(Direction.UP) != null) {
 	        	x1=0;
 	        	z1=0;
@@ -300,7 +302,7 @@ public class BlockCable extends BlockBase implements ICustomBoundingBox, IMetaPr
 	        	y2=1;
 	        	z2=1;
 	        }
-	
+
 	        if (cable.getCoverPanelOnSide(Direction.NORTH) != null) {
 	        	x1=0;
 	        	y1=0;
@@ -308,7 +310,7 @@ public class BlockCable extends BlockBase implements ICustomBoundingBox, IMetaPr
 	        	x2=1;
 	        	y2=1;
 	        }
-	
+
 	        if (cable.getCoverPanelOnSide(Direction.SOUTH) != null) {
 	        	x1=0;
 	        	y1=0;
@@ -316,7 +318,7 @@ public class BlockCable extends BlockBase implements ICustomBoundingBox, IMetaPr
 	        	y2=1;
 	        	z2=1;
 	        }
-	
+
 	        if (cable.getCoverPanelOnSide(Direction.WEST) != null) {
 	        	x1=0;
 	        	y1=0;
@@ -324,7 +326,7 @@ public class BlockCable extends BlockBase implements ICustomBoundingBox, IMetaPr
 	        	y2=1;
 	        	z2=1;
 	        }
-	        
+
 	        if (cable.getCoverPanelOnSide(Direction.EAST) != null) {
 	        	y1=0;
 	        	z1=0;
@@ -333,129 +335,128 @@ public class BlockCable extends BlockBase implements ICustomBoundingBox, IMetaPr
 	        	z2=1;
 	        }
         }
-        
-        return new AxisAlignedBB(x1, y1, z1, x2, y2, z2);
+
+        return new AABB(x1, y1, z1, x2, y2, z2);
     }
-    
+
     // Was addCollisionBoxToList
     @Override
-    public VoxelShape getShape(BlockState state, IBlockReader world, BlockPos pos, ISelectionContext context) {     	
+    public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
         // Center
       	VoxelShape vs = brancheShapes[6];
-    	
-    	TileEntity te = world.getTileEntity(pos);
+
+    	BlockEntity te = world.getBlockEntity(pos);
     	if (!(te instanceof ISEGenericCable))
     		return vs;	// First placement
-    	
+
     	ISEGenericCable cable = (ISEGenericCable) te;
-    	
+
     	for (Direction dir: Direction.values())
     		if (cable.connectedOnSide(dir))
-    			vs = VoxelShapes.combine(vs, brancheShapes[dir.ordinal()], IBooleanFunction.OR);
-    	    	
+    			vs = Shapes.joinUnoptimized(vs, brancheShapes[dir.ordinal()], BooleanOp.OR);
+
       //Cover panel
       if (cable.getCoverPanelOnSide(Direction.DOWN) != null)
-    	  vs = VoxelShapes.combine(vs, VoxelShapes.create(0, 0, 0, 1, ISECoverPanel.thickness, 1), IBooleanFunction.OR);
+    	  vs = Shapes.joinUnoptimized(vs, Shapes.box(0, 0, 0, 1, ISECoverPanel.thickness, 1), BooleanOp.OR);
 
       if (cable.getCoverPanelOnSide(Direction.UP) != null)
-    	  vs = VoxelShapes.combine(vs, VoxelShapes.create(0, 1 - ISECoverPanel.thickness, 0, 1, 1, 1), IBooleanFunction.OR);
+    	  vs = Shapes.joinUnoptimized(vs, Shapes.box(0, 1 - ISECoverPanel.thickness, 0, 1, 1, 1), BooleanOp.OR);
 
       if (cable.getCoverPanelOnSide(Direction.NORTH) != null)
-    	  vs = VoxelShapes.combine(vs, VoxelShapes.create(0, 0, 0, 1, 1, ISECoverPanel.thickness), IBooleanFunction.OR);
+    	  vs = Shapes.joinUnoptimized(vs, Shapes.box(0, 0, 0, 1, 1, ISECoverPanel.thickness), BooleanOp.OR);
 
       if (cable.getCoverPanelOnSide(Direction.SOUTH) != null)
-    	  vs = VoxelShapes.combine(vs, VoxelShapes.create(0, 0, 1 - ISECoverPanel.thickness, 1, 1, 1), IBooleanFunction.OR);
+    	  vs = Shapes.joinUnoptimized(vs, Shapes.box(0, 0, 1 - ISECoverPanel.thickness, 1, 1, 1), BooleanOp.OR);
 
       if (cable.getCoverPanelOnSide(Direction.WEST) != null)
-    	  vs = VoxelShapes.combine(vs, VoxelShapes.create(0, 0, 0, ISECoverPanel.thickness, 1, 1), IBooleanFunction.OR);
+    	  vs = Shapes.joinUnoptimized(vs, Shapes.box(0, 0, 0, ISECoverPanel.thickness, 1, 1), BooleanOp.OR);
 
       if (cable.getCoverPanelOnSide(Direction.EAST) != null)
-    	  vs = VoxelShapes.combine(vs, VoxelShapes.create(1 - ISECoverPanel.thickness, 0, 0, 1, 1, 1), IBooleanFunction.OR);
-      
+    	  vs = Shapes.joinUnoptimized(vs, Shapes.box(1 - ISECoverPanel.thickness, 0, 0, 1, 1, 1), BooleanOp.OR);
+
     	return vs;
     }
-    
+
     // TODO: Check collisionRayTrace (getRayTraceResult) and getRaytraceShape
-    // Was RayTraceResult collisionRayTrace(IBlockState state, World world, BlockPos pos, Vector3d start, Vector3d end)
+    // Was RayTraceResult collisionRayTrace(IBlockState state, Level world, BlockPos pos, Vec3 start, Vec3 end)
 //    @Override
-//    public RayTraceResult getRayTraceResult(BlockState state, World world, BlockPos pos, Vector3d start, Vector3d end, RayTraceResult original) {
+//    public RayTraceResult getRayTraceResult(BlockState state, Level world, BlockPos pos, Vec3 start, Vec3 end, RayTraceResult original) {
 //    	return this.rayTrace(world, pos, start, end);
 //    }
 
     @Nullable
-    public BlockRayTraceResult rayTrace(IBlockReader world, BlockPos pos, PlayerEntity player) {
-        Vector3d start = player.getPositionVec().add(0, player.getEyeHeight(), 0);
+    public MarkedBlockHitResult<Integer> rayTrace(BlockGetter world, BlockPos pos, Player player) {
+        Vec3 start = player.position().add(0, player.getEyeHeight(), 0);
         double reachDistance = 5;
 
-        ModifiableAttributeInstance attrib = player.getAttribute(ForgeMod.REACH_DISTANCE.get());
+        AttributeInstance attrib = player.getAttribute(ForgeMod.REACH_DISTANCE.get());
         if (attrib != null)
         	reachDistance = attrib.getValue();
 
-        Vector3d end = start.add(player.getLookVec().normalize().scale(reachDistance));
+        Vec3 end = start.add(player.getLookAngle().normalize().scale(reachDistance));
         return this.rayTrace(world, pos, start, end);
     }
 
     @Nullable
-    public BlockRayTraceResult rayTrace(IBlockReader world, BlockPos pos, Vector3d start, Vector3d end) {
-        TileEntity tile = world.getTileEntity(pos);
+    public MarkedBlockHitResult<Integer> rayTrace(BlockGetter world, BlockPos pos, Vec3 start, Vec3 end) {
+        BlockEntity tile = world.getBlockEntity(pos);
 
         if (!(tile instanceof ISEGenericCable))
-            return RayTraceHelper.computeTrace(null, pos, start, end, VoxelShapes.fullCube().getBoundingBox(), 400);
+            return MarkedBlockHitResult.rayTrace(pos, start, end, Shapes.block().bounds(), 400);
 
         ISEGenericCable cable = (ISEGenericCable) tile;
 
-        BlockRayTraceResult best = null;
         //Cable center & branches
         //Start form center
-        best = RayTraceHelper.computeTrace(best, pos, start, end, cableBoundingBoxes[Direction.values().length], 0);
+        MarkedBlockHitResult<Integer> best = MarkedBlockHitResult.rayTrace(pos, start, end, cableBoundingBoxes[Direction.values().length], 0);
         for (Direction side : Direction.values()) {
             if (cable.connectedOnSide(side))
-                best = RayTraceHelper.computeTrace(best, pos, start, end, cableBoundingBoxes[side.ordinal()], side.ordinal() + 1);
+                best = MarkedBlockHitResult.iterate(best, pos, start, end, cableBoundingBoxes[side.ordinal()], side.ordinal() + 1);
         }
 
         //CoverPanel
         for (Direction side : Direction.values()) {
             ISECoverPanel coverPanel = cable.getCoverPanelOnSide(side);
             if (coverPanel != null) {
-                best = RayTraceHelper.computeTrace(best, pos, start, end, coverPanelBoundingBoxes[side.ordinal()], side.ordinal() + 1 + 6);
+                best = MarkedBlockHitResult.iterate(best, pos, start, end, coverPanelBoundingBoxes[side.ordinal()], side.ordinal() + 1 + 6);
             }
         }
 
         if (best == null)
-            return RayTraceHelper.computeTrace(null, pos, start, end, VoxelShapes.fullCube().getBoundingBox(), 400);
+            return MarkedBlockHitResult.rayTrace(pos, start, end, Shapes.block().bounds(), 400);
 
         //subhit: 0: center, 123456 branches, 789 10 11 12 coverpanel
         return best;
     }
 
-    // Was AxisAlignedBB getSelectedBoundingBox(IBlockState state, World world, BlockPos pos)
+    // Was AABB getSelectedBoundingBox(IBlockState state, Level world, BlockPos pos)
     @Override
-    public VoxelShape getBoundingShape(BlockState state, IBlockReader world, BlockPos pos, ISelectionContext context) {
-    	VoxelShape ret = VoxelShapes.empty();
-//		for (AxisAlignedBB aabb: getShape(state, world, pos, ISelectionContext.dummy()).toBoundingBoxList()) {
-//			ret = VoxelShapes.combine(ret, VoxelShapes.create(aabb.grow(0.025)), IBooleanFunction.OR);
+    public VoxelShape getBoundingShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
+    	VoxelShape ret = Shapes.empty();
+//		for (AABB aabb: getShape(state, world, pos, CollisionContext.dummy()).toBoundingBoxList()) {
+//			ret = Shapes.combine(ret, Shapes.create(aabb.grow(0.025)), BooleanOp.OR);
 //		}
-    	TileEntity te = world.getTileEntity(pos);
+    	BlockEntity te = world.getBlockEntity(pos);
 
 		if (!(te instanceof ISEGenericCable))
 			return ret; // This is not supposed to happen
 
 		ISEGenericCable cable = (ISEGenericCable) te;
-		BlockRayTraceResult trace = rayTrace(world, pos, Essential.proxy.getClientPlayer());
+		MarkedBlockHitResult<Integer> trace = this.rayTrace(world, pos, Essential.proxy.getClientPlayer());
 
-		AxisAlignedBB aabb = null;
-		if (trace == null || trace.subHit < 0 || !pos.equals(trace.getPos())) {
+		AABB aabb = null;
+		if (trace == null || trace.subHit < 0 || !pos.equals(trace.getBlockPos())) {
 			// Perhaps we aren't the object the mouse is over
 			aabb = cableBoundingBoxes[6];
 		} else {
 			if (trace.subHit > 6 && trace.subHit < 13) { // CoverPanel
-				aabb = coverPanelBoundingBoxes[trace.subHit - 7].expand(0.01, 0.01, 0.01);
+				aabb = coverPanelBoundingBoxes[trace.subHit - 7].expandTowards(0.01, 0.01, 0.01);
 			} else if (trace.subHit > -1 && trace.subHit < 7) { // Center or branches
-				aabb = getBoundingBox(cable, true).grow(0.025);
+				aabb = getBoundingBox(cable, true).inflate(0.025);
 			}
 		}
-		
-		return aabb==null ? VoxelShapes.empty() : VoxelShapes.create(aabb);
+
+		return aabb==null ? Shapes.empty() : Shapes.create(aabb);
     }
 
     //////////////////////////////////////
@@ -463,15 +464,15 @@ public class BlockCable extends BlockBase implements ICustomBoundingBox, IMetaPr
     //////////////////////////////////////
 	@SuppressWarnings("deprecation")
 	@Override
-	public ActionResultType onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult ray) {
-        TileEntity te = world.getTileEntity(pos);
+	public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand handIn, BlockHitResult ray) {
+        BlockEntity te = world.getBlockEntity(pos);
 
         if (!(te instanceof ISEGenericCable))
-            return ActionResultType.FAIL;        //Normally this could not happen, but just in case!
+            return InteractionResult.FAIL;        //Normally this could not happen, but just in case!
 
         ISEGenericCable cable = (ISEGenericCable) te;
-        
-        ItemStack itemStack = player.getHeldItemMainhand();
+
+        ItemStack itemStack = player.getMainHandItem();
         if (itemStack == null || itemStack.isEmpty())
             return CoverPanelUtils.openCoverPanelGui(cable, player);	// Empty hand
 
@@ -482,30 +483,30 @@ public class BlockCable extends BlockBase implements ICustomBoundingBox, IMetaPr
 			if (!player.isCreative())
 				itemStack.shrink(1);
 
-			if (!world.isRemote)
+			if (!world.isClientSide)
 				cable.setColor(color.ordinal());
 
-			return ActionResultType.SUCCESS;
+			return InteractionResult.SUCCESS;
 		}
-        
+
         // Attempt to install cover panel, check panel type
         ISECoverPanel coverPanel = SEEAPI.coverPanelRegistry.fromItemStack(itemStack);
         if (coverPanel instanceof ISEFacadeCoverPanel
         		&&((ISEFacadeCoverPanel)coverPanel).getBlockState().isAir())
-        	return ActionResultType.FAIL;
-        
-        if (CoverPanelUtils.installCoverPanel(state, world, pos, player, handIn, ray) == ActionResultType.SUCCESS)
-            return ActionResultType.SUCCESS;
+        	return InteractionResult.FAIL;
+
+        if (CoverPanelUtils.installCoverPanel(state, world, pos, player, handIn, ray) == InteractionResult.SUCCESS)
+            return InteractionResult.SUCCESS;
 
         return CoverPanelUtils.openCoverPanelGui(cable, player);	// Fail to install cover panel
     }
 
     @Override
-    public void neighborChanged(BlockState state, World world, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving) {
-        if (world.isRemote)
+    public void neighborChanged(BlockState state, Level world, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving) {
+        if (world.isClientSide)
             return;
 
-        TileEntity te = world.getTileEntity(pos);
+        BlockEntity te = world.getBlockEntity(pos);
         if (!(te instanceof ISEGenericCable))
             return;        //Normally this could not happen, but just in case!
 
@@ -514,11 +515,11 @@ public class BlockCable extends BlockBase implements ICustomBoundingBox, IMetaPr
     }
 
     @Override
-    public void onBlockPlacedBy(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
-        if (world.isRemote)
+    public void setPlacedBy(Level world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
+        if (world.isClientSide)
             return;
 
-        TileEntity te = world.getTileEntity(pos);
+        BlockEntity te = world.getBlockEntity(pos);
         if (!(te instanceof ISEGenericCable))
             return;        //Normally this could not happen, but just in case!
 
@@ -530,8 +531,8 @@ public class BlockCable extends BlockBase implements ICustomBoundingBox, IMetaPr
     /// Item drops
     ///////////////////////
     @Override
-    public boolean removedByPlayer(BlockState state, World world, BlockPos pos, PlayerEntity player, boolean willHarvest, FluidState fluid) {
-		TileEntity te = world.getTileEntity(pos);
+    public boolean removedByPlayer(BlockState state, Level world, BlockPos pos, Player player, boolean willHarvest, FluidState fluid) {
+		BlockEntity te = world.getBlockEntity(pos);
 		if (!(te instanceof ISEGenericCable))
 			return super.removedByPlayer(state, world, pos, player, willHarvest, fluid);
 
@@ -542,15 +543,15 @@ public class BlockCable extends BlockBase implements ICustomBoundingBox, IMetaPr
     }
 
     @Override
-    public ItemStack getPickBlock(BlockState state, RayTraceResult target, IBlockReader world, BlockPos pos, PlayerEntity player) {
-        TileEntity te = world.getTileEntity(pos);
+    public ItemStack getPickBlock(BlockState state, HitResult target, BlockGetter world, BlockPos pos, Player player) {
+        BlockEntity te = world.getBlockEntity(pos);
         if (!(te instanceof ISEGenericCable))
             return ItemStack.EMPTY;
 
         ISECoverPanelHost host = (ISECoverPanelHost) te;
         Direction side = host.getSelectedCoverPanel(player);
 
-        return side==null ? 
+        return side==null ?
         		super.getPickBlock(state, target, world, pos, player) :
         		host.getCoverPanelOnSide(side).getDroppedItemStack();
     }
@@ -558,9 +559,10 @@ public class BlockCable extends BlockBase implements ICustomBoundingBox, IMetaPr
     ///////////////////////
     ///Redstone
     ///////////////////////
-    @Override
-    public boolean canConnectRedstone(BlockState state, IBlockReader world, BlockPos pos, @Nullable Direction side) {
-        TileEntity te = world.getTileEntity(pos);
+    // TODO: Fix isSignalSource see DiodeBlock RepeaterBlock
+    /*@Override
+    public boolean isSignalSource(BlockState state, BlockGetter world, BlockPos pos, @Nullable Direction side) {
+        BlockEntity te = world.getBlockEntity(pos);
 
         if (te instanceof ISEGenericCable) {
             ISEGenericCable cable = (ISEGenericCable) te;
@@ -570,11 +572,11 @@ public class BlockCable extends BlockBase implements ICustomBoundingBox, IMetaPr
         }
 
         return false;
-    }
+    }*/
 
     @Override
-    public int getWeakPower(BlockState blockState, IBlockReader world, BlockPos pos, Direction side) {
-        TileEntity te = world.getTileEntity(pos);
+    public int getSignal(BlockState blockState, BlockGetter world, BlockPos pos, Direction side) {
+        BlockEntity te = world.getBlockEntity(pos);
 
         if (te instanceof ISEGenericCable) {
             ISEGenericCable cable = (ISEGenericCable) te;

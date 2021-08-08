@@ -1,13 +1,13 @@
 package simelectricity.essential.client.grid.pole;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.client.renderer.model.BakedQuad;
-import net.minecraft.client.renderer.model.ItemCameraTransforms;
-import net.minecraft.client.renderer.model.ItemTransformVec3f;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.block.model.ItemTransforms;
+import net.minecraft.client.renderer.block.model.ItemTransform;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.vector.Vector3f;
+import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
+import com.mojang.math.Vector3f;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.model.data.IModelData;
@@ -43,14 +43,14 @@ public class ConcretePoleModel extends CodeBasedModel {
     private final TextureAtlasSprite glassInsulator = null;
     @EasyTextureLoader.Mark(ResourcePaths.concrete)
     private final TextureAtlasSprite textureConcrete = null;
-    
+
     public ConcretePoleModel(BlockPoleConcrete.Type blockType, DirHorizontal8 facing8) {
         this.rotation = ((8-facing8.ordinal())&7) * 45- 90;
         this.blockType = blockType;
     }
 
     @Override
-    public TextureAtlasSprite getParticleTexture() {
+    public TextureAtlasSprite getParticleIcon() {
         return this.textureMetal;
     }
 
@@ -58,7 +58,7 @@ public class ConcretePoleModel extends CodeBasedModel {
     public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull IModelData extraData) {
     	if (side != null)
             return emptyQuadList;
-    	
+
         return this.quads;
     }
 
@@ -70,7 +70,7 @@ public class ConcretePoleModel extends CodeBasedModel {
 	@Override
 	public void bake(Function<ResourceLocation, TextureAtlasSprite> textureRegistry){
 		this.quads.clear();
-		
+
         ConcretePoleTER.modelInsulator10kV = Models.render10kVInsulator(textureMetal, glassInsulator);
         ConcretePoleTER.modelInsulator415V = Models.render415VInsulator(textureMetal, glassInsulator);
 
@@ -95,7 +95,7 @@ public class ConcretePoleModel extends CodeBasedModel {
         }
 
         RawQuadGroup model = new RawQuadGroup();
-        
+
         switch (blockType) {
             case pole:
                 break;
@@ -130,17 +130,17 @@ public class ConcretePoleModel extends CodeBasedModel {
         model.translateCoord(0.5F, 0, 0.5F);
         model.bake(this.quads);
 	}
-    
+
     @Override
-    public ItemCameraTransforms getItemCameraTransforms() {
+    public ItemTransforms getTransforms() {
         return itemCameraTransforms;
     }
-    
-    public final static ItemCameraTransforms itemCameraTransforms = ModelPerspectives.create(ModelPerspectives.ItemBlock,
+
+    public final static ItemTransforms itemCameraTransforms = ModelPerspectives.create(ModelPerspectives.ItemBlock,
     		null, null,
-    		new ItemTransformVec3f(new Vector3f(0, 225, 0), 	new Vector3f(0,0.15F,0), 				new Vector3f(0.4F, 0.4F, 0.4F)),		//firstperson_leftIn
-    		new ItemTransformVec3f(new Vector3f(0, 45, 0), 		new Vector3f(0,0.15F,0), 				new Vector3f(0.4F, 0.4F, 0.4F)),		//firstperson_rightIn
-    		null, 
-    		new ItemTransformVec3f(new Vector3f(45, 30, 0), new Vector3f(0.025F, 0.025F, 0), new Vector3f(0.5F, 0.5F, 0.5F))	//gui
+    		new ItemTransform(new Vector3f(0, 225, 0), 	new Vector3f(0,0.15F,0), 				new Vector3f(0.4F, 0.4F, 0.4F)),		//firstperson_leftIn
+    		new ItemTransform(new Vector3f(0, 45, 0), 		new Vector3f(0,0.15F,0), 				new Vector3f(0.4F, 0.4F, 0.4F)),		//firstperson_rightIn
+    		null,
+    		new ItemTransform(new Vector3f(45, 30, 0), new Vector3f(0.025F, 0.025F, 0), new Vector3f(0.5F, 0.5F, 0.5F))	//gui
     		, null, null);
 }

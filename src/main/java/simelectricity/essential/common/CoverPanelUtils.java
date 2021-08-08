@@ -1,17 +1,17 @@
 package simelectricity.essential.common;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.common.util.Constants.NBT;
 import rikka.librikka.Utils;
 import simelectricity.essential.api.ISECoverPanelHost;
@@ -21,16 +21,16 @@ import simelectricity.essential.api.coverpanel.ISEFacadeCoverPanel;
 import simelectricity.essential.api.coverpanel.ISEGuiCoverPanel;
 
 public class CoverPanelUtils {
-	public static ListNBT coverPanelsToNBT(ISECoverPanelHost host, CompoundNBT nbt) {
+	public static ListTag coverPanelsToNBT(ISECoverPanelHost host, CompoundTag nbt) {
 		return coverPanelsToNBT(host, nbt, "coverPanels");
 	}
 	
-    public static ListNBT coverPanelsToNBT(ISECoverPanelHost host, CompoundNBT nbt, String name) {
-        ListNBT tagList = new ListNBT();
+    public static ListTag coverPanelsToNBT(ISECoverPanelHost host, CompoundTag nbt, String name) {
+        ListTag tagList = new ListTag();
         for (Direction side: Direction.values()) {
             ISECoverPanel coverPanel = host.getCoverPanelOnSide(side);
             if (coverPanel != null) {
-                CompoundNBT tag = new CompoundNBT();
+                CompoundTag tag = new CompoundTag();
                 tag.putInt("side", side.ordinal());
                 SEEAPI.coverPanelRegistry.saveToNBT(coverPanel, tag);
                 tagList.add(tag);
@@ -40,28 +40,28 @@ public class CoverPanelUtils {
         return tagList;
     }
 
-    public static <T extends TileEntity&ISECoverPanelHost> void coverPanelsFromNBT(T host, CompoundNBT nbt, ISECoverPanel[] ret) {
+    public static <T extends BlockEntity&ISECoverPanelHost> void coverPanelsFromNBT(T host, CompoundTag nbt, ISECoverPanel[] ret) {
 		coverPanelsFromNBT(host, nbt, "coverPanels", ret);
     }
     
-    public static <T extends TileEntity&ISECoverPanelHost> void coverPanelsFromNBT(T host, CompoundNBT nbt, String name, ISECoverPanel[] ret) {
+    public static <T extends BlockEntity&ISECoverPanelHost> void coverPanelsFromNBT(T host, CompoundTag nbt, String name, ISECoverPanel[] ret) {
     	if (ret == null || ret.length < Direction.values().length)
     		throw new RuntimeException("ISECoverPanel[] is invalid or not ready");
     	
-    	ListNBT tagList = nbt.getList(name, NBT.TAG_COMPOUND);
+    	ListTag tagList = nbt.getList(name, NBT.TAG_COMPOUND);
     	
     	for (Direction side: Direction.values())
         	ret[side.ordinal()] = null;
 
     	for (Direction side: Direction.values()) {
-            CompoundNBT tag = tagList.getCompound(side.ordinal());
+            CompoundTag tag = tagList.getCompound(side.ordinal());
             int sideId = tag.getInt("side");
             if (tag.contains("side") && sideId > -1 && sideId < Direction.values().length) {
                 ISECoverPanel coverPanel = SEEAPI.coverPanelRegistry.fromNBT(tag);
                 ret[sideId] = coverPanel;
 
                 if (coverPanel != null) {
-                    coverPanel.setHost(host, Direction.byIndex(sideId));
+                    coverPanel.setHost(host, Direction.from3DDataValue(sideId));
                 }
             }
         }
@@ -71,22 +71,22 @@ public class CoverPanelUtils {
     /// CoverPanel Handler
     ///////////////////////////////
 	@SuppressWarnings("deprecation")
-	public static ActionResultType installCoverPanel(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult ray) {
-		Direction side = ray.getFace();
-        TileEntity te = world.getTileEntity(pos);
+	public static InteractionResult installCoverPanel(BlockState state, Level world, BlockPos pos, Player player, InteractionHand handIn, BlockHitResult ray) {
+		Direction side = ray.getDirection();
+        BlockEntity te = world.getBlockEntity(pos);
         
         if (!(te instanceof ISECoverPanelHost))
-        	return ActionResultType.FAIL;        //Normally this could not happen, but just in case!
+        	return InteractionResult.FAIL;        //Normally this could not happen, but just in case!
         ISECoverPanelHost host = (ISECoverPanelHost) te;
         
-        ItemStack itemStack = player.getHeldItemMainhand();
+        ItemStack itemStack = player.getMainHandItem();
         if (itemStack == null || itemStack.isEmpty())
-        	return ActionResultType.FAIL;
+        	return InteractionResult.FAIL;
         
         // Check if it is an cover panel item
         ISECoverPanel coverPanel = SEEAPI.coverPanelRegistry.fromItemStack(itemStack);
         if (coverPanel == null)
-        	return ActionResultType.FAIL;
+        	return InteractionResult.FAIL;
         
         
         // Attempt to install cover panel
@@ -96,14 +96,14 @@ public class CoverPanelUtils {
 
             if (coverPanel instanceof ISEFacadeCoverPanel
             		&&((ISEFacadeCoverPanel)coverPanel).getBlockState().isAir())
-            	return ActionResultType.FAIL;
+            	return InteractionResult.FAIL;
             
-            if (!world.isRemote)    //Handle on server side
+            if (!world.isClientSide)    //Handle on server side
             	host.installCoverPanel(side, coverPanel, false);
-            return ActionResultType.SUCCESS;
+            return InteractionResult.SUCCESS;
         }
         
-    	return ActionResultType.FAIL;
+    	return InteractionResult.FAIL;
 	}
 	
 	/**
@@ -115,9 +115,9 @@ public class CoverPanelUtils {
 	 * @param player
 	 * @return true if the cover panel is removed and the host should be kept. In this case, call super.removedByPlayer.
 	 */
-    public static boolean removeCoverPanel(ISECoverPanelHost host, PlayerEntity player) {
-    	World world = ((TileEntity)host).getWorld();
-    	BlockPos pos = ((TileEntity)host).getPos();
+    public static boolean removeCoverPanel(ISECoverPanelHost host, Player player) {
+    	Level world = ((BlockEntity)host).getLevel();
+    	BlockPos pos = ((BlockEntity)host).getBlockPos();
         
         Direction side = host.getSelectedCoverPanel(player);
         if (side == null) {
@@ -125,7 +125,7 @@ public class CoverPanelUtils {
 			for (Direction side2 : Direction.values()) {
 				ISECoverPanel coverPanel = host.getCoverPanelOnSide(side2);
 				if (host.removeCoverPanel(side2, true)) {
-					if (!world.isRemote)
+					if (!world.isClientSide)
 						host.removeCoverPanel(side2, false);
 					
 			        //Spawn an item entity for player to pick up
@@ -139,7 +139,7 @@ public class CoverPanelUtils {
         	// CoverPanel
         	ISECoverPanel coverPanel = host.getCoverPanelOnSide(side);
 			if (host.removeCoverPanel(side, true)) {
-				if (!world.isRemote)
+				if (!world.isClientSide)
 					host.removeCoverPanel(side, false);
 				
 		        //Spawn an item entity for player to pick up
@@ -151,20 +151,20 @@ public class CoverPanelUtils {
         }
     }
     
-    public static ActionResultType openCoverPanelGui(ISECoverPanelHost host, PlayerEntity player) {
+    public static InteractionResult openCoverPanelGui(ISECoverPanelHost host, Player player) {
         if (player.isCrouching())
-            return ActionResultType.FAIL;
+            return InteractionResult.FAIL;
 
         Direction panelSide = host.getSelectedCoverPanel(player);
         if (panelSide == null)
-        	return ActionResultType.FAIL;
+        	return InteractionResult.FAIL;
         ISECoverPanel coverPanel = host.getCoverPanelOnSide(panelSide);
 
         if (coverPanel instanceof ISEGuiCoverPanel) {
-            player.openContainer((ISEGuiCoverPanel) coverPanel);
-            return ActionResultType.SUCCESS;
+            player.openMenu((ISEGuiCoverPanel) coverPanel);
+            return InteractionResult.SUCCESS;
         }
         
-        return ActionResultType.FAIL;
+        return InteractionResult.FAIL;
     }
 }

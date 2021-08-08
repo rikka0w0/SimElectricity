@@ -1,13 +1,14 @@
 package simelectricity.essential.machines.tile;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.Direction;
-import net.minecraft.tileentity.ITickableTileEntity;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import rikka.librikka.tileentity.ITickableTileEntity;
+import net.minecraft.util.Mth;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.capabilities.Capability;
@@ -21,9 +22,13 @@ import simelectricity.api.components.ISEConstantPowerSource;
 import simelectricity.essential.common.semachine.SESinglePortMachine;
 import simelectricity.essential.machines.gui.ContainerRF2SE;
 
-public class TileRF2SE extends SESinglePortMachine<ISEConstantPowerSource> implements 
+public class TileRF2SE extends SESinglePortMachine<ISEConstantPowerSource> implements
 		ISEConstantPowerSource, ISEEnergyNetUpdateHandler, ITickableTileEntity, INamedContainerProvider2 {
-    public final static int bufferCapacity = 1000;	// RF
+    public TileRF2SE(BlockPos pos, BlockState blockState) {
+		super(pos, blockState);
+	}
+
+	public final static int bufferCapacity = 1000;	// RF
     public double ratedOutputPower = 100;	            // W
 
     public double ouputPowerSetPoint = 1;
@@ -37,11 +42,11 @@ public class TileRF2SE extends SESinglePortMachine<ISEConstantPowerSource> imple
     public int rfInputRateDisplay;
 
     ///////////////////////////////////
-    /// TileEntity
+    /// BlockEntity
     ///////////////////////////////////
     @Override
     public void tick() {
-        if (world.isRemote)
+        if (level.isClientSide)
             return;
 
         if (this.bufferedEnergy > bufferCapacity) {
@@ -66,7 +71,7 @@ public class TileRF2SE extends SESinglePortMachine<ISEConstantPowerSource> imple
             double RFConsumed = actualOutputPower / 20.0 * SEAPI.energyNetAgent.joule2rf();
             if (RFConsumed < 1.0)
                 RFConsumed = 1.0;
-            bufferedEnergy -= MathHelper.floor(RFConsumed);
+            bufferedEnergy -= Mth.floor(RFConsumed);
 
             if (this.bufferedEnergy < 2.0*RFConsumed) {
                 this.enabled = false;
@@ -88,8 +93,8 @@ public class TileRF2SE extends SESinglePortMachine<ISEConstantPowerSource> imple
     }
 
     @Override
-    public void read(BlockState blockState, CompoundNBT tagCompound) {
-        super.read(blockState, tagCompound);
+    public void load(CompoundTag tagCompound) {
+        super.load(tagCompound);
 
         this.ratedOutputPower = tagCompound.getDouble("ratedOutputPower");
         this.ouputPowerSetPoint = tagCompound.getDouble("ouputPowerSetPoint");
@@ -99,14 +104,14 @@ public class TileRF2SE extends SESinglePortMachine<ISEConstantPowerSource> imple
     }
 
     @Override
-    public CompoundNBT write(CompoundNBT tagCompound) {
+    public CompoundTag save(CompoundTag tagCompound) {
         tagCompound.putDouble("ratedOutputPower", this.ratedOutputPower);
         tagCompound.putDouble("ouputPowerSetPoint", this.ouputPowerSetPoint);
         tagCompound.putBoolean("enabled", this.enabled);
         tagCompound.putBoolean("acceptRF", this.acceptRF);
         tagCompound.putInt("bufferedEnergy", this.bufferedEnergy);
 
-        return super.write(tagCompound);
+        return super.save(tagCompound);
     }
 
     @Override
@@ -125,8 +130,8 @@ public class TileRF2SE extends SESinglePortMachine<ISEConstantPowerSource> imple
         Direction oldFacing = getFacing();
         super.setFacing(newFacing);
 
-        world.neighborChanged(this.pos.offset(oldFacing), this.getBlockState().getBlock(), this.pos);
-        world.neighborChanged(this.pos.offset(newFacing), this.getBlockState().getBlock(), this.pos);
+        level.neighborChanged(this.worldPosition.relative(oldFacing), this.getBlockState().getBlock(), this.worldPosition);
+        level.neighborChanged(this.worldPosition.relative(newFacing), this.getBlockState().getBlock(), this.worldPosition);
     }
 
     ///////////////////////////////////
@@ -231,10 +236,10 @@ public class TileRF2SE extends SESinglePortMachine<ISEConstantPowerSource> imple
     }
 
     ///////////////////////////////////
-    /// INamedContainerProvider
+    /// MenuProvider
     ///////////////////////////////////
 	@Override
-	public Container createMenu(int windowId, PlayerInventory inv, PlayerEntity player) {
+	public AbstractContainerMenu createMenu(int windowId, Inventory inv, Player player) {
         return new ContainerRF2SE(this, windowId);
     }
 

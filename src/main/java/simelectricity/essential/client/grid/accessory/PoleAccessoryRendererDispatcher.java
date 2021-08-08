@@ -7,9 +7,9 @@ import javax.annotation.Nullable;
 
 import org.apache.commons.lang3.tuple.Pair;
 
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockReader;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.BlockGetter;
 import simelectricity.essential.client.grid.PowerPoleRenderHelper;
 import simelectricity.essential.grid.TileCableJoint;
 import simelectricity.essential.grid.TilePoleBranch;
@@ -38,7 +38,7 @@ public class PoleAccessoryRendererDispatcher {
 		registered.put(Pair.of(poleClass, accessoryClass), renderer);
 	}
 	
-	public static <T extends ISEPowerPole> void render(IBlockReader world, T pole, @Nullable BlockPos accessoryPos) {
+	public static <T extends ISEPowerPole> void render(BlockGetter world, T pole, @Nullable BlockPos accessoryPos) {
 		if (accessoryPos == null)
 			return;
 		
@@ -46,7 +46,7 @@ public class PoleAccessoryRendererDispatcher {
 		if (helper == null)
 			return;
 
-		TileEntity neighborTile = world.getTileEntity(accessoryPos);
+		BlockEntity neighborTile = world.getBlockEntity(accessoryPos);
 		if (neighborTile instanceof ISEPoleAccessory && neighborTile instanceof ISEPowerPole) {
 			ISEPoleAccessory accessory = (ISEPoleAccessory) neighborTile;
 			ISEAccessoryRenderer renderer = registered.get(Pair.of(pole.getClass(), accessory.getClass()));

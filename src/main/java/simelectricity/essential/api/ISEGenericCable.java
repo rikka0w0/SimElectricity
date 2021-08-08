@@ -1,6 +1,6 @@
 package simelectricity.essential.api;
 
-import net.minecraft.util.Direction;
+import net.minecraft.core.Direction;
 import net.minecraftforge.client.model.data.ModelProperty;
 import simelectricity.api.tile.ISECableTile;
 

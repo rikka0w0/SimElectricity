@@ -1,7 +1,6 @@
 package simelectricity.essential.coverpanel;
 
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.world.entity.player.Inventory;
 import rikka.librikka.container.ContainerSynchronizer;
 import rikka.librikka.gui.AutoGuiHandler;
 import simelectricity.essential.common.ContainerNoInvAutoSync;
@@ -22,10 +21,10 @@ public class ContainerVoltageSensor extends ContainerNoInvAutoSync<VoltageSensor
     }
 
     // Client side
-    public ContainerVoltageSensor(int windowId, PlayerInventory inv, PacketBuffer data) {
+    public ContainerVoltageSensor(int windowId, Inventory inv) {
     	this(null, windowId);
     }
-    
+
     @Override
     public void onButtonPressed(int buttonID, boolean isCtrlPressed) {
         double thresholdVoltage = this.thresholdVoltage;

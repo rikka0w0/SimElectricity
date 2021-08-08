@@ -1,14 +1,14 @@
 package simelectricity.essential.items;
 
-import net.minecraft.block.Block;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemUseContext;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.core.Direction;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import rikka.librikka.IMetaProvider;
 import rikka.librikka.IMetaBase;
 import rikka.librikka.Utils;
@@ -37,7 +37,7 @@ import java.util.function.Function;
 
 public final class ItemTools extends ItemBase implements IMetaProvider<IMetaBase> {
 	private final ItemType itemType;
-    private static Map<PlayerEntity, BlockPos> lastCoordinates_cablecutter_hv = new HashMap<>();
+    private static Map<Player, BlockPos> lastCoordinates_cablecutter_hv = new HashMap<>();
 
     public static enum ItemType implements IMetaBase{
     	crowbar(ItemTools::useCrowbar),
@@ -45,17 +45,17 @@ public final class ItemTools extends ItemBase implements IMetaProvider<IMetaBase
     	glove(ItemTools::useGlove),
     	multimeter(ItemTools::useMultimeter),
     	cablecutter_hv(ItemTools::useHVCableCutter);
-    	
-    	private final Function<ItemUseContext, ActionResultType> handler;
-    	ItemType(Function<ItemUseContext, ActionResultType> handler) {
+
+    	private final Function<UseOnContext, InteractionResult> handler;
+    	ItemType(Function<UseOnContext, InteractionResult> handler) {
     		this.handler = handler;
     	}
     }
-    
+
     private ItemTools(ItemType itemType) {
         super("tool_" + itemType.name(), (new Item.Properties())
-        		.maxStackSize(1)
-        		.group(SEAPI.SETab));
+        		.stacksTo(1)
+        		.tab(SEAPI.SETab));
         this.itemType = itemType;
     }
 
@@ -63,145 +63,145 @@ public final class ItemTools extends ItemBase implements IMetaProvider<IMetaBase
 	public IMetaBase meta() {
 		return itemType;
 	}
-    
+
     @Override
-    public ActionResultType onItemUse(ItemUseContext context) {
+    public InteractionResult useOn(UseOnContext context) {
     	return itemType.handler.apply(context);
     }
-    
+
     public static ItemTools[] create() {
     	ItemTools[] ret = new ItemTools[ItemType.values().length];
     	for (ItemType itemType: ItemType.values())
     		ret[itemType.ordinal()] = new ItemTools(itemType);
     	return ret;
     }
-    
-    public static ActionResultType useCrowbar(ItemUseContext context) {
-    	TileEntity te = context.getWorld().getTileEntity(context.getPos());
-    	PlayerEntity player = context.getPlayer();
-    	Direction side = context.getFace();
-    	
-    	
+
+    public static InteractionResult useCrowbar(UseOnContext context) {
+    	BlockEntity te = context.getLevel().getBlockEntity(context.getClickedPos());
+    	Player player = context.getPlayer();
+    	Direction side = context.getClickedFace();
+
+
         if (te instanceof ISECoverPanelHost) {
             Direction coverPanelSide = ((ISECoverPanelHost) te).getSelectedCoverPanel(player);
 
             if (coverPanelSide == null)
-                return ActionResultType.FAIL;
+                return InteractionResult.FAIL;
 
             ISECoverPanelHost host = (ISECoverPanelHost) te;
             if (host.removeCoverPanel(coverPanelSide, true)) {
             	ISECoverPanel coverPanel = ((ISECoverPanelHost) te).getCoverPanelOnSide(side);
-            	
-            	if (!te.getWorld().isRemote())
+
+            	if (!te.getLevel().isClientSide())
                 	host.removeCoverPanel(coverPanelSide, false);
-            	
+
                 if (!player.isCreative()) {
-                	Utils.dropItemIntoWorld(te.getWorld(), te.getPos(), coverPanel.getDroppedItemStack());
+                	Utils.dropItemIntoWorld(te.getLevel(), te.getBlockPos(), coverPanel.getDroppedItemStack());
                 }
-                return ActionResultType.SUCCESS;
+                return InteractionResult.SUCCESS;
             }
-            return ActionResultType.FAIL;
+            return InteractionResult.FAIL;
         } else if (te instanceof ISECrowbarTarget) {
             ISECrowbarTarget crowbarTarget = (ISECrowbarTarget) te;
 
             Direction selectedDirection = side;
 
             if (crowbarTarget.canCrowbarBeUsed(selectedDirection)) {
-                if (te.getWorld().isRemote) {
-                    return ActionResultType.PASS;
+                if (te.getLevel().isClientSide) {
+                    return InteractionResult.PASS;
                 } else {
                     crowbarTarget.onCrowbarAction(selectedDirection, player.isCreative());
-                    return ActionResultType.PASS;
+                    return InteractionResult.PASS;
                 }
 
             }
 
-            return ActionResultType.FAIL;
+            return InteractionResult.FAIL;
         }
 
-        return ActionResultType.FAIL;
+        return InteractionResult.FAIL;
     }
 
-    public static ActionResultType useWrench(ItemUseContext context) {
-    	TileEntity te = context.getWorld().getTileEntity(context.getPos());
-    	PlayerEntity player = context.getPlayer();
-    	Direction side = context.getFace();
-    	
+    public static InteractionResult useWrench(UseOnContext context) {
+    	BlockEntity te = context.getLevel().getBlockEntity(context.getClickedPos());
+    	Player player = context.getPlayer();
+    	Direction side = context.getClickedFace();
+
         if (te instanceof ISEWrenchable) {
             ISEWrenchable wrenchTarget = (ISEWrenchable) te;
 
             if (wrenchTarget.canWrenchBeUsed(side)) {
-                if (te.getWorld().isRemote) {
-                    return ActionResultType.PASS;
+                if (te.getLevel().isClientSide) {
+                    return InteractionResult.PASS;
                 } else {
                     wrenchTarget.onWrenchAction(side, player.isCreative());
-                    return ActionResultType.PASS;
+                    return InteractionResult.PASS;
                 }
             }
-            return ActionResultType.FAIL;
+            return InteractionResult.FAIL;
         }
 
-        return ActionResultType.FAIL;
+        return InteractionResult.FAIL;
     }
 
-    public static ActionResultType useGlove(ItemUseContext context) {
-    	TileEntity te = context.getWorld().getTileEntity(context.getPos());
-    	Direction side = context.getFace();
-    	
+    public static InteractionResult useGlove(UseOnContext context) {
+    	BlockEntity te = context.getLevel().getBlockEntity(context.getClickedPos());
+    	Direction side = context.getClickedFace();
+
         if (te instanceof ISESidedFacing) {
             ISESidedFacing target = (ISESidedFacing) te;
 
             if (target.canSetFacing(side)) {
-                if (te.getWorld().isRemote) {
-                    return ActionResultType.PASS;
+                if (te.getLevel().isClientSide) {
+                    return InteractionResult.PASS;
                 } else {
                     target.setFacing(side);
-                    return ActionResultType.PASS;
+                    return InteractionResult.PASS;
                 }
             }
-            return ActionResultType.FAIL;
+            return InteractionResult.FAIL;
         }
 
-        return ActionResultType.FAIL;
+        return InteractionResult.FAIL;
     }
 
-    public static ActionResultType useMultimeter(ItemUseContext context) {
-    	World world = context.getWorld();
-    	BlockPos pos = context.getPos();
-        PlayerEntity player = context.getPlayer();
-        
-        if (world.isRemote)
-            return ActionResultType.PASS;
-        
-        TileEntity te = world.getTileEntity(pos);
+    public static InteractionResult useMultimeter(UseOnContext context) {
+    	Level world = context.getLevel();
+    	BlockPos pos = context.getClickedPos();
+        Player player = context.getPlayer();
+
+        if (world.isClientSide)
+            return InteractionResult.PASS;
+
+        BlockEntity te = world.getBlockEntity(pos);
         Block block = world.getBlockState(pos).getBlock();
-        
+
         ISESimulatable delegatedNode = null;
         if (block instanceof ISENodeDelegateBlock) {
         	delegatedNode = ((ISENodeDelegateBlock<?>) block).getNode(world, pos);
         }
-        
+
         if (!(	te instanceof ISECableTile ||
         		te instanceof ISETile ||
         		te instanceof ISETile) && delegatedNode == null)
-            return ActionResultType.PASS;
-        
+            return InteractionResult.PASS;
+
         Utils.chat(player, "------------------");
-        player.sendMessage(BlockUtils.getDisplayName(world, pos), net.minecraft.util.Util.DUMMY_UUID);
-        
+        player.sendMessage(BlockUtils.getDisplayName(world, pos), net.minecraft.Util.NIL_UUID);
+
         if (block instanceof ISENodeDelegateBlock) {
         	delegatedNode = ((ISENodeDelegateBlock<?>) block).getNode(world, pos);
             if (delegatedNode != null) {
             	ItemTools.printVI(delegatedNode, player);
             }
         }
-                
+
         if (te instanceof ISECableTile) {
             ISESimulatable node = ((ISECableTile) te).getNode();
             if (node != delegatedNode)
             	ItemTools.printVI(node, player);
         }
-        
+
         if (te instanceof ISETile) {
             ISETile tile = (ISETile) te;
 
@@ -222,20 +222,20 @@ public final class ItemTools extends ItemBase implements IMetaProvider<IMetaBase
                 }
             }
 
-        } 
-        
+        }
+
         if (te instanceof ISEGridTile) {
             ISEGridNode node = ((ISEGridTile) te).getGridNode();
             if (node != delegatedNode)
             	ItemTools.printVI(node, player);
         }
-        
-        return ActionResultType.PASS;
+
+        return InteractionResult.PASS;
     }
 
-    public static void printVI(ISESimulatable node, PlayerEntity player) {
+    public static void printVI(ISESimulatable node, Player player) {
     	String s = "WTF";
-    	
+
     	if (node instanceof ISECable) {
     		s = "Cable";
     	} else if (node instanceof ISEGridNode) {
@@ -247,25 +247,25 @@ public final class ItemTools extends ItemBase implements IMetaProvider<IMetaBase
     		else if (type == 2)
     			s = "TransformerSecondary";
     	}
-    	
+
     	s += ", " + SEUnitHelper.getVoltageStringWithUnit(node.getVoltage());
-    	
+
         double currentMagnitude = node.getCurrentMagnitude();
         if (!Double.isNaN(currentMagnitude))
         	s += ", I=" + SEUnitHelper.getCurrentStringWithUnit(currentMagnitude);
-        
+
         Utils.chat(player, s);
     }
 
-    private static ActionResultType useHVCableCutter(ItemUseContext context) {
-    	World world = context.getWorld();
-    	BlockPos pos = context.getPos();
-        PlayerEntity player = context.getPlayer();
-        
-        if (world.isRemote)
-            return ActionResultType.PASS;
+    private static InteractionResult useHVCableCutter(UseOnContext context) {
+    	Level world = context.getLevel();
+    	BlockPos pos = context.getClickedPos();
+        Player player = context.getPlayer();
 
-        TileEntity te = world.getTileEntity(pos);
+        if (world.isClientSide)
+            return InteractionResult.PASS;
+
+        BlockEntity te = world.getBlockEntity(pos);
         Block block = world.getBlockState(pos).getBlock();
 
         ISEGridNode gridNode = null;
@@ -281,7 +281,7 @@ public final class ItemTools extends ItemBase implements IMetaProvider<IMetaBase
 
         if (gridNode == null) {
             Utils.chatWithLocalization(player, "chat.sime_essential:powerpole_current_selection_invalid");
-            return ActionResultType.FAIL;
+            return InteractionResult.FAIL;
         }
 
         if (player.isCrouching()) {
@@ -289,7 +289,7 @@ public final class ItemTools extends ItemBase implements IMetaProvider<IMetaBase
                 SEAPI.energyNetAgent.breakGridConnection(world, neighbor, gridNode);
             }
             lastCoordinates_cablecutter_hv.put(player, null);
-            return ActionResultType.SUCCESS;
+            return InteractionResult.SUCCESS;
         }
 
         BlockPos lastSelectedPos = lastCoordinates_cablecutter_hv.get(player);
@@ -298,7 +298,7 @@ public final class ItemTools extends ItemBase implements IMetaProvider<IMetaBase
             lastCoordinates_cablecutter_hv.put(player, pos);
         } else {
             lastCoordinates_cablecutter_hv.put(player, null);
-            TileEntity lastTE = world.getTileEntity(lastSelectedPos);
+            BlockEntity lastTE = world.getBlockEntity(lastSelectedPos);
             Block lastBlock = world.getBlockState(lastSelectedPos).getBlock();
             if (lastBlock instanceof ISENodeDelegateBlock)
                 delegatedNode = ((ISENodeDelegateBlock<?>) lastBlock).getNode(world, lastSelectedPos);
@@ -324,6 +324,6 @@ public final class ItemTools extends ItemBase implements IMetaProvider<IMetaBase
             }
         }
 
-        return ActionResultType.SUCCESS;
+        return InteractionResult.SUCCESS;
     }
 }

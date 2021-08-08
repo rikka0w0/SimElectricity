@@ -1,6 +1,6 @@
 package simelectricity.api.components;
 
-import net.minecraft.util.Direction;
+import net.minecraft.core.Direction;
 
 public interface ISEWire extends ISECableBase{
     /**

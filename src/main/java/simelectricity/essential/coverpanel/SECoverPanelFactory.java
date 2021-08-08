@@ -2,18 +2,18 @@ package simelectricity.essential.coverpanel;
 
 import java.lang.reflect.InvocationTargetException;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.NBTUtil;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtUtils;
 import simelectricity.essential.api.ISECoverPanelFactory;
 import simelectricity.essential.api.SEEAPI;
 import simelectricity.essential.api.coverpanel.ISECoverPanel;
 import simelectricity.essential.items.ItemPanel;
 
-public class SECoverPanelFactory implements ISECoverPanelFactory {	
+public class SECoverPanelFactory implements ISECoverPanelFactory {
 	public SECoverPanelFactory() {
 		SEEAPI.coverPanelRegistry.register(this, LedPanel.class, null);
 		SEEAPI.coverPanelRegistry.register(this, VoltageSensorPanel.class, null);
@@ -27,19 +27,19 @@ public class SECoverPanelFactory implements ISECoverPanelFactory {
         if (item instanceof ItemPanel) {
         	ItemPanel.ItemType type = ((ItemPanel) item).itemType;
         	if (type == ItemPanel.ItemType.facade) {
-        		CompoundNBT bsNBT = itemStack.getTag();
-        		BlockState blockstate = Blocks.AIR.getDefaultState();
+        		CompoundTag bsNBT = itemStack.getTag();
+        		BlockState blockstate = Blocks.AIR.defaultBlockState();
         		if (bsNBT != null && bsNBT.contains("facade_blockstate")) {
         			bsNBT = bsNBT.getCompound("facade_blockstate");
-        			blockstate = NBTUtil.readBlockState(bsNBT);
+        			blockstate = NbtUtils.readBlockState(bsNBT);
         		}
         		return new FacadePanel.FacadeNormal(blockstate, itemStack);
         	} else if (type == ItemPanel.ItemType.facade_hollow) {
-        		CompoundNBT bsNBT = itemStack.getTag();
-        		BlockState blockstate = Blocks.AIR.getDefaultState();
+        		CompoundTag bsNBT = itemStack.getTag();
+        		BlockState blockstate = Blocks.AIR.defaultBlockState();
         		if (bsNBT != null && bsNBT.contains("facade_blockstate")) {
         			bsNBT = bsNBT.getCompound("facade_blockstate");
-        			blockstate = NBTUtil.readBlockState(bsNBT);
+        			blockstate = NbtUtils.readBlockState(bsNBT);
         		}
         		return new FacadePanel.FacadeHollow(blockstate, itemStack);
         	}
@@ -50,9 +50,9 @@ public class SECoverPanelFactory implements ISECoverPanelFactory {
     }
 
     @Override
-    public ISECoverPanel from(CompoundNBT nbt, Class<? extends ISECoverPanel> panelCls, String coverPanelName) {
+    public ISECoverPanel from(CompoundTag nbt, Class<? extends ISECoverPanel> panelCls, String coverPanelName) {
 		try {
-			return panelCls.getConstructor(CompoundNBT.class).newInstance(nbt);
+			return panelCls.getConstructor(CompoundTag.class).newInstance(nbt);
 		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
 				| InvocationTargetException | NoSuchMethodException | SecurityException e) {
 

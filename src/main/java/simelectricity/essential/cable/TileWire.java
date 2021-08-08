@@ -1,10 +1,11 @@
 package simelectricity.essential.cable;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.model.data.ModelDataMap;
@@ -87,7 +88,7 @@ public class TileWire extends SEEnergyTile implements ISEGenericWire {
             return stack;
         }
 
-        private void readFromNBT(CompoundNBT tagCompound) {
+        private void readFromNBT(CompoundTag tagCompound) {
             byte connection_dat = tagCompound.getByte("connections");
             for (Direction side: Direction.values()) {
                 this.connections[side.ordinal()] = (connection_dat & (1<<side.ordinal())) > 0;
@@ -98,10 +99,10 @@ public class TileWire extends SEEnergyTile implements ISEGenericWire {
             else
                 this.resistance = 0.1;
 
-            this.itemStack = ItemStack.read(tagCompound.getCompound("itemStack"));
+            this.itemStack = ItemStack.of(tagCompound.getCompound("itemStack"));
         }
 
-        private void write(CompoundNBT compound) {
+        private void write(CompoundTag compound) {
             byte connection_dat = 0;
             for (Direction side: Direction.values()) {
                 if (this.hasBranchOnSide(side))
@@ -111,13 +112,14 @@ public class TileWire extends SEEnergyTile implements ISEGenericWire {
 
 
             compound.putDouble("resistance", this.resistance);
-            CompoundNBT itemStackCompound = new CompoundNBT();
-            this.itemStack.write(itemStackCompound);
+            CompoundTag itemStackCompound = new CompoundTag();
+            this.itemStack.save(itemStackCompound);
             compound.put("itemStack", itemStackCompound);
         }
     }
 
-    public TileWire() {
+    public TileWire(BlockPos pos, BlockState blockState) {
+    	super(pos, blockState);
         this.nodes = new ISESubComponent[Direction.values().length];
 
         this.wires = new Wire[Direction.values().length];
@@ -126,7 +128,7 @@ public class TileWire extends SEEnergyTile implements ISEGenericWire {
     }
 
     ///////////////////////////////////
-    /// TileEntity
+    /// BlockEntity
     ///////////////////////////////////
 
     @Override
@@ -138,23 +140,22 @@ public class TileWire extends SEEnergyTile implements ISEGenericWire {
     }
 
     @Override
-    public void read(BlockState blockState, CompoundNBT tagCompound) {
-        super.read(blockState, tagCompound);
+    public void load(CompoundTag tagCompound) {
+        super.load(tagCompound);
 
         for (Direction side : Direction.values())
-            wires[side.ordinal()].readFromNBT(tagCompound.getCompound(side.getString()));
-
+            wires[side.ordinal()].readFromNBT(tagCompound.getCompound(side.getSerializedName()));
     }
 
     @Override
-    public CompoundNBT write(CompoundNBT tagCompound) {
+    public CompoundTag save(CompoundTag tagCompound) {
         for (Direction side : Direction.values()) {
-            CompoundNBT nbt = new CompoundNBT();
+            CompoundTag nbt = new CompoundTag();
             wires[side.ordinal()].write(nbt);
-            tagCompound.put(side.getString(), nbt);
+            tagCompound.put(side.getSerializedName(), nbt);
         }
 
-        return super.write(tagCompound);
+        return super.save(tagCompound);
     }
 
     ///////////////////////////////////
@@ -186,15 +187,15 @@ public class TileWire extends SEEnergyTile implements ISEGenericWire {
                     continue;
                 }
 
-                TileEntity neighbor = world.getTileEntity(pos.offset(wire_side).offset(branch));
+                BlockEntity neighbor = level.getBlockEntity(worldPosition.relative(wire_side).relative(branch));
 
                 if (neighbor instanceof ISEWireTile) {
                     ISEWireTile wireTileNeighbor = (ISEWireTile) neighbor;
 
                     externalConnections[index] =
                                     wireTileNeighbor.getWireParam(branch.getOpposite()).hasBranchOnSide(wire_side.getOpposite()) &&
-                                    !BlockUtils.isSideSolid(world, pos.offset(branch), branch.getOpposite()) &&
-                                    !BlockUtils.isSideSolid(world, pos.offset(branch), wire_side);
+                                    !BlockUtils.isSideSolid(level, worldPosition.relative(branch), branch.getOpposite()) &&
+                                    !BlockUtils.isSideSolid(level, worldPosition.relative(branch), wire_side);
                 } else {
                     externalConnections[index] = false;
                 }
@@ -214,14 +215,14 @@ public class TileWire extends SEEnergyTile implements ISEGenericWire {
     private boolean[] connectedOnSide = new boolean[Direction.values().length];
 
     @Override
-    public void prepareS2CPacketData(CompoundNBT tagCompound) {
+    public void prepareS2CPacketData(CompoundTag tagCompound) {
         super.prepareS2CPacketData(tagCompound);
 
         byte connections = 0;
         for (Direction side : Direction.values()) {
-            CompoundNBT nbt = new CompoundNBT();
+            CompoundTag nbt = new CompoundTag();
             wires[side.ordinal()].write(nbt);
-            tagCompound.put(side.getString(), nbt);
+            tagCompound.put(side.getSerializedName(), nbt);
 
             if (connectedOnSide[side.ordinal()])
                 connections |= (1 << side.ordinal());
@@ -238,10 +239,10 @@ public class TileWire extends SEEnergyTile implements ISEGenericWire {
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public void onSyncDataFromServerArrived(CompoundNBT tagCompound) {
+    public void onSyncDataFromServerArrived(CompoundTag tagCompound) {
         byte connections = tagCompound.getByte("connections");
         for (Direction side : Direction.values()) {
-            wires[side.ordinal()].readFromNBT(tagCompound.getCompound(side.getString()));
+            wires[side.ordinal()].readFromNBT(tagCompound.getCompound(side.getSerializedName()));
             connectedOnSide[side.ordinal()] = (connections & (1 << side.ordinal())) > 0;
         }
 
@@ -273,7 +274,7 @@ public class TileWire extends SEEnergyTile implements ISEGenericWire {
     public boolean canAddBranch(Direction side, Direction to, ItemStack itemStack) {
         if (this.wires[side.ordinal()].hasBranchOnSide(null)) {
             // Already have some branches
-            return itemStack.isItemEqual(this.wires[side.ordinal()].itemStack);
+            return itemStack.sameItem(this.wires[side.ordinal()].itemStack);
         } else {
             return true;
         }
@@ -288,7 +289,7 @@ public class TileWire extends SEEnergyTile implements ISEGenericWire {
         }
         this.wires[side.ordinal()].setConnection(to, true);
 
-        world.neighborChanged(pos.offset(side), getBlockState().getBlock(), pos);
+        level.neighborChanged(worldPosition.relative(side), getBlockState().getBlock(), worldPosition);
         notifyExtCornerOfStateChange(side, to);
 
         updateTileConnection();
@@ -297,10 +298,10 @@ public class TileWire extends SEEnergyTile implements ISEGenericWire {
     }
 
     void notifyExtCornerOfStateChange(Direction side, Direction to) {
-        TileEntity potentialNeighbor = world.getTileEntity(pos.offset(side).offset(to));
+        BlockEntity potentialNeighbor = level.getBlockEntity(worldPosition.relative(side).relative(to));
         if (    potentialNeighbor instanceof ISEGenericWire &&
-                !BlockUtils.isSideSolid(world, pos.offset(to), to.getOpposite()) &&
-                !BlockUtils.isSideSolid(world, pos.offset(to), side.getOpposite())) {
+                !BlockUtils.isSideSolid(level, worldPosition.relative(to), to.getOpposite()) &&
+                !BlockUtils.isSideSolid(level, worldPosition.relative(to), side.getOpposite())) {
             ISEGenericWire wireTile = (ISEGenericWire)potentialNeighbor;
             if (wireTile.getWireParam(to.getOpposite()).hasBranchOnSide(side.getOpposite()))
                 wireTile.onRenderingUpdateRequested();
@@ -323,7 +324,7 @@ public class TileWire extends SEEnergyTile implements ISEGenericWire {
             notifyExtCornerOfStateChange(side, to);
         }
 
-        world.neighborChanged(pos.offset(side), getBlockState().getBlock(), pos);
+        level.neighborChanged(worldPosition.relative(side), getBlockState().getBlock(), worldPosition);
 
         updateTileConnection();
 
@@ -334,7 +335,7 @@ public class TileWire extends SEEnergyTile implements ISEGenericWire {
     public ItemStack getItemDrop(Direction side) {
         return this.wires[side.ordinal()].getItemToDropAll();
     }
-    
+
     protected void collectModelData(ModelDataMap.Builder builder) {
     	builder.withInitial(ISEGenericWire.prop, this);
     }

@@ -1,7 +1,7 @@
 package simelectricity.essential.api;
 
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import simelectricity.api.node.ISESimulatable;
 
 public interface ISENodeDelegateBlock<T extends ISESimulatable> {
@@ -11,5 +11,5 @@ public interface ISENodeDelegateBlock<T extends ISESimulatable> {
      * @return
      * @throws NoComplementException
      */
-    T getNode(World world, BlockPos pos);
+    T getNode(Level world, BlockPos pos);
 }

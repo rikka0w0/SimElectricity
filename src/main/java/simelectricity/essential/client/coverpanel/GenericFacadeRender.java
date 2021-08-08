@@ -7,12 +7,12 @@ import java.util.Random;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-import net.minecraft.block.BlockState;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.RenderTypeLookup;
-import net.minecraft.client.renderer.model.BakedQuad;
-import net.minecraft.client.renderer.model.IBakedModel;
-import net.minecraft.util.Direction;
+import net.minecraft.client.renderer.ItemBlockRenderTypes;
+import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.core.Direction;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.MinecraftForgeClient;
@@ -27,20 +27,20 @@ import simelectricity.essential.api.coverpanel.ISEFacadeCoverPanel;
 public class GenericFacadeRender implements ISECoverPanelRender<ISEFacadeCoverPanel> {
 	public final static GenericFacadeRender instance = new GenericFacadeRender();
 	protected GenericFacadeRender() {};
-	
+
 	public static void tintFunc(Direction side, MutableQuad mquad) {
 		int tint = mquad.getTint();
 		if (tint != -1)
 			mquad.setTint(tintFunc(side, tint));
 	}
-	
+
 	//Encode the side information in the tint variable
 	public static int tintFunc(Direction side, int tint)	{	return tint * Direction.values().length + side.ordinal();}
-	
+
 	public static int getTint(int in) {	return in / 6;}
-	
-	public static Direction getFacing(int in) {	return Direction.byIndex(in % Direction.values().length);}
-	
+
+	public static Direction getFacing(int in) {	return Direction.from3DDataValue(in % Direction.values().length);}
+
     public final static Consumer<MutableVertex> shrinkX = (vertex) -> {
 		if (vertex.position_x < 0.5)
 			vertex.position_x += ISECoverPanel.thickness;
@@ -61,27 +61,27 @@ public class GenericFacadeRender implements ISECoverPanelRender<ISEFacadeCoverPa
 		else
 			vertex.position_z -= ISECoverPanel.thickness;
 	};
-	
+
 	public static Direction.Axis perpendicular(Direction.Axis a, Direction.Axis b) {
 		if (a==b || a==null || b==null)
 			return null;
-		
+
 		for (Direction.Axis axis: Direction.Axis.values()) {
 			if (axis!=a && axis!=b)
 				return axis;
 		}
 		return null;
 	}
-	
+
 	@Override
-	public void renderCoverPanel(ISEFacadeCoverPanel coverPanel, Direction side, Random random, List<BakedQuad> quads) {		
+	public void renderCoverPanel(ISEFacadeCoverPanel coverPanel, Direction side, Random random, List<BakedQuad> quads) {
 		BlockState blockState = coverPanel.getBlockState();
-		if (RenderTypeLookup.canRenderInLayer(blockState, MinecraftForgeClient.getRenderLayer())) {	
+		if (ItemBlockRenderTypes.canRenderInLayer(blockState, MinecraftForgeClient.getRenderLayer())) {
 	        List<MutableQuad> mquads = new LinkedList<>();
-	        
+
 	        // Get the block model
-			IBakedModel model = Minecraft.getInstance().getBlockRendererDispatcher().getModelForState(blockState);
-			
+			BakedModel model = Minecraft.getInstance().getBlockRenderer().getBlockModel(blockState);
+
 			final Direction.Axis theAxis = side.getAxis();
 			final boolean posAxisDir = side.getAxisDirection() == Direction.AxisDirection.POSITIVE;
 			Predicate<MutableVertex> canShrinkOnSide = (vertex)->{
@@ -94,11 +94,11 @@ public class GenericFacadeRender implements ISECoverPanelRender<ISEFacadeCoverPa
 				}
 				return false;
 			};
-			
+
 			for (Direction dir: Direction.values()) {
 				for (BakedQuad quad: model.getQuads(blockState, dir, random, EmptyModelData.INSTANCE)) {
 					MutableQuad mquad = new MutableQuad(quad);
-					
+
 					if (dir != side) {
 						List<MutableVertex> vertexes = Arrays.asList(
 								mquad.vertex_0,
@@ -106,13 +106,13 @@ public class GenericFacadeRender implements ISECoverPanelRender<ISEFacadeCoverPa
 								mquad.vertex_2,
 								mquad.vertex_3
 						);
-						
+
 						double minU = vertexes.stream().mapToDouble(vertex -> vertex.tex_u).min().orElse(0);
 						double minV = vertexes.stream().mapToDouble(vertex -> vertex.tex_v).min().orElse(0);
 						double maxU = vertexes.stream().mapToDouble(vertex -> vertex.tex_u).max().orElse(0);
 						double maxV = vertexes.stream().mapToDouble(vertex -> vertex.tex_v).max().orElse(0);
 						float lenShrink = posAxisDir ? 1-ISECoverPanel.thickness : ISECoverPanel.thickness-1;
-						
+
 						if (dir == side.getOpposite()) {
 							// Back
 				            Consumer<MutableVertex> func1 = null, func2 = null;
@@ -126,7 +126,7 @@ public class GenericFacadeRender implements ISECoverPanelRender<ISEFacadeCoverPa
 								func1 = shrinkX;
 								func2 = shrinkY;
 							}
-							
+
 							for (MutableVertex vertex: vertexes) {
 								vertex.offset(theAxis, lenShrink);
 								func1.accept(vertex);
@@ -136,7 +136,7 @@ public class GenericFacadeRender implements ISECoverPanelRender<ISEFacadeCoverPa
 									vertex.tex_u += (maxU-minU)/16D;
 								else
 									vertex.tex_u -= (maxU-minU)/16D;
-								
+
 								if (vertex.tex_v < (maxV+minV)/2)
 									vertex.tex_v += (maxV-minV)/16D;
 								else
@@ -145,11 +145,11 @@ public class GenericFacadeRender implements ISECoverPanelRender<ISEFacadeCoverPa
 						} else {	// if (dir == side.getOpposite())
 							//Side
 							Direction.Axis axisToShrink = perpendicular(theAxis, dir.getAxis());
-							
+
 							for (MutableVertex vertex: vertexes) {
 								if (canShrinkOnSide.test(vertex)) {
 									vertex.offset(theAxis, lenShrink);
-									vertex.offset(dir.getAxis(), 
+									vertex.offset(dir.getAxis(),
 											dir.getAxisDirection()==Direction.AxisDirection.POSITIVE
 											? -ISECoverPanel.thickness
 											: ISECoverPanel.thickness);
@@ -161,7 +161,7 @@ public class GenericFacadeRender implements ISECoverPanelRender<ISEFacadeCoverPa
 									} else if (axisToShrink == Direction.Axis.Z) {
 										shrinkZ.accept(vertex);
 									}
-									
+
 									if (theAxis == Direction.Axis.Y) {
 										if (vertex.tex_v < (maxV+minV)/2)
 											vertex.tex_v += (maxV-minV)*14D/16D;
@@ -178,16 +178,16 @@ public class GenericFacadeRender implements ISECoverPanelRender<ISEFacadeCoverPa
 							}	// for (MutableVertex vertex: vertexes)
 						}	// if (dir == side.getOpposite())
 					}	// if (dir != side)
-					
+
 					mquads.add(mquad);
 				}	// for (BakedQuad quad: model.getQuads(blockState, dir, random, EmptyModelData.INSTANCE))
 			}	// for (Direction dir: Direction.values())
-			
+
 			mquads.stream()
 				.peek((mquad)->tintFunc(side, mquad))
 				.map(MutableQuad::bake)
 				.forEach(quads::add);
-			
+
 	        quads.addAll(SupportRender.forSide(side));
 		}
 	}

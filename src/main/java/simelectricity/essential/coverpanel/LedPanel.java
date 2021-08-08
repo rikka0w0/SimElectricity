@@ -1,9 +1,9 @@
 package simelectricity.essential.coverpanel;
 
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.core.Direction;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import rikka.librikka.Utils;
@@ -17,11 +17,11 @@ import simelectricity.essential.client.coverpanel.LedPanelRender;
 
 public class LedPanel implements ISEElectricalLoadCoverPanel, ISEIuminousCoverPanel {
     private volatile byte lightLevel;
-    private volatile TileEntity hostTileEntity;
+    private volatile BlockEntity hostTileEntity;
 
     public LedPanel() {}
     
-    public LedPanel(CompoundNBT nbt) {
+    public LedPanel(CompoundTag nbt) {
     	
     }
     
@@ -31,7 +31,7 @@ public class LedPanel implements ISEElectricalLoadCoverPanel, ISEIuminousCoverPa
     }
 
     @Override
-    public void toNBT(CompoundNBT nbt) {
+    public void toNBT(CompoundTag nbt) {
     }
 
     @Override
@@ -41,7 +41,7 @@ public class LedPanel implements ISEElectricalLoadCoverPanel, ISEIuminousCoverPa
     }
 
     @Override
-    public void setHost(TileEntity hostTileEntity, Direction side) {
+    public void setHost(BlockEntity hostTileEntity, Direction side) {
         this.hostTileEntity = hostTileEntity;
     }
 

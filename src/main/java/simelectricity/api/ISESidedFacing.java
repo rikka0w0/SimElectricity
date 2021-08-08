@@ -19,7 +19,7 @@
 
 package simelectricity.api;
 
-import net.minecraft.util.Direction;
+import net.minecraft.core.Direction;
 
 /**
  * For TileEntities only, implementing this allows glove item to change the facing, all machines are recommended to implement this!

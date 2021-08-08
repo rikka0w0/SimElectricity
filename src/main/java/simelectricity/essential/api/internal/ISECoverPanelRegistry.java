@@ -3,9 +3,9 @@ package simelectricity.essential.api.internal;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.minecraft.block.Block;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
 import simelectricity.essential.api.ISECoverPanelFactory;
 import simelectricity.essential.api.client.ISECoverPanelRender;
 import simelectricity.essential.api.coverpanel.ISECoverPanel;
@@ -35,14 +35,14 @@ public interface ISECoverPanelRegistry {
      * @return the cover panel instance, null if nbt is null or invalid.
      */
     @Nullable
-    ISECoverPanel fromNBT(CompoundNBT nbt);
+    ISECoverPanel fromNBT(CompoundTag nbt);
 
     /**
      * Save a cover panel to NBT
      * @param panel the cover panel to be saved, it must be registered using {@link ISECoverPanelRegistry#register}
      * @param nbt the nbt compound to hold the result, must not be null
      */
-    void saveToNBT(ISECoverPanel panel, @Nonnull CompoundNBT nbt);
+    void saveToNBT(ISECoverPanel panel, @Nonnull CompoundTag nbt);
 
     /**
      * @return the GenericFacadeRender which renders ISEFacadeCoverPanel and mimic the block specified by

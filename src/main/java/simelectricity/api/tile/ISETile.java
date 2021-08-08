@@ -1,6 +1,6 @@
 package simelectricity.api.tile;
 
-import net.minecraft.util.Direction;
+import net.minecraft.core.Direction;
 import simelectricity.api.node.ISESubComponent;
 
 /**

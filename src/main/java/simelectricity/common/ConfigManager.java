@@ -4,6 +4,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.event.config.ModConfigEvent;
 import rikka.librikka.ForgeConfigHelper;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -48,7 +49,7 @@ public class ConfigManager {
     }
 
     @SubscribeEvent
-    public static void onModConfigEvent(final ModConfig.ModConfigEvent configEvent) {
+    public static void onModConfigEvent(final ModConfigEvent configEvent) {
         if (configEvent.getConfig().getSpec() == ConfigManager.configSpec) {
             syncConfig();
             return;
@@ -65,7 +66,7 @@ public class ConfigManager {
         maxIteration_Spec = ForgeConfigHelper.intVal(builder, SimElectricity.MODID, "Max iteration", 50, "To aviod infinite loop, the simualtor aborts the simulation when this threshold is reached");
         shuntPN = ForgeConfigHelper.intVal(builder, SimElectricity.MODID, "RPN", 1000000000, "The resistance put in parallel with every PN junction, alleviate convergence issue");//
         joule2rf = ForgeConfigHelper.doubleVal(builder, Essential.MODID, "Joule to RF conversion ratio", 1, 0, Double.MAX_VALUE, "This number determines how many RF equal to 1 Joule");
-        
+
         builder.pop();
     }
 }

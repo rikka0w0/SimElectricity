@@ -3,9 +3,10 @@ package simelectricity.essential.grid;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.core.BlockPos;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import rikka.librikka.Utils;
@@ -15,37 +16,41 @@ import simelectricity.essential.client.grid.PowerPoleRenderHelper;
 import simelectricity.essential.common.ISEFacing8;
 
 public abstract class TilePoleConcrete extends TilePowerPoleBase implements ISEFacing8 {
+	public TilePoleConcrete(BlockPos pos, BlockState blockState) {
+		super(pos, blockState);
+	}
+
 	protected BlockPos accessory;
-    
-	protected abstract boolean acceptAccessory(TileEntity accessory);
-	
+
+	protected abstract boolean acceptAccessory(BlockEntity accessory);
+
 	@Override
 	@OnlyIn(Dist.CLIENT)
     public BlockPos getAccessoryPos() {
 		return accessory;
 	}
-	
+
     @Override
     public boolean canConnect(@Nullable BlockPos to) {
     	if (to == null)
     		return this.neighbor1 == null || this.neighbor2 == null || this.accessory == null;
-    	
-    	TileEntity te = world.getTileEntity(to);
+
+    	BlockEntity te = level.getBlockEntity(to);
     	if (acceptAccessory(te)) {
     		return this.accessory == null;
     	} else {
     		return this.neighbor1 == null || this.neighbor2 == null;
     	}
     }
-    
+
     @Override
     public void onGridNeighborUpdated() {
         this.neighbor1 = null;
         this.neighbor2 = null;
         this.accessory = null;
-        
+
         for (ISEGridNode node: this.gridNode.getNeighborList()) {
-        	TileEntity tile = world.getTileEntity(node.getPos());
+        	BlockEntity tile = level.getBlockEntity(node.getPos());
         	if (acceptAccessory(tile)) {
         		this.accessory = node.getPos();
         	} else if (neighbor1 == null){
@@ -54,7 +59,7 @@ public abstract class TilePoleConcrete extends TilePowerPoleBase implements ISEF
         		neighbor2 = node.getPos();
         	}
         }
-        
+
         markTileEntityForS2CSync();
     }
 
@@ -62,38 +67,46 @@ public abstract class TilePoleConcrete extends TilePowerPoleBase implements ISEF
     ///Sync
     /////////////////////////////////////////////////////////
     @Override
-    public void prepareS2CPacketData(CompoundNBT nbt) {
+    public void prepareS2CPacketData(CompoundTag nbt) {
         super.prepareS2CPacketData(nbt);
         Utils.saveToNbt(nbt, "accessory", this.accessory);
     }
 
     @Override
 	@OnlyIn(Dist.CLIENT)
-    public void onSyncDataFromServerArrived(CompoundNBT nbt) {
+    public void onSyncDataFromServerArrived(CompoundTag nbt) {
 		this.accessory = Utils.posFromNbt(nbt, "accessory");
         super.onSyncDataFromServerArrived(nbt);
         this.updateRenderInfo(this.accessory);
     }
 
     public static abstract class Pole10Kv extends TilePoleConcrete {
+		public Pole10Kv(BlockPos pos, BlockState blockState) {
+			super(pos, blockState);
+		}
+
 		@Override
-		protected boolean acceptAccessory(TileEntity accessory)  {
+		protected boolean acceptAccessory(BlockEntity accessory)  {
 			if (accessory instanceof TileCableJoint.Type10kV)
 				return true;
-			
+
 			if (accessory instanceof TilePoleBranch.Type10kV) {
-				return accessory.getPos().up().equals(pos);
+				return accessory.getBlockPos().above().equals(worldPosition);
 			}
-			
+
 			return false;
 		}
-    	
+
         public static class Type0 extends Pole10Kv {
-            @Override
+            public Type0(BlockPos pos, BlockState blockState) {
+				super(pos, blockState);
+			}
+
+			@Override
             @Nonnull
             @OnlyIn(Dist.CLIENT)
             protected PowerPoleRenderHelper createRenderHelper() {
-                PowerPoleRenderHelper helper = new PowerPoleRenderHelper(pos, getRotation(), 1, 3);
+                PowerPoleRenderHelper helper = new PowerPoleRenderHelper(worldPosition, getRotation(), 1, 3);
                 helper.addInsulatorGroup(0, 0.5F, 0,
                         helper.createInsulator(0, 1.2F, -0.74F, 0.55F, 0),
                         helper.createInsulator(0, 1.2F, 0, 1.5F, 0),
@@ -102,15 +115,19 @@ public abstract class TilePoleConcrete extends TilePowerPoleBase implements ISEF
                 return helper;
             }
         }
-        
+
         public static class Type1 extends Pole10Kv {
-            @Override
+            public Type1(BlockPos pos, BlockState blockState) {
+				super(pos, blockState);
+			}
+
+			@Override
             @Nonnull
             @OnlyIn(Dist.CLIENT)
             protected PowerPoleRenderHelper createRenderHelper() {
-                PowerPoleRenderHelper helper = new PowerPoleRenderHelper(this.pos, getRotation(), 2, 3) {
+                PowerPoleRenderHelper helper = new PowerPoleRenderHelper(this.worldPosition, getRotation(), 2, 3) {
                     @Override
-                    public void onUpdate() {                    	
+                    public void onUpdate() {
                     	if (this.connectionList.size() == 2) {
                             PowerPoleRenderHelper.ConnectionInfo[] connection1 = connectionList.getFirst();
                             PowerPoleRenderHelper.ConnectionInfo[] connection2 = connectionList.getLast();
@@ -151,26 +168,30 @@ public abstract class TilePoleConcrete extends TilePowerPoleBase implements ISEF
         }
 
     }
-        
+
     public static class Pole415vType0 extends TilePoleConcrete {
+		public Pole415vType0(BlockPos pos, BlockState blockState) {
+			super(pos, blockState);
+		}
+
 		@Override
-		protected boolean acceptAccessory(TileEntity accessory)  {
+		protected boolean acceptAccessory(BlockEntity accessory)  {
 			if (accessory instanceof TileCableJoint.Type415V)
 				return true;
-			
+
 			if (accessory instanceof TilePoleBranch.Type415V) {
-				return accessory.getPos().up().equals(pos);
+				return accessory.getBlockPos().above().equals(worldPosition);
 			}
-			
+
 			return false;
 		}
-    	
+
         @Override
         @Nonnull
         @OnlyIn(Dist.CLIENT)
         protected PowerPoleRenderHelper createRenderHelper() {
-            PowerPoleRenderHelper helper = new PowerPoleRenderHelper(this.pos, getRotation(), 1, 4);
-            
+            PowerPoleRenderHelper helper = new PowerPoleRenderHelper(this.worldPosition, getRotation(), 1, 4);
+
             helper.addInsulatorGroup(0, 0.55F, 0,
                     helper.createInsulator(0, 1.2F, -0.9F, 0.3F, 0),
                     helper.createInsulator(0, 1.2F, -0.45F, 0.3F, 0),

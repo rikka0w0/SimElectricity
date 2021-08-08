@@ -1,11 +1,11 @@
 package simelectricity.essential.client.cable;
 
-import net.minecraft.block.BlockState;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.model.BakedQuad;
+import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.client.model.data.IModelData;
 import rikka.librikka.model.CodeBasedModel;
@@ -32,7 +32,7 @@ public class WireModel extends CodeBasedModel {
     }
 
     @Override
-    public TextureAtlasSprite getParticleTexture() {
+    public TextureAtlasSprite getParticleIcon() {
         return this.insulatorTexture;
     }
 
@@ -49,7 +49,7 @@ public class WireModel extends CodeBasedModel {
         
         if (cullingSide == null) {
             //Render center & branches in SOLID layer
-            if (MinecraftForgeClient.getRenderLayer() == RenderType.getSolid()) {
+            if (MinecraftForgeClient.getRenderLayer() == RenderType.solid()) {
                 for (Direction wire_side: Direction.values()) {
                     byte numOfCon = 0;
                     Direction conSide = Direction.DOWN;

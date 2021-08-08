@@ -1,17 +1,17 @@
 package simelectricity.energynet;
 
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import simelectricity.api.tile.ISEGridTile;
 
 public abstract class TileEvent extends EnergyEventBase {
-    protected final TileEntity te;
+    protected final BlockEntity te;
 
-    private TileEvent(TileEntity te) {
+    private TileEvent(BlockEntity te) {
         this.te = te;
     }
 
     public static class Attach extends TileEvent {
-        public Attach(TileEntity te) {
+        public Attach(BlockEntity te) {
             super(te);
         }
 
@@ -44,7 +44,7 @@ public abstract class TileEvent extends EnergyEventBase {
     }
 
     public static class Detach extends TileEvent {
-        public Detach(TileEntity te) {
+        public Detach(BlockEntity te) {
             super(te);
         }
 
@@ -75,7 +75,7 @@ public abstract class TileEvent extends EnergyEventBase {
     }
 
     public static class ParamChanged extends TileEvent {
-        public ParamChanged(TileEntity te) {
+        public ParamChanged(BlockEntity te) {
             super(te);
         }
 
@@ -97,7 +97,7 @@ public abstract class TileEvent extends EnergyEventBase {
     }
 
     public static class ConnectionChanged extends TileEvent {
-        public ConnectionChanged(TileEntity te) {
+        public ConnectionChanged(BlockEntity te) {
             super(te);
         }
 

@@ -5,12 +5,12 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.Function;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.client.renderer.model.BakedQuad;
-import net.minecraft.client.renderer.model.ItemCameraTransforms;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.model.data.IModelData;
@@ -64,7 +64,7 @@ public class DistributionTransformerComponentModel extends CodeBasedModel {
 	}
 
 	@Override
-	public TextureAtlasSprite getParticleTexture() {
+	public TextureAtlasSprite getParticleIcon() {
 		return textureConcrete;
 	}
 
@@ -141,13 +141,13 @@ public class DistributionTransformerComponentModel extends CodeBasedModel {
 		}
 		
 		if (this.facing != null)
-			model.rotateAroundY(90-facing.getHorizontalAngle());
+			model.rotateAroundY(90-facing.toYRot());
         model.translateCoord(0.5F, 0, 0.5F);
         model.bake(this.quads);
 	}
 
 	@Override
-    public ItemCameraTransforms getItemCameraTransforms() {
+    public ItemTransforms getTransforms() {
         return ConcretePoleModel.itemCameraTransforms;
     }
 }

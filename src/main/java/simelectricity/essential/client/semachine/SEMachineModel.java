@@ -1,18 +1,18 @@
 package simelectricity.essential.client.semachine;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BlockModelShapes;
+import net.minecraft.client.renderer.block.BlockModelShaper;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.model.BakedQuad;
-import net.minecraft.client.renderer.model.IBakedModel;
-import net.minecraft.client.renderer.model.ItemCameraTransforms;
-import net.minecraft.client.renderer.model.ItemOverrideList;
-import net.minecraft.client.renderer.model.ModelResourceLocation;
+import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.renderer.block.model.ItemTransforms;
+import net.minecraft.client.renderer.block.model.ItemOverrides;
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.MinecraftForgeClient;
@@ -34,15 +34,15 @@ import java.util.Random;
 @SuppressWarnings("deprecation")
 @OnlyIn(Dist.CLIENT)
 public final class SEMachineModel implements IDynamicBakedModel {
-    private final IBakedModel bakedModel;
+    private final BakedModel bakedModel;
 
-    public SEMachineModel(IBakedModel bakedModel) {
+    public SEMachineModel(BakedModel bakedModel) {
         this.bakedModel = bakedModel;
     }
 
     @Override
-    public boolean isAmbientOcclusion() {
-        return this.bakedModel.isAmbientOcclusion();
+    public boolean useAmbientOcclusion() {
+        return this.bakedModel.useAmbientOcclusion();
     }
 
     @Override
@@ -51,47 +51,47 @@ public final class SEMachineModel implements IDynamicBakedModel {
     }
 
     @Override
-    public boolean isBuiltInRenderer() {
+    public boolean isCustomRenderer() {
         return false;
     }
 
     @Override
-    public TextureAtlasSprite getParticleTexture() {
-        return this.bakedModel.getParticleTexture();
+    public TextureAtlasSprite getParticleIcon() {
+        return this.bakedModel.getParticleIcon();
     }
 
     @Override
-    public ItemCameraTransforms getItemCameraTransforms() {
-        return this.bakedModel.getItemCameraTransforms();
+    public ItemTransforms getTransforms() {
+        return this.bakedModel.getTransforms();
     }
-    
+
 	@Override
-	public boolean isSideLit() {
-		return this.bakedModel.isSideLit();
+	public boolean usesBlockLight() {
+		return this.bakedModel.usesBlockLight();
 	}
 
     @Override
-    public ItemOverrideList getOverrides() {
-        return ItemOverrideList.EMPTY;
+    public ItemOverrides getOverrides() {
+        return ItemOverrides.EMPTY;
     }
-    
+
 	@Override
 	public List<BakedQuad> getQuads(BlockState state, Direction side, Random rand, IModelData extraData) {
 		RenderType layer = MinecraftForgeClient.getRenderLayer();
 		if (layer == null)
 			return this.bakedModel.getQuads(state, side, rand, extraData);
-		
+
 		List<BakedQuad> quads = new LinkedList<>();
-		
+
 		boolean hideMachineFace = false;
 		// Render facade cover panel, if possible
 		ISECoverPanelHost host = extraData.getData(ISECoverPanelHost.prop);
-		if (host != null && side != null && layer != RenderType.getSolid()) {
+		if (host != null && side != null && layer != RenderType.solid()) {
     		ISECoverPanel coverPanel = host.getCoverPanelOnSide(side);
     		if (coverPanel instanceof ISEFacadeCoverPanel) {
-    			BlockState blockState = ((ISEFacadeCoverPanel) coverPanel).getBlockState();   			   			
-    			IBakedModel model = Minecraft.getInstance().getBlockRendererDispatcher().getModelForState(blockState);
-    			
+    			BlockState blockState = ((ISEFacadeCoverPanel) coverPanel).getBlockState();
+    			BakedModel model = Minecraft.getInstance().getBlockRenderer().getBlockModel(blockState);
+
     			model.getQuads(blockState, side, rand, EmptyModelData.INSTANCE).stream()
     				.map(MutableQuad::new)
     				.peek((mquad)->GenericFacadeRender.tintFunc(side, mquad))
@@ -102,12 +102,12 @@ public final class SEMachineModel implements IDynamicBakedModel {
     		}
 		}
 
-    	if (layer == RenderType.getSolid() && !hideMachineFace)
+    	if (layer == RenderType.solid() && !hideMachineFace)
     		return this.bakedModel.getQuads(state, side, rand, extraData);
     	// Only render the machine body in the solid layer
-    	
+
 		// Render the sockets in the cutout layer
-		if (side == null && layer == RenderType.getCutout()) {
+		if (side == null && layer == RenderType.cutout()) {
     		ISESocketProvider sp = extraData.getData(ISESocketProvider.prop);
     		if (sp != null)
     			SocketRender.getBaked(quads, sp);
@@ -115,12 +115,12 @@ public final class SEMachineModel implements IDynamicBakedModel {
 
     	return quads;
 	}
-	
-	public static void replace(Map<ResourceLocation, IBakedModel> registry, Block block) {
-		for (BlockState blockstate: block.getStateContainer().getValidStates()) {
-			ModelResourceLocation resLoc = BlockModelShapes.getModelLocation(blockstate);
-			IBakedModel original = registry.get(resLoc);
-			IBakedModel newModel = new SEMachineModel(original);
+
+	public static void replace(Map<ResourceLocation, BakedModel> registry, Block block) {
+		for (BlockState blockstate: block.getStateDefinition().getPossibleStates()) {
+			ModelResourceLocation resLoc = BlockModelShaper.stateToModelLocation(blockstate);
+			BakedModel original = registry.get(resLoc);
+			BakedModel newModel = new SEMachineModel(original);
 			registry.put(resLoc, newModel);
 		}
 	}

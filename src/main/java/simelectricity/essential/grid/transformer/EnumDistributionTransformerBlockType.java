@@ -1,11 +1,11 @@
 package simelectricity.essential.grid.transformer;
 
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.IStringSerializable;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.util.StringRepresentable;
 import rikka.librikka.ITileMeta;
 import simelectricity.essential.grid.TileMultiBlockPlaceHolder;
 
-public enum EnumDistributionTransformerBlockType implements ITileMeta, IStringSerializable {
+public enum EnumDistributionTransformerBlockType implements ITileMeta, StringRepresentable {
 	Pole10kVNormal,
 	Pole10kVSpec,
 	Pole10kVAux,
@@ -16,7 +16,7 @@ public enum EnumDistributionTransformerBlockType implements ITileMeta, IStringSe
 	PlaceHolder(TileMultiBlockPlaceHolder.class),
 	Pole415V(TileDistributionTransformer.Pole415V.class);
 
-	public final Class<? extends TileEntity> teCls;
+	public final Class<? extends BlockEntity> teCls;
     public final boolean formed;
 
     EnumDistributionTransformerBlockType() {
@@ -24,29 +24,29 @@ public enum EnumDistributionTransformerBlockType implements ITileMeta, IStringSe
     	this.formed = false;
     }
     
-    EnumDistributionTransformerBlockType(Class<? extends TileEntity> teCls) {
+    EnumDistributionTransformerBlockType(Class<? extends BlockEntity> teCls) {
         this.teCls = teCls;
         this.formed = true;
     }
 
 	@Override
 	public String toString() {
-		return getString();
+		return getSerializedName();
 	}
 
 	@Override
-	public String getString() {
+	public String getSerializedName() {
 		return name().toLowerCase();
 	}
     
 	@Override
-	public Class<? extends TileEntity> teCls() {
+	public Class<? extends BlockEntity> teCls() {
 		return teCls;
 	}
 	
 	public static EnumDistributionTransformerBlockType forName(String name) {
 		for(EnumDistributionTransformerBlockType type: EnumDistributionTransformerBlockType.values()) {
-			if (type.getString().equals(name.toLowerCase()))
+			if (type.getSerializedName().equals(name.toLowerCase()))
 				return type;
 		}
 		return null;

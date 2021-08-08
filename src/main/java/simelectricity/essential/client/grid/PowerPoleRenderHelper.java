@@ -1,12 +1,12 @@
 package simelectricity.essential.client.grid;
 
-import net.minecraft.client.renderer.model.BakedQuad;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Vector3i;
-import net.minecraft.world.IBlockReader;
+import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.core.Direction;
+import net.minecraft.core.BlockPos;
+import net.minecraft.util.Mth;
+import net.minecraft.core.Vec3i;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import rikka.librikka.DirHorizontal8;
@@ -99,9 +99,9 @@ public class PowerPoleRenderHelper {
      *//*
     public static boolean hasIntersection(Vec3f p1, Vec3f p2, Vec3f p3, Vec3f p4) {  
     	float line_x,line_z; 
-        if ((MathHelper.abs(p1.x-p2.x)<1e-6) && (MathHelper.abs(p3.x-p4.x)<1e-6)) {
+        if ((Mth.abs(p1.x-p2.x)<1e-6) && (Mth.abs(p3.x-p4.x)<1e-6)) {
             return false;
-        } else if ((MathHelper.abs(p1.x-p2.x)<1e-6)) {  
+        } else if ((Mth.abs(p1.x-p2.x)<1e-6)) {  
             if (between(p1.x,p3.x,p4.x)) {  
             	float k = (p4.z-p3.z)/(p4.x-p3.x);  
                 line_x = p1.x;  
@@ -113,7 +113,7 @@ public class PowerPoleRenderHelper {
                 return false;  
             }  
         }  
-        else if (MathHelper.abs(p3.x-p4.x) < 1e-6) {  
+        else if (Mth.abs(p3.x-p4.x) < 1e-6) {  
             if (between(p3.x,p1.x,p2.x)) {  
             	float k = (p2.z-p1.z)/(p2.x-p1.x);  
                 line_x = p3.x;  
@@ -128,7 +128,7 @@ public class PowerPoleRenderHelper {
             float k1 = (p2.z-p1.z)/(p2.x-p1.x);   
             float k2 = (p4.z-p3.z)/(p4.x-p3.x);  
       
-            if (MathHelper.abs(k1-k2) < 1e-6) {  
+            if (Mth.abs(k1-k2) < 1e-6) {  
                 return false;  
             } else {  
                 line_x = ((p3.z - p1.z) - (k2*p3.x - k1*p1.x)) / (k1-k2);  
@@ -150,10 +150,10 @@ public class PowerPoleRenderHelper {
     }
 
     private static Vec3f fixConnectionPoints(Vec3f from, Vec3f to, float distance, float angle, float insulatorLength, float tension) {
-        float lcos = insulatorLength * MathHelper.cos(angle);
+        float lcos = insulatorLength * Mth.cos(angle);
         float atan = (float) Math.atan2(to.x - from.x, from.z - to.z);
 
-        return from.add(lcos * MathHelper.sin(atan), insulatorLength * MathHelper.sin(angle), -lcos * MathHelper.cos(atan));
+        return from.add(lcos * Mth.sin(atan), insulatorLength * Mth.sin(angle), -lcos * Mth.cos(atan));
     }
 
     ////////////////////////////
@@ -201,7 +201,7 @@ public class PowerPoleRenderHelper {
     	return false;
     }
     
-    public final void updateRenderData(IBlockReader world, BlockPos... neighborPosList) {
+    public final void updateRenderData(BlockGetter world, BlockPos... neighborPosList) {
         this.connectionList.clear();
         this.extraWireList.clear();
         addNeighors(world, neighborPosList);
@@ -223,12 +223,12 @@ public class PowerPoleRenderHelper {
     
     protected BlockPos getAccessoryPos() {return null;}
 
-    private final void addNeighors(IBlockReader world, BlockPos... neighborPosList) {
+    private final void addNeighors(BlockGetter world, BlockPos... neighborPosList) {
         for (BlockPos neighborPos : neighborPosList) {
             if (neighborPos == null)
                 continue;
 
-            TileEntity te = world.getTileEntity(neighborPos);
+            BlockEntity te = world.getBlockEntity(neighborPos);
             if (te instanceof ISEPowerPole) {
                 PowerPoleRenderHelper helper = ((ISEPowerPole) te).getRenderHelper();
                 if (helper == null) {
@@ -371,13 +371,13 @@ public class PowerPoleRenderHelper {
          * @return
          */
         public float distanceTo(PowerPoleRenderHelper.Group group) {
-            //Normalize respect to current TileEntity coordinate
-            Vector3i offset = group.parent.pos.subtract(this.parent.pos);
+            //Normalize respect to current BlockEntity coordinate
+            Vec3i offset = group.parent.pos.subtract(this.parent.pos);
 
             float x = offset.getX() + group.centerX - this.centerX;
             float z = offset.getZ() + group.centerZ - this.centerZ;
 
-            return MathHelper.sqrt(x * x + z * z);
+            return Mth.sqrt(x * x + z * z);
         }
         
         /**
@@ -385,11 +385,11 @@ public class PowerPoleRenderHelper {
          * @param pos
          * @return
          */
-        public float distanceTo(Vector3i pos) {
+        public float distanceTo(Vec3i pos) {
             float x = pos.getX() - (this.parent.pos.getX() + this.centerX);
             float z = pos.getZ() - (this.parent.pos.getZ() + this.centerZ);
 
-            return MathHelper.sqrt(x * x + z * z);
+            return Mth.sqrt(x * x + z * z);
         }
         
         public Group closest(Group... groups) {

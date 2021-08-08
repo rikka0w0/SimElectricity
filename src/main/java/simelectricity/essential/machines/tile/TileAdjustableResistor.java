@@ -1,12 +1,13 @@
 package simelectricity.essential.machines.tile;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.Direction;
-import net.minecraft.tileentity.ITickableTileEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import rikka.librikka.tileentity.ITickableTileEntity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import rikka.librikka.tileentity.INamedContainerProvider2;
@@ -15,9 +16,13 @@ import simelectricity.api.components.ISEVoltageSource;
 import simelectricity.essential.common.semachine.SESinglePortMachine;
 import simelectricity.essential.machines.gui.ContainerAdjustableResistor;
 
-public class TileAdjustableResistor extends SESinglePortMachine<ISEVoltageSource> implements 
+public class TileAdjustableResistor extends SESinglePortMachine<ISEVoltageSource> implements
 		ISEVoltageSource, ISEEnergyNetUpdateHandler, ITickableTileEntity, INamedContainerProvider2 {
-    //Component parameters
+    public TileAdjustableResistor(BlockPos pos, BlockState blockState) {
+		super(pos, blockState);
+	}
+
+	//Component parameters
     public double resistance = 100;
 
     //Calculated values
@@ -27,28 +32,28 @@ public class TileAdjustableResistor extends SESinglePortMachine<ISEVoltageSource
     public double bufferedEnergy;
 
     ///////////////////////////////////
-    /// TileEntity
+    /// BlockEntity
     ///////////////////////////////////
     @Override
     public void tick() {
-        if (this.world.isRemote)
+        if (this.level.isClientSide)
             return;
 
         this.bufferedEnergy += this.powerLevel / 20;
     }
 
     @Override
-    public void read(BlockState blockState, CompoundNBT tagCompound) {
-        super.read(blockState, tagCompound);
+    public void load(CompoundTag tagCompound) {
+        super.load(tagCompound);
 
         this.resistance = tagCompound.getDouble("resistance");
     }
 
     @Override
-    public CompoundNBT write(CompoundNBT tagCompound) {
+    public CompoundTag save(CompoundTag tagCompound) {
         tagCompound.putDouble("resistance", this.resistance);
 
-        return super.write(tagCompound);
+        return super.save(tagCompound);
     }
 
     ///////////////////////////////////
@@ -90,12 +95,12 @@ public class TileAdjustableResistor extends SESinglePortMachine<ISEVoltageSource
     public int getSocketIconIndex(Direction side) {
         return side == this.functionalSide ? 0 : -1;
     }
-    
+
     ///////////////////////////////////
-    /// INamedContainerProvider
+    /// MenuProvider
     ///////////////////////////////////
 	@Override
-	public Container createMenu(int windowId, PlayerInventory inv, PlayerEntity player) {
+	public AbstractContainerMenu createMenu(int windowId, Inventory inv, Player player) {
 		return new ContainerAdjustableResistor(this, windowId);
 	}
 }

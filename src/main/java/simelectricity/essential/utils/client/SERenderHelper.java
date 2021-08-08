@@ -1,9 +1,9 @@
 package simelectricity.essential.utils.client;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import rikka.librikka.math.MathAssitant;
@@ -121,8 +121,8 @@ public class SERenderHelper {
     }
 
     public static void rotateAroundX(double[][] vertexes, float angle) {
-        float f1 = MathHelper.cos(-angle * 0.01745329252F);
-        float f2 = MathHelper.sin(-angle * 0.01745329252F);
+        float f1 = Mth.cos(-angle * 0.01745329252F);
+        float f2 = Mth.sin(-angle * 0.01745329252F);
 
         for (int i = 0; i < vertexes.length; i++) {
             double d0 = vertexes[i][0];
@@ -135,8 +135,8 @@ public class SERenderHelper {
     }
 
     public static void rotateAroundY(double[][] vertexes, float angle) {
-        float f1 = MathHelper.cos(angle * 0.01745329252F);
-        float f2 = MathHelper.sin(angle * 0.01745329252F);
+        float f1 = Mth.cos(angle * 0.01745329252F);
+        float f2 = Mth.sin(angle * 0.01745329252F);
 
         for (int i = 0; i < vertexes.length; i++) {
             double d0 = vertexes[i][0] * f1 + vertexes[i][2] * f2;
@@ -149,8 +149,8 @@ public class SERenderHelper {
     }
 
     public static void rotateAroundZ(double[][] vertexes, float angle) {
-        float f1 = MathHelper.cos(-angle * 0.01745329252F);
-        float f2 = MathHelper.sin(-angle * 0.01745329252F);
+        float f1 = Mth.cos(-angle * 0.01745329252F);
+        float f2 = Mth.sin(-angle * 0.01745329252F);
 
 
         for (int i = 0; i < vertexes.length; i++) {
@@ -177,8 +177,8 @@ public class SERenderHelper {
         z = z / length;
 
         angle = angle * 0.01745329252F;    //Cast to radian
-        double cos = MathHelper.cos(angle);
-        double sin = MathHelper.sin(angle);
+        double cos = Mth.cos(angle);
+        double sin = Mth.sin(angle);
 
         for (int i = 0; i < vertexes.length; i++) {
             double d0 = vertexes[i][0] * (cos + x * x * (1 - cos)) + vertexes[i][1] * (x * y * (1 - cos) - z * sin) + vertexes[i][2] * (x * z * (1 - cos) + y * sin);

@@ -1,11 +1,12 @@
 package simelectricity.essential.machines.tile;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.Direction;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import rikka.librikka.tileentity.INamedContainerProvider2;
@@ -19,28 +20,32 @@ import simelectricity.essential.machines.gui.ContainerRelay;
  * Created by manageryzy on 12/18/2017.
  */
 public class TileRelay extends SETwoPortMachine<ISESwitch> implements ISESwitch, ISEEnergyNetUpdateHandler, INamedContainerProvider2 {
-    public double current;
+    public TileRelay(BlockPos pos, BlockState blockState) {
+		super(pos, blockState);
+	}
+
+	public double current;
 
     public double resistance = 0.001;
     public boolean isOn;
 
     /////////////////////////////////////////////////////////
-    ///TileEntity
+    ///BlockEntity
     /////////////////////////////////////////////////////////
     @Override
-    public void read(BlockState blockState, CompoundNBT tagCompound) {
-        super.read(blockState, tagCompound);
+    public void load(CompoundTag tagCompound) {
+        super.load(tagCompound);
 
         this.resistance = tagCompound.getDouble("resistance");
         this.isOn = tagCompound.getBoolean("isOn");
     }
 
     @Override
-    public CompoundNBT write(CompoundNBT tagCompound) {
+    public CompoundTag save(CompoundTag tagCompound) {
         tagCompound.putDouble("resistance", this.resistance);
         tagCompound.putBoolean("isOn", this.isOn);
 
-        return super.write(tagCompound);
+        return super.save(tagCompound);
     }
 
     /////////////////////////////////////////////////////////
@@ -72,7 +77,7 @@ public class TileRelay extends SETwoPortMachine<ISESwitch> implements ISESwitch,
     ///Sync
     /////////////////////////////////////////////////////////
     @Override
-    public void prepareS2CPacketData(CompoundNBT nbt) {
+    public void prepareS2CPacketData(CompoundTag nbt) {
         super.prepareS2CPacketData(nbt);
 
         nbt.putBoolean("isOn", this.isOn);
@@ -80,7 +85,7 @@ public class TileRelay extends SETwoPortMachine<ISESwitch> implements ISESwitch,
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public void onSyncDataFromServerArrived(CompoundNBT nbt) {
+    public void onSyncDataFromServerArrived(CompoundTag nbt) {
         this.isOn = nbt.getBoolean("isOn");
 
         markForRenderUpdate();
@@ -116,10 +121,10 @@ public class TileRelay extends SETwoPortMachine<ISESwitch> implements ISESwitch,
     }
 
     ///////////////////////////////////
-    /// INamedContainerProvider
+    /// MenuProvider
     ///////////////////////////////////
     @Override
-    public Container createMenu(int windowId, PlayerInventory inv, PlayerEntity player) {
+    public AbstractContainerMenu createMenu(int windowId, Inventory inv, Player player) {
     	return new ContainerRelay(this, windowId);
     }
 }

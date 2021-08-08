@@ -5,11 +5,11 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.Function;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.client.renderer.model.BakedQuad;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.model.data.IModelData;
@@ -88,7 +88,7 @@ public class DistributionTransformerFormedModel extends CodeBasedModel {
 	}
 
 	@Override
-	public TextureAtlasSprite getParticleTexture() {
+	public TextureAtlasSprite getParticleIcon() {
 		return textureConcrete;
 	}
 
@@ -96,7 +96,7 @@ public class DistributionTransformerFormedModel extends CodeBasedModel {
 	protected void bake(Function<ResourceLocation, TextureAtlasSprite> registry) {
         for (EnumDistributionTransformerRenderPart part: EnumDistributionTransformerRenderPart.values()) {
         	for (int i=2; i<Direction.values().length; i++) {
-        		Direction facing = Direction.byIndex(i);
+        		Direction facing = Direction.from3DDataValue(i);
         		quads[part.ordinal()][i-2].clear();
         		bakePart(part, facing, quads[part.ordinal()][i-2]);
         	}
@@ -361,7 +361,7 @@ public class DistributionTransformerFormedModel extends CodeBasedModel {
 		}
 		
 		if (facing != null)
-			model.rotateAroundY(270-facing.getHorizontalAngle());
+			model.rotateAroundY(270-facing.toYRot());
         model.translateCoord(0.5F, 0, 0.5F);
         model.bake(list);
 	}
@@ -379,10 +379,10 @@ public class DistributionTransformerFormedModel extends CodeBasedModel {
 		}
 
 		@Override
-		public TextureAtlasSprite getParticleTexture() {
+		public TextureAtlasSprite getParticleIcon() {
 			if (instance == null)
 				return null;
-			return instance.getParticleTexture();
+			return instance.getParticleIcon();
 		}
 
 		@Override

@@ -12,13 +12,13 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 
-import net.minecraft.block.Block;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.data.DirectoryCache;
-import net.minecraft.data.IDataProvider;
-import net.minecraft.state.properties.BlockStateProperties;
-import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.data.HashCache;
+import net.minecraft.data.DataProvider;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.model.generators.BlockModelBuilder;
 import net.minecraftforge.client.model.generators.BlockStateProvider;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
@@ -62,8 +62,8 @@ public final class ModelDataProvider extends BlockStateProvider implements ISimp
     }
     
     @Override
-    public void act(DirectoryCache cache) throws IOException {
-        super.act(cache);
+    public void run(HashCache cache) throws IOException {
+        super.run(cache);
 
         Gson GSON = new GsonBuilder().setPrettyPrinting().create();
         for (Entry<ResourceLocation, JsonObject> entry: customLoaders.entrySet()) {
@@ -71,7 +71,7 @@ public final class ModelDataProvider extends BlockStateProvider implements ISimp
             Path path = generator.getOutputFolder().resolve(
                     "assets/" + loc.getNamespace() + "/models/" + loc.getPath() + ".json");
             try {
-                IDataProvider.save(GSON, cache, entry.getValue(), path);
+                DataProvider.save(GSON, cache, entry.getValue(), path);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -153,7 +153,7 @@ public final class ModelDataProvider extends BlockStateProvider implements ISimp
             modelFile2 = new ModelFile.ExistingModelFile(new ResourceLocation(namespace, "block/"+blockName+"_2"), exfh);
         }
         
-        for (Direction dir : BlockStateProperties.FACING.getAllowedValues()) {
+        for (Direction dir : BlockStateProperties.FACING.getPossibleValues()) {
             int angleY = angleYs[dir.ordinal()];
             int angleX = angleXs[dir.ordinal()];
             
@@ -270,7 +270,7 @@ public final class ModelDataProvider extends BlockStateProvider implements ISimp
 
     private void dir8Block(Block block, ModelFile modelFile, ModelFile modelOffAxis) {
         getVariantBuilder(block).forAllStates((blockstate)-> {
-            DirHorizontal8 dir = blockstate.get(DirHorizontal8.prop);
+            DirHorizontal8 dir = blockstate.getValue(DirHorizontal8.prop);
             Pair<Integer, Boolean> encodedDir = ModelGeometryBakeContext.encodeDirection(dir);
             boolean offAxis = encodedDir.getRight();
             int rotation = encodedDir.getLeft();
@@ -320,8 +320,8 @@ public final class ModelDataProvider extends BlockStateProvider implements ISimp
         ModelFile modelHost = customLoader(modelResLocHost, json);
         
         getVariantBuilder(block).forAllStates((blockstate)-> {
-            Direction facing = blockstate.get(BlockStateProperties.HORIZONTAL_FACING);
-            BlockPoleConcrete35kV.Type type = blockstate.get(BlockPoleConcrete35kV.propType);
+            Direction facing = blockstate.getValue(BlockStateProperties.HORIZONTAL_FACING);
+            BlockPoleConcrete35kV.Type type = blockstate.getValue(BlockPoleConcrete35kV.propType);
             ModelFile mdl = modelGhost;
             if (type == BlockPoleConcrete35kV.Type.pole || type == BlockPoleConcrete35kV.Type.pole_collisionbox)
                 mdl = modelRod;
@@ -376,7 +376,7 @@ public final class ModelDataProvider extends BlockStateProvider implements ISimp
         final EnumDistributionTransformerBlockType blockType = block.meta();
 
         JsonObject json = BuiltInModelLoader.serialize("distribution_transformer");
-        json.addProperty("part", blockType.getString());
+        json.addProperty("part", blockType.getSerializedName());
         json.addProperty("formed", blockType.formed);
         ResourceLocation modelResLoc = new ResourceLocation(domain, BuiltInModelLoader.dir + name);
         ModelFile modelFile = customLoader(modelResLoc, json);
@@ -384,7 +384,7 @@ public final class ModelDataProvider extends BlockStateProvider implements ISimp
         getVariantBuilder(block).forAllStates((blockstate)-> {
         	ConfiguredModel.Builder<?> builder = ConfiguredModel.builder().modelFile(modelFile);
         	if (blockstate.hasProperty(BlockStateProperties.HORIZONTAL_FACING)) {
-        		Direction facing = blockstate.get(BlockStateProperties.HORIZONTAL_FACING);
+        		Direction facing = blockstate.getValue(BlockStateProperties.HORIZONTAL_FACING);
         		builder.rotationY(ModelGeometryBakeContext.encodeDirection(facing));
         	}
 

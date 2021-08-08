@@ -2,22 +2,23 @@ package simelectricity.essential.grid;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.SoundType;
-import net.minecraft.block.material.Material;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.fluid.FluidState;
-import net.minecraft.item.BlockItemUseContext;
-import net.minecraft.item.ItemStack;
-import net.minecraft.state.StateContainer;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.shapes.ISelectionContext;
-import net.minecraft.util.math.shapes.VoxelShape;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
 import rikka.librikka.DirHorizontal8;
 import rikka.librikka.IMetaProvider;
 import rikka.librikka.ITileMeta;
@@ -26,35 +27,37 @@ import simelectricity.api.SEAPI;
 import simelectricity.api.tile.ISEGridTile;
 import simelectricity.essential.api.ISEHVCableConnector;
 
-public class BlockCableJoint extends BlockBase implements IMetaProvider<ITileMeta>, ISEHVCableConnector {	
+import net.minecraft.world.level.block.state.BlockBehaviour;
+
+public class BlockCableJoint extends BlockBase implements IMetaProvider<ITileMeta>, EntityBlock, ISEHVCableConnector {
 	public static enum Type implements ITileMeta {
 		_10kv(TileCableJoint.Type10kV.class),
 		_415v(TileCableJoint.Type415V.class);
-		
-		Type(Class<? extends TileEntity> teCls) {
+
+		Type(Class<? extends BlockEntity> teCls) {
 			this.teCls = teCls;
 		}
 
-		public final Class<? extends TileEntity> teCls;
-		
+		public final Class<? extends BlockEntity> teCls;
+
 		@Override
-		public final Class<? extends TileEntity> teCls() {
+		public final Class<? extends BlockEntity> teCls() {
 			return teCls;
 		}
 	}
-	
+
 	private final Type meta;
 	@Override
 	public final ITileMeta meta() {
 		return meta;
 	}
-	
+
     private BlockCableJoint(Type meta) {
-        super("cable_joint" + meta.name(), 
-        		Block.Properties.create(Material.GLASS)
-        		.hardnessAndResistance(0.2F, 10.0F)
+        super("cable_joint" + meta.name(),
+        		BlockBehaviour.Properties.of(Material.GLASS)
+        		.strength(0.2F, 10.0F)
         		.sound(SoundType.METAL)
-        		.setOpaque((a,b,c)->false), SEAPI.SETab);
+        		.isRedstoneConductor((a,b,c)->false), SEAPI.SETab);
         this.meta = meta;
     }
 
@@ -65,25 +68,22 @@ public class BlockCableJoint extends BlockBase implements IMetaProvider<ITileMet
     	}
     	return ret;
     }
-    
+
     ///////////////////////////////
     ///BlockStates
     ///////////////////////////////
     @Override
-	protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
+	protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
     	builder.add(DirHorizontal8.prop);
 	}
 
     ///////////////////////////////
-    /// TileEntity
+    /// BlockEntity
     ///////////////////////////////
 	@Override
-	public boolean hasTileEntity(BlockState state) {return true;}
-	
-    @Override
-    public TileEntity createTileEntity(BlockState state, IBlockReader world) {
+	public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
     	try {
-			return meta.teCls().getConstructor().newInstance();
+			return meta.getBlockEntitySupplier().create(pos, state);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -92,38 +92,38 @@ public class BlockCableJoint extends BlockBase implements IMetaProvider<ITileMet
 
     ////////////////////////////////////
     /// Rendering
-    ////////////////////////////////////    
+    ////////////////////////////////////
     @Override
-    public VoxelShape getShape(BlockState state, IBlockReader world, BlockPos pos, ISelectionContext context) {
-    	return makeCuboidShape(0.0D, 0.0D, 0.0D, 15.0D, 15.0D, 15.0D);
+    public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
+    	return box(0.0D, 0.0D, 0.0D, 15.0D, 15.0D, 15.0D);
     }
 
     //////////////////////////////////////
     /////Item drops and Block activities
     //////////////////////////////////////
     @Override
-    public BlockState getStateForPlacement(BlockItemUseContext context) {
-    	PlayerEntity placer = context.getPlayer();
-        return this.getDefaultState().with(DirHorizontal8.prop, DirHorizontal8.fromSight(placer));
+    public BlockState getStateForPlacement(BlockPlaceContext context) {
+    	Player placer = context.getPlayer();
+        return this.defaultBlockState().setValue(DirHorizontal8.prop, DirHorizontal8.fromSight(placer));
     }
 
     @Override
-    public void onBlockPlacedBy(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
-        if (world.isRemote)
+    public void setPlacedBy(Level world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
+        if (world.isClientSide)
             return;
 
-        TileEntity te = world.getTileEntity(pos);
+        BlockEntity te = world.getBlockEntity(pos);
         if (te instanceof ISEGridTile) {
-        	
+
         	int numOfConductor = te instanceof TileCableJoint.Type10kV ? 3 : 4;
         	SEAPI.energyNetAgent.attachGridNode(world, SEAPI.energyNetAgent.newGridNode(pos, numOfConductor));
         }
     }
 
     @Override
-    public boolean removedByPlayer(BlockState state, World world, BlockPos pos, PlayerEntity player, boolean willHarvest, FluidState fluid) {
-        TileEntity te = world.getTileEntity(pos);    //Do this before the tileEntity is removed!
-        if (!world.isRemote && te instanceof ISEGridTile) {
+    public boolean removedByPlayer(BlockState state, Level world, BlockPos pos, Player player, boolean willHarvest, FluidState fluid) {
+        BlockEntity te = world.getBlockEntity(pos);    //Do this before the tileEntity is removed!
+        if (!world.isClientSide && te instanceof ISEGridTile) {
             SEAPI.energyNetAgent.detachGridNode(world, ((ISEGridTile) te).getGridNode());
         }
 
@@ -134,8 +134,8 @@ public class BlockCableJoint extends BlockBase implements IMetaProvider<ITileMet
     /// ISEHVCableConnector
     //////////////////////////////////////
     @Override
-    public ISEGridTile getGridTile(World world, BlockPos pos) {
-        TileEntity te = world.getTileEntity(pos);
+    public ISEGridTile getGridTile(Level world, BlockPos pos) {
+        BlockEntity te = world.getBlockEntity(pos);
         if (te instanceof ISEGridTile)
             return (ISEGridTile) te;
         else

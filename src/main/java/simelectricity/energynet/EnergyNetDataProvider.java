@@ -3,15 +3,15 @@
  */
 package simelectricity.energynet;
 
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
-import net.minecraft.world.storage.WorldSavedData;
-import net.minecraft.world.storage.DimensionSavedDataManager;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.core.Direction;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.saveddata.SavedData;
+import net.minecraft.world.level.storage.DimensionDataStorage;
 import net.minecraftforge.common.util.Constants.NBT;
 import simelectricity.SimElectricity;
 import simelectricity.api.ISEEnergyNetUpdateHandler;
@@ -29,7 +29,7 @@ import simelectricity.energynet.components.Wire;
 
 import java.util.*;
 
-public class EnergyNetDataProvider extends WorldSavedData {
+public class EnergyNetDataProvider extends SavedData {
     private static final String DATA_NAME = SimElectricity.MODID + "_GridData";
     //-----------------------------------------------------------------------------------------------------------
     ///////////////////////////////////////
@@ -38,32 +38,25 @@ public class EnergyNetDataProvider extends WorldSavedData {
     private final Set<ISEGridTile> updatedGridTile = new HashSet<>();
     //Map between coord and GridNode
     private final HashMap<BlockPos, GridNode> gridNodeMap = new HashMap<>();
-    private final List<TileEntity> loadedTiles = new LinkedList<>();
+    private final List<BlockEntity> loadedTiles = new LinkedList<>();
     //Records TE that associated with grid nodes
-    private final List<TileEntity> loadedGridTiles = new LinkedList<>();
+    private final List<BlockEntity> loadedGridTiles = new LinkedList<>();
     //Records the connection between components
     private final SEGraph tileEntityGraph = new SEGraph();
 
-    // Required constructors
-    public EnergyNetDataProvider() {
-        super(EnergyNetDataProvider.DATA_NAME);
-    }
-
-    public EnergyNetDataProvider(String s) {
-        super(s);
-    }
-
-    public static EnergyNetDataProvider get(World world) {
-        if (world.isRemote)
+    public static EnergyNetDataProvider get(Level world) {
+        if (world.isClientSide)
             throw new RuntimeException("Not allowed to create WiWorldData in client");
 
         // The IS_GLOBAL constant is there for clarity, and should be simplified into the right branch.
-        DimensionSavedDataManager storage = ((ServerWorld)world).getSavedData();
-        EnergyNetDataProvider instance = storage.getOrCreate(EnergyNetDataProvider::new, EnergyNetDataProvider.DATA_NAME);
+        DimensionDataStorage storage = ((ServerLevel)world).getDataStorage();
+        EnergyNetDataProvider instance = storage.computeIfAbsent(EnergyNetDataProvider::load, EnergyNetDataProvider::new, EnergyNetDataProvider.DATA_NAME);
 
         if (instance == null) {
-            instance = new EnergyNetDataProvider();
-            storage.set(instance);
+            //instance = new EnergyNetDataProvider();
+            //storage.set(instance);
+        	// TODO check DimensionDataStorage::computeIfAbsent
+        	return null;
         }
         return instance;
     }
@@ -72,27 +65,27 @@ public class EnergyNetDataProvider extends WorldSavedData {
     //Tile Event handling ----------------------------------------------------------------------------
 
     //Utils ------------------------------------------------------------------------------
-    public static TileEntity getTileEntityOnDirection(TileEntity te, Direction direction) {
-        return te.getWorld().getTileEntity(te.getPos().offset(direction));
+    public static BlockEntity getTileEntityOnDirection(BlockEntity te, Direction direction) {
+        return te.getLevel().getBlockEntity(te.getBlockPos().relative(direction));
     }
 
-    public static TileEntity getTileEntityOnDirection(TileEntity te, Direction direction, Direction direction2) {
-        return te.getWorld().getTileEntity(te.getPos().offset(direction).offset(direction2));
+    public static BlockEntity getTileEntityOnDirection(BlockEntity te, Direction direction, Direction direction2) {
+        return te.getLevel().getBlockEntity(te.getBlockPos().relative(direction).relative(direction2));
     }
 
     public void onNewResultAvailable() {
         this.tileEntityGraph.updateVoltageCache();
 
         //Execute Handlers
-        Iterator<TileEntity> iterator = this.loadedTiles.iterator();
+        Iterator<BlockEntity> iterator = this.loadedTiles.iterator();
         while (iterator.hasNext()) {
-            TileEntity te = iterator.next();
+            BlockEntity te = iterator.next();
             if (te instanceof ISEEnergyNetUpdateHandler)
                 ((ISEEnergyNetUpdateHandler) te).onEnergyNetUpdate();
         }
         iterator = this.loadedGridTiles.iterator();
         while (iterator.hasNext()) {
-            TileEntity te = iterator.next();
+            BlockEntity te = iterator.next();
             if (te instanceof ISEEnergyNetUpdateHandler)
                 ((ISEEnergyNetUpdateHandler) te).onEnergyNetUpdate();
         }
@@ -106,9 +99,9 @@ public class EnergyNetDataProvider extends WorldSavedData {
         return this.gridNodeMap.get(pos);
     }
 
-    public void addTile(TileEntity te) {
+    public void addTile(BlockEntity te) {
         if (this.loadedTiles.contains(te)) {
-            SELogger.logWarn(SELogger.energyNet, "Duplicated TileEntity:" + te + ", this could be a bug!");
+            SELogger.logWarn(SELogger.energyNet, "Duplicated BlockEntity:" + te + ", this could be a bug!");
         } else {
             if (te instanceof ISECableTile) {
                 ISECableTile cableTile = (ISECableTile) te;
@@ -116,7 +109,7 @@ public class EnergyNetDataProvider extends WorldSavedData {
                 this.tileEntityGraph.addVertex(cable);
             } if (te instanceof ISETile) {
                 ISETile tile = (ISETile) te;
-                
+
                 for (Direction direction : Direction.values()) {
                     ISESubComponent<?> subComponent = tile.getComponent(direction);
                     if (subComponent != null) {
@@ -128,36 +121,36 @@ public class EnergyNetDataProvider extends WorldSavedData {
         }
     }
 
-    private static boolean isSideSolid(World world, BlockPos pos, Direction facing) {
-        return world.getBlockState(pos).isSolidSide(world, pos, facing);
+    private static boolean isSideSolid(Level world, BlockPos pos, Direction facing) {
+        return world.getBlockState(pos).isFaceSturdy(world, pos, facing);
     }
 
-    public void updateTileConnection(TileEntity te) {
+    public void updateTileConnection(BlockEntity te) {
     	if (!this.loadedTiles.contains(te))
             return;
 
         if (te instanceof ISECableTile) {
             ISECableTile cableTile = (ISECableTile) te;
             Cable cable = (Cable) cableTile.getNode();
-            
+
             this.tileEntityGraph.isolateVertex(cable);
 
             if (cable.isGridInterConnectionPoint) {
-                GridNode gridNode = getGridObjectAtCoord(te.getPos());
+                GridNode gridNode = getGridObjectAtCoord(te.getBlockPos());
                 SEGraph.interconnection(cable, gridNode);
             }
 
             //Build connection with neighbors
             for (Direction direction : Direction.values()) {
-                TileEntity neighborTileEntity = getTileEntityOnDirection(te, direction);
+                BlockEntity neighborTileEntity = getTileEntityOnDirection(te, direction);
 
                 if (!cable.canConnectOnSide(direction))
                 	continue;
-                
+
                 if (neighborTileEntity instanceof ISECableTile) {  //Conductor
                     ISECableTile neighborCableTile = (ISECableTile) neighborTileEntity;
                     Cable neighborCable = (Cable) neighborCableTile.getNode();
-                    
+
                 	/*
                      * Two cable blocks can link together if and only if both of the following conditions are meet:
                 	 *
@@ -173,7 +166,7 @@ public class EnergyNetDataProvider extends WorldSavedData {
                             (cableTile.getColor() == 0 ||
                             neighborCable.getColor() == 0 ||
                              cableTile.getColor() == neighborCable.getColor()
-                            ) && 
+                            ) &&
                             cable.canConnectOnSide(direction) &&
                             neighborCable.canConnectOnSide(direction.getOpposite())) {
 
@@ -205,7 +198,7 @@ public class EnergyNetDataProvider extends WorldSavedData {
 
                     // Solve connections with cable and ISETile
                     if (wire.hasBranchOnSide(null)) {
-                        TileEntity neighborTileEntity = getTileEntityOnDirection(te, side);
+                        BlockEntity neighborTileEntity = getTileEntityOnDirection(te, side);
                         if (neighborTileEntity instanceof ISECableTile) {
                             Cable cable = (Cable) ((ISECableTile) neighborTileEntity).getNode();
                             // Connected properly
@@ -229,7 +222,7 @@ public class EnergyNetDataProvider extends WorldSavedData {
                             this.tileEntityGraph.addEdge(wire, wireNeighbor);
 
                         // Co-planar Connections
-                        TileEntity neighborTileEntity = getTileEntityOnDirection(te, branch);
+                        BlockEntity neighborTileEntity = getTileEntityOnDirection(te, branch);
                         if (neighborTileEntity instanceof ISEWireTile) {
                             wireNeighbor = (Wire) ((ISEWireTile) neighborTileEntity).getComponent(side);
                             if (wireNeighbor.hasBranchOnSide(branch.getOpposite()))
@@ -241,8 +234,8 @@ public class EnergyNetDataProvider extends WorldSavedData {
                         if (neighborTileEntity instanceof ISEWireTile) {
                             wireNeighbor = (Wire) ((ISEWireTile) neighborTileEntity).getComponent(branch.getOpposite());
                             if (wireNeighbor.hasBranchOnSide(side.getOpposite()) &&
-                                    !isSideSolid(te.getWorld(), te.getPos().offset(branch), side) &&
-                                    !isSideSolid(te.getWorld(), te.getPos().offset(branch), branch.getOpposite()))
+                                    !isSideSolid(te.getLevel(), te.getBlockPos().relative(branch), side) &&
+                                    !isSideSolid(te.getLevel(), te.getBlockPos().relative(branch), branch.getOpposite()))
                                 this.tileEntityGraph.addEdge(wire, wireNeighbor);
                         }
                     }
@@ -252,7 +245,7 @@ public class EnergyNetDataProvider extends WorldSavedData {
                 for (Direction direction : Direction.values()) {
                     ISESubComponent<?> subComponent = tile.getComponent(direction);
                     if (subComponent != null) {
-                        TileEntity neighborTileEntity = getTileEntityOnDirection(te, direction);
+                        BlockEntity neighborTileEntity = getTileEntityOnDirection(te, direction);
 
                         if (neighborTileEntity instanceof ISECableTile) {
                             Cable cable = (Cable) ((ISECableTile) neighborTileEntity).getNode();
@@ -268,14 +261,14 @@ public class EnergyNetDataProvider extends WorldSavedData {
                 }
             }
         } else {
-            throw new RuntimeException("Unexpected TileEntity:" + te);
+            throw new RuntimeException("Unexpected BlockEntity:" + te);
         }
     }
-    
-    public void updateTileParam(TileEntity te) {
+
+    public void updateTileParam(BlockEntity te) {
     	if (!this.loadedTiles.contains(te))
             return;
-    	
+
         if (te instanceof ISECableTile) {
             Cable cable = (Cable) ((ISECableTile) te).getNode();
             cable.updateComponentParameters();
@@ -288,11 +281,11 @@ public class EnergyNetDataProvider extends WorldSavedData {
                     ((Tile<?>) subComponent).updateComponentParameters();
             }
         } else {
-            throw new RuntimeException("Unexpected TileEntity:" + te);
+            throw new RuntimeException("Unexpected BlockEntity:" + te);
         }
     }
-    
-    public void removeTile(TileEntity te) {
+
+    public void removeTile(BlockEntity te) {
     	if (!this.loadedTiles.contains(te))
             return;
 
@@ -309,9 +302,9 @@ public class EnergyNetDataProvider extends WorldSavedData {
                 }
             }
         } else {
-            throw new RuntimeException("Unexpected TileEntity:" + te);
+            throw new RuntimeException("Unexpected BlockEntity:" + te);
         }
-        
+
         this.loadedTiles.remove(te);
     }
 
@@ -320,7 +313,7 @@ public class EnergyNetDataProvider extends WorldSavedData {
         this.tileEntityGraph.addVertex(gridNode);
         this.gridNodeMap.put(gridNode.getPos(), gridNode);
 
-        markDirty();
+        setDirty();
     }
 
     public void removeGridNode(GridNode gridNode) {
@@ -328,13 +321,13 @@ public class EnergyNetDataProvider extends WorldSavedData {
             return;            //TODO should we log this?
 
         for (GridNode affectedNeighbors : this.tileEntityGraph.removeGridVertex(gridNode)) {
-            TileEntity te = affectedNeighbors.te;
+            BlockEntity te = affectedNeighbors.te;
             if (te instanceof ISEGridTile)
                 this.updatedGridTile.add((ISEGridTile) te);
         }
 
         this.gridNodeMap.remove(gridNode.getPos());
-        markDirty();
+        setDirty();
     }
 
     public void addGridConnection(GridNode node1, GridNode node2, double resistance) {
@@ -343,15 +336,15 @@ public class EnergyNetDataProvider extends WorldSavedData {
 
         this.tileEntityGraph.addGridEdge(node1, node2, resistance);
 
-        TileEntity te1 = node1.te;
-        TileEntity te2 = node2.te;
+        BlockEntity te1 = node1.te;
+        BlockEntity te2 = node2.te;
 
         if (te1 instanceof ISEGridTile)
             this.updatedGridTile.add((ISEGridTile) te1);
         if (te2 instanceof ISEGridTile)
             this.updatedGridTile.add((ISEGridTile) te2);
 
-        markDirty();
+        setDirty();
     }
 
     public void removeGridConnection(GridNode node1, GridNode node2) {
@@ -360,15 +353,15 @@ public class EnergyNetDataProvider extends WorldSavedData {
 
         this.tileEntityGraph.removeGridEdge(node1, node2);
 
-        TileEntity te1 = node1.te;
-        TileEntity te2 = node2.te;
+        BlockEntity te1 = node1.te;
+        BlockEntity te2 = node2.te;
 
         if (te1 instanceof ISEGridTile)
             this.updatedGridTile.add((ISEGridTile) te1);
         if (te2 instanceof ISEGridTile)
             this.updatedGridTile.add((ISEGridTile) te2);
 
-        markDirty();
+        setDirty();
     }
 
 
@@ -383,15 +376,15 @@ public class EnergyNetDataProvider extends WorldSavedData {
 
         this.tileEntityGraph.makeTransformer(primary, secondary, ratio, resistance);
 
-        TileEntity te1 = primary.te;
-        TileEntity te2 = secondary.te;
+        BlockEntity te1 = primary.te;
+        BlockEntity te2 = secondary.te;
 
         if (te1 instanceof ISEGridTile)
             this.updatedGridTile.add((ISEGridTile) te1);
         if (te2 instanceof ISEGridTile)
             this.updatedGridTile.add((ISEGridTile) te2);
 
-        markDirty();
+        setDirty();
     }
 
     public void breakTransformer(GridNode node) {
@@ -400,17 +393,17 @@ public class EnergyNetDataProvider extends WorldSavedData {
 
         this.tileEntityGraph.breakTransformer(node);
 
-        TileEntity te = node.te;
+        BlockEntity te = node.te;
 
         if (te instanceof ISEGridTile)
             this.updatedGridTile.add((ISEGridTile) te);
 
-        markDirty();
+        setDirty();
     }
 
-    public void onGridTilePresent(TileEntity te) {
+    public void onGridTilePresent(BlockEntity te) {
         ISEGridTile gridTile = (ISEGridTile) te;
-        GridNode gridObject = this.gridNodeMap.get(te.getPos());
+        GridNode gridObject = this.gridNodeMap.get(te.getBlockPos());
         if (gridObject == null)
             return;
         this.loadedGridTiles.add(te);
@@ -419,13 +412,13 @@ public class EnergyNetDataProvider extends WorldSavedData {
         this.updatedGridTile.add(gridTile);
     }
 
-    public void onGridTileInvalidate(TileEntity te) {
+    public void onGridTileInvalidate(BlockEntity te) {
     	if (!this.loadedTiles.contains(te))
             return;
-    	
+
         this.loadedGridTiles.remove(te);
 
-        GridNode gridObject = this.gridNodeMap.get(te.getPos());
+        GridNode gridObject = this.gridNodeMap.get(te.getBlockPos());
 
         //gridObject can be null if the GridObject is just removed
         if (gridObject != null)
@@ -439,13 +432,13 @@ public class EnergyNetDataProvider extends WorldSavedData {
     /**
      * Read grid data from world NBT, 1.Read grid nodes, 2. Read connections
      */
-    @Override
-    public void read(CompoundNBT nbt) {
-        this.gridNodeMap.clear();
+    public static EnergyNetDataProvider load(CompoundTag nbt) {
+    	EnergyNetDataProvider ret = new EnergyNetDataProvider();
+    	ret.gridNodeMap.clear();
 
-        ListNBT NBTObjects = nbt.getList("Objects", NBT.TAG_COMPOUND);
+        ListTag NBTObjects = nbt.getList("Objects", NBT.TAG_COMPOUND);
         for (int i = 0; i < NBTObjects.size(); i++) {
-            CompoundNBT compound = NBTObjects.getCompound(i);
+            CompoundTag compound = NBTObjects.getCompound(i);
             GridNode obj = new GridNode(compound);
             //byte type = compound.getByte("type");
 
@@ -453,25 +446,27 @@ public class EnergyNetDataProvider extends WorldSavedData {
             //throw new RuntimeException("Undefined grid object type");
 
             //obj.readFromNBT(compound);
-            this.tileEntityGraph.addVertex(obj);
+            ret.tileEntityGraph.addVertex(obj);
 
-            this.gridNodeMap.put(obj.getPos(), obj);
+            ret.gridNodeMap.put(obj.getPos(), obj);
         }
 
 
         //Build node connections
-        for (GridNode gridNode : this.gridNodeMap.values()) {
-            gridNode.buildNeighborConnection(this.gridNodeMap, this.tileEntityGraph);
+        for (GridNode gridNode : ret.gridNodeMap.values()) {
+            gridNode.buildNeighborConnection(ret.gridNodeMap, ret.tileEntityGraph);
         }
 
         SELogger.logInfo(SELogger.energyNet, "Loaded GridNodes from world NBT storage");
+
+        return ret;
     }
 
     @Override
-    public CompoundNBT write(CompoundNBT nbt) {
-        ListNBT NBTNodes = new ListNBT();
+    public CompoundTag save(CompoundTag nbt) {
+        ListTag NBTNodes = new ListTag();
         for (GridNode gridNode : this.gridNodeMap.values()) {
-            CompoundNBT tag = new CompoundNBT();
+            CompoundTag tag = new CompoundTag();
             gridNode.writeToNBT(tag);
             NBTNodes.add(tag);
         }

@@ -5,21 +5,21 @@ import java.util.function.Supplier;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemUseContext;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.NBTUtil;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.shapes.VoxelShape;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtUtils;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.core.Direction;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import rikka.librikka.IMetaProvider;
@@ -36,25 +36,25 @@ public final class ItemPanel extends ItemBase implements IMetaProvider<IMetaBase
     	voltagesensor(VoltageSensorPanel::new),
     	facade(null),
     	facade_hollow(null);
-    	
+
     	public final Supplier<ISECoverPanel> constructor;
     	ItemType(Supplier<ISECoverPanel> constructor) {
     		this.constructor = constructor;
     	}
     }
-    
+
     public final ItemType itemType;
     private ItemPanel(ItemType itemType) {
         super("item_" + itemType.name(), (new Item.Properties())
-        		.group(SEAPI.SETab));
+        		.tab(SEAPI.SETab));
         this.itemType = itemType;
     }
-    
+
     @Override
 	public IMetaBase meta() {
 		return itemType;
 	}
-    
+
     public static ItemPanel[] create() {
     	ItemPanel[] ret = new ItemPanel[ItemType.values().length];
     	for (ItemType meta: ItemType.values()) {
@@ -62,42 +62,42 @@ public final class ItemPanel extends ItemBase implements IMetaProvider<IMetaBase
     	}
     	return ret;
     }
-    
+
 	@Override
-	public ActionResultType onItemUse(ItemUseContext context) {
+	public InteractionResult useOn(UseOnContext context) {
 		if (this.itemType != ItemType.facade && this.itemType != ItemType.facade_hollow)
-			return super.onItemUse(context);
-			
+			return super.useOn(context);
+
 		if (!context.getPlayer().isCrouching())
-			return ActionResultType.FAIL;
-		
-		World world = context.getWorld();
-		BlockPos pos = context.getPos();
+			return InteractionResult.FAIL;
+
+		Level world = context.getLevel();
+		BlockPos pos = context.getClickedPos();
 		BlockState blockstate = world.getBlockState(pos);
 		VoxelShape shape = blockstate.getShape(world, pos);
-		
+
 		for (Direction side: Direction.values()) {
-			if (!Block.doesSideFillSquare(shape, side))
-				return super.onItemUse(context);
+			if (!Block.isFaceFull(shape, side))
+				return super.useOn(context);
 		}
-		
-		CompoundNBT bsNBT = NBTUtil.writeBlockState(blockstate);
-		context.getItem().getOrCreateTag().put("facade_blockstate", bsNBT);
-		
-		return ActionResultType.SUCCESS;
+
+		CompoundTag bsNBT = NbtUtils.writeBlockState(blockstate);
+		context.getItemInHand().getOrCreateTag().put("facade_blockstate", bsNBT);
+
+		return InteractionResult.SUCCESS;
 	}
 
 	@SuppressWarnings("deprecation")
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public void addInformation(ItemStack stack, @Nullable World world, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
-		if (this.itemType != ItemType.facade && this.itemType != ItemType.facade_hollow || !stack.hasTag()) 
+	public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flagIn) {
+		if (this.itemType != ItemType.facade && this.itemType != ItemType.facade_hollow || !stack.hasTag())
 			return;
 
-		BlockState blockstate = NBTUtil.readBlockState(stack.getTag().getCompound("facade_blockstate"));
+		BlockState blockstate = NbtUtils.readBlockState(stack.getTag().getCompound("facade_blockstate"));
 		if (!blockstate.isAir())
-			tooltip.add(blockstate.getBlock().getTranslatedName());
+			tooltip.add(blockstate.getBlock().getName());
 		if (flagIn.isAdvanced())
-			tooltip.add(new StringTextComponent(blockstate.toString()));
+			tooltip.add(new TextComponent(blockstate.toString()));
 	}
 }

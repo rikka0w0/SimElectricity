@@ -4,9 +4,9 @@ import java.util.Iterator;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.container.ContainerType;
-import net.minecraft.inventory.container.IContainerListener;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.inventory.ContainerListener;
 import rikka.librikka.container.ContainerNoInventory;
 import rikka.librikka.container.ContainerSynchronizer;
 import simelectricity.essential.Essential;
@@ -21,23 +21,23 @@ public abstract class ContainerNoInvAutoSync<HOST> extends ContainerNoInventory<
 		super(host, namespace, windowID);
 	}
 
-    public ContainerNoInvAutoSync(@Nullable HOST host, ContainerType<?> containerType, int windowID) {
+    public ContainerNoInvAutoSync(@Nullable HOST host, MenuType<?> containerType, int windowID) {
 		super(host, containerType, windowID);
 	}
 
 	@Override
-    public void detectAndSendChanges() {
+    public void broadcastChanges() {
         Object[] changeList = ContainerSynchronizer.detectChanges(this, ContainerNoInvAutoSync.class, host);
 
         if (changeList == null)
             return;
         
-        Iterator<IContainerListener> iterator = getListeners().iterator();
+        Iterator<ContainerListener> iterator = getListeners().iterator();
         while (iterator.hasNext()) {
-            IContainerListener crafter = iterator.next();
+            ContainerListener crafter = iterator.next();
 
-            if (crafter instanceof ServerPlayerEntity) {
-                MessageContainerSync.syncToClient((ServerPlayerEntity) crafter, changeList);
+            if (crafter instanceof ServerPlayer) {
+                MessageContainerSync.syncToClient((ServerPlayer) crafter, changeList);
             }
         }
     }

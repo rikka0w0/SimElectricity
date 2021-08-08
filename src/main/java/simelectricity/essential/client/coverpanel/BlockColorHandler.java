@@ -1,12 +1,12 @@
 package simelectricity.essential.client.coverpanel;
 
-import net.minecraft.block.BlockState;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.color.IBlockColor;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockDisplayReader;
+import net.minecraft.client.color.block.BlockColor;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.core.Direction;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -15,13 +15,13 @@ import simelectricity.essential.api.coverpanel.ISECoverPanel;
 import simelectricity.essential.api.coverpanel.ISEFacadeCoverPanel;
 
 @OnlyIn(Dist.CLIENT)
-public class BlockColorHandler implements IBlockColor{
-    public final static IBlockColor colorHandler = new BlockColorHandler();
+public class BlockColorHandler implements BlockColor {
+    public final static BlockColor colorHandler = new BlockColorHandler();
 
     @Override
-    public int getColor(BlockState blockState, IBlockDisplayReader world, BlockPos pos, int tintIndex) {
+    public int getColor(BlockState blockState, BlockAndTintGetter world, BlockPos pos, int tintIndex) {
         if (world != null && pos != null) {
-            TileEntity te = world.getTileEntity(pos);
+            BlockEntity te = world.getBlockEntity(pos);
             if (te instanceof ISECoverPanelHost) {
                 ISECoverPanelHost cable = (ISECoverPanelHost)te;
 

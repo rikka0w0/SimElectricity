@@ -1,7 +1,6 @@
 package simelectricity.essential.machines.gui;
 
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.world.entity.player.Inventory;
 import rikka.librikka.container.ContainerSynchronizer;
 import rikka.librikka.gui.AutoGuiHandler;
 import simelectricity.api.SEAPI;
@@ -24,12 +23,12 @@ public class ContainerQuantumGenerator extends ContainerNoInvAutoSync<TileQuantu
     public ContainerQuantumGenerator(TileQuantumGenerator tileEntity, int windowId) {
         super(tileEntity, windowId);
     }
-    
+
     // Client side
-    public ContainerQuantumGenerator(int windowId, PlayerInventory inv, PacketBuffer data) {
+    public ContainerQuantumGenerator(int windowId, Inventory inv) {
     	this(null, windowId);
     }
-    
+
     @Override
     public void onButtonPressed(int buttonID, boolean isCtrlPressed) {
         double resistance = host.resistance;

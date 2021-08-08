@@ -1,14 +1,13 @@
 package simelectricity.essential.items;
 
-import net.minecraft.block.Block;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemUseContext;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import rikka.librikka.IMetaProvider;
 import rikka.librikka.IMetaBase;
 import rikka.librikka.Utils;
@@ -23,31 +22,31 @@ import java.util.HashMap;
 import java.util.Map;
 
 public final class ItemHighVoltageCable extends ItemBase implements IMetaProvider<IMetaBase> {
-    private final Map<PlayerEntity, BlockPos> lastCoordinates;
+    private final Map<Player, BlockPos> lastCoordinates;
 
     public static enum ItemType implements IMetaBase {
     	copper(0.1),
     	aluminum(0.2);
-    	
+
     	public final double resistivity;
     	ItemType(double resistivity) {
     		this.resistivity = resistivity;
     	}
     }
-    
+
     public final ItemType itemType;
     private ItemHighVoltageCable(ItemType itemType) {
         super("hvcable_" + itemType.name(), (new Item.Properties())
-        		.group(SEAPI.SETab));
+        		.tab(SEAPI.SETab));
         lastCoordinates = new HashMap<>();
         this.itemType = itemType;
     }
-    
+
     @Override
 	public IMetaBase meta() {
 		return itemType;
 	}
-    
+
     public static ItemHighVoltageCable[] create() {
     	ItemHighVoltageCable[] ret = new ItemHighVoltageCable[ItemType.values().length];
     	for (ItemType info: ItemType.values())
@@ -62,19 +61,19 @@ public final class ItemHighVoltageCable extends ItemBase implements IMetaProvide
     }
 
     @Override
-    public ActionResultType onItemUse(ItemUseContext context) {
-        PlayerEntity player = context.getPlayer();
-    	World world = context.getWorld();
-    	BlockPos pos = context.getPos();
-    	ItemStack itemStack = context.getItem();
-        
-        if (world.isRemote)
-            return ActionResultType.SUCCESS;
+    public InteractionResult useOn(UseOnContext context) {
+        Player player = context.getPlayer();
+    	Level world = context.getLevel();
+    	BlockPos pos = context.getClickedPos();
+    	ItemStack itemStack = context.getItemInHand();
+
+        if (world.isClientSide)
+            return InteractionResult.SUCCESS;
 
         Block block = world.getBlockState(pos).getBlock();
 
         if (!(block instanceof ISEHVCableConnector))
-            return ActionResultType.SUCCESS;
+            return InteractionResult.SUCCESS;
 
         ISEHVCableConnector connector1 = (ISEHVCableConnector) block;
 
@@ -118,7 +117,7 @@ public final class ItemHighVoltageCable extends ItemBase implements IMetaProvide
                 	//if (flag1 && flag2) {
                 		//Utils.chatWithLocalization(player, "chat.sime_essential.powerpole_connection_denied");
                 	//} else {
-            			double distance = MathHelper.sqrt(node1.getPos().distanceSq(node2.getPos()));
+            			double distance = Math.sqrt(node1.getPos().distSqr(node2.getPos()));
         				double resistance = distance * this.itemType.resistivity;    //Calculate the resistance
                 		boolean isCreative = player.isCreative();
                 		if (!flag1 && !flag2){
@@ -141,24 +140,24 @@ public final class ItemHighVoltageCable extends ItemBase implements IMetaProvide
             this.lastCoordinates.put(player, null);
         }
 
-        return ActionResultType.SUCCESS;
+        return InteractionResult.SUCCESS;
     }
-    
-    private static boolean canConnect(ISEHVCableConnector connector, World world, BlockPos from, BlockPos to) {
+
+    private static boolean canConnect(ISEHVCableConnector connector, Level world, BlockPos from, BlockPos to) {
     	ISEGridTile gridTile = connector.getGridTile(world, from);
     	if (gridTile == null)
     		return false;
-    	
+
     	return gridTile.canConnect(to);
     }
-    
-    private static void connect(World world, ISEGridNode node1, ISEGridNode node2, double resistance, ItemStack itemStack, boolean isCreative) {
+
+    private static void connect(Level world, ISEGridNode node1, ISEGridNode node2, double resistance, ItemStack itemStack, boolean isCreative) {
 		if (node1 != null && node2 != null &&
 				SEAPI.energyNetAgent.isNodeValid(world, node1) &&
 				SEAPI.energyNetAgent.isNodeValid(world, node2)) {
 
 			SEAPI.energyNetAgent.connectGridNode(world, node1, node2, resistance);
-			
+
 			//TODO: Consume items
 		}
     }

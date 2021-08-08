@@ -1,9 +1,10 @@
 package simelectricity.essential.common.semachine;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.state.properties.BlockStateProperties;
-import net.minecraft.util.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import rikka.librikka.Utils;
@@ -14,31 +15,35 @@ import simelectricity.api.components.ISEComponentParameter;
 import simelectricity.api.node.ISESubComponent;
 import simelectricity.api.tile.ISETile;
 
-public abstract class SESinglePortMachine<T extends ISEComponentParameter> extends SEMachineTile implements 
+public abstract class SESinglePortMachine<T extends ISEComponentParameter> extends SEMachineTile implements
 		ISESidedFacing, ISEWrenchable, ISETile, ISEComponentParameter {
     protected Direction functionalSide = Direction.SOUTH;
     protected final ISESubComponent<?> circuit = SEAPI.energyNetAgent.newComponent(this, this);
     @SuppressWarnings("unchecked")
 	protected final T cachedParam = (T) circuit;
 
+    public SESinglePortMachine(BlockPos pos, BlockState blockState) {
+		super(pos, blockState);
+	}
+
     ///////////////////////////////////
-    /// TileEntity
+    /// BlockEntity
     ///////////////////////////////////
     @Override
-    public void read(BlockState blockState, CompoundNBT tagCompound) {
-        super.read(blockState, tagCompound);
+    public void load(CompoundTag tagCompound) {
+        super.load(tagCompound);
         this.functionalSide = Utils.facingFromNbt(tagCompound, "functionalSide");
     }
 
     @Override
-    public CompoundNBT write(CompoundNBT tagCompound) {
+    public CompoundTag save(CompoundTag tagCompound) {
         Utils.saveToNbt(tagCompound, "functionalSide", this.functionalSide);
-        return super.write(tagCompound);
+        return super.save(tagCompound);
     }
 
     @Override
     public Direction getFacing() {
-        return getBlockState().get(BlockStateProperties.FACING);
+        return getBlockState().getValue(BlockStateProperties.FACING);
     }
 
     ///////////////////////////////////
@@ -46,7 +51,7 @@ public abstract class SESinglePortMachine<T extends ISEComponentParameter> exten
     ///////////////////////////////////
     @Override
     public void setFacing(Direction newFacing) {
-    	world.setBlockState(pos, getBlockState().with(BlockStateProperties.FACING, newFacing));
+    	level.setBlockAndUpdate(worldPosition, getBlockState().setValue(BlockStateProperties.FACING, newFacing));
     }
 
     @Override
@@ -72,14 +77,14 @@ public abstract class SESinglePortMachine<T extends ISEComponentParameter> exten
     ///Sync
     /////////////////////////////////////////////////////////
     @Override
-    public void prepareS2CPacketData(CompoundNBT nbt) {
+    public void prepareS2CPacketData(CompoundTag nbt) {
         super.prepareS2CPacketData(nbt);
         Utils.saveToNbt(nbt, "functionalSide", this.functionalSide);
     }
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public void onSyncDataFromServerArrived(CompoundNBT nbt) {
+    public void onSyncDataFromServerArrived(CompoundTag nbt) {
         this.functionalSide = Utils.facingFromNbt(nbt, "functionalSide");
         super.onSyncDataFromServerArrived(nbt);
     }
@@ -97,14 +102,14 @@ public abstract class SESinglePortMachine<T extends ISEComponentParameter> exten
     /////////////////////////////////////////////////////////
     public void SetFunctionalSide(Direction side) {
         this.functionalSide = side;
-        
-        if (world.isRemote) {
+
+        if (level.isClientSide) {
         	this.markForRenderUpdate();
         	return;
         }
 
         markTileEntityForS2CSync();
-        this.world.notifyNeighborsOfStateChange(this.pos, getBlockState().getBlock());
+        this.level.updateNeighborsAt(this.worldPosition, getBlockState().getBlock());
 
         if (isAddedToEnergyNet)
             SEAPI.energyNetAgent.updateTileConnection(this);

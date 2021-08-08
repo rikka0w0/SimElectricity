@@ -1,6 +1,6 @@
 package simelectricity.energynet.components;
 
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import simelectricity.api.components.ISEComponentParameter;
 import simelectricity.api.node.ISESimulatable;
 
@@ -9,9 +9,9 @@ import java.util.LinkedList;
 public abstract class SEComponent implements ISESimulatable, ISEComponentParameter {
     public boolean isValid;
     /**
-     * Host TileEntity for Tiles and Associated TileEntity for GridTiles
+     * Host BlockEntity for Tiles and Associated BlockEntity for GridTiles
      */
-    public TileEntity te;
+    public BlockEntity te;
 
 
     //Optimization and simulation runtime
@@ -35,7 +35,7 @@ public abstract class SEComponent implements ISESimulatable, ISEComponentParamet
     public abstract static class Tile<TYPE extends ISEComponentParameter> extends SEComponent {
         protected final TYPE dataProvider;
 
-        public Tile(TYPE dataProvider, TileEntity te) {
+        public Tile(TYPE dataProvider, BlockEntity te) {
             this.dataProvider = dataProvider;
             this.te = te;
         }

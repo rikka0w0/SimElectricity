@@ -1,7 +1,7 @@
 package simelectricity.energynet.components;
 
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.core.Direction;
 import simelectricity.api.components.ISECable;
 
 public class Cable extends CableBase<ISECable> implements ISECable {
@@ -15,7 +15,7 @@ public class Cable extends CableBase<ISECable> implements ISECable {
     //Simulation & Optimization
     public volatile GridNode connectedGridNode;
 
-    public Cable(ISECable dataProvider, TileEntity te, boolean isGridInterConnectionPoint) {
+    public Cable(ISECable dataProvider, BlockEntity te, boolean isGridInterConnectionPoint) {
         super(dataProvider, te);
         this.isGridInterConnectionPoint = isGridInterConnectionPoint;
         

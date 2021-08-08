@@ -1,22 +1,22 @@
 package simelectricity.essential.machines;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.container.INamedContainerProvider;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.world.IBlockReader;
-import net.minecraft.world.IWorldReader;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.Level;
 import rikka.librikka.IMetaProvider;
 import rikka.librikka.ITileMeta;
 import rikka.librikka.Utils;
@@ -38,15 +38,15 @@ public abstract class BlockTwoPortElectronics extends SEMachineBlock implements 
     	circuit_breaker(TileSwitch.class),
     	relay(TileRelay.class),
     	power_meter(TilePowerMeter.class);
-    	
-		MetaInfo(Class<? extends TileEntity> teCls) {
+
+		MetaInfo(Class<? extends BlockEntity> teCls) {
 			this.teCls = teCls;
 		}
 
-		public final Class<? extends TileEntity> teCls;
-		
+		public final Class<? extends BlockEntity> teCls;
+
 		@Override
-		public final Class<? extends TileEntity> teCls() {
+		public final Class<? extends BlockEntity> teCls() {
 			return teCls;
 		}
     }
@@ -56,7 +56,7 @@ public abstract class BlockTwoPortElectronics extends SEMachineBlock implements 
 	public final ITileMeta meta() {
 		return meta;
 	}
-    
+
     ///////////////////////////////
     ///Block Properties
     ///////////////////////////////
@@ -64,31 +64,31 @@ public abstract class BlockTwoPortElectronics extends SEMachineBlock implements 
         super("electronics2_" + meta.name());
     	this.meta = meta;
     }
-    
+
     public static BlockTwoPortElectronics[] create() {
     	BlockTwoPortElectronics[] ret = new BlockTwoPortElectronics[MetaInfo.values().length];
-    	
+
     	for (ITileMeta meta: MetaInfo.values()) {
     		ret[meta.ordinal()] = new BlockTwoPortElectronics(meta) {
     			@Override
     			public boolean hasSecondState() {
     				return meta == MetaInfo.circuit_breaker;
     			}
-    			
+
     		    @Override
     		    public boolean useObjModel() {
     				return false;
     		    }
     		};
     	}
-    	
+
     	return ret;
     }
 
 	@Override
-	public TileEntity createTileEntity(BlockState state, IBlockReader world) {
+	public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
 		try {
-			return meta.teCls().getConstructor().newInstance();
+			return meta.create(pos, state);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -99,48 +99,48 @@ public abstract class BlockTwoPortElectronics extends SEMachineBlock implements 
     /////Item drops and Block activities
     //////////////////////////////////////
     @Override
-    public ActionResultType onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult rtResult) {
-    	if (CoverPanelUtils.installCoverPanel(state, world, pos, player, hand, rtResult) == ActionResultType.SUCCESS)
-    		return ActionResultType.SUCCESS;
-  
-    	TileEntity te = world.getTileEntity(pos);
+    public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult rtResult) {
+    	if (CoverPanelUtils.installCoverPanel(state, world, pos, player, hand, rtResult) == InteractionResult.SUCCESS)
+    		return InteractionResult.SUCCESS;
+
+    	BlockEntity te = world.getBlockEntity(pos);
     	if (te instanceof ISECoverPanelHost) {
-    		ISECoverPanel coverPanel = ((ISECoverPanelHost) te).getCoverPanelOnSide(rtResult.getFace());
+    		ISECoverPanel coverPanel = ((ISECoverPanelHost) te).getCoverPanelOnSide(rtResult.getDirection());
     		if (coverPanel != null && !coverPanel.isHollow())
-                return ActionResultType.PASS; 
+                return InteractionResult.PASS;
     	}
-    	
+
     	if (player.isCrouching())
-            return ActionResultType.PASS;
-                
+            return InteractionResult.PASS;
+
         if (te instanceof TileSwitch) {
         	TileSwitch tileSwitch = (TileSwitch) te;
-        	if (tileSwitch.getFacing() == rtResult.getFace()) {
+        	if (tileSwitch.getFacing() == rtResult.getDirection()) {
         		if (tileSwitch.isOn) {
-        			world.playSound(pos.getX(), pos.getY(), pos.getZ(), SoundEvents.BLOCK_STONE_BUTTON_CLICK_OFF, SoundCategory.BLOCKS, 0.3F, 0.5F, false);
+        			world.playLocalSound(pos.getX(), pos.getY(), pos.getZ(), SoundEvents.STONE_BUTTON_CLICK_OFF, SoundSource.BLOCKS, 0.3F, 0.5F, false);
         		} else {
-        			world.playSound(pos.getX(), pos.getY(), pos.getZ(), SoundEvents.BLOCK_STONE_BUTTON_CLICK_ON, SoundCategory.BLOCKS, 0.3F, 0.6F, false);
+        			world.playLocalSound(pos.getX(), pos.getY(), pos.getZ(), SoundEvents.STONE_BUTTON_CLICK_ON, SoundSource.BLOCKS, 0.3F, 0.6F, false);
         		}
-        		if (!world.isRemote)
+        		if (!world.isClientSide)
         			tileSwitch.setSwitchStatus(!tileSwitch.isOn);
-            	return ActionResultType.SUCCESS;
+            	return InteractionResult.SUCCESS;
         	}
         }
-        
-        if (te instanceof INamedContainerProvider) {
-        	player.openContainer((INamedContainerProvider) te);
-        	return ActionResultType.SUCCESS;
-        }
-        
 
-        return ActionResultType.PASS;
+        if (te instanceof MenuProvider) {
+        	player.openMenu((MenuProvider) te);
+        	return InteractionResult.SUCCESS;
+        }
+
+
+        return InteractionResult.PASS;
     }
 
     @Override
-    public void onBlockPlacedBy(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
-        super.onBlockPlacedBy(world, pos, state, placer, stack);
+    public void setPlacedBy(Level world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
+        super.setPlacedBy(world, pos, state, placer, stack);
 
-        TileEntity te = world.getTileEntity(pos);
+        BlockEntity te = world.getBlockEntity(pos);
         if (te instanceof SETwoPortMachine) {
             Direction sight = Utils.getPlayerSight(placer);
 
@@ -155,27 +155,28 @@ public abstract class BlockTwoPortElectronics extends SEMachineBlock implements 
     ///Redstone
     ///////////////////////
     @Override
-    public boolean canProvidePower(BlockState state) {
+    public boolean isSignalSource(BlockState state) {
         return meta == MetaInfo.current_sensor;
     }
 
     @Override
-    public boolean shouldCheckWeakPower(BlockState state, IWorldReader world, BlockPos pos, Direction side) {
-        TileEntity te = world.getTileEntity(pos);
+    public boolean shouldCheckWeakPower(BlockState state, LevelReader world, BlockPos pos, Direction side) {
+        BlockEntity te = world.getBlockEntity(pos);
 
         return !(te instanceof TileCurrentSensor);
     }
 
+    /*
     @Override
-    public boolean canConnectRedstone(BlockState state, IBlockReader world, BlockPos pos, @Nullable Direction side) {
-        TileEntity te = world.getTileEntity(pos);
+    public boolean canConnectRedstone(BlockState state, BlockGetter world, BlockPos pos, @Nullable Direction side) {
+        BlockEntity te = world.getBlockEntity(pos);
 
         return te instanceof TileCurrentSensor;
-    }
+    }*/
 
     @Override
-    public int getWeakPower(BlockState blockState, IBlockReader world, BlockPos pos, Direction side) {
-        TileEntity te = world.getTileEntity(pos);
+    public int getSignal(BlockState blockState, BlockGetter world, BlockPos pos, Direction side) {
+        BlockEntity te = world.getBlockEntity(pos);
 
         if (te instanceof TileCurrentSensor)
             return ((TileCurrentSensor) te).emitRedstoneSignal ? 15 : 0;
@@ -185,18 +186,18 @@ public abstract class BlockTwoPortElectronics extends SEMachineBlock implements 
 
     @SuppressWarnings("deprecation")
 	@Override
-    public void neighborChanged(BlockState state, World world, BlockPos pos, Block block, BlockPos fromPos, boolean isMoving) {
-        if (world.isRemote) {
+    public void neighborChanged(BlockState state, Level world, BlockPos pos, Block block, BlockPos fromPos, boolean isMoving) {
+        if (world.isClientSide) {
             super.neighborChanged(state, world, pos, block, fromPos, isMoving);
             return;
         }
 
-        TileEntity te = world.getTileEntity(pos);
+        BlockEntity te = world.getBlockEntity(pos);
         if (te instanceof TileRelay) {
             boolean isPowered = RedstoneHelper.isBlockPowered(world, pos, 4);
             ((TileRelay) te).setSwitchStatus(isPowered);
         }
-        
+
         super.neighborChanged(state, world, pos, block, fromPos, isMoving);
     }
 }

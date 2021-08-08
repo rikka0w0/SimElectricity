@@ -1,8 +1,8 @@
 package simelectricity.essential.coverpanel;
 
-import net.minecraft.block.Block;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
 import simelectricity.essential.Essential;
 import simelectricity.essential.api.ISECoverPanelFactory;
 import simelectricity.essential.api.client.ISECoverPanelRender;
@@ -40,7 +40,7 @@ public enum CoverPanelRegistry implements ISECoverPanelRegistry {
 	}
 	
 	@Override
-	public void saveToNBT(ISECoverPanel panel, CompoundNBT nbt) {
+	public void saveToNBT(ISECoverPanel panel, CompoundTag nbt) {
 		for (Entry<String, Pair<ISECoverPanelFactory, Class<? extends ISECoverPanel>>> entry: panels.entrySet()) {
 			Pair<ISECoverPanelFactory, Class<? extends ISECoverPanel>> pair = entry.getValue();
 			if (pair.getRight() == panel.getClass()) {
@@ -54,7 +54,7 @@ public enum CoverPanelRegistry implements ISECoverPanelRegistry {
 	}
 	
 	@Override
-    public ISECoverPanel fromNBT(CompoundNBT nbt) {
+    public ISECoverPanel fromNBT(CompoundTag nbt) {
 		if (nbt == null)
 			return null;
 		

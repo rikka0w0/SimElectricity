@@ -1,13 +1,13 @@
 package simelectricity.energynet.components;
 
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import simelectricity.api.components.ISETransformer;
 import simelectricity.api.node.ISEPairedComponent;
 
 public class TransformerSecondary extends SEComponent implements ISEPairedComponent<TransformerPrimary>, ISETransformer {
     private volatile TransformerPrimary primary;
 
-    public TransformerSecondary(TransformerPrimary primary, TileEntity te) {
+    public TransformerSecondary(TransformerPrimary primary, BlockEntity te) {
         this.primary = primary;
         this.te = te;
     }

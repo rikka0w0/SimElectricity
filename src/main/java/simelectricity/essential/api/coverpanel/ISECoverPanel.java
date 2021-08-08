@@ -1,9 +1,9 @@
 package simelectricity.essential.api.coverpanel;
 
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.core.Direction;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.api.distmarker.Dist;
 import simelectricity.essential.api.client.ISECoverPanelRender;
@@ -21,7 +21,7 @@ public interface ISECoverPanel {
      *
      * @param nbt
      */
-    void toNBT(CompoundNBT nbt);
+    void toNBT(CompoundTag nbt);
 
     @OnlyIn(Dist.CLIENT)
     <T extends ISECoverPanel> ISECoverPanelRender<T> getCoverPanelRender();
@@ -32,7 +32,7 @@ public interface ISECoverPanel {
      * @param hostTileEntity
      * @param side
      */
-    void setHost(TileEntity hostTileEntity, Direction side);
+    void setHost(BlockEntity hostTileEntity, Direction side);
 
     /**
      * @return a copy or new instance of the item to be dropped into the world

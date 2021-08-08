@@ -1,6 +1,6 @@
 package simelectricity.api;
 
-import net.minecraft.util.Direction;
+import net.minecraft.core.Direction;
 
 /**
  * For TileEntities only, example: cable implement this to allow crowbar remove installed cover panels

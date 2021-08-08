@@ -1,10 +1,10 @@
 package simelectricity.essential.client.semachine;
 
-import net.minecraft.client.renderer.model.BakedQuad;
-import net.minecraft.client.renderer.model.IBakedModel;
+import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.TextureStitchEvent;
@@ -19,15 +19,15 @@ import java.util.List;
 @OnlyIn(Dist.CLIENT)
 public enum SocketRender implements IModelBakeHandler{
 	INSTANCE;
-	
+
 	private final static int numOfSockets = 5;
     private final static TextureAtlasSprite[] icons = new TextureAtlasSprite[SocketRender.numOfSockets];
     private final static ResourceLocation[] iconsLoc = new ResourceLocation[SocketRender.numOfSockets];
-    
+
     public static void getBaked(List<BakedQuad> list, ISESocketProvider sp) {
         TextureAtlasSprite[] textures = new TextureAtlasSprite[6];
         for (int side = 0; side < 6; side++) {
-            int i = sp.getSocketIconIndex(Direction.byIndex(side));
+            int i = sp.getSocketIconIndex(Direction.from3DDataValue(side));
             if (i >= SocketRender.icons.length)
                 i = 0;
 
@@ -43,7 +43,7 @@ public enum SocketRender implements IModelBakeHandler{
 	public void onPreTextureStitchEvent(TextureStitchEvent.Pre event) {
 		if (!EasyTextureLoader.isBlockAtlas(event))
 			return;
-		
+
         //Register textures
         for (int i = 0; i < SocketRender.icons.length; i++) {
         	SocketRender.iconsLoc[i] = new ResourceLocation(Essential.MODID + ":block/sockets/" + i);
@@ -52,7 +52,7 @@ public enum SocketRender implements IModelBakeHandler{
 	}
 
 	@Override
-	public IBakedModel onModelBakeEvent() {
+	public BakedModel onModelBakeEvent() {
 		for (int i = 0; i < SocketRender.icons.length; i++) {
 			SocketRender.icons[i] = EasyTextureLoader.blockTextureGetter().apply(SocketRender.iconsLoc[i]);
 		}

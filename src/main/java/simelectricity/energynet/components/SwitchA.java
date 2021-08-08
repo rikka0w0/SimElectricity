@@ -1,6 +1,6 @@
 package simelectricity.energynet.components;
 
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import simelectricity.api.components.ISESwitch;
 import simelectricity.api.node.ISEPairedComponent;
 import simelectricity.energynet.components.SEComponent.Tile;
@@ -11,7 +11,7 @@ public class SwitchA extends Tile<ISESwitch> implements ISEPairedComponent<Switc
 
     protected volatile SwitchB B;
 
-    public SwitchA(ISESwitch dataProvider, TileEntity te) {
+    public SwitchA(ISESwitch dataProvider, BlockEntity te) {
         super(dataProvider, te);
         B = new SwitchB(this, te);
     }

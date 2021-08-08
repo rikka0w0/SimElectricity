@@ -1,17 +1,17 @@
 package simelectricity.essential.cable;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.phys.AABB;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.model.data.ModelDataMap;
+import rikka.librikka.MarkedBlockHitResult;
 import simelectricity.api.ISEEnergyNetUpdateHandler;
 import simelectricity.api.SEAPI;
 import simelectricity.api.node.ISESimulatable;
@@ -34,6 +34,10 @@ public class TileCable extends SEEnergyTile implements ISEGenericCable, ISEIumin
     private volatile double voltage;
     private final boolean[] connections = new boolean[6];
     private final ISECoverPanel[] installedCoverPanels = new ISECoverPanel[6];
+
+    public TileCable(BlockPos pos, BlockState blockState) {
+		super(pos, blockState);
+	}
 
     ////////////////////////////////////////
     //Private functions
@@ -63,21 +67,21 @@ public class TileCable extends SEEnergyTile implements ISEGenericCable, ISEIumin
     }
 
     @Override
-    public Direction getSelectedCoverPanel(PlayerEntity player) {
+    public Direction getSelectedCoverPanel(Player player) {
         Block block = this.getBlockType();
         if (block instanceof BlockCable) {
-            BlockRayTraceResult result = ((BlockCable) block).rayTrace(this.world, this.pos, player);
-            
-            if (result == null || result.getType() != RayTraceResult.Type.BLOCK)
+        	MarkedBlockHitResult<Integer> result = ((BlockCable) block).rayTrace(this.level, this.worldPosition, player);
+
+            if (result == null || result.getType() != MarkedBlockHitResult.Type.BLOCK)
             	return null;
-            
-            if (result.getPos() != this.getPos())
+
+            if (result.getBlockPos() != this.getBlockPos())
             	return null;	// The player is looking at somewhere else ???
-            
+
             if (result.subHit < 7 || result.subHit > 12)
                 return null;    //The player is not looking at any installed cover panel
 
-            return Direction.byIndex(result.subHit - 7);
+            return Direction.from3DDataValue(result.subHit - 7);
         }
         return null;
     }
@@ -91,10 +95,10 @@ public class TileCable extends SEEnergyTile implements ISEGenericCable, ISEIumin
     public boolean installCoverPanel(Direction side, ISECoverPanel coverPanel, boolean simulated) {
     	if (this.installedCoverPanels[side.ordinal()] != null)
     		return false;
-    	
+
     	if (simulated)
     		return true;
-    	
+
 		this.installedCoverPanels[side.ordinal()] = coverPanel;
         coverPanel.setHost(this, side);
 
@@ -110,10 +114,10 @@ public class TileCable extends SEEnergyTile implements ISEGenericCable, ISEIumin
         if (coverPanel instanceof ISEElectricalLoadCoverPanel)
             SEAPI.energyNetAgent.updateTileConnection(this);
 
-        world.notifyNeighborsOfStateChange(pos, getBlockType());
+        level.updateNeighborsAt(worldPosition, getBlockType());
 
 		this.onRenderingUpdateRequested();
-		
+
 		return true;
     }
 
@@ -121,7 +125,7 @@ public class TileCable extends SEEnergyTile implements ISEGenericCable, ISEIumin
     public boolean removeCoverPanel(Direction side, boolean simulated) {
         if (side == null || this.installedCoverPanels[side.ordinal()] == null)
             return false;
-        
+
         if (simulated)
         	return true;
 
@@ -136,25 +140,25 @@ public class TileCable extends SEEnergyTile implements ISEGenericCable, ISEIumin
 
 		this.onRenderingUpdateRequested();
 
-        world.notifyNeighborsOfStateChange(pos, getBlockType());
+        level.updateNeighborsAt(worldPosition, getBlockType());
 
         return true;
     }
 
     ///////////////////////////////////////
-    ///TileEntity
+    ///BlockEntity
     ///////////////////////////////////////
     @Override
     @OnlyIn(Dist.CLIENT)
-    public AxisAlignedBB getRenderBoundingBox() {
-        AxisAlignedBB bb = TileEntity.INFINITE_EXTENT_AABB;
-        bb = new AxisAlignedBB(this.pos, this.pos.add(1, 1, 1));
+    public AABB getRenderBoundingBox() {
+        AABB bb = BlockEntity.INFINITE_EXTENT_AABB;
+        bb = new AABB(this.worldPosition, this.worldPosition.offset(1, 1, 1));
         return bb;
     }
 
     @Override
-    public void read(BlockState blockState, CompoundNBT tagCompound) {
-        super.read(blockState, tagCompound);
+    public void load(CompoundTag tagCompound) {
+        super.load(tagCompound);
 
 		this.color = tagCompound.getInt("color");
 		this.resistance = tagCompound.getDouble("resistance");
@@ -162,12 +166,12 @@ public class TileCable extends SEEnergyTile implements ISEGenericCable, ISEIumin
     }
 
     @Override
-    public CompoundNBT write(CompoundNBT tagCompound) {
+    public CompoundTag save(CompoundTag tagCompound) {
         tagCompound.putInt("color", this.color);
         tagCompound.putDouble("resistance", this.resistance);
         CoverPanelUtils.coverPanelsToNBT(this, tagCompound);
 
-        return super.write(tagCompound);
+        return super.save(tagCompound);
     }
 
     ///////////////////////////////////////
@@ -178,7 +182,7 @@ public class TileCable extends SEEnergyTile implements ISEGenericCable, ISEIumin
         this.color = newColor;
         this.updateTileConnection();
         this.onRenderingUpdateRequested();
-        world.notifyNeighborsOfStateChange(this.pos, getBlockType());
+        level.updateNeighborsAt(this.worldPosition, getBlockType());
     }
 
     @Override
@@ -232,7 +236,7 @@ public class TileCable extends SEEnergyTile implements ISEGenericCable, ISEIumin
     //Server->Client sync
     ////////////////////////////////////////
     @Override
-    public void prepareS2CPacketData(CompoundNBT nbt) {
+    public void prepareS2CPacketData(CompoundTag nbt) {
         super.prepareS2CPacketData(nbt);
 
         byte bc = 0x00;
@@ -253,7 +257,7 @@ public class TileCable extends SEEnergyTile implements ISEGenericCable, ISEIumin
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public void onSyncDataFromServerArrived(CompoundNBT nbt) {
+    public void onSyncDataFromServerArrived(CompoundTag nbt) {
         byte connectionsBinary = nbt.getByte("connections");
 
 		connections[0] = (connectionsBinary & 1) > 0;
@@ -270,7 +274,7 @@ public class TileCable extends SEEnergyTile implements ISEGenericCable, ISEIumin
         if (this.lightLevel != lightLevel) {
             this.lightLevel = lightLevel;
             //Detect change & proceed
-			this.world.getLightManager().checkBlock(this.pos);
+			this.level.getLightEngine().checkBlock(this.worldPosition);
             //world.updateLightByType(EnumSkyBlock.Block, xCoord, yCoord, zCoord);	//checkLightFor
         }
 
@@ -310,11 +314,11 @@ public class TileCable extends SEEnergyTile implements ISEGenericCable, ISEIumin
 			markTileEntityForS2CSync();
         }
     }
-    
+
     protected Block getBlockType() {
     	return this.getBlockState().getBlock();
     }
-    
+
     @Override
     protected void collectModelData(ModelDataMap.Builder builder) {
     	builder.withInitial(ISEGenericCable.prop, this);

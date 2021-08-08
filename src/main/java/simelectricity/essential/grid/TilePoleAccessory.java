@@ -2,10 +2,11 @@ package simelectricity.essential.grid;
 
 import javax.annotation.Nonnull;
 
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.core.BlockPos;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import rikka.librikka.Utils;
@@ -18,17 +19,21 @@ import simelectricity.essential.common.SEEnergyTile;
 
 public abstract class TilePoleAccessory extends SEEnergyTile implements ISEPoleAccessory, ISEGridTile, ISEPowerPole {
     protected BlockPos host;
-    
+
     @Nonnull
     @OnlyIn(Dist.CLIENT)
     protected abstract PowerPoleRenderHelper createRenderHelper();
-    
+
+    public TilePoleAccessory(BlockPos pos, BlockState blockState) {
+		super(pos, blockState);
+	}
+
     /////////////////////////////////////////////////////////
     /////ISEPowerPole
     /////////////////////////////////////////////////////////
     @OnlyIn(Dist.CLIENT)
     protected PowerPoleRenderHelper renderHelper;
-    
+
     @Override
     @OnlyIn(Dist.CLIENT)
     public BlockPos[] getNeighborPosArray() {
@@ -40,13 +45,13 @@ public abstract class TilePoleAccessory extends SEEnergyTile implements ISEPoleA
     public BlockPos getAccessoryPos() {
     	return null;
     }
-    
+
     @Override
     @OnlyIn(Dist.CLIENT)
     public PowerPoleRenderHelper getRenderHelper() {
         return this.renderHelper;
     }
-    
+
     //////////////////////////////
     /////ISEGridTile
     //////////////////////////////
@@ -64,59 +69,59 @@ public abstract class TilePoleAccessory extends SEEnergyTile implements ISEPoleA
     @Override
     public void onGridNeighborUpdated() {
     	host = null;
-        
+
     	ISEGridNode[] neighbors = this.gridNode.getNeighborList();
     	if (neighbors.length > 0)
     		host = neighbors[0].getPos();
 
         markTileEntityForS2CSync();
     }
-    
+
     @Override
     public boolean canConnect(BlockPos toPos) {
         return this.host == null;
     }
-    
+
     //////////////////////////////
-    /////TileEntity
+    /////BlockEntity
     //////////////////////////////
     @OnlyIn(Dist.CLIENT)
     @Override
-    public double getMaxRenderDistanceSquared() {
+    public double getViewDistance() {
         return 100000;
     }
 
     @OnlyIn(Dist.CLIENT)
     @Override
     @Nonnull
-    public AxisAlignedBB getRenderBoundingBox() {
-        return TileEntity.INFINITE_EXTENT_AABB;
+    public AABB getRenderBoundingBox() {
+        return BlockEntity.INFINITE_EXTENT_AABB;
     }
 
     /////////////////////////////////////////////////////////
     ///Sync
     /////////////////////////////////////////////////////////
     @Override
-    public void prepareS2CPacketData(CompoundNBT nbt) {
+    public void prepareS2CPacketData(CompoundTag nbt) {
         Utils.saveToNbt(nbt, "host", this.host);
     }
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public void onSyncDataFromServerArrived(CompoundNBT nbt) {
+    public void onSyncDataFromServerArrived(CompoundTag nbt) {
     	host = Utils.posFromNbt(nbt, "host");
-    	
-        if (this.renderHelper == null) 
+
+        if (this.renderHelper == null)
             this.renderHelper = this.createRenderHelper();
-        
+
         PowerPoleRenderHelper.notifyChanged(this);
-        
+
         if (this.host != null) {
-            TileEntity neighborTile = this.world.getTileEntity(host);
-            if (neighborTile instanceof ISEPowerPole) 
+            BlockEntity neighborTile = this.level.getBlockEntity(host);
+            if (neighborTile instanceof ISEPowerPole)
                 PowerPoleRenderHelper.notifyChanged((ISEPowerPole) neighborTile);
         }
-        
+
         super.onSyncDataFromServerArrived(nbt);
     }
 }

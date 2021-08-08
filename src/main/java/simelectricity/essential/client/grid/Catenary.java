@@ -1,6 +1,6 @@
 package simelectricity.essential.client.grid;
 
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.Mth;
 import rikka.librikka.math.MathAssitant;
 
 public class Catenary implements java.util.function.Function<Float,Float>, com.google.common.base.Function<Float,Float>{
@@ -20,7 +20,7 @@ public class Catenary implements java.util.function.Function<Float,Float>, com.g
 			a = 1e-4F;	//Prevent NAN
 		
 		float L=calcL(a,h,d);
-		float L1=-h*L/a+MathHelper.sqrt(h*(a+h)*(L*L-a*a))/a;
+		float L1=-h*L/a+Mth.sqrt(h*(a+h)*(L*L-a*a))/a;
 		float u=2*h/(L1*L1-h*h);
 		float x1= MathAssitant.asinh(u*L1)/u;
 		float k=h1-h-1/u;
@@ -43,7 +43,7 @@ public class Catenary implements java.util.function.Function<Float,Float>, com.g
 	}
 	
 	public static float calcL(float a, float h, float d) {
-		float lower = MathHelper.sqrt(d*d+a*a);
+		float lower = Mth.sqrt(d*d+a*a);
 		float upper = 2*h+d+a;
 		
 		float TV=(upper+lower)/2;
@@ -61,7 +61,7 @@ public class Catenary implements java.util.function.Function<Float,Float>, com.g
 	}
 	
 	public static float calcD(float a, float L, float h) {
-		float q = 2*MathHelper.sqrt(h * (a+h) * (L*L - a*a));
+		float q = 2*Mth.sqrt(h * (a+h) * (L*L - a*a));
 		return ((L*L-a*a)*(a+2*h)-L*q)
 				/
 				(a*a)* MathAssitant.atanh(a*a/(L*(a+2*h)-q));

@@ -2,11 +2,11 @@ package simelectricity.essential.client.grid.pole;
 
 import java.util.function.Function;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.client.renderer.model.BakedQuad;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.model.data.IModelData;
@@ -40,13 +40,13 @@ public class ConcretePole35kVModel extends CodeBasedModel {
 		 * Meta facing: MC: South - 0, OpenGL: Xpos(East) - 0
 		 */
     	
-        this.rotation = facing.getHorizontalIndex() * 90 - 90;
+        this.rotation = facing.get2DDataValue() * 90 - 90;
         this.type = type;
         this.isRod = isRod;
     }
 
     @Override
-    public TextureAtlasSprite getParticleTexture() {
+    public TextureAtlasSprite getParticleIcon() {
         return this.textureMetal;
     }
 

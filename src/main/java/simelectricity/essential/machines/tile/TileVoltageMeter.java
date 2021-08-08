@@ -1,9 +1,11 @@
 package simelectricity.essential.machines.tile;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.util.Direction;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import rikka.librikka.tileentity.INamedContainerProvider2;
@@ -12,9 +14,13 @@ import simelectricity.api.components.ISEVoltageSource;
 import simelectricity.essential.common.semachine.SESinglePortMachine;
 import simelectricity.essential.machines.gui.ContainerVoltageMeter;
 
-public class TileVoltageMeter extends SESinglePortMachine<ISEVoltageSource> implements 
+public class TileVoltageMeter extends SESinglePortMachine<ISEVoltageSource> implements
 		ISEVoltageSource, ISEEnergyNetUpdateHandler, INamedContainerProvider2 {
-    public double voltage;
+    public TileVoltageMeter(BlockPos pos, BlockState blockState) {
+		super(pos, blockState);
+	}
+
+	public double voltage;
 
     @Override
     public double getResistance() {
@@ -45,12 +51,12 @@ public class TileVoltageMeter extends SESinglePortMachine<ISEVoltageSource> impl
     public int getSocketIconIndex(Direction side) {
         return side == functionalSide ? 0 : -1;
     }
-    
+
     ///////////////////////////////////
-    /// INamedContainerProvider
+    /// MenuProvider
     ///////////////////////////////////
 	@Override
-	public Container createMenu(int windowID, PlayerInventory playerInv, PlayerEntity player) {
+	public AbstractContainerMenu createMenu(int windowID, Inventory playerInv, Player player) {
 		return new ContainerVoltageMeter(this, windowID);
 	}
 }

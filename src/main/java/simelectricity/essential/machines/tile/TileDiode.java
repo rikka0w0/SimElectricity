@@ -1,9 +1,11 @@
 package simelectricity.essential.machines.tile;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.util.Direction;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import rikka.librikka.tileentity.INamedContainerProvider2;
@@ -12,9 +14,13 @@ import simelectricity.api.components.ISEDiode;
 import simelectricity.essential.common.semachine.SETwoPortMachine;
 import simelectricity.essential.machines.gui.ContainerDiode;
 
-public class TileDiode extends SETwoPortMachine<ISEDiode> implements 
+public class TileDiode extends SETwoPortMachine<ISEDiode> implements
 		ISEDiode, ISEEnergyNetUpdateHandler, INamedContainerProvider2 {
-    public double inputVoltage, outputVoltage;
+    public TileDiode(BlockPos pos, BlockState blockState) {
+		super(pos, blockState);
+	}
+
+	public double inputVoltage, outputVoltage;
 
     /////////////////////////////////////////////////////////
     ///ISEDiodeData
@@ -57,12 +63,12 @@ public class TileDiode extends SETwoPortMachine<ISEDiode> implements
         else
             return -1;
     }
-    
+
     ///////////////////////////////////
-    /// INamedContainerProvider
+    /// MenuProvider
     ///////////////////////////////////
 	@Override
-	public Container createMenu(int windowID, PlayerInventory inv, PlayerEntity player) {
+	public AbstractContainerMenu createMenu(int windowID, Inventory inv, Player player) {
 		return new ContainerDiode(this, windowID);
 	}
 }

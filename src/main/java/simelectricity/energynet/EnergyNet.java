@@ -19,7 +19,7 @@
 
 package simelectricity.energynet;
 
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.server.level.ServerLevel;
 import simelectricity.api.node.ISESimulatable;
 import simelectricity.common.SELogger;
 import simelectricity.energynet.components.SEComponent;
@@ -30,7 +30,7 @@ import simelectricity.energynet.components.VoltageSource;
 import java.util.LinkedList;
 
 public final class EnergyNet {
-    private final ServerWorld world;
+    private final ServerLevel world;
     //Contains information about the grid
     protected final EnergyNetDataProvider dataProvider;
     //////////////////////////
@@ -47,10 +47,10 @@ public final class EnergyNet {
     //////////////////////////
     /// Constructor
     //////////////////////////
-    public EnergyNet(ServerWorld world) {
+    public EnergyNet(ServerLevel world) {
         this.world = world;
         this.dataProvider = EnergyNetDataProvider.get(world);
-        String dimName = world.getDimensionKey().getRegistryName().toString();
+        String dimName = world.dimension().getRegistryName().toString();
 
         //Initialize thread
         this.simulator = new EnergyNetSimulator(dataProvider, "SEEnergyNet_DIM" + dimName);
@@ -99,7 +99,7 @@ public final class EnergyNet {
         }
 
         // Copy the cached events to a new list to allow appending more EnergyTiles while processing the event queue
-        // Minecraft tend to create a new TileEntity if there is no TE there,
+        // Minecraft tend to create a new BlockEntity if there is no TE there,
         // this occasionally causes concurrent modification exception. So here is a work around.
         LinkedList<EnergyEventBase> eventsToProcess = new LinkedList<>();
         eventsToProcess.addAll(this.cachedEvents);
@@ -222,6 +222,6 @@ public final class EnergyNet {
     
     @Override
     public String toString() {
-    	return "EnergyNet for " + world.getProviderName();
+    	return "EnergyNet for " + world.gatherChunkSourceStats();
     }
 }

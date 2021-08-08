@@ -2,20 +2,20 @@ package simelectricity.essential.client.grid.pole;
 
 import java.util.List;
 
-import net.minecraft.block.BlockState;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.model.BakedQuad;
-import net.minecraft.client.renderer.model.IBakedModel;
-import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
+import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.resources.model.BakedModel;
 import simelectricity.essential.client.grid.PowerPoleTER;
 import simelectricity.essential.client.grid.PowerPoleRenderHelper;
 import simelectricity.essential.grid.TilePoleMetal35kV;
 
 public class MetalPole35kVTER extends PowerPoleTER<TilePoleMetal35kV>{
-	public MetalPole35kVTER(TileEntityRendererDispatcher rendererDispatcherIn) {
-		super(rendererDispatcherIn);
+	public MetalPole35kVTER(BlockEntityRendererProvider.Context context) {
+		super(context);
 	}
-		
+
 	@Override
 	protected void bake(TilePoleMetal35kV te, PowerPoleRenderHelper helper) {
 		List<BakedQuad> quads = helper.quadBuffer;
@@ -23,8 +23,8 @@ public class MetalPole35kVTER extends PowerPoleTER<TilePoleMetal35kV>{
 		BlockState blockState = te.getBlockState();
 		if (blockState == null)
 			return;
-		IBakedModel bakedmodel = Minecraft.getInstance().getModelManager()
-				.getBlockModelShapes().getModel(blockState);
+		BakedModel bakedmodel = Minecraft.getInstance().getModelManager()
+				.getBlockModelShaper().getBlockModel(blockState);
 		if (!(bakedmodel instanceof MetalPole35kVModel))
 			return;
 		MetalPole35kVModel model = (MetalPole35kVModel) bakedmodel;

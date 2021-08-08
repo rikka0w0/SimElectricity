@@ -1,17 +1,17 @@
 package simelectricity.extension.facades;
 
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
 import simelectricity.essential.api.ISECoverPanelFactory;
 import simelectricity.essential.api.coverpanel.ISECoverPanel;
 
 public class TECoverFactory implements ISECoverPanelFactory{
     @Override
     public ISECoverPanel from(ItemStack itemStack) {
-    	if (!itemStack.getItem().getTranslationKey().startsWith("item.thermaldynamics.cover"))
+    	if (!itemStack.getItem().getDescriptionId().startsWith("item.thermaldynamics.cover"))
     		return null;
     	
-        CompoundNBT nbt = itemStack.getTag();
+        CompoundTag nbt = itemStack.getTag();
         if (nbt == null)
         	return null;
 
@@ -27,7 +27,7 @@ public class TECoverFactory implements ISECoverPanelFactory{
     }
 
     @Override
-    public ISECoverPanel from(CompoundNBT nbt, Class<? extends ISECoverPanel> panelCls, String coverPanelName) {
+    public ISECoverPanel from(CompoundTag nbt, Class<? extends ISECoverPanel> panelCls, String coverPanelName) {
         return new TEFacadePanel(nbt);
     }
 

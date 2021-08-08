@@ -1,16 +1,17 @@
 package simelectricity.essential.machines.tile;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.FurnaceRecipe;
-import net.minecraft.item.crafting.IRecipeType;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.tileentity.ITickableTileEntity;
-import net.minecraft.util.Direction;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.crafting.SmeltingRecipe;
+import net.minecraft.nbt.CompoundTag;
+import rikka.librikka.tileentity.ITickableTileEntity;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.api.distmarker.Dist;
@@ -30,9 +31,13 @@ import java.util.Optional;
 
 import javax.annotation.Nonnull;
 
-public class TileElectricFurnace extends SESinglePortMachine<ISEVoltageSource> implements 
+public class TileElectricFurnace extends SESinglePortMachine<ISEVoltageSource> implements
 		ISEVoltageSource, ISE2StateTile, ISEEnergyNetUpdateHandler, ITickableTileEntity, INamedContainerProvider2 {
-    public static float energyPerItem = 5000F;
+    public TileElectricFurnace(BlockPos pos, BlockState blockState) {
+		super(pos, blockState);
+	}
+
+	public static float energyPerItem = 5000F;
 
     //Component parameters
     private double resistance = 100;
@@ -44,35 +49,35 @@ public class TileElectricFurnace extends SESinglePortMachine<ISEVoltageSource> i
     public double bufferedEnergy;   // J
 
     public int progress;
-    private FurnaceRecipe recipe = null;
+    private SmeltingRecipe recipe = null;
 
     public boolean setWorking(boolean isOn) {
     	boolean changed = isOn!=this.isOn;
     	if (changed) {
     		this.isOn = isOn;
-    		if (world.isRemote) {
+    		if (level.isClientSide) {
     			// Client Side
     	        markForRenderUpdate();
-    	        this.world.getLightManager().checkBlock(this.pos);	//checkLightFor
+    	        this.level.getLightEngine().checkBlock(this.worldPosition);	//checkLightFor
     		} else {
     			// Server Side
                 updateTileParameter();
-                markTileEntityForS2CSync();		
+                markTileEntityForS2CSync();
     		}
     	}
         return changed;
     }
-    
-    public double getEnergyRequired(FurnaceRecipe recipe) {
-    	return recipe == null? -1 : recipe.getCookTime() * 25;
+
+    public double getEnergyRequired(SmeltingRecipe recipe) {
+    	return recipe == null? -1 : recipe.getCookingTime() * 25;
     }
 
     ///////////////////////////////////
-    /// TileEntity
+    /// BlockEntity
     ///////////////////////////////////
     @Override
     public void tick() {
-        if (this.world.isRemote)
+        if (this.level.isClientSide)
             return;
 
         if (this.isOn) {
@@ -81,7 +86,7 @@ public class TileElectricFurnace extends SESinglePortMachine<ISEVoltageSource> i
 
                 if (this.bufferedEnergy > getEnergyRequired(recipe)) {
                     this.bufferedEnergy = 0;
-                    itemStackHandler.makeResult(recipe.getRecipeOutput().copy());
+                    itemStackHandler.makeResult(recipe.getResultItem().copy());
                 }
             } else {
                 // Item used up or removed or cannot be smelt
@@ -103,10 +108,10 @@ public class TileElectricFurnace extends SESinglePortMachine<ISEVoltageSource> i
     	super.onLoad();
     	itemStackHandler.onContentsChanged(0);
     }
-    
+
     @Override
-    public void read(BlockState blockState, CompoundNBT tagCompound) {
-        super.read(blockState, tagCompound);
+    public void load(CompoundTag tagCompound) {
+        super.load(tagCompound);
 
         this.resistance = tagCompound.getDouble("resistance");
         this.bufferedEnergy = tagCompound.getDouble("bufferedEnergy");
@@ -115,31 +120,31 @@ public class TileElectricFurnace extends SESinglePortMachine<ISEVoltageSource> i
     }
 
     @Override
-    public CompoundNBT write(CompoundNBT tagCompound) {
+    public CompoundTag save(CompoundTag tagCompound) {
         tagCompound.putDouble("resistance", this.resistance);
         tagCompound.putDouble("bufferedEnergy", this.bufferedEnergy);
         if (itemStackHandler != null)
             tagCompound.put("inventory", itemStackHandler.serializeNBT());
 
-        return super.write(tagCompound);
+        return super.save(tagCompound);
     }
 
     @Override
-    public void prepareS2CPacketData(CompoundNBT nbt) {
+    public void prepareS2CPacketData(CompoundTag nbt) {
         super.prepareS2CPacketData(nbt);
         nbt.putBoolean("isWorking", this.isOn);
     }
 
     @Override
-    public void onSyncDataFromServerArrived(CompoundNBT nbt) {
+    public void onSyncDataFromServerArrived(CompoundTag nbt) {
         super.onSyncDataFromServerArrived(nbt);
         this.setWorking(nbt.getBoolean("isWorking"));
-        this.world.getLightManager().checkBlock(this.pos);	//checkLightFor
+        this.level.getLightEngine().checkBlock(this.worldPosition);	//checkLightFor
     }
 
     @Override
     public <T> LazyOptional<T> getCapability(Capability<T> capability, Direction facing) {
-    	if (!this.removed && facing != null && capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+    	if (!this.remove && facing != null && capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
     		return itemStackHdlerCap.cast();
     	}
         return super.getCapability(capability, facing);
@@ -150,27 +155,27 @@ public class TileElectricFurnace extends SESinglePortMachine<ISEVoltageSource> i
     private final LazyOptional<?> itemStackHdlerCap = LazyOptional.of(()->itemStackHandler);
     public final ItemStackHandlerInventory inventory = new ItemStackHandlerInventory(itemStackHandler) {
 		@Override
-		public void markDirty() {
+		public void setChanged() {
 //			furnance.markDirty();
 		}
 
 		@Override
-		public boolean isUsableByPlayer(PlayerEntity player) {
-	        if (furnance.getWorld().getTileEntity(furnance.getPos()) != furnance)
+		public boolean stillValid(Player player) {
+	        if (furnance.getLevel().getBlockEntity(furnance.getBlockPos()) != furnance)
 	            return false;
-	        
+
 	        final double X_CENTRE_OFFSET = 0.5;
 	        final double Y_CENTRE_OFFSET = 0.5;
 	        final double Z_CENTRE_OFFSET = 0.5;
 	        final double MAXIMUM_DISTANCE_SQ = 8.0 * 8.0;
 
-	        return player.getDistanceSq(
-	        		pos.getX() + X_CENTRE_OFFSET, 
-	        		pos.getY() + Y_CENTRE_OFFSET, 
-	        		pos.getZ() + Z_CENTRE_OFFSET) < MAXIMUM_DISTANCE_SQ;
+	        return player.distanceToSqr(
+	        		worldPosition.getX() + X_CENTRE_OFFSET,
+	        		worldPosition.getY() + Y_CENTRE_OFFSET,
+	        		worldPosition.getZ() + Z_CENTRE_OFFSET) < MAXIMUM_DISTANCE_SQ;
 		}
     };
-    
+
     static class ItemStackHandlerImpl extends ItemStackHandler {
         private final TileElectricFurnace owner;
         protected ItemStackHandlerImpl(TileElectricFurnace owner) {
@@ -187,14 +192,14 @@ public class TileElectricFurnace extends SESinglePortMachine<ISEVoltageSource> i
             return super.extractItem(slot, amount, simulate);
         }
 
-        public boolean canWork(FurnaceRecipe recipe) {
+        public boolean canWork(SmeltingRecipe recipe) {
             if (recipe == null)
                 return false;
 
-            ItemStack recipeOutput = recipe.getRecipeOutput();
+            ItemStack recipeOutput = recipe.getResultItem();
             ItemStack itemStack = getStackInSlot(1);
             if (!itemStack.isEmpty()) {
-                if (!itemStack.isItemEqual(recipeOutput))
+                if (!itemStack.sameItem(recipeOutput))
                     return false;   // Different Type
                 if (itemStack.getCount() + recipeOutput.getCount() > getStackLimit(1, recipeOutput))
                     return false;   // No more space
@@ -205,10 +210,10 @@ public class TileElectricFurnace extends SESinglePortMachine<ISEVoltageSource> i
 
         public void makeResult(ItemStack result) {
             super.extractItem(0, 1, false);	// Consume the ingredient
-            
-            ItemStack resultStack = this.getStackInSlot(1);            
+
+            ItemStack resultStack = this.getStackInSlot(1);
             // We assume that resultStack is valid for insert and replace
-            
+
             if (resultStack.isEmpty()) {
                 this.stacks.set(1, result);
             } else {
@@ -222,7 +227,7 @@ public class TileElectricFurnace extends SESinglePortMachine<ISEVoltageSource> i
             if (slot == 0)
                 owner.recipe = owner.getSmeltingResult(this.getStackInSlot(0));
         }
-        
+
         @Override
         public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
         	return slot == 0 && owner.getSmeltingResult(stack) != null;
@@ -254,8 +259,8 @@ public class TileElectricFurnace extends SESinglePortMachine<ISEVoltageSource> i
     public void onEnergyNetUpdate() {
         this.voltage = this.circuit.getVoltage();
         this.powerLevel = this.cachedParam.isOn() ? this.voltage * this.voltage / this.cachedParam.getResistance() : 0;
-        
-        
+
+
     	Utils.enqueueServerWork(()->{
 			this.setSecondState(this.powerLevel > 100);
     	});
@@ -271,15 +276,15 @@ public class TileElectricFurnace extends SESinglePortMachine<ISEVoltageSource> i
     }
 
     ///////////////////////////////////
-    /// INamedContainerProvider
+    /// MenuProvider
     ///////////////////////////////////
 	@Override
-	public Container createMenu(int windowId, PlayerInventory inv, PlayerEntity player) {
+	public AbstractContainerMenu createMenu(int windowId, Inventory inv, Player player) {
 		return new ContainerElectricFurnace(windowId, inv, this);
 	}
-	
-	public FurnaceRecipe getSmeltingResult(ItemStack itemStack) {
-		Optional<FurnaceRecipe> result = world.getRecipeManager().getRecipe(IRecipeType.SMELTING, new Inventory(itemStack), world);
+
+	public SmeltingRecipe getSmeltingResult(ItemStack itemStack) {
+		Optional<SmeltingRecipe> result = level.getRecipeManager().getRecipeFor(RecipeType.SMELTING, new SimpleContainer(itemStack), level);
 		return result.isPresent() ? result.get() : null;
 	}
 }

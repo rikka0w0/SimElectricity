@@ -1,19 +1,19 @@
 package simelectricity.essential;
 
-import net.minecraft.block.Block;
-import net.minecraft.inventory.container.ContainerType;
-import net.minecraft.item.Item;
-import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.world.ChunkWatchEvent;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.network.NetworkRegistry;
-import net.minecraftforge.fml.network.simple.SimpleChannel;
+import net.minecraftforge.fmllegacy.network.NetworkRegistry;
+import net.minecraftforge.fmllegacy.network.simple.SimpleChannel;
 import simelectricity.essential.api.ISEChunkWatchSensitiveTile;
 import simelectricity.essential.api.SEEAPI;
 import simelectricity.essential.client.ClientConfigs;
@@ -31,47 +31,47 @@ public class Essential {
 
 	private static final String PROTOCOL_VERSION = "1";
     public SimpleChannel networkChannel;
-    
+
     public Essential() {
-    	if (instance == null) 
+    	if (instance == null)
             instance = this;
         else
             throw new RuntimeException("Duplicated Class Instantiation: simelectricity.essential.Essential");
-    	
+
     	ClientConfigs.register();
     	proxy.registerModelLoaders();
     }
-    
+
     @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
-    public final static class ModEventBusHandler {   	
+    public final static class ModEventBusHandler {
     	@SubscribeEvent
     	public static void newRegistry(RegistryEvent.NewRegistry event) {
         	SEEAPI.coverPanelRegistry = CoverPanelRegistry.INSTANCE;
     	}
-    	
+
     	@SubscribeEvent
 		public static void registerBlocks(final RegistryEvent.Register<Block> event) {
     		BlockRegistry.initBlocks();
         	BlockRegistry.registerBlocks(event.getRegistry());
     	}
-    	
+
     	@SubscribeEvent
 		public static void registerItems(final RegistryEvent.Register<Item> event) {
     		ItemRegistry.initItems();
         	BlockRegistry.registerBlockItems(event.getRegistry());
             ItemRegistry.registerItems(event.getRegistry());
     	}
-    	
+
     	@SubscribeEvent
-    	public static void onTileEntityTypeRegistration(final RegistryEvent.Register<TileEntityType<?>> event) {
+    	public static void onTileEntityTypeRegistration(final RegistryEvent.Register<BlockEntityType<?>> event) {
     		BlockRegistry.registerTileEntities(event.getRegistry());
     	}
-    	
+
     	@SubscribeEvent
-    	public static void registerContainers(final RegistryEvent.Register<ContainerType<?>> event) {
+    	public static void registerContainers(final RegistryEvent.Register<MenuType<?>> event) {
     		BlockRegistry.registerContainers(event.getRegistry());
     	}
-    	
+
     	@SubscribeEvent
     	public static void onCommonSetup(FMLCommonSetupEvent event) {
     		Essential.instance.networkChannel = NetworkRegistry.newSimpleChannel(
@@ -80,22 +80,22 @@ public class Essential {
     			    PROTOCOL_VERSION::equals,
     			    PROTOCOL_VERSION::equals
     			);
-    		
-    		Essential.instance.networkChannel.registerMessage(0, 
-    				MessageContainerSync.class, MessageContainerSync.processor::toBytes, MessageContainerSync.processor::fromBytes, 
+
+    		Essential.instance.networkChannel.registerMessage(0,
+    				MessageContainerSync.class, MessageContainerSync.processor::toBytes, MessageContainerSync.processor::fromBytes,
     				MessageContainerSync.processor::handler);
 
     		new SECoverPanelFactory();
     	}
     }
-    
+
     @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
     public final static class ForgeEventBusHandler {
 		@SubscribeEvent
 		public static void onChunkWatchEvent(ChunkWatchEvent.Watch event) {
-			Chunk chunk = event.getPlayer().world.getChunk(event.getPos().x, event.getPos().z);
+			LevelChunk chunk = event.getPlayer().level.getChunk(event.getPos().x, event.getPos().z);
 
-			for (Object tileEntity : chunk.getTileEntityMap().values()) {
+			for (Object tileEntity : chunk.getBlockEntities().values()) {
 				if (tileEntity instanceof ISEChunkWatchSensitiveTile)
 					((ISEChunkWatchSensitiveTile) tileEntity).onRenderingUpdateRequested();
 			}

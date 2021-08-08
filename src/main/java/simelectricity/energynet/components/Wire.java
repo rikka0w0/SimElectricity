@@ -1,14 +1,14 @@
 package simelectricity.energynet.components;
 
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.core.Direction;
 import simelectricity.api.components.ISEWire;
 import simelectricity.api.node.ISESubComponent;
 
 public final class Wire extends CableBase<ISEWire> implements ISESubComponent<ISESubComponent<?>>, ISEWire {
     private volatile boolean[] hasBranchOnSide;        //Use canConnectOnSide() instead
 
-    public Wire(ISEWire dataProvider, TileEntity te) {
+    public Wire(ISEWire dataProvider, BlockEntity te) {
         super(dataProvider, te);
     }
 

@@ -19,9 +19,9 @@
 
 package simelectricity;
 
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -61,10 +61,10 @@ public class SimElectricity {
     	@SubscribeEvent
     	public static void newRegistry(RegistryEvent.NewRegistry event) {
             // Register creative tabs
-            SEAPI.SETab = new ItemGroup(SimElectricity.MODID) {
+            SEAPI.SETab = new CreativeModeTab(SimElectricity.MODID) {
                 @Override
                 @OnlyIn(Dist.CLIENT)
-                public ItemStack createIcon() {
+                public ItemStack makeIcon() {
                     return new ItemStack(SEAPI.managementToolItem);
                 }
             };

@@ -2,7 +2,7 @@ package simelectricity.api.tile;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
 import simelectricity.api.node.ISEGridNode;
 
 /**
@@ -15,10 +15,10 @@ public interface ISEGridTile {
     /**
      * This function will be called by the grid manager once a ISEGridObject is going to associate with the ISEGridTile
      * <p/>
-     * Make sure you store the ISEGridNode instance in your TileEntity
+     * Make sure you store the ISEGridNode instance in your BlockEntity
      * <p/>
      * Do NOT call this function anywhere else!
-     * @param gridNode the ISEGridNode at the TileEntity's location
+     * @param gridNode the ISEGridNode at the BlockEntity's location
      */
     void setGridNode(ISEGridNode gridNode);
 

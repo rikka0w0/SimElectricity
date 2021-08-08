@@ -1,12 +1,13 @@
 package simelectricity.essential.machines.tile;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.Direction;
-import net.minecraft.tileentity.ITickableTileEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import rikka.librikka.tileentity.ITickableTileEntity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import rikka.librikka.tileentity.INamedContainerProvider2;
@@ -15,17 +16,21 @@ import simelectricity.api.components.ISESwitch;
 import simelectricity.essential.common.semachine.SETwoPortMachine;
 import simelectricity.essential.machines.gui.ContainerPowerMeter;
 
-public class TilePowerMeter extends SETwoPortMachine<ISESwitch> implements 
+public class TilePowerMeter extends SETwoPortMachine<ISESwitch> implements
 		ISESwitch, ISEEnergyNetUpdateHandler, ITickableTileEntity, INamedContainerProvider2 {
-    public boolean isOn;
+    public TilePowerMeter(BlockPos pos, BlockState blockState) {
+		super(pos, blockState);
+	}
+
+	public boolean isOn;
     public double current, voltage, bufferedEnergy;
 
     ///////////////////////////////////
-    /// TileEntity
+    /// BlockEntity
     ///////////////////////////////////
     @Override
     public void tick() {
-        if (this.world.isRemote)
+        if (this.level.isClientSide)
             return;
 
         if (this.isOn)
@@ -33,19 +38,19 @@ public class TilePowerMeter extends SETwoPortMachine<ISESwitch> implements
     }
 
     @Override
-    public void read(BlockState blockState, CompoundNBT tagCompound) {
-        super.read(blockState, tagCompound);
+    public void load(CompoundTag tagCompound) {
+        super.load(tagCompound);
 
         this.bufferedEnergy = tagCompound.getDouble("bufferedEnergy");
         this.isOn = tagCompound.getBoolean("isOn");
     }
 
     @Override
-    public CompoundNBT write(CompoundNBT tagCompound) {
+    public CompoundTag save(CompoundTag tagCompound) {
         tagCompound.putDouble("bufferedEnergy", this.bufferedEnergy);
         tagCompound.putBoolean("isOn", this.isOn);
 
-        return super.write(tagCompound);
+        return super.save(tagCompound);
     }
 
     /////////////////////////////////////////////////////////
@@ -89,10 +94,10 @@ public class TilePowerMeter extends SETwoPortMachine<ISESwitch> implements
     }
 
     ///////////////////////////////////
-    /// INamedContainerProvider
+    /// MenuProvider
     ///////////////////////////////////
 	@Override
-	public Container createMenu(int windowId, PlayerInventory inv, PlayerEntity player) {
+	public AbstractContainerMenu createMenu(int windowId, Inventory inv, Player player) {
         return new ContainerPowerMeter(this, windowId);
     }
 }

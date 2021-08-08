@@ -1,8 +1,7 @@
 package simelectricity.essential.machines.gui;
 
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.Direction;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.core.Direction;
 import rikka.librikka.container.ContainerSynchronizer;
 import rikka.librikka.gui.AutoGuiHandler;
 import simelectricity.api.SEAPI;
@@ -23,14 +22,14 @@ public class ContainerSwitch extends ContainerNoInventoryTwoPort<TileSwitch> imp
     @ContainerSynchronizer.SyncField
     public volatile Direction inputSide, outputSide;
 
-    
+
     // Server side
     public ContainerSwitch(TileSwitch tileEntity, int windowId) {
     	super(tileEntity, windowId);
     }
 
     // Client side
-    public ContainerSwitch(int windowId, PlayerInventory inv, PacketBuffer data) {
+    public ContainerSwitch(int windowId, Inventory inv) {
     	this(null, windowId);
     }
 

@@ -4,20 +4,20 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.vertex.IVertexBuilder;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.model.BakedQuad;
-import net.minecraft.client.renderer.model.IBakedModel;
+import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
-import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
-import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.TextureStitchEvent;
@@ -32,21 +32,21 @@ import simelectricity.essential.client.grid.pole.Models;
 import simelectricity.essential.grid.transformer.TilePowerTransformerPlaceHolder;
 
 @OnlyIn(Dist.CLIENT)
-public class PowerTransformerTER extends TileEntityRenderer<TilePowerTransformerPlaceHolder.Render> {
+public class PowerTransformerTER implements BlockEntityRenderer<TilePowerTransformerPlaceHolder.Render> {
     public final static ResourceLocation modelResLoc = new ResourceLocation(Essential.MODID, "block/powertransformer");
     @SuppressWarnings("unchecked")
 	private final static List<BakedQuad>[] bakedModel = new List[4];
     @SuppressWarnings("unchecked")
 	private final static List<BakedQuad>[] bakedModelMirrored = new List[4];
 
-    public PowerTransformerTER(TileEntityRendererDispatcher rendererDispatcherIn) {
-		super(rendererDispatcherIn);
+    public PowerTransformerTER(BlockEntityRendererProvider.Context context) {
+
 	}
-    
+
     public static void onModelRegistryEvent() {
     	ModelLoader.addSpecialModel(modelResLoc);
     }
-    
+
     public static void onPreTextureStitchEvent(TextureStitchEvent.Pre event) {
     	if (EasyTextureLoader.isBlockAtlas(event)) {
     		event.addSprite(new ResourceLocation(ResourcePaths.metal));
@@ -62,31 +62,31 @@ public class PowerTransformerTER extends TileEntityRenderer<TilePowerTransformer
 	}
 
 	@Override
-	public void render(TilePowerTransformerPlaceHolder.Render te, float partialTicks, MatrixStack matrixStack,
-			IRenderTypeBuffer bufferIn, int combinedLightIn, int combinedOverlayIn) {
+	public void render(TilePowerTransformerPlaceHolder.Render te, float partialTicks, PoseStack matrixStack,
+			MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
 		Direction facing = te.getFacing();
 		boolean mirrored = te.isMirrored();
 		if (facing == null)
 			return;
-		
+
 		//S   W   N   E
 		//270 180 90  0
 		//0   1   2   3
-		
-        IVertexBuilder buffer = bufferIn.getBuffer(RenderType.getSolid());
-        
+
+        VertexConsumer buffer = bufferIn.getBuffer(RenderType.solid());
+
     	//TODO: Fix light calculation
         int lightDummy = 15728640;
 		for (BakedQuad quad: getQuads(facing, mirrored)) {
-			matrixStack.push();
+			matrixStack.pushPose();
 
-			buffer.addQuad(matrixStack.getLast(), quad, 
-					new float[]{1.0F, 1.0F, 1.0F, 1.0F}, 
-					1.0F, 1.0F, 1.0F, 
-					new int[]{lightDummy, lightDummy, lightDummy, lightDummy}, 
+			buffer.putBulkData(matrixStack.last(), quad,
+					new float[]{1.0F, 1.0F, 1.0F, 1.0F},
+					1.0F, 1.0F, 1.0F,
+					new int[]{lightDummy, lightDummy, lightDummy, lightDummy},
 					OverlayTexture.NO_OVERLAY, true);
 
-			matrixStack.pop();
+			matrixStack.popPose();
 		}
 	}
 
@@ -101,24 +101,24 @@ public class PowerTransformerTER extends TileEntityRenderer<TilePowerTransformer
     			bakedModel[facing.ordinal()-2] = quads;
     		}
     	}
-    	
+
     	if (quads.isEmpty()) {
     		bake(quads, facing, mirrored);
     	}
-    	
+
     	return quads;
     }
 
     @SuppressWarnings("deprecation")
     public static void bake(List<BakedQuad> quads, Direction facing, boolean mirrored) {
-		IBakedModel mdl = Minecraft.getInstance().getModelManager().getModel(modelResLoc);
+		BakedModel mdl = Minecraft.getInstance().getModelManager().getModel(modelResLoc);
 
 		quads.clear();
         quads.addAll(mdl.getQuads(null, null, null));
         for (Direction side: Direction.values()) {
         	quads.addAll(mdl.getQuads(null, side, null));
 		}
-        
+
         // HV and LV Bushing
         TextureAtlasSprite textureMetal = EasyTextureLoader.blockTextureGetter().apply(new ResourceLocation(ResourcePaths.metal));
         TextureAtlasSprite textureInsulator = EasyTextureLoader.blockTextureGetter().apply(new ResourceLocation(ResourcePaths.glass_insulator));
@@ -137,11 +137,11 @@ public class PowerTransformerTER extends TileEntityRenderer<TilePowerTransformer
         model.merge(insulator.clone().translateCoord(-1, 1, 0.2F));
         model.merge(insulator.clone().translateCoord(-1, 1, 1));
         model.merge(insulator.translateCoord(-1, 1, 1.8F));
-        
+
         model.translateCoord(0.5F, 0, 0.5F).bake(quads);
-        
+
         // Rotate and flip the model
-        int rotation = (3-facing.getHorizontalIndex())*90;
+        int rotation = (3-facing.get2DDataValue())*90;
         List<MutableQuad> mquads = quads.stream().map(MutableQuad::new).collect(Collectors.toList());
         quads.clear();
 		for (MutableQuad mquad: mquads) {

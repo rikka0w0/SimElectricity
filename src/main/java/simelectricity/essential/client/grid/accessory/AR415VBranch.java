@@ -1,7 +1,7 @@
 package simelectricity.essential.client.grid.accessory;
 
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import rikka.librikka.math.Vec3f;
 import rikka.librikka.model.loader.EasyTextureLoader;
 import rikka.librikka.model.quadbuilder.RawQuadGroup;
@@ -51,8 +51,8 @@ public class AR415VBranch implements ISEAccessoryRenderer {
 				float angleFrom2 = secondPoleConnection[1].calcAngleFromXInDegree();		
 				float angleDiff2 = angleTo-angleFrom2;
 				
-				float cute1 = MathHelper.abs(angleDiff);
-				float cute2 = MathHelper.abs(angleDiff2);
+				float cute1 = Mth.abs(angleDiff);
+				float cute2 = Mth.abs(angleDiff2);
 				
 				cute1 = cute1>180 ? 360-cute1 : cute1;
 				cute2 = cute2>180? 360-cute2: cute2;

@@ -1,7 +1,7 @@
 package simelectricity.essential.client.grid.pole;
 
-import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import rikka.librikka.model.quadbuilder.RawQuadGroup;
@@ -12,9 +12,9 @@ import simelectricity.essential.grid.TilePoleBranch;
 import simelectricity.essential.grid.TilePoleConcrete;
 
 @OnlyIn(Dist.CLIENT)
-public class ConcretePoleTER<T extends TileEntity & ISEPowerPole> extends PowerPoleTER<T> {
-	public ConcretePoleTER(TileEntityRendererDispatcher rendererDispatcherIn) {
-		super(rendererDispatcherIn);
+public class ConcretePoleTER<T extends BlockEntity & ISEPowerPole> extends PowerPoleTER<T> {
+	public ConcretePoleTER(BlockEntityRendererProvider.Context context) {
+		super(context);
 	}
 	
 	public static RawQuadGroup modelInsulator10kV = null;

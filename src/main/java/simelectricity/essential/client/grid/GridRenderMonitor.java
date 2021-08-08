@@ -1,8 +1,8 @@
 package simelectricity.essential.client.grid;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.event.TickEvent.ClientTickEvent;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -33,7 +33,7 @@ public enum GridRenderMonitor {
         if (this.affactedTiles.isEmpty())
             return;
 
-        ClientWorld theWorld = Minecraft.getInstance().world;
+        ClientLevel theWorld = Minecraft.getInstance().level;
 
         if (theWorld == null)
             return;        //Not in game yet;
@@ -42,9 +42,9 @@ public enum GridRenderMonitor {
             Iterator<ISEPowerPole> iterator = this.affactedTiles.iterator();
             while (iterator.hasNext()) {
                 ISEPowerPole tile = iterator.next();
-                TileEntity te = (TileEntity) tile;
+                BlockEntity te = (BlockEntity) tile;
 
-                if (te.getWorld() != theWorld || te.isRemoved()) {
+                if (te.getLevel() != theWorld || te.isRemoved()) {
                     iterator.remove();
                     continue;
                 }
@@ -56,7 +56,7 @@ public enum GridRenderMonitor {
                 	iterator.remove();
                 }
             }
-            
+
             iterator = this.processedTiles.iterator();
             while (iterator.hasNext()) {
             	ISEPowerPole pole = iterator.next();
@@ -65,25 +65,26 @@ public enum GridRenderMonitor {
             	iterator.remove();
             }
             this.processedTiles.clear();
-            
+
             SELogger.logInfo(SELogger.client, "Grid render updated, remaining:" + this.affactedTiles.size());
         }
     }
 
     public void markLoadedPowerPoleForRenderingUpdate() {
-        ClientWorld theWorld = Minecraft.getInstance().world;
+        ClientLevel theWorld = Minecraft.getInstance().level;
 
         if (theWorld == null)
             return;        //Not in game yet;
-        
-        for (TileEntity tile: theWorld.loadedTileEntityList) {
+
+        // TODO: Check theWorld.blockEntityList
+        /*for (BlockEntity tile: theWorld.getBlockEntity(null)) {
         	if (tile instanceof ISEPowerPole) {
         		PowerPoleRenderHelper helper = ((ISEPowerPole) tile).getRenderHelper();
         		if (helper == null)
         			continue;
-        		
+
         		helper.postUpdate();
         	}
-        }
+        }*/
     }
 }

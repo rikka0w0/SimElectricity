@@ -1,7 +1,8 @@
 package simelectricity.essential.grid;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.model.data.ModelDataMap;
@@ -11,58 +12,58 @@ import rikka.librikka.tileentity.TileEntityBase;
 import simelectricity.essential.Essential;
 
 public class TileMultiBlockPlaceHolder extends TileEntityBase implements IMultiBlockTile {
-	public TileMultiBlockPlaceHolder() {
-		super(Essential.MODID);
+	public TileMultiBlockPlaceHolder(BlockPos pos, BlockState blockState) {
+		super(Essential.MODID, pos, blockState);
 	}
 
 	//To minimize network usage, mbInfo will not be send to blocks other than the Render block
     protected MultiBlockTileInfo mbInfo;
-    
+
     //////////////////////////////
-    /////TileEntity
+    /////BlockEntity
     //////////////////////////////
     @Override
-    public void read(BlockState state, CompoundNBT nbt) {
-        super.read(state, nbt);
+    public void load(CompoundTag nbt) {
+        super.load(nbt);
         this.mbInfo = new MultiBlockTileInfo(nbt);
     }
 
     @Override
-    public CompoundNBT write(CompoundNBT nbt) {
+    public CompoundTag save(CompoundTag nbt) {
         this.mbInfo.saveToNBT(nbt);
-        return super.write(nbt);
+        return super.save(nbt);
     }
-    
+
     @Override
     public final void onStructureCreating(MultiBlockTileInfo mbInfo) {
         this.mbInfo = mbInfo;
-        markDirty();
-        
+        setChanged();
+
         onStructureCreating();
     }
-    
+
     @Override
     public MultiBlockTileInfo getMultiBlockTileInfo() {
         return mbInfo;
     }
-    
+
     /////////////////////////////////////////////////////////
     /////Sync
     /////////////////////////////////////////////////////////
     @Override
-    public void prepareS2CPacketData(CompoundNBT nbt) {
+    public void prepareS2CPacketData(CompoundTag nbt) {
         super.prepareS2CPacketData(nbt);
     	mbInfo.saveToNBT(nbt);
     }
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public void onSyncDataFromServerArrived(CompoundNBT nbt) {
+    public void onSyncDataFromServerArrived(CompoundTag nbt) {
     	mbInfo = new MultiBlockTileInfo(nbt);
-        
+
         super.onSyncDataFromServerArrived(nbt);
     }
-    
+
 	@Override
     protected void collectModelData(ModelDataMap.Builder builder) {
 		builder.withInitial(IMultiBlockTile.prop, this);
@@ -72,9 +73,9 @@ public class TileMultiBlockPlaceHolder extends TileEntityBase implements IMultiB
     /////Functions to be implemented
     /////////////////////////////////////////////////////////
     public void onStructureCreating() {
-    	
+
     }
-    
+
 	@Override
 	public void onStructureCreated() {
 

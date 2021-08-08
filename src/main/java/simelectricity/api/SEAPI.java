@@ -20,8 +20,8 @@
 package simelectricity.api;
 
 
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.Item;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
 import simelectricity.api.internal.ISEEnergyNetAgent;
 
 /**
@@ -41,7 +41,7 @@ public class SEAPI {
      */
     public static ISEEnergyNetAgent energyNetAgent;
 
-    public static ItemGroup SETab;
+    public static CreativeModeTab SETab;
 
     public static Item managementToolItem;
 }

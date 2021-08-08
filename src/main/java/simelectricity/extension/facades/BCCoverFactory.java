@@ -1,8 +1,8 @@
 package simelectricity.extension.facades;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
 import simelectricity.essential.api.ISECoverPanelFactory;
 import simelectricity.essential.api.coverpanel.ISECoverPanel;
 
@@ -90,7 +90,7 @@ public class BCCoverFactory implements ISECoverPanelFactory{
 	}
 
 	@Override
-	public ISECoverPanel from(CompoundNBT nbt, Class<? extends ISECoverPanel> panelCls, String coverPanelName) {
+	public ISECoverPanel from(CompoundTag nbt, Class<? extends ISECoverPanel> panelCls, String coverPanelName) {
 		return new BCFacadePanel(nbt);
 	}
 

@@ -2,7 +2,7 @@ package simelectricity.api.node;
 
 import javax.annotation.Nonnull;
 
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
 
 /**
  * A ISEGridNode represents a circuit node in the world's grid system, it is independent of its host tileEntity and chunk
