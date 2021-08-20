@@ -17,6 +17,7 @@ java.toolchain.languageVersion = JavaLanguageVersion.of(16)
 
 dependencies {
     minecraft 'net.minecraftforge:forge:1.17.1-37.0.27'
+    implementation project(':librikka')
 }
 
 version = "1.0.0"
@@ -25,25 +26,15 @@ archivesBaseName = "SimElectricity"
 
 // configure  the source folders
 sourceSets {
-    librikka {
-        java {
-            srcDir "librikka/src/main/java"
-        }
-        resources {
-            srcDir "librikka/src/main/resources"
-        }
-    }
-
     main {
         resources {
             srcDir "src/generated/resources"
             exclude '.cache'
             exclude 'Thumbs.db'
         }
-        compileClasspath += librikka.output
-        runtimeClasspath += librikka.output
     }
 }
+
 
 minecraft {
     // the mappings can be changed at any time, and must be in the following format.
@@ -70,10 +61,6 @@ minecraft {
                 simelectricity {
                     source sourceSets.main
                 }
-                
-                librikka {
-                    source sourceSets.librikka
-                }
             }
         }
 
@@ -89,10 +76,6 @@ minecraft {
             mods {
                 simelectricity {
                     source sourceSets.main
-                }
-                
-                librikka {
-                    source sourceSets.librikka
                 }
             }
         }
@@ -112,20 +95,9 @@ minecraft {
                 simelectricity {
                     source sourceSets.main
                 }
-                
-                librikka {
-                    source sourceSets.librikka
-                }
             }
         }
     }
-}
-
-// Ref: https://stackoverflow.com/questions/61093029/how-to-add-another-sourceset-with-a-mod-in-minecraft-forge-forge-gradle-3
-configurations {
-    librikkaCompile.extendsFrom(compile)
-    librikkaCompileOnly.extendsFrom(compileOnly)
-    librikkaRuntimeOnly.extendsFrom(runtimeOnly)
 }
 
 jar.version = version
@@ -144,6 +116,7 @@ jar {
 }
 
 def libsDir = new File(System.getenv("LIBS_DIR") ?: "build/libs/")
+
 
 task deobfJar(type: Jar, dependsOn: 'jar') {
     destinationDir = libsDir
