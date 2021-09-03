@@ -6,9 +6,9 @@ A Minecraft mod aiming to bring real world electrical systems into the Minecraft
 
 Presented by the Chinese Institution of Scientific Minecraft Mod (CISM)
 
-Current Supported Version: Minecraft Forge 1.16.4 (Also work on 1.16.3)
+Current Supported Version: Minecraft Forge 1.17.1
 
-Legacy versions: Minecraft Forge 1.15.2, 1.14.4, 1.12.2, 1.11.2, 1.7.10
+Legacy versions: Minecraft Forge 1.16.5(1.16.2 to 1.16.5), 1.15.2, 1.14.4, 1.12.2, 1.11.2, 1.7.10
 
 ![Image](https://raw.githubusercontent.com/wiki/RoyalAliceAcademyOfSciences/SimElectricity/screenshots/grid.jpg)
 
@@ -37,7 +37,6 @@ and type the following commands:
 1. Jars files are in `SimElectricity/build/libs` and `SimElectricity\librikka\build\libs`
 *  The suffix of deobfuscated jars is "dev".
 *  __Obfuscated jars don't have any suffix, these jars are supposed to be used in normal minecraft games, copy them toyour `.minecraft\mods` directory __
-*  `SimElectricity-full.jar` includes LibRikka
 
 # For Developers ![Image](/src/main/resources/assets/sime_essential/textures/item/tool_wrench.png)
 For API Usage, Please refer to the [SimElectricity Github Wiki Pages](https://github.com/RoyalAliceAcademyOfSciences/SimElectricity/wiki)
@@ -47,6 +46,10 @@ and comments in the API source code (`package simelectricity.api`).
 1. Setup the environment first (See section "Setup Environment")
 1. In the SimElectricity directory execute `gradlew genEclipseRuns` to generate the workspace and launch configuration
 1. Launch Eclipse, then `Import > Existing Gradle Project > Select Folder`
+1. Go to `Debug Configuration` (Next to the debug icon), edit `MOD_CLASSES` in the `Environment` tab:
+Replace `simelectricity%%<SomePath>\SimElectricity\bin\main;simelectricity%%<SomePath>\SimElectricity\bin\main` with
+`simelectricity%%<SomePath>\SimElectricity\bin\main;librikka%%<SomePath>\SimElectricity\librikka\bin\main`.
+
 ## IntelliJ IDEA
 1. Setup the environment first (See section "Setup Environment")
 1. Execute `gradlew genIntellijRuns`

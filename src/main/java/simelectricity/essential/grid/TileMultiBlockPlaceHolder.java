@@ -61,7 +61,7 @@ public class TileMultiBlockPlaceHolder extends TileEntityBase implements IMultiB
     public void onSyncDataFromServerArrived(CompoundTag nbt) {
     	mbInfo = new MultiBlockTileInfo(nbt);
 
-        super.onSyncDataFromServerArrived(nbt);
+		this.markForRenderUpdate();
     }
 
 	@Override
@@ -75,14 +75,4 @@ public class TileMultiBlockPlaceHolder extends TileEntityBase implements IMultiB
     public void onStructureCreating() {
 
     }
-
-	@Override
-	public void onStructureCreated() {
-
-	}
-
-	@Override
-	public void onStructureRemoved() {
-
-	}
 }

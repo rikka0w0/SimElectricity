@@ -87,6 +87,7 @@ public abstract class TileDistributionTransformer extends SEMultiBlockGridTile{
 	@OnlyIn(Dist.CLIENT)
     public void onSyncDataFromServerArrived(CompoundTag nbt) {
 		this.accessory = Utils.posFromNbt(nbt, "accessory");
+		this.markForRenderUpdate();
         super.onSyncDataFromServerArrived(nbt);
     }
 
