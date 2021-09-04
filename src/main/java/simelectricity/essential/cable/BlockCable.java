@@ -108,7 +108,7 @@ public class BlockCable extends BlockBase implements EntityBlock, ICustomBoundin
         		cableData,
         		BlockBehaviour.Properties.of(Material.GLASS).strength(0.2F, 10.0F).sound(SoundType.METAL).noOcclusion()
         		.isRedstoneConductor((a,b,c)->false)
-        		, ItemBlockBase.class,
+        		, ItemBlockBase::new,
         		(new Item.Properties()).tab(SEAPI.SETab),
         		Essential.beTypeOf(TileCable.class)::get);
     }
@@ -133,10 +133,10 @@ public class BlockCable extends BlockBase implements EntityBlock, ICustomBoundin
 	}
 
     private final Supplier<BlockEntityType<? extends TileCable>> beType;
-    protected BlockCable(String name, ISECableMeta cableData, BlockBehaviour.Properties props, Class<? extends ItemBlockBase> itemBlockClass,
+    protected BlockCable(String name, ISECableMeta cableData, BlockBehaviour.Properties props, ItemBlockBase.Constructor itemBlockProvider,
     		Item.Properties itemProps, Supplier<BlockEntityType<? extends TileCable>> beType) {
     	// variableOpacity tells Minecraft not to cache any BlockStats
-        super(name+"_"+cableData.name(), props.dynamicShape(), itemBlockClass, itemProps);
+        super(name+"_"+cableData.name(), props.dynamicShape(), itemBlockProvider, itemProps);
         this.registerDefaultState(this.defaultBlockState().setValue(BlockStateProperties.WATERLOGGED, false));
         this.cableData = cableData;
         this.beType = beType;

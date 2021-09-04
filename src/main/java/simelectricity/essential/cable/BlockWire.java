@@ -95,7 +95,7 @@ public class BlockWire extends BlockBase implements EntityBlock, ICustomBounding
         		.strength(0.2F, 10.0F)
         		.sound(SoundType.METAL)
         		.isRedstoneConductor((a,b,c)->false),
-        		ItemBlockWire.class,
+        		ItemBlockWire::new,
         		(new Item.Properties()).tab(SEAPI.SETab),
                 Essential.beTypeOf(TileWire.class)::get);
     }
@@ -389,9 +389,9 @@ public class BlockWire extends BlockBase implements EntityBlock, ICustomBounding
 
 
     private final Supplier<BlockEntityType<? extends TileWire>> beType;
-    protected BlockWire(String name, ISECableMeta meta, BlockBehaviour.Properties props, Class<? extends ItemBlockBase> itemBlockClass,
+    protected BlockWire(String name, ISECableMeta meta, BlockBehaviour.Properties props, ItemBlockBase.Constructor itemBlockProvider,
     		Item.Properties itemProps, Supplier<BlockEntityType<? extends TileWire>> beType) {
-    	super(name+"_"+meta.name(), props, itemBlockClass, itemProps);
+    	super(name+"_"+meta.name(), props, itemBlockProvider, itemProps);
     	this.registerDefaultState(this.defaultBlockState().setValue(BlockStateProperties.WATERLOGGED, false));
         this.meta = meta;
         this.beType = beType;

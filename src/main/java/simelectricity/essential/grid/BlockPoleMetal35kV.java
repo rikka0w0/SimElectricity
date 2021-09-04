@@ -70,7 +70,7 @@ public class BlockPoleMetal35kV extends BlockBase implements EntityBlock, ISEHVC
         		.strength(0.2F, 10.0F)
         		.sound(SoundType.METAL)
         		.isRedstoneConductor((a,b,c)->false),
-        		ItemBlock.class,
+        		ItemBlock::new,
         		(new Item.Properties()).tab(SEAPI.SETab));
 
 		this.structureTemplate = this.createStructureTemplate();

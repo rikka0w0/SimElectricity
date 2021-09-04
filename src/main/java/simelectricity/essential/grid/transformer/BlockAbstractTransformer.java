@@ -30,7 +30,7 @@ public abstract class BlockAbstractTransformer extends BlockBase {
     public BlockAbstractTransformer(String unlocalizedName, Material material, CreativeModeTab group) {
 		super(unlocalizedName,
 				BlockBehaviour.Properties.of(material).strength(3.0F, 10.0F).sound(SoundType.METAL).isRedstoneConductor((a,b,c)->false),
-				ItemBlockBase.class,
+				ItemBlockBase::new,
 				(new Item.Properties()).tab(group));
 	}
 
