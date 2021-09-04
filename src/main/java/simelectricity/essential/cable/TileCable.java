@@ -4,6 +4,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -35,8 +36,8 @@ public class TileCable extends SEEnergyTile implements ISEGenericCable, ISEIumin
     private final boolean[] connections = new boolean[6];
     private final ISECoverPanel[] installedCoverPanels = new ISECoverPanel[6];
 
-    public TileCable(BlockPos pos, BlockState blockState) {
-		super(pos, blockState);
+    public TileCable(BlockEntityType<?> beType, BlockPos pos, BlockState blockState) {
+		super(beType, pos, blockState);
 	}
 
     ////////////////////////////////////////

@@ -1,6 +1,7 @@
 package simelectricity.essential.grid.transformer;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -8,8 +9,8 @@ import simelectricity.api.SEAPI;
 import simelectricity.essential.client.grid.PowerPoleRenderHelper;
 
 public abstract class TilePowerTransformerWinding extends SEMultiBlockGridTile{
-    public TilePowerTransformerWinding(BlockPos pos, BlockState blockState) {
-		super(pos, blockState);
+    public TilePowerTransformerWinding(BlockEntityType<?> beType, BlockPos pos, BlockState blockState) {
+		super(beType, pos, blockState);
 	}
 
 	@Override
@@ -37,8 +38,8 @@ public abstract class TilePowerTransformerWinding extends SEMultiBlockGridTile{
     }
 
     public static class Primary extends TilePowerTransformerWinding {
-        public Primary(BlockPos pos, BlockState blockState) {
-    		super(pos, blockState);
+        public Primary(BlockEntityType<?> beType, BlockPos pos, BlockState blockState) {
+    		super(beType, pos, blockState);
     	}
 
         @Override
@@ -62,8 +63,8 @@ public abstract class TilePowerTransformerWinding extends SEMultiBlockGridTile{
     }
 
     public static class Secondary extends TilePowerTransformerWinding {
-        public Secondary(BlockPos pos, BlockState blockState) {
-    		super(pos, blockState);
+        public Secondary(BlockEntityType<?> beType, BlockPos pos, BlockState blockState) {
+    		super(beType, pos, blockState);
     	}
 
         @Override

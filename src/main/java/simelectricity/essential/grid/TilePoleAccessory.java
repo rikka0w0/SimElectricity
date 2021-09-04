@@ -4,6 +4,7 @@ import javax.annotation.Nonnull;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.core.BlockPos;
@@ -24,8 +25,8 @@ public abstract class TilePoleAccessory extends SEEnergyTile implements ISEPoleA
     @OnlyIn(Dist.CLIENT)
     protected abstract PowerPoleRenderHelper createRenderHelper();
 
-    public TilePoleAccessory(BlockPos pos, BlockState blockState) {
-		super(pos, blockState);
+    public TilePoleAccessory(BlockEntityType<?> beType, BlockPos pos, BlockState blockState) {
+		super(beType, pos, blockState);
 	}
 
     /////////////////////////////////////////////////////////

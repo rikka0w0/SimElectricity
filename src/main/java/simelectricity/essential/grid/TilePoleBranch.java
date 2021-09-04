@@ -2,6 +2,7 @@ package simelectricity.essential.grid;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.BlockPos;
 import net.minecraftforge.api.distmarker.Dist;
@@ -13,8 +14,8 @@ import simelectricity.essential.client.grid.PowerPoleRenderHelper;
 import simelectricity.essential.common.ISEFacing8;
 
 public abstract class TilePoleBranch extends TilePoleAccessory implements ISEFacing8{
-	public TilePoleBranch(BlockPos pos, BlockState blockState) {
-		super(pos, blockState);
+	public TilePoleBranch(BlockEntityType<?> beType, BlockPos pos, BlockState blockState) {
+		super(beType, pos, blockState);
 	}
 
 	protected BlockPos neighbor;
@@ -82,8 +83,8 @@ public abstract class TilePoleBranch extends TilePoleAccessory implements ISEFac
     /////BlockEntity
     //////////////////////////////
 	public static class Type10kV extends TilePoleBranch {
-		public Type10kV(BlockPos pos, BlockState blockState) {
-			super(pos, blockState);
+		public Type10kV(BlockEntityType<?> beType, BlockPos pos, BlockState blockState) {
+			super(beType, pos, blockState);
 		}
 
 		@Override
@@ -101,8 +102,8 @@ public abstract class TilePoleBranch extends TilePoleAccessory implements ISEFac
 	}
 
 	public static class Type415V extends TilePoleBranch {
-		public Type415V(BlockPos pos, BlockState blockState) {
-			super(pos, blockState);
+		public Type415V(BlockEntityType<?> beType, BlockPos pos, BlockState blockState) {
+			super(beType, pos, blockState);
 		}
 
 		@Override

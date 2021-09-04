@@ -1,6 +1,5 @@
 package simelectricity.common;
 
-import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 
 import com.mojang.brigadier.CommandDispatcher;
@@ -49,7 +48,7 @@ public class CommandSimE {
 
 	private static int info(CommandSourceStack sender, ServerLevel world) {
 		if (world == null) {
-			sender.sendSuccess(new TextComponent("Dimension " + world.dimension().getRegistryName() + " is not loaded!"), true);
+			sender.sendSuccess(new TextComponent("Dimension is not loaded!"), true);
 			return 0;
 		}
 
@@ -66,7 +65,7 @@ public class CommandSimE {
 
     private static int refresh(CommandSourceStack sender, ServerLevel world) {
 		if (world == null) {
-			sender.sendSuccess(new TextComponent("Dimension " + world.dimension().getRegistryName() + " is not loaded!"), true);
+			sender.sendSuccess(new TextComponent("Dimension is not loaded!"), true);
 			return 0;
 		}
 

@@ -4,6 +4,7 @@ import javax.annotation.Nullable;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
@@ -18,8 +19,8 @@ import simelectricity.essential.client.grid.PowerPoleRenderHelper;
 import simelectricity.essential.grid.TileCableJoint;
 
 public abstract class TileDistributionTransformer extends SEMultiBlockGridTile{
-	public TileDistributionTransformer(BlockPos pos, BlockState blockState) {
-		super(pos, blockState);
+	public TileDistributionTransformer(BlockEntityType<?> beType, BlockPos pos, BlockState blockState) {
+		super(beType, pos, blockState);
 	}
 
 	protected BlockPos accessory;
@@ -94,8 +95,8 @@ public abstract class TileDistributionTransformer extends SEMultiBlockGridTile{
 	protected abstract BlockPos getComplementPos();
 
 	public static class Pole415V extends TileDistributionTransformer {
-		public Pole415V(BlockPos pos, BlockState blockState) {
-			super(pos, blockState);
+		public Pole415V(BlockEntityType<?> beType, BlockPos pos, BlockState blockState) {
+			super(beType, pos, blockState);
 		}
 
 		public final static Vec3i rightPos = new Vec3i(5, 4, 0);
@@ -144,8 +145,8 @@ public abstract class TileDistributionTransformer extends SEMultiBlockGridTile{
 	}
 
 	public static class Pole10kV extends TileDistributionTransformer {
-		public Pole10kV(BlockPos pos, BlockState blockState) {
-			super(pos, blockState);
+		public Pole10kV(BlockEntityType<?> beType, BlockPos pos, BlockState blockState) {
+			super(beType, pos, blockState);
 		}
 
 		public final static Vec3i rightPos = new Vec3i(5, 6, 0);

@@ -5,6 +5,7 @@ import javax.annotation.Nullable;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.BlockPos;
 import net.minecraftforge.api.distmarker.Dist;
@@ -16,8 +17,8 @@ import simelectricity.essential.client.grid.PowerPoleRenderHelper;
 import simelectricity.essential.common.ISEFacing8;
 
 public abstract class TilePoleConcrete extends TilePowerPoleBase implements ISEFacing8 {
-	public TilePoleConcrete(BlockPos pos, BlockState blockState) {
-		super(pos, blockState);
+	public TilePoleConcrete(BlockEntityType<?> beType, BlockPos pos, BlockState blockState) {
+		super(beType, pos, blockState);
 	}
 
 	protected BlockPos accessory;
@@ -81,8 +82,8 @@ public abstract class TilePoleConcrete extends TilePowerPoleBase implements ISEF
     }
 
     public static abstract class Pole10Kv extends TilePoleConcrete {
-		public Pole10Kv(BlockPos pos, BlockState blockState) {
-			super(pos, blockState);
+		public Pole10Kv(BlockEntityType<?> beType, BlockPos pos, BlockState blockState) {
+			super(beType, pos, blockState);
 		}
 
 		@Override
@@ -98,8 +99,8 @@ public abstract class TilePoleConcrete extends TilePowerPoleBase implements ISEF
 		}
 
         public static class Type0 extends Pole10Kv {
-            public Type0(BlockPos pos, BlockState blockState) {
-				super(pos, blockState);
+            public Type0(BlockEntityType<?> beType, BlockPos pos, BlockState blockState) {
+				super(beType, pos, blockState);
 			}
 
 			@Override
@@ -117,8 +118,8 @@ public abstract class TilePoleConcrete extends TilePowerPoleBase implements ISEF
         }
 
         public static class Type1 extends Pole10Kv {
-            public Type1(BlockPos pos, BlockState blockState) {
-				super(pos, blockState);
+            public Type1(BlockEntityType<?> beType, BlockPos pos, BlockState blockState) {
+				super(beType, pos, blockState);
 			}
 
 			@Override
@@ -170,8 +171,8 @@ public abstract class TilePoleConcrete extends TilePowerPoleBase implements ISEF
     }
 
     public static class Pole415vType0 extends TilePoleConcrete {
-		public Pole415vType0(BlockPos pos, BlockState blockState) {
-			super(pos, blockState);
+		public Pole415vType0(BlockEntityType<?> beType, BlockPos pos, BlockState blockState) {
+			super(beType, pos, blockState);
 		}
 
 		@Override

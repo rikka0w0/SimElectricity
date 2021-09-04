@@ -1,6 +1,7 @@
 package simelectricity.essential.common;
 
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -13,8 +14,8 @@ public abstract class SEMultiBlockEnergyTile extends SEEnergyTile implements IMu
 	//To minimize network usage, mbInfo will not be send to blocks other than the Render block
     protected MultiBlockTileInfo mbInfo;
 
-    public SEMultiBlockEnergyTile(BlockPos pos, BlockState blockState) {
-		super(pos, blockState);
+    public SEMultiBlockEnergyTile(BlockEntityType<?> beType, BlockPos pos, BlockState blockState) {
+		super(beType, pos, blockState);
 	}
 
     //////////////////////////////

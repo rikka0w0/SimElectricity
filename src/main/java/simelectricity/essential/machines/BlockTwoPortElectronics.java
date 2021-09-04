@@ -22,7 +22,8 @@ import net.minecraft.world.level.Level;
 import rikka.librikka.IMetaProvider;
 import rikka.librikka.ITileMeta;
 import rikka.librikka.Utils;
-import rikka.librikka.tileentity.ITickableBlockEntity;
+import rikka.librikka.blockentity.ITickableBlockEntity;
+import simelectricity.essential.Essential;
 import simelectricity.essential.api.ISECoverPanelHost;
 import simelectricity.essential.api.coverpanel.ISECoverPanel;
 import simelectricity.essential.common.CoverPanelUtils;
@@ -31,10 +32,12 @@ import simelectricity.essential.common.semachine.SETwoPortMachine;
 import simelectricity.essential.machines.tile.*;
 import simelectricity.essential.utils.RedstoneHelper;
 
+import java.util.function.Supplier;
+
 import javax.annotation.Nullable;
 
 public abstract class BlockTwoPortElectronics extends SEMachineBlock implements IMetaProvider<ITileMeta> {
-    public static enum MetaInfo implements ITileMeta {
+    public static enum Type implements ITileMeta {
     	adjustable_transformer(TileAdjustableTransformer.class, false),
     	current_sensor(TileCurrentSensor.class, false),
     	diode(TileDiode.class, false),
@@ -42,21 +45,28 @@ public abstract class BlockTwoPortElectronics extends SEMachineBlock implements 
     	relay(TileRelay.class, false),
     	power_meter(TilePowerMeter.class, true);
 
-		MetaInfo(Class<? extends BlockEntity> teCls, boolean tickable) {
+    	Type(Class<? extends BlockEntity> teCls, boolean tickable) {
 			this.teCls = teCls;
+			this.beType = Essential.beTypeOf(teCls)::get;
 			this.tickable = tickable;
 		}
 
 		public final boolean tickable;
 		public final Class<? extends BlockEntity> teCls;
+		public final Supplier<BlockEntityType<?>> beType;
 
 		@Override
 		public final Class<? extends BlockEntity> teCls() {
 			return teCls;
 		}
+
+		@Override
+		public BlockEntityType<?> beType() {
+			return beType.get();
+		}
     }
 
-	private final MetaInfo meta;
+	private final Type meta;
 	@Override
 	public final ITileMeta meta() {
 		return meta;
@@ -65,19 +75,19 @@ public abstract class BlockTwoPortElectronics extends SEMachineBlock implements 
     ///////////////////////////////
     ///Block Properties
     ///////////////////////////////
-    public BlockTwoPortElectronics(MetaInfo meta) {
+    public BlockTwoPortElectronics(Type meta) {
         super("electronics2_" + meta.name());
     	this.meta = meta;
     }
 
     public static BlockTwoPortElectronics[] create() {
-    	BlockTwoPortElectronics[] ret = new BlockTwoPortElectronics[MetaInfo.values().length];
+    	BlockTwoPortElectronics[] ret = new BlockTwoPortElectronics[Type.values().length];
 
-    	for (MetaInfo meta: MetaInfo.values()) {
+    	for (Type meta: Type.values()) {
     		ret[meta.ordinal()] = new BlockTwoPortElectronics(meta) {
     			@Override
     			public boolean hasSecondState() {
-    				return meta == MetaInfo.circuit_breaker;
+    				return meta == Type.circuit_breaker;
     			}
     		};
     	}
@@ -97,7 +107,7 @@ public abstract class BlockTwoPortElectronics extends SEMachineBlock implements 
 
 	@Override
 	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> beType) {
-		return meta.tickable && !level.isClientSide() ? ITickableBlockEntity::genericTicker : null;
+		return meta.tickable && !level.isClientSide() ? ITickableBlockEntity::serverTicker : null;
 	}
     //////////////////////////////////////
     /////Item drops and Block activities
@@ -160,7 +170,7 @@ public abstract class BlockTwoPortElectronics extends SEMachineBlock implements 
     ///////////////////////
     @Override
     public boolean isSignalSource(BlockState state) {
-        return meta == MetaInfo.current_sensor;
+        return meta == Type.current_sensor;
     }
 
     @Override

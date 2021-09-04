@@ -72,7 +72,7 @@ public class BlockDistributionTransformer extends BlockAbstractTransformer
             return null;
 
     	try {
-			return blockType.getBlockEntitySupplier().create(pos, state);
+			return blockType.create(pos, state);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;

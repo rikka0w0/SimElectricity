@@ -2,6 +2,7 @@ package simelectricity.essential.grid.transformer;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.core.BlockPos;
@@ -10,8 +11,8 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import simelectricity.essential.common.SEMultiBlockEnergyTile;
 
 public class TilePowerTransformerPlaceHolder extends SEMultiBlockEnergyTile {
-    public TilePowerTransformerPlaceHolder(BlockPos pos, BlockState blockState) {
-		super(pos, blockState);
+    public TilePowerTransformerPlaceHolder(BlockEntityType<?> beType, BlockPos pos, BlockState blockState) {
+		super(beType, pos, blockState);
 	}
 
     @Override
@@ -24,8 +25,8 @@ public class TilePowerTransformerPlaceHolder extends SEMultiBlockEnergyTile {
     public void onStructureRemoved() {}
 
     public static class Primary extends TilePowerTransformerPlaceHolder {
-        public Primary(BlockPos pos, BlockState blockState) {
-    		super(pos, blockState);
+        public Primary(BlockEntityType<?> beType, BlockPos pos, BlockState blockState) {
+    		super(beType, pos, blockState);
     	}
 
         public TilePowerTransformerWinding getWinding() {
@@ -36,8 +37,8 @@ public class TilePowerTransformerPlaceHolder extends SEMultiBlockEnergyTile {
     }
 
     public static class Secondary extends TilePowerTransformerPlaceHolder {
-        public Secondary(BlockPos pos, BlockState blockState) {
-    		super(pos, blockState);
+        public Secondary(BlockEntityType<?> beType, BlockPos pos, BlockState blockState) {
+    		super(beType, pos, blockState);
     	}
 
         public TilePowerTransformerWinding getWinding() {
@@ -48,8 +49,8 @@ public class TilePowerTransformerPlaceHolder extends SEMultiBlockEnergyTile {
     }
 
     public static class Render extends TilePowerTransformerPlaceHolder {
-        public Render(BlockPos pos, BlockState blockState) {
-    		super(pos, blockState);
+        public Render(BlockEntityType<?> beType, BlockPos pos, BlockState blockState) {
+    		super(beType, pos, blockState);
     	}
 
         @Override

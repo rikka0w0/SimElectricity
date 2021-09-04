@@ -1,5 +1,7 @@
 package simelectricity.essential.machines;
 
+import java.util.function.Supplier;
+
 import javax.annotation.Nullable;
 
 import net.minecraft.world.level.block.state.BlockState;
@@ -26,7 +28,8 @@ import net.minecraft.world.level.Level;
 import rikka.librikka.IMetaProvider;
 import rikka.librikka.ITileMeta;
 import rikka.librikka.Utils;
-import rikka.librikka.tileentity.ITickableBlockEntity;
+import rikka.librikka.blockentity.ITickableBlockEntity;
+import simelectricity.essential.Essential;
 import simelectricity.essential.api.ISECoverPanelHost;
 import simelectricity.essential.api.coverpanel.ISECoverPanel;
 import simelectricity.essential.common.CoverPanelUtils;
@@ -46,15 +49,22 @@ public abstract class BlockElectronics extends SEMachineBlock implements IMetaPr
 
 		Type(Class<? extends BlockEntity> teCls, boolean tickable) {
 			this.teCls = teCls;
+			this.beType = Essential.beTypeOf(teCls)::get;
 			this.tickable = tickable;
 		}
 
 		public final boolean tickable;
 		public final Class<? extends BlockEntity> teCls;
+		public final Supplier<BlockEntityType<?>> beType;
 
 		@Override
 		public final Class<? extends BlockEntity> teCls() {
 			return teCls;
+		}
+
+		@Override
+		public BlockEntityType<?> beType() {
+			return beType.get();
 		}
 	}
 
@@ -106,7 +116,7 @@ public abstract class BlockElectronics extends SEMachineBlock implements IMetaPr
 
 	@Override
 	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> beType) {
-		return meta.tickable && !level.isClientSide() ? ITickableBlockEntity::genericTicker : null;
+		return meta.tickable && !level.isClientSide() ? ITickableBlockEntity::serverTicker : null;
 	}
 
     private final static VoxelShape vsXfmRFSE_NS = Shapes.or(

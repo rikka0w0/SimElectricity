@@ -4,6 +4,7 @@ import javax.annotation.Nullable;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.core.BlockPos;
@@ -22,8 +23,8 @@ public abstract class TileMultiBlockPole extends SEMultiBlockEnergyTile implemen
     @OnlyIn(Dist.CLIENT)
     protected abstract PowerPoleRenderHelper createRenderHelper();
 
-    public TileMultiBlockPole(BlockPos pos, BlockState blockState) {
-		super(pos, blockState);
+    public TileMultiBlockPole(BlockEntityType<?> beType, BlockPos pos, BlockState blockState) {
+		super(beType, pos, blockState);
 	}
 
     //////////////////////////////

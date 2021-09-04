@@ -1,6 +1,7 @@
 package simelectricity.essential.machines.tile;
 
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -14,8 +15,8 @@ import simelectricity.essential.common.semachine.SESinglePortMachine;
 
 public class TileIncandescentLamp extends SESinglePortMachine<ISEVoltageSource> implements
 		ISEVoltageSource, ISE2StateTile, ISEEnergyNetUpdateHandler {
-    public TileIncandescentLamp(BlockPos pos, BlockState blockState) {
-		super(pos, blockState);
+    public TileIncandescentLamp(BlockEntityType<?> beType, BlockPos pos, BlockState blockState) {
+		super(beType, pos, blockState);
 	}
 
 	public byte lightLevel;

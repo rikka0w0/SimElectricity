@@ -21,7 +21,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityType.BlockEntitySupplier;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
@@ -59,6 +59,7 @@ import simelectricity.essential.utils.SEUnitHelper;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.function.Supplier;
 
 import net.minecraft.world.level.block.state.BlockBehaviour;
 
@@ -109,7 +110,7 @@ public class BlockCable extends BlockBase implements EntityBlock, ICustomBoundin
         		.isRedstoneConductor((a,b,c)->false)
         		, ItemBlockBase.class,
         		(new Item.Properties()).tab(SEAPI.SETab),
-                TileCable::new);
+        		Essential.beTypeOf(TileCable.class)::get);
     }
 
     public static BlockCable[] create() {
@@ -131,14 +132,14 @@ public class BlockCable extends BlockBase implements EntityBlock, ICustomBoundin
 		return cableData;
 	}
 
-    private final BlockEntitySupplier<? extends TileCable> blockEntitySupplier;
+    private final Supplier<BlockEntityType<? extends TileCable>> beType;
     protected BlockCable(String name, ISECableMeta cableData, BlockBehaviour.Properties props, Class<? extends ItemBlockBase> itemBlockClass,
-    		Item.Properties itemProps, BlockEntitySupplier<? extends TileCable> blockEntitySupplier) {
+    		Item.Properties itemProps, Supplier<BlockEntityType<? extends TileCable>> beType) {
     	// variableOpacity tells Minecraft not to cache any BlockStats
         super(name+"_"+cableData.name(), props.dynamicShape(), itemBlockClass, itemProps);
         this.registerDefaultState(this.defaultBlockState().setValue(BlockStateProperties.WATERLOGGED, false));
         this.cableData = cableData;
-        this.blockEntitySupplier = blockEntitySupplier;
+        this.beType = beType;
 
         //Calc. collision boxes and cache them
         float min = 0.5F - cableData.thickness() / 2F;
@@ -200,7 +201,7 @@ public class BlockCable extends BlockBase implements EntityBlock, ICustomBoundin
 	public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         TileCable cable;
         try {
-            cable = blockEntitySupplier.create(pos, state);
+            cable = beType.get().create(pos, state);
             // if (world instanceof ServerLevel && !((World)world).isClientSide)    //createTileEntity is only called by the server thread when the block is placed at the first
             cable.setResistanceOnPlace(this.cableData.resistivity());
             return cable;
@@ -459,7 +460,6 @@ public class BlockCable extends BlockBase implements EntityBlock, ICustomBoundin
     //////////////////////////////////////
     /////Item drops and Block activities
     //////////////////////////////////////
-	@SuppressWarnings("deprecation")
 	@Override
 	public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand handIn, BlockHitResult ray) {
         BlockEntity te = world.getBlockEntity(pos);

@@ -1,5 +1,6 @@
 package simelectricity.essential.machines.tile;
 
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.SimpleContainer;
@@ -9,7 +10,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.crafting.SmeltingRecipe;
 import net.minecraft.nbt.CompoundTag;
-import rikka.librikka.tileentity.ITickableBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraftforge.common.capabilities.Capability;
@@ -19,7 +19,8 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import rikka.librikka.Utils;
-import rikka.librikka.tileentity.INamedContainerProvider2;
+import rikka.librikka.blockentity.INamedMenuProvider;
+import rikka.librikka.blockentity.ITickableBlockEntity;
 import simelectricity.api.ISEEnergyNetUpdateHandler;
 import simelectricity.api.components.ISEVoltageSource;
 import simelectricity.essential.common.ItemStackHandlerInventory;
@@ -32,9 +33,9 @@ import java.util.Optional;
 import javax.annotation.Nonnull;
 
 public class TileElectricFurnace extends SESinglePortMachine<ISEVoltageSource> implements
-		ISEVoltageSource, ISE2StateTile, ISEEnergyNetUpdateHandler, ITickableBlockEntity, INamedContainerProvider2 {
-    public TileElectricFurnace(BlockPos pos, BlockState blockState) {
-		super(pos, blockState);
+		ISEVoltageSource, ISE2StateTile, ISEEnergyNetUpdateHandler, ITickableBlockEntity, INamedMenuProvider {
+    public TileElectricFurnace(BlockEntityType<?> beType, BlockPos pos, BlockState blockState) {
+		super(beType, pos, blockState);
 	}
 
 	public static float energyPerItem = 5000F;

@@ -3,9 +3,14 @@ package simelectricity.essential;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+
+import java.util.function.Supplier;
+
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraftforge.common.util.Lazy;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.world.ChunkWatchEvent;
 import net.minecraftforge.fml.DistExecutor;
@@ -14,6 +19,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fmllegacy.network.NetworkRegistry;
 import net.minecraftforge.fmllegacy.network.simple.SimpleChannel;
+import rikka.librikka.blockentity.BlockEntityHelper;
 import simelectricity.essential.api.ISEChunkWatchSensitiveTile;
 import simelectricity.essential.api.SEEAPI;
 import simelectricity.essential.client.ClientConfigs;
@@ -64,7 +70,7 @@ public class Essential {
 
     	@SubscribeEvent
     	public static void onTileEntityTypeRegistration(final RegistryEvent.Register<BlockEntityType<?>> event) {
-    		BlockRegistry.registerTileEntities(event.getRegistry());
+    		BlockEntityRegistry.registerAll(event.getRegistry());
     	}
 
     	@SubscribeEvent
@@ -100,5 +106,9 @@ public class Essential {
 					((ISEChunkWatchSensitiveTile) tileEntity).onRenderingUpdateRequested();
 			}
 		}
+    }
+
+    public static <T extends BlockEntity> Supplier<BlockEntityType<T>> beTypeOf(Class<T> teCls) {
+    	return teCls == null ? () -> null : Lazy.of(() -> BlockEntityHelper.getBEType(Essential.MODID, teCls));
     }
 }

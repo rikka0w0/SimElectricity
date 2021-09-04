@@ -1,6 +1,7 @@
 package simelectricity.essential.grid;
 
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.core.BlockPos;
@@ -15,8 +16,8 @@ import simelectricity.essential.client.grid.PowerPoleRenderHelper;
 import simelectricity.essential.common.ISEFacing8;
 
 public class TilePoleMetal35kV extends TileMultiBlockPole  implements ISEFacing8 {
-    public TilePoleMetal35kV(BlockPos pos, BlockState blockState) {
-		super(pos, blockState);
+    public TilePoleMetal35kV(BlockEntityType<?> beType, BlockPos pos, BlockState blockState) {
+		super(beType, pos, blockState);
 	}
 
 	@OnlyIn(Dist.CLIENT)
@@ -108,8 +109,8 @@ public class TilePoleMetal35kV extends TileMultiBlockPole  implements ISEFacing8
 	}
 
 	public static class Bottom extends TileMultiBlockPlaceHolder {
-	    public Bottom(BlockPos pos, BlockState blockState) {
-			super(pos, blockState);
+	    public Bottom(BlockEntityType<?> beType, BlockPos pos, BlockState blockState) {
+			super(beType, pos, blockState);
 		}
 
 		@OnlyIn(Dist.CLIENT)

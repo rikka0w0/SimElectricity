@@ -15,8 +15,12 @@ import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.core.Direction;
 import net.minecraft.util.StringRepresentable;
+
+import java.util.function.Supplier;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
 import net.minecraft.world.phys.shapes.BooleanOp;
@@ -35,6 +39,7 @@ import rikka.librikka.multiblock.IMultiBlockTile;
 import rikka.librikka.multiblock.MultiBlockStructure;
 import simelectricity.api.SEAPI;
 import simelectricity.api.tile.ISEGridTile;
+import simelectricity.essential.Essential;
 import simelectricity.essential.api.ISEHVCableConnector;
 
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -44,7 +49,18 @@ public class BlockPoleConcrete35kV extends BlockBase implements ICustomBoundingB
 	public final static EnumProperty<Type> propType = EnumProperty.create("type", Type.class);
 
 	public static enum Type implements IMetaBase, StringRepresentable {
-		pole, collisionbox, pole_collisionbox, host;
+		pole, collisionbox, pole_collisionbox, host(true);
+
+		Type() {
+			this(false);
+		}
+
+		Type(boolean isHost) {
+			Class<? extends BlockEntity> beCls = isHost ? TilePoleConcrete35kV.class : TileMultiBlockPlaceHolder.class;
+			this.beType = Essential.beTypeOf(beCls)::get;
+		}
+
+		public final Supplier<BlockEntityType<?>> beType;
 
 		@Override
 		public String getSerializedName() {
@@ -131,7 +147,7 @@ public class BlockPoleConcrete35kV extends BlockBase implements ICustomBoundingB
 	@Override
 	public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
 		Type type = state.getValue(propType);
-		return type == Type.host ? new TilePoleConcrete35kV(pos, state) : new TileMultiBlockPlaceHolder(pos, state);
+		return type.beType.get().create(pos, state);
 	}
 
     @Override

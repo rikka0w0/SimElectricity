@@ -2,6 +2,7 @@ package simelectricity.essential.grid.transformer;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.core.BlockPos;
@@ -19,8 +20,8 @@ public abstract class SEMultiBlockGridTile extends SEMultiBlockEnergyTile implem
     protected PowerPoleRenderHelper renderHelper;
     protected BlockPos neighbor;
 
-    public SEMultiBlockGridTile(BlockPos pos, BlockState blockState) {
-		super(pos, blockState);
+    public SEMultiBlockGridTile(BlockEntityType<?> beType, BlockPos pos, BlockState blockState) {
+		super(beType, pos, blockState);
 	}
 
     //////////////////////////////

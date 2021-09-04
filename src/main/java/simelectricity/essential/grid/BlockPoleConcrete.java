@@ -12,6 +12,7 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -25,7 +26,10 @@ import rikka.librikka.block.BlockBase;
 import simelectricity.api.SEAPI;
 import simelectricity.api.node.ISEGridNode;
 import simelectricity.api.tile.ISEGridTile;
+import simelectricity.essential.Essential;
 import simelectricity.essential.api.ISEHVCableConnector;
+
+import java.util.function.Supplier;
 
 import javax.annotation.Nullable;
 
@@ -41,16 +45,23 @@ public class BlockPoleConcrete extends BlockBase implements IMetaProvider<BlockP
 		branching415v(TilePoleBranch.Type415V.class, 4);
 
 		public final Class<? extends BlockEntity> teCls;
+		public final Supplier<BlockEntityType<?>> beType;
 	    public final int numOfConductor;
 
-	    Type(Class<? extends BlockEntity> teCls, int numOfConductor) {
-	    	this.teCls = teCls;
-	        this.numOfConductor = numOfConductor;
-	    }
+		Type(Class<? extends BlockEntity> teCls, int numOfConductor) {
+			this.teCls = teCls;
+			this.beType = Essential.beTypeOf(teCls)::get;
+			this.numOfConductor = numOfConductor;
+		}
 
 		@Override
 		public Class<? extends BlockEntity> teCls() {
 			return this.teCls;
+		}
+
+		@Override
+		public BlockEntityType<?> beType() {
+			return beType.get();
 		}
 
 		public static Type forName(String name) {
@@ -91,7 +102,7 @@ public class BlockPoleConcrete extends BlockBase implements IMetaProvider<BlockP
 	@Override
 	public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
     	try {
-			return blockType.getBlockEntitySupplier().create(pos, state);
+			return blockType.create(pos, state);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;

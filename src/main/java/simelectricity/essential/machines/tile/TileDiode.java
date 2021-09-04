@@ -3,21 +3,22 @@ package simelectricity.essential.machines.tile;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import rikka.librikka.tileentity.INamedContainerProvider2;
+import rikka.librikka.blockentity.INamedMenuProvider;
 import simelectricity.api.ISEEnergyNetUpdateHandler;
 import simelectricity.api.components.ISEDiode;
 import simelectricity.essential.common.semachine.SETwoPortMachine;
 import simelectricity.essential.machines.gui.ContainerDiode;
 
 public class TileDiode extends SETwoPortMachine<ISEDiode> implements
-		ISEDiode, ISEEnergyNetUpdateHandler, INamedContainerProvider2 {
-    public TileDiode(BlockPos pos, BlockState blockState) {
-		super(pos, blockState);
+		ISEDiode, ISEEnergyNetUpdateHandler, INamedMenuProvider {
+    public TileDiode(BlockEntityType<?> beType, BlockPos pos, BlockState blockState) {
+		super(beType, pos, blockState);
 	}
 
 	public double inputVoltage, outputVoltage;

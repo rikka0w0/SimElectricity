@@ -2,18 +2,19 @@ package simelectricity.essential.machines.tile;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import rikka.librikka.tileentity.ITickableBlockEntity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import rikka.librikka.blockentity.ITickableBlockEntity;
 import simelectricity.api.SEAPI;
 import simelectricity.api.components.ISEVoltageSource;
 import simelectricity.essential.common.semachine.SESinglePortMachine;
 
 public class TileSolarPanel extends SESinglePortMachine<ISEVoltageSource> implements
 		ISEVoltageSource, ITickableBlockEntity {
-    public TileSolarPanel(BlockPos pos, BlockState blockState) {
-		super(pos, blockState);
+    public TileSolarPanel(BlockEntityType<?> beType, BlockPos pos, BlockState blockState) {
+		super(beType, pos, blockState);
 	}
 
 	private static byte STATE_DAY;

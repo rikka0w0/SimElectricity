@@ -1,6 +1,7 @@
 package simelectricity.essential.grid;
 
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.core.BlockPos;
 import net.minecraftforge.api.distmarker.Dist;
@@ -10,8 +11,8 @@ import simelectricity.essential.BlockRegistry;
 import simelectricity.essential.client.grid.PowerPoleRenderHelper;
 
 public class TilePoleConcrete35kV extends TileMultiBlockPole {
-    public TilePoleConcrete35kV(BlockPos pos, BlockState blockState) {
-		super(pos, blockState);
+    public TilePoleConcrete35kV(BlockEntityType<?> beType, BlockPos pos, BlockState blockState) {
+		super(beType, pos, blockState);
 	}
 
 	@OnlyIn(Dist.CLIENT)

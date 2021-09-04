@@ -21,7 +21,7 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityType.BlockEntitySupplier;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -59,6 +59,7 @@ import simelectricity.essential.utils.SEUnitHelper;
 import javax.annotation.Nullable;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Supplier;
 
 import net.minecraft.world.level.block.state.BlockBehaviour;
 
@@ -96,7 +97,7 @@ public class BlockWire extends BlockBase implements EntityBlock, ICustomBounding
         		.isRedstoneConductor((a,b,c)->false),
         		ItemBlockWire.class,
         		(new Item.Properties()).tab(SEAPI.SETab),
-                TileWire::new);
+                Essential.beTypeOf(TileWire.class)::get);
     }
 
     public static BlockWire[] create() {
@@ -387,13 +388,13 @@ public class BlockWire extends BlockBase implements EntityBlock, ICustomBounding
     }
 
 
-    private final BlockEntitySupplier<? extends TileWire> blockEntitySupplier;
+    private final Supplier<BlockEntityType<? extends TileWire>> beType;
     protected BlockWire(String name, ISECableMeta meta, BlockBehaviour.Properties props, Class<? extends ItemBlockBase> itemBlockClass,
-    		Item.Properties itemProps, BlockEntitySupplier<? extends TileWire> blockEntitySupplier) {
+    		Item.Properties itemProps, Supplier<BlockEntityType<? extends TileWire>> beType) {
     	super(name+"_"+meta.name(), props, itemBlockClass, itemProps);
     	this.registerDefaultState(this.defaultBlockState().setValue(BlockStateProperties.WATERLOGGED, false));
         this.meta = meta;
-        this.blockEntitySupplier = blockEntitySupplier;
+        this.beType = beType;
 
         //Calc. collision boxes and cache them
 //        this.cableBoundingBoxes = new AABB[thicknessList.length][7];
@@ -451,7 +452,7 @@ public class BlockWire extends BlockBase implements EntityBlock, ICustomBounding
 	public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         TileWire wire;
         try {
-            wire = blockEntitySupplier.create(pos, state);
+            wire = beType.get().create(pos, state);
             //if (!world.isRemote)    //createTileEntity is only called by the server thread when the block is placed at the first
                 //wire.setResistanceOnPlace(this.resistances[this.getMetaFromState(state)]);
             return wire;

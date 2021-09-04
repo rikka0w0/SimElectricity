@@ -1,14 +1,14 @@
 package simelectricity.essential.common;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import rikka.librikka.tileentity.TileEntityBase;
+import rikka.librikka.blockentity.BlockEntityBase;
 import simelectricity.api.SEAPI;
-import simelectricity.essential.Essential;
 
-public abstract class SEEnergyTile extends TileEntityBase {
-	public SEEnergyTile(BlockPos pos, BlockState blockState) {
-		super(Essential.MODID, pos, blockState);
+public abstract class SEEnergyTile extends BlockEntityBase {
+	public SEEnergyTile(BlockEntityType<?> beType, BlockPos pos, BlockState blockState) {
+		super(beType, pos, blockState);
 	}
 
 	protected boolean isAddedToEnergyNet;

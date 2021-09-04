@@ -2,18 +2,18 @@ package simelectricity.essential.grid;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.model.data.ModelDataMap;
+import rikka.librikka.blockentity.BlockEntityBase;
 import rikka.librikka.multiblock.IMultiBlockTile;
 import rikka.librikka.multiblock.MultiBlockTileInfo;
-import rikka.librikka.tileentity.TileEntityBase;
-import simelectricity.essential.Essential;
 
-public class TileMultiBlockPlaceHolder extends TileEntityBase implements IMultiBlockTile {
-	public TileMultiBlockPlaceHolder(BlockPos pos, BlockState blockState) {
-		super(Essential.MODID, pos, blockState);
+public class TileMultiBlockPlaceHolder extends BlockEntityBase implements IMultiBlockTile {
+	public TileMultiBlockPlaceHolder(BlockEntityType<?> beType, BlockPos pos, BlockState blockState) {
+		super(beType, pos, blockState);
 	}
 
 	//To minimize network usage, mbInfo will not be send to blocks other than the Render block

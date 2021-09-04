@@ -4,6 +4,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraftforge.api.distmarker.Dist;
@@ -118,8 +119,8 @@ public class TileWire extends SEEnergyTile implements ISEGenericWire {
         }
     }
 
-    public TileWire(BlockPos pos, BlockState blockState) {
-    	super(pos, blockState);
+    public TileWire(BlockEntityType<?> beType, BlockPos pos, BlockState blockState) {
+    	super(beType, pos, blockState);
         this.nodes = new ISESubComponent[Direction.values().length];
 
         this.wires = new Wire[Direction.values().length];

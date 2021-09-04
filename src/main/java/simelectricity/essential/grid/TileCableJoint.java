@@ -4,6 +4,7 @@ import javax.annotation.Nonnull;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -14,15 +15,15 @@ import simelectricity.api.tile.ISECableTile;
 import simelectricity.essential.client.grid.PowerPoleRenderHelper;
 
 public abstract class TileCableJoint extends TilePoleAccessory implements ISECableTile {
-    public TileCableJoint(BlockPos pos, BlockState blockState) {
-		super(pos, blockState);
+    public TileCableJoint(BlockEntityType<?> beType, BlockPos pos, BlockState blockState) {
+		super(beType, pos, blockState);
 	}
 
 	private final ISESimulatable cableNode = SEAPI.energyNetAgent.newCable(this, true);
 
     public static class Type10kV extends TileCableJoint {
-        public Type10kV(BlockPos pos, BlockState blockState) {
-			super(pos, blockState);
+        public Type10kV(BlockEntityType<?> beType, BlockPos pos, BlockState blockState) {
+			super(beType, pos, blockState);
 		}
 
 		@Override
@@ -41,8 +42,8 @@ public abstract class TileCableJoint extends TilePoleAccessory implements ISECab
     }
 
     public static class Type415V extends TileCableJoint {
-        public Type415V(BlockPos pos, BlockState blockState) {
-			super(pos, blockState);
+        public Type415V(BlockEntityType<?> beType, BlockPos pos, BlockState blockState) {
+			super(beType, pos, blockState);
 		}
 
 		@Override

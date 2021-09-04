@@ -87,7 +87,6 @@ public final class ItemPanel extends ItemBase implements IMetaProvider<IMetaBase
 		return InteractionResult.SUCCESS;
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
 	@OnlyIn(Dist.CLIENT)
 	public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flagIn) {

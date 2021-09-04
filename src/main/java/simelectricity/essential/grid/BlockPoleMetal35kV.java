@@ -13,8 +13,12 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.core.Direction;
 import net.minecraft.util.StringRepresentable;
+
+import java.util.function.Supplier;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -32,10 +36,10 @@ import rikka.librikka.multiblock.MultiBlockStructure;
 import rikka.librikka.multiblock.MultiBlockTileInfo;
 import simelectricity.api.SEAPI;
 import simelectricity.api.tile.ISEGridTile;
+import simelectricity.essential.Essential;
 import simelectricity.essential.api.ISEHVCableConnector;
 
 import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.minecraft.world.item.Item.Properties;
 
 public class BlockPoleMetal35kV extends BlockBase implements EntityBlock, ISEHVCableConnector {
 	public final MultiBlockStructure structureTemplate;
@@ -43,11 +47,17 @@ public class BlockPoleMetal35kV extends BlockBase implements EntityBlock, ISEHVC
 	public final static EnumProperty<Type> propType = EnumProperty.create("type", Type.class);
 
 	public static enum Type implements IMetaBase, StringRepresentable {
-		pole,
-		collisionbox_full,
-		collisionbox_half,
-		collisionbox_quarter,
-		host;
+		pole(TilePoleMetal35kV.Bottom.class),
+		collisionbox_full(TileMultiBlockPlaceHolder.class),
+		collisionbox_half(TileMultiBlockPlaceHolder.class),
+		collisionbox_quarter(TileMultiBlockPlaceHolder.class),
+		host(TilePoleMetal35kV.class);
+
+		Type(Class<? extends BlockEntity> beCls) {
+			this.beType = Essential.beTypeOf(beCls)::get;
+		}
+
+		public final Supplier<BlockEntityType<?>> beType;
 
 		@Override
 		public String getSerializedName() {
@@ -178,7 +188,6 @@ public class BlockPoleMetal35kV extends BlockBase implements EntityBlock, ISEHVC
     	final Block blockThis = this;
 
     	return new BlockMapping(toState) {
-    		@SuppressWarnings("deprecation")
 			@Override
     	    protected boolean cancelPlacement(BlockState state) {
     			return !state.isAir();
@@ -201,7 +210,6 @@ public class BlockPoleMetal35kV extends BlockBase implements EntityBlock, ISEHVC
     	final Block blockThis = this;
 
     	return new BlockMapping(toState) {
-    		@SuppressWarnings("deprecation")
 			@Override
     	    protected boolean cancelPlacement(BlockState state) {
     			return !state.isAir();
@@ -300,12 +308,7 @@ public class BlockPoleMetal35kV extends BlockBase implements EntityBlock, ISEHVC
 	@Override
 	public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
 		Type type = state.getValue(propType);
-		if (type == Type.host)
-			return new TilePoleMetal35kV(pos, state);
-		else if (type == Type.pole)
-			return new TilePoleMetal35kV.Bottom(pos, state);
-		else
-			return new TileMultiBlockPlaceHolder(pos, state);
+		return type.beType.get().create(pos, state);
 	}
 
     @Override

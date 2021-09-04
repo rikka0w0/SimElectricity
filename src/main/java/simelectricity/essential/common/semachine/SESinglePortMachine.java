@@ -1,6 +1,7 @@
 package simelectricity.essential.common.semachine;
 
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.core.BlockPos;
@@ -22,8 +23,8 @@ public abstract class SESinglePortMachine<T extends ISEComponentParameter> exten
     @SuppressWarnings("unchecked")
 	protected final T cachedParam = (T) circuit;
 
-    public SESinglePortMachine(BlockPos pos, BlockState blockState) {
-		super(pos, blockState);
+    public SESinglePortMachine(BlockEntityType<?> beType, BlockPos pos, BlockState blockState) {
+		super(beType, pos, blockState);
 	}
 
     ///////////////////////////////////

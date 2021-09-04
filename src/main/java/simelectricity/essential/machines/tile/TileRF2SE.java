@@ -1,5 +1,6 @@
 package simelectricity.essential.machines.tile;
 
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.Inventory;
@@ -7,7 +8,6 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import rikka.librikka.tileentity.ITickableBlockEntity;
 import net.minecraft.util.Mth;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -15,7 +15,8 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
-import rikka.librikka.tileentity.INamedContainerProvider2;
+import rikka.librikka.blockentity.INamedMenuProvider;
+import rikka.librikka.blockentity.ITickableBlockEntity;
 import simelectricity.api.ISEEnergyNetUpdateHandler;
 import simelectricity.api.SEAPI;
 import simelectricity.api.components.ISEConstantPowerSource;
@@ -23,9 +24,9 @@ import simelectricity.essential.common.semachine.SESinglePortMachine;
 import simelectricity.essential.machines.gui.ContainerRF2SE;
 
 public class TileRF2SE extends SESinglePortMachine<ISEConstantPowerSource> implements
-		ISEConstantPowerSource, ISEEnergyNetUpdateHandler, ITickableBlockEntity, INamedContainerProvider2 {
-    public TileRF2SE(BlockPos pos, BlockState blockState) {
-		super(pos, blockState);
+		ISEConstantPowerSource, ISEEnergyNetUpdateHandler, ITickableBlockEntity, INamedMenuProvider {
+    public TileRF2SE(BlockEntityType<?> beType, BlockPos pos, BlockState blockState) {
+		super(beType, pos, blockState);
 	}
 
 	public final static int bufferCapacity = 1000;	// RF

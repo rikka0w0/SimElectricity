@@ -1,5 +1,6 @@
 package simelectricity.essential.machines.tile;
 
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.Inventory;
@@ -7,19 +8,19 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import rikka.librikka.tileentity.ITickableBlockEntity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import rikka.librikka.tileentity.INamedContainerProvider2;
+import rikka.librikka.blockentity.INamedMenuProvider;
+import rikka.librikka.blockentity.ITickableBlockEntity;
 import simelectricity.api.ISEEnergyNetUpdateHandler;
 import simelectricity.api.components.ISESwitch;
 import simelectricity.essential.common.semachine.SETwoPortMachine;
 import simelectricity.essential.machines.gui.ContainerPowerMeter;
 
 public class TilePowerMeter extends SETwoPortMachine<ISESwitch> implements
-		ISESwitch, ISEEnergyNetUpdateHandler, ITickableBlockEntity, INamedContainerProvider2 {
-    public TilePowerMeter(BlockPos pos, BlockState blockState) {
-		super(pos, blockState);
+		ISESwitch, ISEEnergyNetUpdateHandler, ITickableBlockEntity, INamedMenuProvider {
+    public TilePowerMeter(BlockEntityType<?> beType, BlockPos pos, BlockState blockState) {
+		super(beType, pos, blockState);
 	}
 
 	public boolean isOn;

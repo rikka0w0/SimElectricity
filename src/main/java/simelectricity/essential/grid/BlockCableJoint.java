@@ -1,5 +1,7 @@
 package simelectricity.essential.grid;
 
+import java.util.function.Supplier;
+
 import javax.annotation.Nullable;
 
 import net.minecraft.world.level.block.Block;
@@ -14,6 +16,7 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -25,6 +28,7 @@ import rikka.librikka.ITileMeta;
 import rikka.librikka.block.BlockBase;
 import simelectricity.api.SEAPI;
 import simelectricity.api.tile.ISEGridTile;
+import simelectricity.essential.Essential;
 import simelectricity.essential.api.ISEHVCableConnector;
 
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -36,13 +40,20 @@ public class BlockCableJoint extends BlockBase implements IMetaProvider<ITileMet
 
 		Type(Class<? extends BlockEntity> teCls) {
 			this.teCls = teCls;
+			this.beType = Essential.beTypeOf(teCls)::get;
 		}
 
 		public final Class<? extends BlockEntity> teCls;
+		public final Supplier<BlockEntityType<?>> beType;
 
 		@Override
 		public final Class<? extends BlockEntity> teCls() {
 			return teCls;
+		}
+
+		@Override
+		public BlockEntityType<?> beType() {
+			return beType.get();
 		}
 	}
 
@@ -83,7 +94,7 @@ public class BlockCableJoint extends BlockBase implements IMetaProvider<ITileMet
 	@Override
 	public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
     	try {
-			return meta.getBlockEntitySupplier().create(pos, state);
+			return meta.create(pos, state);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
