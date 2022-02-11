@@ -17,7 +17,7 @@ public interface ISEFacing8 {
 		BlockEntity te = (BlockEntity) this;
 		BlockPos pos = te.getBlockPos();
 		Level world = te.getLevel();
-		BlockState oldState = world.getBlockState(pos);
+		BlockState oldState = te.getBlockState();
 		BlockState newState = oldState.setValue(DirHorizontal8.prop, facing);
 		return world.setBlockAndUpdate(pos, newState);
 	}
@@ -27,9 +27,7 @@ public interface ISEFacing8 {
 	 */
 	default DirHorizontal8 getRotation() {
 		BlockEntity te = (BlockEntity) this;
-		BlockPos pos = te.getBlockPos();
-		Level world = te.getLevel();
-		BlockState state = world.getBlockState(pos);
+		BlockState state = te.getBlockState();
 		return state.getValue(DirHorizontal8.prop);
 	}
 }
