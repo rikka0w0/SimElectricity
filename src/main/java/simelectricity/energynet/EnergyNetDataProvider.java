@@ -5,6 +5,7 @@ package simelectricity.energynet;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.core.Direction;
 import net.minecraft.core.BlockPos;
@@ -12,7 +13,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.level.storage.DimensionDataStorage;
-import net.minecraftforge.common.util.Constants.NBT;
 import simelectricity.SimElectricity;
 import simelectricity.api.ISEEnergyNetUpdateHandler;
 import simelectricity.api.node.ISESubComponent;
@@ -429,7 +429,7 @@ public class EnergyNetDataProvider extends SavedData {
     	EnergyNetDataProvider ret = new EnergyNetDataProvider();
     	ret.gridNodeMap.clear();
 
-        ListTag NBTObjects = nbt.getList("Objects", NBT.TAG_COMPOUND);
+        ListTag NBTObjects = nbt.getList("Objects", Tag.TAG_COMPOUND);
         for (int i = 0; i < NBTObjects.size(); i++) {
             CompoundTag compound = NBTObjects.getCompound(i);
             GridNode obj = new GridNode(compound);

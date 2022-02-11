@@ -51,7 +51,7 @@ public interface IMatrixSolver {
 
     public static IMatrixSolver newSolver(String name) {
         try {
-            return (IMatrixSolver) Class.forName("simelectricity.energynet.matrix." + name).newInstance();
+            return (IMatrixSolver) Class.forName("simelectricity.energynet.matrix." + name).getConstructor().newInstance();
         } catch (Exception e) {
             SELogger.logFatal(SELogger.simulator, "Invalid Matrix Solver! Please check your config settings!");
             e.printStackTrace();

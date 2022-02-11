@@ -77,7 +77,7 @@ public final class SEMachineModel implements IDynamicBakedModel {
 
 	@Override
 	public List<BakedQuad> getQuads(BlockState state, Direction side, Random rand, IModelData extraData) {
-		RenderType layer = MinecraftForgeClient.getRenderLayer();
+		RenderType layer = MinecraftForgeClient.getRenderType();
 		if (layer == null)
 			return this.bakedModel.getQuads(state, side, rand, extraData);
 

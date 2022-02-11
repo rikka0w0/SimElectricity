@@ -40,11 +40,11 @@ public abstract class SETwoPortMachine<T extends ISEComponentParameter> extends 
     }
 
     @Override
-    public CompoundTag save(CompoundTag tagCompound) {
-    	Utils.saveToNbt(tagCompound, "inputSide", this.inputSide);
-    	Utils.saveToNbt(tagCompound, "outputSide", this.outputSide);
+    protected void saveAdditional(CompoundTag nbt) {
+    	Utils.saveToNbt(nbt, "inputSide", this.inputSide);
+    	Utils.saveToNbt(nbt, "outputSide", this.outputSide);
 
-        return super.save(tagCompound);
+    	super.saveAdditional(nbt);
     }
 
     @Override

@@ -28,9 +28,9 @@ public abstract class SEMultiBlockEnergyTile extends SEEnergyTile implements IMu
     }
 
     @Override
-    public CompoundTag save(CompoundTag nbt) {
+    protected void saveAdditional(CompoundTag nbt) {
         this.mbInfo.saveToNBT(nbt);
-        return super.save(nbt);
+        super.saveAdditional(nbt);
     }
 
     @Override

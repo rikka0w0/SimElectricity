@@ -312,7 +312,7 @@ public class BlockPoleMetal35kV extends BlockBase implements EntityBlock, ISEHVC
 	}
 
     @Override
-    public boolean removedByPlayer(BlockState state, Level world, BlockPos pos, Player player, boolean willHarvest, FluidState fluid) {
+    public boolean onDestroyedByPlayer(BlockState state, Level world, BlockPos pos, Player player, boolean willHarvest, FluidState fluid) {
         BlockEntity te = world.getBlockEntity(pos);
         if (te != null && !world.isClientSide) {
         	DirHorizontal8 facing = state.getValue(DirHorizontal8.prop);
@@ -322,7 +322,7 @@ public class BlockPoleMetal35kV extends BlockBase implements EntityBlock, ISEHVC
         		this.structureTemplate45.restoreStructure(te, state, true);
         }
 
-        return super.removedByPlayer(state, world, pos, player, willHarvest, fluid);
+        return super.onDestroyedByPlayer(state, world, pos, player, willHarvest, fluid);
     }
 
     ///////////////////

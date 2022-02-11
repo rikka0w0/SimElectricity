@@ -43,12 +43,12 @@ public class TileSwitch extends SETwoPortMachine<ISESwitch> implements
     }
 
     @Override
-    public CompoundTag save(CompoundTag tagCompound) {
-        tagCompound.putDouble("resistance", this.resistance);
-        tagCompound.putDouble("maxCurrent", this.maxCurrent);
-        tagCompound.putBoolean("isOn", this.isOn);
+    protected void saveAdditional(CompoundTag nbt) {
+    	nbt.putDouble("resistance", this.resistance);
+    	nbt.putDouble("maxCurrent", this.maxCurrent);
+    	nbt.putBoolean("isOn", this.isOn);
 
-        return super.save(tagCompound);
+        super.saveAdditional(nbt);
     }
 
     /////////////////////////////////////////////////////////

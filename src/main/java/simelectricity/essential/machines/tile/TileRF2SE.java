@@ -105,14 +105,14 @@ public class TileRF2SE extends SESinglePortMachine<ISEConstantPowerSource> imple
     }
 
     @Override
-    public CompoundTag save(CompoundTag tagCompound) {
-        tagCompound.putDouble("ratedOutputPower", this.ratedOutputPower);
-        tagCompound.putDouble("ouputPowerSetPoint", this.ouputPowerSetPoint);
-        tagCompound.putBoolean("enabled", this.enabled);
-        tagCompound.putBoolean("acceptRF", this.acceptRF);
-        tagCompound.putInt("bufferedEnergy", this.bufferedEnergy);
+    protected void saveAdditional(CompoundTag nbt) {
+    	nbt.putDouble("ratedOutputPower", this.ratedOutputPower);
+    	nbt.putDouble("ouputPowerSetPoint", this.ouputPowerSetPoint);
+    	nbt.putBoolean("enabled", this.enabled);
+    	nbt.putBoolean("acceptRF", this.acceptRF);
+    	nbt.putInt("bufferedEnergy", this.bufferedEnergy);
 
-        return super.save(tagCompound);
+        super.saveAdditional(nbt);
     }
 
     @Override

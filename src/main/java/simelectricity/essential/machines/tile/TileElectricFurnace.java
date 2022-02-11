@@ -121,13 +121,13 @@ public class TileElectricFurnace extends SESinglePortMachine<ISEVoltageSource> i
     }
 
     @Override
-    public CompoundTag save(CompoundTag tagCompound) {
-        tagCompound.putDouble("resistance", this.resistance);
-        tagCompound.putDouble("bufferedEnergy", this.bufferedEnergy);
+    protected void saveAdditional(CompoundTag nbt) {
+    	nbt.putDouble("resistance", this.resistance);
+        nbt.putDouble("bufferedEnergy", this.bufferedEnergy);
         if (itemStackHandler != null)
-            tagCompound.put("inventory", itemStackHandler.serializeNBT());
+        	nbt.put("inventory", itemStackHandler.serializeNBT());
 
-        return super.save(tagCompound);
+        super.saveAdditional(nbt);
     }
 
     @Override

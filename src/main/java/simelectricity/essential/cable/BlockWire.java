@@ -433,7 +433,7 @@ public class BlockWire extends BlockBase implements EntityBlock, ICustomBounding
 	public BlockState updateShape(BlockState stateIn, Direction facing, BlockState facingState, LevelAccessor worldIn,
 			BlockPos currentPos, BlockPos facingPos) {
 		if (stateIn.getValue(BlockStateProperties.WATERLOGGED)) {
-			worldIn.getLiquidTicks().scheduleTick(currentPos, Fluids.WATER, Fluids.WATER.getTickDelay(worldIn));
+			worldIn.scheduleTick(currentPos, Fluids.WATER, Fluids.WATER.getTickDelay(worldIn));
 		}
 
 		return super.updateShape(stateIn, facing, facingState, worldIn, currentPos, facingPos);
@@ -873,19 +873,19 @@ public class BlockWire extends BlockBase implements EntityBlock, ICustomBounding
     ///////////////////////
     ThreadLocal<List<ItemStack>> itemDrops = new ThreadLocal<>();
     @Override
-    public boolean removedByPlayer(BlockState state, Level world, BlockPos pos, Player player, boolean willHarvest, FluidState fluid) {
+    public boolean onDestroyedByPlayer(BlockState state, Level world, BlockPos pos, Player player, boolean willHarvest, FluidState fluid) {
         if (world.isClientSide)
             return false;
 
         BlockEntity te = world.getBlockEntity(pos);
         if (!(te instanceof ISEGenericWire))
-            return super.removedByPlayer(state, world, pos, player, willHarvest, fluid);
+            return super.onDestroyedByPlayer(state, world, pos, player, willHarvest, fluid);
 
         ISEGenericWire wireTile = (ISEGenericWire) te;
 
         MarkedBlockHitResult<Integer> trace = this.rayTrace(world, pos, player);
         if (trace == null)
-            return super.removedByPlayer(state, world, pos, player, willHarvest, fluid);
+            return super.onDestroyedByPlayer(state, world, pos, player, willHarvest, fluid);
 
         if (subHit_isBranch(trace.subHit) && trace.getBlockPos().equals(pos)) {
             // Remove cable branch
@@ -909,14 +909,14 @@ public class BlockWire extends BlockBase implements EntityBlock, ICustomBounding
                         return false;
             }
 
-            return super.removedByPlayer(state, world, pos, player, willHarvest, fluid);
+            return super.onDestroyedByPlayer(state, world, pos, player, willHarvest, fluid);
         }
 
-        return super.removedByPlayer(state, world, pos, player, willHarvest, fluid);
+        return super.onDestroyedByPlayer(state, world, pos, player, willHarvest, fluid);
     }
 
     @Override
-    public ItemStack getPickBlock(BlockState state, HitResult target, BlockGetter world, BlockPos pos, Player player) {
+    public ItemStack getCloneItemStack(BlockState state, HitResult target, BlockGetter world, BlockPos pos, Player player) {
         BlockEntity te = world.getBlockEntity(pos);
         if (!(te instanceof ISEGenericWire))
             return ItemStack.EMPTY;

@@ -149,14 +149,14 @@ public class TileWire extends SEEnergyTile implements ISEGenericWire {
     }
 
     @Override
-    public CompoundTag save(CompoundTag tagCompound) {
+    protected void saveAdditional(CompoundTag nbt) {
         for (Direction side : Direction.values()) {
-            CompoundTag nbt = new CompoundTag();
-            wires[side.ordinal()].write(nbt);
-            tagCompound.put(side.getSerializedName(), nbt);
+            CompoundTag nbt_side = new CompoundTag();
+            wires[side.ordinal()].write(nbt_side);
+            nbt.put(side.getSerializedName(), nbt_side);
         }
 
-        return super.save(tagCompound);
+        super.saveAdditional(nbt);
     }
 
     ///////////////////////////////////

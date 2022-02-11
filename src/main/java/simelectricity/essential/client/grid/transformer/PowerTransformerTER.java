@@ -21,7 +21,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.TextureStitchEvent;
-import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.client.model.ForgeModelBakery;
 import rikka.librikka.model.loader.EasyTextureLoader;
 import rikka.librikka.model.quadbuilder.MutableQuad;
 import rikka.librikka.model.quadbuilder.RawQuadCube;
@@ -44,7 +44,7 @@ public class PowerTransformerTER implements BlockEntityRenderer<TilePowerTransfo
 	}
 
     public static void onModelRegistryEvent() {
-    	ModelLoader.addSpecialModel(modelResLoc);
+    	ForgeModelBakery.addSpecialModel(modelResLoc);
     }
 
     public static void onPreTextureStitchEvent(TextureStitchEvent.Pre event) {

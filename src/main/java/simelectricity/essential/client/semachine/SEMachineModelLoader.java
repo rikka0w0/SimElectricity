@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.Set;
 import java.util.function.Function;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 import com.mojang.datafixers.util.Pair;
@@ -20,23 +19,22 @@ import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.GsonHelper;
-import net.minecraft.util.LazyLoadedValue;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.model.BlockModelConfiguration;
 import net.minecraftforge.client.model.IModelConfiguration;
 import net.minecraftforge.client.model.IModelLoader;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.client.model.geometry.IModelGeometry;
-import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 import simelectricity.essential.Essential;
 
 public class SEMachineModelLoader implements IModelLoader<SEMachineModelLoader.Wrapper> {
 	public final static ResourceLocation id = new ResourceLocation(Essential.MODID, "machine");
 	public final static IModelLoader<?> instance = new SEMachineModelLoader();
-	@SuppressWarnings("deprecation")
+/*
 	public final static LazyLoadedValue<Gson> vanillaParser = new LazyLoadedValue<>(
 			()->ObfuscationReflectionHelper.getPrivateValue(BlockModel.class, null, "GSON")
 		);
+*/
 
 	@Override
 	public void onResourceManagerReload(ResourceManager resourceManager) {

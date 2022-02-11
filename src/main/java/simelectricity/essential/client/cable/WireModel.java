@@ -49,7 +49,7 @@ public class WireModel extends CodeBasedModel {
         
         if (cullingSide == null) {
             //Render center & branches in SOLID layer
-            if (MinecraftForgeClient.getRenderLayer() == RenderType.solid()) {
+            if (MinecraftForgeClient.getRenderType() == RenderType.solid()) {
                 for (Direction wire_side: Direction.values()) {
                     byte numOfCon = 0;
                     Direction conSide = Direction.DOWN;

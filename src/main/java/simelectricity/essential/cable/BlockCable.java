@@ -182,7 +182,7 @@ public class BlockCable extends BlockBase implements EntityBlock, ICustomBoundin
 	public BlockState updateShape(BlockState stateIn, Direction facing, BlockState facingState, LevelAccessor worldIn,
 			BlockPos currentPos, BlockPos facingPos) {
 		if (stateIn.getValue(BlockStateProperties.WATERLOGGED)) {
-			worldIn.getLiquidTicks().scheduleTick(currentPos, Fluids.WATER, Fluids.WATER.getTickDelay(worldIn));
+			worldIn.scheduleTick(currentPos, Fluids.WATER, Fluids.WATER.getTickDelay(worldIn));
 		}
 
 		return super.updateShape(stateIn, facing, facingState, worldIn, currentPos, facingPos);
@@ -528,19 +528,19 @@ public class BlockCable extends BlockBase implements EntityBlock, ICustomBoundin
     /// Item drops
     ///////////////////////
     @Override
-    public boolean removedByPlayer(BlockState state, Level world, BlockPos pos, Player player, boolean willHarvest, FluidState fluid) {
+    public boolean onDestroyedByPlayer(BlockState state, Level world, BlockPos pos, Player player, boolean willHarvest, FluidState fluid) {
 		BlockEntity te = world.getBlockEntity(pos);
 		if (!(te instanceof ISEGenericCable))
-			return super.removedByPlayer(state, world, pos, player, willHarvest, fluid);
+			return super.onDestroyedByPlayer(state, world, pos, player, willHarvest, fluid);
 
 		if (CoverPanelUtils.removeCoverPanel((ISECoverPanelHost)te, player))
 			return false;
 
-		return super.removedByPlayer(state, world, pos, player, willHarvest, fluid);
+		return super.onDestroyedByPlayer(state, world, pos, player, willHarvest, fluid);
     }
 
     @Override
-    public ItemStack getPickBlock(BlockState state, HitResult target, BlockGetter world, BlockPos pos, Player player) {
+    public ItemStack getCloneItemStack(BlockState state, HitResult target, BlockGetter world, BlockPos pos, Player player) {
         BlockEntity te = world.getBlockEntity(pos);
         if (!(te instanceof ISEGenericCable))
             return ItemStack.EMPTY;
@@ -549,17 +549,16 @@ public class BlockCable extends BlockBase implements EntityBlock, ICustomBoundin
         Direction side = host.getSelectedCoverPanel(player);
 
         return side==null ?
-        		super.getPickBlock(state, target, world, pos, player) :
+        		super.getCloneItemStack(state, target, world, pos, player) :
         		host.getCoverPanelOnSide(side).getDroppedItemStack();
     }
 
     ///////////////////////
     ///Redstone
     ///////////////////////
-    // TODO: Fix isSignalSource see DiodeBlock RepeaterBlock RedStoneWireBlock
-    // https://github.com/MinecraftForge/MinecraftForge/issues/7915
-    /*@Override
-    public boolean isSignalSource(BlockState state, BlockGetter world, BlockPos pos, @Nullable Direction side) {
+    // The more sensitive version of vanilla isSignalSource
+    @Override
+    public boolean canConnectRedstone(BlockState state, BlockGetter world, BlockPos pos, @Nullable Direction side) {
         BlockEntity te = world.getBlockEntity(pos);
 
         if (te instanceof ISEGenericCable) {
@@ -570,7 +569,7 @@ public class BlockCable extends BlockBase implements EntityBlock, ICustomBoundin
         }
 
         return false;
-    }*/
+    }
 
     @Override
     public int getSignal(BlockState blockState, BlockGetter world, BlockPos pos, Direction side) {

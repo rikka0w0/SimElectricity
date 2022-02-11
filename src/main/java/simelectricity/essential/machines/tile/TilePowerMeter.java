@@ -47,11 +47,11 @@ public class TilePowerMeter extends SETwoPortMachine<ISESwitch> implements
     }
 
     @Override
-    public CompoundTag save(CompoundTag tagCompound) {
-        tagCompound.putDouble("bufferedEnergy", this.bufferedEnergy);
-        tagCompound.putBoolean("isOn", this.isOn);
+    protected void saveAdditional(CompoundTag nbt) {
+    	nbt.putDouble("bufferedEnergy", this.bufferedEnergy);
+    	nbt.putBoolean("isOn", this.isOn);
 
-        return super.save(tagCompound);
+        super.saveAdditional(nbt);
     }
 
     /////////////////////////////////////////////////////////

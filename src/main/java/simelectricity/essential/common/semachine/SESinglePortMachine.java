@@ -37,9 +37,9 @@ public abstract class SESinglePortMachine<T extends ISEComponentParameter> exten
     }
 
     @Override
-    public CompoundTag save(CompoundTag tagCompound) {
-        Utils.saveToNbt(tagCompound, "functionalSide", this.functionalSide);
-        return super.save(tagCompound);
+    protected void saveAdditional(CompoundTag nbt) {
+        Utils.saveToNbt(nbt, "functionalSide", this.functionalSide);
+        super.saveAdditional(nbt);
     }
 
     @Override

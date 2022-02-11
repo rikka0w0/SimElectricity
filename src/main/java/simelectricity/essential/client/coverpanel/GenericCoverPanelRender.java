@@ -134,7 +134,7 @@ public abstract class GenericCoverPanelRender<T extends ISECoverPanel> implement
 
     @Override
     public void renderCoverPanel(T coverPanel, Direction side, Random rand, List<BakedQuad> quads) {
-        if (MinecraftForgeClient.getRenderLayer() != RenderType.solid())
+        if (MinecraftForgeClient.getRenderType() != RenderType.solid())
             return;
 
         quads.addAll(this.bakedQuads[side.ordinal()]);

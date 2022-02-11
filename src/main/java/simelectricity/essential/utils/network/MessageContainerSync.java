@@ -6,7 +6,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.core.Direction;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.fmllegacy.network.PacketDistributor;
+import net.minecraftforge.network.PacketDistributor;
 import rikka.librikka.network.MessageContainerSyncBase;
 import simelectricity.essential.Essential;
 

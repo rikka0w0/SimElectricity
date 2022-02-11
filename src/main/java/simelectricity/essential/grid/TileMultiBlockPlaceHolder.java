@@ -29,9 +29,9 @@ public class TileMultiBlockPlaceHolder extends BlockEntityBase implements IMulti
     }
 
     @Override
-    public CompoundTag save(CompoundTag nbt) {
+    protected void saveAdditional(CompoundTag nbt) {
         this.mbInfo.saveToNBT(nbt);
-        return super.save(nbt);
+        super.saveAdditional(nbt);
     }
 
     @Override

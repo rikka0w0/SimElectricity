@@ -9,18 +9,23 @@ buildscript {
 	}
 }
 
+// Load the common property
+Properties librikka_props = new Properties();
+librikka_props.load(new FileInputStream("$project.rootDir/librikka/gradle.properties"));
+librikka_props.each {prop -> project.ext.set(prop.key, prop.value)};
+
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'eclipse'
 
-// Mojang ships Java 16 to end users in 1.17+ instead of Java 8 in 1.16 or lower, so your mod should target Java 16.
-java.toolchain.languageVersion = JavaLanguageVersion.of(16)
+// Mojang ships Java 17 to end users in 1.18+
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.17.1-37.0.27'
+    minecraft 'net.minecraftforge:forge:'+ project.minecraft_version + '-' + project.forge_version
     implementation project(':librikka')
 }
 
-version = "1.0.0"
+version = project.mod_version
 group = "simelectricity" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "SimElectricity"
 
@@ -42,7 +47,7 @@ minecraft {
     // stable_#            stables are built at the discretion of the MCP team.
     // Use non-default mappings at your own risk. they may not always work.
     // simply re-run your setup task after changing the mappings to update your workspace.
-    mappings channel: 'official', version: '1.17.1'
+    mappings channel: 'official', version: project.minecraft_version
     // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
 
     // Default run configurations.
@@ -56,6 +61,10 @@ minecraft {
 
             // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
+
+            lazyToken 'source_roots', {
+            	'librikka%%' + project(':librikka').buildDir.toString() + '/../bin/main'
+            }
 
             mods {
                 simelectricity {
@@ -72,6 +81,10 @@ minecraft {
 
             // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
+
+            lazyToken 'source_roots', {
+            	'librikka%%' + project(':librikka').buildDir.toString() + '/../bin/main'
+            }
 
             mods {
                 simelectricity {
@@ -90,6 +103,10 @@ minecraft {
             // property 'forge.logging.console.level', 'debug'
 
             args '--mod', 'sime_essential', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
+
+            lazyToken 'source_roots', {
+            	'librikka%%' + project(':librikka').buildDir.toString() + '/../bin/main'
+            }
 
             mods {
                 simelectricity {
@@ -134,4 +151,17 @@ task sourceJar(type: Jar) {
 artifacts {
     archives deobfJar
     archives sourceJar
+}
+
+import org.apache.tools.ant.filters.ReplaceTokens
+// Process resources on build
+processResources {
+	filesMatching("**/META-INF/mods.toml") {
+		println "Substituting strings into mods.toml"
+		filter(ReplaceTokens, tokens: [
+			fml_version: project.fml_version,
+			forge_version: project.forge_version,
+			minecraft_version_min: project.minecraft_version_min
+		])
+	}
 }

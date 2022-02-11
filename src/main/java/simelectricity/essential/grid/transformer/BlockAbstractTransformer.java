@@ -54,13 +54,13 @@ public abstract class BlockAbstractTransformer extends BlockBase {
     }
 
     @Override
-    public boolean removedByPlayer(BlockState state, Level world, BlockPos pos, Player player, boolean willHarvest, FluidState fluid) {
+    public boolean onDestroyedByPlayer(BlockState state, Level world, BlockPos pos, Player player, boolean willHarvest, FluidState fluid) {
         BlockEntity te = world.getBlockEntity(pos);
         if (te != null && !world.isClientSide) {
             this.getBlueprint().restoreStructure(te, state, true);
         }
 
-        return super.removedByPlayer(state, world, pos, player, willHarvest, fluid);
+        return super.onDestroyedByPlayer(state, world, pos, player, willHarvest, fluid);
     }
 
     @Override

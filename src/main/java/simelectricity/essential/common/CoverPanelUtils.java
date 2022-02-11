@@ -5,6 +5,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.core.Direction;
@@ -12,7 +13,6 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.util.Constants.NBT;
 import rikka.librikka.Utils;
 import simelectricity.essential.api.ISECoverPanelHost;
 import simelectricity.essential.api.SEEAPI;
@@ -48,7 +48,7 @@ public class CoverPanelUtils {
     	if (ret == null || ret.length < Direction.values().length)
     		throw new RuntimeException("ISECoverPanel[] is invalid or not ready");
 
-    	ListTag tagList = nbt.getList(name, NBT.TAG_COMPOUND);
+    	ListTag tagList = nbt.getList(name, Tag.TAG_COMPOUND);
 
     	for (Direction side: Direction.values())
         	ret[side.ordinal()] = null;

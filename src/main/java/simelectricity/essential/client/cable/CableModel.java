@@ -56,7 +56,7 @@ public class CableModel extends CodeBasedModel {
         
     	if (cullingSide == null) {
             //Render center & branches in SOLID layer
-            if (MinecraftForgeClient.getRenderLayer() == getCableRenderLayer()) {
+            if (MinecraftForgeClient.getRenderType() == getCableRenderLayer()) {
                 byte numOfCon = 0;
                 Direction conSide = Direction.DOWN;
 

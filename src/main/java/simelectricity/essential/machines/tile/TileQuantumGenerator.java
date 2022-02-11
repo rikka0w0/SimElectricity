@@ -42,11 +42,11 @@ public class TileQuantumGenerator extends SESinglePortMachine<ISEVoltageSource> 
     }
 
     @Override
-    public CompoundTag save(CompoundTag tagCompound) {
-        tagCompound.putDouble("internalVoltage", this.internalVoltage);
-        tagCompound.putDouble("resistance", this.resistance);
+    protected void saveAdditional(CompoundTag nbt) {
+    	nbt.putDouble("internalVoltage", this.internalVoltage);
+    	nbt.putDouble("resistance", this.resistance);
 
-        return super.save(tagCompound);
+        super.saveAdditional(nbt);
     }
 
     ///////////////////////////////////

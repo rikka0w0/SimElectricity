@@ -45,13 +45,13 @@ public class TileCurrentSensor extends SETwoPortMachine<ISESwitch> implements
     }
 
     @Override
-    public CompoundTag save(CompoundTag tagCompound) {
-        tagCompound.putDouble("resistance", this.resistance);
-        tagCompound.putDouble("thresholdCurrent", this.thresholdCurrent);
-        tagCompound.putBoolean("absMode", this.absMode);
-        tagCompound.putBoolean("inverted", this.inverted);
+    protected void saveAdditional(CompoundTag nbt) {
+    	nbt.putDouble("resistance", this.resistance);
+    	nbt.putDouble("thresholdCurrent", this.thresholdCurrent);
+    	nbt.putBoolean("absMode", this.absMode);
+    	nbt.putBoolean("inverted", this.inverted);
 
-        return super.save(tagCompound);
+        super.saveAdditional(nbt);
     }
 
     /////////////////////////////////////////////////////////

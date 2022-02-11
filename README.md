@@ -4,11 +4,11 @@
 
 A Minecraft mod aiming to bring real world electrical systems into the Minecraft world
 
-Presented by the Chinese Institution of Scientific Minecraft Mod (CISM)
+Brought to you by the Chinese Institution of Scientific Minecraft Mod (CISM)
 
-Current Supported Version: Minecraft Forge 1.17.1
+Current Supported Version: Minecraft Forge 1.18.1
 
-Legacy versions: Minecraft Forge 1.16.5(1.16.2 to 1.16.5), 1.15.2, 1.14.4, 1.12.2, 1.11.2, 1.7.10
+Legacy versions: Minecraft Forge 1.17.1, 1.16.5(1.16.2 to 1.16.5), 1.15.2, 1.14.4, 1.12.2, 1.11.2, 1.7.10
 
 ![Image](https://raw.githubusercontent.com/wiki/RoyalAliceAcademyOfSciences/SimElectricity/screenshots/grid.jpg)
 
@@ -60,6 +60,7 @@ Replace `simelectricity%%<SomePath>\SimElectricity\bin\main;simelectricity%%<Som
 1. Since 1.15.2, Mojang introduces "DataGenerators", they generate json resource files such as blockstates and models.
 They are invoked separately. Before building or testing this Mod, you have to execute the gradle task "runData". 
 Checkout: [https://minecraft.gamepedia.com/Tutorials/Running_the_Data_Generator](https://minecraft.gamepedia.com/Tutorials/Running_the_Data_Generator)
+1. Since 1.18.1, Minecraft requires Java 17. To specify JRE path, use './gradlew -Dorg.gradle.java.home=/path_to_jdk_directory <commands>'.
 
 ## Special Thanks To: ![Image](/src/main/resources/assets/sime_essential/textures/item/tool_glove.png)
 * [LibRikka](https://github.com/rikka0w0/librikka) - A code pack designed to simplify Minecraft Modding

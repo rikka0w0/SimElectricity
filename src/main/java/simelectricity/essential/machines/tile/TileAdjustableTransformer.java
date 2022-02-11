@@ -39,11 +39,11 @@ public class TileAdjustableTransformer extends SETwoPortMachine<ISETransformer> 
     }
 
     @Override
-    public CompoundTag save(CompoundTag tagCompound) {
-        tagCompound.putDouble("ratio", this.ratio);
-        tagCompound.putDouble("outputResistance", this.outputResistance);
+    protected void saveAdditional(CompoundTag nbt) {
+    	nbt.putDouble("ratio", this.ratio);
+    	nbt.putDouble("outputResistance", this.outputResistance);
 
-        return super.save(tagCompound);
+        super.saveAdditional(nbt);
     }
 
     /////////////////////////////////////////////////////////

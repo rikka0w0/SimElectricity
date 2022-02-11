@@ -42,11 +42,11 @@ public class TileRelay extends SETwoPortMachine<ISESwitch> implements ISESwitch,
     }
 
     @Override
-    public CompoundTag save(CompoundTag tagCompound) {
-        tagCompound.putDouble("resistance", this.resistance);
-        tagCompound.putBoolean("isOn", this.isOn);
+    protected void saveAdditional(CompoundTag nbt) {
+    	nbt.putDouble("resistance", this.resistance);
+    	nbt.putBoolean("isOn", this.isOn);
 
-        return super.save(tagCompound);
+        super.saveAdditional(nbt);
     }
 
     /////////////////////////////////////////////////////////

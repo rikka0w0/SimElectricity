@@ -200,12 +200,12 @@ public abstract class BlockElectronics extends SEMachineBlock implements IMetaPr
     }
 
     @Override
-    public boolean removedByPlayer(BlockState state, Level level, BlockPos pos, Player player, boolean willHarvest, FluidState fluid) {
+    public boolean onDestroyedByPlayer(BlockState state, Level level, BlockPos pos, Player player, boolean willHarvest, FluidState fluid) {
     	BlockEntity blockEntity = level.getBlockEntity(pos);
     	if (blockEntity instanceof TileElectricFurnace) {
     		Containers.dropContents(level, pos, ((TileElectricFurnace)blockEntity).inventory);
     	}
 
-    	return super.removedByPlayer(state, level, pos, player, willHarvest, fluid);
+    	return super.onDestroyedByPlayer(state, level, pos, player, willHarvest, fluid);
     }
 }

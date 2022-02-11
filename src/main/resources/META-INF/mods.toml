@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="[28,)" #mandatory (28 is current forge version)
+loaderVersion="[@fml_version@,)"
 issueTrackerURL="https://github.com/RoyalAliceAcademyOfSciences/SimElectricity/issues" #optional
 license="MIT License"
 
@@ -52,7 +52,7 @@ Facade support for BuildCraft and ThermalExpansion
     # Does this dependency have to exist - if not, ordering below must be specified
     mandatory=true #mandatory
     # The version range of the dependency
-    versionRange="[28,)" #mandatory
+    versionRange="[@forge_version@,)" #mandatory
     # An ordering relationship for the dependency - BEFORE or AFTER required if the relationship is not mandatory
     ordering="NONE"
     # Side this dependency is applied on - BOTH, CLIENT or SERVER
@@ -67,7 +67,7 @@ Facade support for BuildCraft and ThermalExpansion
 [[dependencies.simelectricity]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.16.3,)"
+    versionRange="[@minecraft_version_min@,)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.sime_essential]]

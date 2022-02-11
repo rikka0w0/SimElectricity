@@ -24,7 +24,6 @@ import simelectricity.essential.common.CoverPanelUtils;
 import simelectricity.essential.common.SEEnergyTile;
 
 public class TileCable extends SEEnergyTile implements ISEGenericCable, ISEIuminousCoverPanelHost, ISECableTile, ISEEnergyNetUpdateHandler {
-    public boolean emitRedstoneSignal;
     /**
      * Accessible from client
      */
@@ -167,12 +166,11 @@ public class TileCable extends SEEnergyTile implements ISEGenericCable, ISEIumin
     }
 
     @Override
-    public CompoundTag save(CompoundTag tagCompound) {
-        tagCompound.putInt("color", this.color);
-        tagCompound.putDouble("resistance", this.resistance);
-        CoverPanelUtils.coverPanelsToNBT(this, tagCompound);
-
-        return super.save(tagCompound);
+    protected void saveAdditional(CompoundTag nbt) {
+    	nbt.putInt("color", this.color);
+    	nbt.putDouble("resistance", this.resistance);
+        CoverPanelUtils.coverPanelsToNBT(this, nbt);
+        super.saveAdditional(nbt);
     }
 
     ///////////////////////////////////////

@@ -44,9 +44,9 @@ public abstract class SEMachineTile extends SEEnergyTile implements ISESocketPro
     }
 
     @Override
-    public CompoundTag save(CompoundTag tagCompound) {
-        CoverPanelUtils.coverPanelsToNBT(this, tagCompound);
-        return super.save(tagCompound);
+    protected void saveAdditional(CompoundTag nbt) {
+        CoverPanelUtils.coverPanelsToNBT(this, nbt);
+        super.saveAdditional(nbt);
     }
 
     /////////////////////////////////////////////////////////

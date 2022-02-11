@@ -76,7 +76,7 @@ public class GenericFacadeRender implements ISECoverPanelRender<ISEFacadeCoverPa
 	@Override
 	public void renderCoverPanel(ISEFacadeCoverPanel coverPanel, Direction side, Random random, List<BakedQuad> quads) {
 		BlockState blockState = coverPanel.getBlockState();
-		if (ItemBlockRenderTypes.canRenderInLayer(blockState, MinecraftForgeClient.getRenderLayer())) {
+		if (ItemBlockRenderTypes.canRenderInLayer(blockState, MinecraftForgeClient.getRenderType())) {
 	        List<MutableQuad> mquads = new LinkedList<>();
 
 	        // Get the block model

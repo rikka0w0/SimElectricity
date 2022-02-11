@@ -51,10 +51,10 @@ public class TileAdjustableResistor extends SESinglePortMachine<ISEVoltageSource
     }
 
     @Override
-    public CompoundTag save(CompoundTag tagCompound) {
-        tagCompound.putDouble("resistance", this.resistance);
+    protected void saveAdditional(CompoundTag nbt) {
+    	nbt.putDouble("resistance", this.resistance);
 
-        return super.save(tagCompound);
+        super.saveAdditional(nbt);
     }
 
     ///////////////////////////////////

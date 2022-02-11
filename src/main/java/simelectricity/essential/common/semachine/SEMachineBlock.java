@@ -79,14 +79,14 @@ public abstract class SEMachineBlock extends BlockBase implements EntityBlock {
     /// CoverPanelHandler
     ///////////////////////////////
     @Override
-    public boolean removedByPlayer(BlockState state, Level world, BlockPos pos, Player player, boolean willHarvest, FluidState fluid) {
+    public boolean onDestroyedByPlayer(BlockState state, Level world, BlockPos pos, Player player, boolean willHarvest, FluidState fluid) {
 		BlockEntity te = world.getBlockEntity(pos);
 		if (!(te instanceof ISECoverPanelHost))
-			return super.removedByPlayer(state, world, pos, player, willHarvest, fluid);
+			return super.onDestroyedByPlayer(state, world, pos, player, willHarvest, fluid);
 
     	if (CoverPanelUtils.removeCoverPanel((ISECoverPanelHost)te, player))
 			return false;
 
-		return super.removedByPlayer(state, world, pos, player, willHarvest, fluid);
+		return super.onDestroyedByPlayer(state, world, pos, player, willHarvest, fluid);
     }
 }
