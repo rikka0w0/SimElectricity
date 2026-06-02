@@ -68,6 +68,10 @@ public final class ItemTools extends ItemBase implements IMetaProvider<IMetaBase
     	return itemType.handler.apply(context);
     }
 
+    public static ItemTools createItem(ItemType itemType) {
+        return new ItemTools(itemType);
+    }
+
     public static ItemTools[] create() {
     	ItemTools[] ret = new ItemTools[ItemType.values().length];
     	for (ItemType itemType: ItemType.values())

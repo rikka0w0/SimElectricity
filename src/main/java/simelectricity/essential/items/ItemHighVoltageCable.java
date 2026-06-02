@@ -46,6 +46,10 @@ public final class ItemHighVoltageCable extends ItemBase implements IMetaProvide
 		return itemType;
 	}
 
+    public static ItemHighVoltageCable createItem(ItemType itemType) {
+        return new ItemHighVoltageCable(itemType);
+    }
+
     public static ItemHighVoltageCable[] create() {
     	ItemHighVoltageCable[] ret = new ItemHighVoltageCable[ItemType.values().length];
     	for (ItemType info: ItemType.values())

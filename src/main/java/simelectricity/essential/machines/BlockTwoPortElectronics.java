@@ -97,6 +97,15 @@ public abstract class BlockTwoPortElectronics extends SEMachineBlock implements 
     	return ret;
     }
 
+    public static BlockTwoPortElectronics createBlock(final Type meta) {
+    	return new BlockTwoPortElectronics(meta) {
+    		@Override
+    		public boolean hasSecondState() {
+    			return meta == Type.circuit_breaker;
+    		}
+    	};
+    }
+
 	@Override
 	public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
 		try {

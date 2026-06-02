@@ -35,7 +35,10 @@ public class SEMachineModelLoader implements IGeometryLoader<SEMachineModelLoade
             }
             return null;
         } else {
-            BlockModel vanillaBlockModel = deserializationContext.deserialize(modelContents, BlockModel.class);
+            JsonObject cleanedContents = modelContents.deepCopy();
+            cleanedContents.remove("loader");
+            cleanedContents.remove("loader2");
+            BlockModel vanillaBlockModel = deserializationContext.deserialize(cleanedContents, BlockModel.class);
             return new VanillaWrapper(vanillaBlockModel);
         }
 	}

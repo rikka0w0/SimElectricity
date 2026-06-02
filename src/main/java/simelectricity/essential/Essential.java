@@ -24,6 +24,9 @@ import simelectricity.essential.coverpanel.CoverPanelRegistry;
 import simelectricity.essential.coverpanel.SECoverPanelFactory;
 import simelectricity.essential.utils.network.MessageContainerSync;
 
+import simelectricity.essential.grid.transformer.BlockPowerTransformer;
+import simelectricity.essential.grid.transformer.BlockDistributionTransformer;
+
 import java.util.function.Supplier;
 
 @Mod(Essential.MODID)
@@ -62,6 +65,15 @@ public class Essential {
     	@SubscribeEvent
     	public static void onCommonSetup(FMLCommonSetupEvent event) {
     		new SECoverPanelFactory();
+    		
+    		// Build blueprints now that block instances are fully created and registered
+    		BlockPowerTransformer.createBluePrint();
+    		BlockDistributionTransformer.createBluePrint();
+    		
+    		// Register colored facade hosts when blocks are fully instantiated
+    		SEEAPI.coverPanelRegistry.registerColoredFacadeHost(BlockRegistry.blockCable);
+    		SEEAPI.coverPanelRegistry.registerColoredFacadeHost(BlockRegistry.blockElectronics);
+    		SEEAPI.coverPanelRegistry.registerColoredFacadeHost(BlockRegistry.blockTwoPortElectronics);
     	}
 
         @SubscribeEvent

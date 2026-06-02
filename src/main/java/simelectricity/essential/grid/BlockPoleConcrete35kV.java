@@ -83,6 +83,10 @@ public class BlockPoleConcrete35kV extends BlockBase implements ICustomBoundingB
 		return new BlockPoleConcrete35kV[] {new BlockPoleConcrete35kV(0), new BlockPoleConcrete35kV(1)};
 	}
 
+	public static BlockPoleConcrete35kV createBlock(int type) {
+		return new BlockPoleConcrete35kV(type);
+	}
+
 	public final static Vec3i hostOffset = new Vec3i(5, 11, 0);
     protected MultiBlockStructure createStructureTemplate() {
         //y,z,x facing NORTH(Z-), do not change

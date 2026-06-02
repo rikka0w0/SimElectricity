@@ -43,6 +43,14 @@ public class BlockPowerTransformer extends BlockAbstractTransformer implements I
     	return ret;
     }
 
+    public static BlockPowerTransformer createBlock(EnumPowerTransformerBlockType type) {
+    	if (type.formed) {
+    		return new FormedStructureBlock(type);
+    	} else {
+    		return new RawStructureBlock(type);
+    	}
+    }
+
     private static class RawStructureBlock extends BlockPowerTransformer {
     	private RawStructureBlock(EnumPowerTransformerBlockType type) {
     		super(type);

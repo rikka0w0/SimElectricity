@@ -17,6 +17,8 @@ import simelectricity.essential.coverpanel.ContainerVoltageSensor;
 import simelectricity.essential.grid.*;
 import simelectricity.essential.grid.transformer.BlockDistributionTransformer;
 import simelectricity.essential.grid.transformer.BlockPowerTransformer;
+import simelectricity.essential.grid.transformer.EnumPowerTransformerBlockType;
+import simelectricity.essential.grid.transformer.EnumDistributionTransformerBlockType;
 import simelectricity.essential.machines.*;
 import simelectricity.essential.machines.gui.*;
 
@@ -42,35 +44,196 @@ public class BlockRegistry {
 	public static BlockTwoPortElectronics[] blockTwoPortElectronics;
 
 	public static void init(IEventBus modEventBus) {
-		blockCable = BlockCable.create();
-		blockWire = BlockWire.create();
-		cableJoint = BlockCableJoint.create();
-		metalPole35kV = BlockPoleMetal35kV.create();
-		concretePole35kV = BlockPoleConcrete35kV.create();
-		concretePole = BlockPoleConcrete.create();
-		powerTransformer = BlockPowerTransformer.create();
-		BlockPowerTransformer.createBluePrint();
-		distributionTransformer = BlockDistributionTransformer.create();
-		BlockDistributionTransformer.createBluePrint();
-		blockElectronics = BlockElectronics.create();
-		blockTwoPortElectronics = BlockTwoPortElectronics.create();
+		// Allocate arrays
+		blockCable = new BlockCable[BlockCable.CableTypes.values().length];
+		blockWire = new BlockWire[BlockWire.Type.values().length];
+		cableJoint = new BlockCableJoint[BlockCableJoint.Type.values().length];
+		metalPole35kV = new BlockPoleMetal35kV[2];
+		concretePole35kV = new BlockPoleConcrete35kV[2];
+		concretePole = new BlockPoleConcrete[BlockPoleConcrete.Type.values().length];
+		powerTransformer = new BlockPowerTransformer[EnumPowerTransformerBlockType.values().length];
+		distributionTransformer = new BlockDistributionTransformer[EnumDistributionTransformerBlockType.values().length];
+		blockElectronics = new BlockElectronics[BlockElectronics.Type.values().length];
+		blockTwoPortElectronics = new BlockTwoPortElectronics[BlockTwoPortElectronics.Type.values().length];
 
-		// Register blocks and items
-		registerBlocks(blockCable);
-		registerBlocks(blockWire);
-		registerBlocks(metalPole35kV);
-		registerBlocks(concretePole35kV);
-		registerBlocks(concretePole);
-		registerBlocks(cableJoint);
-		registerBlocks(powerTransformer);
-		registerBlocks(distributionTransformer);
-		registerBlocks(blockElectronics);
-		registerBlocks(blockTwoPortElectronics);
+		// 1. BlockCable
+		for (BlockCable.CableTypes meta : BlockCable.CableTypes.values()) {
+			final int index = meta.ordinal();
+			final String name = "cable_" + meta.name();
+			var blockHolder = BLOCKS.register(name, () -> BlockCable.createBlock(meta));
+			ITEMS.register(name, () -> {
+				BlockCable block = (BlockCable) blockHolder.get();
+				blockCable[index] = block;
+				Item item = block.asItem();
+				if (item != null) {
+					synchronized (blockItems) {
+						if (!blockItems.contains(item)) blockItems.add(item);
+					}
+				}
+				return item;
+			});
+		}
 
-		// Cover Panel colored facade hosts
-		SEEAPI.coverPanelRegistry.registerColoredFacadeHost(blockCable);
-		SEEAPI.coverPanelRegistry.registerColoredFacadeHost(blockElectronics);
-		SEEAPI.coverPanelRegistry.registerColoredFacadeHost(blockTwoPortElectronics);
+		// 2. BlockWire
+		for (BlockWire.Type meta : BlockWire.Type.values()) {
+			final int index = meta.ordinal();
+			final String name = "wire_" + meta.name();
+			var blockHolder = BLOCKS.register(name, () -> BlockWire.createBlock(meta));
+			ITEMS.register(name, () -> {
+				BlockWire block = (BlockWire) blockHolder.get();
+				blockWire[index] = block;
+				Item item = block.asItem();
+				if (item != null) {
+					synchronized (blockItems) {
+						if (!blockItems.contains(item)) blockItems.add(item);
+					}
+				}
+				return item;
+			});
+		}
+
+		// 3. BlockCableJoint
+		for (BlockCableJoint.Type meta : BlockCableJoint.Type.values()) {
+			final int index = meta.ordinal();
+			final String name = "cable_joint" + meta.name();
+			var blockHolder = BLOCKS.register(name, () -> BlockCableJoint.createBlock(meta));
+			ITEMS.register(name, () -> {
+				BlockCableJoint block = (BlockCableJoint) blockHolder.get();
+				cableJoint[index] = block;
+				Item item = block.asItem();
+				if (item != null) {
+					synchronized (blockItems) {
+						if (!blockItems.contains(item)) blockItems.add(item);
+					}
+				}
+				return item;
+			});
+		}
+
+		// 4. BlockPoleMetal35kV
+		for (int i = 0; i < 2; i++) {
+			final int index = i;
+			final String name = "pole_metal_35kv_" + index;
+			var blockHolder = BLOCKS.register(name, () -> BlockPoleMetal35kV.createBlock(index));
+			ITEMS.register(name, () -> {
+				BlockPoleMetal35kV block = (BlockPoleMetal35kV) blockHolder.get();
+				metalPole35kV[index] = block;
+				Item item = block.asItem();
+				if (item != null) {
+					synchronized (blockItems) {
+						if (!blockItems.contains(item)) blockItems.add(item);
+					}
+				}
+				return item;
+			});
+		}
+
+		// 5. BlockPoleConcrete35kV
+		for (int i = 0; i < 2; i++) {
+			final int index = i;
+			final String name = "pole_concrete_35kv_" + index;
+			var blockHolder = BLOCKS.register(name, () -> BlockPoleConcrete35kV.createBlock(index));
+			ITEMS.register(name, () -> {
+				BlockPoleConcrete35kV block = (BlockPoleConcrete35kV) blockHolder.get();
+				concretePole35kV[index] = block;
+				Item item = block.asItem();
+				if (item != null) {
+					synchronized (blockItems) {
+						if (!blockItems.contains(item)) blockItems.add(item);
+					}
+				}
+				return item;
+			});
+		}
+
+		// 6. BlockPoleConcrete
+		for (BlockPoleConcrete.Type meta : BlockPoleConcrete.Type.values()) {
+			final int index = meta.ordinal();
+			final String name = "pole_concrete_" + meta.name();
+			var blockHolder = BLOCKS.register(name, () -> BlockPoleConcrete.createBlock(meta));
+			ITEMS.register(name, () -> {
+				BlockPoleConcrete block = (BlockPoleConcrete) blockHolder.get();
+				concretePole[index] = block;
+				Item item = block.asItem();
+				if (item != null) {
+					synchronized (blockItems) {
+						if (!blockItems.contains(item)) blockItems.add(item);
+					}
+				}
+				return item;
+			});
+		}
+
+		// 7. BlockPowerTransformer
+		for (EnumPowerTransformerBlockType meta : EnumPowerTransformerBlockType.values()) {
+			final int index = meta.ordinal();
+			final String name = "transformer_35kv_10kv_" + meta.getSerializedName();
+			var blockHolder = BLOCKS.register(name, () -> BlockPowerTransformer.createBlock(meta));
+			ITEMS.register(name, () -> {
+				BlockPowerTransformer block = (BlockPowerTransformer) blockHolder.get();
+				powerTransformer[index] = block;
+				Item item = block.asItem();
+				if (item != null) {
+					synchronized (blockItems) {
+						if (!blockItems.contains(item)) blockItems.add(item);
+					}
+				}
+				return item;
+			});
+		}
+		// 8. BlockDistributionTransformer
+		for (EnumDistributionTransformerBlockType meta : EnumDistributionTransformerBlockType.values()) {
+			final int index = meta.ordinal();
+			final String name = "transformer_10kv_415v_" + meta.getSerializedName();
+			var blockHolder = BLOCKS.register(name, () -> BlockDistributionTransformer.createBlock(meta));
+			ITEMS.register(name, () -> {
+				BlockDistributionTransformer block = (BlockDistributionTransformer) blockHolder.get();
+				distributionTransformer[index] = block;
+				Item item = block.asItem();
+				if (item != null) {
+					synchronized (blockItems) {
+						if (!blockItems.contains(item)) blockItems.add(item);
+					}
+				}
+				return item;
+			});
+		}
+
+		// 9. BlockElectronics
+		for (BlockElectronics.Type meta : BlockElectronics.Type.values()) {
+			final int index = meta.ordinal();
+			final String name = "electronics_" + meta.name();
+			var blockHolder = BLOCKS.register(name, () -> BlockElectronics.createBlock(meta));
+			ITEMS.register(name, () -> {
+				BlockElectronics block = (BlockElectronics) blockHolder.get();
+				blockElectronics[index] = block;
+				Item item = block.asItem();
+				if (item != null) {
+					synchronized (blockItems) {
+						if (!blockItems.contains(item)) blockItems.add(item);
+					}
+				}
+				return item;
+			});
+		}
+
+		// 10. BlockTwoPortElectronics
+		for (BlockTwoPortElectronics.Type meta : BlockTwoPortElectronics.Type.values()) {
+			final int index = meta.ordinal();
+			final String name = "electronics2_" + meta.name();
+			var blockHolder = BLOCKS.register(name, () -> BlockTwoPortElectronics.createBlock(meta));
+			ITEMS.register(name, () -> {
+				BlockTwoPortElectronics block = (BlockTwoPortElectronics) blockHolder.get();
+				blockTwoPortElectronics[index] = block;
+				Item item = block.asItem();
+				if (item != null) {
+					synchronized (blockItems) {
+						if (!blockItems.contains(item)) blockItems.add(item);
+					}
+				}
+				return item;
+			});
+		}
 
 		// Register containers
 		registerGuiContainer(ContainerVoltageMeter.class);
@@ -90,17 +253,6 @@ public class BlockRegistry {
 		BLOCKS.register(modEventBus);
 		ITEMS.register(modEventBus);
 		CONTAINERS.register(modEventBus);
-	}
-
-	private static void registerBlocks(BlockBase[] blocks) {
-		for (BlockBase block : blocks) {
-			BLOCKS.register(block.registryName, () -> block);
-			Item item = block.asItem();
-			if (item != null) {
-				ITEMS.register(block.registryName, () -> item);
-				blockItems.add(item);
-			}
-		}
 	}
 
 	private static <T extends AbstractContainerMenu> void registerGuiContainer(Class<T> containerCls) {

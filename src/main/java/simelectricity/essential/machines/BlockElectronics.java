@@ -105,6 +105,16 @@ public abstract class BlockElectronics extends SEMachineBlock implements IMetaPr
     	return ret;
     }
 
+    public static BlockElectronics createBlock(final Type meta) {
+    	return new BlockElectronics(meta) {
+    		@Override
+    		public boolean hasSecondState() {
+    			return meta == Type.incandescent_lamp ||
+    					meta == Type.electric_furnace;
+    		}
+    	};
+    }
+
 	@Override
 	public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
     	try {

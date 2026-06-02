@@ -54,6 +54,10 @@ public final class ItemPanel extends ItemBase implements IMetaProvider<IMetaBase
 		return itemType;
 	}
 
+    public static ItemPanel createItem(ItemType itemType) {
+        return new ItemPanel(itemType);
+    }
+
     public static ItemPanel[] create() {
     	ItemPanel[] ret = new ItemPanel[ItemType.values().length];
     	for (ItemType meta: ItemType.values()) {

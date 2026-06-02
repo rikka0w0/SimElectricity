@@ -18,23 +18,51 @@ public class ItemRegistry {
     public static ItemTools[] itemTools;
 
     public static void init(IEventBus modEventBus) {
-        itemHVCable = ItemHighVoltageCable.create();
-        itemFutaTea = new ItemFutaTea();
-        itemMisc = ItemPanel.create();
-        itemTools = ItemTools.create();
+        // Allocate arrays
+        itemHVCable = new ItemHighVoltageCable[ItemHighVoltageCable.ItemType.values().length];
+        itemMisc = new ItemPanel[ItemPanel.ItemType.values().length];
+        itemTools = new ItemTools[ItemTools.ItemType.values().length];
 
-        registerItems(itemHVCable);
-        ITEMS.register(itemFutaTea.registryName, () -> itemFutaTea);
-        registerItems(itemMisc);
-        registerItems(itemTools);
+        // Register ItemFutaTea
+        ITEMS.register("futa_lemon_tea", () -> {
+            itemFutaTea = new ItemFutaTea();
+            return itemFutaTea;
+        });
+
+        // Register ItemHighVoltageCable
+        for (ItemHighVoltageCable.ItemType meta : ItemHighVoltageCable.ItemType.values()) {
+            final int index = meta.ordinal();
+            final String name = "hvcable_" + meta.name();
+            ITEMS.register(name, () -> {
+                ItemHighVoltageCable item = ItemHighVoltageCable.createItem(meta);
+                itemHVCable[index] = item;
+                return item;
+            });
+        }
+
+        // Register ItemPanel
+        for (ItemPanel.ItemType meta : ItemPanel.ItemType.values()) {
+            final int index = meta.ordinal();
+            final String name = "item_" + meta.name();
+            ITEMS.register(name, () -> {
+                ItemPanel item = ItemPanel.createItem(meta);
+                itemMisc[index] = item;
+                return item;
+            });
+        }
+
+        // Register ItemTools
+        for (ItemTools.ItemType meta : ItemTools.ItemType.values()) {
+            final int index = meta.ordinal();
+            final String name = "tool_" + meta.name();
+            ITEMS.register(name, () -> {
+                ItemTools item = ItemTools.createItem(meta);
+                itemTools[index] = item;
+                return item;
+            });
+        }
 
         ITEMS.register(modEventBus);
-    }
-
-    private static void registerItems(rikka.librikka.item.ItemBase... items) {
-        for (rikka.librikka.item.ItemBase item : items) {
-            ITEMS.register(item.registryName, () -> item);
-        }
     }
 
     public static void addItemsToCreativeTab(CreativeModeTab.Output output) {

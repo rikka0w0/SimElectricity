@@ -108,6 +108,10 @@ public class BlockWire extends BlockBase implements EntityBlock, ICustomBounding
     	return ret;
     }
 
+    public static BlockWire createBlock(ISECableMeta meta) {
+    	return new BlockWire(meta);
+    }
+
 
     public final ISECableMeta meta;
     protected static ThreadLocal<Direction> nextPlacedSide = new ThreadLocal<>();

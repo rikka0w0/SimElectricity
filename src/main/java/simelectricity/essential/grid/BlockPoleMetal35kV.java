@@ -80,6 +80,10 @@ public class BlockPoleMetal35kV extends BlockBase implements EntityBlock, ISEHVC
 		return new BlockPoleMetal35kV[] {new BlockPoleMetal35kV(0), new BlockPoleMetal35kV(1)};
 	}
 
+	public static BlockPoleMetal35kV createBlock(int type) {
+		return new BlockPoleMetal35kV(type);
+	}
+
 	public final static Vec3i hostOffset = new Vec3i(5, 18, 2);
 	public final static Vec3i hostOffset45 = new Vec3i(4, 18, 4);
     protected MultiBlockStructure createStructureTemplate() {

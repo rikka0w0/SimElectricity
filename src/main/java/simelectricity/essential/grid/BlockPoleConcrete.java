@@ -80,6 +80,10 @@ public class BlockPoleConcrete extends BlockBase implements IMetaProvider<BlockP
 		return ret;
 	}
 
+	public static BlockPoleConcrete createBlock(Type blockType) {
+		return new BlockPoleConcrete(blockType);
+	}
+
     public final Type blockType;
 	@Override
 	public Type meta() {

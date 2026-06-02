@@ -79,6 +79,10 @@ public class BlockCableJoint extends BlockBase implements IMetaProvider<ITileMet
     	return ret;
     }
 
+    public static BlockCableJoint createBlock(Type meta) {
+    	return new BlockCableJoint(meta);
+    }
+
     ///////////////////////////////
     ///BlockStates
     ///////////////////////////////

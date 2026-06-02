@@ -52,6 +52,16 @@ public class BlockDistributionTransformer extends BlockAbstractTransformer
     	return ret;
     }
 
+    public static BlockDistributionTransformer createBlock(final EnumDistributionTransformerBlockType type) {
+    	return new BlockDistributionTransformer(type) {
+    	    @Override
+    	    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+    	    	if (!type.formed)
+    		    	builder.add(BlockStateProperties.HORIZONTAL_FACING);
+    	    }
+    	};
+    }
+
     @Override
 	public EnumDistributionTransformerBlockType meta() {
 		return this.blockType;

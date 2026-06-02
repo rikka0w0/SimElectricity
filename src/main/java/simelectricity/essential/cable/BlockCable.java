@@ -121,6 +121,10 @@ public class BlockCable extends BlockBase implements EntityBlock, ICustomBoundin
     	return ret;
     }
 
+    public static BlockCable createBlock(ISECableMeta cableData) {
+    	return new BlockCable(cableData);
+    }
+
 
     ///////////////////////////////
     ///Block Properties
