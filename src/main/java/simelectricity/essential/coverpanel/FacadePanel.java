@@ -51,13 +51,11 @@ public abstract class FacadePanel implements ISEFacadeCoverPanel {
 		nbt.putBoolean("isHollow", isHollow());
 		nbt.put("blockstate", NbtUtils.writeBlockState(blockState));
 
-		CompoundTag nbtItemStack = new CompoundTag();
-		if (itemStack != null) {
+		if (itemStack != null && !itemStack.isEmpty()) {
+			CompoundTag nbtItemStack = new CompoundTag();
 			itemStack.save(net.minecraft.data.registries.VanillaRegistries.createLookup(), nbtItemStack);
-		} else {
-			ItemStack.EMPTY.save(net.minecraft.data.registries.VanillaRegistries.createLookup(), nbtItemStack);
+			nbt.put("itemstack", nbtItemStack);
 		}
-		nbt.put("itemstack", nbtItemStack);
 	}
 
 	@Override

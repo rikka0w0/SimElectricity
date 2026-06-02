@@ -113,9 +113,11 @@ public class BlockEntityWire extends SEEnergyBlockEntity implements ISEGenericWi
 
 
             compound.putDouble("resistance", this.resistance);
-            CompoundTag itemStackCompound = new CompoundTag();
-            this.itemStack.save(registries, itemStackCompound);
-            compound.put("itemStack", itemStackCompound);
+            if (!this.itemStack.isEmpty()) {
+                CompoundTag itemStackCompound = new CompoundTag();
+                this.itemStack.save(registries, itemStackCompound);
+                compound.put("itemStack", itemStackCompound);
+            }
         }
     }
 

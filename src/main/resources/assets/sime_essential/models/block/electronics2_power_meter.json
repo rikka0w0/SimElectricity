@@ -1,4 +1,5 @@
 {
+    "loader": "sime_essential:machine",
     "parent": "sime_essential:block/machine",
     "textures": {
         "bottom": "sime_essential:block/machines/machine_bottom",
