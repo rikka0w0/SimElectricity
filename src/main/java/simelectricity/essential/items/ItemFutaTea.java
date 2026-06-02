@@ -7,8 +7,7 @@ import simelectricity.api.SEAPI;
 
 public class ItemFutaTea extends ItemBase {
     public ItemFutaTea() {
-        super("futa_lemon_tea", (new Item.Properties())
-        		.tab(SEAPI.SETab));
+        super("futa_lemon_tea", (new Item.Properties()));
     }
     
     @Override

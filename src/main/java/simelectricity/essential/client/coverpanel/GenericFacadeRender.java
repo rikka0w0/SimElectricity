@@ -3,20 +3,19 @@ package simelectricity.essential.client.coverpanel;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Random;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.ItemBlockRenderTypes;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.Direction;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.MinecraftForgeClient;
-import net.minecraftforge.client.model.data.EmptyModelData;
+import net.minecraft.util.RandomSource;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.client.model.data.ModelData;
 import rikka.librikka.model.quadbuilder.MutableQuad;
 import rikka.librikka.model.quadbuilder.MutableVertex;
 import simelectricity.essential.api.client.ISECoverPanelRender;
@@ -74,15 +73,13 @@ public class GenericFacadeRender implements ISECoverPanelRender<ISEFacadeCoverPa
 	}
 
 	@Override
-	public void renderCoverPanel(ISEFacadeCoverPanel coverPanel, Direction side, Random random, List<BakedQuad> quads) {
+	public void renderCoverPanel(ISEFacadeCoverPanel coverPanel, Direction side, RandomSource random, List<BakedQuad> quads, RenderType renderType) {
 		BlockState blockState = coverPanel.getBlockState();
-		if (ItemBlockRenderTypes.canRenderInLayer(blockState, MinecraftForgeClient.getRenderType())) {
+		BakedModel model = Minecraft.getInstance().getBlockRenderer().getBlockModel(blockState);
+		if (model.getRenderTypes(blockState, random, ModelData.EMPTY).contains(renderType)) {
 	        List<MutableQuad> mquads = new LinkedList<>();
 
-	        // Get the block model
-			BakedModel model = Minecraft.getInstance().getBlockRenderer().getBlockModel(blockState);
-
-			final Direction.Axis theAxis = side.getAxis();
+	        final Direction.Axis theAxis = side.getAxis();
 			final boolean posAxisDir = side.getAxisDirection() == Direction.AxisDirection.POSITIVE;
 			Predicate<MutableVertex> canShrinkOnSide = (vertex)->{
 				if (theAxis == Direction.Axis.X) {
@@ -96,7 +93,7 @@ public class GenericFacadeRender implements ISECoverPanelRender<ISEFacadeCoverPa
 			};
 
 			for (Direction dir: Direction.values()) {
-				for (BakedQuad quad: model.getQuads(blockState, dir, random, EmptyModelData.INSTANCE)) {
+				for (BakedQuad quad: model.getQuads(blockState, dir, random, ModelData.EMPTY, renderType)) {
 					MutableQuad mquad = new MutableQuad(quad);
 
 					if (dir != side) {
@@ -180,7 +177,7 @@ public class GenericFacadeRender implements ISECoverPanelRender<ISEFacadeCoverPa
 					}	// if (dir != side)
 
 					mquads.add(mquad);
-				}	// for (BakedQuad quad: model.getQuads(blockState, dir, random, EmptyModelData.INSTANCE))
+				}	// for (BakedQuad quad: model.getQuads(blockState, dir, random, ModelData.EMPTY, renderType))
 			}	// for (Direction dir: Direction.values())
 
 			mquads.stream()

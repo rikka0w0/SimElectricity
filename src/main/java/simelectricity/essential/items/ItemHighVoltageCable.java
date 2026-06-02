@@ -14,7 +14,7 @@ import rikka.librikka.Utils;
 import rikka.librikka.item.ItemBase;
 import simelectricity.api.SEAPI;
 import simelectricity.api.node.ISEGridNode;
-import simelectricity.api.tile.ISEGridTile;
+import simelectricity.api.blockentity.ISEGridBlockEntity;
 import simelectricity.essential.api.ISEHVCableConnector;
 import simelectricity.essential.api.ISEPoleAccessory;
 
@@ -36,8 +36,7 @@ public final class ItemHighVoltageCable extends ItemBase implements IMetaProvide
 
     public final ItemType itemType;
     private ItemHighVoltageCable(ItemType itemType) {
-        super("hvcable_" + itemType.name(), (new Item.Properties())
-        		.tab(SEAPI.SETab));
+        super("hvcable_" + itemType.name(), (new Item.Properties()));
         lastCoordinates = new HashMap<>();
         this.itemType = itemType;
     }
@@ -96,8 +95,8 @@ public final class ItemHighVoltageCable extends ItemBase implements IMetaProvide
 
             if (neighbor instanceof ISEHVCableConnector) {
                 ISEHVCableConnector connector2 = (ISEHVCableConnector) neighbor;
-                ISEGridTile tile1 = connector1.getGridTile(world, pos);
-                ISEGridTile tile2 = connector2.getGridTile(world, lastCoordinate);
+                ISEGridBlockEntity tile1 = connector1.getGridTile(world, pos);
+                ISEGridBlockEntity tile2 = connector2.getGridTile(world, lastCoordinate);
                 ISEGridNode node1 = tile1==null ? null : tile1.getGridNode();
                 ISEGridNode node2 = tile2==null ? null : tile2.getGridNode();
 
@@ -144,7 +143,7 @@ public final class ItemHighVoltageCable extends ItemBase implements IMetaProvide
     }
 
     private static boolean canConnect(ISEHVCableConnector connector, Level world, BlockPos from, BlockPos to) {
-    	ISEGridTile gridTile = connector.getGridTile(world, from);
+    	ISEGridBlockEntity gridTile = connector.getGridTile(world, from);
     	if (gridTile == null)
     		return false;
 

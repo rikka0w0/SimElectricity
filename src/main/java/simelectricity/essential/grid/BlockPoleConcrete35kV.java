@@ -6,7 +6,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.SoundType;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -38,7 +37,7 @@ import rikka.librikka.multiblock.BlockMapping;
 import rikka.librikka.multiblock.IMultiBlockTile;
 import rikka.librikka.multiblock.MultiBlockStructure;
 import simelectricity.api.SEAPI;
-import simelectricity.api.tile.ISEGridTile;
+import simelectricity.api.blockentity.ISEGridBlockEntity;
 import simelectricity.essential.Essential;
 import simelectricity.essential.api.ISEHVCableConnector;
 
@@ -56,7 +55,7 @@ public class BlockPoleConcrete35kV extends BlockBase implements ICustomBoundingB
 		}
 
 		Type(boolean isHost) {
-			Class<? extends BlockEntity> beCls = isHost ? TilePoleConcrete35kV.class : TileMultiBlockPlaceHolder.class;
+			Class<? extends BlockEntity> beCls = isHost ? BlockEntityPoleConcrete35kV.class : BlockEntityMultiBlockPlaceHolder.class;
 			this.beType = Essential.beTypeOf(beCls)::get;
 		}
 
@@ -70,12 +69,12 @@ public class BlockPoleConcrete35kV extends BlockBase implements ICustomBoundingB
 
 	private BlockPoleConcrete35kV(int type) {
 		super("pole_concrete_35kv_" + String.valueOf(type),
-				BlockBehaviour.Properties.of(Material.STONE)
+				BlockBehaviour.Properties.of()
         		.strength(0.2F, 10.0F)
         		.sound(SoundType.METAL)
         		.isRedstoneConductor((a,b,c)->false),
         		ItemBlock::new,
-        		(new Item.Properties()).tab(SEAPI.SETab));
+        		(new Item.Properties()));
 
 		this.structureTemplate = this.createStructureTemplate();
 	}
@@ -221,17 +220,17 @@ public class BlockPoleConcrete35kV extends BlockBase implements ICustomBoundingB
     /// ISEHVCableConnector
     //////////////////////////////////////
     @Override
-    public ISEGridTile getGridTile(Level world, BlockPos pos) {
+    public ISEGridBlockEntity getGridTile(Level world, BlockPos pos) {
         BlockEntity te = world.getBlockEntity(pos);
 
-        if (te instanceof ISEGridTile)
-        	return (ISEGridTile) te;
+        if (te instanceof ISEGridBlockEntity)
+        	return (ISEGridBlockEntity) te;
         else if (te instanceof IMultiBlockTile) {
         	BlockPos hostPos = ((IMultiBlockTile) te).getMultiBlockTileInfo().getPartPos(hostOffset);
         	BlockEntity host = world.getBlockEntity(hostPos);
 
-        	if (host instanceof ISEGridTile)
-        		return (ISEGridTile) host;
+        	if (host instanceof ISEGridBlockEntity)
+        		return (ISEGridBlockEntity) host;
         }
 
         return null;

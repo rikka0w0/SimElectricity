@@ -6,11 +6,11 @@ import rikka.librikka.container.ContainerSynchronizer;
 import rikka.librikka.gui.AutoGuiHandler;
 import simelectricity.api.SEAPI;
 import simelectricity.essential.common.ContainerNoInvAutoSync;
-import simelectricity.essential.machines.tile.TileAdjustableResistor;
+import simelectricity.essential.machines.blockentity.BlockEntityAdjustableResistor;
 import simelectricity.essential.utils.network.ISEButtonEventHandler;
 
 @AutoGuiHandler.Marker(GuiAdjustableResistor.class)
-public class ContainerAdjustableResistor extends ContainerNoInvAutoSync<TileAdjustableResistor> implements ISEButtonEventHandler {
+public class ContainerAdjustableResistor extends ContainerNoInvAutoSync<BlockEntityAdjustableResistor> implements ISEButtonEventHandler {
     @ContainerSynchronizer.SyncField
     public double resistance;
     @ContainerSynchronizer.SyncField
@@ -23,7 +23,7 @@ public class ContainerAdjustableResistor extends ContainerNoInvAutoSync<TileAdju
     public double bufferedEnergy;
 
     // Server side
-    public ContainerAdjustableResistor(TileAdjustableResistor tileEntity, int windowId, Player player) {
+    public ContainerAdjustableResistor(BlockEntityAdjustableResistor tileEntity, int windowId, Player player) {
     	super(tileEntity, windowId, player);
     }
 

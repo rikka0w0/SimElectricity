@@ -1,0 +1,19 @@
+{
+  "sources": [
+    {
+      "type": "directory",
+      "source": "block/sockets",
+      "prefix": "block/sockets/"
+    },
+    {
+      "type": "directory",
+      "source": "block/coverpanel",
+      "prefix": "block/coverpanel/"
+    },
+    {
+      "type": "directory",
+      "source": "render",
+      "prefix": "render/"
+    }
+  ]
+}

@@ -1,35 +1,53 @@
-buildscript {
-	repositories {
-		// These repositories are only for Gradle plugins, put any other repositories in the repository block further below
-		maven { url = 'https://maven.minecraftforge.net' }
-		mavenCentral()
-	}
-	dependencies {
-		classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
-	}
-}
-
-// Load the common property
-Properties librikka_props = new Properties();
-librikka_props.load(new FileInputStream("$project.rootDir/librikka/gradle.properties"));
-librikka_props.each {prop -> project.ext.set(prop.key, prop.value)};
-
-apply plugin: 'net.minecraftforge.gradle'
-apply plugin: 'eclipse'
-
-// Mojang ships Java 17 to end users in 1.18+
-java.toolchain.languageVersion = JavaLanguageVersion.of(17)
-
-dependencies {
-    minecraft 'net.minecraftforge:forge:'+ project.minecraft_version + '-' + project.forge_version
-    implementation project(':librikka')
+plugins {
+    id 'java'
+    id 'eclipse'
+    id 'net.neoforged.moddev' version '2.0.140'
 }
 
 version = project.mod_version
-group = "simelectricity" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = "SimElectricity"
+group = "simelectricity"
 
-// configure  the source folders
+base {
+    archivesName = "SimElectricity"
+}
+
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(21)
+}
+
+dependencies {
+    implementation project(':librikka')
+}
+
+neoForge {
+    version = project.neoforge_version
+
+    runs {
+        client {
+            client()
+            systemProperty 'neoforge.logging.markers', 'SCAN,REGISTRIES'
+            systemProperty 'neoforge.logging.console.level', 'debug'
+        }
+
+        server {
+            server()
+            systemProperty 'neoforge.logging.markers', 'SCAN,REGISTRIES'
+            systemProperty 'neoforge.logging.console.level', 'debug'
+        }
+
+        data {
+            data()
+            programArguments.addAll '--mod', 'sime_essential', '--all', '--output', file('src/generated/resources/').absolutePath, '--existing', file('src/main/resources/').absolutePath
+        }
+    }
+
+    mods {
+        simelectricity {
+            sourceSet sourceSets.main
+        }
+    }
+}
+
 sourceSets {
     main {
         resources {
@@ -40,128 +58,16 @@ sourceSets {
     }
 }
 
-
-minecraft {
-    // the mappings can be changed at any time, and must be in the following format.
-    // snapshot_YYYYMMDD   snapshot are built nightly.
-    // stable_#            stables are built at the discretion of the MCP team.
-    // Use non-default mappings at your own risk. they may not always work.
-    // simply re-run your setup task after changing the mappings to update your workspace.
-    mappings channel: 'official', version: project.minecraft_version
-    // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
-
-    // Default run configurations.
-    // These can be tweaked, removed, or duplicated as needed.
-    runs {
-        client {
-            workingDirectory project.file('run')
-
-            // Recommended logging data for a userdev environment
-            property 'forge.logging.markers', 'SCAN,REGISTRIES'
-
-            // Recommended logging level for the console
-            property 'forge.logging.console.level', 'debug'
-
-            lazyToken 'source_roots', {
-            	'librikka%%' + project(':librikka').buildDir.toString() + '/../bin/main'
-            }
-
-            mods {
-                simelectricity {
-                    source sourceSets.main
-                }
-            }
-        }
-
-        server {
-            workingDirectory project.file('run')
-
-            // Recommended logging data for a userdev environment
-            property 'forge.logging.markers', 'SCAN,REGISTRIES'
-
-            // Recommended logging level for the console
-            property 'forge.logging.console.level', 'debug'
-
-            lazyToken 'source_roots', {
-            	'librikka%%' + project(':librikka').buildDir.toString() + '/../bin/main'
-            }
-
-            mods {
-                simelectricity {
-                    source sourceSets.main
-                }
-            }
-        }
-
-        data {
-            workingDirectory project.file('run')
-
-            // Recommended logging data for a userdev environment
-            // property 'forge.logging.markers', 'SCAN,REGISTRIES'
-
-            // Recommended logging level for the console
-            // property 'forge.logging.console.level', 'debug'
-
-            args '--mod', 'sime_essential', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
-
-            lazyToken 'source_roots', {
-            	'librikka%%' + project(':librikka').buildDir.toString() + '/../bin/main'
-            }
-
-            mods {
-                simelectricity {
-                    source sourceSets.main
-                }
-            }
-        }
-    }
-}
-
-jar.version = version
 jar {
     manifest {
         attributes([
-                "Specification-Title": "simelectricity",
-                "Specification-Vendor": "CISM",
-                "Specification-Version": "1", // We are version 1 of ourselves
-                "Implementation-Title": project.name,
-                "Implementation-Version": "${version}",
-                "Implementation-Vendor" :"CISM",
-                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+            "Specification-Title": "simelectricity",
+            "Specification-Vendor": "CISM",
+            "Specification-Version": "1",
+            "Implementation-Title": project.name,
+            "Implementation-Version": "${project.version}",
+            "Implementation-Vendor" :"CISM",
+            "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         ])
     }
-}
-
-def libsDir = new File(System.getenv("LIBS_DIR") ?: "build/libs/")
-
-
-task deobfJar(type: Jar, dependsOn: 'jar') {
-    destinationDir = libsDir
-    from sourceSets.main.output
-    manifest = jar.manifest
-    classifier = 'dev'
-}
-
-task sourceJar(type: Jar) {
-    destinationDir = libsDir
-    from sourceSets.main.allSource
-    classifier "src"
-}
-
-artifacts {
-    archives deobfJar
-    archives sourceJar
-}
-
-import org.apache.tools.ant.filters.ReplaceTokens
-// Process resources on build
-processResources {
-	filesMatching("**/META-INF/mods.toml") {
-		println "Substituting strings into mods.toml"
-		filter(ReplaceTokens, tokens: [
-			fml_version: project.fml_version,
-			forge_version: project.forge_version,
-			minecraft_version_min: project.minecraft_version_min
-		])
-	}
 }

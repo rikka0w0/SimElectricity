@@ -1,44 +1,28 @@
-/*
- * Copyright (C) 2014 SimElectricity
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
- * USA
- */
-
 package simelectricity;
 
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.event.RegisterCommandsEvent;
-import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.chat.Component;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.registries.RegisterEvent;
+import net.minecraft.core.registries.Registries;
+import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import simelectricity.api.SEAPI;
 import simelectricity.common.CommandSimE;
 import simelectricity.common.ConfigManager;
 import simelectricity.common.ItemSEMgrTool;
 import simelectricity.common.SELogger;
 import simelectricity.energynet.EnergyNetAgent;
+import simelectricity.essential.BlockRegistry;
+import simelectricity.essential.ItemRegistry;
 
 @Mod(SimElectricity.MODID)
 public class SimElectricity {
     public static final String MODID = "simelectricity";
-//    public static final String NAME = "SimElectricity";
     public static final String version = "1.0.0";
 
     public static SimElectricity instance = null;
@@ -56,35 +40,38 @@ public class SimElectricity {
         SEAPI.energyNetAgent = new EnergyNetAgent();
     }
     
-    @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
-    public final static class ModEventBusHandler {		// FMLJavaModLoadingContext.get().getModEventBus()
-    	@SubscribeEvent
-    	public static void newRegistry(RegistryEvent.NewRegistry event) {
-            // Register creative tabs
-            SEAPI.SETab = new CreativeModeTab(SimElectricity.MODID) {
-                @Override
-                @OnlyIn(Dist.CLIENT)
-                public ItemStack makeIcon() {
-                    return new ItemStack(SEAPI.managementToolItem);
-                }
-            };
-    	}
-
+    @EventBusSubscriber(modid = MODID, bus = EventBusSubscriber.Bus.MOD)
+    public final static class ModEventBusHandler {
         @SubscribeEvent
-        public static void registerItems(RegistryEvent.Register<Item> event) {
-            //Register items
-            SEAPI.managementToolItem = new ItemSEMgrTool();
-    	    event.getRegistry().register(SEAPI.managementToolItem);
+        public static void onRegister(RegisterEvent event) {
+            if (event.getRegistryKey().equals(Registries.ITEM)) {
+                SEAPI.managementToolItem = new ItemSEMgrTool();
+                event.register(Registries.ITEM, ResourceLocation.fromNamespaceAndPath(MODID, ItemSEMgrTool.name), () -> SEAPI.managementToolItem);
+            }
+
+            if (event.getRegistryKey().equals(Registries.CREATIVE_MODE_TAB)) {
+                event.register(Registries.CREATIVE_MODE_TAB, ResourceLocation.fromNamespaceAndPath(MODID, "creative_tab"), () -> {
+                    SEAPI.SETab = CreativeModeTab.builder()
+                            .title(Component.translatable("itemGroup.simelectricity"))
+                            .icon(() -> new ItemStack(SEAPI.managementToolItem))
+                            .displayItems((params, output) -> {
+                                output.accept(SEAPI.managementToolItem);
+                                BlockRegistry.addItemsToCreativeTab(output);
+                                ItemRegistry.addItemsToCreativeTab(output);
+                            })
+                            .build();
+                    return SEAPI.SETab;
+                });
+            }
         }
     }
 
-    @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
-    public final static class ForgeEventBusHandler{	// MinecraftForge.EVENT_BUS MinecraftForgeEventsHandler
+    @EventBusSubscriber(modid = MODID, bus = EventBusSubscriber.Bus.GAME)
+    public final static class ForgeEventBusHandler {
         @SubscribeEvent
         public static void onServerStarting(RegisterCommandsEvent e) {
-        	CommandSimE.register(e.getDispatcher());
+            CommandSimE.register(e.getDispatcher());
             SELogger.logInfo(SELogger.loader, "Server command registered");
         }
     }
-
 }

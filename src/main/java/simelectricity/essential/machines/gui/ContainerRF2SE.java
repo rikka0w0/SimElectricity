@@ -5,11 +5,11 @@ import net.minecraft.world.entity.player.Player;
 import rikka.librikka.container.ContainerSynchronizer;
 import rikka.librikka.gui.AutoGuiHandler;
 import simelectricity.essential.common.ContainerNoInvAutoSync;
-import simelectricity.essential.machines.tile.TileRF2SE;
+import simelectricity.essential.machines.blockentity.BlockEntityRF2SE;
 import simelectricity.essential.utils.network.ISEButtonEventHandler;
 
 @AutoGuiHandler.Marker(GuiRF2SE.class)
-public class ContainerRF2SE extends ContainerNoInvAutoSync<TileRF2SE> implements ISEButtonEventHandler {
+public class ContainerRF2SE extends ContainerNoInvAutoSync<BlockEntityRF2SE> implements ISEButtonEventHandler {
     @ContainerSynchronizer.SyncField
     public double ratedOutputPower;
     @ContainerSynchronizer.SyncField
@@ -22,7 +22,7 @@ public class ContainerRF2SE extends ContainerNoInvAutoSync<TileRF2SE> implements
     public int rfInputRateDisplay;
 
     // Server side
-    public ContainerRF2SE(TileRF2SE tileEntity, int windowId, Player player) {
+    public ContainerRF2SE(BlockEntityRF2SE tileEntity, int windowId, Player player) {
         super(tileEntity, windowId, player);
     }
 
@@ -57,8 +57,8 @@ public class ContainerRF2SE extends ContainerNoInvAutoSync<TileRF2SE> implements
 
         if (ratedOutputPower < 10)
             ratedOutputPower = 10;
-        if (ratedOutputPower > TileRF2SE.bufferCapacity / 2)
-            ratedOutputPower = TileRF2SE.bufferCapacity / 2;
+        if (ratedOutputPower > BlockEntityRF2SE.bufferCapacity / 2)
+            ratedOutputPower = BlockEntityRF2SE.bufferCapacity / 2;
 
         host.ratedOutputPower = ratedOutputPower;
 

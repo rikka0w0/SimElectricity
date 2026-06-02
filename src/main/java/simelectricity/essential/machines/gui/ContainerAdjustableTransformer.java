@@ -7,11 +7,11 @@ import rikka.librikka.container.ContainerSynchronizer;
 import rikka.librikka.gui.AutoGuiHandler;
 import simelectricity.api.SEAPI;
 import simelectricity.essential.common.ContainerNoInventoryTwoPort;
-import simelectricity.essential.machines.tile.TileAdjustableTransformer;
+import simelectricity.essential.machines.blockentity.BlockEntityAdjustableTransformer;
 import simelectricity.essential.utils.network.ISEButtonEventHandler;
 
 @AutoGuiHandler.Marker(GuiAdjustableTransformer.class)
-public class ContainerAdjustableTransformer extends ContainerNoInventoryTwoPort<TileAdjustableTransformer> implements ISEButtonEventHandler {
+public class ContainerAdjustableTransformer extends ContainerNoInventoryTwoPort<BlockEntityAdjustableTransformer> implements ISEButtonEventHandler {
 	@ContainerSynchronizer.SyncField
 	public double ratio, outputResistance;
 	@ContainerSynchronizer.SyncField
@@ -20,7 +20,7 @@ public class ContainerAdjustableTransformer extends ContainerNoInventoryTwoPort<
     public double vPri, vSec;
 
 	// Server side
-    public ContainerAdjustableTransformer(TileAdjustableTransformer tileEntity, int windowID, Player player) {
+    public ContainerAdjustableTransformer(BlockEntityAdjustableTransformer tileEntity, int windowID, Player player) {
         super(tileEntity, windowID, player);
     }
 

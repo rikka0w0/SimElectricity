@@ -6,11 +6,11 @@ import rikka.librikka.container.ContainerSynchronizer;
 import rikka.librikka.gui.AutoGuiHandler;
 import simelectricity.api.SEAPI;
 import simelectricity.essential.common.ContainerNoInvAutoSync;
-import simelectricity.essential.machines.tile.TileQuantumGenerator;
+import simelectricity.essential.machines.blockentity.BlockEntityQuantumGenerator;
 import simelectricity.essential.utils.network.ISEButtonEventHandler;
 
 @AutoGuiHandler.Marker(GuiQuantumGenerator.class)
-public class ContainerQuantumGenerator extends ContainerNoInvAutoSync<TileQuantumGenerator> implements ISEButtonEventHandler {
+public class ContainerQuantumGenerator extends ContainerNoInvAutoSync<BlockEntityQuantumGenerator> implements ISEButtonEventHandler {
 	@ContainerSynchronizer.SyncField
 	public double internalVoltage;
     @ContainerSynchronizer.SyncField
@@ -21,7 +21,7 @@ public class ContainerQuantumGenerator extends ContainerNoInvAutoSync<TileQuantu
     public double current;
 
     // Server side
-    public ContainerQuantumGenerator(TileQuantumGenerator tileEntity, int windowId, Player player) {
+    public ContainerQuantumGenerator(BlockEntityQuantumGenerator tileEntity, int windowId, Player player) {
         super(tileEntity, windowId, player);
     }
 

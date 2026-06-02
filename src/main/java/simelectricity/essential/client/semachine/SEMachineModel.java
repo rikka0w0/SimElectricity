@@ -13,12 +13,10 @@ import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.MinecraftForgeClient;
-import net.minecraftforge.client.model.data.EmptyModelData;
-import net.minecraftforge.client.model.data.IDynamicBakedModel;
-import net.minecraftforge.client.model.data.IModelData;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.client.model.IDynamicBakedModel;
+import net.neoforged.neoforge.client.model.data.ModelData;
 import rikka.librikka.model.quadbuilder.MutableQuad;
 import simelectricity.essential.api.ISECoverPanelHost;
 import simelectricity.essential.api.coverpanel.ISECoverPanel;
@@ -29,7 +27,7 @@ import simelectricity.essential.common.semachine.ISESocketProvider;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
+import net.minecraft.util.RandomSource;
 
 @SuppressWarnings("deprecation")
 @OnlyIn(Dist.CLIENT)
@@ -76,23 +74,22 @@ public final class SEMachineModel implements IDynamicBakedModel {
     }
 
 	@Override
-	public List<BakedQuad> getQuads(BlockState state, Direction side, Random rand, IModelData extraData) {
-		RenderType layer = MinecraftForgeClient.getRenderType();
-		if (layer == null)
-			return this.bakedModel.getQuads(state, side, rand, extraData);
+	public List<BakedQuad> getQuads(BlockState state, Direction side, RandomSource rand, ModelData extraData, RenderType renderType) {
+		if (renderType == null)
+			return this.bakedModel.getQuads(state, side, rand);
 
 		List<BakedQuad> quads = new LinkedList<>();
 
 		boolean hideMachineFace = false;
 		// Render facade cover panel, if possible
-		ISECoverPanelHost host = extraData.getData(ISECoverPanelHost.prop);
-		if (host != null && side != null && layer != RenderType.solid()) {
+		ISECoverPanelHost host = extraData.get(ISECoverPanelHost.prop);
+		if (host != null && side != null && renderType != RenderType.solid()) {
     		ISECoverPanel coverPanel = host.getCoverPanelOnSide(side);
     		if (coverPanel instanceof ISEFacadeCoverPanel) {
     			BlockState blockState = ((ISEFacadeCoverPanel) coverPanel).getBlockState();
     			BakedModel model = Minecraft.getInstance().getBlockRenderer().getBlockModel(blockState);
 
-    			model.getQuads(blockState, side, rand, EmptyModelData.INSTANCE).stream()
+    			model.getQuads(blockState, side, rand).stream()
     				.map(MutableQuad::new)
     				.peek((mquad)->GenericFacadeRender.tintFunc(side, mquad))
     				.map(MutableQuad::bake)
@@ -102,13 +99,13 @@ public final class SEMachineModel implements IDynamicBakedModel {
     		}
 		}
 
-    	if (layer == RenderType.solid() && !hideMachineFace)
-    		return this.bakedModel.getQuads(state, side, rand, extraData);
+    	if (renderType == RenderType.solid() && !hideMachineFace)
+    		return this.bakedModel.getQuads(state, side, rand);
     	// Only render the machine body in the solid layer
 
 		// Render the sockets in the cutout layer
-		if (side == null && layer == RenderType.cutout()) {
-    		ISESocketProvider sp = extraData.getData(ISESocketProvider.prop);
+		if (side == null && renderType == RenderType.cutout()) {
+    		ISESocketProvider sp = extraData.get(ISESocketProvider.prop);
     		if (sp != null)
     			SocketRender.getBaked(quads, sp);
     	}
@@ -116,9 +113,11 @@ public final class SEMachineModel implements IDynamicBakedModel {
     	return quads;
 	}
 
-	public static void replace(Map<ResourceLocation, BakedModel> registry, Block block) {
+
+
+	public static void replace(Map<net.minecraft.client.resources.model.ModelResourceLocation, BakedModel> registry, Block block) {
 		for (BlockState blockstate: block.getStateDefinition().getPossibleStates()) {
-			ModelResourceLocation resLoc = BlockModelShaper.stateToModelLocation(blockstate);
+			net.minecraft.client.resources.model.ModelResourceLocation resLoc = BlockModelShaper.stateToModelLocation(blockstate);
 			BakedModel original = registry.get(resLoc);
 			BakedModel newModel = new SEMachineModel(original);
 			registry.put(resLoc, newModel);

@@ -1,0 +1,74 @@
+modLoader="javafml"
+loaderVersion="[4,)"
+license="MIT License"
+
+[[mods]]
+modId="simelectricity"
+version="${file.jarVersion}"
+displayName="SimElectricity EnergyNet"
+displayURL="https://github.com/RoyalAliceAcademyOfSciences/SimElectricity"
+logoFile="sime_logo.png"
+credits="Chinese Institution of Scientific Minecraft Mod (CISM)"
+authors="Rikka0_0, Aurora"
+description='''
+A mod for real world circuit simulation!
+'''
+
+[[mods]]
+modId="sime_essential"
+version="${file.jarVersion}"
+displayName="SimElectricity Essential"
+displayURL="https://github.com/RoyalAliceAcademyOfSciences/SimElectricity"
+logoFile="sime_logo.png"
+credits="Chinese Institution of Scientific Minecraft Mod (CISM)"
+authors="Rikka0_0, Aurora, MeowJ, YurisCat"
+description='''
+Provides a set of items and blocks to demonstrate the capability of the SimElectricity EnergyNet
+'''
+
+[[mods]]
+modId="sime_facades"
+version="${file.jarVersion}"
+displayName="SimElectricity Facades Extension"
+displayURL="https://github.com/RoyalAliceAcademyOfSciences/SimElectricity"
+logoFile="examplemod.png"
+credits="Chinese Institution of Scientific Minecraft Mod (CISM)"
+authors="Rikka0_0"
+description='''
+Facade support for BuildCraft and ThermalExpansion
+'''
+
+[[dependencies.simelectricity]]
+    modId="neoforge"
+    mandatory=true
+    versionRange="[21.1.80,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.simelectricity]]
+    modId="librikka"
+    mandatory=true
+    versionRange="[0.0,)"
+    ordering="AFTER"
+    side="BOTH"
+
+[[dependencies.simelectricity]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.21.1,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.sime_essential]]
+    modId="simelectricity"
+    mandatory=true
+    versionRange="[1.0.0,)"
+    ordering="AFTER"
+    side="BOTH"
+
+[[dependencies.sime_facades]]
+    modId="sime_essential"
+    mandatory=true
+    versionRange="[1.0.0,)"
+    ordering="AFTER"
+    side="BOTH"

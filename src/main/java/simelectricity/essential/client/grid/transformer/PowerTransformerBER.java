@@ -1,0 +1,145 @@
+package simelectricity.essential.client.grid.transformer;
+
+import java.util.LinkedList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.RandomSource;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.client.model.data.ModelData;
+import rikka.librikka.model.loader.EasyTextureLoader;
+import rikka.librikka.model.quadbuilder.MutableQuad;
+import rikka.librikka.model.quadbuilder.RawQuadCube;
+import rikka.librikka.model.quadbuilder.RawQuadGroup;
+import simelectricity.essential.Essential;
+import simelectricity.essential.client.ResourcePaths;
+import simelectricity.essential.client.grid.pole.Models;
+import simelectricity.essential.grid.transformer.BlockEntityPowerTransformerPlaceHolder;
+
+@OnlyIn(Dist.CLIENT)
+public class PowerTransformerBER implements BlockEntityRenderer<BlockEntityPowerTransformerPlaceHolder.Render> {
+    public final static ResourceLocation modelResLoc = ResourceLocation.fromNamespaceAndPath(Essential.MODID, "block/powertransformer");
+    @SuppressWarnings("unchecked")
+	private final static List<BakedQuad>[] bakedModel = new List[4];
+    @SuppressWarnings("unchecked")
+	private final static List<BakedQuad>[] bakedModelMirrored = new List[4];
+
+    public PowerTransformerBER(BlockEntityRendererProvider.Context context) {
+
+	}
+
+	public static void onModelBakeEvent() {
+		for (int i=0; i<bakedModel.length; i++) {
+			bakedModel[i] = null;
+			bakedModelMirrored[i] = null;
+		}
+	}
+
+	@Override
+	public void render(BlockEntityPowerTransformerPlaceHolder.Render te, float partialTicks, PoseStack matrixStack,
+			MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
+		Direction facing = te.getFacing();
+		boolean mirrored = te.isMirrored();
+		if (facing == null)
+			return;
+
+        VertexConsumer buffer = bufferIn.getBuffer(RenderType.solid());
+
+        int lightDummy = 15728640;
+		for (BakedQuad quad: getQuads(facing, mirrored)) {
+			matrixStack.pushPose();
+
+			buffer.putBulkData(matrixStack.last(), quad,
+					new float[]{1.0F, 1.0F, 1.0F, 1.0F},
+					1.0F, 1.0F, 1.0F, 1.0F,
+					new int[]{lightDummy, lightDummy, lightDummy, lightDummy},
+					OverlayTexture.NO_OVERLAY, true);
+
+			matrixStack.popPose();
+		}
+	}
+
+
+	public static List<BakedQuad> getQuads(Direction facing, boolean mirrored) {
+    	List<BakedQuad> quads = mirrored ? bakedModelMirrored[facing.ordinal()-2] : bakedModel[facing.ordinal()-2];
+    	if (quads == null) {
+    		quads = new LinkedList<>();
+    		if (mirrored) {
+    			bakedModelMirrored[facing.ordinal()-2] = quads;
+    		} else {
+    			bakedModel[facing.ordinal()-2] = quads;
+    		}
+    	}
+
+    	if (quads.isEmpty()) {
+    		bake(quads, facing, mirrored);
+    	}
+
+    	return quads;
+    }
+
+    @SuppressWarnings("deprecation")
+    public static void bake(List<BakedQuad> quads, Direction facing, boolean mirrored) {
+		BakedModel mdl = Minecraft.getInstance().getModelManager().getModel(new net.minecraft.client.resources.model.ModelResourceLocation(modelResLoc, "standalone"));
+
+		quads.clear();
+		RandomSource random = RandomSource.create();
+        quads.addAll(mdl.getQuads(null, null, random, ModelData.EMPTY, RenderType.solid()));
+        for (Direction side: Direction.values()) {
+        	quads.addAll(mdl.getQuads(null, side, random, ModelData.EMPTY, RenderType.solid()));
+		}
+
+        // HV and LV Bushing
+        TextureAtlasSprite textureMetal = EasyTextureLoader.blockTextureGetter().apply(ResourceLocation.parse(ResourcePaths.metal));
+        TextureAtlasSprite textureInsulator = EasyTextureLoader.blockTextureGetter().apply(ResourceLocation.parse(ResourcePaths.glass_insulator));
+
+        RawQuadGroup model = new RawQuadGroup();
+        RawQuadGroup insulator = Models.renderInsulatorString(1.4F, textureInsulator);
+        insulator.add((new RawQuadCube(0.1F, 1.8F, 0.1F, textureMetal)).translateCoord(0, -0.1F, 0));
+        insulator.translateCoord(0, 0.1F, 0);
+        model.merge(insulator.clone().translateCoord(1, 1, -1.5F));
+        model.merge(insulator.clone().translateCoord(1, 1, 0));
+        model.merge(insulator.translateCoord(1, 1, 1.5F));
+
+        insulator = Models.renderInsulatorString(0.7F, textureInsulator);
+        insulator.add((new RawQuadCube(0.1F, 1.1F, 0.1F, textureMetal)).translateCoord(0, -0.1F, 0));
+        insulator.translateCoord(0, 0.1F, 0);
+        model.merge(insulator.clone().translateCoord(-1, 1, 0.2F));
+        model.merge(insulator.clone().translateCoord(-1, 1, 1));
+        model.merge(insulator.translateCoord(-1, 1, 1.8F));
+
+        model.translateCoord(0.5F, 0, 0.5F).bake(quads);
+
+        // Rotate and flip the model
+        int rotation = (3-facing.get2DDataValue())*90;
+        List<MutableQuad> mquads = quads.stream().map(MutableQuad::new).collect(Collectors.toList());
+        quads.clear();
+		for (MutableQuad mquad: mquads) {
+			mquad.translateCoord(-0.5f, 0, -0.5f);
+			if (mirrored) {
+				mquad.vertex_0.position_z = -mquad.vertex_0.position_z;
+				mquad.vertex_1.position_z = -mquad.vertex_1.position_z;
+				mquad.vertex_2.position_z = -mquad.vertex_2.position_z;
+				mquad.vertex_3.position_z = -mquad.vertex_3.position_z;
+			}
+			mquad.rotateAroundY(rotation);
+			mquad.translateCoord(0.5f, 0, 0.5f);
+			quads.add(mquad.bake());
+		}
+    }
+}

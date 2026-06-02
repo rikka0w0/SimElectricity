@@ -50,7 +50,7 @@ public final class EnergyNet {
     public EnergyNet(ServerLevel world) {
         this.world = world;
         this.dataProvider = EnergyNetDataProvider.get(world);
-        String dimName = world.dimension().getRegistryName().toString();
+        String dimName = world.dimension().location().toString();
 
         //Initialize thread
         this.simulator = new EnergyNetSimulator(dataProvider, "SEEnergyNet_DIM_" + dimName);
@@ -113,10 +113,10 @@ public final class EnergyNet {
 		 * GridEvent.BreakTranformer	|2
 		 * GridEvent.BreakConnection	|2
 		 * GridEvent.RemoveNode			|3
-		 * TileEvent.Attach				|4
-		 * TileEvent.ConnectionChanged	|5
-		 * TileEvent.ParamChanged		|5
-		 * TileEvent.Detach				|6
+		 * BlockEntityEvent.Attach				|4
+		 * BlockEntityEvent.ConnectionChanged	|5
+		 * BlockEntityEvent.ParamChanged		|5
+		 * BlockEntityEvent.Detach				|6
 		 */
         for (int pass = 0; pass < EnergyEventBase.numOfPass; pass++) {
             //Process EventQueue

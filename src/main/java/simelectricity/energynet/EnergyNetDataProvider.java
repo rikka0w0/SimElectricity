@@ -16,10 +16,10 @@ import net.minecraft.world.level.storage.DimensionDataStorage;
 import simelectricity.SimElectricity;
 import simelectricity.api.ISEEnergyNetUpdateHandler;
 import simelectricity.api.node.ISESubComponent;
-import simelectricity.api.tile.ISECableTile;
-import simelectricity.api.tile.ISEGridTile;
-import simelectricity.api.tile.ISETile;
-import simelectricity.api.tile.ISEWireTile;
+import simelectricity.api.blockentity.ISECableBlockEntity;
+import simelectricity.api.blockentity.ISEGridBlockEntity;
+import simelectricity.api.blockentity.ISEBlockEntity;
+import simelectricity.api.blockentity.ISEWireBlockEntity;
 import simelectricity.common.SELogger;
 import simelectricity.energynet.components.Cable;
 import simelectricity.energynet.components.GridNode;
@@ -35,7 +35,7 @@ public class EnergyNetDataProvider extends SavedData {
     ///////////////////////////////////////
     /// GridTile update notification
     ///////////////////////////////////////
-    private final Set<ISEGridTile> updatedGridTile = new HashSet<>();
+    private final Set<ISEGridBlockEntity> updatedGridTile = new HashSet<>();
     //Map between coord and GridNode
     private final HashMap<BlockPos, GridNode> gridNodeMap = new HashMap<>();
     private final List<BlockEntity> loadedTiles = new LinkedList<>();
@@ -49,7 +49,14 @@ public class EnergyNetDataProvider extends SavedData {
             throw new RuntimeException("Cannot create SavedData on client side!");
 
         DimensionDataStorage storage = ((ServerLevel)world).getDataStorage();
-        EnergyNetDataProvider instance = storage.computeIfAbsent(EnergyNetDataProvider::load, EnergyNetDataProvider::new, EnergyNetDataProvider.DATA_NAME);
+        EnergyNetDataProvider instance = storage.computeIfAbsent(
+        		new net.minecraft.world.level.saveddata.SavedData.Factory<>(
+        				EnergyNetDataProvider::new,
+        				EnergyNetDataProvider::load,
+        				null
+        		),
+        		EnergyNetDataProvider.DATA_NAME
+        );
 
         return instance;
     }
@@ -96,12 +103,12 @@ public class EnergyNetDataProvider extends SavedData {
         if (this.loadedTiles.contains(te)) {
             SELogger.logWarn(SELogger.energyNet, "Duplicated BlockEntity:" + te + ", this could be a bug!");
         } else {
-            if (te instanceof ISECableTile) {
-                ISECableTile cableTile = (ISECableTile) te;
+            if (te instanceof ISECableBlockEntity) {
+                ISECableBlockEntity cableTile = (ISECableBlockEntity) te;
                 Cable cable = (Cable) cableTile.getNode();
                 this.tileEntityGraph.addVertex(cable);
-            } if (te instanceof ISETile) {
-                ISETile tile = (ISETile) te;
+            } if (te instanceof ISEBlockEntity) {
+                ISEBlockEntity tile = (ISEBlockEntity) te;
 
                 for (Direction direction : Direction.values()) {
                     ISESubComponent<?> subComponent = tile.getComponent(direction);
@@ -122,8 +129,8 @@ public class EnergyNetDataProvider extends SavedData {
     	if (!this.loadedTiles.contains(te))
             return;
 
-        if (te instanceof ISECableTile) {
-            ISECableTile cableTile = (ISECableTile) te;
+        if (te instanceof ISECableBlockEntity) {
+            ISECableBlockEntity cableTile = (ISECableBlockEntity) te;
             Cable cable = (Cable) cableTile.getNode();
 
             this.tileEntityGraph.isolateVertex(cable);
@@ -140,8 +147,8 @@ public class EnergyNetDataProvider extends SavedData {
                 if (!cable.canConnectOnSide(direction))
                 	continue;
 
-                if (neighborTileEntity instanceof ISECableTile) {  //Conductor
-                    ISECableTile neighborCableTile = (ISECableTile) neighborTileEntity;
+                if (neighborTileEntity instanceof ISECableBlockEntity) {  //Conductor
+                    ISECableBlockEntity neighborCableTile = (ISECableBlockEntity) neighborTileEntity;
                     Cable neighborCable = (Cable) neighborCableTile.getNode();
 
                 	/*
@@ -165,8 +172,8 @@ public class EnergyNetDataProvider extends SavedData {
 
                         this.tileEntityGraph.addEdge(neighborCable, cable);
                     }
-                } else if (neighborTileEntity instanceof ISETile) {
-                    ISETile tile = (ISETile) neighborTileEntity;
+                } else if (neighborTileEntity instanceof ISEBlockEntity) {
+                    ISEBlockEntity tile = (ISEBlockEntity) neighborTileEntity;
                     ISESubComponent<?> component = tile.getComponent(direction.getOpposite());
 
                     if (component != null) {
@@ -174,8 +181,8 @@ public class EnergyNetDataProvider extends SavedData {
                     }
                 }
             }
-        } else if (te instanceof ISETile) {
-            ISETile tile = (ISETile) te;
+        } else if (te instanceof ISEBlockEntity) {
+            ISEBlockEntity tile = (ISEBlockEntity) te;
 
             for (Direction direction : Direction.values()) {
                 ISESubComponent<?> subComponent = tile.getComponent(direction);
@@ -184,21 +191,21 @@ public class EnergyNetDataProvider extends SavedData {
                 }
             }
 
-            if (te instanceof ISEWireTile) {
-                ISEWireTile wireTile = (ISEWireTile) te;
+            if (te instanceof ISEWireBlockEntity) {
+                ISEWireBlockEntity wireTile = (ISEWireBlockEntity) te;
                 for (Direction side : Direction.values()) {
                     Wire wire = (Wire) wireTile.getComponent(side);
 
-                    // Solve connections with cable and ISETile
+                    // Solve connections with cable and ISEBlockEntity
                     if (wire.hasBranchOnSide(null)) {
                         BlockEntity neighborTileEntity = getTileEntityOnDirection(te, side);
-                        if (neighborTileEntity instanceof ISECableTile) {
-                            Cable cable = (Cable) ((ISECableTile) neighborTileEntity).getNode();
+                        if (neighborTileEntity instanceof ISECableBlockEntity) {
+                            Cable cable = (Cable) ((ISECableBlockEntity) neighborTileEntity).getNode();
                             // Connected properly
                             if (cable.canConnectOnSide(side.getOpposite()))
                                 this.tileEntityGraph.addEdge(cable, wire);
-                        } else if (neighborTileEntity instanceof ISETile && !(neighborTileEntity instanceof ISEWireTile)) {
-                            this.tileEntityGraph.addEdge((SEComponent) ((ISETile) neighborTileEntity).getComponent(side.getOpposite()), wire);
+                        } else if (neighborTileEntity instanceof ISEBlockEntity && !(neighborTileEntity instanceof ISEWireBlockEntity)) {
+                            this.tileEntityGraph.addEdge((SEComponent) ((ISEBlockEntity) neighborTileEntity).getComponent(side.getOpposite()), wire);
                         }
                     }
 
@@ -210,22 +217,22 @@ public class EnergyNetDataProvider extends SavedData {
                             continue;
 
                         Wire wireNeighbor = (Wire) wireTile.getComponent(branch);
-                        // Connections within the ISEWireTile
+                        // Connections within the ISEWireBlockEntity
                         if (wireNeighbor.hasBranchOnSide(side))
                             this.tileEntityGraph.addEdge(wire, wireNeighbor);
 
                         // Co-planar Connections
                         BlockEntity neighborTileEntity = getTileEntityOnDirection(te, branch);
-                        if (neighborTileEntity instanceof ISEWireTile) {
-                            wireNeighbor = (Wire) ((ISEWireTile) neighborTileEntity).getComponent(side);
+                        if (neighborTileEntity instanceof ISEWireBlockEntity) {
+                            wireNeighbor = (Wire) ((ISEWireBlockEntity) neighborTileEntity).getComponent(side);
                             if (wireNeighbor.hasBranchOnSide(branch.getOpposite()))
                                 this.tileEntityGraph.addEdge(wire, wireNeighbor);
                         }
 
                         // Corner connections
                         neighborTileEntity = getTileEntityOnDirection(te, side, branch);
-                        if (neighborTileEntity instanceof ISEWireTile) {
-                            wireNeighbor = (Wire) ((ISEWireTile) neighborTileEntity).getComponent(branch.getOpposite());
+                        if (neighborTileEntity instanceof ISEWireBlockEntity) {
+                            wireNeighbor = (Wire) ((ISEWireBlockEntity) neighborTileEntity).getComponent(branch.getOpposite());
                             if (wireNeighbor.hasBranchOnSide(side.getOpposite()) &&
                                     !isSideSolid(te.getLevel(), te.getBlockPos().relative(branch), side) &&
                                     !isSideSolid(te.getLevel(), te.getBlockPos().relative(branch), branch.getOpposite()))
@@ -234,19 +241,19 @@ public class EnergyNetDataProvider extends SavedData {
                     }
                 }
             } else {
-                // ISETile
+                // ISEBlockEntity
                 for (Direction direction : Direction.values()) {
                     ISESubComponent<?> subComponent = tile.getComponent(direction);
                     if (subComponent != null) {
                         BlockEntity neighborTileEntity = getTileEntityOnDirection(te, direction);
 
-                        if (neighborTileEntity instanceof ISECableTile) {
-                            Cable cable = (Cable) ((ISECableTile) neighborTileEntity).getNode();
+                        if (neighborTileEntity instanceof ISECableBlockEntity) {
+                            Cable cable = (Cable) ((ISECableBlockEntity) neighborTileEntity).getNode();
                             // Connected properly
                             if (cable.canConnectOnSide(direction.getOpposite()))
                                 this.tileEntityGraph.addEdge(cable, (SEComponent) subComponent);
-                        } else if (neighborTileEntity instanceof ISEWireTile) {
-                            Wire wire = (Wire) ((ISEWireTile) neighborTileEntity).getComponent(direction.getOpposite());
+                        } else if (neighborTileEntity instanceof ISEWireBlockEntity) {
+                            Wire wire = (Wire) ((ISEWireBlockEntity) neighborTileEntity).getComponent(direction.getOpposite());
                             if (wire.hasBranchOnSide(null))
                                 this.tileEntityGraph.addEdge(wire, (SEComponent) subComponent);
                         }
@@ -262,11 +269,11 @@ public class EnergyNetDataProvider extends SavedData {
     	if (!this.loadedTiles.contains(te))
             return;
 
-        if (te instanceof ISECableTile) {
-            Cable cable = (Cable) ((ISECableTile) te).getNode();
+        if (te instanceof ISECableBlockEntity) {
+            Cable cable = (Cable) ((ISECableBlockEntity) te).getNode();
             cable.updateComponentParameters();
-        } else if (te instanceof ISETile) {
-            ISETile tile = (ISETile) te;
+        } else if (te instanceof ISEBlockEntity) {
+            ISEBlockEntity tile = (ISEBlockEntity) te;
             for (Direction direction : Direction.values()) {
                 ISESubComponent<?> subComponent = tile.getComponent(direction);
 
@@ -282,12 +289,12 @@ public class EnergyNetDataProvider extends SavedData {
     	if (!this.loadedTiles.contains(te))
             return;
 
-        if (te instanceof ISECableTile) {
-            Cable cable = (Cable) ((ISECableTile) te).getNode();
+        if (te instanceof ISECableBlockEntity) {
+            Cable cable = (Cable) ((ISECableBlockEntity) te).getNode();
 
             this.tileEntityGraph.removeVertex(cable);
-        } else if (te instanceof ISETile) {
-            ISETile tile = (ISETile) te;
+        } else if (te instanceof ISEBlockEntity) {
+            ISEBlockEntity tile = (ISEBlockEntity) te;
             for (Direction direction : Direction.values()) {
                 ISESubComponent<?> subComponent = tile.getComponent(direction);
                 if (subComponent != null) {
@@ -315,8 +322,8 @@ public class EnergyNetDataProvider extends SavedData {
 
         for (GridNode affectedNeighbors : this.tileEntityGraph.removeGridVertex(gridNode)) {
             BlockEntity te = affectedNeighbors.te;
-            if (te instanceof ISEGridTile)
-                this.updatedGridTile.add((ISEGridTile) te);
+            if (te instanceof ISEGridBlockEntity)
+                this.updatedGridTile.add((ISEGridBlockEntity) te);
         }
 
         this.gridNodeMap.remove(gridNode.getPos());
@@ -332,10 +339,10 @@ public class EnergyNetDataProvider extends SavedData {
         BlockEntity te1 = node1.te;
         BlockEntity te2 = node2.te;
 
-        if (te1 instanceof ISEGridTile)
-            this.updatedGridTile.add((ISEGridTile) te1);
-        if (te2 instanceof ISEGridTile)
-            this.updatedGridTile.add((ISEGridTile) te2);
+        if (te1 instanceof ISEGridBlockEntity)
+            this.updatedGridTile.add((ISEGridBlockEntity) te1);
+        if (te2 instanceof ISEGridBlockEntity)
+            this.updatedGridTile.add((ISEGridBlockEntity) te2);
 
         setDirty();
     }
@@ -349,10 +356,10 @@ public class EnergyNetDataProvider extends SavedData {
         BlockEntity te1 = node1.te;
         BlockEntity te2 = node2.te;
 
-        if (te1 instanceof ISEGridTile)
-            this.updatedGridTile.add((ISEGridTile) te1);
-        if (te2 instanceof ISEGridTile)
-            this.updatedGridTile.add((ISEGridTile) te2);
+        if (te1 instanceof ISEGridBlockEntity)
+            this.updatedGridTile.add((ISEGridBlockEntity) te1);
+        if (te2 instanceof ISEGridBlockEntity)
+            this.updatedGridTile.add((ISEGridBlockEntity) te2);
 
         setDirty();
     }
@@ -372,10 +379,10 @@ public class EnergyNetDataProvider extends SavedData {
         BlockEntity te1 = primary.te;
         BlockEntity te2 = secondary.te;
 
-        if (te1 instanceof ISEGridTile)
-            this.updatedGridTile.add((ISEGridTile) te1);
-        if (te2 instanceof ISEGridTile)
-            this.updatedGridTile.add((ISEGridTile) te2);
+        if (te1 instanceof ISEGridBlockEntity)
+            this.updatedGridTile.add((ISEGridBlockEntity) te1);
+        if (te2 instanceof ISEGridBlockEntity)
+            this.updatedGridTile.add((ISEGridBlockEntity) te2);
 
         setDirty();
     }
@@ -388,14 +395,14 @@ public class EnergyNetDataProvider extends SavedData {
 
         BlockEntity te = node.te;
 
-        if (te instanceof ISEGridTile)
-            this.updatedGridTile.add((ISEGridTile) te);
+        if (te instanceof ISEGridBlockEntity)
+            this.updatedGridTile.add((ISEGridBlockEntity) te);
 
         setDirty();
     }
 
     public void onGridTilePresent(BlockEntity te) {
-        ISEGridTile gridTile = (ISEGridTile) te;
+        ISEGridBlockEntity gridTile = (ISEGridBlockEntity) te;
         GridNode gridObject = this.gridNodeMap.get(te.getBlockPos());
         if (gridObject == null)
             return;
@@ -425,7 +432,7 @@ public class EnergyNetDataProvider extends SavedData {
     /**
      * Read grid data from world NBT, 1.Read grid nodes, 2. Read connections
      */
-    public static EnergyNetDataProvider load(CompoundTag nbt) {
+    public static EnergyNetDataProvider load(CompoundTag nbt, net.minecraft.core.HolderLookup.Provider registries) {
     	EnergyNetDataProvider ret = new EnergyNetDataProvider();
     	ret.gridNodeMap.clear();
 
@@ -456,7 +463,7 @@ public class EnergyNetDataProvider extends SavedData {
     }
 
     @Override
-    public CompoundTag save(CompoundTag nbt) {
+    public CompoundTag save(CompoundTag nbt, net.minecraft.core.HolderLookup.Provider registries) {
         ListTag NBTNodes = new ListTag();
         for (GridNode gridNode : this.gridNodeMap.values()) {
             CompoundTag tag = new CompoundTag();
@@ -469,7 +476,7 @@ public class EnergyNetDataProvider extends SavedData {
     }
 
     public void fireGridTileUpdateEvent() {
-        for (ISEGridTile gridTile : this.updatedGridTile) {
+        for (ISEGridBlockEntity gridTile : this.updatedGridTile) {
             gridTile.onGridNeighborUpdated();
         }
         this.updatedGridTile.clear();

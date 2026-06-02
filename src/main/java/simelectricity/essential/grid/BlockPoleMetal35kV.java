@@ -5,7 +5,6 @@ import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.SoundType;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -35,7 +34,7 @@ import rikka.librikka.multiblock.IMultiBlockTile;
 import rikka.librikka.multiblock.MultiBlockStructure;
 import rikka.librikka.multiblock.MultiBlockTileInfo;
 import simelectricity.api.SEAPI;
-import simelectricity.api.tile.ISEGridTile;
+import simelectricity.api.blockentity.ISEGridBlockEntity;
 import simelectricity.essential.Essential;
 import simelectricity.essential.api.ISEHVCableConnector;
 
@@ -47,11 +46,11 @@ public class BlockPoleMetal35kV extends BlockBase implements EntityBlock, ISEHVC
 	public final static EnumProperty<Type> propType = EnumProperty.create("type", Type.class);
 
 	public static enum Type implements IMetaBase, StringRepresentable {
-		pole(TilePoleMetal35kV.Bottom.class),
-		collisionbox_full(TileMultiBlockPlaceHolder.class),
-		collisionbox_half(TileMultiBlockPlaceHolder.class),
-		collisionbox_quarter(TileMultiBlockPlaceHolder.class),
-		host(TilePoleMetal35kV.class);
+		pole(BlockEntityPoleMetal35kV.Bottom.class),
+		collisionbox_full(BlockEntityMultiBlockPlaceHolder.class),
+		collisionbox_half(BlockEntityMultiBlockPlaceHolder.class),
+		collisionbox_quarter(BlockEntityMultiBlockPlaceHolder.class),
+		host(BlockEntityPoleMetal35kV.class);
 
 		Type(Class<? extends BlockEntity> beCls) {
 			this.beType = Essential.beTypeOf(beCls)::get;
@@ -66,12 +65,12 @@ public class BlockPoleMetal35kV extends BlockBase implements EntityBlock, ISEHVC
 	}
 
 	private BlockPoleMetal35kV(int type) {
-		super("pole_metal_35kv_" + String.valueOf(type), BlockBehaviour.Properties.of(Material.STONE)
+		super("pole_metal_35kv_" + String.valueOf(type), BlockBehaviour.Properties.of()
         		.strength(0.2F, 10.0F)
         		.sound(SoundType.METAL)
         		.isRedstoneConductor((a,b,c)->false),
         		ItemBlock::new,
-        		(new Item.Properties()).tab(SEAPI.SETab));
+        		(new Item.Properties()));
 
 		this.structureTemplate = this.createStructureTemplate();
 		this.structureTemplate45 = this.createStructureTemplate45();
@@ -434,19 +433,19 @@ public class BlockPoleMetal35kV extends BlockBase implements EntityBlock, ISEHVC
     /// ISEHVCableConnector
     //////////////////////////////////////
     @Override
-    public ISEGridTile getGridTile(Level world, BlockPos pos) {
+    public ISEGridBlockEntity getGridTile(Level world, BlockPos pos) {
         BlockEntity te = world.getBlockEntity(pos);
 
-        if (te instanceof ISEGridTile)
-        	return (ISEGridTile) te;
+        if (te instanceof ISEGridBlockEntity)
+        	return (ISEGridBlockEntity) te;
         else if (te instanceof IMultiBlockTile) {
         	DirHorizontal8 facing = world.getBlockState(pos).getValue(DirHorizontal8.prop);
         	BlockPos hostPos = ((IMultiBlockTile) te).getMultiBlockTileInfo()
         			.getPartPos(facing.isOnAxis()?hostOffset:hostOffset45);
         	BlockEntity host = world.getBlockEntity(hostPos);
 
-        	if (host instanceof ISEGridTile)
-        		return (ISEGridTile) host;
+        	if (host instanceof ISEGridBlockEntity)
+        		return (ISEGridBlockEntity) host;
         }
 
         return null;

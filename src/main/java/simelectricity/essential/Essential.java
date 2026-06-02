@@ -5,110 +5,119 @@ import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-
-import java.util.function.Supplier;
-
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.chunk.LevelChunk;
-import net.minecraftforge.common.util.Lazy;
-import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.event.world.ChunkWatchEvent;
-import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.network.NetworkRegistry;
-import net.minecraftforge.network.simple.SimpleChannel;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.neoforge.registries.RegisterEvent;
+import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
+import net.neoforged.neoforge.network.registration.PayloadRegistrar;
+import net.neoforged.neoforge.event.level.ChunkWatchEvent;
 import rikka.librikka.blockentity.BlockEntityHelper;
-import simelectricity.essential.api.ISEChunkWatchSensitiveTile;
+import rikka.librikka.network.MessageContainerSyncBase;
+import simelectricity.essential.api.ISEChunkWatchSensitiveBlockEntity;
 import simelectricity.essential.api.SEEAPI;
 import simelectricity.essential.client.ClientConfigs;
 import simelectricity.essential.coverpanel.CoverPanelRegistry;
 import simelectricity.essential.coverpanel.SECoverPanelFactory;
 import simelectricity.essential.utils.network.MessageContainerSync;
 
+import java.util.function.Supplier;
+
 @Mod(Essential.MODID)
 public class Essential {
     public static final String MODID = "sime_essential";
 
-    public static CommonProxy proxy = DistExecutor.runForDist(()->()->new ClientProxy(), ()->()->new CommonProxy());
-
     public static Essential instance;
 
-	private static final String PROTOCOL_VERSION = "1";
-    public SimpleChannel networkChannel;
-
-    public Essential() {
+    public Essential(net.neoforged.bus.api.IEventBus modEventBus) {
     	if (instance == null)
             instance = this;
-        else
+    	else
             throw new RuntimeException("Duplicated Class Instantiation: simelectricity.essential.Essential");
 
     	ClientConfigs.register();
-    	proxy.registerModelLoaders();
+        SEEAPI.coverPanelRegistry = CoverPanelRegistry.INSTANCE;
+
+        BlockRegistry.init(modEventBus);
+        ItemRegistry.init(modEventBus);
+        BlockEntityRegistry.init(modEventBus);
     }
 
-    @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
+    @EventBusSubscriber(modid = MODID, bus = EventBusSubscriber.Bus.MOD)
     public final static class ModEventBusHandler {
-    	@SubscribeEvent
-    	public static void newRegistry(RegistryEvent.NewRegistry event) {
-        	SEEAPI.coverPanelRegistry = CoverPanelRegistry.INSTANCE;
-    	}
 
-    	@SubscribeEvent
-		public static void registerBlocks(final RegistryEvent.Register<Block> event) {
-    		BlockRegistry.initBlocks();
-        	BlockRegistry.registerBlocks(event.getRegistry());
-    	}
-
-    	@SubscribeEvent
-		public static void registerItems(final RegistryEvent.Register<Item> event) {
-    		ItemRegistry.initItems();
-        	BlockRegistry.registerBlockItems(event.getRegistry());
-            ItemRegistry.registerItems(event.getRegistry());
-    	}
-
-    	@SubscribeEvent
-    	public static void onTileEntityTypeRegistration(final RegistryEvent.Register<BlockEntityType<?>> event) {
-    		BlockEntityRegistry.registerAll(event.getRegistry());
-    	}
-
-    	@SubscribeEvent
-    	public static void registerContainers(final RegistryEvent.Register<MenuType<?>> event) {
-    		BlockRegistry.registerContainers(event.getRegistry());
-    	}
+        @SubscribeEvent
+        public static void registerNetworking(final RegisterPayloadHandlersEvent event) {
+            final PayloadRegistrar registrar = event.registrar(Essential.MODID).versioned("1");
+            registrar.playBidirectional(
+                MessageContainerSync.TYPE,
+                MessageContainerSync.STREAM_CODEC,
+                (msg, ctx) -> msg.handle(ctx)
+            );
+        }
 
     	@SubscribeEvent
     	public static void onCommonSetup(FMLCommonSetupEvent event) {
-    		Essential.instance.networkChannel = NetworkRegistry.newSimpleChannel(
-    			    new ResourceLocation(MODID, "network_channel"),
-    			    () -> PROTOCOL_VERSION,
-    			    PROTOCOL_VERSION::equals,
-    			    PROTOCOL_VERSION::equals
-    			);
-
-    		Essential.instance.networkChannel.registerMessage(0,
-    				MessageContainerSync.class, MessageContainerSync.processor::toBytes, MessageContainerSync.processor::fromBytes,
-    				MessageContainerSync.processor::handler);
-
     		new SECoverPanelFactory();
     	}
+
+        @SubscribeEvent
+        public static void registerCapabilities(net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent event) {
+            event.registerBlockEntity(
+                net.neoforged.neoforge.capabilities.Capabilities.EnergyStorage.BLOCK,
+                rikka.librikka.blockentity.BlockEntityHelper.getBEType(Essential.MODID, simelectricity.essential.machines.blockentity.BlockEntitySE2RF.class),
+                (tile, side) -> {
+                    if (side == tile.getFacing()) {
+                        return tile.rfBufferHandler;
+                    }
+                    return null;
+                }
+            );
+            event.registerBlockEntity(
+                net.neoforged.neoforge.capabilities.Capabilities.EnergyStorage.BLOCK,
+                rikka.librikka.blockentity.BlockEntityHelper.getBEType(Essential.MODID, simelectricity.essential.machines.blockentity.BlockEntityRF2SE.class),
+                (tile, side) -> {
+                    if (side == tile.getFacing()) {
+                        return tile.rfBufferHandler;
+                    }
+                    return null;
+                }
+            );
+            event.registerBlockEntity(
+                net.neoforged.neoforge.capabilities.Capabilities.ItemHandler.BLOCK,
+                rikka.librikka.blockentity.BlockEntityHelper.getBEType(Essential.MODID, simelectricity.essential.machines.blockentity.BlockEntityElectricFurnace.class),
+                (tile, side) -> tile.itemStackHandler
+            );
+        }
     }
 
-    @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
+    @EventBusSubscriber(modid = MODID, bus = EventBusSubscriber.Bus.GAME)
     public final static class ForgeEventBusHandler {
 		@SubscribeEvent
 		public static void onChunkWatchEvent(ChunkWatchEvent.Watch event) {
-			LevelChunk chunk = event.getPlayer().level.getChunk(event.getPos().x, event.getPos().z);
+			LevelChunk chunk = event.getLevel().getChunk(event.getPos().x, event.getPos().z);
 
 			for (Object tileEntity : chunk.getBlockEntities().values()) {
-				if (tileEntity instanceof ISEChunkWatchSensitiveTile)
-					((ISEChunkWatchSensitiveTile) tileEntity).onRenderingUpdateRequested();
+				if (tileEntity instanceof ISEChunkWatchSensitiveBlockEntity)
+					((ISEChunkWatchSensitiveBlockEntity) tileEntity).onRenderingUpdateRequested();
 			}
 		}
     }
 
     public static <T extends BlockEntity> Supplier<BlockEntityType<T>> beTypeOf(Class<T> teCls) {
-    	return teCls == null ? () -> null : Lazy.of(() -> BlockEntityHelper.getBEType(Essential.MODID, teCls));
+        if (teCls == null) return () -> null;
+        return new Supplier<BlockEntityType<T>>() {
+            private BlockEntityType<T> value;
+            @Override
+            public BlockEntityType<T> get() {
+                if (value == null) {
+                    value = BlockEntityHelper.getBEType(Essential.MODID, teCls);
+                }
+                return value;
+            }
+        };
     }
 }

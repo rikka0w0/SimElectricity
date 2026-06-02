@@ -2,8 +2,8 @@ package simelectricity.essential.utils.client;
 
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import rikka.librikka.model.quadbuilder.RawQuadCube;
 
 import java.util.Iterator;

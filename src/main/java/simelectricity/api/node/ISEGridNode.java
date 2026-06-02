@@ -7,7 +7,7 @@ import net.minecraft.core.BlockPos;
 /**
  * A ISEGridNode represents a circuit node in the world's grid system, it is independent of its host tileEntity and chunk
  * <p/>
- * Once the host chunk is loaded, the EnergyNet will assign this ISEGridNode to the {@link simelectricity.api.tile.ISEGridTile}
+ * Once the host chunk is loaded, the EnergyNet will assign this ISEGridNode to the {@link simelectricity.api.blockentity.ISEGridBlockEntity}
  * at the same location
  *
  * API users should NOT implement this interface!.

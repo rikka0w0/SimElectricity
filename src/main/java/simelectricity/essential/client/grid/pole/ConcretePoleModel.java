@@ -7,10 +7,10 @@ import net.minecraft.client.renderer.block.model.ItemTransform;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
-import com.mojang.math.Vector3f;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.model.data.IModelData;
+import org.joml.Vector3f;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.client.model.data.ModelData;
 import rikka.librikka.DirHorizontal8;
 import rikka.librikka.model.CodeBasedModel;
 import rikka.librikka.model.ModelPerspectives;
@@ -28,7 +28,7 @@ import simelectricity.essential.grid.BlockPoleConcrete;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Random;
+import net.minecraft.util.RandomSource;
 
 @SuppressWarnings("deprecation")
 @OnlyIn(Dist.CLIENT)
@@ -55,7 +55,7 @@ public class ConcretePoleModel extends CodeBasedModel {
     }
 
     @Override
-    public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull IModelData extraData) {
+    public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, @Nonnull RandomSource rand, @Nonnull ModelData extraData) {
     	if (side != null)
             return emptyQuadList;
 
@@ -71,8 +71,8 @@ public class ConcretePoleModel extends CodeBasedModel {
 	public void bake(Function<ResourceLocation, TextureAtlasSprite> textureRegistry){
 		this.quads.clear();
 
-        ConcretePoleTER.modelInsulator10kV = Models.render10kVInsulator(textureMetal, glassInsulator);
-        ConcretePoleTER.modelInsulator415V = Models.render415VInsulator(textureMetal, glassInsulator);
+        ConcretePoleBER.modelInsulator10kV = Models.render10kVInsulator(textureMetal, glassInsulator);
+        ConcretePoleBER.modelInsulator415V = Models.render415VInsulator(textureMetal, glassInsulator);
 
         RawQuadGroup insulator = null;
         //Build the insulator model

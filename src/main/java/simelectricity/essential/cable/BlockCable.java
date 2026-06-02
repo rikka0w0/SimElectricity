@@ -5,7 +5,6 @@ import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.SimpleWaterloggedBlock;
 import net.minecraft.world.level.block.SoundType;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.entity.LivingEntity;
@@ -23,6 +22,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.phys.AABB;
@@ -35,11 +35,11 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
+
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.ForgeMod;
 import rikka.librikka.IMetaProvider;
 import rikka.librikka.RayTraceHelper;
 import rikka.librikka.MarkedBlockHitResult;
@@ -106,11 +106,11 @@ public class BlockCable extends BlockBase implements EntityBlock, ICustomBoundin
 	private BlockCable(ISECableMeta cableData) {
         this("cable",
         		cableData,
-        		BlockBehaviour.Properties.of(Material.GLASS).strength(0.2F, 10.0F).sound(SoundType.METAL).noOcclusion()
+        		BlockBehaviour.Properties.of().strength(0.2F, 10.0F).sound(SoundType.METAL).noOcclusion()
         		.isRedstoneConductor((a,b,c)->false)
         		, ItemBlockBase::new,
-        		(new Item.Properties()).tab(SEAPI.SETab),
-        		Essential.beTypeOf(TileCable.class)::get);
+        		(new Item.Properties()),
+        		Essential.beTypeOf(BlockEntityCable.class)::get);
     }
 
     public static BlockCable[] create() {
@@ -132,9 +132,9 @@ public class BlockCable extends BlockBase implements EntityBlock, ICustomBoundin
 		return cableData;
 	}
 
-    private final Supplier<BlockEntityType<? extends TileCable>> beType;
+    private final Supplier<BlockEntityType<? extends BlockEntityCable>> beType;
     protected BlockCable(String name, ISECableMeta cableData, BlockBehaviour.Properties props, ItemBlockBase.Constructor itemBlockProvider,
-    		Item.Properties itemProps, Supplier<BlockEntityType<? extends TileCable>> beType) {
+    		Item.Properties itemProps, Supplier<BlockEntityType<? extends BlockEntityCable>> beType) {
     	// variableOpacity tells Minecraft not to cache any BlockStats
         super(name+"_"+cableData.name(), props.dynamicShape(), itemBlockProvider, itemProps);
         this.registerDefaultState(this.defaultBlockState().setValue(BlockStateProperties.WATERLOGGED, false));
@@ -190,16 +190,15 @@ public class BlockCable extends BlockBase implements EntityBlock, ICustomBoundin
 
     @Override
     // @OnlyIn(Dist.CLIENT)
-    public void appendHoverText(ItemStack stack, @Nullable BlockGetter worldIn, List<Component> tooltip, TooltipFlag flagIn) {
-    	tooltip.add(new TextComponent(
-    			I18n.get("gui.simelectricity.resistivity") + ": " +
+    public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
+    	tooltip.add(Component.literal(I18n.get("gui.simelectricity.resistivity") + ": " +
     			SEUnitHelper.getStringWithoutUnit(2F*cableData.resistivity()) + "\u03a9/m"
     			));
     }
 
 	@Override
 	public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        TileCable cable;
+        BlockEntityCable cable;
         try {
             cable = beType.get().create(pos, state);
             // if (world instanceof ServerLevel && !((World)world).isClientSide)    //createTileEntity is only called by the server thread when the block is placed at the first
@@ -229,8 +228,8 @@ public class BlockCable extends BlockBase implements EntityBlock, ICustomBoundin
     public int getLightEmission(BlockState state, BlockGetter world, BlockPos pos) {
         BlockEntity te = world.getBlockEntity(pos);
 
-        if (te instanceof TileCable)
-            return ((TileCable) te).lightLevel;
+        if (te instanceof BlockEntityCable)
+            return ((BlockEntityCable) te).lightLevel;
 
         return 0;
     }
@@ -387,7 +386,7 @@ public class BlockCable extends BlockBase implements EntityBlock, ICustomBoundin
         Vec3 start = player.position().add(0, player.getEyeHeight(), 0);
         double reachDistance = 5;
 
-        AttributeInstance attrib = player.getAttribute(ForgeMod.REACH_DISTANCE.get());
+        AttributeInstance attrib = player.getAttribute(net.minecraft.world.entity.ai.attributes.Attributes.BLOCK_INTERACTION_RANGE);
         if (attrib != null)
         	reachDistance = attrib.getValue();
 
@@ -440,7 +439,7 @@ public class BlockCable extends BlockBase implements EntityBlock, ICustomBoundin
 			return ret; // This is not supposed to happen
 
 		ISEGenericCable cable = (ISEGenericCable) te;
-		MarkedBlockHitResult<Integer> trace = this.rayTrace(world, pos, Essential.proxy.getClientPlayer());
+		MarkedBlockHitResult<Integer> trace = this.rayTrace(world, pos, getClientPlayer());
 
 		AABB aabb = null;
 		if (trace == null || trace.subHit < 0 || !pos.equals(trace.getBlockPos())) {
@@ -461,41 +460,53 @@ public class BlockCable extends BlockBase implements EntityBlock, ICustomBoundin
     /////Item drops and Block activities
     //////////////////////////////////////
 	@Override
-	public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand handIn, BlockHitResult ray) {
+	protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level world, BlockPos pos, Player player, InteractionHand handIn, BlockHitResult ray) {
         BlockEntity te = world.getBlockEntity(pos);
 
         if (!(te instanceof ISEGenericCable))
-            return InteractionResult.FAIL;        //Normally this could not happen, but just in case!
+            return ItemInteractionResult.FAIL;        //Normally this could not happen, but just in case!
 
         ISEGenericCable cable = (ISEGenericCable) te;
 
-        ItemStack itemStack = player.getMainHandItem();
-        if (itemStack == null || itemStack.isEmpty())
-            return CoverPanelUtils.openCoverPanelGui(cable, player);	// Empty hand
+        if (stack.isEmpty())
+            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
 
-        // We have an item on the player's main hand
-        Item item = itemStack.getItem();
+        Item item = stack.getItem();
 		if (item instanceof DyeItem) {
 			DyeColor color = ((DyeItem) item).getDyeColor();
 			if (!player.isCreative())
-				itemStack.shrink(1);
+				stack.shrink(1);
 
 			if (!world.isClientSide)
 				cable.setColor(color.ordinal());
 
-			return InteractionResult.SUCCESS;
+			return ItemInteractionResult.SUCCESS;
 		}
 
         // Attempt to install cover panel, check panel type
-        ISECoverPanel coverPanel = SEEAPI.coverPanelRegistry.fromItemStack(itemStack);
+        ISECoverPanel coverPanel = SEEAPI.coverPanelRegistry.fromItemStack(stack);
         if (coverPanel instanceof ISEFacadeCoverPanel
         		&&((ISEFacadeCoverPanel)coverPanel).getBlockState().isAir())
-        	return InteractionResult.FAIL;
+        	return ItemInteractionResult.FAIL;
 
         if (CoverPanelUtils.installCoverPanel(state, world, pos, player, handIn, ray) == InteractionResult.SUCCESS)
-            return InteractionResult.SUCCESS;
+            return ItemInteractionResult.SUCCESS;
 
-        return CoverPanelUtils.openCoverPanelGui(cable, player);	// Fail to install cover panel
+        if (CoverPanelUtils.openCoverPanelGui(cable, player) == InteractionResult.SUCCESS)
+            return ItemInteractionResult.SUCCESS;
+
+        return ItemInteractionResult.FAIL;
+    }
+
+	@Override
+	protected InteractionResult useWithoutItem(BlockState state, Level world, BlockPos pos, Player player, BlockHitResult ray) {
+        BlockEntity te = world.getBlockEntity(pos);
+
+        if (!(te instanceof ISEGenericCable))
+            return InteractionResult.FAIL;
+
+        ISEGenericCable cable = (ISEGenericCable) te;
+        return CoverPanelUtils.openCoverPanelGui(cable, player);
     }
 
     @Override
@@ -540,7 +551,7 @@ public class BlockCable extends BlockBase implements EntityBlock, ICustomBoundin
     }
 
     @Override
-    public ItemStack getCloneItemStack(BlockState state, HitResult target, BlockGetter world, BlockPos pos, Player player) {
+    public ItemStack getCloneItemStack(BlockState state, HitResult target, LevelReader world, BlockPos pos, Player player) {
         BlockEntity te = world.getBlockEntity(pos);
         if (!(te instanceof ISEGenericCable))
             return ItemStack.EMPTY;
@@ -585,5 +596,12 @@ public class BlockCable extends BlockBase implements EntityBlock, ICustomBoundin
         }
 
         return 0;
+    }
+
+    private Player getClientPlayer() {
+        if (net.neoforged.fml.loading.FMLEnvironment.dist == net.neoforged.api.distmarker.Dist.CLIENT) {
+            return simelectricity.essential.client.ClientHelper.getClientPlayer();
+        }
+        return null;
     }
 }

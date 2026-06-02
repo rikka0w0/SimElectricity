@@ -29,17 +29,17 @@ import simelectricity.api.internal.ISEEnergyNetAgent;
 import simelectricity.api.node.ISEGridNode;
 import simelectricity.api.node.ISESimulatable;
 import simelectricity.api.node.ISESubComponent;
-import simelectricity.api.tile.ISECableTile;
-import simelectricity.api.tile.ISEGridTile;
-import simelectricity.api.tile.ISETile;
-import simelectricity.api.tile.ISEWireTile;
+import simelectricity.api.blockentity.ISECableBlockEntity;
+import simelectricity.api.blockentity.ISEGridBlockEntity;
+import simelectricity.api.blockentity.ISEBlockEntity;
+import simelectricity.api.blockentity.ISEWireBlockEntity;
 import simelectricity.common.ConfigManager;
 import simelectricity.common.SELogger;
 import simelectricity.energynet.GridEvent.*;
-import simelectricity.energynet.TileEvent.Attach;
-import simelectricity.energynet.TileEvent.ConnectionChanged;
-import simelectricity.energynet.TileEvent.Detach;
-import simelectricity.energynet.TileEvent.ParamChanged;
+import simelectricity.energynet.BlockEntityEvent.Attach;
+import simelectricity.energynet.BlockEntityEvent.ConnectionChanged;
+import simelectricity.energynet.BlockEntityEvent.Detach;
+import simelectricity.energynet.BlockEntityEvent.ParamChanged;
 import simelectricity.energynet.components.*;
 
 import java.util.Map;
@@ -78,7 +78,7 @@ public class EnergyNetAgent implements ISEEnergyNetAgent {
 
         if (energyNet == null) {
             SELogger.logWarn(SELogger.energyNet, "Attempt to unload the EnergyNet associated with DIM" +
-                    String.valueOf(world.dimension().getRegistryName()) + " but it does not exist!");
+                    String.valueOf(world.dimension().location()) + " but it does not exist!");
             return;
         }
 
@@ -87,50 +87,50 @@ public class EnergyNetAgent implements ISEEnergyNetAgent {
     }
 
     public static boolean isNormalTile(BlockEntity te) {
-        return te instanceof ISETile || te instanceof ISECableTile || te instanceof ISEWireTile;
+        return te instanceof ISEBlockEntity || te instanceof ISECableBlockEntity || te instanceof ISEWireBlockEntity;
     }
 
     @Override
     public boolean canConnectTo(BlockEntity tileEntity, Direction direction) {
-        if (tileEntity instanceof ISECableTile) {
-            ISECableTile cableTile = (ISECableTile) tileEntity;
+        if (tileEntity instanceof ISECableBlockEntity) {
+            ISECableBlockEntity cableTile = (ISECableBlockEntity) tileEntity;
             BlockEntity neighborTileEntity = EnergyNetDataProvider.getTileEntityOnDirection(tileEntity, direction);
 
 
             if (!cableTile.canConnectOnSide(direction))
                 return false;
 
-            if (neighborTileEntity instanceof ISECableTile) {
-                ISECableTile neighborCableTile = (ISECableTile) neighborTileEntity;
+            if (neighborTileEntity instanceof ISECableBlockEntity) {
+                ISECableBlockEntity neighborCableTile = (ISECableBlockEntity) neighborTileEntity;
                 return (
                         cableTile.getColor() == 0 ||
                                 neighborCableTile.getColor() == 0 ||
                                 cableTile.getColor() == neighborCableTile.getColor()
                 ) &&     neighborCableTile.canConnectOnSide(direction.getOpposite());
-            } else if (neighborTileEntity instanceof ISEWireTile) {
-                return (((ISEWireTile) neighborTileEntity).getWireParam(direction.getOpposite())).hasBranchOnSide(null);
-            } else if (neighborTileEntity instanceof ISETile) {
-                return ((ISETile) neighborTileEntity).getComponent(direction.getOpposite()) != null;
+            } else if (neighborTileEntity instanceof ISEWireBlockEntity) {
+                return (((ISEWireBlockEntity) neighborTileEntity).getWireParam(direction.getOpposite())).hasBranchOnSide(null);
+            } else if (neighborTileEntity instanceof ISEBlockEntity) {
+                return ((ISEBlockEntity) neighborTileEntity).getComponent(direction.getOpposite()) != null;
             }
-        } else if (tileEntity instanceof ISEWireTile) {
-            if (!((ISEWireTile) tileEntity).getWireParam(direction).hasBranchOnSide(null))
+        } else if (tileEntity instanceof ISEWireBlockEntity) {
+            if (!((ISEWireBlockEntity) tileEntity).getWireParam(direction).hasBranchOnSide(null))
                 return false;
 
             BlockEntity neighborTileEntity = EnergyNetDataProvider.getTileEntityOnDirection(tileEntity, direction);
 
-            if (neighborTileEntity instanceof ISECableTile)
-                return ((ISECableTile) neighborTileEntity).canConnectOnSide(direction.getOpposite());
-            else if (neighborTileEntity instanceof ISETile)
-                return ((ISETile) neighborTileEntity).getComponent(direction.getOpposite()) != null;
-        } else if (tileEntity instanceof ISETile) {
+            if (neighborTileEntity instanceof ISECableBlockEntity)
+                return ((ISECableBlockEntity) neighborTileEntity).canConnectOnSide(direction.getOpposite());
+            else if (neighborTileEntity instanceof ISEBlockEntity)
+                return ((ISEBlockEntity) neighborTileEntity).getComponent(direction.getOpposite()) != null;
+        } else if (tileEntity instanceof ISEBlockEntity) {
             BlockEntity neighborTileEntity = EnergyNetDataProvider.getTileEntityOnDirection(tileEntity, direction);
 
-            if (neighborTileEntity instanceof ISECableTile)
-                return  ((ISECableTile) neighborTileEntity).canConnectOnSide(direction.getOpposite());
-            else if (neighborTileEntity instanceof ISEWireTile)
-                return (((ISEWireTile) neighborTileEntity).getWireParam(direction.getOpposite())).hasBranchOnSide(null);
+            if (neighborTileEntity instanceof ISECableBlockEntity)
+                return  ((ISECableBlockEntity) neighborTileEntity).canConnectOnSide(direction.getOpposite());
+            else if (neighborTileEntity instanceof ISEWireBlockEntity)
+                return (((ISEWireBlockEntity) neighborTileEntity).getWireParam(direction.getOpposite())).hasBranchOnSide(null);
         } else {
-            throw new RuntimeException("canConnectTo: input parameter \"tileEntity\" must implement either ISECableTile, ISEWireTile or ISETile");
+            throw new RuntimeException("canConnectTo: input parameter \"tileEntity\" must implement either ISECableBlockEntity, ISEWireBlockEntity or ISEBlockEntity");
         }
 
         return false;
@@ -151,15 +151,15 @@ public class EnergyNetAgent implements ISEEnergyNetAgent {
             return new VoltageSource((ISEVoltageSource) dataProvider, parent);
         else if (dataProvider instanceof ISESwitch)
             return new SwitchA((ISESwitch) dataProvider, parent);
-        else if (dataProvider instanceof ISEWire && parent instanceof ISEWireTile)
+        else if (dataProvider instanceof ISEWire && parent instanceof ISEWireBlockEntity)
             return new Wire((ISEWire)dataProvider, parent);
         return null;
     }
 
     @Override
     public ISESimulatable newCable(BlockEntity dataProviderTileEntity, boolean isGridInterConnectionPoint) {
-        if (dataProviderTileEntity instanceof ISECableTile)
-            return new Cable((ISECableTile) dataProviderTileEntity, dataProviderTileEntity, isGridInterConnectionPoint);
+        if (dataProviderTileEntity instanceof ISECableBlockEntity)
+            return new Cable((ISECableBlockEntity) dataProviderTileEntity, dataProviderTileEntity, isGridInterConnectionPoint);
         return null;
     }
 
@@ -179,7 +179,7 @@ public class EnergyNetAgent implements ISEEnergyNetAgent {
     }
 
     private boolean isInvalidTile(BlockEntity te) {
-        if (!(isNormalTile(te) || te instanceof ISEGridTile)){
+        if (!(isNormalTile(te) || te instanceof ISEGridBlockEntity)){
         	SELogger.logWarn(SELogger.energyNet, "Unknown tileentity " + te + " @["+te.getBlockPos()+"], abort!");
         	return true;
         }
@@ -207,7 +207,7 @@ public class EnergyNetAgent implements ISEEnergyNetAgent {
             SELogger.logInfo(SELogger.energyNet, "Tileentity " + te + " attached to the EnergyNet");
         }
 
-        if (te instanceof ISEGridTile) {
+        if (te instanceof ISEGridBlockEntity) {
             SELogger.logInfo(SELogger.energyNet, "GridTile linked with GridNode at " + te.getBlockPos());
         }
 
@@ -229,7 +229,7 @@ public class EnergyNetAgent implements ISEEnergyNetAgent {
         if (isInvalidTile(te))
         	return;
 
-        if (te instanceof ISEGridTile)
+        if (te instanceof ISEGridBlockEntity)
             SELogger.logInfo(SELogger.energyNet, "GridTile invalidated at " + te.getBlockPos());
 
         if (isNormalTile(te))

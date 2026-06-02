@@ -1,9 +1,9 @@
 package simelectricity.essential.common.semachine;
 
 import net.minecraft.core.Direction;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.model.data.ModelProperty;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.client.model.data.ModelProperty;
 
 public interface ISESocketProvider {	
 	public static ModelProperty<ISESocketProvider> prop = new ModelProperty<>();

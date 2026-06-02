@@ -4,11 +4,11 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.client.resources.language.I18n;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 
 import simelectricity.essential.Essential;
 import simelectricity.essential.utils.SEUnitHelper;
@@ -17,7 +17,7 @@ import simelectricity.essential.utils.client.gui.SEGuiContainer;
 @OnlyIn(Dist.CLIENT)
 public final class GuiVoltageMeter extends SEGuiContainer<ContainerVoltageMeter> {
 	private static final ResourceLocation bgTexture =
-			new ResourceLocation(Essential.MODID, "textures/gui/voltage_meter.png");
+			ResourceLocation.fromNamespaceAndPath(Essential.MODID, "textures/gui/voltage_meter.png");
 
     private int sqr;
 
@@ -26,23 +26,23 @@ public final class GuiVoltageMeter extends SEGuiContainer<ContainerVoltageMeter>
     }
 
     @Override
-    protected void renderLabels(PoseStack matrixStack, int x, int y) {
+    protected void renderLabels(GuiGraphics guiGraphics, int x, int y) {
         //draw text and stuff here
         //the parameters for drawString are: string, x, y, color
 
-        this.font.draw(matrixStack, this.title.getString(), 8, 6, 4210752);
-        this.font.draw(matrixStack, I18n.get("gui.simelectricity.voltage") + ": " +
-        		SEUnitHelper.getVoltageStringWithUnit(this.container.voltage), 18, 22, 4210752);
-        this.font.draw(matrixStack, "x10^" + String.valueOf(this.sqr), this.imageWidth - 38, this.imageHeight - 96, 4210752);
+        guiGraphics.drawString(this.font, this.title.getString(), 8, 6, 4210752, false);
+        guiGraphics.drawString(this.font, I18n.get("gui.simelectricity.voltage") + ": " +
+        		SEUnitHelper.getVoltageStringWithUnit(this.container.voltage), 18, 22, 4210752, false);
+        guiGraphics.drawString(this.font, "x10^" + String.valueOf(this.sqr), this.imageWidth - 38, this.imageHeight - 96, 4210752, false);
     }
 
     @Override
-    protected void renderBg(PoseStack matrixStack, float partialTicks, int xMouse, int yMouse) {
+    protected void renderBg(GuiGraphics guiGraphics, float partialTicks, int xMouse, int yMouse) {
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.setShaderTexture(0, bgTexture);
         int x = (this.width - this.imageWidth) / 2;
         int y = (this.height - this.imageHeight) / 2;
-        blit(matrixStack, x, y, 0, 0, this.imageWidth, this.imageHeight);
+        guiGraphics.blit(bgTexture, x, y, 0, 0, this.imageWidth, this.imageHeight);
 
 
         float v = (float) this.container.voltage;
@@ -66,10 +66,10 @@ public final class GuiVoltageMeter extends SEGuiContainer<ContainerVoltageMeter>
         if (center + 68 - 255 > 0)
             mx = center + 68 - 255;
 
-        blit(matrixStack, x + 20 + nx, y + 36, center - 68 + nx, 166, 135 - nx - mx, 24);
+        guiGraphics.blit(bgTexture, x + 20 + nx, y + 36, center - 68 + nx, 166, 135 - nx - mx, 24);
 
         //Draw the pointer
-        blit(matrixStack, x + 88, y + 56, 0, 190, 1, 4);
+        guiGraphics.blit(bgTexture, x + 88, y + 56, 0, 190, 1, 4);
     }
 
 }

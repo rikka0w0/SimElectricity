@@ -8,7 +8,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.SoundType;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.material.FluidState;
@@ -27,7 +26,7 @@ import rikka.librikka.IMetaProvider;
 import rikka.librikka.ITileMeta;
 import rikka.librikka.block.BlockBase;
 import simelectricity.api.SEAPI;
-import simelectricity.api.tile.ISEGridTile;
+import simelectricity.api.blockentity.ISEGridBlockEntity;
 import simelectricity.essential.Essential;
 import simelectricity.essential.api.ISEHVCableConnector;
 
@@ -35,8 +34,8 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 
 public class BlockCableJoint extends BlockBase implements IMetaProvider<ITileMeta>, EntityBlock, ISEHVCableConnector {
 	public static enum Type implements ITileMeta {
-		_10kv(TileCableJoint.Type10kV.class),
-		_415v(TileCableJoint.Type415V.class);
+		_10kv(BlockEntityCableJoint.Type10kV.class),
+		_415v(BlockEntityCableJoint.Type415V.class);
 
 		Type(Class<? extends BlockEntity> teCls) {
 			this.teCls = teCls;
@@ -65,7 +64,7 @@ public class BlockCableJoint extends BlockBase implements IMetaProvider<ITileMet
 
     private BlockCableJoint(Type meta) {
         super("cable_joint" + meta.name(),
-        		BlockBehaviour.Properties.of(Material.GLASS)
+        		BlockBehaviour.Properties.of()
         		.strength(0.2F, 10.0F)
         		.sound(SoundType.METAL)
         		.isRedstoneConductor((a,b,c)->false), SEAPI.SETab);
@@ -124,9 +123,9 @@ public class BlockCableJoint extends BlockBase implements IMetaProvider<ITileMet
             return;
 
         BlockEntity te = world.getBlockEntity(pos);
-        if (te instanceof ISEGridTile) {
+        if (te instanceof ISEGridBlockEntity) {
 
-        	int numOfConductor = te instanceof TileCableJoint.Type10kV ? 3 : 4;
+        	int numOfConductor = te instanceof BlockEntityCableJoint.Type10kV ? 3 : 4;
         	SEAPI.energyNetAgent.attachGridNode(world, SEAPI.energyNetAgent.newGridNode(pos, numOfConductor));
         }
     }
@@ -134,8 +133,8 @@ public class BlockCableJoint extends BlockBase implements IMetaProvider<ITileMet
     @Override
     public boolean onDestroyedByPlayer(BlockState state, Level world, BlockPos pos, Player player, boolean willHarvest, FluidState fluid) {
         BlockEntity te = world.getBlockEntity(pos);    //Do this before the tileEntity is removed!
-        if (!world.isClientSide && te instanceof ISEGridTile) {
-            SEAPI.energyNetAgent.detachGridNode(world, ((ISEGridTile) te).getGridNode());
+        if (!world.isClientSide && te instanceof ISEGridBlockEntity) {
+            SEAPI.energyNetAgent.detachGridNode(world, ((ISEGridBlockEntity) te).getGridNode());
         }
 
         return super.onDestroyedByPlayer(state, world, pos, player, willHarvest, fluid);
@@ -145,10 +144,10 @@ public class BlockCableJoint extends BlockBase implements IMetaProvider<ITileMet
     /// ISEHVCableConnector
     //////////////////////////////////////
     @Override
-    public ISEGridTile getGridTile(Level world, BlockPos pos) {
+    public ISEGridBlockEntity getGridTile(Level world, BlockPos pos) {
         BlockEntity te = world.getBlockEntity(pos);
-        if (te instanceof ISEGridTile)
-            return (ISEGridTile) te;
+        if (te instanceof ISEGridBlockEntity)
+            return (ISEGridBlockEntity) te;
         else
             return null;
     }

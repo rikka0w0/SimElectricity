@@ -18,12 +18,12 @@ public enum EnumPowerTransformerBlockType implements ITileMeta, StringRepresenta
     OilTankSupport,
     OilPipe,
 
-    PlaceholderPrimary(TilePowerTransformerPlaceHolder.Primary.class, null),        //Connection to primary
-    Primary(TilePowerTransformerWinding.Primary.class, new Vec3i(3, 2, 1)),         //Primary node
-    PlaceholderSecondary(TilePowerTransformerPlaceHolder.Secondary.class, null),    //Connection to secondary
-    Secondary(TilePowerTransformerWinding.Secondary.class, new Vec3i(4, 2, 3)),     //Secondary node
-    Placeholder(TilePowerTransformerPlaceHolder.class, null),
-    Render(TilePowerTransformerPlaceHolder.Render.class, new Vec3i(3, 2, 2));       //Render the structure
+    PlaceholderPrimary(BlockEntityPowerTransformerPlaceHolder.Primary.class, null),        //Connection to primary
+    Primary(BlockEntityPowerTransformerWinding.Primary.class, new Vec3i(3, 2, 1)),         //Primary node
+    PlaceholderSecondary(BlockEntityPowerTransformerPlaceHolder.Secondary.class, null),    //Connection to secondary
+    Secondary(BlockEntityPowerTransformerWinding.Secondary.class, new Vec3i(4, 2, 3)),     //Secondary node
+    Placeholder(BlockEntityPowerTransformerPlaceHolder.class, null),
+    Render(BlockEntityPowerTransformerPlaceHolder.Render.class, new Vec3i(3, 2, 2));       //Render the structure
 
     static final EnumPowerTransformerBlockType[] rawStructure = new EnumPowerTransformerBlockType[6];
     static final EnumPowerTransformerBlockType[] formedStructure = new EnumPowerTransformerBlockType[6];

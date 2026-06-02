@@ -6,18 +6,18 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import rikka.librikka.Utils;
 import simelectricity.api.ISESidedFacing;
 import simelectricity.api.SEAPI;
 import simelectricity.api.components.ISEComponentParameter;
 import simelectricity.api.node.ISEPairedComponent;
 import simelectricity.api.node.ISESubComponent;
-import simelectricity.api.tile.ISETile;
+import simelectricity.api.blockentity.ISEBlockEntity;
 
-public abstract class SETwoPortMachine<T extends ISEComponentParameter> extends SEMachineTile implements
-		ISESidedFacing, ISETile, ISEComponentParameter {
+public abstract class SETwoPortMachine<T extends ISEComponentParameter> extends SEMachineBlockEntity implements
+		ISESidedFacing, ISEBlockEntity, ISEComponentParameter {
     public Direction inputSide = Direction.SOUTH;
     public Direction outputSide = Direction.NORTH;
     protected final ISEPairedComponent<?> input = (ISEPairedComponent<?>) SEAPI.energyNetAgent.newComponent(this, this);
@@ -32,19 +32,19 @@ public abstract class SETwoPortMachine<T extends ISEComponentParameter> extends 
     /// BlockEntity
     ///////////////////////////////////
     @Override
-    public void load(CompoundTag tagCompound) {
-        super.load(tagCompound);
+    public void loadAdditional(CompoundTag tagCompound, net.minecraft.core.HolderLookup.Provider registries) {
+        super.loadAdditional(tagCompound, registries);
 
         this.inputSide = Utils.facingFromNbt(tagCompound, "inputSide");
         this.outputSide = Utils.facingFromNbt(tagCompound, "outputSide");
     }
 
     @Override
-    protected void saveAdditional(CompoundTag nbt) {
+    protected void saveAdditional(CompoundTag nbt, net.minecraft.core.HolderLookup.Provider registries) {
     	Utils.saveToNbt(nbt, "inputSide", this.inputSide);
     	Utils.saveToNbt(nbt, "outputSide", this.outputSide);
 
-    	super.saveAdditional(nbt);
+    	super.saveAdditional(nbt, registries);
     }
 
     @Override
@@ -89,7 +89,7 @@ public abstract class SETwoPortMachine<T extends ISEComponentParameter> extends 
     }
 
     /////////////////////////////////////////////////////////
-    ///ISETile
+    ///ISEBlockEntity
     /////////////////////////////////////////////////////////
     @Override
     public ISESubComponent<?> getComponent(Direction side) {

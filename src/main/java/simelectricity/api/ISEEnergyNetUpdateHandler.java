@@ -24,7 +24,7 @@ public interface ISEEnergyNetUpdateHandler {
     /**
      * This function will be called as soon as the EnergyNet finishes simulation
      * Suitable for TileEntities which implement any of the following:<br>
-     * ISECableTile, ISEGridTile and ISEMachineTile<br>
+     * ISECableBlockEntity, ISEGridBlockEntity and ISEMachineBlockEntity<br>
      * Warning: this function is always called from the EnergyNet thread, so do not directly interact with
      * Blocks, TileEntities or anything in the world.<br>
      * Inappropriate multi-threading can lead to random weirdness in the game and

@@ -5,15 +5,15 @@ import net.minecraft.world.entity.player.Player;
 import rikka.librikka.container.ContainerSynchronizer;
 import rikka.librikka.gui.AutoGuiHandler;
 import simelectricity.essential.common.ContainerNoInvAutoSync;
-import simelectricity.essential.machines.tile.TileVoltageMeter;
+import simelectricity.essential.machines.blockentity.BlockEntityVoltageMeter;
 
 @AutoGuiHandler.Marker(GuiVoltageMeter.class)
-public class ContainerVoltageMeter extends ContainerNoInvAutoSync<TileVoltageMeter> {
+public class ContainerVoltageMeter extends ContainerNoInvAutoSync<BlockEntityVoltageMeter> {
 	@ContainerSynchronizer.SyncField
     public double voltage;
 
     // Server side
-    public ContainerVoltageMeter(TileVoltageMeter tileEntity, int windowId, Player player) {
+    public ContainerVoltageMeter(BlockEntityVoltageMeter tileEntity, int windowId, Player player) {
     	super(tileEntity, windowId, player);
     }
 

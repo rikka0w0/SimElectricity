@@ -11,10 +11,10 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;
 import simelectricity.essential.client.grid.PowerPoleRenderHelper;
-import simelectricity.essential.grid.TileCableJoint;
-import simelectricity.essential.grid.TilePoleBranch;
-import simelectricity.essential.grid.TilePoleConcrete;
-import simelectricity.essential.grid.transformer.TileDistributionTransformer;
+import simelectricity.essential.grid.BlockEntityCableJoint;
+import simelectricity.essential.grid.BlockEntityPoleBranch;
+import simelectricity.essential.grid.BlockEntityPoleConcrete;
+import simelectricity.essential.grid.transformer.BlockEntityDistributionTransformer;
 import simelectricity.essential.client.grid.ISEPowerPole;
 import simelectricity.essential.api.ISEPoleAccessory;
 
@@ -22,16 +22,16 @@ public class PoleAccessoryRendererDispatcher {
 	private final static Map<Pair<Class<? extends ISEPowerPole>, Class<? extends ISEPoleAccessory>>,ISEAccessoryRenderer> registered = new HashMap<>();
 	
 	static {
-		register(TilePoleConcrete.Pole10Kv.Type0.class, TileCableJoint.Type10kV.class, AR10kVType0CableJoint.instance);
-		register(TilePoleConcrete.Pole10Kv.Type1.class, TileCableJoint.Type10kV.class, AR10kVType1CableJoint.instance);
-		register(TileDistributionTransformer.Pole10kV.class, TileCableJoint.Type10kV.class, AR10kVType0CableJoint.instance);
+		register(BlockEntityPoleConcrete.Pole10Kv.Type0.class, BlockEntityCableJoint.Type10kV.class, AR10kVType0CableJoint.instance);
+		register(BlockEntityPoleConcrete.Pole10Kv.Type1.class, BlockEntityCableJoint.Type10kV.class, AR10kVType1CableJoint.instance);
+		register(BlockEntityDistributionTransformer.Pole10kV.class, BlockEntityCableJoint.Type10kV.class, AR10kVType0CableJoint.instance);
 		
-		register(TilePoleConcrete.Pole10Kv.Type0.class, TilePoleBranch.Type10kV.class, AR10kVType0Branch.instance);
-		register(TilePoleConcrete.Pole10Kv.Type1.class, TilePoleBranch.Type10kV.class, AR10kVType1Branch.instance);
-		register(TilePoleConcrete.Pole415vType0.class, TilePoleBranch.Type415V.class, AR415VBranch.instance);
+		register(BlockEntityPoleConcrete.Pole10Kv.Type0.class, BlockEntityPoleBranch.Type10kV.class, AR10kVType0Branch.instance);
+		register(BlockEntityPoleConcrete.Pole10Kv.Type1.class, BlockEntityPoleBranch.Type10kV.class, AR10kVType1Branch.instance);
+		register(BlockEntityPoleConcrete.Pole415vType0.class, BlockEntityPoleBranch.Type415V.class, AR415VBranch.instance);
 		
-		register(TilePoleConcrete.Pole415vType0.class, TileCableJoint.Type415V.class, AR415VType0CableJoint.instance);
-		register(TileDistributionTransformer.Pole415V.class, TileCableJoint.Type415V.class, AR415VType0CableJoint.instance);
+		register(BlockEntityPoleConcrete.Pole415vType0.class, BlockEntityCableJoint.Type415V.class, AR415VType0CableJoint.instance);
+		register(BlockEntityDistributionTransformer.Pole415V.class, BlockEntityCableJoint.Type415V.class, AR415VType0CableJoint.instance);
 	}
 	
 	public static void register(Class<? extends ISEPowerPole> poleClass, Class<? extends ISEPoleAccessory> accessoryClass, ISEAccessoryRenderer renderer) {

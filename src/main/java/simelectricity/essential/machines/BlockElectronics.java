@@ -15,6 +15,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.core.Direction;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
@@ -35,17 +36,17 @@ import simelectricity.essential.api.coverpanel.ISECoverPanel;
 import simelectricity.essential.common.CoverPanelUtils;
 import simelectricity.essential.common.semachine.SEMachineBlock;
 import simelectricity.essential.common.semachine.SESinglePortMachine;
-import simelectricity.essential.machines.tile.*;
+import simelectricity.essential.machines.blockentity.*;
 
 public abstract class BlockElectronics extends SEMachineBlock implements IMetaProvider<ITileMeta> {
 	public static enum Type implements ITileMeta {
-		voltage_meter(TileVoltageMeter.class, false),
-		quantum_generator(TileQuantumGenerator.class, false),
-		adjustable_resistor(TileAdjustableResistor.class, true),
-		incandescent_lamp(TileIncandescentLamp.class, false),
-		electric_furnace(TileElectricFurnace.class, true),
-		transformer_se2rf(TileSE2RF.class, true),
-		transformer_rf2se(TileRF2SE.class, true);
+		voltage_meter(BlockEntityVoltageMeter.class, false),
+		quantum_generator(BlockEntityQuantumGenerator.class, false),
+		adjustable_resistor(BlockEntityAdjustableResistor.class, true),
+		incandescent_lamp(BlockEntityIncandescentLamp.class, false),
+		electric_furnace(BlockEntityElectricFurnace.class, true),
+		transformer_se2rf(BlockEntitySE2RF.class, true),
+		transformer_rf2se(BlockEntityRF2SE.class, true);
 
 		Type(Class<? extends BlockEntity> teCls, boolean tickable) {
 			this.teCls = teCls;
@@ -149,17 +150,13 @@ public abstract class BlockElectronics extends SEMachineBlock implements IMetaPr
     public int getLightEmission(BlockState state, BlockGetter world, BlockPos pos) {
         BlockEntity te = world.getBlockEntity(pos);
 
-        if (te instanceof TileIncandescentLamp) {
-            return ((TileIncandescentLamp) te).lightLevel;
+        if (te instanceof BlockEntityIncandescentLamp) {
+            return ((BlockEntityIncandescentLamp) te).lightLevel;
         }
         return 0;
     }
 
-    @Override
-    public InteractionResult use(BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult rtResult) {
-    	if (CoverPanelUtils.installCoverPanel(state, world, pos, player, hand, rtResult) == InteractionResult.SUCCESS)
-    		return InteractionResult.SUCCESS;
-
+    private InteractionResult interact(Level world, BlockPos pos, Player player, BlockHitResult rtResult) {
     	BlockEntity te = world.getBlockEntity(pos);
     	if (te instanceof ISECoverPanelHost) {
     		ISECoverPanel coverPanel = ((ISECoverPanelHost) te).getCoverPanelOnSide(rtResult.getDirection());
@@ -182,6 +179,23 @@ public abstract class BlockElectronics extends SEMachineBlock implements IMetaPr
     }
 
     @Override
+    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult rtResult) {
+    	if (CoverPanelUtils.installCoverPanel(state, world, pos, player, hand, rtResult) == InteractionResult.SUCCESS)
+    		return ItemInteractionResult.SUCCESS;
+
+        InteractionResult result = interact(world, pos, player, rtResult);
+        if (result.consumesAction()) {
+            return ItemInteractionResult.SUCCESS;
+        }
+        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+    }
+
+    @Override
+    protected InteractionResult useWithoutItem(BlockState state, Level world, BlockPos pos, Player player, BlockHitResult rtResult) {
+        return interact(world, pos, player, rtResult);
+    }
+
+    @Override
     public void setPlacedBy(Level world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
         super.setPlacedBy(world, pos, state, placer, stack);
 
@@ -192,7 +206,7 @@ public abstract class BlockElectronics extends SEMachineBlock implements IMetaPr
             // which has been set during getStateForPlacement
 //            ((SESinglePortMachine) te).setFacing(sight.getOpposite());
 
-            if (sight == Direction.UP && te instanceof TileSolarPanel)
+            if (sight == Direction.UP && te instanceof BlockEntitySolarPanel)
                 sight = Direction.DOWN;
 
             ((SESinglePortMachine<?>) te).SetFunctionalSide(sight);
@@ -202,8 +216,8 @@ public abstract class BlockElectronics extends SEMachineBlock implements IMetaPr
     @Override
     public boolean onDestroyedByPlayer(BlockState state, Level level, BlockPos pos, Player player, boolean willHarvest, FluidState fluid) {
     	BlockEntity blockEntity = level.getBlockEntity(pos);
-    	if (blockEntity instanceof TileElectricFurnace) {
-    		Containers.dropContents(level, pos, ((TileElectricFurnace)blockEntity).inventory);
+    	if (blockEntity instanceof BlockEntityElectricFurnace) {
+    		Containers.dropContents(level, pos, ((BlockEntityElectricFurnace)blockEntity).inventory);
     	}
 
     	return super.onDestroyedByPlayer(state, level, pos, player, willHarvest, fluid);

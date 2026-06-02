@@ -1,9 +1,8 @@
 package simelectricity.essential.common.semachine;
 
 import net.minecraft.core.Direction;
-import net.minecraftforge.client.model.data.IModelData;
-import net.minecraftforge.client.model.data.ModelDataMap;
-import net.minecraftforge.client.model.data.ModelProperty;
+import net.neoforged.neoforge.client.model.data.ModelData;
+import net.neoforged.neoforge.client.model.data.ModelProperty;
 
 public class SocketProvider {  
     public static final ModelProperty<Integer> propertyDownSocket = new ModelProperty<>();
@@ -13,14 +12,15 @@ public class SocketProvider {
     public static final ModelProperty<Integer> propertyWestSocket = new ModelProperty<>();
     public static final ModelProperty<Integer> propertyEastSocket = new ModelProperty<>();  
 
-    public static IModelData getModelData(ISESocketProvider socketProvider) {
-        return new ModelDataMap.Builder()
-                .withInitial(propertyDownSocket, socketProvider.getSocketIconIndex(Direction.DOWN))
-                .withInitial(propertyUpSocket, socketProvider.getSocketIconIndex(Direction.UP))
-                .withInitial(propertyNorthSocket, socketProvider.getSocketIconIndex(Direction.NORTH))
-                .withInitial(propertySouthSocket, socketProvider.getSocketIconIndex(Direction.SOUTH))
-                .withInitial(propertyWestSocket, socketProvider.getSocketIconIndex(Direction.WEST))
-                .withInitial(propertyEastSocket, socketProvider.getSocketIconIndex(Direction.EAST))
+    public static ModelData getModelData(ISESocketProvider socketProvider) {
+        return ModelData.builder()
+                .with(propertyDownSocket, socketProvider.getSocketIconIndex(Direction.DOWN))
+                .with(propertyUpSocket, socketProvider.getSocketIconIndex(Direction.UP))
+                .with(propertyNorthSocket, socketProvider.getSocketIconIndex(Direction.NORTH))
+                .with(propertySouthSocket, socketProvider.getSocketIconIndex(Direction.SOUTH))
+                .with(propertyWestSocket, socketProvider.getSocketIconIndex(Direction.WEST))
+                .with(propertyEastSocket, socketProvider.getSocketIconIndex(Direction.EAST))
                 .build();
     }
 }
+

@@ -4,11 +4,11 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.client.resources.language.I18n;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 
 import simelectricity.essential.Essential;
 import simelectricity.essential.utils.SEUnitHelper;
@@ -17,35 +17,35 @@ import simelectricity.essential.utils.client.gui.SEGuiContainer;
 @OnlyIn(Dist.CLIENT)
 public final class GuiDiode extends SEGuiContainer<ContainerDiode> {
 	private static final ResourceLocation bgTexture =
-			new ResourceLocation(Essential.MODID, "textures/gui/diode.png");
+			ResourceLocation.fromNamespaceAndPath(Essential.MODID, "textures/gui/diode.png");
     public GuiDiode(ContainerDiode screenContainer, Inventory inv, Component titleIn) {
         super(screenContainer, inv, titleIn);
     }
 
     @Override
-    protected void renderLabels(PoseStack matrixStack, int x, int y) {
+    protected void renderLabels(GuiGraphics guiGraphics, int x, int y) {
         //draw text and stuff here
         //the parameters for drawString are: string, x, y, color
 
-        this.font.draw(matrixStack, this.title.getString(), 8, 6, 4210752);
+        guiGraphics.drawString(this.font, this.title.getString(), 8, 6, 4210752, false);
 
         int ybase = 22;
-        this.font.draw(matrixStack, I18n.get("gui.simelectricity.voltage_input"), 85, ybase, 4210752);
-        this.font.draw(matrixStack, SEUnitHelper.getVoltageStringWithUnit(this.container.inputVoltage), 85, ybase + 8, 4210752);
-        this.font.draw(matrixStack, I18n.get("gui.simelectricity.voltage_output"), 85, ybase + 16, 4210752);
-        this.font.draw(matrixStack, SEUnitHelper.getVoltageStringWithUnit(this.container.outputVoltage), 85, ybase + 24, 4210752);
+        guiGraphics.drawString(this.font, I18n.get("gui.simelectricity.voltage_input"), 85, ybase, 4210752, false);
+        guiGraphics.drawString(this.font, SEUnitHelper.getVoltageStringWithUnit(this.container.inputVoltage), 85, ybase + 8, 4210752, false);
+        guiGraphics.drawString(this.font, I18n.get("gui.simelectricity.voltage_output"), 85, ybase + 16, 4210752, false);
+        guiGraphics.drawString(this.font, SEUnitHelper.getVoltageStringWithUnit(this.container.outputVoltage), 85, ybase + 24, 4210752, false);
 
-        this.font.draw(matrixStack, I18n.get(this.container.inputVoltage > this.container.outputVoltage ?
+        guiGraphics.drawString(this.font, I18n.get(this.container.inputVoltage > this.container.outputVoltage ?
                 "gui.simelectricity.forward_biased" :
                 "gui.simelectricity.reverse_biased"
-        ), 85, ybase + 32, 4210752);
+        ), 85, ybase + 32, 4210752, false);
     }
 
     @Override
-    protected void renderBg(PoseStack matrixStack, float partialTicks, int xMouse, int yMouse) {
+    protected void renderBg(GuiGraphics guiGraphics, float partialTicks, int xMouse, int yMouse) {
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.setShaderTexture(0, bgTexture);
-        blit(matrixStack, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight);
+        guiGraphics.blit(bgTexture, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight);
 
         this.directionSelector.set(this.container.inputSide, this.container.outputSide);
     }

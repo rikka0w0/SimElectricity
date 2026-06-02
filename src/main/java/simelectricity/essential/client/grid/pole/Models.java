@@ -1,8 +1,8 @@
 package simelectricity.essential.client.grid.pole;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import rikka.librikka.model.quadbuilder.RawQuadCube;
 import rikka.librikka.model.quadbuilder.RawQuadGroup;
 import simelectricity.essential.utils.client.SERenderHeap;

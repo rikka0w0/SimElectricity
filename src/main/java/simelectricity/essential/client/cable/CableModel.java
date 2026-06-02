@@ -8,10 +8,9 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.model.data.IModelData;
-import net.minecraftforge.client.MinecraftForgeClient;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.client.model.data.ModelData;
 import rikka.librikka.model.CodeBasedModel;
 import rikka.librikka.model.quadbuilder.RawQuadCube;
 import simelectricity.essential.api.ISEGenericCable;
@@ -20,7 +19,7 @@ import simelectricity.essential.api.coverpanel.ISECoverPanel;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
+import net.minecraft.util.RandomSource;
 
 @OnlyIn(Dist.CLIENT)
 public class CableModel extends CodeBasedModel {
@@ -46,17 +45,17 @@ public class CableModel extends CodeBasedModel {
     }
     
     @Override
-	public List<BakedQuad> getQuads(BlockState blockState, Direction cullingSide, Random rand,
-			IModelData extraData) {
+    public List<BakedQuad> getQuads(BlockState blockState, Direction cullingSide, RandomSource rand,
+            ModelData extraData, RenderType renderType) {
     	List<BakedQuad> quads = new ArrayList<BakedQuad>();
         
-        ISEGenericCable cable = extraData.getData(ISEGenericCable.prop);
+        ISEGenericCable cable = extraData.get(ISEGenericCable.prop);
     	if (cable == null)
     		return quads;
         
     	if (cullingSide == null) {
             //Render center & branches in SOLID layer
-            if (MinecraftForgeClient.getRenderType() == getCableRenderLayer()) {
+            if (renderType == getCableRenderLayer()) {
                 byte numOfCon = 0;
                 Direction conSide = Direction.DOWN;
 
@@ -89,11 +88,17 @@ public class CableModel extends CodeBasedModel {
             if (coverPanel != null) {
                 ISECoverPanelRender<ISECoverPanel> render = coverPanel.getCoverPanelRender();
                 if (render != null)
-                    render.renderCoverPanel(coverPanel, side, rand, quads);
+                    render.renderCoverPanel(coverPanel, side, rand, quads, renderType);
             }
         }
 
         return quads;
+    }
+
+    @Override
+    public List<BakedQuad> getQuads(BlockState blockState, Direction cullingSide, RandomSource rand,
+            ModelData extraData) {
+        return getQuads(blockState, cullingSide, rand, extraData, getCableRenderLayer());
     }
 
 	@Override

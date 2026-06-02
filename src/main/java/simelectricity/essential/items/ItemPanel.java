@@ -18,10 +18,10 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
+
 import net.minecraft.world.level.Level;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import rikka.librikka.IMetaProvider;
 import rikka.librikka.IMetaBase;
 import rikka.librikka.item.ItemBase;
@@ -45,8 +45,7 @@ public final class ItemPanel extends ItemBase implements IMetaProvider<IMetaBase
 
     public final ItemType itemType;
     private ItemPanel(ItemType itemType) {
-        super("item_" + itemType.name(), (new Item.Properties())
-        		.tab(SEAPI.SETab));
+        super("item_" + itemType.name(), (new Item.Properties()));
         this.itemType = itemType;
     }
 
@@ -82,21 +81,30 @@ public final class ItemPanel extends ItemBase implements IMetaProvider<IMetaBase
 		}
 
 		CompoundTag bsNBT = NbtUtils.writeBlockState(blockstate);
-		context.getItemInHand().getOrCreateTag().put("facade_blockstate", bsNBT);
+		ItemStack itemStack = context.getItemInHand();
+		net.minecraft.world.item.component.CustomData customData = itemStack.get(net.minecraft.core.component.DataComponents.CUSTOM_DATA);
+		CompoundTag tag = customData != null ? customData.copyTag() : new CompoundTag();
+		tag.put("facade_blockstate", bsNBT);
+		itemStack.set(net.minecraft.core.component.DataComponents.CUSTOM_DATA, net.minecraft.world.item.component.CustomData.of(tag));
 
 		return InteractionResult.SUCCESS;
 	}
 
 	@Override
 	@OnlyIn(Dist.CLIENT)
-	public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> tooltip, TooltipFlag flagIn) {
-		if (this.itemType != ItemType.facade && this.itemType != ItemType.facade_hollow || !stack.hasTag())
+	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
+		net.minecraft.world.item.component.CustomData customData = stack.get(net.minecraft.core.component.DataComponents.CUSTOM_DATA);
+		if (this.itemType != ItemType.facade && this.itemType != ItemType.facade_hollow || customData == null)
 			return;
 
-		BlockState blockstate = NbtUtils.readBlockState(stack.getTag().getCompound("facade_blockstate"));
+		CompoundTag tag = customData.copyTag();
+		if (!tag.contains("facade_blockstate"))
+			return;
+
+		BlockState blockstate = NbtUtils.readBlockState(net.minecraft.core.registries.BuiltInRegistries.BLOCK.asLookup(), tag.getCompound("facade_blockstate"));
 		if (!blockstate.isAir())
 			tooltip.add(blockstate.getBlock().getName());
 		if (flagIn.isAdvanced())
-			tooltip.add(new TextComponent(blockstate.toString()));
+			tooltip.add(net.minecraft.network.chat.Component.literal(blockstate.toString()));
 	}
 }

@@ -4,7 +4,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.SoundType;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.material.FluidState;
@@ -25,7 +24,7 @@ import rikka.librikka.ITileMeta;
 import rikka.librikka.block.BlockBase;
 import simelectricity.api.SEAPI;
 import simelectricity.api.node.ISEGridNode;
-import simelectricity.api.tile.ISEGridTile;
+import simelectricity.api.blockentity.ISEGridBlockEntity;
 import simelectricity.essential.Essential;
 import simelectricity.essential.api.ISEHVCableConnector;
 
@@ -38,11 +37,11 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 public class BlockPoleConcrete extends BlockBase implements IMetaProvider<BlockPoleConcrete.Type>, EntityBlock, ISEHVCableConnector {
 	public enum Type implements ITileMeta {
 		pole(null, 0),
-		crossarm10kvt0(TilePoleConcrete.Pole10Kv.Type0.class,3),
-		crossarm10kvt1(TilePoleConcrete.Pole10Kv.Type1.class, 3),
-		crossarm415vt0(TilePoleConcrete.Pole415vType0.class, 4),
-		branching10kv(TilePoleBranch.Type10kV.class, 3),
-		branching415v(TilePoleBranch.Type415V.class, 4);
+		crossarm10kvt0(BlockEntityPoleConcrete.Pole10Kv.Type0.class,3),
+		crossarm10kvt1(BlockEntityPoleConcrete.Pole10Kv.Type1.class, 3),
+		crossarm415vt0(BlockEntityPoleConcrete.Pole415vType0.class, 4),
+		branching10kv(BlockEntityPoleBranch.Type10kV.class, 3),
+		branching415v(BlockEntityPoleBranch.Type415V.class, 4);
 
 		public final Class<? extends BlockEntity> teCls;
 		public final Supplier<BlockEntityType<?>> beType;
@@ -89,7 +88,7 @@ public class BlockPoleConcrete extends BlockBase implements IMetaProvider<BlockP
 
     private BlockPoleConcrete(Type blockType) {
         super("pole_concrete_" + blockType.name(),
-        		BlockBehaviour.Properties.of(Material.STONE)
+        		BlockBehaviour.Properties.of()
         		.strength(3F, 10F)
         		.sound(SoundType.METAL)
         		.isRedstoneConductor((a,b,c)->false),
@@ -140,8 +139,8 @@ public class BlockPoleConcrete extends BlockBase implements IMetaProvider<BlockP
     @Override
     public boolean onDestroyedByPlayer(BlockState state, Level world, BlockPos pos, Player player, boolean willHarvest, FluidState fluid) {
         BlockEntity te = world.getBlockEntity(pos);    //Do this before the tileEntity is removed!
-        if (!world.isClientSide && te instanceof ISEGridTile) {
-        	ISEGridNode node = ((ISEGridTile) te).getGridNode();
+        if (!world.isClientSide && te instanceof ISEGridBlockEntity) {
+        	ISEGridNode node = ((ISEGridBlockEntity) te).getGridNode();
         	if (node != null)
                 SEAPI.energyNetAgent.detachGridNode(world, node);
         }

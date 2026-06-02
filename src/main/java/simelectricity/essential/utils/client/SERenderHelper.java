@@ -4,8 +4,8 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import rikka.librikka.math.MathAssitant;
 
 import org.lwjgl.opengl.GL11;
@@ -20,7 +20,7 @@ import simelectricity.essential.Essential;
 @OnlyIn(Dist.CLIENT)
 public class SERenderHelper {
     public static ResourceLocation createResourceLocation(String path) {
-        return new ResourceLocation(Essential.MODID, path);
+        return ResourceLocation.fromNamespaceAndPath(Essential.MODID, path);
     }
 
     public static void rotateUpwardCoordSysTo(Direction direction) {

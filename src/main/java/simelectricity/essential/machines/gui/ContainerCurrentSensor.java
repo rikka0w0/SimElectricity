@@ -7,11 +7,11 @@ import rikka.librikka.container.ContainerSynchronizer;
 import rikka.librikka.gui.AutoGuiHandler;
 import simelectricity.api.SEAPI;
 import simelectricity.essential.common.ContainerNoInventoryTwoPort;
-import simelectricity.essential.machines.tile.TileCurrentSensor;
+import simelectricity.essential.machines.blockentity.BlockEntityCurrentSensor;
 import simelectricity.essential.utils.network.ISEButtonEventHandler;
 
 @AutoGuiHandler.Marker(GuiCurrentSensor.class)
-public class ContainerCurrentSensor extends ContainerNoInventoryTwoPort<TileCurrentSensor> implements ISEButtonEventHandler {
+public class ContainerCurrentSensor extends ContainerNoInventoryTwoPort<BlockEntityCurrentSensor> implements ISEButtonEventHandler {
 	@ContainerSynchronizer.SyncField
 	public double thresholdCurrent, resistance;
 	@ContainerSynchronizer.SyncField
@@ -24,7 +24,7 @@ public class ContainerCurrentSensor extends ContainerNoInventoryTwoPort<TileCurr
     public boolean emitRedstoneSignal;
 
     // Server side
-    public ContainerCurrentSensor(TileCurrentSensor tileEntity, int windowId, Player player) {
+    public ContainerCurrentSensor(BlockEntityCurrentSensor tileEntity, int windowId, Player player) {
     	super(tileEntity, windowId, player);
     }
 

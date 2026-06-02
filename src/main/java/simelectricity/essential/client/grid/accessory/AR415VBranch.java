@@ -85,8 +85,8 @@ public class AR415VBranch implements ISEAccessoryRenderer {
 					pole.addExtraWire(from[1].pointOnCable(0.5F), to[1].pointOnCable(0.1F), 0.05F, false);
 
 					RawQuadGroup insulator = Models.render415VInsulator(
-							EasyTextureLoader.blockTextureGetter().apply(new ResourceLocation(ResourcePaths.metal)), 
-							EasyTextureLoader.blockTextureGetter().apply(new ResourceLocation(ResourcePaths.glass_insulator)));
+							EasyTextureLoader.blockTextureGetter().apply(ResourceLocation.parse(ResourcePaths.metal)), 
+							EasyTextureLoader.blockTextureGetter().apply(ResourceLocation.parse(ResourcePaths.glass_insulator)));
 					
 					//PowerPoleRenderHelper.hasIntersection(from1, to1, from2, to2)
 					Vec3f pt0 = new Vec3f(-0.375F, -0.9F, 0).rotateAroundY(middle).add(0.5F, 0, 0.5F);
