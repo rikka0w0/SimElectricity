@@ -113,6 +113,11 @@ public final class SEMachineModel implements IDynamicBakedModel {
     	return quads;
 	}
 
+	@Override
+	public net.neoforged.neoforge.client.ChunkRenderTypeSet getRenderTypes(BlockState state, RandomSource rand, ModelData data) {
+		return net.neoforged.neoforge.client.ChunkRenderTypeSet.of(RenderType.solid(), RenderType.cutout(), RenderType.translucent());
+	}
+
 
 
 	public static void replace(Map<net.minecraft.client.resources.model.ModelResourceLocation, BakedModel> registry, Block block) {
