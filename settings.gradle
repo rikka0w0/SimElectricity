@@ -12,4 +12,4 @@ plugins {
 rootProject.name = 'SimElectricity'
 
 include 'librikka'
-project(':librikka').projectDir = new File(settingsDir, '../librikka')
+project(':librikka').projectDir = new File(settingsDir, './librikka')
