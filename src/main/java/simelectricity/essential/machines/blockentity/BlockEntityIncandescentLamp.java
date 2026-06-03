@@ -61,6 +61,14 @@ public class BlockEntityIncandescentLamp extends SESinglePortMachine<ISEVoltageS
     }
 
     @Override
+    public void onLoad() {
+        super.onLoad();
+        if (this.level.isClientSide && this.lightLevel > 0) {
+            this.level.getLightEngine().checkBlock(this.worldPosition);
+        }
+    }
+
+    @Override
     public void prepareS2CPacketData(CompoundTag nbt) {
         super.prepareS2CPacketData(nbt);
         nbt.putByte("lightLevel", this.lightLevel);

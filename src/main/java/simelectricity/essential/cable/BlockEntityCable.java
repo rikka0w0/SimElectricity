@@ -151,6 +151,14 @@ public class BlockEntityCable extends SEEnergyBlockEntity implements ISEGenericC
 
 
     @Override
+    public void onLoad() {
+        super.onLoad();
+        if (this.level.isClientSide && this.lightLevel > 0) {
+            this.level.getLightEngine().checkBlock(this.worldPosition);
+        }
+    }
+
+    @Override
     public void loadAdditional(CompoundTag tagCompound, net.minecraft.core.HolderLookup.Provider registries) {
         super.loadAdditional(tagCompound, registries);
 

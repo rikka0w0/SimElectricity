@@ -51,8 +51,8 @@ public record MessageContainerSync(int windowID, byte eventType, Object[] data) 
         }
     );
 
-    public static void syncToClient(ServerPlayer player, Object[] changeList) {
-        PacketDistributor.sendToPlayer(player, new MessageContainerSync(player.containerMenu.containerId, EVENT_SYNC, changeList));
+    public static void syncToClient(ServerPlayer player, int containerId, Object[] changeList) {
+        PacketDistributor.sendToPlayer(player, new MessageContainerSync(containerId, EVENT_SYNC, changeList));
     }
 
     public static void sendToClient(ServerPlayer player, Object... data) {
