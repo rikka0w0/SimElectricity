@@ -184,7 +184,7 @@ public class EnergyNetSimulator extends Thread {
         double[] currents = new double[matrixSize];
 
         // --- Data-Oriented Extraction & Static Jacobian Caching ---
-        double[][] staticJacobian = new double[matrixSize][matrixSize];
+        double[] staticJacobian = new double[matrixSize * matrixSize];
         double[] staticCurrents = new double[matrixSize];
 
         int numCPL = 0, numCPS = 0, numDiodes = 0;
@@ -212,6 +212,7 @@ public class EnergyNetSimulator extends Thread {
 
         for (SEComponent node : unknownVoltageNodes) {
             int i = node.index;
+            int offsetI = i * matrixSize;
 
             // 1. Optimized Neighbors (Linear Edges)
             Iterator<SEComponent> itN = node.optimizedNeighbors.iterator();
@@ -219,44 +220,46 @@ public class EnergyNetSimulator extends Thread {
             while (itN.hasNext()) {
                 int j = itN.next().index;
                 double G = 1.0 / itR.next();
-                staticJacobian[i][i] += G;
-                staticJacobian[i][j] -= G;
+                staticJacobian[offsetI + i] += G;
+                staticJacobian[offsetI + j] -= G;
             }
 
             // 2. Cables and Grids
             if (node instanceof CableBase) {
                 CableBase<?> cable = (CableBase<?>) node;
                 if (cable.hasShuntResistance()) {
-                    staticJacobian[i][i] += 1.0 / cable.getShuntResistance();
+                    staticJacobian[offsetI + i] += 1.0 / cable.getShuntResistance();
                 }
                 if (cable instanceof Cable) {
                     Cable c = (Cable) cable;
                     if (c.connectedGridNode != null && c.isGridLinkEnabled()) {
                         int j = c.connectedGridNode.index;
+                        int offsetJ = j * matrixSize;
                         double G = 1.0 / c.getResistance();
-                        staticJacobian[i][i] += G;
-                        staticJacobian[i][j] -= G;
-                        staticJacobian[j][i] -= G;
+                        staticJacobian[offsetI + i] += G;
+                        staticJacobian[offsetI + j] -= G;
+                        staticJacobian[offsetJ + i] -= G;
                     }
                 }
             } else if (node instanceof GridNode) {
                 GridNode gridNode = (GridNode) node;
                 if (gridNode.interConnection != null && gridNode.interConnection.isGridLinkEnabled()) {
-                    staticJacobian[i][i] += 1.0 / gridNode.interConnection.getResistance();
+                    staticJacobian[offsetI + i] += 1.0 / gridNode.interConnection.getResistance();
                 }
 
                 if (gridNode.type == GridNode.ISEGridNode_TransformerPrimary) {
                     GridNode sec = gridNode.complement;
                     int j = sec.index;
+                    int offsetJ = j * matrixSize;
                     double ratio = gridNode.ratio;
                     double res = gridNode.resistance;
-                    staticJacobian[i][i] += ratio * ratio / res;
-                    staticJacobian[i][j] -= ratio / res;
-                    staticJacobian[j][i] -= ratio / res;
+                    staticJacobian[offsetI + i] += ratio * ratio / res;
+                    staticJacobian[offsetI + j] -= ratio / res;
+                    staticJacobian[offsetJ + i] -= ratio / res;
                 } else if (gridNode.type == GridNode.ISEGridNode_TransformerSecondary) {
                     GridNode pri = gridNode.complement;
                     double res = pri.resistance;
-                    staticJacobian[i][i] += 1.0 / res;
+                    staticJacobian[offsetI + i] += 1.0 / res;
                 }
             }
             // 3. Voltage Source
@@ -264,7 +267,7 @@ public class EnergyNetSimulator extends Thread {
                 VoltageSource vs = (VoltageSource) node;
                 if (vs.isOn()) {
                     double G = 1.0 / vs.getResistance();
-                    staticJacobian[i][i] += G;
+                    staticJacobian[offsetI + i] += G;
                     staticCurrents[i] += vs.getOutputVoltage() * G;
                 }
             }
@@ -295,29 +298,31 @@ public class EnergyNetSimulator extends Thread {
                 SwitchA sw = (SwitchA) node;
                 if (sw.isOn()) {
                     int j = sw.getComplement().index;
+                    int offsetJ = j * matrixSize;
                     double G = 1.0 / sw.getResistance();
-                    staticJacobian[i][i] += G;
-                    staticJacobian[i][j] -= G;
-                    staticJacobian[j][i] -= G;
+                    staticJacobian[offsetI + i] += G;
+                    staticJacobian[offsetI + j] -= G;
+                    staticJacobian[offsetJ + i] -= G;
                 }
             } else if (node instanceof SwitchB) {
                 SwitchB sw = (SwitchB) node;
                 if (sw.isOn()) {
-                    staticJacobian[i][i] += 1.0 / sw.getResistance();
+                    staticJacobian[offsetI + i] += 1.0 / sw.getResistance();
                 }
             }
             // 7. Transformer
             else if (node instanceof TransformerPrimary) {
                 TransformerPrimary pri = (TransformerPrimary) node;
                 int j = pri.getComplement().index;
+                int offsetJ = j * matrixSize;
                 double ratio = pri.getRatio();
                 double res = pri.getInternalResistance();
-                staticJacobian[i][i] += ratio * ratio / res;
-                staticJacobian[i][j] -= ratio / res;
-                staticJacobian[j][i] -= ratio / res;
+                staticJacobian[offsetI + i] += ratio * ratio / res;
+                staticJacobian[offsetI + j] -= ratio / res;
+                staticJacobian[offsetJ + i] -= ratio / res;
             } else if (node instanceof TransformerSecondary) {
                 TransformerSecondary sec = (TransformerSecondary) node;
-                staticJacobian[i][i] += 1.0 / sec.getComplement().getInternalResistance();
+                staticJacobian[offsetI + i] += 1.0 / sec.getComplement().getInternalResistance();
             }
             // 8. Diode
             else if (node instanceof DiodeInput) {
@@ -330,39 +335,39 @@ public class EnergyNetSimulator extends Thread {
 
         // --- Iterative Solver Loop ---
         this.iterations = 0;
-        double[][] workingJacobian = new double[matrixSize][matrixSize];
+        double[] workingJacobian = new double[matrixSize * matrixSize];
 
         while (true) {
             // Compute currents mismatch vector
             // I_mismatch = staticCurrents - staticJacobian * voltages
             for (int i = 0; i < matrixSize; i++) {
                 double I = staticCurrents[i];
-                double v_i = voltages[i];
+                int offsetI = i * matrixSize;
                 for (int j = 0; j < matrixSize; j++) {
-                    I -= staticJacobian[i][j] * voltages[j];
+                    I -= staticJacobian[offsetI + j] * voltages[j];
                 }
                 currents[i] = I;
             }
 
-            // Copy static jacobian to working jacobian
-            for (int i = 0; i < matrixSize; i++) {
-                System.arraycopy(staticJacobian[i], 0, workingJacobian[i], 0, matrixSize);
-            }
+            // O(1) Memory Snapshot (Matrix Reset)
+            System.arraycopy(staticJacobian, 0, workingJacobian, 0, matrixSize * matrixSize);
 
             // Non-linear elements updates
             for (int k = 0; k < numCPL; k++) {
                 int i = cplNode[k];
+                int offsetI = i * matrixSize;
                 double v = voltages[i];
                 double Rcal = v * v / cplP[k];
                 if (Rcal > cplMaxR[k]) Rcal = cplMaxR[k];
                 if (Rcal < cplMinR[k]) Rcal = cplMinR[k];
                 double G = 1.0 / Rcal;
                 currents[i] -= v * G;
-                workingJacobian[i][i] += G;
+                workingJacobian[offsetI + i] += G;
             }
 
             for (int k = 0; k < numCPS; k++) {
                 int i = cpsNode[k];
+                int offsetI = i * matrixSize;
                 double v = voltages[i];
                 double Isrc, G;
                 if (v < cpsMinV[k]) {
@@ -376,12 +381,14 @@ public class EnergyNetSimulator extends Thread {
                     G = cpsP[k] / (v * v);
                 }
                 currents[i] -= (v * G - Isrc);
-                workingJacobian[i][i] += G;
+                workingJacobian[offsetI + i] += G;
             }
 
             for (int k = 0; k < numDiodes; k++) {
                 int in = diodeIn[k];
                 int out = diodeOut[k];
+                int offsetIn = in * matrixSize;
+                int offsetOut = out * matrixSize;
                 double Vd = voltages[in] - voltages[out];
                 DiodeInput comp = diodeComponents[k];
                 double Id = comp.calcId(Vd);
@@ -390,10 +397,10 @@ public class EnergyNetSimulator extends Thread {
                 currents[in] -= Id + Vd * this.Gpn;
                 currents[out] += Id + Vd * this.Gpn;
 
-                workingJacobian[in][in] += Gd;
-                workingJacobian[out][out] += Gd;
-                workingJacobian[in][out] -= Gd;
-                workingJacobian[out][in] -= Gd;
+                workingJacobian[offsetIn + in] += Gd;
+                workingJacobian[offsetOut + out] += Gd;
+                workingJacobian[offsetIn + out] -= Gd;
+                workingJacobian[offsetOut + in] -= Gd;
             }
 
             boolean keepGoing = false;
@@ -415,9 +422,11 @@ public class EnergyNetSimulator extends Thread {
 
             this.matrix.newMatrix(matrixSize);
             for (int i = 0; i < matrixSize; i++) {
+                int offsetI = i * matrixSize;
                 for (int j = 0; j < matrixSize; j++) {
-                    if (workingJacobian[i][j] != 0) {
-                        this.matrix.setElementValue(i, j, workingJacobian[i][j]);
+                    double val = workingJacobian[offsetI + j];
+                    if (val != 0) {
+                        this.matrix.setElementValue(i, j, val);
                     }
                 }
             }
