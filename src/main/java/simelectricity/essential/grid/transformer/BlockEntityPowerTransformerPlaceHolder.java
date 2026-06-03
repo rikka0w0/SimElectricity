@@ -16,6 +16,18 @@ public class BlockEntityPowerTransformerPlaceHolder extends SEMultiBlockEnergyBl
 	}
 
     @Override
+    public void clearRemoved() {
+        this.isAddedToEnergyNet = true;
+        super.clearRemoved();
+    }
+
+    @Override
+    public void setRemoved() {
+        this.isAddedToEnergyNet = false;
+        super.setRemoved();
+    }
+
+    @Override
     public void onLoad() {}
 	@Override
 	protected void onStructureCreating() {}

@@ -71,7 +71,7 @@ public class BlockPowerTransformer extends BlockAbstractTransformer implements I
 	            return null;
 
 	    	try {
-				return blockType.teCls().getConstructor().newInstance();
+				return blockType.create(pos, state);
 			} catch (Exception e) {
 				e.printStackTrace();
 				return null;
