@@ -100,7 +100,7 @@ public class BlockEntityWire extends SEEnergyBlockEntity implements ISEGenericWi
             else
                 this.resistance = 0.1;
 
-            this.itemStack = ItemStack.parse(registries, tagCompound.getCompound("itemStack")).orElse(ItemStack.EMPTY);
+            this.itemStack = tagCompound.contains("itemStack") && tagCompound.getCompound("itemStack").contains("id") ? ItemStack.parse(registries, tagCompound.getCompound("itemStack")).orElse(ItemStack.EMPTY) : ItemStack.EMPTY;
         }
 
         private void write(net.minecraft.core.HolderLookup.Provider registries, CompoundTag compound) {
