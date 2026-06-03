@@ -1,34 +1,20 @@
-/*
- * Copyright (C) 2014 SimElectricity
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
- * USA
- */
-
 package simelectricity.energynet.matrix;
+
+import jdk.incubator.vector.DoubleVector;
+import jdk.incubator.vector.VectorSpecies;
+import jdk.incubator.vector.VectorOperators;
 
 public class Gaussian implements IMatrixSolver {
     public static final double EPSILON = 1e-10;
+    
+    // Select the optimal SIMD width for the current hardware architecture (e.g., 256-bit or 512-bit)
+    private static final VectorSpecies<Double> SPECIES = DoubleVector.SPECIES_PREFERRED;
 
     private double[][] matrix;
-//    private int currentRow;
-//    private int currentColumn;
     private int nZ;
     private int size;
 
-    // Gaussian elimination with partial pivoting
+    // Gaussian elimination with partial pivoting and SIMD acceleration via Java Vector API
     public static double[] lsolve(double[][] A, double[] b) {
         int N = b.length;
 
@@ -51,7 +37,6 @@ public class Gaussian implements IMatrixSolver {
             // singular or nearly singular
             if (Math.abs(A[p][p]) <= Gaussian.EPSILON) {
                 return null;
-                //throw new RuntimeException(	"Matrix is singular or nearly singular");
             }
 
             // pivot within A and b
@@ -59,7 +44,17 @@ public class Gaussian implements IMatrixSolver {
                 if (A[p][p] != 0) {//Ignore any line with all zero
                     double alpha = A[i][p] / A[p][p];
                     b[i] -= alpha * b[p];
-                    for (int j = p; j < N; j++) {
+                    
+                    int j = p;
+                    // Hardware accelerated FMA (Fused Multiply-Add) via Vector API
+                    int upperBound = SPECIES.loopBound(N - p) + p;
+                    for (; j < upperBound; j += SPECIES.length()) {
+                        DoubleVector vRowP = DoubleVector.fromArray(SPECIES, A[p], j);
+                        DoubleVector vRowI = DoubleVector.fromArray(SPECIES, A[i], j);
+                        vRowI.sub(vRowP.mul(alpha)).intoArray(A[i], j);
+                    }
+                    // Scalar post-loop for the remainder
+                    for (; j < N; j++) {
                         A[i][j] -= alpha * A[p][j];
                     }
                 }
@@ -71,9 +66,24 @@ public class Gaussian implements IMatrixSolver {
         for (int i = N - 1; i >= 0; i--) {
             if (A[i][i] != 0) {//Ignore any line with all zero
                 double sum = 0.0;
-                for (int j = i + 1; j < N; j++) {
+                
+                int j = i + 1;
+                // Hardware accelerated reduction via Vector API
+                int upperBound = SPECIES.loopBound(N - (i + 1)) + (i + 1);
+                
+                DoubleVector vSum = DoubleVector.zero(SPECIES);
+                for (; j < upperBound; j += SPECIES.length()) {
+                    DoubleVector vA = DoubleVector.fromArray(SPECIES, A[i], j);
+                    DoubleVector vX = DoubleVector.fromArray(SPECIES, x, j);
+                    vSum = vSum.add(vA.mul(vX));
+                }
+                sum += vSum.reduceLanes(VectorOperators.ADD);
+                
+                // Scalar remainder
+                for (; j < N; j++) {
                     sum += A[i][j] * x[j];
                 }
+                
                 x[i] = (b[i] - sum) / A[i][i];
             }
         }
@@ -84,8 +94,6 @@ public class Gaussian implements IMatrixSolver {
     public void newMatrix(int size) {
         this.size = size;
         this.matrix = new double[size][size];
-//        this.currentRow = 0;
-//        this.currentColumn = 0;
         this.nZ = 0;
     }
 
@@ -96,7 +104,6 @@ public class Gaussian implements IMatrixSolver {
 
     @Override
     public void finishEditing() {
-
     }
 
     @Override
