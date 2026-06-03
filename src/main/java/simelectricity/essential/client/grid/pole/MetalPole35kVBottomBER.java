@@ -12,12 +12,18 @@ import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.world.phys.AABB;
 import rikka.librikka.DirHorizontal8;
 import simelectricity.essential.grid.BlockEntityPoleMetal35kV;
 
 public class MetalPole35kVBottomBER implements BlockEntityRenderer<BlockEntityPoleMetal35kV.Bottom>{
 	public MetalPole35kVBottomBER(BlockEntityRendererProvider.Context context) {
 
+	}
+
+	@Override
+	public AABB getRenderBoundingBox(BlockEntityPoleMetal35kV.Bottom blockEntity) {
+		return AABB.INFINITE;
 	}
 
 	@Override
