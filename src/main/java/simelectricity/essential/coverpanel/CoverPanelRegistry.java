@@ -99,8 +99,7 @@ public enum CoverPanelRegistry implements ISECoverPanelRegistry {
 			this.coloredBlocks.add(block);
 	}
 	
-	public void registerAllColoredFacadeHost() {
-		for (Block block: this.coloredBlocks)
-			Essential.proxy.registerColoredFacadeHost(block);
+	public List<Block> getColoredBlocks() {
+		return this.coloredBlocks;
 	}
 }

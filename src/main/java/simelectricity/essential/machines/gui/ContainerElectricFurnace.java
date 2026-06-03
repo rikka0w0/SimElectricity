@@ -11,12 +11,12 @@ import rikka.librikka.container.ContainerInventory;
 import rikka.librikka.container.ContainerSynchronizer;
 import rikka.librikka.gui.AutoGuiHandler;
 import simelectricity.essential.Essential;
-import simelectricity.essential.machines.tile.TileElectricFurnace;
+import simelectricity.essential.machines.blockentity.BlockEntityElectricFurnace;
 import simelectricity.essential.utils.network.MessageContainerSync;
 
 @AutoGuiHandler.Marker(GuiElectricFurnace.class)
 public class ContainerElectricFurnace extends ContainerInventory<Container> {
-	private TileElectricFurnace te;
+	private BlockEntityElectricFurnace te;
     @ContainerSynchronizer.SyncField
     public int progress;
 
@@ -29,7 +29,7 @@ public class ContainerElectricFurnace extends ContainerInventory<Container> {
     }
 
     // Server side
-    public ContainerElectricFurnace(int windowId, Inventory playerInv, TileElectricFurnace te) {
+    public ContainerElectricFurnace(int windowId, Inventory playerInv, BlockEntityElectricFurnace te) {
     	this(windowId, playerInv, te.inventory);
     	this.te = te;
     }
@@ -58,11 +58,13 @@ public class ContainerElectricFurnace extends ContainerInventory<Container> {
     public void broadcastChanges() {
         super.broadcastChanges();
 
-        Object[] changeList = ContainerSynchronizer.detectChanges(this, ContainerInventory.class, te);
+        if (this.player instanceof ServerPlayer serverPlayer) {
+            Object[] changeList = ContainerSynchronizer.detectChanges(this, ContainerInventory.class, te);
 
-        if (changeList == null)
-            return;
+            if (changeList == null)
+                return;
 
-        MessageContainerSync.syncToClient((ServerPlayer) this.player, changeList);
+            MessageContainerSync.syncToClient(serverPlayer, this.containerId, changeList);
+        }
     }
 }

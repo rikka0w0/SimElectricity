@@ -11,9 +11,9 @@ import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.model.data.IModelData;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.client.model.data.ModelData;
 import rikka.librikka.math.Vec3f;
 import rikka.librikka.model.CodeBasedModel;
 import rikka.librikka.model.loader.EasyTextureLoader;
@@ -24,6 +24,9 @@ import simelectricity.essential.client.grid.PowerCableBakery;
 import simelectricity.essential.client.grid.pole.ConcretePoleModel;
 import simelectricity.essential.client.grid.pole.Models;
 import simelectricity.essential.grid.transformer.EnumDistributionTransformerBlockType;
+
+import java.util.Random;
+import net.minecraft.util.RandomSource;
 
 @OnlyIn(Dist.CLIENT)
 public class DistributionTransformerComponentModel extends CodeBasedModel {
@@ -55,7 +58,7 @@ public class DistributionTransformerComponentModel extends CodeBasedModel {
 	}
 
 	@Override
-	public List<BakedQuad> getQuads(BlockState state, Direction side, Random rand, IModelData extraData) {
+	public List<BakedQuad> getQuads(BlockState state, Direction side, RandomSource rand, ModelData extraData) {
     	if (side != null)
             return emptyQuadList;
 

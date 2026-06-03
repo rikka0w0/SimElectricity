@@ -4,7 +4,7 @@ import javax.annotation.Nullable;
 
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.core.Direction;
-import net.minecraftforge.client.model.data.ModelProperty;
+import net.neoforged.neoforge.client.model.data.ModelProperty;
 import simelectricity.essential.api.coverpanel.ISECoverPanel;
 
 public interface ISECoverPanelHost {

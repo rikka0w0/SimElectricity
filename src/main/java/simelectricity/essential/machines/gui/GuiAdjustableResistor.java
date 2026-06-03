@@ -4,11 +4,11 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.client.resources.language.I18n;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 
 import simelectricity.essential.Essential;
 import simelectricity.essential.utils.SEUnitHelper;
@@ -17,40 +17,40 @@ import simelectricity.essential.utils.client.gui.SEGuiContainer;
 @OnlyIn(Dist.CLIENT)
 public final class GuiAdjustableResistor extends SEGuiContainer<ContainerAdjustableResistor> {
 	private static final ResourceLocation bgTexture =
-			new ResourceLocation(Essential.MODID, "textures/gui/adjustable_resistor.png");
+			ResourceLocation.fromNamespaceAndPath(Essential.MODID, "textures/gui/adjustable_resistor.png");
 
     public GuiAdjustableResistor(ContainerAdjustableResistor screenContainer, Inventory inv, Component titleIn) {
         super(screenContainer, inv, titleIn);
     }
 
     @Override
-    protected void renderLabels(PoseStack matrixStack, int x, int y) {
+    protected void renderLabels(GuiGraphics guiGraphics, int x, int y) {
         //draw text and stuff here
         //the parameters for drawString are: string, x, y, color
 
-        this.font.draw(matrixStack,title.getString(), 8, 6, 4210752);
+        guiGraphics.drawString(this.font, title.getString(), 8, 6, 4210752, false);
 
-        this.font.draw(matrixStack, I18n.get("gui.simelectricity.buffered_energy"), 18, 85, 4210752);
-        this.font.draw(matrixStack, SEUnitHelper.getEnergyStringInJ(this.container.bufferedEnergy), 18, 98, 4210752);
-        this.font.draw(matrixStack, SEUnitHelper.getEnergyStringInKWh(this.container.bufferedEnergy), 18, 107, 4210752);
-        this.font.draw(matrixStack, I18n.get("gui.simelectricity.resistance_internal"), 18, 124, 4210752);
+        guiGraphics.drawString(this.font, I18n.get("gui.simelectricity.buffered_energy"), 18, 85, 4210752, false);
+        guiGraphics.drawString(this.font, SEUnitHelper.getEnergyStringInJ(this.container.bufferedEnergy), 18, 98, 4210752, false);
+        guiGraphics.drawString(this.font, SEUnitHelper.getEnergyStringInKWh(this.container.bufferedEnergy), 18, 107, 4210752, false);
+        guiGraphics.drawString(this.font, I18n.get("gui.simelectricity.resistance_internal"), 18, 124, 4210752, false);
 
         int ybase = 22;
-        this.font.draw(matrixStack, I18n.get("gui.simelectricity.voltage_input"), 85, ybase, 4210752);
-        this.font.draw(matrixStack, SEUnitHelper.getVoltageStringWithUnit(this.container.voltage), 85, ybase + 8, 4210752);
-        this.font.draw(matrixStack, I18n.get("gui.simelectricity.current_input"), 85, ybase + 16, 4210752);
-        this.font.draw(matrixStack, SEUnitHelper.getCurrentStringWithUnit(this.container.current), 85, ybase + 24, 4210752);
-        this.font.draw(matrixStack, I18n.get("gui.simelectricity.power_input"), 85, ybase + 32, 4210752);
-        this.font.draw(matrixStack, SEUnitHelper.getPowerStringWithUnit(this.container.powerLevel), 85, ybase + 40, 4210752);
+        guiGraphics.drawString(this.font, I18n.get("gui.simelectricity.voltage_input"), 85, ybase, 4210752, false);
+        guiGraphics.drawString(this.font, SEUnitHelper.getVoltageStringWithUnit(this.container.voltage), 85, ybase + 8, 4210752, false);
+        guiGraphics.drawString(this.font, I18n.get("gui.simelectricity.current_input"), 85, ybase + 16, 4210752, false);
+        guiGraphics.drawString(this.font, SEUnitHelper.getCurrentStringWithUnit(this.container.current), 85, ybase + 24, 4210752, false);
+        guiGraphics.drawString(this.font, I18n.get("gui.simelectricity.power_input"), 85, ybase + 32, 4210752, false);
+        guiGraphics.drawString(this.font, SEUnitHelper.getPowerStringWithUnit(this.container.powerLevel), 85, ybase + 40, 4210752, false);
 
-        this.font.draw(matrixStack, String.format("%.1f", this.container.resistance) + " \u03a9", 26, 28, 4210752);
+        guiGraphics.drawString(this.font, String.format("%.1f", this.container.resistance) + " \u03a9", 26, 28, 4210752, false);
     }
 
     @Override
-    protected void renderBg(PoseStack matrixStack, float partialTicks, int x, int y) {
+    protected void renderBg(GuiGraphics guiGraphics, float partialTicks, int x, int y) {
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.setShaderTexture(0, bgTexture);
-        this.blit(matrixStack, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight);
+        guiGraphics.blit(bgTexture, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight);
     }
 
     @Override

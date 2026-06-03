@@ -29,11 +29,13 @@ public abstract class ContainerNoInvAutoSync<HOST> extends ContainerNoInventory<
 
 	@Override
     public void broadcastChanges() {
-        Object[] changeList = ContainerSynchronizer.detectChanges(this, ContainerNoInvAutoSync.class, host);
+        if (this.player instanceof ServerPlayer serverPlayer) {
+            Object[] changeList = ContainerSynchronizer.detectChanges(this, ContainerNoInvAutoSync.class, host);
 
-        if (changeList == null)
-            return;
+            if (changeList == null)
+                return;
 
-        MessageContainerSync.syncToClient((ServerPlayer) this.player, changeList);
+            MessageContainerSync.syncToClient(serverPlayer, this.containerId, changeList);
+        }
     }
 }

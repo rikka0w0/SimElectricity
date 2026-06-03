@@ -7,11 +7,11 @@ import rikka.librikka.container.ContainerSynchronizer;
 import rikka.librikka.gui.AutoGuiHandler;
 import simelectricity.api.SEAPI;
 import simelectricity.essential.common.ContainerNoInventoryTwoPort;
-import simelectricity.essential.machines.tile.TileSwitch;
+import simelectricity.essential.machines.blockentity.BlockEntitySwitch;
 import simelectricity.essential.utils.network.ISEButtonEventHandler;
 
 @AutoGuiHandler.Marker(GuiSwitch.class)
-public class ContainerSwitch extends ContainerNoInventoryTwoPort<TileSwitch> implements ISEButtonEventHandler {
+public class ContainerSwitch extends ContainerNoInventoryTwoPort<BlockEntitySwitch> implements ISEButtonEventHandler {
 	@ContainerSynchronizer.SyncField
 	public volatile double resistance;
 	@ContainerSynchronizer.SyncField
@@ -25,7 +25,7 @@ public class ContainerSwitch extends ContainerNoInventoryTwoPort<TileSwitch> imp
 
 
     // Server side
-    public ContainerSwitch(TileSwitch tileEntity, int windowId, Player player) {
+    public ContainerSwitch(BlockEntitySwitch tileEntity, int windowId, Player player) {
     	super(tileEntity, windowId, player);
     }
 

@@ -6,7 +6,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.client.resources.language.I18n;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 
 import simelectricity.essential.Essential;
 import simelectricity.essential.utils.SEUnitHelper;
@@ -14,33 +14,33 @@ import simelectricity.essential.utils.client.gui.SEGuiContainer;
 
 public class GuiVoltageSensor extends SEGuiContainer<ContainerVoltageSensor> {
 	private static final ResourceLocation bgTexture =
-			new ResourceLocation(Essential.MODID, "textures/gui/voltage_sensor.png");
+			ResourceLocation.fromNamespaceAndPath(Essential.MODID, "textures/gui/voltage_sensor.png");
 
     public GuiVoltageSensor(ContainerVoltageSensor screenContainer, Inventory inv, Component titleIn) {
         super(screenContainer, inv, titleIn);
     }
 
     @Override
-    protected void renderLabels(PoseStack matrixStack, int x, int y) {
+    protected void renderLabels(GuiGraphics guiGraphics, int x, int y) {
         //draw text and stuff here
         //the parameters for drawString are: string, x, y, color
 
-    	this.font.draw(matrixStack, title.getString(), 8, 6, 4210752);
+    	guiGraphics.drawString(this.font, title.getString(), 8, 6, 4210752, false);
 
-    	this.font.draw(matrixStack, I18n.get("gui.simelectricity.voltage_threshold"), 18, 124, 4210752);
+    	guiGraphics.drawString(this.font, I18n.get("gui.simelectricity.voltage_threshold"), 18, 124, 4210752, false);
 
-        this.font.draw(matrixStack, SEUnitHelper.getVoltageStringWithUnit(this.container.thresholdVoltage), 20, 51, 4210752);
+        guiGraphics.drawString(this.font, SEUnitHelper.getVoltageStringWithUnit(this.container.thresholdVoltage), 20, 51, 4210752, false);
     }
 
     @Override
-    protected void renderBg(PoseStack matrixStack, float opacity, int par2, int par3) {
+    protected void renderBg(GuiGraphics guiGraphics, float opacity, int par2, int par3) {
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.setShaderTexture(0, bgTexture);
 
-        blit(matrixStack, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight);
+        guiGraphics.blit(bgTexture, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight);
 
-        blit(matrixStack, this.leftPos + 70, this.topPos + 30, this.container.inverted ? 52 : 0, 166, 52, 33);
-        blit(matrixStack, this.leftPos + 130, this.topPos + 36, this.container.emitRedStoneSignal ? 180 : 176, 0, 4, 16);
+        guiGraphics.blit(bgTexture, this.leftPos + 70, this.topPos + 30, this.container.inverted ? 52 : 0, 166, 52, 33);
+        guiGraphics.blit(bgTexture, this.leftPos + 130, this.topPos + 36, this.container.emitRedStoneSignal ? 180 : 176, 0, 4, 16);
     }
 
     @Override

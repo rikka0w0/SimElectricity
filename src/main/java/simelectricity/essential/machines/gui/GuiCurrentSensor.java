@@ -4,11 +4,11 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.client.resources.language.I18n;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 
 import simelectricity.essential.Essential;
 import simelectricity.essential.utils.SEUnitHelper;
@@ -17,21 +17,21 @@ import simelectricity.essential.utils.client.gui.SEGuiContainer;
 @OnlyIn(Dist.CLIENT)
 public class GuiCurrentSensor extends SEGuiContainer<ContainerCurrentSensor> {
 	private static final ResourceLocation bgTexture =
-			new ResourceLocation(Essential.MODID, "textures/gui/current_sensor.png");
+			ResourceLocation.fromNamespaceAndPath(Essential.MODID, "textures/gui/current_sensor.png");
 
     public GuiCurrentSensor(ContainerCurrentSensor screenContainer, Inventory inv, Component titleIn) {
         super(screenContainer, inv, titleIn);
     }
 
     @Override
-    protected void renderLabels(PoseStack matrixStack, int x, int y) {
+    protected void renderLabels(GuiGraphics guiGraphics, int x, int y) {
         //draw text and stuff here
         //the parameters for drawString are: string, x, y, color
 
-        this.font.draw(matrixStack, this.title.getString(), 8, 6, 4210752);
+        guiGraphics.drawString(this.font, this.title.getString(), 8, 6, 4210752, false);
 
-        this.font.draw(matrixStack, I18n.get("gui.simelectricity.current_threshold"), 18, 85, 4210752);
-        this.font.draw(matrixStack, I18n.get("gui.simelectricity.resistance_internal"), 18, 124, 4210752);
+        guiGraphics.drawString(this.font, I18n.get("gui.simelectricity.current_threshold"), 18, 85, 4210752, false);
+        guiGraphics.drawString(this.font, I18n.get("gui.simelectricity.resistance_internal"), 18, 124, 4210752, false);
 
         String conditionString = this.container.absMode ? "|I|" : "I";
         conditionString += this.container.inverted ? "<" : ">";
@@ -39,19 +39,19 @@ public class GuiCurrentSensor extends SEGuiContainer<ContainerCurrentSensor> {
 
 
         int ybase = 22;
-        this.font.draw(matrixStack, I18n.get("gui.simelectricity.condition_threshold"), 10, ybase, 4210752);
-        this.font.draw(matrixStack, conditionString, 10, ybase + 8, 4210752);
-        this.font.draw(matrixStack, "I=" + SEUnitHelper.getCurrentStringWithUnit(this.container.current), 10, ybase + 16, 4210752);
-        this.font.draw(matrixStack, "Ron = " + String.format("%.3f", this.container.resistance) + " \u03a9", 10, ybase + 24, 4210752);
+        guiGraphics.drawString(this.font, I18n.get("gui.simelectricity.condition_threshold"), 10, ybase, 4210752, false);
+        guiGraphics.drawString(this.font, conditionString, 10, ybase + 8, 4210752, false);
+        guiGraphics.drawString(this.font, "I=" + SEUnitHelper.getCurrentStringWithUnit(this.container.current), 10, ybase + 16, 4210752, false);
+        guiGraphics.drawString(this.font, "Ron = " + String.format("%.3f", this.container.resistance) + " \u03a9", 10, ybase + 24, 4210752, false);
     }
 
     @Override
-    protected void renderBg(PoseStack matrixStack, float partialTicks, int x, int y) {
+    protected void renderBg(GuiGraphics guiGraphics, float partialTicks, int x, int y) {
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.setShaderTexture(0, bgTexture);
-        blit(matrixStack, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight);
+        guiGraphics.blit(bgTexture, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight);
 
-        blit(matrixStack, this.leftPos + 152, this.topPos + 44, this.container.emitRedstoneSignal ? 180 : 176, 0, 4, 16);
+        guiGraphics.blit(bgTexture, this.leftPos + 152, this.topPos + 44, this.container.emitRedstoneSignal ? 180 : 176, 0, 4, 16);
 
         this.directionSelector.set(this.container.inputSide, this.container.outputSide);
     }

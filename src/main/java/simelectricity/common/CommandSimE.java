@@ -11,7 +11,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.DimensionArgument;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import simelectricity.SimElectricity;
 import simelectricity.energynet.EnergyNet;
@@ -25,7 +25,7 @@ public class CommandSimE {
 
 	private static LiteralArgumentBuilder<CommandSourceStack> consumeDimension(LiteralArgumentBuilder<CommandSourceStack> cmd, BiFunction<CommandSourceStack, ServerLevel, Integer> func) {
 		return cmd.then(argDimension.executes(context -> func.apply(context.getSource(), parseDimension(context))))
-				.executes(context -> func.apply(context.getSource(), context.getSource().getPlayerOrException().getLevel()));
+				.executes(context -> func.apply(context.getSource(), context.getSource().getPlayerOrException().serverLevel()));
 	}
 
 	public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
@@ -41,23 +41,23 @@ public class CommandSimE {
 	}
 
 	public static int version(CommandSourceStack sender) {
-		sender.sendSuccess(new TextComponent("SimElectricity Version: " + SimElectricity.version), true);
+		sender.sendSuccess(() -> Component.literal("SimElectricity Version: " + SimElectricity.version), true);
 
 		return 1;
 	}
 
 	private static int info(CommandSourceStack sender, ServerLevel world) {
 		if (world == null) {
-			sender.sendSuccess(new TextComponent("Dimension is not loaded!"), true);
+			sender.sendSuccess(() -> Component.literal("Dimension is not loaded!"), true);
 			return 0;
 		}
 
 		EnergyNet energyNet = EnergyNetAgent.getEnergyNetForWorld(world);
-		sender.sendSuccess(new TextComponent("-----------------------------------"), true);
-		sender.sendSuccess(new TextComponent("EnergyNet for dimension " + world.dimension().getRegistryName() + ":"), true);
+		sender.sendSuccess(() -> Component.literal("-----------------------------------"), true);
+		sender.sendSuccess(() -> Component.literal("EnergyNet for dimension " + world.dimension().location() + ":"), true);
 
 		for (String s : energyNet.info()) {
-			sender.sendSuccess(new TextComponent(s), true);
+			sender.sendSuccess(() -> Component.literal(s), true);
 		}
 
 		return 1;
@@ -65,13 +65,13 @@ public class CommandSimE {
 
     private static int refresh(CommandSourceStack sender, ServerLevel world) {
 		if (world == null) {
-			sender.sendSuccess(new TextComponent("Dimension is not loaded!"), true);
+			sender.sendSuccess(() -> Component.literal("Dimension is not loaded!"), true);
 			return 0;
 		}
 
 		EnergyNet energyNet = EnergyNetAgent.getEnergyNetForWorld(world);
 		energyNet.reFresh();
-		sender.sendSuccess(new TextComponent("EnergyNet for dimension " + world.dimension().getRegistryName() + " has been refreshed!"), true);
+		sender.sendSuccess(() -> Component.literal("EnergyNet for dimension " + world.dimension().location() + " has been refreshed!"), true);
 
 		return 1;
     }

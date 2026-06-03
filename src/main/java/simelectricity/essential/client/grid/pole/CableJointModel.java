@@ -7,9 +7,9 @@ import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.model.data.IModelData;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.neoforge.client.model.data.ModelData;
 import rikka.librikka.DirHorizontal8;
 import rikka.librikka.model.CodeBasedModel;
 import rikka.librikka.model.loader.EasyTextureLoader;
@@ -18,7 +18,7 @@ import rikka.librikka.model.quadbuilder.RawQuadGroup;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Random;
+import net.minecraft.util.RandomSource;
 
 @OnlyIn(Dist.CLIENT)
 public abstract class CableJointModel extends CodeBasedModel {
@@ -38,7 +38,7 @@ public abstract class CableJointModel extends CodeBasedModel {
     }
 
     @Override
-    public List<BakedQuad> getQuads(BlockState state, Direction side, Random rand, IModelData extraData) {
+    public List<BakedQuad> getQuads(BlockState state, Direction side, RandomSource rand, ModelData extraData) {
     	if (side != null)
             return emptyQuadList;
     	

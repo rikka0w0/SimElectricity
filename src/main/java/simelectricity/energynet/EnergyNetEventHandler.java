@@ -20,32 +20,28 @@
 package simelectricity.energynet;
 
 import net.minecraft.world.level.Level;
-//import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.world.WorldEvent.Unload;
-import net.minecraftforge.fml.LogicalSide;
-//import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.neoforge.event.level.LevelEvent;
+import net.neoforged.neoforge.event.tick.LevelTickEvent;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
 import simelectricity.SimElectricity;
 
-@Mod.EventBusSubscriber(modid = SimElectricity.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
+@EventBusSubscriber(modid = SimElectricity.MODID)
 public class EnergyNetEventHandler {
     @SubscribeEvent
-    public static void onWorldUnload(Unload event) {
-    	// TODO: Check Type: World
-        EnergyNetAgent.onWorldUnload((Level)event.getWorld());
+    public static void onWorldUnload(LevelEvent.Unload event) {
+        if (event.getLevel() instanceof Level) {
+            EnergyNetAgent.onWorldUnload((Level) event.getLevel());
+        }
     }
 
-    //Pre -> Entities -> TileEntitis -> Post
     @SubscribeEvent
-    public static void tick(TickEvent.WorldTickEvent event) {
-        if (event.side != LogicalSide.SERVER)
-            return;
-        if (event.phase != TickEvent.Phase.START)
+    public static void tick(LevelTickEvent.Pre event) {
+        Level level = event.getLevel();
+        if (level.isClientSide())
             return;
 
-        EnergyNet energyNet = EnergyNetAgent.getEnergyNetForWorld(event.world);
+        EnergyNet energyNet = EnergyNetAgent.getEnergyNetForWorld(level);
         energyNet.onPreTick();
     }
 }

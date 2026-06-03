@@ -8,9 +8,8 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import rikka.librikka.Utils;
 import simelectricity.essential.ItemRegistry;
 import simelectricity.essential.api.client.ISECoverPanelRender;
@@ -94,7 +93,7 @@ public class VoltageSensorPanel implements ISEElectricalCoverPanel, ISERedstoneE
 
 	@Override
 	public Component getDisplayName() {
-		return new TranslatableComponent(ItemRegistry.itemMisc[ItemPanel.ItemType.voltagesensor.ordinal()].getDescriptionId());
+		return Component.translatable(ItemRegistry.itemMisc[ItemPanel.ItemType.voltagesensor.ordinal()].getDescriptionId());
 	}
 
     /////////////////////////

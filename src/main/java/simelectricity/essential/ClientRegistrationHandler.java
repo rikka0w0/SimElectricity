@@ -1,26 +1,19 @@
 package simelectricity.essential;
 
-import java.util.function.Predicate;
-
 import net.minecraft.world.level.block.Block;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.data.DataGenerator;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.ModelBakeEvent;
-import net.minecraftforge.client.event.ModelRegistryEvent;
-import net.minecraftforge.client.event.TextureStitchEvent;
-import net.minecraftforge.client.model.ModelLoaderRegistry;
-import net.minecraftforge.common.data.ExistingFileHelper;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
-import rikka.librikka.block.ICustomBoundingBox;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
+import net.neoforged.neoforge.client.event.ModelEvent;
+import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
+import net.neoforged.neoforge.client.event.RegisterClientReloadListenersEvent;
+import net.neoforged.neoforge.data.event.GatherDataEvent;
+import net.neoforged.neoforge.common.data.ExistingFileHelper;
+import net.neoforged.neoforge.common.NeoForge;
 import rikka.librikka.gui.AutoGuiHandler;
 import rikka.librikka.model.loader.TERHelper;
-import simelectricity.essential.cable.BlockWire;
 import simelectricity.essential.client.BuiltInModelLoader;
 import simelectricity.essential.client.ModelDataProvider;
 import simelectricity.essential.client.cable.CableModelLoader;
@@ -29,129 +22,93 @@ import simelectricity.essential.client.coverpanel.SupportRender;
 import simelectricity.essential.client.coverpanel.VoltageSensorRender;
 import simelectricity.essential.client.semachine.SEMachineModelLoader;
 import simelectricity.essential.client.semachine.SocketRender;
-import simelectricity.essential.common.semachine.SEMachineBlock;
 import simelectricity.essential.coverpanel.CoverPanelRegistry;
-import simelectricity.essential.client.grid.pole.ConcretePole35kVTER;
-import simelectricity.essential.client.grid.pole.ConcretePoleTER;
-import simelectricity.essential.client.grid.pole.MetalPole35kVBottomTER;
-import simelectricity.essential.client.grid.pole.MetalPole35kVTER;
-import simelectricity.essential.client.grid.transformer.PowerTransformerTER;
-import simelectricity.essential.client.grid.PowerPoleTER;
+import simelectricity.essential.client.grid.pole.ConcretePole35kVBER;
+import simelectricity.essential.client.grid.pole.ConcretePoleBER;
+import simelectricity.essential.client.grid.pole.MetalPole35kVBottomBER;
+import simelectricity.essential.client.grid.pole.MetalPole35kVBER;
+import simelectricity.essential.client.grid.transformer.PowerTransformerBER;
+import simelectricity.essential.client.grid.PowerPoleBER;
 import simelectricity.essential.client.grid.GridRenderMonitor;
-import simelectricity.essential.grid.TilePoleBranch;
-import simelectricity.essential.grid.TilePoleConcrete;
-import simelectricity.essential.grid.TilePoleConcrete35kV;
-import simelectricity.essential.grid.TilePoleMetal35kV;
-import simelectricity.essential.grid.transformer.TileDistributionTransformer;
-import simelectricity.essential.grid.transformer.TilePowerTransformerPlaceHolder;
-import simelectricity.essential.grid.transformer.TilePowerTransformerWinding;
+import simelectricity.essential.grid.BlockEntityPoleBranch;
+import simelectricity.essential.grid.BlockEntityPoleConcrete;
+import simelectricity.essential.grid.BlockEntityPoleConcrete35kV;
+import simelectricity.essential.grid.BlockEntityPoleMetal35kV;
+import simelectricity.essential.grid.transformer.BlockEntityDistributionTransformer;
+import simelectricity.essential.grid.transformer.BlockEntityPowerTransformerPlaceHolder;
+import simelectricity.essential.grid.transformer.BlockEntityPowerTransformerWinding;
 
-@Mod.EventBusSubscriber(value = Dist.CLIENT, modid = Essential.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(value = Dist.CLIENT, modid = Essential.MODID, bus = EventBusSubscriber.Bus.MOD)
 public class ClientRegistrationHandler {
 	public static void registerTileEntityRenders() {
 		// ConcretePole35kV
-		TERHelper.bind(TilePoleConcrete35kV.class, ConcretePole35kVTER::new);
+		TERHelper.bind(BlockEntityPoleConcrete35kV.class, ConcretePole35kVBER::new);
 
 		// MetalPole35kV
-		TERHelper.bind(TilePoleMetal35kV.class, MetalPole35kVTER::new);
-		TERHelper.bind(TilePoleMetal35kV.Bottom.class, MetalPole35kVBottomTER::new);
+		TERHelper.bind(BlockEntityPoleMetal35kV.class, MetalPole35kVBER::new);
+		TERHelper.bind(BlockEntityPoleMetal35kV.Bottom.class, MetalPole35kVBottomBER::new);
 
 		// ConcretePole
-		TERHelper.bind(TilePoleConcrete.Pole10Kv.Type0.class, ConcretePoleTER::new);
-		TERHelper.bind(TilePoleConcrete.Pole10Kv.Type1.class, ConcretePoleTER::new);
-		TERHelper.bind(TilePoleConcrete.Pole415vType0.class, ConcretePoleTER::new);
-		TERHelper.bind(TilePoleBranch.Type10kV.class, ConcretePoleTER::new);
-		TERHelper.bind(TilePoleBranch.Type415V.class, ConcretePoleTER::new);
+		TERHelper.bind(BlockEntityPoleConcrete.Pole10Kv.Type0.class, ConcretePoleBER::new);
+		TERHelper.bind(BlockEntityPoleConcrete.Pole10Kv.Type1.class, ConcretePoleBER::new);
+		TERHelper.bind(BlockEntityPoleConcrete.Pole415vType0.class, ConcretePoleBER::new);
+		TERHelper.bind(BlockEntityPoleBranch.Type10kV.class, ConcretePoleBER::new);
+		TERHelper.bind(BlockEntityPoleBranch.Type415V.class, ConcretePoleBER::new);
 
 		// PowerTransformer
-		TERHelper.bind(TilePowerTransformerPlaceHolder.Render.class, PowerTransformerTER::new);
-		TERHelper.bind(TilePowerTransformerWinding.Primary.class, PowerPoleTER::new);
-		TERHelper.bind(TilePowerTransformerWinding.Secondary.class, PowerPoleTER::new);
+		TERHelper.bind(BlockEntityPowerTransformerPlaceHolder.Render.class, PowerTransformerBER::new);
+		TERHelper.bind(BlockEntityPowerTransformerWinding.Primary.class, PowerPoleBER::new);
+		TERHelper.bind(BlockEntityPowerTransformerWinding.Secondary.class, PowerPoleBER::new);
 
-		TERHelper.bind(TileDistributionTransformer.Pole10kV.class, PowerPoleTER::new);
-		TERHelper.bind(TileDistributionTransformer.Pole415V.class, PowerPoleTER::new);
-	}
-
-	public static void registerModelLoaders() {
-    	ModelLoaderRegistry.registerLoader(SEMachineModelLoader.id, SEMachineModelLoader.instance);
-    	ModelLoaderRegistry.registerLoader(CableModelLoader.id, CableModelLoader.instance);
-    	ModelLoaderRegistry.registerLoader(BuiltInModelLoader.id, BuiltInModelLoader.instance);
+		TERHelper.bind(BlockEntityDistributionTransformer.Pole10kV.class, PowerPoleBER::new);
+		TERHelper.bind(BlockEntityDistributionTransformer.Pole415V.class, PowerPoleBER::new);
 	}
 
 	@SubscribeEvent
-	public static void onModelRegistryEvent(ModelRegistryEvent event) {
-		PowerTransformerTER.onModelRegistryEvent();
-
-		// This cannot be placed here yet, due to Forge's bug, use proxy as a temp replacement
-//		registerModelLoaders()
+	public static void registerModelLoaders(ModelEvent.RegisterGeometryLoaders event) {
+		event.register(SEMachineModelLoader.id, SEMachineModelLoader.instance);
+		event.register(CableModelLoader.id, CableModelLoader.instance);
+		event.register(BuiltInModelLoader.id, BuiltInModelLoader.instance);
 	}
 
-    @SubscribeEvent
-    public static void onTextureStitch(TextureStitchEvent.Pre event) {
-    	SocketRender.INSTANCE.onPreTextureStitchEvent(event);
-    	SupportRender.INSTANCE.onPreTextureStitchEvent(event);
-    	VoltageSensorRender.instance.onPreTextureStitchEvent(event);
-    	LedPanelRender.instance.onPreTextureStitchEvent(event);
+	@SubscribeEvent
+	public static void registerAdditionalModels(ModelEvent.RegisterAdditional event) {
+		event.register(new net.minecraft.client.resources.model.ModelResourceLocation(PowerTransformerBER.modelResLoc, "standalone"));
+	}
 
-    	PowerPoleTER.onPreTextureStitchEvent(event);
-    	PowerTransformerTER.onPreTextureStitchEvent(event);
-    }
+	@SubscribeEvent
+	public static void onModelBake(ModelEvent.BakingCompleted event) {
+		SocketRender.INSTANCE.onModelBakeEvent();
+		SupportRender.INSTANCE.onModelBakeEvent();
+		VoltageSensorRender.instance.onModelBakeEvent();
+		LedPanelRender.instance.onModelBakeEvent();
 
-    @SubscribeEvent
-    public static void onModelBake(ModelBakeEvent event) {
-    	SocketRender.INSTANCE.onModelBakeEvent();
-    	SupportRender.INSTANCE.onModelBakeEvent();
-    	VoltageSensorRender.instance.onModelBakeEvent();
-    	LedPanelRender.instance.onModelBakeEvent();
+		PowerPoleBER.onModelBakeEvent();
+		PowerTransformerBER.onModelBakeEvent();
+	}
 
-    	PowerPoleTER.onModelBakeEvent();
-    	PowerTransformerTER.onModelBakeEvent();
-    }
-
-
-    /*
-     * Event order:
-     * FMLClientSetupEvent
-     * TextureStitchEvent.Pre
-     * TextureStitchEvent.Post
-     * ModelBakeEvent
-     */
+	@SubscribeEvent
+	public static void registerClientReloadListeners(RegisterClientReloadListenersEvent event) {
+		event.registerReloadListener((net.minecraft.server.packs.resources.ResourceManagerReloadListener) resourceManager -> {
+			GridRenderMonitor.instance.markLoadedPowerPoleForRenderingUpdate();
+		});
+	}
 
 	@SubscribeEvent
 	public static void onClientSetup(FMLClientSetupEvent event){
-		MinecraftForge.EVENT_BUS.addListener(ICustomBoundingBox::onBlockHighLight);
-
 		// Register Gui
-//		MenuScreens.registerFactory(BlockRegistry.cAdjustableResistor, GuiAdjustableResistor::new);
 		BlockRegistry.registeredGuiContainers.forEach(AutoGuiHandler::registerContainerGui);
 
     	ClientRegistrationHandler.registerTileEntityRenders();
 
-    	Predicate<RenderType> multiLayer = (layer) -> {
-    		return layer==RenderType.solid() ||
-    				layer==RenderType.cutout()||
-    				layer==RenderType.cutoutMipped();
-    	};
+		NeoForge.EVENT_BUS.register(GridRenderMonitor.instance);
+	}
 
-		// Was Block::getBlockLayer
-		for (SEMachineBlock sem: BlockRegistry.blockElectronics) {
-			ItemBlockRenderTypes.setRenderLayer(sem, multiLayer);
+	@SubscribeEvent
+	public static void registerBlockColors(net.neoforged.neoforge.client.event.RegisterColorHandlersEvent.Block event) {
+		for (Block block : CoverPanelRegistry.INSTANCE.getColoredBlocks()) {
+			event.register(simelectricity.essential.client.coverpanel.BlockColorHandler.colorHandler, block);
 		}
-
-		for (SEMachineBlock sem: BlockRegistry.blockTwoPortElectronics) {
-			ItemBlockRenderTypes.setRenderLayer(sem, multiLayer);
-		}
-
-		for (Block block: BlockRegistry.blockCable) {
-			ItemBlockRenderTypes.setRenderLayer(block, multiLayer);
-		}
-
-		for (BlockWire wire: BlockRegistry.blockWire) {
-			ItemBlockRenderTypes.setRenderLayer(wire, RenderType.solid());
-		}
-
-		MinecraftForge.EVENT_BUS.register(GridRenderMonitor.instance);
-		CoverPanelRegistry.INSTANCE.registerAllColoredFacadeHost();
 	}
 
 	@SubscribeEvent
@@ -160,10 +117,7 @@ public class ClientRegistrationHandler {
 		ExistingFileHelper exfh = event.getExistingFileHelper();
 
 		if (event.includeClient()) {
-			generator.addProvider(new ModelDataProvider(generator, exfh));
+			generator.addProvider(true, (net.minecraft.data.DataProvider.Factory<ModelDataProvider>) output -> new ModelDataProvider(output, exfh));
 		}
 	}
-
-//	ModelLoaderRegistry.registerLoader(new ResourceLocation("librikka","virtual"), loader);
-//	ModelLoaderRegistry.getModel("", deserializationContext, data)
 }

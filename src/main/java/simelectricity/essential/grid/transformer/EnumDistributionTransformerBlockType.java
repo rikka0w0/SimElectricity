@@ -8,7 +8,7 @@ import java.util.function.Supplier;
 import net.minecraft.util.StringRepresentable;
 import rikka.librikka.ITileMeta;
 import simelectricity.essential.Essential;
-import simelectricity.essential.grid.TileMultiBlockPlaceHolder;
+import simelectricity.essential.grid.BlockEntityMultiBlockPlaceHolder;
 
 public enum EnumDistributionTransformerBlockType implements ITileMeta, StringRepresentable {
 	Pole10kVNormal,
@@ -17,9 +17,9 @@ public enum EnumDistributionTransformerBlockType implements ITileMeta, StringRep
 	Pole415VNormal,
 	Transformer,
 
-	Pole10kV(TileDistributionTransformer.Pole10kV.class),
-	PlaceHolder(TileMultiBlockPlaceHolder.class),
-	Pole415V(TileDistributionTransformer.Pole415V.class);
+	Pole10kV(BlockEntityDistributionTransformer.Pole10kV.class),
+	PlaceHolder(BlockEntityMultiBlockPlaceHolder.class),
+	Pole415V(BlockEntityDistributionTransformer.Pole415V.class);
 
 	public final Class<? extends BlockEntity> teCls;
 	public final Supplier<BlockEntityType<?>> beType;

@@ -10,12 +10,14 @@ import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.client.model.data.IModelData;
+import net.neoforged.neoforge.client.model.data.ModelData;
 import rikka.librikka.model.CodeBasedModel;
 import rikka.librikka.model.loader.EasyTextureLoader;
 import rikka.librikka.model.quadbuilder.RawQuadGroup;
 import simelectricity.essential.client.ResourcePaths;
 import simelectricity.essential.utils.client.SERenderHeap;
+
+import net.minecraft.util.RandomSource;
 
 public class MetalPole35kVModel extends CodeBasedModel {	
 	@EasyTextureLoader.Mark(ResourcePaths.metal)
@@ -49,7 +51,7 @@ public class MetalPole35kVModel extends CodeBasedModel {
     }
 
 	@Override
-	public List<BakedQuad> getQuads(BlockState state, Direction side, Random rand, IModelData extraData) {
+	public List<BakedQuad> getQuads(BlockState state, Direction side, RandomSource rand, ModelData extraData) {
 		return emptyQuadList;
 	}
 

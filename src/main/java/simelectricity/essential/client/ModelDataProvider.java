@@ -8,24 +8,27 @@ import java.util.Map.Entry;
 
 import org.apache.commons.lang3.tuple.Pair;
 
+import java.util.List;
+import java.util.ArrayList;
+import java.util.concurrent.CompletableFuture;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 
 import net.minecraft.world.level.block.Block;
-import net.minecraft.data.DataGenerator;
-import net.minecraft.data.HashCache;
 import net.minecraft.data.DataProvider;
+import net.minecraft.data.CachedOutput;
+import net.minecraft.data.PackOutput;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.client.model.generators.BlockModelBuilder;
-import net.minecraftforge.client.model.generators.BlockStateProvider;
-import net.minecraftforge.client.model.generators.ConfiguredModel;
-import net.minecraftforge.client.model.generators.ModelFile;
-import net.minecraftforge.client.model.generators.VariantBlockStateBuilder;
-import net.minecraftforge.client.model.generators.ModelBuilder.Perspective;
-import net.minecraftforge.common.data.ExistingFileHelper;
+import net.neoforged.neoforge.client.model.generators.BlockModelBuilder;
+import net.neoforged.neoforge.client.model.generators.BlockStateProvider;
+import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
+import net.neoforged.neoforge.client.model.generators.ModelFile;
+import net.neoforged.neoforge.client.model.generators.VariantBlockStateBuilder;
+import net.minecraft.world.item.ItemDisplayContext;
+import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import rikka.librikka.DirHorizontal8;
 import rikka.librikka.IMetaProvider;
 import rikka.librikka.model.GeneratedModelLoader;
@@ -46,12 +49,20 @@ import simelectricity.essential.grid.transformer.BlockDistributionTransformer;
 import simelectricity.essential.grid.transformer.BlockPowerTransformer;
 import simelectricity.essential.grid.transformer.EnumDistributionTransformerBlockType;
 
-public final class ModelDataProvider extends BlockStateProvider implements ISimpleItemDataProvider {    
-    private final DataGenerator generator;
+public final class ModelDataProvider extends BlockStateProvider implements ISimpleItemDataProvider {
+    private static ResourceLocation getRegistryName(Block block) {
+        return net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(block);
+    }
+
+    private static ResourceLocation resourceLocation(String namespace, String path) {
+        return ResourceLocation.fromNamespaceAndPath(namespace, path);
+    }
+    
+    private final PackOutput output;
     private final ExistingFileHelper exfh;
-    public ModelDataProvider(DataGenerator gen, ExistingFileHelper exFileHelper) {
-        super(gen, Essential.MODID, exFileHelper);
-        this.generator = gen;
+    public ModelDataProvider(PackOutput output, ExistingFileHelper exFileHelper) {
+        super(output, Essential.MODID, exFileHelper);
+        this.output = output;
         this.exfh = exFileHelper;
     }
     
@@ -62,20 +73,21 @@ public final class ModelDataProvider extends BlockStateProvider implements ISimp
     }
     
     @Override
-    public void run(HashCache cache) throws IOException {
-        super.run(cache);
+    public CompletableFuture<?> run(CachedOutput cache) {
+        CompletableFuture<?> parentFuture = super.run(cache);
+
+        List<CompletableFuture<?>> futures = new ArrayList<>();
+        futures.add(parentFuture);
 
         Gson GSON = new GsonBuilder().setPrettyPrinting().create();
         for (Entry<ResourceLocation, JsonObject> entry: customLoaders.entrySet()) {
             ResourceLocation loc = entry.getKey();
-            Path path = generator.getOutputFolder().resolve(
+            Path path = output.getOutputFolder().resolve(
                     "assets/" + loc.getNamespace() + "/models/" + loc.getPath() + ".json");
-            try {
-                DataProvider.save(GSON, cache, entry.getValue(), path);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            futures.add(DataProvider.saveStable(cache, entry.getValue(), path));
         }
+        
+        return CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]));
     }
     
     @Override
@@ -108,9 +120,9 @@ public final class ModelDataProvider extends BlockStateProvider implements ISimp
                 registerFake(block);
             } else {
                 VariantBlockStateBuilder builder = getVariantBuilder(block);
-                String namespace = block.getRegistryName().getNamespace();
-                String blockName =  block.getRegistryName().getPath();
-                ModelFile modelFile = new ModelFile.ExistingModelFile(new ResourceLocation(namespace, "block/"+blockName), exfh);    
+                String namespace = getRegistryName(block).getNamespace();
+                String blockName =  getRegistryName(block).getPath();
+                ModelFile modelFile = new ModelFile.ExistingModelFile(resourceLocation(namespace, "block/"+blockName), exfh);    
                 builder.forAllStates((blockstate) -> ConfiguredModel.builder().modelFile(modelFile).build());
                 
                 BlockModelBuilder itemModelBuilder = models().getBuilder("item/"+blockName);
@@ -126,11 +138,11 @@ public final class ModelDataProvider extends BlockStateProvider implements ISimp
     }
 
     private void registerFake(Block block) {
-        String domain = block.getRegistryName().getNamespace();
-        String name = block.getRegistryName().getPath();
+        String domain = getRegistryName(block).getNamespace();
+        String name = getRegistryName(block).getPath();
         
         JsonObject json = GeneratedModelLoader.placeholder();
-        ResourceLocation modelResLoc = new ResourceLocation(domain, BuiltInModelLoader.dir + name);
+        ResourceLocation modelResLoc = resourceLocation(domain, BuiltInModelLoader.dir + name);
         ModelFile modelGhost = customLoader(modelResLoc, json);
         getVariantBuilder(block).forAllStates(
                 (blockstate)->ConfiguredModel.builder().modelFile(modelGhost).build());
@@ -140,9 +152,9 @@ public final class ModelDataProvider extends BlockStateProvider implements ISimp
     
     private void machineModel(SEMachineBlock block) {
         VariantBlockStateBuilder builder = getVariantBuilder(block);
-        String namespace = block.getRegistryName().getNamespace();
-        String blockName =  block.getRegistryName().getPath();
-        ModelFile modelFile = new ModelFile.ExistingModelFile(new ResourceLocation(namespace, "block/"+blockName), exfh);
+        String namespace = getRegistryName(block).getNamespace();
+        String blockName =  getRegistryName(block).getPath();
+        ModelFile modelFile = new ModelFile.ExistingModelFile(resourceLocation(namespace, "block/"+blockName), exfh);
         ModelFile modelFile2 = null;
         
         int[] angleYs = new int[] {0, 0, 0, 180, 270, 90};
@@ -150,7 +162,7 @@ public final class ModelDataProvider extends BlockStateProvider implements ISimp
         
         boolean hasSecondState = block.hasSecondState();
         if (hasSecondState) {
-            modelFile2 = new ModelFile.ExistingModelFile(new ResourceLocation(namespace, "block/"+blockName+"_2"), exfh);
+            modelFile2 = new ModelFile.ExistingModelFile(resourceLocation(namespace, "block/"+blockName+"_2"), exfh);
         }
         
         for (Direction dir : BlockStateProperties.FACING.getPossibleValues()) {
@@ -193,52 +205,52 @@ public final class ModelDataProvider extends BlockStateProvider implements ISimp
         itemModelBuilder.parent(modelFile);
         if (block.useObjModel()) {
             itemModelBuilder.transforms()
-            .transform(Perspective.GUI)
+            .transform(ItemDisplayContext.GUI)
             .rotation(30, 225, 0)
             .translation(1, 0, 0)
             .scale(0.7F)
             .end();
             
             itemModelBuilder.transforms()
-            .transform(Perspective.FIRSTPERSON_LEFT)
+            .transform(ItemDisplayContext.FIRST_PERSON_LEFT_HAND)
             .scale(0.5F)
             .end();
             
             itemModelBuilder.transforms()
-            .transform(Perspective.FIRSTPERSON_RIGHT)
+            .transform(ItemDisplayContext.FIRST_PERSON_RIGHT_HAND)
             .scale(0.5F)
             .end();
             
             itemModelBuilder.transforms()
-            .transform(Perspective.THIRDPERSON_LEFT)
+            .transform(ItemDisplayContext.THIRD_PERSON_LEFT_HAND)
             .rotation(30, 45, 0)
             .scale(0.5F)
             .end();
             
             itemModelBuilder.transforms()
-            .transform(Perspective.THIRDPERSON_RIGHT)
+            .transform(ItemDisplayContext.THIRD_PERSON_RIGHT_HAND)
             .rotation(30, 45, 0)
             .scale(0.5F)
             .end();
             
             itemModelBuilder.transforms()
-            .transform(Perspective.GROUND)
+            .transform(ItemDisplayContext.GROUND)
             .scale(0.35F)
             .end();
         }
     }
 
     private <T extends Block & IMetaProvider<ISECableMeta>> void cableModel(T block, String type) {
-        String domain = block.getRegistryName().getNamespace();
-        String name = block.getRegistryName().getPath();
+        String domain = getRegistryName(block).getNamespace();
+        String name = getRegistryName(block).getPath();
         float thickness = block.meta().thickness();
         
         String dirLoc = "block/" + type + "/";
-        ResourceLocation insulator = new ResourceLocation(domain, dirLoc + name + "_insulator");
-        ResourceLocation conductor = new ResourceLocation(domain, dirLoc + name + "_conductor");
+        ResourceLocation insulator = resourceLocation(domain, dirLoc + name + "_insulator");
+        ResourceLocation conductor = resourceLocation(domain, dirLoc + name + "_conductor");
         JsonObject json = CableModelLoader.serialize(type, insulator, conductor, thickness);
 
-        ResourceLocation modelResLoc = new ResourceLocation(domain, dirLoc + name);
+        ResourceLocation modelResLoc = resourceLocation(domain, dirLoc + name);
         ModelFile modelFile = customLoader(modelResLoc, json);
 
         getVariantBuilder(block).forAllStates(
@@ -252,13 +264,13 @@ public final class ModelDataProvider extends BlockStateProvider implements ISimp
         final JsonObject json = new JsonObject();
         commonProps.entrySet().forEach((entry)->json.add(entry.getKey(), entry.getValue()));
         json.addProperty("offaxis", false);
-        ResourceLocation modelResLoc = new ResourceLocation(domain, path);
+        ResourceLocation modelResLoc = resourceLocation(domain, path);
         ModelFile modelFile = customLoader(modelResLoc, json);
         
         final JsonObject jsonOffAxis = new JsonObject();
         commonProps.entrySet().forEach((entry)->jsonOffAxis.add(entry.getKey(), entry.getValue()));
         jsonOffAxis.addProperty("offaxis", true);
-        ResourceLocation modelResLocOffAxis = new ResourceLocation(domain, path + "_45");
+        ResourceLocation modelResLocOffAxis = resourceLocation(domain, path + "_45");
         ModelFile modelFileOffAxis = customLoader(modelResLocOffAxis, jsonOffAxis);
         
         return Pair.of(modelFile, modelFileOffAxis);
@@ -285,8 +297,8 @@ public final class ModelDataProvider extends BlockStateProvider implements ISimp
     /// Built-in models
     ////////////////////
     private void cableJoint(BlockCableJoint block) {
-        String domain = block.getRegistryName().getNamespace();
-        String name = block.getRegistryName().getPath();
+        String domain = getRegistryName(block).getNamespace();
+        String name = getRegistryName(block).getPath();
         
         String type = block.meta() == BlockCableJoint.Type._415v ? "cable_joint_415v" : "cable_joint_10kv";
         JsonObject json = BuiltInModelLoader.serialize(type);
@@ -299,24 +311,24 @@ public final class ModelDataProvider extends BlockStateProvider implements ISimp
     }
 
     private void concretePole35kV(Block block, boolean terminals) {
-        String domain = block.getRegistryName().getNamespace();
-        String name = block.getRegistryName().getPath();
+        String domain = getRegistryName(block).getNamespace();
+        String name = getRegistryName(block).getPath();
 
         String typeName = "concrete_pole_35kv";
         JsonObject json = GeneratedModelLoader.placeholder();
-        ResourceLocation modelResLoc = new ResourceLocation(domain, BuiltInModelLoader.dir + name + "_placeholder");
+        ResourceLocation modelResLoc = resourceLocation(domain, BuiltInModelLoader.dir + name + "_placeholder");
         ModelFile modelGhost = customLoader(modelResLoc, json);
 
         json = BuiltInModelLoader.serialize(typeName);
         json.addProperty("terminals", terminals);
         json.addProperty("isrod", true);
-        ResourceLocation modelResLocRod = new ResourceLocation(domain, BuiltInModelLoader.dir + name + "_rod");
+        ResourceLocation modelResLocRod = resourceLocation(domain, BuiltInModelLoader.dir + name + "_rod");
         ModelFile modelRod = customLoader(modelResLocRod, json);
         
         json = BuiltInModelLoader.serialize(typeName);
         json.addProperty("terminals", terminals);
         json.addProperty("isrod", false);
-        ResourceLocation modelResLocHost = new ResourceLocation(domain, BuiltInModelLoader.dir + name + "_host");
+        ResourceLocation modelResLocHost = resourceLocation(domain, BuiltInModelLoader.dir + name + "_host");
         ModelFile modelHost = customLoader(modelResLocHost, json);
         
         getVariantBuilder(block).forAllStates((blockstate)-> {
@@ -339,12 +351,12 @@ public final class ModelDataProvider extends BlockStateProvider implements ISimp
     }
 
     private void metalPole35kV(Block block, boolean terminals) {
-        String domain = block.getRegistryName().getNamespace();
-        String name = block.getRegistryName().getPath();
+        String domain = getRegistryName(block).getNamespace();
+        String name = getRegistryName(block).getPath();
 
         JsonObject json = BuiltInModelLoader.serialize("metal_pole_35kv");
         json.addProperty("terminals", terminals);
-        ResourceLocation modelResLoc = new ResourceLocation(domain, BuiltInModelLoader.dir + name);
+        ResourceLocation modelResLoc = resourceLocation(domain, BuiltInModelLoader.dir + name);
         ModelFile modelFile = customLoader(modelResLoc, json);
 
         getVariantBuilder(block).forAllStates((blockstate)->ConfiguredModel.builder().modelFile(modelFile).build());
@@ -354,8 +366,8 @@ public final class ModelDataProvider extends BlockStateProvider implements ISimp
     }
     
     private void concretePole(BlockPoleConcrete block) {
-        String domain = block.getRegistryName().getNamespace();
-        String name = block.getRegistryName().getPath();
+        String domain = getRegistryName(block).getNamespace();
+        String name = getRegistryName(block).getPath();
 
         JsonObject json = BuiltInModelLoader.serialize("concrete_pole");
         json.addProperty("part", block.meta().name());
@@ -370,15 +382,15 @@ public final class ModelDataProvider extends BlockStateProvider implements ISimp
     }
     
     private void distributionTransformer(BlockDistributionTransformer block) {
-        String domain = block.getRegistryName().getNamespace();
-        String name = block.getRegistryName().getPath();
+        String domain = getRegistryName(block).getNamespace();
+        String name = getRegistryName(block).getPath();
 
         final EnumDistributionTransformerBlockType blockType = block.meta();
 
         JsonObject json = BuiltInModelLoader.serialize("distribution_transformer");
         json.addProperty("part", blockType.getSerializedName());
         json.addProperty("formed", blockType.formed);
-        ResourceLocation modelResLoc = new ResourceLocation(domain, BuiltInModelLoader.dir + name);
+        ResourceLocation modelResLoc = resourceLocation(domain, BuiltInModelLoader.dir + name);
         ModelFile modelFile = customLoader(modelResLoc, json);
         
         getVariantBuilder(block).forAllStates((blockstate)-> {
@@ -396,7 +408,7 @@ public final class ModelDataProvider extends BlockStateProvider implements ISimp
         if (blockType.formed) {
         	itemModelBuilder.parent(
         		customLoader(
-                	new ResourceLocation(domain, BuiltInModelLoader.dir + name + "_inventory"), 
+                	resourceLocation(domain, BuiltInModelLoader.dir + name + "_inventory"), 
                 	GeneratedModelLoader.placeholder()
         		)
         	);

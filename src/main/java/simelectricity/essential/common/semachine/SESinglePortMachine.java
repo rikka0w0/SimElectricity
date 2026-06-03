@@ -6,18 +6,18 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import rikka.librikka.Utils;
 import simelectricity.api.ISEWrenchable;
 import simelectricity.api.ISESidedFacing;
 import simelectricity.api.SEAPI;
 import simelectricity.api.components.ISEComponentParameter;
 import simelectricity.api.node.ISESubComponent;
-import simelectricity.api.tile.ISETile;
+import simelectricity.api.blockentity.ISEBlockEntity;
 
-public abstract class SESinglePortMachine<T extends ISEComponentParameter> extends SEMachineTile implements
-		ISESidedFacing, ISEWrenchable, ISETile, ISEComponentParameter {
+public abstract class SESinglePortMachine<T extends ISEComponentParameter> extends SEMachineBlockEntity implements
+		ISESidedFacing, ISEWrenchable, ISEBlockEntity, ISEComponentParameter {
     protected Direction functionalSide = Direction.SOUTH;
     protected final ISESubComponent<?> circuit = SEAPI.energyNetAgent.newComponent(this, this);
     @SuppressWarnings("unchecked")
@@ -31,15 +31,15 @@ public abstract class SESinglePortMachine<T extends ISEComponentParameter> exten
     /// BlockEntity
     ///////////////////////////////////
     @Override
-    public void load(CompoundTag tagCompound) {
-        super.load(tagCompound);
+    public void loadAdditional(CompoundTag tagCompound, net.minecraft.core.HolderLookup.Provider registries) {
+        super.loadAdditional(tagCompound, registries);
         this.functionalSide = Utils.facingFromNbt(tagCompound, "functionalSide");
     }
 
     @Override
-    protected void saveAdditional(CompoundTag nbt) {
+    protected void saveAdditional(CompoundTag nbt, net.minecraft.core.HolderLookup.Provider registries) {
         Utils.saveToNbt(nbt, "functionalSide", this.functionalSide);
-        super.saveAdditional(nbt);
+        super.saveAdditional(nbt, registries);
     }
 
     @Override
@@ -91,7 +91,7 @@ public abstract class SESinglePortMachine<T extends ISEComponentParameter> exten
     }
 
     /////////////////////////////////////////////////////////
-    ///ISETile
+    ///ISEBlockEntity
     /////////////////////////////////////////////////////////
     @Override
     public ISESubComponent<?> getComponent(Direction side) {

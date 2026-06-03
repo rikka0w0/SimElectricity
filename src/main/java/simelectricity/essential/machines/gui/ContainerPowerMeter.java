@@ -7,11 +7,11 @@ import rikka.librikka.container.ContainerSynchronizer;
 import rikka.librikka.gui.AutoGuiHandler;
 import simelectricity.api.SEAPI;
 import simelectricity.essential.common.ContainerNoInventoryTwoPort;
-import simelectricity.essential.machines.tile.TilePowerMeter;
+import simelectricity.essential.machines.blockentity.BlockEntityPowerMeter;
 import simelectricity.essential.utils.network.ISEButtonEventHandler;
 
 @AutoGuiHandler.Marker(GuiPowerMeter.class)
-public class ContainerPowerMeter extends ContainerNoInventoryTwoPort<TilePowerMeter> implements ISEButtonEventHandler {
+public class ContainerPowerMeter extends ContainerNoInventoryTwoPort<BlockEntityPowerMeter> implements ISEButtonEventHandler {
     @ContainerSynchronizer.SyncField
     public volatile boolean isOn;
     @ContainerSynchronizer.SyncField
@@ -25,7 +25,7 @@ public class ContainerPowerMeter extends ContainerNoInventoryTwoPort<TilePowerMe
 
 
     // Server side
-    public ContainerPowerMeter(TilePowerMeter tileEntity, int windowId, Player player) {
+    public ContainerPowerMeter(BlockEntityPowerMeter tileEntity, int windowId, Player player) {
     	super(tileEntity, windowId, player);
     }
 

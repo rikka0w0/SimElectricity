@@ -1,0 +1,66 @@
+{
+  "sources": [
+    {
+      "type": "directory",
+      "source": "block/sockets",
+      "prefix": "block/sockets/"
+    },
+    {
+      "type": "directory",
+      "source": "block/coverpanel",
+      "prefix": "block/coverpanel/"
+    },
+    {
+      "type": "directory",
+      "source": "block/cable",
+      "prefix": "block/cable/"
+    },
+    {
+      "type": "directory",
+      "source": "block/wire",
+      "prefix": "block/wire/"
+    },
+    {
+      "type": "directory",
+      "source": "block/machines",
+      "prefix": "block/machines/"
+    },
+    {
+      "type": "single",
+      "resource": "sime_essential:block/powertransformer_ironcore_front"
+    },
+    {
+      "type": "single",
+      "resource": "sime_essential:block/powertransformer_ironcore_side"
+    },
+    {
+      "type": "single",
+      "resource": "sime_essential:block/powertransformer_oilpipe_side"
+    },
+    {
+      "type": "single",
+      "resource": "sime_essential:block/powertransformer_oilpipe_top"
+    },
+    {
+      "type": "single",
+      "resource": "sime_essential:block/powertransformer_oiltank"
+    },
+    {
+      "type": "single",
+      "resource": "sime_essential:block/powertransformer_oiltanksupport"
+    },
+    {
+      "type": "single",
+      "resource": "sime_essential:block/powertransformer_winding_side"
+    },
+    {
+      "type": "single",
+      "resource": "sime_essential:block/powertransformer_winding_top"
+    },
+    {
+      "type": "directory",
+      "source": "render",
+      "prefix": "render/"
+    }
+  ]
+}

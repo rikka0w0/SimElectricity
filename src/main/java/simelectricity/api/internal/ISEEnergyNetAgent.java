@@ -52,7 +52,7 @@ public interface ISEEnergyNetAgent {
      * @param pos
      * @param numOfParallelConductor the number of parallel conductors, e.g. number of phases.
      *                               GridNodes with different conductor number cannot be connected together.
-     * @return A reference to ISEGridNode. The {@link simelectricity.api.tile.ISEGridTile} should store this reference
+     * @return A reference to ISEGridNode. The {@link simelectricity.api.blockentity.ISEGridBlockEntity} should store this reference
      *          and use it to access simulation results, e.g. voltage.
      */
     ISEGridNode newGridNode(BlockPos pos, int numOfParallelConductor);
@@ -77,23 +77,23 @@ public interface ISEEnergyNetAgent {
 
     /**
      * Add and register a BlockEntity to the energyNet.
-     * @param te must implement one interface from {@link simelectricity.api.tile}
+     * @param te must implement one interface from {@link simelectricity.api.blockentity}
      */
     void attachTile(BlockEntity te);
     /**
      * Notify the EnergyNet that the parameter of one or more of component within the BlockEntity has changed.
-     * @param te must implement one interface from {@link simelectricity.api.tile}
+     * @param te must implement one interface from {@link simelectricity.api.blockentity}
      */
     void updateTileParameter(BlockEntity te);
     /**
      * Remove a BlockEntity from the energyNet.
-     * @param te must implement one interface from {@link simelectricity.api.tile}
+     * @param te must implement one interface from {@link simelectricity.api.blockentity}
      */
     void detachTile(BlockEntity te);
     /**
      * Notify the EnergyNet that the connection or orientation of one or more of component within the BlockEntity has changed.
      * E.g. the machine has been rotated, a new cover panel has blocked an existing connection, e.t.c...
-     * @param te must implement one interface from {@link simelectricity.api.tile}
+     * @param te must implement one interface from {@link simelectricity.api.blockentity}
      */
     void updateTileConnection(BlockEntity te);
     /**

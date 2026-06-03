@@ -81,7 +81,7 @@ public class AR10kVType0Branch implements ISEAccessoryRenderer {
 				} else {					
 					Vec3f pt = new Vec3f(0.65F, -1.2F, 0).rotateAroundY(middle).add(0.5F, 0, 0.5F);
 					
-					Models.render10kVInsulator(EasyTextureLoader.blockTextureGetter().apply(new ResourceLocation(ResourcePaths.metal)), EasyTextureLoader.blockTextureGetter().apply(new ResourceLocation(ResourcePaths.glass_insulator)))
+					Models.render10kVInsulator(EasyTextureLoader.blockTextureGetter().apply(ResourceLocation.parse(ResourcePaths.metal)), EasyTextureLoader.blockTextureGetter().apply(ResourceLocation.parse(ResourcePaths.glass_insulator)))
 					.translateCoord(0, 0.125F, 0).rotateToVec(0.5F, 0, 0.5F, pt.x, 0, pt.z).translateCoord(0.5F, pt.y, 0.5F).bake(pole.quadBuffer);
 					
 					pt = pt.add(pole.pos);

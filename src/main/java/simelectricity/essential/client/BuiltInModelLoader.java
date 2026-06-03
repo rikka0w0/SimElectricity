@@ -3,16 +3,14 @@ package simelectricity.essential.client;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 
-import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.core.Direction;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.client.model.IModelLoader;
+import net.neoforged.neoforge.client.model.geometry.IGeometryLoader;
 import rikka.librikka.DirHorizontal8;
 import rikka.librikka.model.GeneratedModelLoader;
 import rikka.librikka.model.loader.ModelGeometryWrapper;
 import simelectricity.essential.Essential;
-import simelectricity.essential.client.grid.GridRenderMonitor;
 import simelectricity.essential.client.grid.pole.CableJointModel;
 import simelectricity.essential.client.grid.pole.ConcretePole35kVModel;
 import simelectricity.essential.client.grid.pole.ConcretePoleModel;
@@ -22,9 +20,9 @@ import simelectricity.essential.client.grid.transformer.DistributionTransformerF
 import simelectricity.essential.grid.BlockPoleConcrete;
 import simelectricity.essential.grid.transformer.EnumDistributionTransformerBlockType;
 
-public class BuiltInModelLoader implements IModelLoader<ModelGeometryWrapper> {
-	public final static ResourceLocation id = new ResourceLocation(Essential.MODID, "builtin");
-	public final static IModelLoader<?> instance = new BuiltInModelLoader();
+public class BuiltInModelLoader implements IGeometryLoader<ModelGeometryWrapper> {
+	public final static ResourceLocation id = ResourceLocation.fromNamespaceAndPath(Essential.MODID, "builtin");
+	public final static IGeometryLoader<ModelGeometryWrapper> instance = new BuiltInModelLoader();
 	public final static String dir = "block/builtin/";
 	
 	public static JsonObject serialize(String type) {
@@ -36,7 +34,7 @@ public class BuiltInModelLoader implements IModelLoader<ModelGeometryWrapper> {
 	}
 
 	@Override
-	public ModelGeometryWrapper read(JsonDeserializationContext deserializationContext, JsonObject modelContents) {	
+	public ModelGeometryWrapper read(JsonObject modelContents, JsonDeserializationContext deserializationContext) {	
 		final String type = GsonHelper.getAsString(modelContents, "type");
 
 		if (type.equals("cable_joint_10kv")) {
@@ -102,12 +100,6 @@ public class BuiltInModelLoader implements IModelLoader<ModelGeometryWrapper> {
 			}
 		}
 
-
 		throw new RuntimeException("\"" + type + "\" is not implemented by " + id.toString());
-	}
-	
-	@Override
-	public void onResourceManagerReload(ResourceManager resourceManager) {
-		GridRenderMonitor.instance.markLoadedPowerPoleForRenderingUpdate();
 	}
 }

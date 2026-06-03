@@ -8,9 +8,9 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import rikka.librikka.gui.GuiDirectionSelector;
 import simelectricity.essential.utils.network.MessageContainerSync;
 
@@ -18,7 +18,7 @@ import simelectricity.essential.utils.network.MessageContainerSync;
 public abstract class SEGuiContainer<TC extends AbstractContainerMenu> extends AbstractContainerScreen<TC> {
     protected final TC container;
     protected GuiDirectionSelector directionSelector;
-    private static final ResourceLocation dsTexture = new ResourceLocation("sime_essential:textures/gui/direction_selector.png");
+    private static final ResourceLocation dsTexture = ResourceLocation.parse("sime_essential:textures/gui/direction_selector.png");
 
     public SEGuiContainer(TC screenContainer, Inventory inv, Component titleIn) {
         super(screenContainer, inv, titleIn);
@@ -26,13 +26,13 @@ public abstract class SEGuiContainer<TC extends AbstractContainerMenu> extends A
     }
 
     protected Button addServerButton(int id, int x, int y, int width, int height, String text) {
-    	return addServerButton(id, x, y, width, height, new TextComponent(text));
+    	return addServerButton(id, x, y, width, height, net.minecraft.network.chat.Component.literal(text));
     }
 
     protected Button addServerButton(int id, int x, int y, int width, int height, Component text) {
-        return this.addRenderableWidget(new Button(x, y, width, height, text, (button) -> {
+        return this.addRenderableWidget(Button.builder(text, (button) -> {
         	MessageContainerSync.sendButtonClickEventToSever(container, id, Screen.hasControlDown());
-        }));
+        }).bounds(x, y, width, height).build());
     }
 
     protected GuiDirectionSelector addDirectionSelector(int x, int y) {

@@ -6,11 +6,11 @@ import net.minecraft.core.Direction;
 import rikka.librikka.container.ContainerSynchronizer;
 import rikka.librikka.gui.AutoGuiHandler;
 import simelectricity.essential.common.ContainerNoInventoryTwoPort;
-import simelectricity.essential.machines.tile.TileRelay;
+import simelectricity.essential.machines.blockentity.BlockEntityRelay;
 import simelectricity.essential.utils.network.ISEButtonEventHandler;
 
 @AutoGuiHandler.Marker(GuiRelay.class)
-public class ContainerRelay extends ContainerNoInventoryTwoPort<TileRelay> implements ISEButtonEventHandler {
+public class ContainerRelay extends ContainerNoInventoryTwoPort<BlockEntityRelay> implements ISEButtonEventHandler {
     @ContainerSynchronizer.SyncField
     public volatile double resistance;
     @ContainerSynchronizer.SyncField
@@ -21,7 +21,7 @@ public class ContainerRelay extends ContainerNoInventoryTwoPort<TileRelay> imple
     public volatile Direction inputSide, outputSide;
 
     // Server side
-    public ContainerRelay(TileRelay tileEntity, int windowId, Player player) {
+    public ContainerRelay(BlockEntityRelay tileEntity, int windowId, Player player) {
     	super(tileEntity, windowId, player);
     }
 

@@ -3,7 +3,6 @@ package simelectricity.essential.common.semachine;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.SoundType;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -27,7 +26,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 public abstract class SEMachineBlock extends BlockBase implements EntityBlock {
     public SEMachineBlock(String unlocalizedName) {
         super(unlocalizedName,
-        		BlockBehaviour.Properties.of(Material.METAL)
+        		BlockBehaviour.Properties.of()
         		.sound(SoundType.METAL)
         		.strength(3.0F, 10.0F)
         		, SEAPI.SETab);

@@ -1,9 +1,10 @@
 package simelectricity.extension.facades;
 
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.ModList;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import simelectricity.essential.api.ISECoverPanelFactory;
 import simelectricity.essential.api.SEEAPI;
 
@@ -16,7 +17,7 @@ public class Facades {
     public static boolean teThermalDynamicLoaded;
     public static boolean bcTransportLoaded;
 
-    @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
+    @EventBusSubscriber(modid = MODID, bus = EventBusSubscriber.Bus.MOD)
     public final static class ModEventBusHandler {
     	@SubscribeEvent
     	public static void onCommonSetup(FMLCommonSetupEvent event) {

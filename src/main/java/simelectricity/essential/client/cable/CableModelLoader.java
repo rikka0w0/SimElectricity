@@ -4,24 +4,18 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonObject;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.client.model.IModelLoader;
+import net.neoforged.neoforge.client.model.geometry.IGeometryLoader;
 import rikka.librikka.model.loader.ModelGeometryWrapper;
 import simelectricity.essential.Essential;
 
-public class CableModelLoader implements IModelLoader<ModelGeometryWrapper> {
-	public final static ResourceLocation id = new ResourceLocation(Essential.MODID, "cable");
+public class CableModelLoader implements IGeometryLoader<ModelGeometryWrapper> {
+	public final static ResourceLocation id = ResourceLocation.fromNamespaceAndPath(Essential.MODID, "cable");
 	public final static CableModelLoader instance = new CableModelLoader();
 	
 	@Override
-	public void onResourceManagerReload(ResourceManager resourceManager) {
-		
-	}
-
-	@Override
-	public ModelGeometryWrapper read(JsonDeserializationContext deserializationContext, JsonObject modelContents) {
+	public ModelGeometryWrapper read(JsonObject modelContents, JsonDeserializationContext deserializationContext) {
 		final String type = GsonHelper.getAsString(modelContents, "type");
 		final float thickness = GsonHelper.getAsFloat(modelContents, "thickness");
 		JsonObject textures = GsonHelper.getAsJsonObject(modelContents, "textures");
@@ -50,7 +44,7 @@ public class CableModelLoader implements IModelLoader<ModelGeometryWrapper> {
 		textures.addProperty("insulator", insulator.toString());
 		textures.addProperty("conductor", conductor.toString());
 		root.add("textures", textures);
-
+		
 		return root;
 	}
 }

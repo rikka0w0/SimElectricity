@@ -6,9 +6,9 @@ A Minecraft mod aiming to bring real world electrical systems into the Minecraft
 
 Brought to you by the Chinese Institution of Scientific Minecraft Mod (CISM)
 
-Current Supported Version: Minecraft Forge 1.18.1
+Current Supported Version: NeoForge 1.21.1
 
-Legacy versions: Minecraft Forge 1.17.1, 1.16.5(1.16.2 to 1.16.5), 1.15.2, 1.14.4, 1.12.2, 1.11.2, 1.7.10
+Legacy versions: Minecraft Forge 1.18.1, 1.17.1, 1.16.5(1.16.2 to 1.16.5), 1.15.2, 1.14.4, 1.12.2, 1.11.2, 1.7.10
 
 ![Image](https://raw.githubusercontent.com/wiki/RoyalAliceAcademyOfSciences/SimElectricity/screenshots/grid.jpg)
 
@@ -44,15 +44,10 @@ and comments in the API source code (`package simelectricity.api`).
 
 ## Eclipse
 1. Setup the environment first (See section "Setup Environment")
-1. In the SimElectricity directory execute `gradlew genEclipseRuns` to generate the workspace and launch configuration
 1. Launch Eclipse, then `Import > Existing Gradle Project > Select Folder`
-1. Go to `Debug Configuration` (Next to the debug icon), edit `MOD_CLASSES` in the `Environment` tab:
-Replace `simelectricity%%<SomePath>\SimElectricity\bin\main;simelectricity%%<SomePath>\SimElectricity\bin\main` with
-`simelectricity%%<SomePath>\SimElectricity\bin\main;librikka%%<SomePath>\SimElectricity\librikka\bin\main`.
 
 ## IntelliJ IDEA
 1. Setup the environment first (See section "Setup Environment")
-1. Execute `gradlew genIntellijRuns`
 1. In IDEA, import build.gradle as a gradle project
 ## Notes
 1. Advanced users only: There are two hidden gradlew tasks: `energyNetDevJar` and `energyNetJar`, 
@@ -60,11 +55,12 @@ Replace `simelectricity%%<SomePath>\SimElectricity\bin\main;simelectricity%%<Som
 1. Since 1.15.2, Mojang introduces "DataGenerators", they generate json resource files such as blockstates and models.
 They are invoked separately. Before building or testing this Mod, you have to execute the gradle task "runData". 
 Checkout: [https://minecraft.gamepedia.com/Tutorials/Running_the_Data_Generator](https://minecraft.gamepedia.com/Tutorials/Running_the_Data_Generator)
-1. Since 1.18.1, Minecraft requires Java 17. To specify JRE path, use './gradlew -Dorg.gradle.java.home=/path_to_jdk_directory <commands>'.
+1. Since 1.21.1, Minecraft requires Java 21. To specify JRE path, use './gradlew -Dorg.gradle.java.home=/path_to_jdk_directory <commands>'.
 
 ## Special Thanks To: ![Image](/src/main/resources/assets/sime_essential/textures/item/tool_glove.png)
 * [LibRikka](https://github.com/rikka0w0/librikka) - A code pack designed to simplify Minecraft Modding
 * [CSPARSEJ](https://github.com/rwl/CSparseJ) - CSparseJ is a Java port of CSparse, a Concise Sparse matrix package.
+* [NeoForge](https://github.com/neoforged/NeoForge) - A modern Minecraft modding API
 * [Minecraft Forge](https://github.com/MinecraftForge/MinecraftForge) - A Minecraft mod container and loader
 * [LambdaLib](https://github.com/LambdaInnovation/LambdaLib) - A modding library that aims at making modding fluent and enjoyable.
 * Also, inspired by [BuildCraft](https://github.com/BuildCraft/BuildCraft) and

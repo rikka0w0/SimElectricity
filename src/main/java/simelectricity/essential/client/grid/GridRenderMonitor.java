@@ -3,9 +3,8 @@ package simelectricity.essential.client.grid;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.event.TickEvent.ClientTickEvent;
-import net.minecraftforge.event.TickEvent.Phase;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.neoforged.neoforge.client.event.ClientTickEvent;
+import net.neoforged.bus.api.SubscribeEvent;
 import simelectricity.common.SELogger;
 import simelectricity.essential.client.grid.accessory.PoleAccessoryRendererDispatcher;
 
@@ -26,10 +25,7 @@ public enum GridRenderMonitor {
     }
 
     @SubscribeEvent
-    public void tick(ClientTickEvent event) {
-        if (event.phase == Phase.END)
-            return;
-
+    public void tick(ClientTickEvent.Pre event) {
         if (this.affactedTiles.isEmpty())
             return;
 

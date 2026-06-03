@@ -11,7 +11,8 @@ public class TECoverFactory implements ISECoverPanelFactory{
     	if (!itemStack.getItem().getDescriptionId().startsWith("item.thermaldynamics.cover"))
     		return null;
     	
-        CompoundTag nbt = itemStack.getTag();
+        net.minecraft.world.item.component.CustomData customData = itemStack.get(net.minecraft.core.component.DataComponents.CUSTOM_DATA);
+        CompoundTag nbt = customData != null ? customData.copyTag() : null;
         if (nbt == null)
         	return null;
 

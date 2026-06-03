@@ -2,12 +2,12 @@ package simelectricity.essential.api;
 
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.core.Direction;
-import net.minecraftforge.client.model.data.ModelProperty;
-import simelectricity.api.tile.ISEWireTile;
+import net.neoforged.neoforge.client.model.data.ModelProperty;
+import simelectricity.api.blockentity.ISEWireBlockEntity;
 
 import java.util.List;
 
-public interface ISEGenericWire extends ISEWireTile, ISEChunkWatchSensitiveTile{
+public interface ISEGenericWire extends ISEWireBlockEntity, ISEChunkWatchSensitiveBlockEntity{
 	public static ModelProperty<ISEGenericWire> prop = new ModelProperty<>();
 	
     // Server-Only functions

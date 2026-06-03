@@ -6,8 +6,7 @@ import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.client.MinecraftForgeClient;
-import net.minecraftforge.client.model.data.IModelData;
+import net.neoforged.neoforge.client.model.data.ModelData;
 import rikka.librikka.model.CodeBasedModel;
 import rikka.librikka.model.quadbuilder.IRawModel;
 import rikka.librikka.model.quadbuilder.RawQuadCube;
@@ -17,7 +16,7 @@ import simelectricity.essential.cable.BlockWire;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
+import net.minecraft.util.RandomSource;
 import java.util.function.Function;
 
 public class WireModel extends CodeBasedModel {
@@ -42,14 +41,14 @@ public class WireModel extends CodeBasedModel {
     }
 
     @Override
-	public List<BakedQuad> getQuads(BlockState state, Direction cullingSide, Random rand, IModelData extraData) {
+    public List<BakedQuad> getQuads(BlockState state, Direction cullingSide, RandomSource rand, ModelData extraData, RenderType renderType) {
         List<BakedQuad> quads = new ArrayList<BakedQuad>();
 
-        ISEGenericWire wireTile = extraData.getData(ISEGenericWire.prop);        
+        ISEGenericWire wireTile = extraData.get(ISEGenericWire.prop);        
         
         if (cullingSide == null) {
             //Render center & branches in SOLID layer
-            if (MinecraftForgeClient.getRenderType() == RenderType.solid()) {
+            if (renderType == RenderType.solid()) {
                 for (Direction wire_side: Direction.values()) {
                     byte numOfCon = 0;
                     Direction conSide = Direction.DOWN;
@@ -132,6 +131,11 @@ public class WireModel extends CodeBasedModel {
         }
 
         return quads;
+    }
+
+    @Override
+    public List<BakedQuad> getQuads(BlockState state, Direction cullingSide, RandomSource rand, ModelData extraData) {
+        return getQuads(state, cullingSide, rand, extraData, RenderType.solid());
     }
 
     private void translateGroupCoord(Direction wire_side, IRawModel<?> group) {

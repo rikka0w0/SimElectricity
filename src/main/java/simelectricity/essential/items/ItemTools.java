@@ -23,9 +23,9 @@ import simelectricity.api.components.ISEVoltageSource;
 import simelectricity.api.node.ISEGridNode;
 import simelectricity.api.node.ISESimulatable;
 import simelectricity.api.node.ISESubComponent;
-import simelectricity.api.tile.ISECableTile;
-import simelectricity.api.tile.ISEGridTile;
-import simelectricity.api.tile.ISETile;
+import simelectricity.api.blockentity.ISECableBlockEntity;
+import simelectricity.api.blockentity.ISEGridBlockEntity;
+import simelectricity.api.blockentity.ISEBlockEntity;
 import simelectricity.essential.api.ISECoverPanelHost;
 import simelectricity.essential.api.ISENodeDelegateBlock;
 import simelectricity.essential.api.coverpanel.ISECoverPanel;
@@ -54,8 +54,7 @@ public final class ItemTools extends ItemBase implements IMetaProvider<IMetaBase
 
     private ItemTools(ItemType itemType) {
         super("tool_" + itemType.name(), (new Item.Properties())
-        		.stacksTo(1)
-        		.tab(SEAPI.SETab));
+        		.stacksTo(1));
         this.itemType = itemType;
     }
 
@@ -67,6 +66,10 @@ public final class ItemTools extends ItemBase implements IMetaProvider<IMetaBase
     @Override
     public InteractionResult useOn(UseOnContext context) {
     	return itemType.handler.apply(context);
+    }
+
+    public static ItemTools createItem(ItemType itemType) {
+        return new ItemTools(itemType);
     }
 
     public static ItemTools[] create() {
@@ -181,13 +184,13 @@ public final class ItemTools extends ItemBase implements IMetaProvider<IMetaBase
         	delegatedNode = ((ISENodeDelegateBlock<?>) block).getNode(world, pos);
         }
 
-        if (!(	te instanceof ISECableTile ||
-        		te instanceof ISETile ||
-        		te instanceof ISETile) && delegatedNode == null)
+        if (!(	te instanceof ISECableBlockEntity ||
+        		te instanceof ISEBlockEntity ||
+        		te instanceof ISEBlockEntity) && delegatedNode == null)
             return InteractionResult.PASS;
 
         Utils.chat(player, "------------------");
-        player.sendMessage(BlockUtils.getDisplayName(world, pos), net.minecraft.Util.NIL_UUID);
+        player.sendSystemMessage(BlockUtils.getDisplayName(world, pos));
 
         if (block instanceof ISENodeDelegateBlock) {
         	delegatedNode = ((ISENodeDelegateBlock<?>) block).getNode(world, pos);
@@ -196,14 +199,14 @@ public final class ItemTools extends ItemBase implements IMetaProvider<IMetaBase
             }
         }
 
-        if (te instanceof ISECableTile) {
-            ISESimulatable node = ((ISECableTile) te).getNode();
+        if (te instanceof ISECableBlockEntity) {
+            ISESimulatable node = ((ISECableBlockEntity) te).getNode();
             if (node != delegatedNode)
             	ItemTools.printVI(node, player);
         }
 
-        if (te instanceof ISETile) {
-            ISETile tile = (ISETile) te;
+        if (te instanceof ISEBlockEntity) {
+            ISEBlockEntity tile = (ISEBlockEntity) te;
 
             for (Direction dir : Direction.values()) {
                 ISESubComponent<?> comp = tile.getComponent(dir);
@@ -224,8 +227,8 @@ public final class ItemTools extends ItemBase implements IMetaProvider<IMetaBase
 
         }
 
-        if (te instanceof ISEGridTile) {
-            ISEGridNode node = ((ISEGridTile) te).getGridNode();
+        if (te instanceof ISEGridBlockEntity) {
+            ISEGridNode node = ((ISEGridBlockEntity) te).getGridNode();
             if (node != delegatedNode)
             	ItemTools.printVI(node, player);
         }
@@ -275,8 +278,8 @@ public final class ItemTools extends ItemBase implements IMetaProvider<IMetaBase
 
         if (delegatedNode instanceof ISEGridNode) {
             gridNode = (ISEGridNode) delegatedNode;
-        } else if (te instanceof ISEGridTile) {
-            gridNode = ((ISEGridTile)te).getGridNode();
+        } else if (te instanceof ISEGridBlockEntity) {
+            gridNode = ((ISEGridBlockEntity)te).getGridNode();
         }
 
         if (gridNode == null) {
@@ -306,8 +309,8 @@ public final class ItemTools extends ItemBase implements IMetaProvider<IMetaBase
             ISEGridNode lastNode = null;
             if (delegatedNode instanceof ISEGridNode) {
                 lastNode = (ISEGridNode) delegatedNode;
-            } else if (lastTE instanceof ISEGridTile) {
-                lastNode = ((ISEGridTile)lastTE).getGridNode();
+            } else if (lastTE instanceof ISEGridBlockEntity) {
+                lastNode = ((ISEGridBlockEntity)lastTE).getGridNode();
             }
 
             if (lastNode == null) {

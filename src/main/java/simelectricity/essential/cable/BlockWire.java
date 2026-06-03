@@ -2,7 +2,6 @@ package simelectricity.essential.cable;
 
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.EntityBlock;
@@ -30,16 +29,17 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
+
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.Level;
 import net.minecraft.util.Mth;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import rikka.librikka.IMetaProvider;
 import rikka.librikka.MarkedBlockHitResult;
 import rikka.librikka.RayTraceHelper;
@@ -49,8 +49,8 @@ import rikka.librikka.block.BlockUtils;
 import rikka.librikka.block.ICustomBoundingBox;
 import rikka.librikka.item.ItemBlockBase;
 import simelectricity.api.SEAPI;
-import simelectricity.api.tile.ISECableTile;
-import simelectricity.api.tile.ISEWireTile;
+import simelectricity.api.blockentity.ISECableBlockEntity;
+import simelectricity.api.blockentity.ISEWireBlockEntity;
 import simelectricity.essential.Essential;
 import simelectricity.essential.api.ISEGenericCable;
 import simelectricity.essential.api.ISEGenericWire;
@@ -91,13 +91,13 @@ public class BlockWire extends BlockBase implements EntityBlock, ICustomBounding
 
     private BlockWire(ISECableMeta meta) {
         this("wire", meta,
-        		BlockBehaviour.Properties.of(Material.GLASS)
+        		BlockBehaviour.Properties.of()
         		.strength(0.2F, 10.0F)
         		.sound(SoundType.METAL)
         		.isRedstoneConductor((a,b,c)->false),
         		ItemBlockWire::new,
-        		(new Item.Properties()).tab(SEAPI.SETab),
-                Essential.beTypeOf(TileWire.class)::get);
+        		(new Item.Properties()),
+                Essential.beTypeOf(BlockEntityWire.class)::get);
     }
 
     public static BlockWire[] create() {
@@ -106,6 +106,10 @@ public class BlockWire extends BlockBase implements EntityBlock, ICustomBounding
     		ret[cableData.ordinal()] = new BlockWire(cableData);
     	}
     	return ret;
+    }
+
+    public static BlockWire createBlock(ISECableMeta meta) {
+    	return new BlockWire(meta);
     }
 
 
@@ -237,7 +241,7 @@ public class BlockWire extends BlockBase implements EntityBlock, ICustomBounding
 
                             if (!wireTile.hasBranch(to, facing.getOpposite()) &&
                                     (BlockUtils.isSideSolid(world, pos.relative(to), to.getOpposite()) ||
-                                            world.getBlockEntity(pos.relative(to)) instanceof ISECableTile)) {
+                                            world.getBlockEntity(pos.relative(to)) instanceof ISECableBlockEntity)) {
                                 shrinkItem = blockWire.addBranch(wireTile, to, facing.getOpposite(), itemStack, world.isClientSide);
                             }
                         } else {
@@ -246,13 +250,13 @@ public class BlockWire extends BlockBase implements EntityBlock, ICustomBounding
                                     // Add branch in neighbor
                                     if (!((ISEGenericWire) teNew).hasBranch(tr_side, tr_branch.getOpposite()) &&
                                             (BlockUtils.isSideSolid(world, pos.relative(facing).relative(tr_side), tr_side.getOpposite()) ||
-                                                    world.getBlockEntity(pos.relative(tr_branch).relative(tr_side)) instanceof ISECableTile)) {
+                                                    world.getBlockEntity(pos.relative(tr_branch).relative(tr_side)) instanceof ISECableBlockEntity)) {
                                         shrinkItem = blockWire.addBranch((ISEGenericWire) teNew, tr_side, tr_branch.getOpposite(), itemStack, world.isClientSide);
                                     }
                                 } else {
                                     // Block edge, try to place a new neighbor wire
                                     if (BlockUtils.isSideSolid(world, pos.relative(tr_branch).relative(tr_side), tr_side.getOpposite()) ||
-                                            world.getBlockEntity(pos.relative(tr_branch).relative(tr_side)) instanceof ISECableTile) {
+                                            world.getBlockEntity(pos.relative(tr_branch).relative(tr_side)) instanceof ISECableBlockEntity) {
                                         nextPlacedSide.set(tr_side);
                                         nextPlacedto.set(tr_branch.getOpposite());
                                         nextPlacedItemStack.set(itemStack);
@@ -388,9 +392,9 @@ public class BlockWire extends BlockBase implements EntityBlock, ICustomBounding
     }
 
 
-    private final Supplier<BlockEntityType<? extends TileWire>> beType;
+    private final Supplier<BlockEntityType<? extends BlockEntityWire>> beType;
     protected BlockWire(String name, ISECableMeta meta, BlockBehaviour.Properties props, ItemBlockBase.Constructor itemBlockProvider,
-    		Item.Properties itemProps, Supplier<BlockEntityType<? extends TileWire>> beType) {
+    		Item.Properties itemProps, Supplier<BlockEntityType<? extends BlockEntityWire>> beType) {
     	super(name+"_"+meta.name(), props, itemBlockProvider, itemProps);
     	this.registerDefaultState(this.defaultBlockState().setValue(BlockStateProperties.WATERLOGGED, false));
         this.meta = meta;
@@ -441,16 +445,15 @@ public class BlockWire extends BlockBase implements EntityBlock, ICustomBounding
 
     @Override
     @OnlyIn(Dist.CLIENT)
-    public void appendHoverText(ItemStack stack, @Nullable BlockGetter worldIn, List<Component> tooltip, TooltipFlag flagIn) {
-    	tooltip.add(new TextComponent(
-    			I18n.get("gui.simelectricity.resistivity") + ": " +
+    public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flagIn) {
+    	tooltip.add(Component.literal(I18n.get("gui.simelectricity.resistivity") + ": " +
     			SEUnitHelper.getStringWithoutUnit(2F*meta.resistivity()) + "\u03a9/m"
-    			));;
+    			));
     }
 
 	@Override
 	public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        TileWire wire;
+        BlockEntityWire wire;
         try {
             wire = beType.get().create(pos, state);
             //if (!world.isRemote)    //createTileEntity is only called by the server thread when the block is placed at the first
@@ -694,7 +697,7 @@ public class BlockWire extends BlockBase implements EntityBlock, ICustomBounding
         BlockEntity te = world.getBlockEntity(pos);
 
         VoxelShape vs = Shapes.empty();
-        if (!(te instanceof ISEWireTile))
+        if (!(te instanceof ISEWireBlockEntity))
             return vs;
 
         ISEGenericWire wireTile = (ISEGenericWire) te;
@@ -778,7 +781,7 @@ public class BlockWire extends BlockBase implements EntityBlock, ICustomBounding
             return ret;  //This is not supposed to happen
 
         ISEGenericWire wireTile = (ISEGenericWire) te;
-        MarkedBlockHitResult<Integer> trace = rayTrace(world, pos, Essential.proxy.getClientPlayer());
+        MarkedBlockHitResult<Integer> trace = rayTrace(world, pos, getClientPlayer());
 
         if (trace == null || trace.subHit < 0 || !pos.equals(trace.getBlockPos())) {
             // Perhaps we aren't the object the mouse is over
@@ -916,7 +919,7 @@ public class BlockWire extends BlockBase implements EntityBlock, ICustomBounding
     }
 
     @Override
-    public ItemStack getCloneItemStack(BlockState state, HitResult target, BlockGetter world, BlockPos pos, Player player) {
+    public ItemStack getCloneItemStack(BlockState state, HitResult target, LevelReader world, BlockPos pos, Player player) {
         BlockEntity te = world.getBlockEntity(pos);
         if (!(te instanceof ISEGenericWire))
             return ItemStack.EMPTY;
@@ -936,5 +939,12 @@ public class BlockWire extends BlockBase implements EntityBlock, ICustomBounding
         }
 
         return ItemStack.EMPTY;
+    }
+
+    private Player getClientPlayer() {
+        if (net.neoforged.fml.loading.FMLEnvironment.dist == net.neoforged.api.distmarker.Dist.CLIENT) {
+            return simelectricity.essential.client.ClientHelper.getClientPlayer();
+        }
+        return null;
     }
 }

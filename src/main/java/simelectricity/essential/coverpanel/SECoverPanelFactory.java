@@ -27,19 +27,19 @@ public class SECoverPanelFactory implements ISECoverPanelFactory {
         if (item instanceof ItemPanel) {
         	ItemPanel.ItemType type = ((ItemPanel) item).itemType;
         	if (type == ItemPanel.ItemType.facade) {
-        		CompoundTag bsNBT = itemStack.getTag();
+        		CompoundTag bsNBT = itemStack.get(net.minecraft.core.component.DataComponents.CUSTOM_DATA) != null ? itemStack.get(net.minecraft.core.component.DataComponents.CUSTOM_DATA).copyTag() : null;
         		BlockState blockstate = Blocks.AIR.defaultBlockState();
         		if (bsNBT != null && bsNBT.contains("facade_blockstate")) {
         			bsNBT = bsNBT.getCompound("facade_blockstate");
-        			blockstate = NbtUtils.readBlockState(bsNBT);
+        			blockstate = NbtUtils.readBlockState(net.minecraft.core.registries.BuiltInRegistries.BLOCK.asLookup(), bsNBT);
         		}
         		return new FacadePanel.FacadeNormal(blockstate, itemStack);
         	} else if (type == ItemPanel.ItemType.facade_hollow) {
-        		CompoundTag bsNBT = itemStack.getTag();
+        		CompoundTag bsNBT = itemStack.get(net.minecraft.core.component.DataComponents.CUSTOM_DATA) != null ? itemStack.get(net.minecraft.core.component.DataComponents.CUSTOM_DATA).copyTag() : null;
         		BlockState blockstate = Blocks.AIR.defaultBlockState();
         		if (bsNBT != null && bsNBT.contains("facade_blockstate")) {
         			bsNBT = bsNBT.getCompound("facade_blockstate");
-        			blockstate = NbtUtils.readBlockState(bsNBT);
+        			blockstate = NbtUtils.readBlockState(net.minecraft.core.registries.BuiltInRegistries.BLOCK.asLookup(), bsNBT);
         		}
         		return new FacadePanel.FacadeHollow(blockstate, itemStack);
         	}

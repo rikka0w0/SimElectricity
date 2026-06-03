@@ -1,43 +1,44 @@
 package simelectricity.common;
 
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.fml.event.config.ModConfigEvent;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.ModLoadingContext;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.config.ModConfig;
+import net.neoforged.fml.event.config.ModConfigEvent;
 import rikka.librikka.ForgeConfigHelper;
 
 import org.apache.commons.lang3.tuple.Pair;
-import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
+import net.neoforged.neoforge.common.ModConfigSpec;
+import net.neoforged.neoforge.common.ModConfigSpec.BooleanValue;
 import simelectricity.SimElectricity;
 import simelectricity.energynet.EnergyNet;
 import simelectricity.energynet.EnergyNetAgent;
 import simelectricity.essential.Essential;
 
-@Mod.EventBusSubscriber(modid = SimElectricity.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = SimElectricity.MODID, bus = EventBusSubscriber.Bus.MOD)
 public class ConfigManager {
     public final static String CATEGORY_ENERGYNET = "energynet";
 
     public static BooleanValue showDebugOutput_Spec;
     public static BooleanValue showEnergyNetInfo_Spec;
-    public static ForgeConfigSpec.IntValue maxIteration_Spec;
-    public static ForgeConfigSpec.ConfigValue<String> matrixSolver;
-    public static ForgeConfigSpec.IntValue precision;
-    public static ForgeConfigSpec.IntValue shuntPN;
-    public static ForgeConfigSpec.DoubleValue joule2rf;
+    public static ModConfigSpec.IntValue maxIteration_Spec;
+    public static ModConfigSpec.ConfigValue<String> matrixSolver;
+    public static ModConfigSpec.IntValue precision;
+    public static ModConfigSpec.IntValue shuntPN;
+    public static ModConfigSpec.DoubleValue joule2rf;
 
     public static boolean showDebugOutput;
     public static boolean showEnergyNetInfo;
     public static int maxIteration;
 
-    private static ForgeConfigSpec configSpec;
+    private static ModConfigSpec configSpec;
 
     public static void register() {
-        Pair<ConfigManager, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(ConfigManager::new);
+        Pair<ConfigManager, ModConfigSpec> specPair = new ModConfigSpec.Builder().configure(ConfigManager::new);
         configSpec = specPair.getRight();
 
-        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, ConfigManager.configSpec);
+        ModLoadingContext.get().getActiveContainer().registerConfig(ModConfig.Type.COMMON, ConfigManager.configSpec);
     }
 
     public static void syncConfig() {
@@ -56,7 +57,7 @@ public class ConfigManager {
         }
     }
 
-    private ConfigManager(ForgeConfigSpec.Builder builder) {
+    private ConfigManager(ModConfigSpec.Builder builder) {
         builder.push(CATEGORY_ENERGYNET);
 
         showDebugOutput_Spec = ForgeConfigHelper.boolVal(builder, SimElectricity.MODID, "Enable Debug Output", false, "Display debug information in the console, e.g. S->C sync notifications");

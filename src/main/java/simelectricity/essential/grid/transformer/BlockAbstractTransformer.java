@@ -5,20 +5,18 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 import net.minecraft.world.level.block.SoundType;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.storage.loot.LootContext;
+
 import rikka.librikka.block.BlockBase;
 import rikka.librikka.item.ItemBlockBase;
 import rikka.librikka.multiblock.MultiBlockStructure;
@@ -27,11 +25,11 @@ import rikka.librikka.multiblock.MultiBlockStructure.Result;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 
 public abstract class BlockAbstractTransformer extends BlockBase {
-    public BlockAbstractTransformer(String unlocalizedName, Material material, CreativeModeTab group) {
+    public BlockAbstractTransformer(String unlocalizedName) {
 		super(unlocalizedName,
-				BlockBehaviour.Properties.of(material).strength(3.0F, 10.0F).sound(SoundType.METAL).isRedstoneConductor((a,b,c)->false),
+				BlockBehaviour.Properties.of().strength(3.0F, 10.0F).sound(SoundType.METAL).isRedstoneConductor((a,b,c)->false),
 				ItemBlockBase::new,
-				(new Item.Properties()).tab(group));
+				(new Item.Properties()));
 	}
 
     protected abstract MultiBlockStructure getBlueprint();
@@ -64,7 +62,7 @@ public abstract class BlockAbstractTransformer extends BlockBase {
     }
 
     @Override
-    public List<ItemStack> getDrops(BlockState state, LootContext.Builder builder) {
+    protected List<ItemStack> getDrops(BlockState state, net.minecraft.world.level.storage.loot.LootParams.Builder builder) {
     	List<ItemStack> ret = new java.util.ArrayList<ItemStack>();
 
     	ItemStack itemStack = getItemToDrop(state);
@@ -78,7 +76,7 @@ public abstract class BlockAbstractTransformer extends BlockBase {
      * Creative-mode middle mouse button clicks
      */
     @Override
-    public ItemStack getCloneItemStack(BlockGetter world, BlockPos pos, BlockState state) {
+    public ItemStack getCloneItemStack(net.minecraft.world.level.LevelReader world, BlockPos pos, BlockState state) {
     	return getItemToDrop(state);
     }
 }

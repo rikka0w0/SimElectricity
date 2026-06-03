@@ -2,7 +2,6 @@ package simelectricity.essential.grid.transformer;
 
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -24,7 +23,7 @@ import rikka.librikka.multiblock.BlockMapping;
 import rikka.librikka.multiblock.MultiBlockStructure;
 import rikka.librikka.multiblock.MultiBlockTileInfo;
 import simelectricity.api.SEAPI;
-import simelectricity.api.tile.ISEGridTile;
+import simelectricity.api.blockentity.ISEGridBlockEntity;
 import simelectricity.essential.BlockRegistry;
 import simelectricity.essential.api.ISEHVCableConnector;
 
@@ -35,7 +34,7 @@ public class BlockDistributionTransformer extends BlockAbstractTransformer
     public static EnumDistributionTransformerRenderPart[][][] renderParts;
     public final EnumDistributionTransformerBlockType blockType;
 	private BlockDistributionTransformer(EnumDistributionTransformerBlockType blockType) {
-		super("transformer_10kv_415v_"+blockType.getSerializedName(), Material.METAL, blockType.formed ? null : SEAPI.SETab);
+		super("transformer_10kv_415v_"+blockType.getSerializedName());
 		this.blockType = blockType;
 	}
 
@@ -51,6 +50,16 @@ public class BlockDistributionTransformer extends BlockAbstractTransformer
     		};
     	}
     	return ret;
+    }
+
+    public static BlockDistributionTransformer createBlock(final EnumDistributionTransformerBlockType type) {
+    	return new BlockDistributionTransformer(type) {
+    	    @Override
+    	    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+    	    	if (!type.formed)
+    		    	builder.add(BlockStateProperties.HORIZONTAL_FACING);
+    	    }
+    	};
     }
 
     @Override
@@ -115,9 +124,9 @@ public class BlockDistributionTransformer extends BlockAbstractTransformer
 
     	if (blockType.formed) {
     		BlockEntity te = world.getBlockEntity(pos);
-    		if (te instanceof TileDistributionTransformer) {
+    		if (te instanceof BlockEntityDistributionTransformer) {
         		EnumDistributionTransformerRenderPart part =
-        				MultiBlockTileInfo.lookup((TileDistributionTransformer) te, BlockDistributionTransformer.renderParts);
+        				MultiBlockTileInfo.lookup((BlockEntityDistributionTransformer) te, BlockDistributionTransformer.renderParts);
         		if (part == EnumDistributionTransformerRenderPart.TransformerLeft || part == EnumDistributionTransformerRenderPart.TransformerRight)
         			return Shapes.block();
     		}
@@ -130,9 +139,9 @@ public class BlockDistributionTransformer extends BlockAbstractTransformer
     /// ISEHVCableConnector
     ///////////////////
 	@Override
-	public ISEGridTile getGridTile(Level world, BlockPos pos) {
+	public ISEGridBlockEntity getGridTile(Level world, BlockPos pos) {
 		BlockEntity te = world.getBlockEntity(pos);
-		return te instanceof TileDistributionTransformer ? (TileDistributionTransformer)te : null;
+		return te instanceof BlockEntityDistributionTransformer ? (BlockEntityDistributionTransformer)te : null;
 	}
 
     ///////////////////////////////

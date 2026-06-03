@@ -1,6 +1,5 @@
 package simelectricity.essential.grid.transformer;
 
-import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.state.BlockState;
@@ -20,7 +19,7 @@ import rikka.librikka.multiblock.IMultiBlockTile;
 import rikka.librikka.multiblock.MultiBlockStructure;
 import rikka.librikka.multiblock.MultiBlockTileInfo;
 import simelectricity.api.SEAPI;
-import simelectricity.api.tile.ISEGridTile;
+import simelectricity.api.blockentity.ISEGridBlockEntity;
 import simelectricity.essential.BlockRegistry;
 import simelectricity.essential.api.ISEHVCableConnector;
 
@@ -29,7 +28,7 @@ public class BlockPowerTransformer extends BlockAbstractTransformer implements I
     private static Object[][][] collisionBoxes;
 	public final EnumPowerTransformerBlockType blockType;
     private BlockPowerTransformer(EnumPowerTransformerBlockType type) {
-        super("transformer_35kv_10kv_" + type.getSerializedName(), Material.METAL, type.formed ? null : SEAPI.SETab);
+        super("transformer_35kv_10kv_" + type.getSerializedName());
         this.blockType = type;
     }
 
@@ -42,6 +41,14 @@ public class BlockPowerTransformer extends BlockAbstractTransformer implements I
     		ret[type.ordinal()] = new FormedStructureBlock(type);
     	}
     	return ret;
+    }
+
+    public static BlockPowerTransformer createBlock(EnumPowerTransformerBlockType type) {
+    	if (type.formed) {
+    		return new FormedStructureBlock(type);
+    	} else {
+    		return new RawStructureBlock(type);
+    	}
     }
 
     private static class RawStructureBlock extends BlockPowerTransformer {
@@ -232,15 +239,15 @@ public class BlockPowerTransformer extends BlockAbstractTransformer implements I
     /// ISEHVCableConnector
     //////////////////////////////////////
     @Override
-    public ISEGridTile getGridTile(Level world, BlockPos pos) {
+    public ISEGridBlockEntity getGridTile(Level world, BlockPos pos) {
         BlockEntity te = world.getBlockEntity(pos);
 
-        if (te instanceof TilePowerTransformerPlaceHolder.Primary)
-            return ((TilePowerTransformerPlaceHolder.Primary) te).getWinding();
-        else if (te instanceof TilePowerTransformerPlaceHolder.Secondary)
-            return ((TilePowerTransformerPlaceHolder.Secondary) te).getWinding();
-        else if (te instanceof TilePowerTransformerWinding)
-            return (TilePowerTransformerWinding) te;
+        if (te instanceof BlockEntityPowerTransformerPlaceHolder.Primary)
+            return ((BlockEntityPowerTransformerPlaceHolder.Primary) te).getWinding();
+        else if (te instanceof BlockEntityPowerTransformerPlaceHolder.Secondary)
+            return ((BlockEntityPowerTransformerPlaceHolder.Secondary) te).getWinding();
+        else if (te instanceof BlockEntityPowerTransformerWinding)
+            return (BlockEntityPowerTransformerWinding) te;
 
         return null;
     }

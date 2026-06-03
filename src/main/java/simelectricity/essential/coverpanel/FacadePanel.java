@@ -7,8 +7,8 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.core.Direction;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import simelectricity.essential.api.client.ISECoverPanelRender;
 import simelectricity.essential.api.coverpanel.ISECoverPanel;
 import simelectricity.essential.api.coverpanel.ISEFacadeCoverPanel;
@@ -22,8 +22,8 @@ public abstract class FacadePanel implements ISEFacadeCoverPanel {
 	protected FacadePanel(CompoundTag nbt) {
 		this(
 				nbt.getBoolean("isHollow"),
-				NbtUtils.readBlockState(nbt.getCompound("blockstate")),
-				ItemStack.of(nbt.getCompound("itemstack"))
+				NbtUtils.readBlockState(net.minecraft.core.registries.BuiltInRegistries.BLOCK.asLookup(), nbt.getCompound("blockstate")),
+				ItemStack.parse(net.minecraft.data.registries.VanillaRegistries.createLookup(), nbt.getCompound("itemstack")).orElse(ItemStack.EMPTY)
 			);
 	}
 
@@ -51,13 +51,11 @@ public abstract class FacadePanel implements ISEFacadeCoverPanel {
 		nbt.putBoolean("isHollow", isHollow());
 		nbt.put("blockstate", NbtUtils.writeBlockState(blockState));
 
-		CompoundTag nbtItemStack = new CompoundTag();
-		if (itemStack != null) {
-			itemStack.save(nbtItemStack);
-		} else {
-			ItemStack.EMPTY.save(nbtItemStack);
+		if (itemStack != null && !itemStack.isEmpty()) {
+			CompoundTag nbtItemStack = new CompoundTag();
+			itemStack.save(net.minecraft.data.registries.VanillaRegistries.createLookup(), nbtItemStack);
+			nbt.put("itemstack", nbtItemStack);
 		}
-		nbt.put("itemstack", nbtItemStack);
 	}
 
 	@Override

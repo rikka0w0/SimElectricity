@@ -6,12 +6,11 @@ import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.MinecraftForgeClient;
-import net.minecraftforge.client.event.TextureStitchEvent;
+import net.minecraft.util.RandomSource;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import rikka.librikka.model.loader.EasyTextureLoader;
-import rikka.librikka.model.loader.IModelBakeHandler;
+import simelectricity.essential.client.IModelBakeHandler;
 import rikka.librikka.model.quadbuilder.RawQuadCube;
 import simelectricity.essential.Essential;
 import simelectricity.essential.api.client.ISECoverPanelRender;
@@ -19,7 +18,6 @@ import simelectricity.essential.api.coverpanel.ISECoverPanel;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 @OnlyIn(Dist.CLIENT)
 public abstract class GenericCoverPanelRender<T extends ISECoverPanel> implements ISECoverPanelRender<T>, IModelBakeHandler {
@@ -34,15 +32,9 @@ public abstract class GenericCoverPanelRender<T extends ISECoverPanel> implement
     }
     
     protected GenericCoverPanelRender(String modId, String textureName) {
-        textureRes = new ResourceLocation(Essential.MODID, "block/coverpanel/" + textureName);
+        textureRes = ResourceLocation.fromNamespaceAndPath(Essential.MODID, "block/coverpanel/" + textureName);
     }
 
-    @Override
-    public void onPreTextureStitchEvent(TextureStitchEvent.Pre event) {
-    	if (EasyTextureLoader.isBlockAtlas(event))
-        	event.addSprite(textureRes);
-    }
-    
     @Override
     public BakedModel onModelBakeEvent() {
     	this.texture = EasyTextureLoader.blockTextureGetter().apply(textureRes);
@@ -133,8 +125,8 @@ public abstract class GenericCoverPanelRender<T extends ISECoverPanel> implement
     }
 
     @Override
-    public void renderCoverPanel(T coverPanel, Direction side, Random rand, List<BakedQuad> quads) {
-        if (MinecraftForgeClient.getRenderType() != RenderType.solid())
+    public void renderCoverPanel(T coverPanel, Direction side, RandomSource rand, List<BakedQuad> quads, RenderType renderType) {
+        if (renderType != RenderType.solid())
             return;
 
         quads.addAll(this.bakedQuads[side.ordinal()]);

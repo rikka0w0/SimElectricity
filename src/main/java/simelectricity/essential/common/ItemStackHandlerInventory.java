@@ -2,7 +2,7 @@ package simelectricity.essential.common;
 
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.items.IItemHandlerModifiable;
+import net.neoforged.neoforge.items.IItemHandlerModifiable;
 
 public abstract class ItemStackHandlerInventory implements Container {
 	protected IItemHandlerModifiable itemHandler;

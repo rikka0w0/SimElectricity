@@ -1,10 +1,10 @@
 package simelectricity.essential.api;
 
 import net.minecraft.core.Direction;
-import net.minecraftforge.client.model.data.ModelProperty;
-import simelectricity.api.tile.ISECableTile;
+import net.neoforged.neoforge.client.model.data.ModelProperty;
+import simelectricity.api.blockentity.ISECableBlockEntity;
 
-public interface ISEGenericCable extends ISECoverPanelHost, ISECableTile, ISEChunkWatchSensitiveTile {
+public interface ISEGenericCable extends ISECoverPanelHost, ISECableBlockEntity, ISEChunkWatchSensitiveBlockEntity {
 	public static ModelProperty<ISEGenericCable> prop = new ModelProperty<>();
 	
     /**
