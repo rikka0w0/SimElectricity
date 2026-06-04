@@ -18,12 +18,12 @@ Install BuildCraft facades to SimElectricity cable, already included in the SimE
 1. ThermalExpension Extension: Install ThermalDynamics facades to SimElectricity cable, already included in the SimElectricity Essential Mod.
 
 # Setup the Environment ![Image](/src/main/resources/assets/sime_essential/textures/item/tool_multimeter.png)
-1. Ensure `Java` (found [here](https://www.java.com/en/download/manual.jsp)) and `Git` (found [here](http://git-scm.com/)) are properly installed on your system.
+1. Ensure **Java 21** (for Windows users, we recommend **Eclipse Temurin 21 (LTS)** found [here](https://adoptium.net/temurin/releases/?version=21)) and `Git` (found [here](http://git-scm.com/)) are properly installed on your system.
 1. Create a base directory for the repo (anywhere you like)
 1. On Windows, open either 'CMD' or Windows PowerShell, on Linux and MacOS, 
 launch a terminal, then navigate to the directory just created,
 and type the following commands:
-1. `git clone https://github.com/RoyalAliceAcademyOfSciences/SimElectricity`
+1. `git clone https://github.com/rikka0w0/SimElectricity`
 1. `git submodule init` and `git submodule update` to get LibRikka
 * On Windows: use `gradlew.bat` instead of `gradlew`
 
@@ -39,7 +39,7 @@ and type the following commands:
 *  __Obfuscated jars don't have any suffix, these jars are supposed to be used in normal minecraft games, copy them toyour `.minecraft\mods` directory __
 
 # For Developers ![Image](/src/main/resources/assets/sime_essential/textures/item/tool_wrench.png)
-For API Usage, Please refer to the [SimElectricity Github Wiki Pages](https://github.com/RoyalAliceAcademyOfSciences/SimElectricity/wiki)
+For API Usage, Please refer to the [SimElectricity Github Wiki Pages](https://github.com/rikka0w0/SimElectricity/wiki)
 and comments in the API source code (`package simelectricity.api`).
 
 ## Eclipse
@@ -55,7 +55,7 @@ and comments in the API source code (`package simelectricity.api`).
 1. Since 1.15.2, Mojang introduces "DataGenerators", they generate json resource files such as blockstates and models.
 They are invoked separately. Before building or testing this Mod, you have to execute the gradle task "runData". 
 Checkout: [https://minecraft.gamepedia.com/Tutorials/Running_the_Data_Generator](https://minecraft.gamepedia.com/Tutorials/Running_the_Data_Generator)
-1. Since 1.21.1, Minecraft requires Java 21. To specify JRE path, use './gradlew -Dorg.gradle.java.home=/path_to_jdk_directory <commands>'.
+1. Since 1.21.1, Minecraft requires Java 21. For Windows users, we recommend installing **Eclipse Temurin 21 (LTS)**. To specify a custom JRE path, use `gradlew.bat -Dorg.gradle.java.home=/path_to_jdk_directory <commands>` on Windows, or `./gradlew -Dorg.gradle.java.home=/path_to_jdk_directory <commands>` on Linux/macOS.
 
 ## Special Thanks To: ![Image](/src/main/resources/assets/sime_essential/textures/item/tool_glove.png)
 * [LibRikka](https://github.com/rikka0w0/librikka) - A code pack designed to simplify Minecraft Modding

@@ -70,20 +70,14 @@ public final class EnergyNet {
      * Called at pre-tick stage
      */
     public synchronized void onPreTick() {
-        if (this.simulator.isAlive() && this.simulator.isWorking()) {
-            SELogger.logWarn(SELogger.simulator, "Simulation takes longer than usual!");
-
-            while (this.simulator.isWorking()) {
-                try {
-                    Thread.sleep(1);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-
         if (this.simulator.isNewResultAvaliable()) {
             this.dataProvider.onNewResultAvailable();
+        }
+
+        if (this.simulator.isAlive() && this.simulator.isWorking()) {
+            // Simulator is still running asynchronously. Do not process events or start a new simulation yet.
+            // This prevents concurrent modification of the SEGraph and avoids blocking the server thread.
+            return;
         }
 
         boolean needOptimize = false;    //Due to connection changes

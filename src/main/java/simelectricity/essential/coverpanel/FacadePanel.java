@@ -23,7 +23,7 @@ public abstract class FacadePanel implements ISEFacadeCoverPanel {
 		this(
 				nbt.getBoolean("isHollow"),
 				NbtUtils.readBlockState(net.minecraft.core.registries.BuiltInRegistries.BLOCK.asLookup(), nbt.getCompound("blockstate")),
-				ItemStack.parse(net.minecraft.data.registries.VanillaRegistries.createLookup(), nbt.getCompound("itemstack")).orElse(ItemStack.EMPTY)
+				nbt.contains("itemstack") && nbt.getCompound("itemstack").contains("id") ? ItemStack.parse(net.minecraft.data.registries.VanillaRegistries.createLookup(), nbt.getCompound("itemstack")).orElse(ItemStack.EMPTY) : ItemStack.EMPTY
 			);
 	}
 

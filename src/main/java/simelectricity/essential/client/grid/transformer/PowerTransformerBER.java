@@ -19,6 +19,7 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.phys.AABB;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.client.model.data.ModelData;
@@ -41,6 +42,11 @@ public class PowerTransformerBER implements BlockEntityRenderer<BlockEntityPower
 
     public PowerTransformerBER(BlockEntityRendererProvider.Context context) {
 
+	}
+
+	@Override
+	public AABB getRenderBoundingBox(BlockEntityPowerTransformerPlaceHolder.Render blockEntity) {
+		return AABB.INFINITE;
 	}
 
 	public static void onModelBakeEvent() {

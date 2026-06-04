@@ -164,351 +164,6 @@ public class EnergyNetSimulator extends Thread {
                 e.printStackTrace();
             }
         }
-
-
-    }
-
-    /**
-     * @param voltages input, node voltage array from last iteration
-     * @param currents output, return the new current mismatch
-     * @param iterator An iterator instance of the unknown voltage node linked list.
-     */
-    private final void calcCurrents(double[] voltages, double[] currents, Iterator<SEComponent> iterator) {
-        //Calculate the current flow into each node using their voltage
-        while (iterator.hasNext()) {
-            SEComponent columnNode = iterator.next();
-
-            //Node - Node
-            Iterator<SEComponent> iteratorON = columnNode.optimizedNeighbors.iterator();
-            Iterator<Double> iteratorR = columnNode.optimizedResistance.iterator();
-            while (iteratorON.hasNext()) {
-                SEComponent neighbor = iteratorON.next();
-                double R = iteratorR.next();
-                currents[columnNode.index] -= (voltages[columnNode.index] - voltages[neighbor.index]) / R;
-            }
-
-
-            if (columnNode instanceof CableBase) {
-                CableBase<?> cableBase = (CableBase<?>) columnNode;
-
-                if (cableBase.hasShuntResistance())
-                    currents[columnNode.index] -= voltages[cableBase.index] / cableBase.getShuntResistance();
-
-                //Cable - GridNode interconnection
-                if (cableBase instanceof Cable) {
-                    Cable cable = (Cable) cableBase;
-                    if (cable.connectedGridNode != null && cable.isGridLinkEnabled())
-                        currents[columnNode.index] -= (voltages[cable.index] - voltages[cable.connectedGridNode.index]) / cable.getResistance();
-                }
-
-            } else if (columnNode instanceof GridNode) {
-                GridNode gridNode = (GridNode) columnNode;
-
-                //Cable - GridNode interconnection
-                if (gridNode.interConnection != null && gridNode.interConnection.isGridLinkEnabled())
-                    currents[columnNode.index] -= (voltages[gridNode.index] - voltages[gridNode.interConnection.index]) / gridNode.interConnection.getResistance();
-
-                if (gridNode.type == GridNode.ISEGridNode_TransformerPrimary) {
-                    GridNode pri = gridNode;
-                    GridNode sec = pri.complement;
-                    double ratio = pri.ratio;
-                    double res = pri.resistance;
-                    currents[columnNode.index] -= voltages[pri.index] * ratio * ratio / res - voltages[sec.index] * ratio / res;
-                }
-
-                if (gridNode.type == GridNode.ISEGridNode_TransformerSecondary) {
-                    GridNode sec = gridNode;
-                    GridNode pri = sec.complement;
-                    double ratio = pri.ratio;
-                    double res = pri.resistance;
-                    currents[columnNode.index] -= -(voltages[pri.index] * ratio / res) + voltages[sec.index] / res;
-                }
-            }
-
-
-            //Node - shunt and two port networks
-            else if (columnNode instanceof VoltageSource) {
-                VoltageSource vs = (VoltageSource) columnNode;
-
-                if (vs.isOn())
-                    currents[columnNode.index] -= (voltages[vs.index] - vs.getOutputVoltage()) / vs.getResistance();
-            } else if (columnNode instanceof ConstantPowerLoad) {
-                ConstantPowerLoad load = (ConstantPowerLoad) columnNode;
-
-                double V = voltages[load.index];
-                double Rcal = V * V / load.getRatedPower();
-
-                if (Rcal > load.getMaximumResistance())
-                    Rcal = load.getMaximumResistance();
-                if (Rcal < load.getMinimumResistance())
-                    Rcal = load.getMinimumResistance();
-
-                if (load.isOn())
-                    currents[columnNode.index] -= V / Rcal;
-            } else if (columnNode instanceof ConstantPowerSource) {
-                ConstantPowerSource source = (ConstantPowerSource) columnNode;
-
-                double V = voltages[source.index];
-
-                double Isrc, G;
-                if (V<source.getMinimumOutputVoltage()) {
-                    Isrc = 2 * source.getRatedPower() / source.getMinimumOutputVoltage();
-                    G = source.getRatedPower() / source.getMinimumOutputVoltage() / source.getMinimumOutputVoltage();
-                } else if (V>source.getMaximumOutputVoltage()) {
-                    Isrc = 2 * source.getRatedPower() / source.getMaximumOutputVoltage();
-                    G = source.getRatedPower() / source.getMaximumOutputVoltage() / source.getMaximumOutputVoltage();
-                } else {
-                    Isrc = 2 * source.getRatedPower() / V;
-                    G = source.getRatedPower() / V / V;
-                }
-
-                if (source.isOn())
-                    currents[columnNode.index] -= (V*G - Isrc);
-            }
-
-            //Switch
-            else if (columnNode instanceof SwitchA) {
-                SwitchA A = (SwitchA) columnNode;
-                SwitchB B = A.getComplement();
-
-                if (A.isOn())
-                    currents[columnNode.index] -= (voltages[A.index] - voltages[B.index]) / A.getResistance();
-            } else if (columnNode instanceof SwitchB) {
-                SwitchB B = (SwitchB) columnNode;
-                SwitchA A = B.getComplement();
-
-                if (A.isOn())
-                    currents[columnNode.index] -= (voltages[B.index] - voltages[A.index]) / A.getResistance();
-            }
-
-            //Transformer
-            else if (columnNode instanceof TransformerPrimary) {
-                TransformerPrimary pri = (TransformerPrimary) columnNode;
-                TransformerSecondary sec = pri.getComplement();
-                double ratio = pri.getRatio();
-                double res = pri.getInternalResistance();
-                currents[columnNode.index] -= voltages[pri.index] * ratio * ratio / res - voltages[sec.index] * ratio / res;
-            } else if (columnNode instanceof TransformerSecondary) {
-                TransformerSecondary sec = (TransformerSecondary) columnNode;
-                TransformerPrimary pri = sec.getComplement();
-                double ratio = pri.getRatio();
-                double res = pri.getInternalResistance();
-                currents[columnNode.index] -= -(voltages[pri.index] * ratio / res) + voltages[sec.index] / res;
-            }
-
-
-            //Diode
-            else if (columnNode instanceof DiodeInput) {
-                DiodeInput input = (DiodeInput) columnNode;
-                DiodeOutput output = input.getComplement();
-
-                double Vd = voltages[input.index] - voltages[output.index];
-
-                currents[columnNode.index] -= input.calcId(Vd) + Vd * this.Gpn;
-            } else if (columnNode instanceof DiodeOutput) {
-                DiodeOutput output = (DiodeOutput) columnNode;
-                DiodeInput input = output.getComplement();
-
-                double Vd = voltages[input.index] - voltages[output.index];
-
-
-                currents[columnNode.index] += input.calcId(Vd) + Vd * this.Gpn;
-            }
-        }
-    }
-
-    private final void formJacobian(double[] voltages, Iterator<SEComponent> iterator) {
-        this.matrix.newMatrix(voltages.length);
-
-        while (iterator.hasNext()) {
-            SEComponent columnNode = iterator.next();
-            double diagonalElement = 0;
-
-            //Add conductance between nodes
-            Iterator<SEComponent> iteratorON = columnNode.optimizedNeighbors.iterator();
-            Iterator<Double> iteratorR = columnNode.optimizedResistance.iterator();
-            while (iteratorON.hasNext()) {
-                SEComponent neighbor = iteratorON.next();
-                int rowIndex = neighbor.index;
-                double R = iteratorR.next();
-
-                diagonalElement += 1.0D / R;
-
-                this.matrix.setElementValue(columnNode.index, rowIndex, -1.0D / R);
-            }
-
-
-            //Cable - GridNode
-            if (columnNode instanceof CableBase) {
-                CableBase<?> cableBase = (CableBase<?>) columnNode;
-
-                if (cableBase.hasShuntResistance())
-                    diagonalElement += 1.0D / cableBase.getShuntResistance();
-
-                if (cableBase instanceof Cable) {
-                    Cable cable = (Cable) cableBase;
-                    if (cable.connectedGridNode != null && cable.isGridLinkEnabled()) {
-                        int iCable = cable.index;
-                        int iGridNode = cable.connectedGridNode.index;
-
-                        //Diagonal element
-                        diagonalElement += 1.0D / cable.getResistance();
-
-                        //Off-diagonal elements
-                        this.matrix.setElementValue(iCable, iGridNode, -1.0D / cable.getResistance());
-                        this.matrix.setElementValue(iGridNode, iCable, -1.0D / cable.getResistance());
-                    }
-                }
-            } else if (columnNode instanceof GridNode) {
-                GridNode gridNode = (GridNode) columnNode;
-
-                if (gridNode.interConnection != null && gridNode.interConnection.isGridLinkEnabled()) {
-                    diagonalElement += 1.0D / gridNode.interConnection.getResistance();
-                }
-
-                if (gridNode.type == GridNode.ISEGridNode_TransformerPrimary) {
-                    GridNode pri = gridNode;
-                    GridNode sec = pri.complement;
-                    double ratio = pri.ratio;
-                    double res = pri.resistance;
-
-                    int iPri = pri.index;
-                    int iSec = sec.index;
-
-                    //Primary diagonal element
-                    diagonalElement += ratio * ratio / res;
-
-                    //Off-diagonal elements
-                    this.matrix.setElementValue(iPri, iSec, -ratio / res);
-                    this.matrix.setElementValue(iSec, iPri, -ratio / res);
-                }
-
-                if (gridNode.type == GridNode.ISEGridNode_TransformerSecondary) {
-                    GridNode sec = gridNode;
-                    GridNode pri = sec.complement;
-//                    double ratio = pri.ratio;
-                    double res = pri.resistance;
-
-                    diagonalElement += 1.0D / res;
-                }
-            }
-
-
-            //Process voltage sources and resistive loads
-            else if (columnNode instanceof VoltageSource) {
-                VoltageSource vs = (VoltageSource) columnNode;
-
-                if (vs.isOn())
-                    diagonalElement += 1.0D / vs.getResistance();
-            }
-
-            //Constant power load
-            else if (columnNode instanceof ConstantPowerLoad) {
-                ConstantPowerLoad load = (ConstantPowerLoad) columnNode;
-                double V = voltages[columnNode.index];
-
-                double Rcal = V * V / load.getRatedPower();
-
-                if (Rcal > load.getMaximumResistance())
-                    Rcal = load.getMaximumResistance();
-                if (Rcal < load.getMinimumResistance())
-                    Rcal = load.getMinimumResistance();
-
-                if (load.isOn())
-                    diagonalElement += 1.0D / Rcal;
-            }
-
-            //Constant power source
-            else if (columnNode instanceof ConstantPowerSource) {
-                ConstantPowerSource source = (ConstantPowerSource) columnNode;
-
-                double V = voltages[source.index];
-
-                double G;
-                if (V<source.getMinimumOutputVoltage()) {
-                    G = source.getRatedPower() / source.getMinimumOutputVoltage() / source.getMinimumOutputVoltage();
-                } else if (V>source.getMaximumOutputVoltage()) {
-                    G = source.getRatedPower() / source.getMaximumOutputVoltage() / source.getMaximumOutputVoltage();
-                } else {
-                    G = source.getRatedPower() / V / V;
-                }
-
-                if (source.isOn())
-                    diagonalElement += G;
-            }
-
-            //Two port networks
-            //Switch
-            else if (columnNode instanceof SwitchA) {
-                SwitchA A = (SwitchA) columnNode;
-
-                if (A.isOn()) {
-                    int iA = A.index;
-                    int iB = A.getComplement().index;
-
-                    //Diagonal element
-                    diagonalElement += 1.0D / A.getResistance();
-
-                    //Off-diagonal elements
-                    this.matrix.setElementValue(iA, iB, -1.0D / A.getResistance());
-                    this.matrix.setElementValue(iB, iA, -1.0D / A.getResistance());
-                }
-            } else if (columnNode instanceof SwitchB) {
-                //Diagonal element
-                if (((SwitchB) columnNode).isOn())
-                    diagonalElement += 1.0D / ((SwitchB) columnNode).getResistance();
-            }
-
-
-            //Transformer
-            else if (columnNode instanceof TransformerPrimary) {
-                TransformerPrimary pri = (TransformerPrimary) columnNode;
-                int iPri = pri.index;
-                int iSec = pri.getComplement().index;
-
-                double ratio = pri.getRatio();
-                double res = pri.getInternalResistance();
-                //Primary diagonal element
-                diagonalElement += ratio * ratio / res;
-
-                //Off-diagonal elements
-                this.matrix.setElementValue(iPri, iSec, -ratio / res);
-                this.matrix.setElementValue(iSec, iPri, -ratio / res);
-            } else if (columnNode instanceof TransformerSecondary) {
-                //Secondary diagonal element
-                diagonalElement += 1.0D / ((TransformerSecondary) columnNode).getComplement().getInternalResistance();
-            }
-
-            //Diode
-            else if (columnNode instanceof DiodeInput) {
-                DiodeInput input = (DiodeInput) columnNode;
-                DiodeOutput output = input.getComplement();
-
-                int iPri = input.index;
-                int iSec = output.index;
-                double Vd = voltages[iPri] - voltages[iSec];
-                double Gd = input.calcG(Vd) + this.Gpn;
-
-                diagonalElement += Gd;
-                this.matrix.setElementValue(iPri, iSec, -Gd);
-                this.matrix.setElementValue(iSec, iPri, -Gd);
-            } else if (columnNode instanceof DiodeOutput) {
-            	DiodeOutput output = (DiodeOutput) columnNode;
-                DiodeInput input = output.getComplement();
-
-                int iPri = input.index;
-                int iSec = output.index;
-                double Vd = voltages[iPri] - voltages[iSec];
-                double Gd = input.calcG(Vd) + this.Gpn;
-
-                diagonalElement += Gd;
-            }
-
-
-            this.matrix.setElementValue(columnNode.index, columnNode.index, diagonalElement);
-        }
-
-        this.matrix.finishEditing();
     }
 
     protected final void runSimulator(boolean optimizeGraph) {
@@ -519,29 +174,242 @@ public class EnergyNetSimulator extends Thread {
         LinkedList<SEComponent> unknownVoltageNodes = circuit.getTerminalNodes();
 
         int matrixSize = 0;
-        Iterator<SEComponent> iterator = unknownVoltageNodes.iterator();
-        while (iterator.hasNext()) {
-            iterator.next().index = matrixSize;
-            matrixSize++;
+        for (SEComponent comp : unknownVoltageNodes) {
+            comp.index = matrixSize++;
         }
+
+        if (matrixSize == 0) return;
 
         double[] voltages = new double[matrixSize];
         double[] currents = new double[matrixSize];
 
-        this.iterations = 0;
-        while (true) {
-            for (int i = 0; i < matrixSize; i++)
-                currents[i] = 0;
-            //Calculate the current flow into each node using their voltage
-            this.calcCurrents(voltages, currents, unknownVoltageNodes.iterator());    //Current mismatch
+        // --- Data-Oriented Extraction & Static Jacobian Caching ---
+        double[] staticJacobian = new double[matrixSize * matrixSize];
+        double[] staticCurrents = new double[matrixSize];
 
-            boolean keepGoing = false;
+        int numCPL = 0, numCPS = 0, numDiodes = 0;
+        for (SEComponent comp : unknownVoltageNodes) {
+            if (comp instanceof ConstantPowerLoad && ((ConstantPowerLoad)comp).isOn()) numCPL++;
+            else if (comp instanceof ConstantPowerSource && ((ConstantPowerSource)comp).isOn()) numCPS++;
+            else if (comp instanceof DiodeInput) numDiodes++;
+        }
 
-            for (int i = 0; i < matrixSize; i++) {
-                if (Math.abs(currents[i]) > this.epsilon)
-                    keepGoing = true;
+        int[] cplNode = new int[numCPL];
+        double[] cplP = new double[numCPL];
+        double[] cplMaxR = new double[numCPL];
+        double[] cplMinR = new double[numCPL];
+
+        int[] cpsNode = new int[numCPS];
+        double[] cpsP = new double[numCPS];
+        double[] cpsMaxV = new double[numCPS];
+        double[] cpsMinV = new double[numCPS];
+
+        int[] diodeIn = new int[numDiodes];
+        int[] diodeOut = new int[numDiodes];
+        DiodeInput[] diodeComponents = new DiodeInput[numDiodes];
+
+        int idxCPL = 0, idxCPS = 0, idxDiode = 0;
+
+        for (SEComponent node : unknownVoltageNodes) {
+            int i = node.index;
+            int offsetI = i * matrixSize;
+
+            // 1. Optimized Neighbors (Linear Edges)
+            Iterator<SEComponent> itN = node.optimizedNeighbors.iterator();
+            Iterator<Double> itR = node.optimizedResistance.iterator();
+            while (itN.hasNext()) {
+                int j = itN.next().index;
+                double G = 1.0 / itR.next();
+                staticJacobian[offsetI + i] += G;
+                staticJacobian[offsetI + j] -= G;
             }
 
+            // 2. Cables and Grids
+            if (node instanceof CableBase) {
+                CableBase<?> cable = (CableBase<?>) node;
+                if (cable.hasShuntResistance()) {
+                    staticJacobian[offsetI + i] += 1.0 / cable.getShuntResistance();
+                }
+                if (cable instanceof Cable) {
+                    Cable c = (Cable) cable;
+                    if (c.connectedGridNode != null && c.isGridLinkEnabled()) {
+                        int j = c.connectedGridNode.index;
+                        int offsetJ = j * matrixSize;
+                        double G = 1.0 / c.getResistance();
+                        staticJacobian[offsetI + i] += G;
+                        staticJacobian[offsetI + j] -= G;
+                        staticJacobian[offsetJ + i] -= G;
+                    }
+                }
+            } else if (node instanceof GridNode) {
+                GridNode gridNode = (GridNode) node;
+                if (gridNode.interConnection != null && gridNode.interConnection.isGridLinkEnabled()) {
+                    staticJacobian[offsetI + i] += 1.0 / gridNode.interConnection.getResistance();
+                }
+
+                if (gridNode.type == GridNode.ISEGridNode_TransformerPrimary) {
+                    GridNode sec = gridNode.complement;
+                    int j = sec.index;
+                    int offsetJ = j * matrixSize;
+                    double ratio = gridNode.ratio;
+                    double res = gridNode.resistance;
+                    staticJacobian[offsetI + i] += ratio * ratio / res;
+                    staticJacobian[offsetI + j] -= ratio / res;
+                    staticJacobian[offsetJ + i] -= ratio / res;
+                } else if (gridNode.type == GridNode.ISEGridNode_TransformerSecondary) {
+                    GridNode pri = gridNode.complement;
+                    double res = pri.resistance;
+                    staticJacobian[offsetI + i] += 1.0 / res;
+                }
+            }
+            // 3. Voltage Source
+            else if (node instanceof VoltageSource) {
+                VoltageSource vs = (VoltageSource) node;
+                if (vs.isOn()) {
+                    double G = 1.0 / vs.getResistance();
+                    staticJacobian[offsetI + i] += G;
+                    staticCurrents[i] += vs.getOutputVoltage() * G;
+                }
+            }
+            // 4. Constant Power Load
+            else if (node instanceof ConstantPowerLoad) {
+                ConstantPowerLoad load = (ConstantPowerLoad) node;
+                if (load.isOn()) {
+                    cplNode[idxCPL] = i;
+                    cplP[idxCPL] = load.getRatedPower();
+                    cplMaxR[idxCPL] = load.getMaximumResistance();
+                    cplMinR[idxCPL] = load.getMinimumResistance();
+                    idxCPL++;
+                }
+            }
+            // 5. Constant Power Source
+            else if (node instanceof ConstantPowerSource) {
+                ConstantPowerSource source = (ConstantPowerSource) node;
+                if (source.isOn()) {
+                    cpsNode[idxCPS] = i;
+                    cpsP[idxCPS] = source.getRatedPower();
+                    cpsMaxV[idxCPS] = source.getMaximumOutputVoltage();
+                    cpsMinV[idxCPS] = source.getMinimumOutputVoltage();
+                    idxCPS++;
+                }
+            }
+            // 6. Switches
+            else if (node instanceof SwitchA) {
+                SwitchA sw = (SwitchA) node;
+                if (sw.isOn()) {
+                    int j = sw.getComplement().index;
+                    int offsetJ = j * matrixSize;
+                    double G = 1.0 / sw.getResistance();
+                    staticJacobian[offsetI + i] += G;
+                    staticJacobian[offsetI + j] -= G;
+                    staticJacobian[offsetJ + i] -= G;
+                }
+            } else if (node instanceof SwitchB) {
+                SwitchB sw = (SwitchB) node;
+                if (sw.isOn()) {
+                    staticJacobian[offsetI + i] += 1.0 / sw.getResistance();
+                }
+            }
+            // 7. Transformer
+            else if (node instanceof TransformerPrimary) {
+                TransformerPrimary pri = (TransformerPrimary) node;
+                int j = pri.getComplement().index;
+                int offsetJ = j * matrixSize;
+                double ratio = pri.getRatio();
+                double res = pri.getInternalResistance();
+                staticJacobian[offsetI + i] += ratio * ratio / res;
+                staticJacobian[offsetI + j] -= ratio / res;
+                staticJacobian[offsetJ + i] -= ratio / res;
+            } else if (node instanceof TransformerSecondary) {
+                TransformerSecondary sec = (TransformerSecondary) node;
+                staticJacobian[offsetI + i] += 1.0 / sec.getComplement().getInternalResistance();
+            }
+            // 8. Diode
+            else if (node instanceof DiodeInput) {
+                diodeIn[idxDiode] = i;
+                diodeOut[idxDiode] = ((DiodeInput)node).getComplement().index;
+                diodeComponents[idxDiode] = (DiodeInput)node;
+                idxDiode++;
+            }
+        }
+
+        // --- Iterative Solver Loop ---
+        this.iterations = 0;
+        double[] workingJacobian = new double[matrixSize * matrixSize];
+
+        while (true) {
+            // Compute currents mismatch vector
+            // I_mismatch = staticCurrents - staticJacobian * voltages
+            for (int i = 0; i < matrixSize; i++) {
+                double I = staticCurrents[i];
+                int offsetI = i * matrixSize;
+                for (int j = 0; j < matrixSize; j++) {
+                    I -= staticJacobian[offsetI + j] * voltages[j];
+                }
+                currents[i] = I;
+            }
+
+            // O(1) Memory Snapshot (Matrix Reset)
+            System.arraycopy(staticJacobian, 0, workingJacobian, 0, matrixSize * matrixSize);
+
+            // Non-linear elements updates
+            for (int k = 0; k < numCPL; k++) {
+                int i = cplNode[k];
+                int offsetI = i * matrixSize;
+                double v = voltages[i];
+                double Rcal = v * v / cplP[k];
+                if (Rcal > cplMaxR[k]) Rcal = cplMaxR[k];
+                if (Rcal < cplMinR[k]) Rcal = cplMinR[k];
+                double G = 1.0 / Rcal;
+                currents[i] -= v * G;
+                workingJacobian[offsetI + i] += G;
+            }
+
+            for (int k = 0; k < numCPS; k++) {
+                int i = cpsNode[k];
+                int offsetI = i * matrixSize;
+                double v = voltages[i];
+                double Isrc, G;
+                if (v < cpsMinV[k]) {
+                    Isrc = 2 * cpsP[k] / cpsMinV[k];
+                    G = cpsP[k] / (cpsMinV[k] * cpsMinV[k]);
+                } else if (v > cpsMaxV[k]) {
+                    Isrc = 2 * cpsP[k] / cpsMaxV[k];
+                    G = cpsP[k] / (cpsMaxV[k] * cpsMaxV[k]);
+                } else {
+                    Isrc = 2 * cpsP[k] / v;
+                    G = cpsP[k] / (v * v);
+                }
+                currents[i] -= (v * G - Isrc);
+                workingJacobian[offsetI + i] += G;
+            }
+
+            for (int k = 0; k < numDiodes; k++) {
+                int in = diodeIn[k];
+                int out = diodeOut[k];
+                int offsetIn = in * matrixSize;
+                int offsetOut = out * matrixSize;
+                double Vd = voltages[in] - voltages[out];
+                DiodeInput comp = diodeComponents[k];
+                double Id = comp.calcId(Vd);
+                double Gd = comp.calcG(Vd) + this.Gpn;
+                
+                currents[in] -= Id + Vd * this.Gpn;
+                currents[out] += Id + Vd * this.Gpn;
+
+                workingJacobian[offsetIn + in] += Gd;
+                workingJacobian[offsetOut + out] += Gd;
+                workingJacobian[offsetIn + out] -= Gd;
+                workingJacobian[offsetOut + in] -= Gd;
+            }
+
+            boolean keepGoing = false;
+            for (int i = 0; i < matrixSize; i++) {
+                if (Math.abs(currents[i]) > this.epsilon) {
+                    keepGoing = true;
+                    break;
+                }
+            }
 
             if (keepGoing) {
                 if (this.iterations > ConfigManager.maxIteration) {
@@ -552,33 +420,31 @@ public class EnergyNetSimulator extends Thread {
                 break;
             }
 
-            this.formJacobian(voltages, unknownVoltageNodes.iterator());
-
-            String[] header = new String[unknownVoltageNodes.size()];
-            Iterator<SEComponent> it = unknownVoltageNodes.iterator();
-            while (it.hasNext()) {
-                SEComponent comp = it.next();
-                header[comp.index] = comp.toString();
+            this.matrix.newMatrix(matrixSize);
+            for (int i = 0; i < matrixSize; i++) {
+                int offsetI = i * matrixSize;
+                for (int j = 0; j < matrixSize; j++) {
+                    double val = workingJacobian[offsetI + j];
+                    if (val != 0) {
+                        this.matrix.setElementValue(i, j, val);
+                    }
+                }
             }
-            //matrix.print(header);
+            this.matrix.finishEditing();
+
             if (!this.matrix.solve(currents)) {
                 throw new RuntimeException("Due to incorrect value of components, the EnergyNet has been shutdown!");
             }
-            //currents is now deltaV
 
-            //Debug.println("Iteration:", String.valueOf(iterations));
             for (int i = 0; i < matrixSize; i++) {
                 if (!Double.isNaN(currents[i]))
                     voltages[i] += currents[i];
-                //String[] temp = unknownVoltageNodes.get(i).toString().split("[.]");
-                //Debug.println(temp[temp.length-1].split("@")[0], String.valueOf(voltages[i]));
             }
 
             this.iterations++;
         }
 
-
-        //Update voltage cache
+        // Update voltage cache
         for (SEComponent node : unknownVoltageNodes) {
             node.newVoltage = voltages[node.index];
         }

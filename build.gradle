@@ -15,6 +15,14 @@ java {
     toolchain.languageVersion = JavaLanguageVersion.of(21)
 }
 
+tasks.withType(JavaCompile).configureEach {
+    options.compilerArgs += ["--add-modules", "jdk.incubator.vector"]
+}
+
+tasks.withType(JavaExec).configureEach {
+    jvmArgs += ["--add-modules", "jdk.incubator.vector"]
+}
+
 dependencies {
     implementation project(':librikka')
 }

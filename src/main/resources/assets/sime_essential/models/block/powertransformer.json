@@ -2,5 +2,17 @@
 	"loader": "neoforge:obj",
 	"model": "sime_essential:models/powertransformer.obj",
 	"diffuseLighting": true,
-	"ambientToFullbright": true
+	"ambientToFullbright": true,
+	"textures": {
+		"particle": "sime_essential:block/machines/motor_case_blue",
+		"Layer_Body": "sime_essential:block/machines/motor_case_blue",
+		"Layer_Box1": "sime_essential:block/machines/motor_case_blue",
+		"Layer_OilPipe": "sime_essential:block/powertransformer_oilpipe_side",
+		"Layer_OilTank": "sime_essential:block/powertransformer_oiltank",
+		"Layer_Support": "sime_essential:block/powertransformer_oiltanksupport",
+		"Layer_Fan1": "minecraft:block/white",
+		"Layer_Fan2": "minecraft:block/white",
+		"Layer_HeatSink1": "minecraft:block/white",
+		"Layer_HeatSink2": "minecraft:block/white"
+	}
 }

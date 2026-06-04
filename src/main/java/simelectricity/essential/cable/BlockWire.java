@@ -223,7 +223,7 @@ public class BlockWire extends BlockBase implements EntityBlock, ICustomBounding
             	// TODO: fix this
             	MarkedBlockHitResult<Integer> trace = blockWire.rayTrace(world, pos, player);
 //                RayTraceResult trace = this.rayTrace(world, player, RayTraceContext.FluidMode.NONE);
-                if (trace.getBlockPos().equals(pos) && subHit_isBranch(trace.subHit)) {
+                if (trace != null && trace.getBlockPos().equals(pos) && subHit_isBranch(trace.subHit)) {
                     ISEGenericWire wireTile = (ISEGenericWire) teSelected;
                     Direction tr_side = subHit_side(trace.subHit);
                     Direction tr_branch = subHit_branch(trace.subHit);
@@ -928,7 +928,7 @@ public class BlockWire extends BlockBase implements EntityBlock, ICustomBounding
 
         MarkedBlockHitResult<Integer> trace = this.rayTrace(world, pos, player);
 
-        if (subHit_isBranch(trace.subHit) && trace.getBlockPos().equals(pos)) {    //Center, corner or branches
+        if (trace != null && subHit_isBranch(trace.subHit) && trace.getBlockPos().equals(pos)) {    //Center, corner or branches
             Direction wire_side = subHit_side(trace.subHit);
 
             if (wireTile.getWireParam(wire_side).hasBranchOnSide(null)) {
