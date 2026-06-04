@@ -1,0 +1,64 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+name: Gradle Package
+
+on:
+  release:
+    types: [created]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+    - uses: actions/checkout@v4
+    
+    # 修改点：将 JDK 版本从 17 升级为 21，以满足 NeoForge 1.21.1 的硬性要求
+    - name: Set up JDK 21
+      uses: actions/setup-java@v4
+      with:
+        java-version: '21'
+        distribution: 'temurin'
+        server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
+        settings-path: ${{ github.workspace }} # location for the settings.xml file
+
+    - name: Setup Gradle
+      uses: gradle/actions/setup-gradle@af1da67850ed9a4cedd57bfd976089dd991e2582 # v4.0.0
+
+    # ==========================================
+    # 1. SimElectricity 根项目构建与发布
+    # ==========================================
+    # 在 NeoForge (ModDevGradle) 中，数据生成任务依然依赖 runs 块中的配置，通常命名为 runData
+    - name: Generate Data for SimElectricity
+      run: ./gradlew runData
+      continue-on-error: true 
+
+    - name: Build SimElectricity with Gradle
+      run: ./gradlew build
+
+    - name: Publish SimElectricity to GitHub Packages
+      run: ./gradlew publish
+      env:
+        USERNAME: ${{ github.actor }}
+        TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    # ==========================================
+    # 2. LibRikka 子项目构建与发布
+    # ==========================================
+    - name: Build LibRikka with Gradle
+      working-directory: ./librikka
+      run: ./gradlew build
+
+    - name: Publish LibRikka to GitHub Packages
+      working-directory: ./librikka
+      run: ./gradlew publish
+      env:
+        USERNAME: ${{ github.actor }}
+        TOKEN: ${{ secrets.GITHUB_TOKEN }}
