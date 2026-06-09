@@ -69,11 +69,11 @@ public final class GuiSwitch extends SEGuiContainer<ContainerSwitch> {
         int ybase = 97;
 
         addServerButton(0, this.leftPos + xbase, this.topPos + ybase, 30, 20, "-100");
-        addServerButton(1, this.leftPos + xbase + 30, this.topPos + ybase, 20, 20, "-10");
-        addServerButton(2, this.leftPos + xbase + 50, this.topPos + ybase, 20, 20, "-1");
-        addServerButton(3, this.leftPos + xbase + 70, this.topPos + ybase, 20, 20, "+1");
-        addServerButton(4, this.leftPos + xbase + 90, this.topPos + ybase, 20, 20, "+10");
-        addServerButton(5, this.leftPos + xbase + 110, this.topPos + ybase, 30, 20, "+100");
+        addServerButton(1, this.leftPos + xbase + 30, this.topPos + ybase, 26, 20, "-10");
+        addServerButton(2, this.leftPos + xbase + 56, this.topPos + ybase, 20, 20, "-1");
+        addServerButton(3, this.leftPos + xbase + 76, this.topPos + ybase, 20, 20, "+1");
+        addServerButton(4, this.leftPos + xbase + 96, this.topPos + ybase, 26, 20, "+10");
+        addServerButton(5, this.leftPos + xbase + 122, this.topPos + ybase, 30, 20, "+100");
 
         addServerButton(6, this.leftPos + xbase, this.topPos + ybase + 38, 20, 20, "-1");
         addServerButton(7, this.leftPos + xbase + 20, this.topPos + ybase + 38, 20, 20, "-.1");

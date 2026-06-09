@@ -60,11 +60,11 @@ public final class GuiAdjustableResistor extends SEGuiContainer<ContainerAdjusta
         int ybase = 97;
 
         addServerButton(0, this.leftPos + xbase, this.topPos + ybase + 38, 30, 20, "-100");
-        addServerButton(1, this.leftPos + xbase + 30, this.topPos + ybase + 38, 20, 20, "-10");
-        addServerButton(2, this.leftPos + xbase + 50, this.topPos + ybase + 38, 20, 20, "-1");
-        addServerButton(3, this.leftPos + xbase + 70, this.topPos + ybase + 38, 20, 20, "+1");
-        addServerButton(4, this.leftPos + xbase + 90, this.topPos + ybase + 38, 20, 20, "+10");
-        addServerButton(5, this.leftPos + xbase + 110, this.topPos + ybase + 38, 30, 20, "+100");
+        addServerButton(1, this.leftPos + xbase + 30, this.topPos + ybase + 38, 26, 20, "-10");
+        addServerButton(2, this.leftPos + xbase + 56, this.topPos + ybase + 38, 20, 20, "-1");
+        addServerButton(3, this.leftPos + xbase + 76, this.topPos + ybase + 38, 20, 20, "+1");
+        addServerButton(4, this.leftPos + xbase + 96, this.topPos + ybase + 38, 26, 20, "+10");
+        addServerButton(5, this.leftPos + xbase + 122, this.topPos + ybase + 38, 30, 20, "+100");
 
         addServerButton(6, this.leftPos + xbase + 100, this.topPos + ybase, 40, 20, "Clear");
     }
