@@ -65,10 +65,10 @@ public final class GuiQuantumGenerator extends SEGuiContainer<ContainerQuantumGe
         addServerButton(5, this.leftPos + xbase + 120, this.topPos + ybase, 20, 20, "+1");
 
         addServerButton(6, this.leftPos + xbase, this.topPos + ybase + 38, 30, 20, "-100");
-        addServerButton(7, this.leftPos + xbase + 30, this.topPos + ybase + 38, 20, 20, "-10");
-        addServerButton(8, this.leftPos + xbase + 50, this.topPos + ybase + 38, 20, 20, "-1");
-        addServerButton(9, this.leftPos + xbase + 70, this.topPos + ybase + 38, 20, 20, "+1");
-        addServerButton(10, this.leftPos + xbase + 90, this.topPos + ybase + 38, 20, 20, "+10");
-        addServerButton(11, this.leftPos + xbase + 110, this.topPos + ybase + 38, 30, 20, "+100");
+        addServerButton(7, this.leftPos + xbase + 30, this.topPos + ybase + 38, 26, 20, "-10");
+        addServerButton(8, this.leftPos + xbase + 56, this.topPos + ybase + 38, 20, 20, "-1");
+        addServerButton(9, this.leftPos + xbase + 76, this.topPos + ybase + 38, 20, 20, "+1");
+        addServerButton(10, this.leftPos + xbase + 96, this.topPos + ybase + 38, 26, 20, "+10");
+        addServerButton(11, this.leftPos + xbase + 122, this.topPos + ybase + 38, 30, 20, "+100");
     }
 }

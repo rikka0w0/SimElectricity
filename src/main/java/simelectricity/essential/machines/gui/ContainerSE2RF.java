@@ -48,6 +48,7 @@ public class ContainerSE2RF extends ContainerNoInvAutoSync<BlockEntitySE2RF> imp
                 break;
             case 2:
                 ratedOutputPower -= 1;
+                break;
             case 3:
                 ratedOutputPower += 1;
                 break;
